@@ -1,0 +1,1249 @@
+<?php
+class ExcelTemplate {
+
+	public function getCnabLotes($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Número da Remessa")
+								->setCellValue('C1', "Data")
+								->setCellValue('D1', "Banco")
+								->setCellValue('E1', "Qtde")
+								->setCellValue('F1', "Total")
+								->setCellValue('G1', "Documento")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Status"]["name"])
+									->setCellValue('B'.$indx, str_pad($dados[$i]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT))
+									->setCellValue('C'.$indx, date('d/m/Y H:i:s', strtotime($dados[$i]['CnabLote']['created'])))
+									->setCellValue('D'.$indx, $dados[$i]['Bank']['name'])
+									->setCellValue('E'.$indx, $dados[$i][0]['qtde'])
+									->setCellValue('F'.$indx, number_format($dados[$i][0]['valor_total'],2,',','.'))
+									->setCellValue('G'.$indx, $dados[$i]['CnabLote']['arquivo'])
+									;
+		}
+	}
+
+	public function getBloqueioDiario($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Código do associado")
+								->setCellValue('B1', "Razão social")
+								->setCellValue('C1', "Nome fantasia")
+								->setCellValue('D1', "Status atual")
+								->setCellValue('E1', "Data alteração")
+								->setCellValue('F1', "Status antigo")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["nome_primario"])
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["Status"]["name"])
+									->setCellValue('E'.$indx, date('d/m/Y H:i:s', strtotime($dados[$i]["MovimentacaoCredor"]["created"])))
+									->setCellValue('F'.$indx, $dados[$i]["Status"]["name"])
+									;
+		}
+	}
+
+	public function getClientesBloquear($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Código associado")
+								->setCellValue('C1', "Nome")
+								->setCellValue('D1', "Email")
+								->setCellValue('E1', "Data de cadastro")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Customer"]["Status"]["name"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["email"])
+									->setCellValue('E'.$indx, $dados[$i]["Customer"]["created"])
+									;
+		}
+	}
+
+	public function getClientes($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Data cadastro")
+								->setCellValue('C1', "Código")
+								->setCellValue('D1', "Nome fantasia")
+								->setCellValue('E1', "Cidade")
+								->setCellValue('F1', "UF")
+								->setCellValue('G1', "Plano")
+								->setCellValue('H1', "Valor")
+								->setCellValue('I1', "Data Plano")
+								->setCellValue('J1', "Vendedor")
+								->setCellValue('K1', "Data Cancelamento")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Statuses"]["name"])
+									->setCellValue('B'.$indx, date('d/m/Y', strtotime($dados[$i]["Customer"]["created"])))
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('E'.$indx, $dados[$i]["Customer"]["cidade"])
+									->setCellValue('F'.$indx, $dados[$i]["Customer"]["estado"])
+									->setCellValue('G'.$indx, $dados[$i]['Plan']['description'])
+									->setCellValue('H'.$indx, $dados[$i]['PlanCustomer']['mensalidade'])
+									->setCellValue('I'.$indx, ($dados[$i]["PlanCustomer"]["created"] ? date('d/m/Y', strtotime($dados[$i]["PlanCustomer"]["created"])) : ''))
+									->setCellValue('J'.$indx, $dados[$i]["Seller"]["nome_fantasia"])
+									->setCellValue('K'.$indx, ($dados[$i][0]["dataCancelamento"] ? date('d/m/Y', strtotime($dados[$i][0]["dataCancelamento"])) : ''))
+									;
+		}
+	}
+
+	public function getDiarioCobranca($objPHPExcel, $dados, $valor_cobrado, $exito){
+		$DistribuicaoCobranca = ClassRegistry::init('DistribuicaoCobranca');
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Cobrador")
+								->setCellValue('B1', "Quantidade")
+								->setCellValue('C1', "Valor Cobrado")
+								->setCellValue('D1', "Total de Cobranças Realizadas")
+								->setCellValue('E1', "Total Cobrado")
+								->setCellValue('F1', "Total Recebido")
+								;
+
+		$valor_total = 0;
+		$qtde_total_exito = 0;
+		$valor_total_exito = 0;
+		$total_pago = 0;
+		$qtde_total = 0;
+		$indx = 1;
+		foreach ($dados['QtdeUsuarios'] as $user){
+
+			$valor_total += $valor_cobrado[$user['user_id']][0][0]['total'];
+			$qtde_total_exito += $exito[$user['user_id']][0][0]["qtde"];
+			$valor_total_exito += $exito[$user['user_id']][0][0]["valor_total"];
+			$total_pago += $exito[$user['user_id']][0][0]["valor_total_pago"];
+			$qtde_total += $user['QtdeUsuarios'][0]['total_clientes'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $user['User']['name'])
+									->setCellValue('B'.$indx, $user['QtdeUsuarios'][0]['total_clientes'])
+									->setCellValue('C'.$indx, number_format($valor_cobrado[$user['user_id']][0][0]['total'], 2, ',','.'))
+									->setCellValue('D'.$indx, $exito[$user['user_id']][0][0]['qtde'])
+									->setCellValue('E'.$indx, number_format($exito[$user['user_id']][0][0]['valor_total'], 2, ',','.'))
+									->setCellValue('F'.$indx, number_format($exito[$user['user_id']][0][0]['valor_total_pago'], 2, ',','.'))
+									;
+		}
+		
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, "Total:")
+								->setCellValue('B'.$indx, $qtde_total)
+								->setCellValue('C'.$indx, number_format($valor_total, 2, ',','.'))
+								->setCellValue('D'.$indx, $qtde_total_exito)
+								->setCellValue('E'.$indx, number_format($valor_total_exito, 2, ',','.'))
+								->setCellValue('F'.$indx, number_format($total_pago, 2, ',','.'))
+								;
+	}
+
+	public function getContasReceber($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Número do documento")
+								->setCellValue('C1', "Código")
+								->setCellValue('D1', "Cliente")
+								->setCellValue('E1', "Descrição da conta")
+								->setCellValue('F1', "Valor bruto")
+								->setCellValue('G1', "Valor multa")
+								->setCellValue('H1', "Valor liquido")
+								->setCellValue('I1', "Valor pago")
+								->setCellValue('J1', "Conta bancária")
+								->setCellValue('K1', "Competência")
+								->setCellValue('L1', "Vencimento")
+								->setCellValue('M1', "Receita")
+								->setCellValue('N1', "Centro de custo")
+								->setCellValue('O1', "Observações")
+								;
+
+		$indx = 1;
+		for ($i=0; $i < count($dados); $i++) {
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Status']['name'])
+									->setCellValue('B'.$indx, "'".$dados[$i]['Income']['doc_num']."'")
+									->setCellValue('C'.$indx, $dados[$i]['Customer']['codigo_associado'])
+									->setCellValue('D'.$indx, $dados[$i]['Customer']['nome_secundario'])
+									->setCellValue('E'.$indx, $dados[$i]['Income']['name'])
+									->setCellValue('F'.$indx, $dados[$i]['Income']['valor_bruto'])
+									->setCellValue('G'.$indx, $dados[$i]['Income']['valor_multa'])
+									->setCellValue('H'.$indx, $dados[$i]['Income']['valor_total'])
+									->setCellValue('I'.$indx, $dados[$i]['Income']['valor_pago'])
+									->setCellValue('J'.$indx, $dados[$i]['BankAccount']['name'])
+									->setCellValue('K'.$indx, $dados[$i]['Income']['data_competencia'])
+									->setCellValue('L'.$indx, $dados[$i]['Income']['vencimento'])
+									->setCellValue('M'.$indx, $dados[$i]['Revenue']['name'])
+									->setCellValue('N'.$indx, $dados[$i]['CostCenter']['name'])
+									->setCellValue('O'.$indx, $dados[$i]['Income']['observation'])
+
+									;
+		}
+	}
+
+	public function getOutcome($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Nome")
+								->setCellValue('C1', "Conta bancária")
+								->setCellValue('D1', "Vencimento")
+								->setCellValue('E1', "Parcela")
+								->setCellValue('F1', "Valor a pagar R$")
+								->setCellValue('G1', "Valor pago R$")
+								;
+
+		$indx = 1;
+		for ($i=0; $i < count($dados); $i++) {
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Status']['name'])
+									->setCellValue('B'.$indx, $dados[$i]["Outcome"]["name"])
+									->setCellValue('C'.$indx, $dados[$i]["BankAccount"]["name"])
+									->setCellValue('D'.$indx, $dados[$i]["Outcome"]["vencimento"])
+									->setCellValue('E'.$indx, $dados[$i]["Outcome"]["parcela"].'ª')
+									->setCellValue('F'.$indx, $dados[$i]["Outcome"]["valor_total"])
+									->setCellValue('G'.$indx, $dados[$i]["Outcome"]["valor_pago"])
+									;
+		}
+	}
+
+	public function getFluxo($objPHPExcel, $dados, $conta){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Conta bancária")
+								->setCellValue('C1', "Data")
+								->setCellValue('D1', "Valor")
+								->setCellValue('E1', "Saldo")
+								;
+
+		$indx = 2;
+		$saldo = 0;
+		if (!empty($conta)){
+			$saldo = $conta['BankAccount']['initial_balance_not_formated'];
+
+			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $conta['BankAccount']['name'])
+									->setCellValue('E'.$indx, $conta['BankAccount']['initial_balance'])
+									;
+		}
+
+		for ($i=0; $i < count($dados); $i++) {
+			$saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i][0]['valor_total'] : $saldo - $dados[$i][0]['valor_total'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i][0]['status'])
+									->setCellValue('B'.$indx, $dados[$i][0]['name'])
+									->setCellValue('C'.$indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
+									->setCellValue('D'.$indx, $dados[$i][0]['operador'].' '.number_format($dados[$i][0]['valor_total'],2,',','.'))
+									->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, 'Total:')
+								->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+								;
+	}
+
+	public function getDespesas($objPHPExcel, $dados, $conta){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Conta bancária")
+								->setCellValue('C1', "Data")
+								->setCellValue('D1', "Valor")
+								->setCellValue('E1', "Saldo")
+								;
+
+		$indx = 2;
+		$saldo = 0;
+		if (!empty($conta)){
+			$saldo = $conta['BankAccount']['initial_balance'];
+
+			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $conta['BankAccount']['name'])
+									->setCellValue('E'.$indx, $conta['BankAccount']['initial_balance_formated'])
+									;
+		}
+
+		for ($i=0; $i < count($dados); $i++) {
+			$saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i]['o']['valor_total'] : $saldo - $dados[$i]['o']['valor_total'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['s']['status'])
+									->setCellValue('B'.$indx, $dados[$i]['b']['name'])
+									->setCellValue('C'.$indx, date('d/m/Y', strtotime($dados[$i]['o']['vencimento'])))
+									->setCellValue('D'.$indx, $dados[$i][0]['operador'].' '.number_format($dados[$i]['o']['valor_total'],2,',','.'))
+									->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, 'Total:')
+								->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+								;
+	}
+
+	public function getReceitas($objPHPExcel, $dados, $conta){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Conta bancária")
+								->setCellValue('C1', "Data")
+								->setCellValue('D1', "Valor")
+								->setCellValue('E1', "Saldo")
+								;
+
+		$indx = 2;
+		$saldo = 0;
+		if (!empty($conta)){
+			$saldo = $conta['BankAccount']['initial_balance'];
+
+			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $conta['BankAccount']['name'])
+									->setCellValue('E'.$indx, $conta['BankAccount']['initial_balance_formated'])
+									;
+		}
+
+		for ($i=0; $i < count($dados); $i++) {
+			$saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i]['i']['valor_total'] : $saldo - $dados[$i]['i']['valor_total'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['s']['status'])
+									->setCellValue('B'.$indx, $dados[$i]['b']['name'])
+									->setCellValue('C'.$indx, date('d/m/Y', strtotime($dados[$i]['i']['vencimento'])))
+									->setCellValue('D'.$indx, $dados[$i][0]['operador'].' '.number_format($dados[$i]['i']['valor_total'],2,',','.'))
+									->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':D'.$indx);
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, 'Total:')
+								->setCellValue('E'.$indx, number_format($saldo,2,',','.'))
+								;
+	}
+
+	public function getCustomersTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Período : ".$dados['periodo'])
+								->setCellValue('A2', "Minimo Consultas : ".$dados['min_consulta'])
+								->setCellValue('A3', "Produtos")
+								->setCellValue('A4', "Nome")
+								->setCellValue('B4', "Consultas Realizadas")
+								->setCellValue('C4', "Valor Unitário")
+								->setCellValue('D4', "Total")
+								->setCellValue('A5', "Mensalidade")
+								->setCellValue('D5', "R$ ".$dados['mensalidade'])
+								;
+
+		$indx = 5;
+		$total = 0;
+
+		for($i=0;$i<count($dados['negativacao']);$i++){
+			$total += $dados['negativacao'][$i]['n']['valor_total'];
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, $dados['negativacao'][$i]['p']['name'])
+								->setCellValue('B'.$indx, $dados['negativacao'][$i]['n']['qtde_consumo'])
+								->setCellValue('C'.$indx, "R$ ".number_format($dados['negativacao'][$i]['n']['valor_unitario'], 2, ',', '.'))
+								->setCellValue('D'.$indx, "R$ ".number_format($dados['negativacao'][$i]['n']['valor_total'], 2, ',', '.'))
+								;
+		}
+
+		for($i=0;$i<count($dados['pefin']);$i++){
+			$total += $dados['pefin'][$i]['n']['valor_total'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, $dados['pefin'][$i]['p']['name'])
+								->setCellValue('B'.$indx, $dados['pefin'][$i]['n']['qtde_realizado'])
+								->setCellValue('C'.$indx, "R$ ".number_format($dados['pefin'][$i]['n']['valor_unitario'], 2, ',', '.'))
+								->setCellValue('D'.$indx, "R$ ".number_format($dados['pefin'][$i]['n']['valor_total'], 2, ',', '.'))
+								;
+		}
+
+		for($i=0;$i<count($dados['hipercheck']);$i++){
+			$total += $dados['hipercheck'][$i]['BillingNovaVida']['valor_total'];
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A'.$indx, $dados['hipercheck'][$i]['Product']['name'])
+								->setCellValue('B'.$indx, $dados['hipercheck'][$i]['BillingNovaVida']['quantidade_cobrada'])
+								->setCellValue('C'.$indx, "R$ ".number_format($dados['hipercheck'][$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'))
+								->setCellValue('D'.$indx, "R$ ".number_format($dados['hipercheck'][$i]['BillingNovaVida']['valor_total'], 2, ',', '.'))
+								;
+		}
+		
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+							->setCellValue('A'.$indx, "Manutenção PEFIN:")
+							->setCellValue('D'.$indx, "R$ ".$dados['manutencao'])
+							;	
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+							->setCellValue('C'.$indx, "Total Excedente:")
+							->setCellValue('D'.$indx, "R$ ".number_format($total, 2, ',', '.'))
+							;		
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+							->setCellValue('C'.$indx, "Total Fatura:")
+							->setCellValue('D'.$indx, "R$ ".number_format($dados['mensalidade']+$total+$dados['manutencao'], 2, ',', '.'))
+							;	
+	}
+
+	public function getRetornoCnab($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Processado")
+								->setCellValue('B1', "Encontrado")
+								->setCellValue('C1', "Status do Cliente")
+								->setCellValue('D1', "Cliente")
+								->setCellValue('E1', "Documento")
+								->setCellValue('F1', "Vencimento")
+								->setCellValue('G1', "Valor pago")
+								->setCellValue('H1', "Valor liquido")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, ($dados[$i]["TmpRetornoCnab"]["processado"] == 1 ? 'Sim' : 'Não'))
+									->setCellValue('B'.$indx, ($dados[$i]["TmpRetornoCnab"]["encontrado"] == 1 ? 'Sim' : 'Não'))
+									->setCellValue('C'.$indx, ($dados[$i]["TmpRetornoCnab"]["encontrado"] == 1 ? $dados[$i]["Income"]["Customer"]['Status']['name'] : ''))
+									->setCellValue('D'.$indx, ($dados[$i]["TmpRetornoCnab"]["encontrado"] == 1 ? $dados[$i]["Income"]["Customer"]['codigo_associado'].' - '.$dados[$i]["Income"]["Customer"]['nome_primario'] : ''))
+									->setCellValue('E'.$indx, " ".$dados[$i]["TmpRetornoCnab"]["nosso_numero"])
+									->setCellValue('F'.$indx, date('d/m/Y', strtotime($dados[$i]["TmpRetornoCnab"]["vencimento"])))
+									->setCellValue('G'.$indx, number_format($dados[$i]["TmpRetornoCnab"]["valor_pago"],2,',','.'))
+									->setCellValue('H'.$indx, number_format($dados[$i]["TmpRetornoCnab"]["valor_liquido"],2,',','.'))
+									;
+		}
+	}
+
+	public function getTwwRelatorio($objPHPExcel, $dados, $grupo){
+		$indx = 0;
+		for($i=0;$i<count($dados);$i++){
+
+			// hack para funcionar como o ramon pediu
+			$celular = '';
+			if ($dados[$i]['Customer']['celular'] != '') {
+				$celular = $dados[$i]['Customer']['celular'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			} 
+			if ($dados[$i]['Customer']['celular1'] != '') {
+				$celular = $dados[$i]['Customer']['celular1'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			} 
+			if ($dados[$i]['Customer']['celular2'] != '') {
+				$celular = $dados[$i]['Customer']['celular2'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			} 
+			if ($dados[$i]['Customer']['celular3'] != '') {
+				$celular = $dados[$i]['Customer']['celular3'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			} 
+			if ($dados[$i]['Customer']['celular4'] != '') {
+				$celular = $dados[$i]['Customer']['celular4'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			} 
+			if ($dados[$i]['Customer']['celular5'] != '') {
+				$celular = $dados[$i]['Customer']['celular5'];
+				
+				$indx++;
+				$objPHPExcel->setActiveSheetIndex(0)
+										->setCellValue('A'.$indx, $grupo)
+										->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+										->setCellValue('C'.$indx, str_replace(array(" ", "-", "(", ")"), "", $celular))
+										->setCellValue('D'.$indx, $dados[$i]['Customer']['email'])
+										->setCellValue('E'.$indx, $dados[$i]['Customer']['codigo_associado'])
+										;
+			}
+		}
+	}
+
+	public function getLocawebRelatorio($objPHPExcel, $dados){
+		$indx = 0;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Customer']['nome_primario'].' - '.$dados[$i]['Customer']['nome_secundario'])
+									->setCellValue('B'.$indx, $dados[$i]['Customer']['email'])
+									;
+		}
+	}
+
+	public function getNegativacaoTemplate($objPHPExcel, $dados, $errosPefin){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue('A1', "Status")
+					->setCellValue('B1', "Natureza de operação")
+					->setCellValue('C1', "Tipo de pessoa")
+					->setCellValue('D1', "Cliente")
+					->setCellValue('E1', "CPF")
+					->setCellValue('F1', "Nome")
+					->setCellValue('G1', "CEP")
+					->setCellValue('H1', "Endereço")
+					->setCellValue('I1', "Número")
+					->setCellValue('J1', "Complemento")
+					->setCellValue('K1', "Bairro")
+					->setCellValue('L1', "Cidade")
+					->setCellValue('M1', "Estado")
+					->setCellValue('N1', "Data da compra")
+					->setCellValue('O1', "Nosso número")
+					->setCellValue('P1', "Número do título")
+					->setCellValue('Q1', "Venc da dívida")
+					->setCellValue('R1', "Valor")
+					->setCellValue('S1', "Valor")
+					;
+
+		$indx = 1;
+
+		$tipo_pessoa = [2 => "Física", 1 => "Jurídica"];
+
+		for($i=0;$i<count($dados);$i++){
+			if ($dados[$i]["Status"]["id"] == 23) {
+				$pefinErros = isset($dados[$i]['CadastroPefinErros']) ? $dados[$i]['CadastroPefinErros'] : false;
+
+				$nome_erro = "";
+				if ($pefinErros) {
+					for ($a=0; $a < count($pefinErros); $a++) {
+						$erro = $errosPefin->find('first', ['conditions' => ['ErrosPefin.id' => $pefinErros[$a]['erros_pefin_id'] ]]);							
+
+						$nome_erro .= $erro['ErrosPefin']['descricao']." ";
+					}
+				}
+
+				$status = $dados[$i]["Status"]["name"]." ".$nome_erro;
+			} else {
+				$status = $dados[$i]["Status"]["name"];
+			}
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue('A'.$indx, $status)
+						->setCellValue('B'.$indx, $dados[$i]["NaturezaOperacao"]["nome"])
+						->setCellValue('C'.$indx, $tipo_pessoa[$dados[$i]["CadastroPefin"]["tipo_pessoa"]])
+						->setCellValue('D'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+						->setCellValue('E'.$indx, $dados[$i]["CadastroPefin"]["documento"])
+						->setCellValue('F'.$indx, $dados[$i]["CadastroPefin"]["nome"])
+						->setCellValue('G'.$indx, $dados[$i]["CadastroPefin"]["cep"])
+						->setCellValue('H'.$indx, $dados[$i]["CadastroPefin"]["endereco"])
+						->setCellValue('I'.$indx, $dados[$i]["CadastroPefin"]["numero"])
+						->setCellValue('J'.$indx, $dados[$i]["CadastroPefin"]["complemento"])
+						->setCellValue('K'.$indx, $dados[$i]["CadastroPefin"]["bairro"])
+						->setCellValue('L'.$indx, $dados[$i]["CadastroPefin"]["cidade"])
+						->setCellValue('M'.$indx, $dados[$i]["CadastroPefin"]["estado"])
+						->setCellValue('N'.$indx, $dados[$i]["CadastroPefin"]["data_compra"])
+						->setCellValue('O'.$indx, $dados[$i]["CadastroPefin"]["nosso_numero"])
+						->setCellValue('P'.$indx, $dados[$i]["CadastroPefin"]["numero_titulo"])
+						->setCellValue('Q'.$indx, $dados[$i]["CadastroPefin"]["venc_divida"])
+						->setCellValue('R'.$indx, $dados[$i]["CadastroPefin"]["valor"])
+						->setCellValue('S'.$indx, $dados[$i]["CadastroPefin"]["created"])
+						;
+		}		
+	}
+
+	public function getNovaVidaTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Produto")
+								->setCellValue('B1', "Data")
+								->setCellValue('C1', "Associado")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Product']['name'])
+									->setCellValue('B'.$indx, date('d/m/Y H:i:s', strtotime($dados[$i]['NovaVidaLogConsulta']['created'])))
+									->setCellValue('C'.$indx, $dados[$i]['Customer']['codigo_associado'].' - '.$dados[$i]['Customer']['nome_primario'])
+									;
+		}
+	}
+
+	public function getNovaVidaConsolidadoTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Produto")
+								->setCellValue('B1', "Qtde de consultas realizadas")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Product']['name'])
+									->setCellValue('B'.$indx, $dados[$i][0]['total'])
+									;
+		}
+	}
+
+
+	public function getInadimplentesTemplate($objPHPExcel, $dados, $total_valores){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Cliente")
+								->setCellValue('B1', "Estado")
+								->setCellValue('C1', "Cidade")
+								->setCellValue('D1', "Valor")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['Customer']['codigo_associado'].' - '.$dados[$i]['Customer']['nome_primario'].' '.$dados[$i]['Customer']['nome_secundario'])
+									->setCellValue('B'.$indx, $dados[$i]['Customer']['estado'])
+									->setCellValue('C'.$indx, $dados[$i]['Customer']['cidade'])
+									->setCellValue('D'.$indx, number_format($dados[$i][0]['total'],2,',','.'))
+									;
+		}
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('C'.$indx, "Total")
+								->setCellValue('D'.$indx, number_format($total_valores,2,",","."))
+								;
+	}
+
+	public function getClientesCobradosTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Cliente")
+								->setCellValue('B1', "Parcela")
+								->setCellValue('C1', "Vencimento")
+								->setCellValue('D1', "Valor")
+								;
+
+		$total = 0;
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$total += $dados[$i]["Income"]["valor_total"];
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Income"]['Customer']['codigo_associado'].' - '.$dados[$i]["Income"]['Customer']['nome_primario'])
+									->setCellValue('B'.$indx, $dados[$i]["Income"]["parcela"])
+									->setCellValue('C'.$indx, date("d/m/Y", strtotime($dados[$i]['Income']['vencimento_nao_formatado'])))
+									->setCellValue('D'.$indx, $dados[$i]["Income"]["valor_total"])
+									;
+		}
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('D'.$indx, number_format($total,2,",","."));
+	}
+
+	public function getClientesExitoTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Cliente")
+								->setCellValue('B1', "Parcela")
+								->setCellValue('C1', "Vencimento")
+								->setCellValue('D1', "Valor")
+								;
+		$total = 0;
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+
+			$total += $dados[$i]["i"]["valor_total"];
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['c']['codigo_associado'].' - '.$dados[$i]['c']['nome_primario'])
+									->setCellValue('B'.$indx, $dados[$i]["i"]["parcela"])
+									->setCellValue('C'.$indx, date("d/m/Y", strtotime($dados[$i]['i']['vencimento'])))
+									->setCellValue('D'.$indx, $dados[$i]["i"]["valor_total"])
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('D'.$indx, number_format($total,2,",","."));
+
+	}
+
+	public function getFaturamentoRevendaTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Revenda")
+								->setCellValue('B1', "Valor a pagar")
+								->setCellValue('C1', "Valor pago")
+								;
+
+		$previsao = $dados['previsao'];
+		$realizado = $dados['realizado'];
+
+		$indx = 1;
+		for($i=0;$i<count($previsao);$i++){
+
+			$valor_pagar = $previsao[$i][0]["valor_comissao"];
+
+			if (!empty($realizado[$i][0])) {
+				$valor_pago = $realizado[$i][0]["valor_comissao"];
+			} else {
+				$valor_pago = 0;
+			}
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $previsao[$i]["r"]["nome_fantasia"])
+									->setCellValue('B'.$indx, number_format($valor_pagar,2,',','.'))
+									->setCellValue('C'.$indx, number_format($valor_pago,2,',','.'))
+									;
+		}
+	}
+
+	public function getFaturamentoHipercheckTemplate($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Vendedor")
+								->setCellValue('B1', "Quantidade de planos")
+								->setCellValue('C1', "Comissão")
+								->setCellValue('D1', "Valor a pagar")
+								->setCellValue('E1', "Valor pago")
+								;
+
+		$previsao = $dados['previsao'];
+		$realizado = $dados['realizado'];
+
+		$indx = 1;
+		for($i=0;$i<count($previsao);$i++){
+
+			$valor_pagar = $previsao[$i][0]["valor_comissao"];
+
+			if (!empty($realizado[$i][0])) {
+				$valor_pago = $realizado[$i][0]["valor_comissao"];
+			} else {
+				$valor_pago = 0;
+			}
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $previsao[$i]["s"]["nome_fantasia"])
+									->setCellValue('B'.$indx, $previsao[$i][0]["qtde"])
+									->setCellValue('C'.$indx, number_format($previsao[$i]['p']["commission"],2,',','.'))
+									->setCellValue('D'.$indx, number_format($valor_pagar,2,',','.'))
+									->setCellValue('E'.$indx, number_format($valor_pago,2,',','.'))
+									;
+		}
+	}
+
+	public function getFaturamentoTemplate($objPHPExcel, $dados)
+	{
+		$campoInicial = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Código associado");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Razão social");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Nome fantasia");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Documento");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Email");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Franquia");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Vendedor");$campoInicial++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.'1', "Total");
+
+		foreach ($dados as $key => $dado) {
+			$valorManutencaoPefin = 0;
+			if(!empty($dado['PefinMaintenance']['value_nao_formatado']))
+			    $valorManutencaoPefin = $dado['PefinMaintenance']['value_nao_formatado'];
+
+			$total_sem_desconto = $dado['BillingMonthlyPayment']['monthly_value_total']+$valorManutencaoPefin;
+			$total_com_desconto = $total_sem_desconto - (($dado['BillingMonthlyPayment']['desconto']/100)*$total_sem_desconto);
+
+			$campoInicial = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Customer']['codigo_associado']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Customer']['nome_primario']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Customer']['nome_secundario']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Customer']['documento']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Customer']['email']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Resale']['nome_fantasia']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), $dado['Seller']['nome_fantasia']);$campoInicial++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial.($key+2), number_format($total_com_desconto,2,',','.'));
+		}
+	}
+
+	public function getClientesDesconto($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Código")
+								->setCellValue('C1', "Nome")
+								->setCellValue('D1', "Email")
+								->setCellValue('E1', "Data de cadastro")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Status"]["name"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["email"])
+									->setCellValue('E'.$indx, date('d/m/Y', strtotime($dados[$i]["Customer"]["created"])))
+									;
+		}
+	}
+
+	public function getStatusClientes($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Código")
+								->setCellValue('B1', "Nome fantasia")
+								->setCellValue('C1', "Cancelado")
+								->setCellValue('D1', "Bloqueado")
+								->setCellValue('E1', "Inadimplente")
+								->setCellValue('F1', "Aguardando Carta")
+								->setCellValue('G1', "Login de Consulta")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$status_cliente = $dados[$i]["Customer"]["status_id"];
+								$status_resposta = "";
+
+
+								switch ($status_cliente) {
+								 	case 4:
+								 		$status_resposta = "Bloqueado";
+								 		break;
+								 	case 5:
+								 		$status_resposta = "Cancelado";
+								 		break;
+								 	case 6:
+								 		$status_resposta = "Aguardando Carta";
+								 		break;
+								 	
+								 	default:
+								 		$status_resposta = "Inadimplente";
+								 		break;
+								 }
+								 
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('C'.$indx, ($status_resposta == "Cancelado") ? "Sim" : "Não" )
+									->setCellValue('D'.$indx, ($status_resposta == "Bloqueado") ? "Sim" : "Não" )
+									->setCellValue('E'.$indx, ($status_resposta == "Aguardando Carta") ? "Sim" : "Não" )
+									->setCellValue('F'.$indx, ($status_resposta == "Inadimplente") ? "Sim" : "Não" )
+									->setCellValue('G'.$indx, $dados[$i]["Status"]["name"])
+									;
+		}
+	}
+
+
+	public function getLoginsConsulta($objPHPExcel, $dados){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status do Login de Consulta")
+								->setCellValue('B1', "Login de Consulta")
+								->setCellValue('C1', "Código do Cliente")
+								->setCellValue('D1', "Cliente")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Status"]["name"])
+									->setCellValue('B'.$indx, $dados[$i]["LoginConsulta"]["login"])
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["codigo_associado"] )
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["nome_secundario"] )
+									;
+		}
+	}
+
+	public function getLogonBlindagem($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Login de Consulta")
+								->setCellValue('B1', "Código do Cliente")
+								->setCellValue('C1', "Cliente")
+								->setCellValue('D1', "Criado Por")
+								->setCellValue('E1', "Data e Hora")
+								->setCellValue('F1', "Status Login de Consulta")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["LoginConsulta"]["login"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["codigo_associado"] )
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["nome_secundario"] )
+									->setCellValue('D'.$indx, $dados[$i]["User"]["name"])
+									->setCellValue('E'.$indx, date("d/m/Y H:i:s", strtotime($dados[$i]["LoginConsulta"]["created"])) )
+									->setCellValue('F'.$indx, ($dados[$i]["LoginConsulta"]["login_blindado"] == 2) ? "Pendente" : "Blindado")
+									;
+		}
+	}
+
+	public function getPefinDetalhes($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Nome do credor")
+								->setCellValue('C1', "CNPJ do credor")
+								->setCellValue('D1', "Código do Associado")
+								->setCellValue('E1', "Nome")
+								->setCellValue('F1', "Documento")
+								->setCellValue('G1', "Valor")
+								->setCellValue('H1', "Remessa")
+								->setCellValue('I1', "Sequência")
+								->setCellValue('J1', "Erros")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$strErros = '';
+
+			if (!empty($erros)) {
+				for ($a=0; $a < count($erros); $a++) { 
+					$strErros .= $erros[$a]['ErrosPefin']['descricao'].'<br>';
+				}
+			}
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Status"]["name"])
+									->setCellValue('B'.$indx, $dados[$i]['Customer']['nome_secundario'])
+									->setCellValue('C'.$indx, $dados[$i]['Customer']['documento'])
+									->setCellValue('D'.$indx, $dados[$i]['Customer']['codigo_associado'])
+									->setCellValue('E'.$indx, $dados[$i]['CadastroPefin']['nome'])
+									->setCellValue('F'.$indx, $dados[$i]['CadastroPefin']['documento'])
+									->setCellValue('G'.$indx, $dados[$i]['CadastroPefin']['valor'])
+									->setCellValue('H'.$indx, $dados[$i]['CadastroPefin']['n_remessa'])
+									->setCellValue('I'.$indx, $dados[$i]['CadastroPefin']['n_sequencial'])
+									->setCellValue('J'.$indx, $strErros)
+									;
+		}
+	}
+
+	public function getDivisao($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Credcheck")
+								->setCellValue('A2', "Cliente")
+								->setCellValue('B2', "Valor")
+								->setCellValue('C2', "Vencimento")
+								->setCellValue('E1', "Ivan")
+								->setCellValue('E2', "Cliente")
+								->setCellValue('F2', "Valor")
+								->setCellValue('G2', "Vencimento")
+								;
+
+		$indx = 2;
+		$total_hiper = 0;
+		$hipercheck = $dados['hipercheck'];
+		for($i=0;$i<count($hipercheck);$i++){
+			$indx++;
+			$total_hiper += $hipercheck[$i]['Income']['valor_total_nao_formatado'];
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $hipercheck[$i]['Customer']['nome_primario'])
+									->setCellValue('B'.$indx, $hipercheck[$i]['Income']['valor_total'])
+									->setCellValue('C'.$indx, $hipercheck[$i]['Income']['vencimento'])
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, 'Total:')
+									->setCellValue('B'.$indx, number_format($total_hiper,2,',','.'));
+
+		$indx = 2;
+		$total_ivan = 0;
+		$ivan = $dados['ivan'];
+		for($i=0;$i<count($ivan);$i++){
+			$indx++;
+			$total_ivan += $ivan[$i]['Income']['valor_total_nao_formatado'];
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('E'.$indx, $ivan[$i]['Customer']['nome_primario'])
+									->setCellValue('F'.$indx, $ivan[$i]['Income']['valor_total'])
+									->setCellValue('G'.$indx, $ivan[$i]['Income']['vencimento'])
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('E'.$indx, 'Total:')
+									->setCellValue('F'.$indx, number_format($total_ivan,2,',','.'));
+	}
+
+	public function getDivisaoTodos($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Credcheck")
+								->setCellValue('A2', "Cliente")
+								->setCellValue('B2', "CNPJ")
+								->setCellValue('C2', "Endereço")
+								->setCellValue('D2', "Telefone")
+								->setCellValue('E2', "Valor")
+								->setCellValue('F2', "Vencimento")
+								->setCellValue('H1', "Ivan")
+								->setCellValue('H2', "Cliente")
+								->setCellValue('I2', "CNPJ")
+								->setCellValue('J2', "Endereço")
+								->setCellValue('K2', "Telefone")
+								->setCellValue('L2', "Valor")
+								->setCellValue('M2', "Vencimento")
+								;
+
+		$indx = 2;
+		$total_hiper = 0;
+		$hipercheck = $dados['hipercheck'];
+		for($i=0;$i<count($hipercheck);$i++){
+			$indx++;
+			$total_hiper += $hipercheck[$i]['Income']['valor_total_nao_formatado'];
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $hipercheck[$i]['Customer']['nome_primario'])
+									->setCellValue('B'.$indx, $hipercheck[$i]['Customer']['documento'])
+									->setCellValue('C'.$indx, $hipercheck[$i]['Customer']['endereco'].', '.$hipercheck[$i]['Customer']['numero'].' - '.$hipercheck[$i]['Customer']['bairro'].' - '.$hipercheck[$i]['Customer']['cidade'].', '.$hipercheck[$i]['Customer']['estado'])
+									->setCellValue('D'.$indx, $hipercheck[$i]['Customer']['telefone1'])
+									->setCellValue('E'.$indx, $hipercheck[$i]['Income']['valor_total'])
+									->setCellValue('F'.$indx, $hipercheck[$i]['Income']['vencimento'])
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$indx.':E'.$indx);
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('E'.$indx, 'Total:')
+									->setCellValue('F'.$indx, number_format($total_hiper,2,',','.'));
+
+		$indx = 2;
+		$total_ivan = 0;
+		$ivan = $dados['ivan'];
+		for($i=0;$i<count($ivan);$i++){
+			$indx++;
+			$total_ivan += $ivan[$i]['Income']['valor_total_nao_formatado'];
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('H'.$indx, $ivan[$i]['Customer']['nome_primario'])
+									->setCellValue('I'.$indx, $ivan[$i]['Customer']['documento'])
+									->setCellValue('J'.$indx, $ivan[$i]['Customer']['endereco'].', '.$ivan[$i]['Customer']['numero'].' - '.$ivan[$i]['Customer']['bairro'].' - '.$ivan[$i]['Customer']['cidade'].', '.$ivan[$i]['Customer']['estado'])
+									->setCellValue('K'.$indx, $ivan[$i]['Customer']['telefone1'])
+									->setCellValue('L'.$indx, $ivan[$i]['Income']['valor_total'])
+									->setCellValue('M'.$indx, $ivan[$i]['Income']['vencimento'])
+									;
+		}
+
+		$indx++;
+		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('H'.$indx.':L'.$indx);
+		$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('L'.$indx, 'Total:')
+									->setCellValue('M'.$indx, number_format($total_ivan,2,',','.'));
+	}
+
+	public function getPlansCustomers($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Código")
+								->setCellValue('C1', "Nome")
+								->setCellValue('D1', "Email")
+								->setCellValue('E1', "Data de cadastro")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]["Status"]["name"])
+									->setCellValue('B'.$indx, $dados[$i]["Customer"]["codigo_associado"])
+									->setCellValue('C'.$indx, $dados[$i]["Customer"]["nome_secundario"])
+									->setCellValue('D'.$indx, $dados[$i]["Customer"]["email"])
+									->setCellValue('E'.$indx, date('d/m/Y', strtotime($dados[$i]["Customer"]["created"])))
+									;
+		}
+	}
+
+	public function getBaixaManual($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Código associado")
+								->setCellValue('B1', "Cliente")
+								->setCellValue('C1', "Mensalidade")
+								->setCellValue('D1', "Vencimento")
+								->setCellValue('E1', "Data de pagamento")
+								->setCellValue('F1', "Valor total")
+								->setCellValue('G1', "Valor pago")
+								->setCellValue('H1', "Data baixa")
+								->setCellValue('I1', "Usuário baixa")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['c']['codigo_associado'])
+									->setCellValue('B'.$indx, $dados[$i]['c']['nome_secundario'])
+									->setCellValue('C'.$indx, $dados[$i]['i']['mensalidade'])
+									->setCellValue('D'.$indx, date('d/m/Y', strtotime($dados[$i]['i']['vencimento'])))
+									->setCellValue('E'.$indx, date('d/m/Y', strtotime($dados[$i]['i']['data_pagamento'])))
+									->setCellValue('F'.$indx, number_format($dados[$i]['i']['valor_total'],2,',','.'))
+									->setCellValue('G'.$indx, number_format($dados[$i]['i']['valor_pago'],2,',','.'))
+									->setCellValue('H'.$indx, date('d/m/Y', strtotime($dados[$i]['i']['data_baixa'])))
+									->setCellValue('I'.$indx, $dados[$i]['u']['usuarioBaixa'])
+									;
+		}
+	}
+
+	public function getMovimentacaoStatus($objPHPExcel, $dados){
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Código")
+								->setCellValue('B1', "Nome")		
+								->setCellValue('C1', "Status atual")						
+								->setCellValue('D1', "Status anterior")
+								->setCellValue('E1', "Data")
+								->setCellValue('F1', "Usuário")
+								->setCellValue('G1', "Vendedor")
+								->setCellValue('H1', "Cadastro cliente")
+								->setCellValue('I1', "Valor plano Ativo")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($dados);$i++){
+			$indx++;
+
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $dados[$i]['c']['codigo_associado'])
+									->setCellValue('B'.$indx, $dados[$i]['c']['nome_secundario'])	
+									->setCellValue('C'.$indx, $dados[$i]['s']['statusAtual'])
+									->setCellValue('D'.$indx, $dados[$i]['sm']['statusAnterior'])
+									->setCellValue('E'.$indx, date('d/m/Y H:i:s', strtotime($dados[$i]['mv']['created'])))
+									->setCellValue('F'.$indx, $dados[$i]['u']['usuario'])
+									->setCellValue('G'.$indx, $dados[$i]['ve']['nome_fantasia'])
+									->setCellValue('H'.$indx, date('d/m/Y H:i:s', strtotime($dados[$i]['c']['created'])))
+									->setCellValue('I'.$indx, number_format($dados[$i][0]['mensalidade'],2,',','.'))
+									;
+		}
+	}
+
+	public function getDadosComerciais($objPHPExcel, $data){
+
+		$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue('A1', "Status")
+								->setCellValue('B1', "Nome fantasia")
+								->setCellValue('C1', "Razão social")
+								->setCellValue('D1', "Responsável")
+								->setCellValue('E1', "Telefone 1")
+								->setCellValue('F1', "Telefone 2")
+								->setCellValue('G1', "Celular 1")
+								->setCellValue('H1', "Celular 2")
+								->setCellValue('I1', "Endereço")
+								->setCellValue('J1', "Cidade/Estado")
+								->setCellValue('K1', "Valor total")
+								->setCellValue('L1', "Plano")
+								->setCellValue('M1', "Valor do plano")
+								;
+
+		$indx = 1;
+		for($i=0;$i<count($data);$i++){
+
+			$indx++;
+			$objPHPExcel->setActiveSheetIndex(0)
+									->setCellValue('A'.$indx, $data[$i]['Status']['name'])
+									->setCellValue('B'.$indx, $data[$i]['Customer']['codigo_associado'].' - '.$data[$i]['Customer']['nome_secundario'])
+									->setCellValue('C'.$indx, $data[$i]['Customer']['nome_primario'])
+									->setCellValue('D'.$indx, $data[$i]['Customer']['responsavel'])
+									->setCellValue('E'.$indx, $data[$i]['Customer']['telefone1'])
+									->setCellValue('F'.$indx, $data[$i]['Customer']['telefone2'])
+									->setCellValue('G'.$indx, $data[$i]['Customer']['celular1'])
+									->setCellValue('H'.$indx, $data[$i]['Customer']['celular2'])
+									->setCellValue('I'.$indx, trim($data[$i]['Customer']['endereco']).', '.$data[$i]['Customer']['numero'].' - '.$data[$i]['Customer']['bairro'])
+									->setCellValue('J'.$indx, $data[$i]['Customer']['cidade'].' - '.$data[$i]['Customer']['estado'])
+									->setCellValue('K'.$indx, number_format($data[$i][0]['valor_em_aberto'], 2, ',','.'))
+									->setCellValue('L'.$indx, $data[$i]['Plan']['description'])
+									->setCellValue('M'.$indx, number_format($data[$i]['Plan']['value'], 2, ',','.'))
+									;
+		}
+	}
+
+}

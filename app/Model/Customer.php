@@ -1,0 +1,283 @@
+<?php
+class Customer extends AppModel
+{
+    public $name = 'Customer';
+    public $displayField = 'nome_secundario';
+    public $belongsTo = [
+        'Resale' => [
+            'className' => 'Resale',
+            'foreignKey' => 'cod_franquia'
+        ],
+        'Status',
+        'Seller',
+        'ActivityArea'
+    ];
+
+    public $hasOne = [
+        'PlanoAtivo' => [
+            'className' => 'PlanCustomer',
+            'foreignKey' => 'customer_id',
+            'conditions' => ['PlanoAtivo.status_id' => 1]
+        ],
+    ];
+
+    public function dateFormatBeforeSave($dateString)
+    {
+        return date('Y-m-d', strtotime($this->date_converter($dateString)));
+    }
+
+    public function date_converter($_date = null)
+    {
+        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+        if ($_date != null && preg_match($format, $_date, $partes)) {
+            return $partes[3].'-'.$partes[2].'-'.$partes[1];
+        }
+        
+        return false;
+    }
+
+    public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            if (isset($val[$this->alias]['desconto'])) {
+                $results[$key][$this->alias]['desconto'] = number_format($val[$this->alias]['desconto'], 2, '.', '');
+            }
+            if (isset($val[$this->alias]['created'])) {
+                $results[$key][$this->alias]['created_nao_formatado'] = $results[$key][$this->alias]['created'];
+                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($results[$key][$this->alias]['created']));
+            }
+        }
+
+        return $results;
+    }
+
+    public function beforeSave($options = array()) {
+        if (!empty($this->data[$this->alias]['created'])) {
+          $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
+    }
+
+    public function beforeFind($queryData)
+    {
+        $queryData['conditions'][] = ['Customer.data_cancel' => '1901-01-01 00:00:00'];
+        
+        return $queryData;
+    }
+
+    public function is_unique($check)
+    {
+        $count = $this->find('count', ['conditions' => [$check, 'Customer.status_id != 5'], 'recursive' => -1]);
+
+        if ($count > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function rankingCustomers($billing_id, $page = 1, $limit = 10){
+        $offset = $limit * ($page - 1);
+
+        $sql = "SELECT r.razao_social AS revenda, c.codigo_associado, c.nome_secundario, 
+                    ROUND((bm.monthly_value_total + pm.value),2) AS totalFaturamento
+                FROM billing_monthly_payments bm
+                INNER JOIN customers c ON c.id = bm.customer_id
+                inner JOIN resales r ON r.id = c.cod_franquia
+                LEFT JOIN pefin_maintenances pm ON pm.id = bm.pefin_maintenance_id
+                WHERE bm.billing_id = ".$billing_id."
+                AND bm.data_cancel = '1901-01-01'
+                GROUP BY c.id
+                ORDER BY totalFaturamento DESC, c.nome_secundario
+                LIMIT ".$limit." OFFSET ".$offset;
+        
+        return $sql;
+    }
+
+    public function rankingPartners($billing_id, $page = 1, $limit = 10){
+        $offset = $limit * ($page - 1);
+
+        $sql = "SELECT r.razao_social, c.codigo_associado, c.nome_secundario, COUNT(bm.id) AS qtdeClientes,
+                    ROUND(sum(bm.monthly_value_total + pm.value),2) AS totalFaturamento
+                FROM billing_monthly_payments bm
+                INNER JOIN customers c ON c.id = bm.customer_id
+                INNER JOIN resales r ON r.id = c.cod_franquia
+                LEFT JOIN pefin_maintenances pm ON pm.id = bm.pefin_maintenance_id
+                WHERE bm.billing_id = ".$billing_id."
+                AND bm.data_cancel = '1901-01-01'
+                GROUP BY r.id
+                ORDER BY totalFaturamento desc, qtdeClientes desc, r.razao_social
+                LIMIT ".$limit." OFFSET ".$offset;
+        
+        return $sql;
+    }
+
+    public function countPartners($billing_id){
+
+        $sql = "select count(1) as tot from (SELECT r.razao_social, c.codigo_associado, c.nome_secundario, COUNT(bm.id) AS qtdeClientes,
+        ROUND(sum(bm.monthly_value_total + pm.value),2) AS totalFaturamento
+                FROM billing_monthly_payments bm
+                INNER JOIN customers c ON c.id = bm.customer_id
+                INNER JOIN resales r ON r.id = c.cod_franquia
+                LEFT JOIN pefin_maintenances pm ON pm.id = bm.pefin_maintenance_id
+                WHERE bm.billing_id = ".$billing_id."
+                AND bm.data_cancel = '1901-01-01'
+                GROUP BY r.id
+                ORDER BY totalFaturamento desc, qtdeClientes desc, r.razao_social) a";
+        
+        return $this->query($sql);
+    }
+
+    public function countCustomers($billing_id){
+
+        $sql = "select count(1) as tot from (SELECT r.razao_social AS revenda, c.codigo_associado, c.nome_secundario, 
+                    ROUND((bm.monthly_value_total + pm.value),2) AS totalFaturamento
+                FROM billing_monthly_payments bm
+                INNER JOIN customers c ON c.id = bm.customer_id
+                inner JOIN resales r ON r.id = c.cod_franquia
+                LEFT JOIN pefin_maintenances pm ON pm.id = bm.pefin_maintenance_id
+                WHERE bm.billing_id = ".$billing_id."
+                AND bm.data_cancel = '1901-01-01'
+                GROUP BY c.id
+                ORDER BY totalFaturamento DESC, c.nome_secundario) a";
+        
+        return $this->query($sql);
+    }
+
+    public $validate = [
+        'contato' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'cod_franquia' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'senha' => [
+            'required' => [
+                'rule' => ['maxLength', 6],
+                'message' => 'Limite de 6 caracteres'
+            ]
+        ],
+        'nome_primario' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'documento' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O documento é obrigatório',
+                'last' => false
+            ],
+            'isUnique' => [
+                'rule' => 'isUnique',
+                'message' => 'O documento fornecido já foi cadastrado',
+                'on' => 'create'
+            ]
+        ],
+        'email' => [
+            'email' => [
+                'rule' => 'email',
+                'message' => 'O e-mail deve ser válido',
+                'last' => false
+            ],
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O e-mail é obrigatório',
+                'last' => false
+            ],
+            'isUnique' => [
+                'rule' => 'isUnique',
+                'message' => 'O e-mail fornecido já foi cadastrado'
+            ]
+        ],
+        'cep' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O cep é obrigatório'
+            ],
+        ],
+        'endereco' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O endereço é obrigatório'
+            ],
+        ],
+        'numero' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O numero é obrigatório',
+                'last' => false
+            ],
+            'alphanumeric' => [
+                'rule' => ['alphanumeric'],
+                'message' => 'Somente números'
+            ],
+        ],
+        'bairro' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O bairro é obrigatório'
+            ],
+        ],
+        'cidade' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'A cidade é obrigatória'
+            ],
+        ],
+        'estado' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O estado é obrigatório'
+            ],
+        ],
+        'telefone1' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'O telefone é obrigatório'
+            ]
+        ],
+        'responsavel' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'cod_vendedor' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'activity_area_id' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'faturar' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'desconto' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ],
+        'enviar_email' => [
+            'required' => [
+                'rule' => ['notEmpty'],
+                'message' => 'Campo obrigatório'
+            ]
+        ]
+    ];
+}

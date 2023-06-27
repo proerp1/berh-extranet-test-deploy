@@ -1,0 +1,45 @@
+<?php
+class PefinMaintenancesController extends AppController
+{
+    public $helpers = ['Html', 'Form'];
+    public $components = ['Paginator', 'Permission'];
+
+    public $paginate = ['limit' => 10, 'order' => ['Status.id' => 'asc', 'PefinMaintenance.description' => 'asc']];
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+    }
+    
+    public function index()
+    {
+        $this->Permission->check(8, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $pefin = $this->PefinMaintenance->find('first');
+        $this->PefinMaintenance->id = $pefin['PefinMaintenance']['id'];
+        if ($this->request->is('post')) {
+            $update_data = ['PefinMaintenance.data_cancel' => 'current_timestamp()', 'PefinMaintenance.user_updated_id' => CakeSession::Read('Auth.User.id')];
+            $this->PefinMaintenance->updateAll(
+                $update_data//set
+            );
+
+            $this->PefinMaintenance->create();
+            $this->PefinMaintenance->validates();
+            $this->request->data['PefinMaintenance']['user_created_id'] = CakeSession::Read('Auth.User.id');
+            if ($this->PefinMaintenance->save($this->request->data)) {
+                $this->Session->setFlash(__('Salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+            } else {
+                $this->Session->setFlash(__('Não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+            }
+        }
+
+        $temp_errors = $this->PefinMaintenance->validationErrors;
+        $this->request->data = $this->PefinMaintenance->read();
+        $this->PefinMaintenance->validationErrors = $temp_errors;
+        
+        $action = 'Manutenção Pefin';
+        $breadcrumb = ['Configurações' => '', 'Manutenção Pefin' => ''];
+        $this->set("form_action", "index");
+        $this->set(compact('action', 'breadcrumb'));
+    }
+}

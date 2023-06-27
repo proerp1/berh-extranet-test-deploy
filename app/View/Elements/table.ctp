@@ -1,0 +1,1 @@
+<table class="table table-hover align-middle gs-0 gy-4">

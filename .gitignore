@@ -1,0 +1,12 @@
+/config.local.php
+/app/tmp/*
+/app/webroot/files/*
+/vendor/
+/composer.phar
+.idea
+database/
+_sftp-config.json
+*.DS_Store
+*.local
+arquivos_meproteja/*
+arquivos_meproteja/lidos/*

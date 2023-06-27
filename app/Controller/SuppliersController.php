@@ -1,0 +1,108 @@
+<?php
+class SuppliersController extends AppController
+{
+    public $helpers = ['Html', 'Form'];
+    public $components = ['Paginator', 'Permission'];
+    public $uses = ['Supplier', 'Status'];
+
+    public $paginate = [
+        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.nome_fantasia' => 'asc']
+    ];
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+    }
+
+    public function index()
+    {
+        $this->Permission->check(9, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
+        }
+
+        if (isset($_GET["t"]) and $_GET["t"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $data = $this->Paginator->paginate('Supplier', $condition);
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+
+        $action = 'Fornecedores';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => ''];
+        $this->set(compact('status', 'data', 'action', 'breadcrumb'));
+    }
+    
+    public function add()
+    {
+        $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
+        if ($this->request->is('post')) {
+            $this->Supplier->create();
+            if ($this->Supplier->validates()) {
+                $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
+                if ($this->Supplier->save($this->request->data)) {
+                    $this->Session->setFlash(__('O fornecedor foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->redirect(['action' => 'edit/'.$this->Supplier->id]);
+                } else {
+                    $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                }
+            } else {
+                $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+            }
+        }
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+
+        $action = 'Fornecedores';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Novo fornecedor' => ''];
+        $this->set(compact('statuses', 'action', 'breadcrumb'));
+        $this->set("form_action", "add");
+    }
+
+    public function edit($id = null)
+    {
+        $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Supplier->id = $id;
+        if ($this->request->is('post')) {
+            $this->Supplier->validates();
+            $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
+            if ($this->Supplier->save($this->request->data)) {
+                $this->Session->setFlash(__('O fornecedor foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+            } else {
+                $this->Session->setFlash(__('O fornecedor não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+            }
+        }
+
+        $temp_errors = $this->Supplier->validationErrors;
+        $this->request->data = $this->Supplier->read();
+        $this->Supplier->validationErrors = $temp_errors;
+        
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+
+        $action = 'Fornecedores';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Alterar fornecedor' => ''];
+        $this->set("form_action", "edit");
+        $this->set(compact('statuses', 'id', 'action', 'breadcrumb'));
+        
+        $this->render("add");
+    }
+
+    public function delete($id)
+    {
+        $this->Permission->check(9, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Supplier->id = $id;
+        $this->request->data = $this->Supplier->read();
+
+        $this->request->data['Supplier']['data_cancel'] = date("Y-m-d H:i:s");
+        $this->request->data['Supplier']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->Supplier->save($this->request->data)) {
+            $this->Session->setFlash(__('O fornecedor foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->redirect(['action' => 'index']);
+        }
+    }
+}
