@@ -1,4 +1,4 @@
-<?php $url_novo = $this->base."/billing_sales/faturar_hipercheck/".$id;  ?>
+<?php $url_novo = $this->base."/billing_sales/faturar_berh/".$id;  ?>
 <?php
     echo $this->element("aba_faturamento_vendas_revenda", ['id' => $id]);
 ?>
@@ -55,8 +55,8 @@
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($valor_pagar,2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($valor_pago,2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4"> 
-                                    <?php if ($billing_sale['BillingSale']['faturado_hipercheck'] == 1) { ?>
-                                        <a href="<?php echo $this->base.'/billing_sales/detalhes_hipercheck/'.$id.'/'.$previsao[$i]["s"]["id"]; ?>" class="btn btn-info btn-sm">Detalhes</a>
+                                    <?php if ($billing_sale['BillingSale']['faturado_berh'] == 1) { ?>
+                                        <a href="<?php echo $this->base.'/billing_sales/detalhes_berh/'.$id.'/'.$previsao[$i]["s"]["id"]; ?>" class="btn btn-info btn-sm">Detalhes</a>
                                     <?php } ?>
                                 </td>
                             </tr>

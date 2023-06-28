@@ -21,13 +21,13 @@ class Department extends AppModel
     public $validate = [
         'name' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'email' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

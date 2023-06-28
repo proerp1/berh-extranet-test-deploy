@@ -28,7 +28,7 @@ class Group extends AppModel
     public $validate = [
         'name' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O nome é obrigatório'
             ]
         ]

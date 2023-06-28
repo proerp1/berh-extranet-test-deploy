@@ -53,7 +53,7 @@ class Billing extends AppModel {
 	public $validate = array(
 		'date_billing' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

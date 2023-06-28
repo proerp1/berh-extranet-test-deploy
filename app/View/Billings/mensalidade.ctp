@@ -33,71 +33,7 @@
             </div>
         </div>
     </div>
-
-    <div class="col-lg-3 col-sm-6">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-start align-items-center flex-row gap-10">
-                <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning h-75px w-75px">
-                    <i class="fas fa-dollar-sign fa-3x text-white"></i>
-                </div>
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2"><?php echo number_format($valor_manutencao[0]['total'], 2, ',', '.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Valor Manutenção PEFIN R$</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-sm-6">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-start align-items-center flex-row gap-10">
-                <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning h-75px w-75px">
-                    <i class="fas fa-dollar-sign fa-3x text-white"></i>
-                </div>
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2"><?php echo number_format($valor_serasa[0]['total'], 2, ',', '.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Valor SERASA R$</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-sm-6">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-start align-items-center flex-row gap-10">
-                <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning h-75px w-75px">
-                    <i class="fas fa-dollar-sign fa-3x text-white"></i>
-                </div>
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2"><?php echo number_format($valor_pefin[0]['total'], 2, ',', '.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Valor PEFIN R$</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-sm-6">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-start align-items-center flex-row gap-10">
-                <div class="d-flex align-items-center justify-content-center rounded-circle bg-warning h-75px w-75px">
-                    <i class="fas fa-dollar-sign fa-3x text-white"></i>
-                </div>
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2"><?php echo number_format($valor_hipercheck[0]['total'], 2, ',', '.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Valor BeRH R$</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <div class="col-lg-3 col-sm-6">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-start align-items-center flex-row gap-10">

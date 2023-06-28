@@ -31,7 +31,7 @@ class CustomerUser extends AppModel {
 				'message' => 'O e-mail deve ser válido'
 			),
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			),
 			'isUnique' => array(
@@ -41,19 +41,19 @@ class CustomerUser extends AppModel {
 		),
 		'password' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatória'
 			)
 		),
 		'name' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'status_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

@@ -36,18 +36,18 @@ class BoletoComponent extends Component{
 
 		// INFORMACOES PARA O CLIENTE
 		$dadosboleto["demonstrativo1"] = "Pagamento de Fatura";
-		$dadosboleto["demonstrativo2"] = "credcheck.com.br";
+		$dadosboleto["demonstrativo2"] = "berh.com.br";
 		$dadosboleto["demonstrativo3"] = "SAC CAIXA: 0800 726 0101 (Informações, reclamações, sugestões e elogios). <br>Para pessoas com deficiência auditiva ou de fala: 0800 726 2492. Ouvidoria: 0800 725 7474. caixa.gov.br";
 
 		// INSTRUÇÕES PARA O CAIXA
 		//$dadosboleto["instrucoes1"] = ($dados['cobrar_juros'] == 'S') ? utf8_decode("- Sr. Caixa, cobrar multa de 2% e juros de 0.333% ao dia após o vencimento"):"";
 		$dadosboleto["instrucoes1"] = "";
 		$dadosboleto["instrucoes2"] = "";//"- Receber até 5 dias após o vencimento";
-		$dadosboleto["instrucoes3"] = utf8_decode("- Em caso de dúvidas entre em contato conosco: financeiro@credcheck.com.br");
-		$dadosboleto["instrucoes4"] = utf8_decode("Credcheck Informações Cadastrais LTDA EPP");
+		$dadosboleto["instrucoes3"] = utf8_decode("- Em caso de dúvidas entre em contato conosco: financeiro@berh.com.br");
+		$dadosboleto["instrucoes4"] = utf8_decode("BeRH Informações Cadastrais LTDA EPP");
 		$dadosboleto["instrucoes5"] = utf8_decode("4020-7705 Para capitais e regiões metropolitanas");
 		$dadosboleto["instrucoes6"] = utf8_decode("0800 606 8117 Demais localidades");
-		$dadosboleto["instrucoes7"] = utf8_decode("credcheck.com.br");
+		$dadosboleto["instrucoes7"] = utf8_decode("berh.com.br");
 
 		// DADOS OPCIONAIS DE ACORDO COM O BANCO OU CLIENTE
 		$dadosboleto["quantidade"] = "";
@@ -68,11 +68,11 @@ class BoletoComponent extends Component{
 		$dadosboleto["carteira"] = "RG";  // C?digo da Carteira: pode ser SR (Sem Registro) ou RG (Com Registro) - (Confirmar com gerente qual usar)
 
 		// SEUS DADOS
-		$dadosboleto["identificacao"] = utf8_decode("Credcheck Informações Cadastrais LTDA EPP");
+		$dadosboleto["identificacao"] = utf8_decode("BeRH Informações Cadastrais LTDA EPP");
 		$dadosboleto["cpf_cnpj"] = utf8_decode("14.438.607/0001-62");
 		$dadosboleto["endereco"] = utf8_decode("RUA MONSENHOR OLIMPIO - 61 - AND3 SL301 - CENTRO");
 		$dadosboleto["cidade_uf"] = utf8_decode("VITORIA DA CONQUISTA / BA - CEP 45.000.360");
-		$dadosboleto["cedente"] = utf8_decode("Credcheck Informações Cadastrais LTDA EPP");
+		$dadosboleto["cedente"] = utf8_decode("BeRH Informações Cadastrais LTDA EPP");
 
 		// NÃO ALTERAR!
 		include("includes_boleto/funcoes_cef_sigcb.php"); 

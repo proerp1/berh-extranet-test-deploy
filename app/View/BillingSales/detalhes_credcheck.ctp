@@ -12,7 +12,7 @@
 	<?php echo $this->Session->flash(); ?>
 	
 	<?php
-		$url = $this->base.'/billing_sales/hipercheck';
+		$url = $this->base.'/billing_sales/berh';
 		echo $this->element("aba_faturamento_vendas_revenda", array('id' => $id, 'url' => $url));
 	?>
 
@@ -62,7 +62,7 @@
 					</tr>
 				</tfoot>
 			</table>
-			<a href="<?php echo $this->base.'/billing_sales/hipercheck/'.$id; ?>" class="btn btn-default">Voltar</a>
+			<a href="<?php echo $this->base.'/billing_sales/berh/'.$id; ?>" class="btn btn-default">Voltar</a>
 		</div> <!-- /painel-body -->
 	</section> <!-- /panel-default -->
 </div> <!-- /page-profile -->

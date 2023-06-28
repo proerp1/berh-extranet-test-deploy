@@ -144,7 +144,7 @@ class UsersController extends AppController
         $dados = ['viewVars' => ['nome'  => $data['User']['name'],
             'email' => $data['User']['username'],
             'senha' => $data['User']['password'],
-            'link'  => 'http://credcheck.com.br/extranet'
+            'link'  => 'http://berh.com.br/extranet'
         ],
             'template' => 'nova_senha',
             'subject'  => 'Nova Senha',

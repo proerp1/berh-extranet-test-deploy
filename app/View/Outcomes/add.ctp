@@ -63,7 +63,7 @@
             <?php if(isset($id)){ ?>
                 <textarea name="log_old_value" style="display:none"><?php echo json_encode(array('Outcome' => $this->request->data['Outcome'])); ?></textarea>
             <?php } ?>
-            <input type="hidden" name="query_string" value="<?php echo $_SERVER['QUERY_STRING'] ?>">
+            <input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '' ?>">
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Revenda</label>

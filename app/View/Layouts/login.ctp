@@ -53,7 +53,6 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
 
     <div class="d-flex flex-column flex-root">
         <style>body { background-image: url('<?php echo $this->base ?>/img/background_image.jpg'); background-size: cover;} [data-theme="dark"] body { background-image: url('assets/media/auth/bg4-dark.jpg'); }</style>
-        <img alt="Logo" src="<?php echo $this->base ?>/img/logo-serasa-novo.png" class="align-self-end d-flex h-100px mt-10 me-10">
 
         <div class="d-flex flex-column flex-lg-row flex-column-fluid">
 
@@ -78,7 +77,7 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
             </div>
         </div>
 
-        <div class="d-flex flex-end pe-10 align-items-center" style="gap: 15rem;">
+        <!-- <div class="d-flex flex-end pe-10 align-items-center" style="gap: 15rem;">
             <div>
                 <p>
                     <strong>Central de atendimento</strong> <br>
@@ -105,7 +104,7 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
                     <img src="<?php echo $this->base.'/img/Instagram_icon.png' ?>" style="width: 4em;">
                 </a>
             </div>
-        </div>
+        </div> -->
 
     </div>
     

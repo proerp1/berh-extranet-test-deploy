@@ -17,7 +17,7 @@ class Sender
             'Senha' => $this->senha,
             'SeuNum' => '123123123',
             'Celular' => '55'.$num,
-            'Mensagem' => utf8_encode('teste hipercheck'),
+            'Mensagem' => utf8_encode('teste berh'),
         ]];
 
         $soap = new Commom();

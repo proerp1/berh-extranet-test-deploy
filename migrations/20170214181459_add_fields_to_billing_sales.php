@@ -29,7 +29,7 @@ class AddFieldsToBillingSales extends AbstractMigration
     {
         $table = $this->table('billing_sales');
         $table->addColumn('faturado_revendas', 'integer', array('after' => 'billing_id', 'default' => 0))
-              ->addColumn('faturado_hipercheck', 'integer', array('after' => 'faturado_revendas', 'default' => 0))
+              ->addColumn('faturado_berh', 'integer', array('after' => 'faturado_revendas', 'default' => 0))
               ->update();
 
     }

@@ -48,13 +48,13 @@ class Seller extends AppModel {
 	public $validate = array(
 		'nome_fantasia' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'documento' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O documento é obrigatório',
 				'last' => false
 			),
@@ -70,7 +70,7 @@ class Seller extends AppModel {
 				'last' => false
 			),
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O e-mail é obrigatório'/*,
 				'last' => false*/
 			)/*,
@@ -81,19 +81,19 @@ class Seller extends AppModel {
 		),
 		'cep' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O cep é obrigatório'
 			),
 		),
 		'endereco' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O endereço é obrigatório'
 			),
 		),
 		'numero' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O numero é obrigatório',
 				'last' => false
 			),
@@ -104,31 +104,31 @@ class Seller extends AppModel {
 		),
 		'bairro' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O bairro é obrigatório'
 			),
 		),
 		'cidade' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'A cidade é obrigatória'
 			),
 		),
 		'estado' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O estado é obrigatório'
 			),
 		),
 		'tipo_comissao' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo é obrigatório'
 			),
 		),
 		'valor_comissao' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo é obrigatório'
 			),
 		)

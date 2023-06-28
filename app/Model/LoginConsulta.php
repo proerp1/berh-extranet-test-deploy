@@ -34,7 +34,7 @@ class LoginConsulta extends AppModel {
     public $validate = array(
         'login' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'O login não pode ser um já existente',
                 'last' => false
             ),
@@ -45,13 +45,13 @@ class LoginConsulta extends AppModel {
         ),
         'senha' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'Campo senha é obrigatório'
             )
         ),
         'status_id' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'Campo status obrigatório'
             )
         )

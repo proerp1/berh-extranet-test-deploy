@@ -10,7 +10,7 @@
       <td align="center">
       <table width="80%" align="center" bgcolor="#FFF" style="border-radius: 6px; margin-top: 20px;">
             <tr>
-              <td align="center"><img style="margin: 30px" width="200" src="https://credcheck.com.br/extranet/img/berh_logo.png" alt=""></td>
+              <td align="center"><img style="margin: 30px" width="200" src="https://berh.com.br/extranet/img/berh_logo.png" alt=""></td>
             </tr>
 
             <!-- body -->
@@ -42,7 +42,7 @@
                     <td align="center" style="font-family: \'Open Sans\', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
                       <p><strong>'.$nome_fantasia.'</strong> - CNPJ: <strong>'.$cnpj.'</strong> - CONTRATO Nº <strong>'.$codigo_associado.'</strong></p>
                       Para sua comodidade, e também com a finalidade de contornar possíveis extravios, <br />
-                      a Credcheck - Distribuidor Autorizado Serasa disponibiliza através de nosso site, o seu boleto de cobrança.<br /><br />
+                      a BeRH - Distribuidor Autorizado Serasa disponibiliza através de nosso site, o seu boleto de cobrança.<br /><br />
                       Para acessar seu boleto clique no botão abaixo:
                     </td>
                   </tr>
@@ -70,7 +70,7 @@
 
       <!-- footer -->
         <footer>
-          <div style="font-family: \'Open Sans\', Arial, sans-serif; text-align: center; font-size:16px; color:#FFFFFF; margin: 20px auto;">&copy; '.date('Y').' Credcheck</div>
+          <div style="font-family: \'Open Sans\', Arial, sans-serif; text-align: center; font-size:16px; color:#FFFFFF; margin: 20px auto;">&copy; '.date('Y').' BeRH</div>
         </footer>
         <!-- end footer -->
         </td>

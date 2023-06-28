@@ -73,10 +73,7 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Data</th>
                         <th>Mensalidades</th>
-                        <th>Serasa</th>
                         <th>Manutenção</th>
-                        <th>Pefin</th>
-                        <th>BeRH/String</th>
                         <th>Total</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -88,19 +85,11 @@
                             <?php
                                 $valor_total = 0;
                                 $mensalidade = 0;
-                                $consumo = 0;
                                 $total_manutencao = 0;
-                                $total_pefin = 0;
-                                $total_credcheck = 0;
+                                $total_desconto = 0;
                                 foreach ($val_mensalidade as $value) {
                                     if ($value['BillingMonthlyPayment']['billing_id'] == $data[$i]["Billing"]["id"]) {
                                         $mensalidade = $value[0]['valor_total'];
-                                    }
-                                }
-
-                                foreach ($valor_consultas as $value) {
-                                    if ($value['Negativacao']['billing_id'] == $data[$i]["Billing"]["id"]) {
-                                        $consumo = $value[0]['valor_total'];
                                     }
                                 }
 
@@ -110,25 +99,13 @@
                                     }
                                 }
 
-                                foreach ($valor_pefin as $value) {
-                                    if ($value['Pefin']['billing_id'] == $data[$i]["Billing"]["id"]) {
-                                        $total_pefin = $value[0]['valor_total'];
-                                    }
-                                }
-
-                                foreach ($valor_credcheck as $value) {
-                                    if ($value['BillingNovaVida']['billing_id'] == $data[$i]["Billing"]["id"]) {
-                                        $total_credcheck = $value[0]['valor_total'];
-                                    }
-                                }
-
                                 foreach ($valor_desconto as $value) {
                                     if ($value['BillingMonthlyPayment']['billing_id'] == $data[$i]["Billing"]["id"]) {
                                         $total_desconto = $value[0]['valor_total'];
                                     }
                                 }
 
-                                $valor_total = ($mensalidade+$consumo+$total_manutencao+$total_pefin+$total_credcheck)-$total_desconto;
+                                $valor_total = ($mensalidade+$total_manutencao)-$total_desconto;
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
@@ -138,10 +115,7 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Billing"]["date_billing_index"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($mensalidade,2,',','.') ?></td>
-                                <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($consumo,2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($total_manutencao,2,',','.') ?></td>
-                                <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($total_pefin,2,',','.') ?></td>
-                                <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($total_credcheck,2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo number_format($valor_total,2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/billings/mensalidade/'.$data[$i]["Billing"]["id"]; ?>" class="btn btn-info btn-sm">

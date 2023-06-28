@@ -6,6 +6,6 @@
 		<a class="nav-link <?php echo $this->request->params['action'] == 'revenda' ? 'active' : '' ?>" href="<?php echo $this->base.'/billing_sales/revenda/'.$id; ?>">Revendas</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo $this->request->params['action'] == 'credcheck' ? 'active' : '' ?>" href="<?php echo $this->base.'/billing_sales/credcheck/'.$id; ?>">BeRH</a>
+		<a class="nav-link <?php echo $this->request->params['action'] == 'berh' ? 'active' : '' ?>" href="<?php echo $this->base.'/billing_sales/berh/'.$id; ?>">BeRH</a>
 	</li>
 </ul>

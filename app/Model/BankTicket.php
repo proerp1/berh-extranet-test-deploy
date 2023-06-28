@@ -63,25 +63,25 @@ class BankTicket extends AppModel {
 	public $validate = array(
 		'status_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'carteira' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'codigo_cedente' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'cobranca_taxa_bancaria' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

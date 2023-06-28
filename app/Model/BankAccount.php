@@ -78,31 +78,31 @@ class BankAccount extends AppModel {
 	public $validate = array(
 		'name' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'agency' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'account_number' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'initial_balance' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'limit' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

@@ -61,19 +61,19 @@ class CustomerDiscount extends AppModel {
     public $validate = array(
         'status_id' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'O status é obrigatório'
             )
         ),
         'discount' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'O valor do desconto é obrigatório'
             )
         ),
         'expire_date' => array(
             'required' => array(
-                'rule' => array('notEmpty'),
+                'rule' => array('notBlank'),
                 'message' => 'A data da validade é obrigatório'
             )
         )

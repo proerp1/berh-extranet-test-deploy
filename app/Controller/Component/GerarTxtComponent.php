@@ -10,11 +10,11 @@ class GerarTxtComponent extends Component
         $CadastroPefin = ClassRegistry::init('CadastroPefin');
         $DOCUMENT_ROOT = env('DOCUMENT_ROOT');
 
-        $cnpj_credcheck = $this->tiraCaracteres('08.663.497/0001-30');
+        $cnpj_berh = $this->tiraCaracteres('08.663.497/0001-30');
 
         // REGISTRO HEADER
         $outputstring  = "0"; // TAM 001 - Código do Registro
-        $outputstring .= $this->zerosEsq(substr($cnpj_credcheck, 0, 8), 9);	 // TAM 009 - Número do CNPJ da instituição informante ajustado à direita e preenchido com zeros à esquerda
+        $outputstring .= $this->zerosEsq(substr($cnpj_berh, 0, 8), 9);	 // TAM 009 - Número do CNPJ da instituição informante ajustado à direita e preenchido com zeros à esquerda
         $outputstring .= $this->tiraCaracteres(date("Ymd")); // TAM 008 - Data do movimento (AAAAMMDD) – data de geração do arquivo
         $outputstring .= $this->zerosEsq('69', 4); // TAM 004 - Número de DDD do telefone de contato da instituição informante
         $outputstring .= $this->tiraCaracteres('32250443'); // TAM 008 - Número do telefone de contato da instituição informante
@@ -45,7 +45,7 @@ class GerarTxtComponent extends Component
                 $outputstring .= "E";
             }
 
-            $outputstring .= substr($cnpj_credcheck, 8, 6); // TAM 006 - Filial e dígito do CNPJ da contratante
+            $outputstring .= substr($cnpj_berh, 8, 6); // TAM 006 - Filial e dígito do CNPJ da contratante
 
             if (isset($dados['CadastroPefin']['venc_divida_nao_formatado'])) {
                 $dataOcorrencia = $dados['CadastroPefin']['venc_divida_nao_formatado'];

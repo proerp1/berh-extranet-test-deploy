@@ -6,9 +6,9 @@ class BillingsController extends AppController
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ImportarNegativacao', 'Email', 'Sms', 'ExcelGenerator'];
     public $uses = ['Billing', 'ProdutosNaoCadastrados', 'Status', 'Negativacao', 'Customer', 
-                    'BillingMonthlyPayment', 'ContasReceberOld', 'PefinMaintenance', 'Pefin', 
+                    'BillingMonthlyPayment', 'ContasReceberOld', 
                     'Income', 'LinhasNaoImportadas', 'NovaVidaLogConsulta', 'BillingNovaVida', 
-                    'PlanCustomer', 'CadastroPefin', 'Instituicao', 'ClienteMeProteja', 
+                    'PlanCustomer', 'Instituicao', 
                     'ProductPrice', 'Resale', 'Product'];
 
     public $paginate = [
@@ -16,11 +16,8 @@ class BillingsController extends AppController
         'BillingMonthlyPayment' => ['limit' => 10, 'order' => ['Customer.nome_primario', 'Customer.nome_secundario']],
         'Reembolso' => ['limit' => 165, 'order' => ['Customer.nome_primario', 'Customer.nome_secundario']],
         'Negativacao' => ['limit' => 10, 'order' => ['Product.name', 'Customer.nome_primario', 'Customer.nome_secundario']],
-        'Pefin' => ['limit' => 10, 'order' => ['Product.name', 'Customer.nome_primario', 'Customer.nome_secundario']],
         'ProdutosNaoCadastrados' => ['limit' => 10, 'order' => ['ProdutosNaoCadastrados.name' => 'asc'], 'group' => 'ProdutosNaoCadastrados.name'],
-        'LinhasNaoImportadas' => ['limit' => 200, 'order' => ['LinhasNaoImportadas.logon' => 'asc']],
-        'BillingNovaVida' => ['limit' => 10, 'order' => ['Product.name', 'Customer.nome_primario', 'Customer.nome_secundario']],
-        'ClienteMeProteja' => ['limit' => 10, 'order' => ['Product.name', 'Customer.nome_primario', 'Customer.nome_secundario']],
+        'LinhasNaoImportadas' => ['limit' => 200, 'order' => ['LinhasNaoImportadas.logon' => 'asc']]
     ];
 
     public function beforeFilter()
@@ -53,14 +50,6 @@ class BillingsController extends AppController
 
         $manutencao = $this->BillingMonthlyPayment->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'BillingMonthlyPayment.billing_id', 'fields' => 'BillingMonthlyPayment.billing_id, sum(PefinMaintenance.value) as valor_total']);
 
-        $valor_pefin = $this->Pefin->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'Pefin.billing_id', 'fields' => 'Pefin.billing_id, sum(Pefin.valor_total) as valor_total']);
-
-        $valor_consultas = $this->Negativacao->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'Negativacao.billing_id', 'fields' => 'Negativacao.billing_id, sum(Negativacao.valor_total) as valor_total']);
-
-        $valor_credcheck = $this->BillingNovaVida->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01', 'BillingNovaVida.data_cancel' => '1901-01-01'], 
-            'group' => 'BillingNovaVida.billing_id',
-            'fields' => 'BillingNovaVida.billing_id, sum(BillingNovaVida.valor_total) as valor_total']);
-
         $valor_desconto = $this->BillingMonthlyPayment->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'BillingMonthlyPayment.billing_id', 'fields' => 'BillingMonthlyPayment.billing_id, sum(round((BillingMonthlyPayment.desconto/100)*BillingMonthlyPayment.monthly_value_total,2)) as valor_total']);
 
         $data = $this->Paginator->paginate('Billing', $condition);
@@ -68,7 +57,7 @@ class BillingsController extends AppController
 
         $action = 'Faturamento';
         $breadcrumb = ['Financeiro' => '', 'Faturamento' => ''];
-        $this->set(compact('status', 'data', 'valor_consultas', 'val_mensalidade', 'manutencao', 'valor_pefin', 'valor_desconto', 'valor_credcheck', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'valor_consultas', 'val_mensalidade', 'manutencao', 'valor_pefin', 'valor_desconto', 'action', 'breadcrumb'));
     }
 
     public function add()
@@ -328,21 +317,10 @@ class BillingsController extends AppController
         $valor_mensal = $this->BillingMonthlyPayment->find('first', ['conditions' => $condition, 'fields' => 'sum(BillingMonthlyPayment.monthly_value) as total']);
         $valor_pago = $this->BillingMonthlyPayment->find('first', ['conditions' => array_merge($condition['and'], ['BillingMonthlyPayment.status_id' => 9]), 'fields' => 'sum(BillingMonthlyPayment.monthly_value) as total']);
         $valor_a_pagar = $this->BillingMonthlyPayment->find('first', ['conditions' => array_merge($condition['and'], ['BillingMonthlyPayment.status_id' => 8]), 'fields' => 'sum(BillingMonthlyPayment.monthly_value) as total']);
-        $valor_manutencao = $this->BillingMonthlyPayment->find('first', ['conditions' => $condition, 'fields' => 'sum(PefinMaintenance.value) as total']);
-        $valor_serasa = $this->Negativacao->find('first', ['conditions' => ['Negativacao.billing_id' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(Negativacao.valor_total) as total']);
-        $valor_pefin = $this->Pefin->find('first', ['conditions' => ['Pefin.billing_id' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(Pefin.valor_total) as total']);
-        /*$valor_hipercheck = $this->NovaVidaLogConsulta->find('first', [
-            'conditions' => ['NovaVidaLogConsulta.faturado' => 1,
-                'date_format(NovaVidaLogConsulta.created, "%m-%Y")' => date('m-Y', strtotime(str_replace('/', '-', $faturamento['Billing']['date_billing']))),
-            ],
-            'fields' => 'sum(NovaVidaLogConsulta.valor) as total',
-        ]);*/
-        $valor_hipercheck = $this->BillingNovaVida->find('first', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.data_cancel' => '1901-01-01'],'fields' => 'sum(BillingNovaVida.valor_total) as total']);
-        $valor_meproteja = $this->ClienteMeProteja->find('first', ['conditions' => ['ClienteMeProteja.billingID' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(ClienteMeProteja.clienteMeProtejaValor) as total']);
         
         $valor_desconto = $this->BillingMonthlyPayment->find('first', ['conditions' => $condition, 'fields' => 'sum(round((BillingMonthlyPayment.desconto/100)*BillingMonthlyPayment.monthly_value_total,2)) as total']);
 
-        $valor_total = (float) $valor_mensal[0]['total'] + (float) $valor_manutencao[0]['total'] + (float) $valor_serasa[0]['total'] + (float) $valor_pefin[0]['total'] + (float) $valor_hipercheck[0]['total'];
+        $valor_total = (float) $valor_mensal[0]['total'];
 
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => '%'.$_GET['q'].'%', 'Customer.nome_secundario LIKE' => '%'.$_GET['q'].'%', 'Customer.codigo_associado LIKE' => '%'.$_GET['q'].'%']);
@@ -408,7 +386,7 @@ class BillingsController extends AppController
 
         $action = 'Faturamento';
         $breadcrumb = ['Financeiro' => '', 'Faturamento' => '', $faturamento['Billing']['date_billing_index'] => '', 'Mensalidade' => ''];
-        $this->set(compact('data', 'action', 'id', 'total_clientes', 'valor_mensal', 'valor_total', 'status', 'valor_manutencao', 'valor_serasa', 'valor_pefin', 'valor_pago', 'valor_a_pagar', 'faturamento', 'qtde_email_restante', 'valor_hipercheck', 'valor_desconto', 'valor_meproteja', 'breadcrumb'));
+        $this->set(compact('data', 'action', 'id', 'total_clientes', 'valor_mensal', 'valor_total', 'status', 'valor_pago', 'valor_a_pagar', 'faturamento', 'qtde_email_restante', 'valor_desconto', 'breadcrumb'));
     }
 
     public function gerar_contas_receber($id)
@@ -525,14 +503,14 @@ class BillingsController extends AppController
 
         $negativacao = $this->Negativacao->find_negativacao_cliente($id, $customer_id);
         $pefin = $this->Pefin->find_pefin_cliente($id, $customer_id);
-        $hipercheck = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
+        $berh = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
         $meproteja = $this->ClienteMeProteja->find('all', ['conditions' => ['ClienteMeProteja.billingID' => $id, 'ClienteMeProteja.clienteID' => $customer_id]]);
 
         $tipo = $negativacao ? $negativacao[0]['n']['type'] : 1;
 
         $action = 'Faturamento';
         $breadcrumb = ['Financeiro' => '', 'Faturamento' => '', $faturamento['Billing']['date_billing_index'] => '', 'Mensalidade' => '', 'Demonstrativo' => ''];
-        $this->set(compact('data', 'id', 'action', 'faturamento', 'faturamento_cliente', 'negativacao', 'pefin', 'customer_id', 'tipo', 'hipercheck', 'meproteja', 'breadcrumb'));
+        $this->set(compact('data', 'id', 'action', 'faturamento', 'faturamento_cliente', 'negativacao', 'pefin', 'customer_id', 'tipo', 'berh', 'meproteja', 'breadcrumb'));
     }
 
     public function mensalidade_paga($billing_monthly_payment_id, $billing_id, $customer_id)
@@ -665,9 +643,9 @@ class BillingsController extends AppController
     }
 
     /*********************
-                Credcheck
+                BeRH
     **********************/
-    public function credcheck($id)
+    public function berh($id)
     {
         $this->Permission->check(7, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
@@ -690,7 +668,7 @@ class BillingsController extends AppController
         $this->set(compact('id', 'action', 'qtde_processar', 'data', 'breadcrumb'));
     }
 
-    public function processar_produtos_credcheck($id)
+    public function processar_produtos_berh($id)
     {
         $this->Permission->check(7, 'escrita') ? '' : $this->redirect('/not_allowed');
 
@@ -789,7 +767,7 @@ class BillingsController extends AppController
         );*/
 
         $this->Session->setFlash(__('Registros processdos com sucesso!'), 'default', ['class' => 'alert alert-success']);
-        $this->redirect(['action' => 'credcheck/'.$id]);
+        $this->redirect(['action' => 'berh/'.$id]);
     }
 
     /*********************
@@ -968,7 +946,7 @@ class BillingsController extends AppController
                 ],
                     'template' => 'pague_fatura',
                     'layout' => 'new_layout',
-                    'subject' => 'Credcheck - Comunicado importante',
+                    'subject' => 'BeRH - Comunicado importante',
                     'config' => 'fatura',
                 ];
 
@@ -1021,7 +999,7 @@ class BillingsController extends AppController
                 ],
                     'template' => 'boleto',
                     'layout' => 'new_layout',
-                    'subject' => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                    'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];
 
@@ -1059,7 +1037,7 @@ class BillingsController extends AppController
                 ],
                     'template' => 'boleto',
                     'layout' => 'new_layout',
-                    'subject' => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                    'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];
 
@@ -1122,7 +1100,7 @@ class BillingsController extends AppController
                 ],
                     'template' => 'payment_not_found',
                     'layout' => 'new_layout',
-                    'subject' => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                    'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];
 
@@ -1188,7 +1166,7 @@ class BillingsController extends AppController
             ],
                 'template' => 'extrajudicial',
                 'layout' => 'simple',
-                'subject' => 'Credcheck- NOTIFICAÇÃO EXTRAJUDICIAL',
+                'subject' => 'BeRH- NOTIFICAÇÃO EXTRAJUDICIAL',
                 'config' => 'fatura',
             ];
 
@@ -1271,20 +1249,12 @@ class BillingsController extends AppController
 
         $manutencao = $this->BillingMonthlyPayment->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'BillingMonthlyPayment.billing_id', 'fields' => 'BillingMonthlyPayment.billing_id, sum(PefinMaintenance.value) as valor_total']);
 
-        $valor_pefin = $this->Pefin->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'Pefin.billing_id', 'fields' => 'Pefin.billing_id, sum(Pefin.valor_total) as valor_total']);
-
-        $valor_consultas = $this->Negativacao->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'Negativacao.billing_id', 'fields' => 'Negativacao.billing_id, sum(Negativacao.valor_total) as valor_total']);
-
-        $valor_credcheck = $this->BillingNovaVida->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01', 'BillingNovaVida.data_cancel' => '1901-01-01'], 
-            'group' => 'BillingNovaVida.billing_id',
-            'fields' => 'BillingNovaVida.billing_id, sum(BillingNovaVida.valor_total) as valor_total']);
-
         $valor_desconto = $this->BillingMonthlyPayment->find('all', ['conditions' => ['Customer.data_cancel' => '1901-01-01'], 'group' => 'BillingMonthlyPayment.billing_id', 'fields' => 'BillingMonthlyPayment.billing_id, sum(round((BillingMonthlyPayment.desconto/100)*BillingMonthlyPayment.monthly_value_total,2)) as valor_total']);
 
         $data = $this->Paginator->paginate('Billing', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
 
-        $this->set(compact('status', 'data', 'valor_consultas', 'val_mensalidade', 'manutencao', 'valor_pefin', 'valor_desconto', 'valor_credcheck'));
+        $this->set(compact('status', 'data', 'val_mensalidade', 'manutencao', 'valor_desconto'));
 
     }
 
@@ -1303,21 +1273,10 @@ class BillingsController extends AppController
         $valor_pago = $this->BillingMonthlyPayment->find('first', ['conditions' => array_merge($condition['and'], ['BillingMonthlyPayment.status_id' => 9]), 'fields' => 'sum(BillingMonthlyPayment.monthly_value) as total']);
         $valor_a_pagar = $this->BillingMonthlyPayment->find('first', ['conditions' => array_merge($condition['and'], ['BillingMonthlyPayment.status_id' => 8]), 'fields' => 'sum(BillingMonthlyPayment.monthly_value) as total']);
         $valor_manutencao = $this->BillingMonthlyPayment->find('first', ['conditions' => $condition, 'fields' => 'sum(PefinMaintenance.value) as total']);
-        $valor_serasa = $this->Negativacao->find('first', ['conditions' => ['Negativacao.billing_id' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(Negativacao.valor_total) as total']);
-        $valor_pefin = $this->Pefin->find('first', ['conditions' => ['Pefin.billing_id' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(Pefin.valor_total) as total']);
-        /*$valor_hipercheck = $this->NovaVidaLogConsulta->find('first', [
-            'conditions' => ['NovaVidaLogConsulta.faturado' => 1,
-                'date_format(NovaVidaLogConsulta.created, "%m-%Y")' => date('m-Y', strtotime(str_replace('/', '-', $faturamento['Billing']['date_billing']))),
-            ],
-            'fields' => 'sum(NovaVidaLogConsulta.valor) as total',
-        ]);*/
-        $valor_hipercheck = $this->BillingNovaVida->find('first', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.data_cancel' => '1901-01-01'],
-            'fields' => 'sum(BillingNovaVida.valor_total) as total']);
-        $valor_meproteja = $this->ClienteMeProteja->find('first', ['conditions' => ['ClienteMeProteja.billingID' => $id, 'Customer.data_cancel' => '1901-01-01'], 'fields' => 'sum(ClienteMeProteja.clienteMeProtejaValor) as total']);
         
         $valor_desconto = $this->BillingMonthlyPayment->find('first', ['conditions' => $condition, 'fields' => 'sum(round((BillingMonthlyPayment.desconto/100)*BillingMonthlyPayment.monthly_value_total,2)) as total']);
 
-        $valor_total = (float) $valor_mensal[0]['total'] + (float) $valor_manutencao[0]['total'] + (float) $valor_serasa[0]['total'] + (float) $valor_pefin[0]['total'] + (float) $valor_hipercheck[0]['total'];
+        $valor_total = (float) $valor_mensal[0]['total'] + (float) $valor_manutencao[0]['total'];
 
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => '%'.$_GET['q'].'%', 'Customer.nome_secundario LIKE' => '%'.$_GET['q'].'%', 'Customer.codigo_associado LIKE' => '%'.$_GET['q'].'%']);
@@ -1331,7 +1290,7 @@ class BillingsController extends AppController
 
         $action = 'Faturamento';
         $breadcrumb = ['Financeiro' => '', 'Faturamento' => '', $faturamento['Billing']['date_billing_index'] => '', 'Dashboard' => ''];
-        $this->set(compact('data', 'action', 'id', 'total_clientes', 'valor_mensal', 'valor_total', 'status', 'valor_manutencao', 'valor_serasa', 'valor_pefin', 'valor_pago', 'valor_a_pagar', 'faturamento', 'qtde_email_restante', 'valor_hipercheck', 'valor_desconto', 'valor_meproteja', 'breadcrumb'));
+        $this->set(compact('data', 'action', 'id', 'total_clientes', 'valor_mensal', 'valor_total', 'status', 'valor_manutencao', 'valor_pago', 'valor_a_pagar', 'faturamento', 'qtde_email_restante', 'valor_desconto', 'valor_meproteja', 'breadcrumb'));
 
     }
 

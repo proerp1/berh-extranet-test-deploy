@@ -35,15 +35,15 @@
 						</thead>
 						<tbody>
 							<?php $total_hiper = 0; ?>
-							<?php if ($hipercheck) { ?>
-								<?php for ($i=0; $i < count($hipercheck); $i++) { ?>
-									<?php $total_hiper += $hipercheck[$i]['Income']['valor_total_nao_formatado'] ?>
+							<?php if ($berh) { ?>
+								<?php for ($i=0; $i < count($berh); $i++) { ?>
+									<?php $total_hiper += $berh[$i]['Income']['valor_total_nao_formatado'] ?>
 									<tr>
-										<td><?php echo $hipercheck[$i]['Customer']['nome_primario'] ?></td>
-										<td><?php echo $hipercheck[$i]['Income']['valor_total'] ?></td>
-										<td><?php echo $hipercheck[$i]['Income']['vencimento'] ?></td>
+										<td><?php echo $berh[$i]['Customer']['nome_primario'] ?></td>
+										<td><?php echo $berh[$i]['Income']['valor_total'] ?></td>
+										<td><?php echo $berh[$i]['Income']['vencimento'] ?></td>
 										<td>
-											<a href="<?php echo $this->base.'/incomes/edit/'.$hipercheck[$i]['Income']['id'] ?>" class="btn btn-info btn-xs">
+											<a href="<?php echo $this->base.'/incomes/edit/'.$berh[$i]['Income']['id'] ?>" class="btn btn-info btn-xs">
 												Ver fatura
 											</a>
 										</td>

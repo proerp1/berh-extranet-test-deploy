@@ -2,7 +2,7 @@
 include '../../vendor/autoload.php';
 
 class GerarRemessaCnabComponent extends Component {	
-	public $nome_fantasia = 'Credcheck';
+	public $nome_fantasia = 'BeRH';
 	public $razao_social = 'CREDCHECK INFORMACOES CADASTRAIS LTDA - ME';
 	public $cnpj = '';
 	public $logradouro = '';

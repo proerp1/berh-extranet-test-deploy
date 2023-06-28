@@ -80,13 +80,13 @@ class CustomerPefin extends AppModel {
 	public $validate = array(
 		'natureza_operacao_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		),
 		'data_compra' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório',
 				'last' => false
 			),
@@ -97,7 +97,7 @@ class CustomerPefin extends AppModel {
 		),
 		'venc_divida' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			),
 			'date_format' => array(
@@ -107,7 +107,7 @@ class CustomerPefin extends AppModel {
 		),
 		'valor' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório',
 				'last' => false
 			),

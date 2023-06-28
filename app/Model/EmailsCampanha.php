@@ -21,7 +21,7 @@ class EmailsCampanha extends AppModel {
 	public $validate = array(
 		'subject' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

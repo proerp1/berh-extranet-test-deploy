@@ -126,7 +126,7 @@
                                 </li>
                                 <li>
                                     <h3 class="counter m-t-15">100</h3>
-                                    <h4>SOLUTECH R$</h4>
+                                    <h4>BeRH R$</h4>
                                 </li>
                             </ul>
                         </div>

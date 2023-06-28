@@ -68,7 +68,7 @@ class RoboComponent extends Component
             echo 'Serasa temporariamente fora do ar. Tente novamente em instantes. <a href="javascript:history.back()">Voltar</a>';die;
         }
 
-        $full_name = dirname(__FILE__).'/credcheck-scrapper/tmp/'.$file_name;
+        $full_name = dirname(__FILE__).'/berh-scrapper/tmp/'.$file_name;
 
         $file = file_get_contents($full_name);
 
@@ -111,7 +111,7 @@ class RoboComponent extends Component
 
         $param_json = json_encode($params);
 
-        $path = dirname(__FILE__) . "/credcheck-scrapper";
+        $path = dirname(__FILE__) . "/berh-scrapper";
 
         return shell_exec("cd " . $path . " && ./robo.sh " . $method . " DATA='" . $param_json . "' ");
     }

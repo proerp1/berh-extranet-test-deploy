@@ -257,7 +257,7 @@ class BillingSalesController extends AppController {
 /*********************
 			HIPERCHECK			
 **********************/
-	public function credcheck($id){
+	public function berh($id){
 		$this->Permission->check(35, "leitura") ? "" : $this->redirect("/not_allowed");
 
 		$this->BillingSale->id = $id;
@@ -296,7 +296,7 @@ class BillingSalesController extends AppController {
 		}
 
 		if (isset($_GET['excel'])) {
-			$nome = 'faturamento_hipercheck_'.$data_ini;
+			$nome = 'faturamento_berh_'.$data_ini;
 
 			$dados = ['previsao' => $previsao,
 								'realizado' => $realizado
@@ -306,15 +306,15 @@ class BillingSalesController extends AppController {
 			$this->redirect("/files/excel/".$nome.".xlsx");
 		}
 
-		$action = "Gerar Faturamento da Credcheck";
+		$action = "Gerar Faturamento da BeRH";
 		$this->set(compact('previsao', 'action', 'id', 'billing_sale', 'realizado', 'refaturar'));
 	}
 
-	public function faturar_credcheck($id){
+	public function faturar_berh($id){
 		$this->Permission->check(35, "escrita") ? "" : $this->redirect("/not_allowed");
 
 		$this->BillingSale->id = $id;
-		$this->BillingSale->save(['BillingSale' => ['faturado_hipercheck' => 1]]);
+		$this->BillingSale->save(['BillingSale' => ['faturado_berh' => 1]]);
 
 		$billing_sale = $this->BillingSale->read();
 		$data_ini = date('Y-m-d', strtotime(str_replace('/', '-', $billing_sale['BillingSale']['mes_pagamento'])));
@@ -371,7 +371,7 @@ class BillingSalesController extends AppController {
 		$this->redirect($this->referer());
 	}
 
-	public function detalhes_credcheck($id, $seller_id){
+	public function detalhes_berh($id, $seller_id){
 		$this->Permission->check(35, "leitura") ? "" : $this->redirect("/not_allowed");
 
 		$this->Seller->id = $seller_id;

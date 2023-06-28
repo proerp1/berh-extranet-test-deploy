@@ -27,7 +27,7 @@ class Notice extends AppModel
     public $validate = [
         'title' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

@@ -8,7 +8,7 @@ class Franquia extends AppModel {
 	public $validate = array(
 		'nome_fantasia' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		)

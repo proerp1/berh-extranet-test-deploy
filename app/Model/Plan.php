@@ -62,19 +62,19 @@ class Plan extends AppModel
     public $validate = [
         'description' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'value' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'commission' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

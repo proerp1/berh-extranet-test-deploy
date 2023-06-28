@@ -6,7 +6,7 @@
                 <td align="center" valign="center" style="text-align:center;">
                     <div style="margin: 0 20px; background-color: #1d4f91;border-top-left-radius: 6px;border-top-right-radius: 6px">
                         <a href="https://grupoberh.com.br/" rel="noopener" target="_blank">
-                            <img alt="Logo" src="http://credcheck.com.br/cliente/img/berh_2.png" height="80" width="197" />
+                            <img alt="Logo" src="http://berh.com.br/cliente/img/berh_2.png" height="80" width="197" />
                         </a>
                     </div>
                 </td>

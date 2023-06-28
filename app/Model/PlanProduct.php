@@ -22,13 +22,13 @@ class PlanProduct extends AppModel {
 	public $validate = array(
     'product_id' => array(
       'required' => array(
-        'rule' => array('notEmpty'),
+        'rule' => array('notBlank'),
         'message' => 'Campo obrigatório'
       )
     ),
     'gratuidade' => array(
       'required' => array(
-        'rule' => array('notEmpty'),
+        'rule' => array('notBlank'),
         'message' => 'Campo obrigatório'
       )
     )

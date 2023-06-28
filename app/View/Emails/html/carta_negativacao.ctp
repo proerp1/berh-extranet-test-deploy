@@ -7,10 +7,10 @@
                 <td>
                     <div style="margin: 0 20px; background-color: #eee;border-top-left-radius: 6px;border-radius: 6px">
                         <a href="https://grupoberh.com.br/" rel="noopener" target="_blank" style="text-decoration: none;">
-                            <img alt="Logo" src="http://credcheck.com.br/extranet/img/logo-berh-colorido.png" style="height: 80px;" />
+                            <img alt="Logo" src="http://berh.com.br/extranet/img/logo-berh-colorido.png" style="height: 80px;" />
                         </a>
                         <a href="https://grupoberh.com.br/" rel="noopener" target="_blank" style="text-decoration: none; float: right;">
-                            <img alt="Logo" src="http://credcheck.com.br/cliente/img/logo-serasa-novo.png" style="height: 80px;" />
+                            <img alt="Logo" src="http://berh.com.br/cliente/img/logo-serasa-novo.png" style="height: 80px;" />
                         </a>
                     </div>
                 </td>

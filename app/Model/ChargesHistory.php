@@ -83,13 +83,13 @@ class ChargesHistory extends AppModel {
 	public $validate = array(
 		'call_status' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		),
 		'text' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		)

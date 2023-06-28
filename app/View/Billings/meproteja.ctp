@@ -34,7 +34,7 @@
 				<div class="col-md-4 col-lg-6">
 				</div>
 
-				<form class="col-md-8 col-lg-6" action="<?php echo $this->Html->url(array( "controller" => "billings", "action" => "hipercheck")).'/'.$id; ?>" role="form" id="busca">
+				<form class="col-md-8 col-lg-6" action="<?php echo $this->Html->url(array( "controller" => "billings", "action" => "berh")).'/'.$id; ?>" role="form" id="busca">
 					<div class="row">
 						<div class="col-md-4">
 						</div>

@@ -25,7 +25,7 @@
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('BankTicket', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
-			<input type="hidden" name="query_string" value="<?php echo $_SERVER['QUERY_STRING'] ?>">
+			<input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '' ?>">
 			<input type="hidden" name="idBank" value="<?php echo $idBank ?>">
 
             <div class="mb-7 col">

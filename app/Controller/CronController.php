@@ -135,7 +135,7 @@ class CronController extends AppController
                     'nome' => $dados[0]['nome'],
                     'email' => explode(',', $dados[0]['email']),
                     'mensagem' => $mensagem,
-                    'link' => 'http://credcheck.com.br/',
+                    'link' => 'http://berh.com.br/',
                 ],
                 'template' => 'alerta_cliente',
                 'layout' => 'meproteja',

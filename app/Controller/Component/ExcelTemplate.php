@@ -404,15 +404,15 @@ class ExcelTemplate {
 								;
 		}
 
-		for($i=0;$i<count($dados['hipercheck']);$i++){
-			$total += $dados['hipercheck'][$i]['BillingNovaVida']['valor_total'];
+		for($i=0;$i<count($dados['berh']);$i++){
+			$total += $dados['berh'][$i]['BillingNovaVida']['valor_total'];
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-								->setCellValue('A'.$indx, $dados['hipercheck'][$i]['Product']['name'])
-								->setCellValue('B'.$indx, $dados['hipercheck'][$i]['BillingNovaVida']['quantidade_cobrada'])
-								->setCellValue('C'.$indx, "R$ ".number_format($dados['hipercheck'][$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'))
-								->setCellValue('D'.$indx, "R$ ".number_format($dados['hipercheck'][$i]['BillingNovaVida']['valor_total'], 2, ',', '.'))
+								->setCellValue('A'.$indx, $dados['berh'][$i]['Product']['name'])
+								->setCellValue('B'.$indx, $dados['berh'][$i]['BillingNovaVida']['quantidade_cobrada'])
+								->setCellValue('C'.$indx, "R$ ".number_format($dados['berh'][$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'))
+								->setCellValue('D'.$indx, "R$ ".number_format($dados['berh'][$i]['BillingNovaVida']['valor_total'], 2, ',', '.'))
 								;
 		}
 		
@@ -1007,7 +1007,7 @@ class ExcelTemplate {
 
 	public function getDivisao($objPHPExcel, $dados){
 		$objPHPExcel->setActiveSheetIndex(0)
-								->setCellValue('A1', "Credcheck")
+								->setCellValue('A1', "BeRH")
 								->setCellValue('A2', "Cliente")
 								->setCellValue('B2', "Valor")
 								->setCellValue('C2', "Vencimento")
@@ -1019,15 +1019,15 @@ class ExcelTemplate {
 
 		$indx = 2;
 		$total_hiper = 0;
-		$hipercheck = $dados['hipercheck'];
-		for($i=0;$i<count($hipercheck);$i++){
+		$berh = $dados['berh'];
+		for($i=0;$i<count($berh);$i++){
 			$indx++;
-			$total_hiper += $hipercheck[$i]['Income']['valor_total_nao_formatado'];
+			$total_hiper += $berh[$i]['Income']['valor_total_nao_formatado'];
 
 			$objPHPExcel->setActiveSheetIndex(0)
-									->setCellValue('A'.$indx, $hipercheck[$i]['Customer']['nome_primario'])
-									->setCellValue('B'.$indx, $hipercheck[$i]['Income']['valor_total'])
-									->setCellValue('C'.$indx, $hipercheck[$i]['Income']['vencimento'])
+									->setCellValue('A'.$indx, $berh[$i]['Customer']['nome_primario'])
+									->setCellValue('B'.$indx, $berh[$i]['Income']['valor_total'])
+									->setCellValue('C'.$indx, $berh[$i]['Income']['vencimento'])
 									;
 		}
 
@@ -1058,7 +1058,7 @@ class ExcelTemplate {
 
 	public function getDivisaoTodos($objPHPExcel, $dados){
 		$objPHPExcel->setActiveSheetIndex(0)
-								->setCellValue('A1', "Credcheck")
+								->setCellValue('A1', "BeRH")
 								->setCellValue('A2', "Cliente")
 								->setCellValue('B2', "CNPJ")
 								->setCellValue('C2', "Endereço")
@@ -1076,18 +1076,18 @@ class ExcelTemplate {
 
 		$indx = 2;
 		$total_hiper = 0;
-		$hipercheck = $dados['hipercheck'];
-		for($i=0;$i<count($hipercheck);$i++){
+		$berh = $dados['berh'];
+		for($i=0;$i<count($berh);$i++){
 			$indx++;
-			$total_hiper += $hipercheck[$i]['Income']['valor_total_nao_formatado'];
+			$total_hiper += $berh[$i]['Income']['valor_total_nao_formatado'];
 
 			$objPHPExcel->setActiveSheetIndex(0)
-									->setCellValue('A'.$indx, $hipercheck[$i]['Customer']['nome_primario'])
-									->setCellValue('B'.$indx, $hipercheck[$i]['Customer']['documento'])
-									->setCellValue('C'.$indx, $hipercheck[$i]['Customer']['endereco'].', '.$hipercheck[$i]['Customer']['numero'].' - '.$hipercheck[$i]['Customer']['bairro'].' - '.$hipercheck[$i]['Customer']['cidade'].', '.$hipercheck[$i]['Customer']['estado'])
-									->setCellValue('D'.$indx, $hipercheck[$i]['Customer']['telefone1'])
-									->setCellValue('E'.$indx, $hipercheck[$i]['Income']['valor_total'])
-									->setCellValue('F'.$indx, $hipercheck[$i]['Income']['vencimento'])
+									->setCellValue('A'.$indx, $berh[$i]['Customer']['nome_primario'])
+									->setCellValue('B'.$indx, $berh[$i]['Customer']['documento'])
+									->setCellValue('C'.$indx, $berh[$i]['Customer']['endereco'].', '.$berh[$i]['Customer']['numero'].' - '.$berh[$i]['Customer']['bairro'].' - '.$berh[$i]['Customer']['cidade'].', '.$berh[$i]['Customer']['estado'])
+									->setCellValue('D'.$indx, $berh[$i]['Customer']['telefone1'])
+									->setCellValue('E'.$indx, $berh[$i]['Income']['valor_total'])
+									->setCellValue('F'.$indx, $berh[$i]['Income']['vencimento'])
 									;
 		}
 

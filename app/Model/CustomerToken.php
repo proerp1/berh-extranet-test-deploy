@@ -53,7 +53,7 @@ class CustomerToken extends AppModel {
 	public $validate = array(
 		'token' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

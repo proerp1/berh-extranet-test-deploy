@@ -22,7 +22,7 @@ class PriceTable extends AppModel
     public $validate = [
         'descricao' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

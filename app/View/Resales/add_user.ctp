@@ -32,7 +32,7 @@
                 <input type="hidden" name="data[CustomerUser][resale]" value="1">
             <?php } ?>
             <input type="hidden" name="data[CustomerUser][customer_id]" value="<?php echo $id ?>">
-            <input type="hidden" name="query_string" value="<?php echo $_SERVER['QUERY_STRING'] ?>">
+            <input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '' ?>">
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Status</label>

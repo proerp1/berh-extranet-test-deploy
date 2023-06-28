@@ -25,13 +25,13 @@
             <!--begin::Label-->
             <label class="form-label fw-bolder text-dark fs-6 mb-0">Senha</label>
             <!--end::Label-->
-            <!--begin::Link-->
-            <a href="<?php echo $this->Html->url(['controller' => 'users', 'action' => 'forgot_password']) ?>" class="link-primary fs-6 fw-bolder">Esqueceu a senha ?</a>
-            <!--end::Link-->
         </div>
         <!--end::Wrapper-->
         <!--begin::Input-->
         <input required class="form-control form-control-lg form-control-solid" type="password" name="data[User][password]" autocomplete="off" />
+        <!--begin::Link-->
+        <a href="<?php echo $this->Html->url(['controller' => 'users', 'action' => 'forgot_password']) ?>" class="link-primary fs-6 fw-bolder">Esqueceu a senha ?</a>
+            <!--end::Link-->
         <!--end::Input-->
     </div>
     <!--end::Input group-->

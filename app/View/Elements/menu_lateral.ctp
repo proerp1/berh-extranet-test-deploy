@@ -72,7 +72,7 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="https://opasuite.credcheck.com.br/atendente/login/" target="_blank">
+                    <a class="menu-link" href="https://opasuite.berh.com.br/atendente/login/" target="_blank">
                         <span class="menu-icon">
                             <i class="fas fa-globe"></i> 
                         </span>
@@ -283,15 +283,6 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Faturamento Vendas</span>
-                            </a>
-                        </div>
-
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'consumo_diario') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'consumo_diario', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Consumo diário</span>
                             </a>
                         </div>
 
@@ -582,15 +573,6 @@
                                 <span class="menu-title">Lotes aguardando baixa</span>
                             </a>
                         </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && in_array($this->request->params['action'], ['negativacoes_cliente'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'negativacoes_cliente']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Negativações cliente</span>
-                            </a>
-                        </div>
                     
                     </div>
                 </div>
@@ -743,15 +725,6 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Usuários</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(in_array($this->request->params['action'], ['meproteja_consultas_lista']) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'meproteja', 'action' => 'meproteja_consultas_lista']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Consultas Me Proteja</span>
                             </a>
                         </div>
 

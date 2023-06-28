@@ -21,13 +21,13 @@ class Supplier extends AppModel
     public $validate = [
         'nome_fantasia' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'documento' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O documento é obrigatório',
                 'last' => false
             ],
@@ -43,7 +43,7 @@ class Supplier extends AppModel
                 'last' => false
             ],
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O e-mail é obrigatório',
                 'last' => false
             ],
@@ -54,19 +54,19 @@ class Supplier extends AppModel
         ],
         'cep' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O cep é obrigatório'
             ],
         ],
         'endereco' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O endereço é obrigatório'
             ],
         ],
         'numero' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O numero é obrigatório',
                 'last' => false
             ],
@@ -77,19 +77,19 @@ class Supplier extends AppModel
         ],
         'bairro' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O bairro é obrigatório'
             ],
         ],
         'cidade' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'A cidade é obrigatória'
             ],
         ],
         'estado' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O estado é obrigatório'
             ],
         ]

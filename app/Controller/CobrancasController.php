@@ -501,7 +501,7 @@ class CobrancasController extends AppController
             ],
                 'template' => 'boleto_negociado',
                 'layout'   => 'new_layout',
-                'subject'  => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
 
@@ -520,7 +520,7 @@ class CobrancasController extends AppController
             ],
                 'template' => 'boleto_negociado',
                 'layout'   => 'new_layout',
-                'subject'  => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
 
@@ -539,7 +539,7 @@ class CobrancasController extends AppController
             ],
                 'template' => 'boleto_negociado',
                 'layout'   => 'new_layout',
-                'subject'  => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
 
@@ -558,7 +558,7 @@ class CobrancasController extends AppController
             ],
                 'template' => 'boleto_negociado',
                 'layout'   => 'new_layout',
-                'subject'  => 'Credcheck - Distribuidor Autorizado Serasa Experian',
+                'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
 

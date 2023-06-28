@@ -146,13 +146,13 @@ class Customer extends AppModel
     public $validate = [
         'contato' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'cod_franquia' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
@@ -164,13 +164,13 @@ class Customer extends AppModel
         ],
         'nome_primario' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'documento' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O documento é obrigatório',
                 'last' => false
             ],
@@ -187,7 +187,7 @@ class Customer extends AppModel
                 'last' => false
             ],
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O e-mail é obrigatório',
                 'last' => false
             ],
@@ -198,19 +198,19 @@ class Customer extends AppModel
         ],
         'cep' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O cep é obrigatório'
             ],
         ],
         'endereco' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O endereço é obrigatório'
             ],
         ],
         'numero' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O numero é obrigatório',
                 'last' => false
             ],
@@ -221,61 +221,61 @@ class Customer extends AppModel
         ],
         'bairro' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O bairro é obrigatório'
             ],
         ],
         'cidade' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'A cidade é obrigatória'
             ],
         ],
         'estado' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O estado é obrigatório'
             ],
         ],
         'telefone1' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'O telefone é obrigatório'
             ]
         ],
         'responsavel' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'cod_vendedor' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'activity_area_id' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'faturar' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'desconto' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ],
         'enviar_email' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

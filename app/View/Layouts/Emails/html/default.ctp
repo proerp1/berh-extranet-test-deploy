@@ -14,8 +14,8 @@
               <tbody>
                 <tr>
                   <td>
-                    <a href="https://credcheck.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
-                      <img src="<?php echo "https://credcheck.com.br/extranet/img/logo-credcheckb-branco-alta.png" ?>" width="175" style="">                      
+                    <a href="https://berh.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
+                      <img src="<?php echo "https://berh.com.br/extranet/img/logo-berhb-branco-alta.png" ?>" width="175" style="">                      
                     </a>
                   </td>                  
                 </tr>
@@ -48,7 +48,7 @@
                   <td width="20"></td>
                 </tr>
                 <tr>
-                  <td style="text-align: right;" colspan="3"><img src="https://credcheck.com.br/cliente/img/logo-serasa-novo.png" width="120"></td>
+                  <td style="text-align: right;" colspan="3"><img src="https://berh.com.br/cliente/img/logo-serasa-novo.png" width="120"></td>
 
                 </tr>
               </tbody>

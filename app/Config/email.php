@@ -27,7 +27,7 @@ class EmailConfig {
 	/*
 	public $default = array(
 		'transport' => 'Smtp',
-		'from' => ['no-reply@credcheck.com.br' => 'Credcheck'],
+		'from' => ['no-reply@credcheck.com.br' => 'BeRH'],
         'host' => 'mail.credcheck.com.br',
         'port' => 587,
         'username' => 'no-reply@credcheck.com.br',
@@ -37,7 +37,7 @@ class EmailConfig {
 
 	public $fatura = array(
 		'transport' => 'Smtp',
-		'from' => ['no-reply@credcheck.com.br' => 'Credcheck'],
+		'from' => ['no-reply@credcheck.com.br' => 'BeRH'],
         'host' => 'mail.credcheck.com.br',
         'port' => 587,
         'username' => 'no-reply@credcheck.com.br',

@@ -340,7 +340,7 @@ class ApiBoleto extends Controller
             $faturamento = $this->Billing->read();
             $negativacao = $this->Negativacao->find_negativacao_cliente($id, $customer_id);
             $pefin = $this->Pefin->find_pefin_cliente($id, $customer_id);
-            $hipercheck = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
+            $berh = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
             $meproteja = $this->ClienteMeProteja->find('all', ['conditions' => ['ClienteMeProteja.billingID' => $id, 'ClienteMeProteja.clienteID' => $customer_id]]);
 
             $tipo = $negativacao ? $negativacao[0]['n']['type'] : 1;
@@ -348,7 +348,7 @@ class ApiBoleto extends Controller
             $view = new View($this, false);
             $view->layout=false;
 
-            $view->set(compact('faturamento_cliente', 'negativacao', 'pefin', 'hipercheck', 'meproteja', 'tipo', 'faturamento'));
+            $view->set(compact('faturamento_cliente', 'negativacao', 'pefin', 'berh', 'meproteja', 'tipo', 'faturamento'));
             $html=$view->render('../Elements/boleto_demonstrativo');
 
             $HtmltoPdf = new HtmltoPdf();

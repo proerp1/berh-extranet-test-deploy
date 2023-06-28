@@ -741,10 +741,10 @@ class CustomersController extends AppController
                 'email' => $data['Customer']['email'],
                 'username' => $data['LoginConsulta']['login'],
                 'senha' => $data['LoginConsulta']['senha'],
-                'link'  => 'http://credcheck.com.br/cliente'
+                'link'  => 'http://berh.com.br/cliente'
             ],
             'template' => 'nova_senha_login_consulta',
-            'subject'  => 'Credcheck - Nova senha',
+            'subject'  => 'BeRH - Nova senha',
             'config'   => 'default'
         ];
 
@@ -932,10 +932,10 @@ class CustomersController extends AppController
                 'email' => $data['CustomerUser']['email'],
                 'username' => $data['CustomerUser']['email'],
                 'senha' => $data['CustomerUser']['password'],
-                'link'  => 'http://credcheck.com.br/cliente'
+                'link'  => 'http://berh.com.br/cliente'
             ],
             'template' => 'nova_senha_usuario_cliente',
-            'subject'  => 'Credcheck - Nova senha',
+            'subject'  => 'BeRH - Nova senha',
             'config'   => 'default'
         ];
 
@@ -1009,7 +1009,7 @@ class CustomersController extends AppController
         $negativacao = $this->Negativacao->find_negativacao_cliente($id, $customer_id);
         $pefin = $this->Pefin->find_pefin_cliente($id, $customer_id);
 
-        $hipercheck = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
+        $berh = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
 
         $faturamento_inicio = $faturamento['Billing']['date_billing'];
         $mes = date("m", strtotime($faturamento['Billing']['date_billing']));
@@ -1024,7 +1024,7 @@ class CustomersController extends AppController
 
             $dados = ['negativacao' => $negativacao,
                 'pefin' => $pefin,
-                'hipercheck' => $hipercheck,
+                'berh' => $berh,
                 'periodo' => $faturamento_inicio." até ".$faturamento_fim."/".$mes."/".$ano,
                 'min_consulta' => $faturamento_cliente['BillingMonthlyPayment']['quantity'],
                 'mensalidade' => $faturamento_cliente['BillingMonthlyPayment']['monthly_value'],
@@ -1043,7 +1043,7 @@ class CustomersController extends AppController
             'Faturamento '.$faturamento['Billing']['date_billing_index'] => ['controller' => 'customers', 'action' => 'mensalidade', $customer_id],
             'Demonstrativo' => ''
         ];
-        $this->set(compact('id', 'action', 'faturamento', 'faturamento_cliente', 'negativacao', 'pefin', 'customer_id', 'tipo', 'dados', 'hipercheck', 'breadcrumb'));
+        $this->set(compact('id', 'action', 'faturamento', 'faturamento_cliente', 'negativacao', 'pefin', 'customer_id', 'tipo', 'dados', 'berh', 'breadcrumb'));
     }
 
     public function historico($id, $customer_id)

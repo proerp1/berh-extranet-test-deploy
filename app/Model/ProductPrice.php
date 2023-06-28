@@ -44,13 +44,13 @@ class ProductPrice extends AppModel {
 	public $validate = array(
     'price_table_id' => array(
       'required' => array(
-        'rule' => array('notEmpty'),
+        'rule' => array('notBlank'),
         'message' => 'Campo obrigatório'
       )
     ),
     'value' => array(
       'required' => array(
-        'rule' => array('notEmpty'),
+        'rule' => array('notBlank'),
         'message' => 'Campo obrigatório'
       )
     )

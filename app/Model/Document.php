@@ -28,13 +28,13 @@ class Document extends AppModel {
 	public $validate = array(
 		'name' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		),
 		'status_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		)

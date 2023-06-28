@@ -428,10 +428,10 @@ class ResalesController extends AppController
             'email' => $data['CustomerUser']['email'],
             'username' => $data['CustomerUser']['username'],
             'senha' => $data['CustomerUser']['password'],
-            'link'  => 'http://credcheck.com.br/cliente'
+            'link'  => 'http://berh.com.br/cliente'
         ],
             'template' => 'nova_senha_usuario_cliente',
-            'subject'  => 'Credcheck - Nova senha',
+            'subject'  => 'BeRH - Nova senha',
             'config'   => 'default'
         ];
 

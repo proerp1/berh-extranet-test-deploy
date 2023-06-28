@@ -3,7 +3,7 @@
 ?>
 
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url([ "controller" => "billings", "action" => "credcheck", $id]); ?>/" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url([ "controller" => "billings", "action" => "berh", $id]); ?>/" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -18,7 +18,7 @@
             <div class="card-toolbar">
                 <div class="d-flex flex-column justify-content-end" data-kt-customer-table-toolbar="base">
                     <label for="inputNome" class="control-label">Registros para processar: <?php echo $qtde_processar ?></label>
-                    <a href="<?php echo $this->base.'/billings/processar_produtos_credcheck/'.$id; ?>" class="btn btn-primary">Processar Infobusca</a>
+                    <a href="<?php echo $this->base.'/billings/processar_produtos_berh/'.$id; ?>" class="btn btn-primary">Processar Infobusca</a>
                 </div>
             </div>
         </div>

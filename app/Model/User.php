@@ -21,7 +21,7 @@ class User extends AppModel {
 				'message' => 'O e-mail deve ser válido'
 			),
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O e-mail é obrigatório'
 			),
 			'isUnique' => array(
@@ -31,13 +31,13 @@ class User extends AppModel {
 		),
 		'password' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'A senha é obrigatória'
 			)
 		),
 		'name' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'O nome é obrigatório'
 			)
 		)

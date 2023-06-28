@@ -21,7 +21,7 @@ class MailList extends AppModel
     public $validate = [
         'subject' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]

@@ -22,12 +22,12 @@ class DivisaoSociosController extends AppController {
 		$socios = $this->Socios->find('all');
 
 		if (isset($_GET['excel'])) {
-			$hipercheck = $this->Income->find('all', ['conditions' => ['Income.socio_id' => 1], 'order' => ['Customer.nome_primario' => 'asc']]);
+			$berh = $this->Income->find('all', ['conditions' => ['Income.socio_id' => 1], 'order' => ['Customer.nome_primario' => 'asc']]);
 			$ivan = $this->Income->find('all', ['conditions' => ['Income.socio_id' => 2], 'order' => ['Customer.nome_primario' => 'asc']]);
 
 			$nome = 'divisao_socios';
 
-			$dados = ['ivan' => $ivan, 'hipercheck' => $hipercheck];
+			$dados = ['ivan' => $ivan, 'berh' => $berh];
 
 			$this->ExcelGenerator->gerarExcelDivisao($nome, $dados, 'todos');
 			$this->redirect("/files/excel/".$nome.".xlsx");
@@ -39,20 +39,20 @@ class DivisaoSociosController extends AppController {
 	public function detalhes(){
 		$this->Permission->check(48, "leitura")? "" : $this->redirect("/not_allowed");
 
-		$hipercheck = $this->Income->find('all', ['conditions' => ["DATE_FORMAT(Income.vencimento, '%m/%Y')" => $_GET['mes'], 'Income.socio_id' => 1], 'order' => ['Customer.nome_primario' => 'asc']]);
+		$berh = $this->Income->find('all', ['conditions' => ["DATE_FORMAT(Income.vencimento, '%m/%Y')" => $_GET['mes'], 'Income.socio_id' => 1], 'order' => ['Customer.nome_primario' => 'asc']]);
 
 		$ivan = $this->Income->find('all', ['conditions' => ["DATE_FORMAT(Income.vencimento, '%m/%Y')" => $_GET['mes'], 'Income.socio_id' => 2], 'order' => ['Customer.nome_primario' => 'asc']]);
 
 		if (isset($_GET['excel'])) {
 			$nome = 'divisao_'.str_replace('/', '_', $_GET['mes']);
 
-			$dados = ['ivan' => $ivan, 'hipercheck' => $hipercheck];
+			$dados = ['ivan' => $ivan, 'berh' => $berh];
 
 			$this->ExcelGenerator->gerarExcelDivisao($nome, $dados);
 			$this->redirect("/files/excel/".$nome.".xlsx");
 		}
 
-		$this->set(compact('hipercheck', 'ivan'));
+		$this->set(compact('berh', 'ivan'));
 	}
 
 	public function divide_cobranca(){

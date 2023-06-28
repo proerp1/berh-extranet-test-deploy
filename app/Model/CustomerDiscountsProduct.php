@@ -19,13 +19,13 @@ class CustomerDiscountsProduct extends AppModel {
 	public $validate = array(
 		'product_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Ocorreu algum erro, tente novamente'
 			)
 		),
 		'discount_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Ocorreu algum erro, tente novamente'
 			)
 		)

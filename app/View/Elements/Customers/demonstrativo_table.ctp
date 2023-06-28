@@ -101,25 +101,25 @@
 			<?php } ?>
 		<?php } ?>
 
-		<?php if ($hipercheck) { ?>
-			<?php for ($i=0; $i < count($hipercheck); $i++) { ?>
-			<?php $total += $hipercheck[$i]['BillingNovaVida']['valor_total']; ?>
-				<form action="<?php echo $this->Html->url(["controller" => "billings", "action" => "update_hiper", $hipercheck[$i]['BillingNovaVida']['id']]) ?>" method="post">
+		<?php if ($berh) { ?>
+			<?php for ($i=0; $i < count($berh); $i++) { ?>
+			<?php $total += $berh[$i]['BillingNovaVida']['valor_total']; ?>
+				<form action="<?php echo $this->Html->url(["controller" => "billings", "action" => "update_hiper", $berh[$i]['BillingNovaVida']['id']]) ?>" method="post">
 					<tr class="align-middle">
-						<td colspan="1" class="ps-4"><?php echo $hipercheck[$i]['Product']['name']; ?></td>
+						<td colspan="1" class="ps-4"><?php echo $berh[$i]['Product']['name']; ?></td>
 						<td></td>
 						<td colspan="<?php echo $tipo == 1 ? '1' : '2' ?>">
-							<input required type="number" name="quantidade" class="form-control js_quantidade" value="<?php echo $hipercheck[$i]['BillingNovaVida']['quantidade']; ?>">
+							<input required type="number" name="quantidade" class="form-control js_quantidade" value="<?php echo $berh[$i]['BillingNovaVida']['quantidade']; ?>">
 						</td>
 						<?php if ($tipo == 1): ?>
-							<td colspan="1"><?php echo $hipercheck[$i]['BillingNovaVida']['quantidade_cobrada']; ?></td>
+							<td colspan="1"><?php echo $berh[$i]['BillingNovaVida']['quantidade_cobrada']; ?></td>
 						<?php endif ?>
 						<td colspan="1">
-							<input required type="text" name="valor_unitario" class="form-control money_exchange js_valor_unitario" value="<?php echo number_format($hipercheck[$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'); ?>">
+							<input required type="text" name="valor_unitario" class="form-control money_exchange js_valor_unitario" value="<?php echo number_format($berh[$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'); ?>">
 						</td>
-						<td colspan="1">R$ <?php echo number_format($hipercheck[$i]['BillingNovaVida']['quantidade_cobrada']*$hipercheck[$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'); ?></td>
+						<td colspan="1">R$ <?php echo number_format($berh[$i]['BillingNovaVida']['quantidade_cobrada']*$berh[$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'); ?></td>
 						<td colspan="1">
-							R$ <?php echo number_format($hipercheck[$i]['BillingNovaVida']['valor_total'], 2, ',', '.'); ?>
+							R$ <?php echo number_format($berh[$i]['BillingNovaVida']['valor_total'], 2, ',', '.'); ?>
 							<button class="btn btn-success js_salva_linha" style="display:none">Salvar</button>
 						</td>
 					</tr>

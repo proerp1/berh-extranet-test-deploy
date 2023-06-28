@@ -20,7 +20,7 @@ class ProductFeature extends AppModel {
 	public $validate = array(
 		'nova_vida_feature_id' => array(
 			'required' => array(
-				'rule' => array('notEmpty'),
+				'rule' => array('notBlank'),
 				'message' => 'Campo obrigatório'
 			)
 		)

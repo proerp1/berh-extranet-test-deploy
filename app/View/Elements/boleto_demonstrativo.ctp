@@ -28,7 +28,7 @@
     <body topmargin="0" rightmargin="0" bgcolor="#ffffff" text="#000000">
         <table border="0" width="666">
             <tr>
-                <td width="666" rowspan="3" valign="middle"><img src="<?php echo APP ?>webroot/img/logo-credcheck-principal-alta.png" width="145"></td>
+                <td width="666" rowspan="3" valign="middle"><img src="<?php echo APP ?>webroot/img/logo-berh-principal-alta.png" width="145"></td>
             </tr>
             <tr width="666">
                 <td width="300">
@@ -126,19 +126,19 @@
                                             <?php } ?>
                                         <?php } ?>
 
-                                        <?php if ($hipercheck) { ?>
-                                            <?php for ($i=0; $i < count($hipercheck); $i++) { ?>
-                                            <?php $total += $hipercheck[$i]['BillingNovaVida']['valor_total']; ?>
+                                        <?php if ($berh) { ?>
+                                            <?php for ($i=0; $i < count($berh); $i++) { ?>
+                                            <?php $total += $berh[$i]['BillingNovaVida']['valor_total']; ?>
                                                 <tr>
-                                                    <td class="style4" colspan="1"><?php echo $hipercheck[$i]['Product']['name']; ?></td>
+                                                    <td class="style4" colspan="1"><?php echo $berh[$i]['Product']['name']; ?></td>
                                                     <td class="style4"></td>
-                                                    <td class="style4" colspan="<?php echo $tipo == 1 ? '1' : '2' ?>"><?php echo $hipercheck[$i]['BillingNovaVida']['quantidade']; ?></td>
+                                                    <td class="style4" colspan="<?php echo $tipo == 1 ? '1' : '2' ?>"><?php echo $berh[$i]['BillingNovaVida']['quantidade']; ?></td>
                                                     <?php if ($tipo == 1): ?>
-                                                        <td class="style4" colspan="1"><?php echo $hipercheck[$i]['BillingNovaVida']['quantidade_cobrada']; ?></td>
+                                                        <td class="style4" colspan="1"><?php echo $berh[$i]['BillingNovaVida']['quantidade_cobrada']; ?></td>
                                                     <?php endif ?>
-                                                    <td class="style4" colspan="1">R$ <?php echo number_format($hipercheck[$i]['BillingNovaVida']['valor_unitario'],2,',','.'); ?></td>
-                                                    <td class="style4" colspan="1">R$ <?php echo number_format($hipercheck[$i]['BillingNovaVida']['quantidade_cobrada']*$hipercheck[$i]['BillingNovaVida']['valor_unitario'],2,',','.'); ?></td>
-                                                    <td class="style4" colspan="1">R$ <?php echo number_format($hipercheck[$i]['BillingNovaVida']['valor_total'],2,',','.'); ?></td>
+                                                    <td class="style4" colspan="1">R$ <?php echo number_format($berh[$i]['BillingNovaVida']['valor_unitario'],2,',','.'); ?></td>
+                                                    <td class="style4" colspan="1">R$ <?php echo number_format($berh[$i]['BillingNovaVida']['quantidade_cobrada']*$berh[$i]['BillingNovaVida']['valor_unitario'],2,',','.'); ?></td>
+                                                    <td class="style4" colspan="1">R$ <?php echo number_format($berh[$i]['BillingNovaVida']['valor_total'],2,',','.'); ?></td>
                                                 </tr>
                                             <?php } ?>
                                         <?php } ?>

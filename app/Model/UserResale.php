@@ -18,7 +18,7 @@ class UserResale extends AppModel
     public $validate = [
         'resale_id' => [
             'required' => [
-                'rule' => ['notEmpty'],
+                'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório'
             ]
         ]
