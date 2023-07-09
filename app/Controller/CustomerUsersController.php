@@ -154,7 +154,7 @@ class CustomerUsersController extends AppController
         $condition = ["and" => ['CustomerUserAddress.customer_user_id' => $user_id], "or" => []];
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUserAddress.logradouro LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.bairro LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.cidade LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.estado LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUserAddress.address_line LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.neighborhood LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.city LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.state LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('CustomerUserAddress', $condition);
@@ -273,7 +273,7 @@ class CustomerUsersController extends AppController
         $condition = ["and" => ['CustomerUserBankAccount.customer_user_id' => $user_id], "or" => []];
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUserBankAccount.logradouro LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.bairro LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.cidade LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.estado LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUserBankAccount.bank_name LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.bank_code LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_digit LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_digit LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('CustomerUserBankAccount', $condition);
@@ -367,7 +367,7 @@ class CustomerUsersController extends AppController
         $condition = ["and" => ['CustomerUserItinerary.customer_user_id' => $user_id], "or" => []];
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUserItinerary.logradouro LIKE' => "%".$_GET['q']."%", 'CustomerUserItinerary.bairro LIKE' => "%".$_GET['q']."%", 'CustomerUserItinerary.cidade LIKE' => "%".$_GET['q']."%", 'CustomerUserItinerary.estado LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Benefit.name LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('CustomerUserItinerary', $condition);

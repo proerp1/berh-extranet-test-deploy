@@ -3,7 +3,7 @@ class BenefitsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Benefit', 'Status'];
+    public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Benefit.name' => 'asc']
@@ -22,11 +22,7 @@ class BenefitsController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Benefit.name LIKE' => "%".$_GET['q']."%", 'Benefit.description LIKE' => "%".$_GET['q']."%"]);
-        }
-
-        if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+            $condition['or'] = array_merge($condition['or'], ['Benefit.name LIKE' => "%".$_GET['q']."%", 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('Benefit', $condition);
@@ -55,12 +51,15 @@ class BenefitsController extends AppController
             }
         }
 
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        // $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia']]);
+        $benefit_types = $this->BenefitType->find('list');
+        $states = $this->CepbrEstado->find('list');
 
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Novo Benefício' => ''];
         $this->set("form_action", "add");
-        $this->set(compact('statuses', 'action', 'breadcrumb'));
+        $this->set(compact('action', 'breadcrumb', 'suppliers', 'benefit_types', 'states'));
     }
 
     public function edit($id = null)
@@ -82,12 +81,14 @@ class BenefitsController extends AppController
         $this->request->data = $this->Benefit->read();
         $this->Benefit->validationErrors = $temp_errors;
         
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia']]);
+        $benefit_types = $this->BenefitType->find('list');
+        $states = $this->CepbrEstado->find('list');
 
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Alterar Benefício' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'suppliers', 'benefit_types', 'states'));
         
         $this->render("add");
     }

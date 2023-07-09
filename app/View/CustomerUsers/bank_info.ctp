@@ -5,7 +5,7 @@
     echo $this->element('abas_customer_users', ['id' => $id, 'url' => $url]);
 ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "customers", "action" => "users", $id)); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array( "controller" => "customer_users", "action" => "bank_info", $id, $user_id)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -19,10 +19,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                    <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                    <!-- <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
-                    </button>
+                    </button> -->
 
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                     
