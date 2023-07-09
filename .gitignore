@@ -4,7 +4,7 @@
 /vendor/
 /composer.phar
 .idea
-database/
+/database
 _sftp-config.json
 *.DS_Store
 *.local
