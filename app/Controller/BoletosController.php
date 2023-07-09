@@ -82,7 +82,7 @@ class BoletosController extends AppController
     {
         $this->Permission->check(52, "escrita") ? "" : $this->redirect("/not_allowed");
         ini_set('max_execution_time', 900);
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $ids = substr($_POST['ids'], 0, -1);
 
             $contas = $this->Income->find('all', ['conditions' => ['Income.id in ('.$ids.')'], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 'recursive' => -1,

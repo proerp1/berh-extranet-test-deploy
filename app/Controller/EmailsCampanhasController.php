@@ -36,7 +36,7 @@ class EmailsCampanhasController extends AppController
         $this->Permission->check(47, "escrita") ? "" : $this->redirect("/not_allowed");
         $send = false;
             
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['EmailsCampanha']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
             $this->EmailsCampanha->validates();
@@ -64,7 +64,7 @@ class EmailsCampanhasController extends AppController
         $this->Permission->check(47, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->EmailsCampanha->id = $id;
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->EmailsCampanha->validates();
             $this->request->data['EmailsCampanha']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
@@ -115,7 +115,7 @@ class EmailsCampanhasController extends AppController
         $buscar = false;
 
         //salvar destinatários
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->EmailsCampanha->id = $id;
 
             $customer_ids = explode(',', substr($this->request->data['user_id'], 0, -1));
@@ -277,7 +277,7 @@ class EmailsCampanhasController extends AppController
         //bloqueia acesso sem o id da campanha
         isset($id) ? "" : $this->redirect("/emails_campanhas");
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             //setar flag processando para enviar os dados pelo cron
             $this->EmailsCampanha->updateAll(['send' => true, 'processing' => true], ['id' => $id]);
 

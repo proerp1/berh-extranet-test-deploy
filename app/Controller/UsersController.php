@@ -45,7 +45,7 @@ class UsersController extends AppController
     public function add()
     {
         $this->Permission->check(1, "escrita")? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->User->create();
             if ($this->User->validates()) {
                 $this->request->data['User']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -80,7 +80,7 @@ class UsersController extends AppController
     {
         $this->Permission->check(1, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->User->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->User->validates();
             
             if ($this->User->save($this->request->data)) {
@@ -159,7 +159,7 @@ class UsersController extends AppController
 
     public function change_password()
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->User->id = CakeSession::read("Auth.User.id");
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash('A senha foi alterada com sucesso.', 'default', ['class' => "alert alert-success"]);
@@ -173,7 +173,7 @@ class UsersController extends AppController
 
     public function primeiro_acesso()
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->User->id = CakeSession::read("Auth.User.id");
 
             $this->request->data['User']['primeiro_acesso'] = 0;
@@ -195,7 +195,7 @@ class UsersController extends AppController
     {
         $this->layout = "login";
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $dados = $this->request->data;
             if ($this->Auth->login()) {
                 $user = $this->User->find("first", ['conditions' => ['User.username' => $dados['User']['username']]]);
@@ -214,6 +214,7 @@ class UsersController extends AppController
 
                 CakeSession::write("Auth.User.primeiro_acesso", $user['User']['primeiro_acesso']);
                 CakeSession::write("Auth.User.resales", $userResales);
+                CakeSession::write("Auth.User.aside", 0);
 
                 if ($user['User']['primeiro_acesso'] == 1) {
                     $this->redirect("/users/primeiro_acesso");
@@ -227,6 +228,15 @@ class UsersController extends AppController
         }
     }
 
+    public function aside(){
+        $this->autoRender = false;
+
+        $aside = $this->request->data['aside'];
+        CakeSession::write("Auth.User.aside", $aside);
+
+        echo json_encode(['status' => true]);
+    }
+
     public function logout()
     {
         $this->redirect($this->Auth->logout());
@@ -236,7 +246,7 @@ class UsersController extends AppController
     {
         $this->layout = "login";
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $user = $this->User->find("first", ['conditions' => ['User.username' => $this->request->data['User']['username']]]);
             if ($user) {
                 $this->reenviar_senha($user['User']['id']);

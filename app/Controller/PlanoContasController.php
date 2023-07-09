@@ -89,7 +89,7 @@ class PlanoContasController extends AppController
     {
         $this->Permission->check(42, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->PlanoConta->create();
             
             if ($this->PlanoConta->validates()) {
@@ -129,7 +129,7 @@ class PlanoContasController extends AppController
     {
         $this->Permission->check(42, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->PlanoConta->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->PlanoConta->validates();
             $this->request->data['PlanoConta']['user_updated_id'] = CakeSession::read("Auth.User.id");
 

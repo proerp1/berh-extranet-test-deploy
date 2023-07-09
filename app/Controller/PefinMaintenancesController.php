@@ -17,7 +17,7 @@ class PefinMaintenancesController extends AppController
 
         $pefin = $this->PefinMaintenance->find('first');
         $this->PefinMaintenance->id = $pefin['PefinMaintenance']['id'];
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $update_data = ['PefinMaintenance.data_cancel' => 'current_timestamp()', 'PefinMaintenance.user_updated_id' => CakeSession::Read('Auth.User.id')];
             $this->PefinMaintenance->updateAll(
                 $update_data//set

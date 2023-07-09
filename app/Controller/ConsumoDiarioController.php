@@ -45,7 +45,7 @@ class ConsumoDiarioController extends AppController
     public function add()
     {
         $this->Permission->check(61, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->ConsumoDiario->create();
 
             $this->request->data['ConsumoDiario']['user_creator_id'] = CakeSession::read("Auth.User.id");

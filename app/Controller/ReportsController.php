@@ -1121,7 +1121,7 @@ class ReportsController extends AppController {
 
 		public function save_transf(){
 
-			if ($this->request->is('post')) {
+			if ($this->request->is(['post', 'put'])) {
 				$ids = explode(',', substr($this->request->data['negativacoes_id'], 0,-1));
 
 				$negativacoes = $this->CadastroPefin->find('all', ['conditions' => ['CadastroPefin.id' => $ids], 'recursive' => -1]);
@@ -1306,7 +1306,7 @@ class ReportsController extends AppController {
         ini_set('memory_limit', '-1');
         set_time_limit(0);
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $data_ini = array_reverse(explode('-', $this->request->data['de']));
             $data_fim = array_reverse(explode('-', $this->request->data['ate']));
 

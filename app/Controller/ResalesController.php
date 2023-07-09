@@ -43,7 +43,7 @@ class ResalesController extends AppController
     public function add()
     {
         $this->Permission->check(10, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Resale->create();
             if ($this->Resale->validates()) {
                 $this->request->data['Resale']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -71,7 +71,7 @@ class ResalesController extends AppController
     {
         $this->Permission->check(10, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Resale->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Resale->validates();
             $this->request->data['Resale']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Resale->save($this->request->data)) {
@@ -147,7 +147,7 @@ class ResalesController extends AppController
     public function add_seller($resale_id)
     {
         $this->Permission->check(10, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Seller->create();
             if ($this->Seller->validates()) {
                 $this->request->data['Seller']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -181,7 +181,7 @@ class ResalesController extends AppController
     {
         $this->Permission->check(10, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Seller->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Seller->validates();
             $this->request->data['Seller']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Seller->save($this->request->data)) {
@@ -332,7 +332,7 @@ class ResalesController extends AppController
             $resale_id = $cliente['Seller']['resale_id'];
         }
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CustomerUser->create();
             $this->CustomerUser->validates();
 
@@ -382,7 +382,7 @@ class ResalesController extends AppController
         }
 
         $this->CustomerUser->id = $user_id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CustomerUser->validates();
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerUser->save($this->request->data)) {

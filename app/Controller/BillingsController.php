@@ -63,7 +63,7 @@ class BillingsController extends AppController
     public function add()
     {
         $this->Permission->check(7, 'escrita') ? '' : $this->redirect('/not_allowed');
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Billing->create();
             if ($this->Billing->validates()) {
                 $this->request->data['Billing']['user_creator_id'] = CakeSession::read('Auth.User.id');
@@ -260,7 +260,7 @@ class BillingsController extends AppController
     {
         $this->Permission->check(7, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Billing->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Billing->validates();
             $this->request->data['Billing']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Billing->save($this->request->data)) {
@@ -533,7 +533,7 @@ class BillingsController extends AppController
 
     public function update_negativacao($id)
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $valor_unitario = str_replace('.', '', $this->request->data['valor_unitario']);
             $valor_unitario = str_replace(',', '.', $valor_unitario);
 
@@ -551,7 +551,7 @@ class BillingsController extends AppController
 
     public function update_pefin($id)
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $valor_unitario = str_replace('.', '', $this->request->data['valor_unitario']);
             $valor_unitario = str_replace(',', '.', $valor_unitario);
 
@@ -569,7 +569,7 @@ class BillingsController extends AppController
 
     public function update_hiper($id)
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $valor_unitario = str_replace('.', '', $this->request->data['valor_unitario']);
             $valor_unitario = str_replace(',', '.', $valor_unitario);
 

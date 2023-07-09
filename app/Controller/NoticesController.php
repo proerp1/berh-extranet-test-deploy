@@ -40,7 +40,7 @@ class NoticesController extends AppController
     public function add()
     {
         $this->Permission->check(55, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['Notice']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
             $this->Notice->create();
@@ -69,7 +69,7 @@ class NoticesController extends AppController
     {
         $this->Permission->check(55, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Notice->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Notice->validates();
             $this->request->data['Notice']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Notice->save($this->request->data)) {

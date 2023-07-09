@@ -40,7 +40,7 @@ class ExpensesController extends AppController
     public function add()
     {
         $this->Permission->check(14, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Expense->create();
             if ($this->Expense->validates()) {
                 $this->request->data['Expense']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class ExpensesController extends AppController
     {
         $this->Permission->check(14, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Expense->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Expense->validates();
             $this->request->data['Expense']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Expense->save($this->request->data)) {

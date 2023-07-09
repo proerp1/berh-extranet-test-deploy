@@ -40,7 +40,7 @@ class ProspectsController extends AppController
     public function add()
     {
         $this->Permission->check(13, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Prospect->create();
             if ($this->Prospect->validates()) {
                 $this->request->data['Prospect']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -68,7 +68,7 @@ class ProspectsController extends AppController
     {
         $this->Permission->check(13, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Prospect->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Prospect->validates();
             $this->request->data['Prospect']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Prospect->save($this->request->data)) {

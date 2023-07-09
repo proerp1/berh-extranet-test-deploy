@@ -40,7 +40,7 @@ class RevenuesController extends AppController
     public function add()
     {
         $this->Permission->check(13, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Revenue->create();
             if ($this->Revenue->validates()) {
                 $this->request->data['Revenue']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class RevenuesController extends AppController
     {
         $this->Permission->check(13, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Revenue->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Revenue->validates();
             $this->request->data['Revenue']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Revenue->save($this->request->data)) {

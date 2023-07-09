@@ -64,7 +64,7 @@ class NegativacaoController extends AppController {
 	}
 
 	public function edit($id){
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 
 			$this->CadastroPefin->id = $id;
 			$old = $this->CadastroPefin->read();
@@ -110,7 +110,7 @@ class NegativacaoController extends AppController {
 
 	public function baixa($id = null) {
 		$this->CadastroPefin->id = $id;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->CadastroPefin->validates();
 			$this->request->data['CadastroPefin']['user_updated_id'] = CakeSession::read("Auth.User.id");
 			$this->request->data['CadastroPefin']['data_solic_baixa'] = date('Y-m-d H:i:s');

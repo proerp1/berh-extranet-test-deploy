@@ -40,7 +40,7 @@ class SuppliersController extends AppController
     public function add()
     {
         $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Supplier->create();
             if ($this->Supplier->validates()) {
                 $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class SuppliersController extends AppController
     {
         $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Supplier->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Supplier->validates();
             $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Supplier->save($this->request->data)) {

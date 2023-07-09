@@ -40,7 +40,7 @@ class ActivityAreasController extends AppController
     public function add()
     {
         $this->Permission->check(17, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->ActivityArea->create();
             if ($this->ActivityArea->validates()) {
                 $this->request->data['ActivityArea']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class ActivityAreasController extends AppController
     {
         $this->Permission->check(17, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->ActivityArea->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->ActivityArea->validates();
             $this->request->data['ActivityArea']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->ActivityArea->save($this->request->data)) {

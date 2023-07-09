@@ -34,7 +34,7 @@ class BillingSalesController extends AppController {
 	public function add(){
 		$this->Permission->check(35, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->request->data['BillingSale']['user_creator_id'] = CakeSession::read("Auth.User.id");
 			$this->request->data["BillingSale"]["status_id"] = 2;
 
@@ -66,7 +66,7 @@ class BillingSalesController extends AppController {
 		$this->Permission->check(35, "escrita") ? "" : $this->redirect("/not_allowed");
 
 		$this->BillingSale->id = $id;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->request->data['BillingSale']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
 			$this->BillingSale->validates();

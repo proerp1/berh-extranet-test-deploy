@@ -147,7 +147,7 @@ class IncomesController extends AppController
     public function add()
     {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Income->create();
             if ($this->Income->validates()) {
                 $this->request->data['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -213,7 +213,7 @@ class IncomesController extends AppController
 
         $this->TmpRetornoCnab->id = $tmp_id;
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Income->create();
             $this->Income->validates();
 
@@ -257,7 +257,7 @@ class IncomesController extends AppController
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Income->id = $id;
         $this->Income->recursive = 2;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Income->validates();
             $this->request->data['Income']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $log_old_value = $this->request->data["log_old_value"];

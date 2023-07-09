@@ -70,7 +70,7 @@ class CnabController extends AppController
     {
         $this->Permission->check(52, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $ids = substr($_POST['ids'], 0, -1);
 
             $contas = $this->Income->getDadosBoleto($ids, 'all');

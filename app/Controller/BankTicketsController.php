@@ -42,7 +42,7 @@ class BankTicketsController extends AppController
     {
         $this->Permission->check(45, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->BankTicket->create();
 
             if ($this->BankTicket->validates()) {
@@ -81,7 +81,7 @@ class BankTicketsController extends AppController
     {
         $this->Permission->check(45, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->BankTicket->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['BanksTickets']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['BankTicket']['valor_taxa_bancaria'] = $this->request->data['BankTicket']['taxa_bancaria'];
             $this->request->data['BankTicket']['multa_boleto'] = $this->request->data['BankTicket']['multa'];

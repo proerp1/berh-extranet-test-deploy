@@ -42,7 +42,7 @@ class ProductsController extends AppController {
 
 	public function add() {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->Product->create();
 			
 			if($this->Product->validates()){
@@ -69,7 +69,7 @@ class ProductsController extends AppController {
 	public function edit($id = null) {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
 		$this->Product->id = $id;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this->Product->save($this->request->data)) {
 				$this->Session->setFlash(__('O produto foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
 			} else {
@@ -118,7 +118,7 @@ class ProductsController extends AppController {
 	}
 
 	public function add_price() {
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->ProductPrice->create();
 			$this->request->data['ProductPrice']['user_creator_id'] = CakeSession::read("Auth.User.id");
 			if ($this->ProductPrice->save($this->request->data)) {
@@ -151,7 +151,7 @@ class ProductsController extends AppController {
 		$this->Permission->check(5, "leitura")? "" : $this->redirect("/not_allowed");
 		$this->Paginator->settings = $this->paginate;
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->ProductFeature->create();
 			$this->ProductFeature->validates();
 			
@@ -247,7 +247,7 @@ class ProductsController extends AppController {
 	public function edit_feature_string($id, $featureID){
 		$this->Permission->check(5, "escrita")? "" : $this->redirect("/not_allowed");
 		$this->Feature->id = $featureID;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this->Feature->save($this->request->data)) {
 				$this->Session->setFlash(__('A feature foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect($this->referer());
@@ -301,7 +301,7 @@ class ProductsController extends AppController {
 	public function add_feature($id) {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->Feature->create();
 			
 			if($this->Feature->validates()){        
@@ -330,7 +330,7 @@ class ProductsController extends AppController {
 
 		$this->Feature->id = $feature_id;
 		
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this->Feature->save($this->request->data)) {
 				$this->Session->setFlash(__('A feature foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect("/products/features/".$id);
@@ -393,7 +393,7 @@ class ProductsController extends AppController {
 	public function add_answer($id) {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->Answer->create();
 			
 			if($this->Answer->validates()){        
@@ -419,7 +419,7 @@ class ProductsController extends AppController {
 
 		$this->Answer->id = $answer_id;
 		
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this->Answer->save($this->request->data)) {
 				$this->Session->setFlash(__('A resposta foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect("/products/answer/".$id);
@@ -485,7 +485,7 @@ class ProductsController extends AppController {
 	public function add_answer_item($id) {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->AnswerItem->create();
 			
 			if($this->AnswerItem->validates()){        
@@ -511,7 +511,7 @@ class ProductsController extends AppController {
 
 		$this->AnswerItem->id = $answer_item_id;
 		
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if(trim($this->request->data['AnswerItem']['itemNome2']) != null ){
 				$str = $this->request->data['AnswerItem']['name'].'§'.$this->request->data['AnswerItem']['itemNome2'];
 			} else {
@@ -581,7 +581,7 @@ class ProductsController extends AppController {
 	public function add_option($id, $answer_id, $answer_item_id) {
 		$this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->ItemOption->create();
 			
 			if($this->ItemOption->validates()){        
@@ -609,7 +609,7 @@ class ProductsController extends AppController {
 
 		$this->ItemOption->id = $option_id;
 		
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this->ItemOption->save($this->request->data)) {
 				$this->Session->setFlash(__('A opção foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect("/products/option/".$id."/".$answer_id."/".$answer_item_id);

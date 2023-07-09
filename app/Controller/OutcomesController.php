@@ -59,7 +59,7 @@ class OutcomesController extends AppController {
 	
 	public function add() {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->Outcome->create();
 			if($this->Outcome->validates()){
 				$this->request->data['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -119,7 +119,7 @@ class OutcomesController extends AppController {
 	public function edit($id = null) {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 		$this->Outcome->id = $id;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->Outcome->validates();
 			$this->request->data['Outcome']['user_updated_id'] = CakeSession::read("Auth.User.id");
 			$log_old_value = $this->request->data["log_old_value"];

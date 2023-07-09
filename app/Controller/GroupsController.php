@@ -45,7 +45,7 @@ class GroupsController extends AppController
     public function add()
     {
         $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Group->create();
             if ($this->Group->validates()) {
                 $this->request->data['Group']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -72,7 +72,7 @@ class GroupsController extends AppController
     {
         $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Group->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Group->validates();
             
             if ($this->Group->save($this->request->data)) {

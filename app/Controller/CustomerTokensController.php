@@ -42,7 +42,7 @@ class CustomerTokensController extends AppController {
 	public function add($id) {
 		$this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->request->data['CustomerToken']['user_creator_id'] = CakeSession::read("Auth.User.id");
 			$this->request->data['CustomerToken']['token'] = AuthComponent::password(uniqid());
 
@@ -72,7 +72,7 @@ class CustomerTokensController extends AppController {
 	public function edit($id, $token_id = null) {
 		$this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
 		$this->CustomerToken->id = $token_id;
-		if ($this->request->is('post')) {
+		if ($this->request->is(['post', 'put'])) {
 			$this->request->data['CustomerToken']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
 			$log_old_value = $this->request->data["log_old_value"];

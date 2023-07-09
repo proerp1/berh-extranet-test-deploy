@@ -40,7 +40,7 @@ class BankAccountsController extends AppController
     public function add()
     {
         $this->Permission->check(12, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->BankAccount->create();
             if ($this->BankAccount->validates()) {
                 $this->request->data['BankAccount']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -68,7 +68,7 @@ class BankAccountsController extends AppController
     {
         $this->Permission->check(12, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->BankAccount->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->BankAccount->validates();
             $this->request->data['BankAccount']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->BankAccount->save($this->request->data)) {

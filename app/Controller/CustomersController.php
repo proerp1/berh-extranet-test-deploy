@@ -160,7 +160,7 @@ class CustomersController extends AppController
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
             
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Customer->create();
 
             if (empty($this->request->data["Customer"]["desconto"])) {
@@ -194,13 +194,13 @@ class CustomersController extends AppController
                     $this->CustomerUser->save($customer_user, ['validate' => false]);
 
 
-                    $this->Session->setFlash(__('O cliente foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Flash->set(__('O cliente foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
                     $this->redirect("/customers/edit/".$id);
                 } else {
-                    $this->Session->setFlash(__('O cliente não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Flash->set(__('O cliente não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
                 }
             } else {
-                $this->Session->setFlash(__('O cliente não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O cliente não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
             
@@ -219,7 +219,7 @@ class CustomersController extends AppController
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Customer->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
 
@@ -245,7 +245,7 @@ class CustomersController extends AppController
 
             if ($this->Customer->save($this->request->data)) {
                 $this->Log->save($dados_log);
-                $this->Session->setFlash(__('O cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
 
                 $this->redirect($this->referer());
             } else {
@@ -253,7 +253,7 @@ class CustomersController extends AppController
                 foreach ($this->Customer->validationErrors as $key => $value) {
                     $mensagem .= ucfirst($key).': '.implode(', ', $value).'.<br>';
                 }
-                $this->Session->setFlash(__($mensagem), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__($mensagem), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -292,7 +292,7 @@ class CustomersController extends AppController
         $data = ['Customer' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->Customer->save($data)) {
-            $this->Session->setFlash(__('O cliente foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O cliente foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -337,14 +337,14 @@ class CustomersController extends AppController
 
             $this->CustomerUser->save($customer_user, ['validate' => false]);
                 
-            $this->Session->setFlash(__('O cliente foi duplicado com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O cliente foi duplicado com sucesso'), 'default', ['class' => "alert alert-success"]);
         } else {
             $mensagem = '';
             foreach ($this->Customer->validationErrors as $key => $value) {
                 $mensagem .= ucfirst($key).': '.implode(', ', $value).'.<br>';
             }
 
-            $this->Session->setFlash(__($mensagem), 'default', ['class' => "alert alert-danger"]);
+            $this->Flash->set(__($mensagem), 'default', ['class' => "alert alert-danger"]);
         }
 
         $this->redirect(['action' => 'index']);
@@ -416,15 +416,15 @@ class CustomersController extends AppController
     public function add_plan($id)
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['PlanCustomer']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
             $this->PlanCustomer->create();
             if ($this->PlanCustomer->save($this->request->data)) {
-                $this->Session->setFlash(__('O plano foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O plano foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'plans/'.$id]);
             } else {
-                $this->Session->setFlash(__('O plano não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O plano não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -454,7 +454,7 @@ class CustomersController extends AppController
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->PlanCustomer->id = $plan_id;
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['PlanCustomer']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             $log_old_value = $this->request->data["log_old_value"];
@@ -479,10 +479,10 @@ class CustomersController extends AppController
 
             if ($this->PlanCustomer->save($this->request->data)) {
                 $this->Log->save($dados_log);
-                $this->Session->setFlash(__('O plano foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O plano foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'plans/'.$id]);
             } else {
-                $this->Session->setFlash(__('O plano não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O plano não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -527,7 +527,7 @@ class CustomersController extends AppController
         $data = ['PlanCustomer' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->PlanCustomer->save($data)) {
-            $this->Session->setFlash(__('O plano foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O plano foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect($this->referer());
         }
     }
@@ -539,7 +539,7 @@ class CustomersController extends AppController
         $data = ['PlanCustomer' => ['status_id' => $status, 'user_updated_id' => CakeSession::read("Auth.User.id")]];
 
         if ($this->PlanCustomer->save($data)) {
-            $this->Session->setFlash(__('Status alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('Status alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect($this->referer());
         }
     }
@@ -618,7 +618,7 @@ class CustomersController extends AppController
         $customer = $this->Customer->read();
             
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->LoginConsulta->create();
                 
             if ($this->LoginConsulta->validates()) {
@@ -631,14 +631,14 @@ class CustomersController extends AppController
                 }
 
                 if ($this->LoginConsulta->save($this->request->data)) {
-                    $this->Session->setFlash(__('O login foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Flash->set(__('O login foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
                     $this->redirect(['action' => 'login_consulta/'.$id]);
                 } else {
                     var_dump($this->LoginConsulta);die;
-                    $this->Session->setFlash(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
                 }
             } else {
-                $this->Session->setFlash(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -670,15 +670,15 @@ class CustomersController extends AppController
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->LoginConsulta->id = $login_id;
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data["LoginConsulta"]["login_blindado"] = 2;
             $this->request->data['LoginConsulta']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->LoginConsulta->save($this->request->data)) {
-                $this->Session->setFlash(__('O login foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O login foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'login_consulta/'.$id]);
             } else {
-                $this->Session->setFlash(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -728,7 +728,7 @@ class CustomersController extends AppController
 
         if ($this->LoginConsulta->save($this->request->data)) {
             $this->envia_email_consulta($this->request->data);
-            $this->Session->setFlash(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect(['action' => 'edit_login_consulta/'.$customer_id.'/'.$id]);
         }
     }
@@ -749,7 +749,7 @@ class CustomersController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
         }
     }
 
@@ -761,129 +761,8 @@ class CustomersController extends AppController
         $data = ['LoginConsulta' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->LoginConsulta->save($data)) {
-            $this->Session->setFlash(__('O login foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O login foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect($this->referer());
-        }
-    }
-
-    /*******************
-                USUARIOS
-    ********************/
-    public function users($id)
-    {
-        $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->Paginator->settings = $this->paginate;
-
-        $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
-
-        if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%".$_GET['q']."%", 'CustomerUser.email LIKE' => "%".$_GET['q']."%"]);
-        }
-
-        if (!empty($_GET["t"])) {
-            $condition['and'] = array_merge($condition['and'], ['CustomerUser.status_id' => $_GET['t']]);
-        }
-
-        $data = $this->Paginator->paginate('CustomerUser', $condition);
-        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1], 'order' => 'Status.name']);
-
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
-        $action = 'Usuários';
-        $breadcrumb = [
-            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Usuários' => ''
-        ];
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb'));
-    }
-
-    public function add_user($id)
-    {
-        $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
-            $this->CustomerUser->create();
-            $this->CustomerUser->validates();
-
-            $senha = substr(sha1(time()), 0, 6);
-
-            $this->request->data['CustomerUser']['user_creator_id'] = CakeSession::read("Auth.User.id");
-            $this->request->data['CustomerUser']['password'] = $senha;
-            $this->request->data['CustomerUser']['username'] = $this->request->data['CustomerUser']['email'];
-            if ($this->CustomerUser->save($this->request->data)) {
-                $this->envia_email($this->request->data);
-
-                $this->Session->setFlash(__('O usuário foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
-                $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
-            } else {
-                $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
-            }
-        }
-
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
-        $action = 'Usuários';
-
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Novo Usuário' => ''
-        ];
-        $this->set("form_action", "../customers/add_user/".$id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
-    }
-
-    public function edit_user($id, $user_id = null)
-    {
-        $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
-        $this->CustomerUser->id = $user_id;
-        if ($this->request->is('post')) {
-            $this->CustomerUser->validates();
-            $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
-            if ($this->CustomerUser->save($this->request->data)) {
-                $this->Session->setFlash(__('O usuário foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
-                $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
-            } else {
-                $this->Session->setFlash(__('O usuário não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
-            }
-        }
-
-        $temp_errors = $this->CustomerUser->validationErrors;
-        $this->request->data = $this->CustomerUser->read();
-        $this->CustomerUser->validationErrors = $temp_errors;
-            
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
-        $action = 'Usuários';
-
-        // usado para fazer login no site com o bypass, NAO ALTERAR!!!
-        $hash = base64_encode($this->request->data['CustomerUser']['username']);
-        $breadcrumb = [
-            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Alterar Usuário' => ''
-        ];
-        $this->set('hash', rawurlencode($hash));
-        $this->set("form_action", "../customers/edit_user/".$id);
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb'));
-            
-        $this->render("add_user");
-    }
-
-    public function delete_user($customer_id, $id){
-        $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
-        $this->CustomerUser->id = $id;
-        $this->request->data = $this->CustomerUser->read();
-
-        $this->request->data['CustomerUser']['data_cancel'] = date("Y-m-d H:i:s");
-        $this->request->data['CustomerUser']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
-
-        if ($this->CustomerUser->save($this->request->data)) {
-            $this->Session->setFlash(__('O usuário foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
-            $this->redirect(['action' => 'users/'.$customer_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
     }
 
@@ -940,7 +819,7 @@ class CustomersController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -957,7 +836,7 @@ class CustomersController extends AppController
         if ($this->CustomerUser->save($this->request->data)) {
             $this->envia_email($this->request->data);
 
-            $this->Session->setFlash(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect("/customers/users/".$id);
         }
     }
@@ -1109,18 +988,18 @@ class CustomersController extends AppController
     public function add_document($id)
     {
         $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Document->create();
             if ($this->Document->validates()) {
                 $this->request->data['Document']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Document->save($this->request->data)) {
-                    $this->Session->setFlash(__('O documento foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Flash->set(__('O documento foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
                     $this->redirect(['action' => 'documents/'.$id]);
                 } else {
-                    $this->Session->setFlash(__('O documento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
                 }
             } else {
-                $this->Session->setFlash(__('O documento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1142,17 +1021,17 @@ class CustomersController extends AppController
     {
         $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Document->id = $document_id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Document->validates();
             if ($this->request->data["Document"]["file"]["name"] == "") {
                 unset($this->request->data["Document"]["file"]);
             }
             $this->request->data['Document']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Document->save($this->request->data)) {
-                $this->Session->setFlash(__('O documento foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O documento foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'documents/'.$id]);
             } else {
-                $this->Session->setFlash(__('O documento não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1184,7 +1063,7 @@ class CustomersController extends AppController
         if ($this->Document->save($this->request->data)) {
             unlink(APP.'webroot/files/document/file/'.$this->request->data["Document"]["id"].'/'.$this->request->data["Document"]["file"]);
 
-            $this->Session->setFlash(__('O documento foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O documento foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect(['action' => 'documents/'.$customer_id]);
         }
     }
@@ -1250,7 +1129,7 @@ class CustomersController extends AppController
     public function add_negativacao($id)
     {
         /*(CakeSession::read('Auth.User.id') == 1 || CakeSession::read('Auth.User.id') == 6) ? "" : $this->redirect("/not_allowed");*/
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CadastroPefin->create();
             $this->CadastroPefin->validates();
             $this->request->data['CadastroPefin']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -1294,14 +1173,14 @@ class CustomersController extends AppController
                     $this->CadastroPefin->saveMany($dados_coobrigado);
                 }
 
-                $this->Session->setFlash(__('A negativação foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('A negativação foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'index']);
             } else {
                 $mensagem = '';
                 foreach ($this->CadastroPefin->validationErrors as $key => $value) {
                     $mensagem .= ucfirst($key).': '.implode(', ', $value).'.<br>';
                 }
-                $this->Session->setFlash(__($mensagem), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__($mensagem), 'default', ['class' => "alert alert-danger"]);
             }
         }
         $naturezaOperacaos = $this->NaturezaOperacao->find('list', ['order' => ['NaturezaOperacao.nome']]);
@@ -1323,7 +1202,7 @@ class CustomersController extends AppController
         );
 
         $this->redirect($this->referer());
-        $this->Session->setFlash(__('Negativações baixadas com sucesso'), 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set(__('Negativações baixadas com sucesso'), 'default', ['class' => "alert alert-success"]);
     }
 
     /***********************
@@ -1335,7 +1214,7 @@ class CustomersController extends AppController
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
         $this->Customer->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $cliente_antigo = $this->Customer->read();
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
@@ -1347,9 +1226,9 @@ class CustomersController extends AppController
                     $this->MovimentacaoCredor->save($data_movimentacao);
                 }
 
-                $this->Session->setFlash(__('O status do cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O status do cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
             } else {
-                $this->Session->setFlash(__('O status do cliente não pode ser alterado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O status do cliente não pode ser alterado com sucesso'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1433,17 +1312,17 @@ class CustomersController extends AppController
     public function add_negativacao_cliente($id)
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CustomerPefin->create();
             $this->CustomerPefin->validates();
             $this->request->data['CustomerPefin']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerPefin']['customer_id'] = $id;
 
             if ($this->CustomerPefin->save($this->request->data)) {
-                $this->Session->setFlash(__('A negativação foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('A negativação foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect(['action' => 'negativacoes_cliente/'.$id]);
             } else {
-                $this->Session->setFlash(__('A negativação não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('A negativação não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1464,13 +1343,13 @@ class CustomersController extends AppController
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerPefin->id = $negativacao_id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CustomerPefin->validates();
             $this->request->data['CustomerPefin']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerPefin->save($this->request->data)) {
-                $this->Session->setFlash(__('A negativação foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('A negativação foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
             } else {
-                $this->Session->setFlash(__('A negativação não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('A negativação não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1534,7 +1413,7 @@ class CustomersController extends AppController
     {
         $this->Permission->check(49, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data["CustomerDiscount"]['customer_id'] = $id;
             // $disc = str_replace(".", "", $this->request->data["CustomerDiscount"]['discount']);
             // $this->request->data["CustomerDiscount"]['discount'] = str_replace(",", ".", $disc);
@@ -1542,10 +1421,10 @@ class CustomersController extends AppController
 
             $this->CustomerDiscount->create();
             if ($this->CustomerDiscount->save($this->request->data)) {
-                $this->Session->setFlash(__('O desconto foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Flash->set(__('O desconto foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
                 $this->redirect("/customers/edit_desconto/".$id."/".$this->CustomerDiscount->id);
             } else {
-                $this->Session->setFlash(__('O desconto não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O desconto não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1575,7 +1454,7 @@ class CustomersController extends AppController
         $this->CustomerDiscount->id = $desconto_id;
         $mensagem = '';
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['CustomerDiscount']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerDiscount']['updated'] = date('Y-m-d H:i:s');
             $disc = str_replace(".", "", $this->request->data["CustomerDiscount"]['discount']);
@@ -1594,16 +1473,16 @@ class CustomersController extends AppController
 
             if ($this->CustomerDiscount->validates()) {
                 if ($this->CustomerDiscount->save($this->request->data)) {
-                    $this->Session->setFlash(__('O cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Flash->set(__('O cliente foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
                     $this->redirect("/customers/edit_desconto/".$id."/".$desconto_id);
                 } else {
                     foreach ($this->CustomerDiscount->validationErrors as $key => $value) {
                         $mensagem .= ucfirst($key).': '.implode(', ', $value).'.<br>';
                     }
-                    $this->Session->setFlash(__($mensagem), 'default', ['class' => "alert alert-danger"]);
+                    $this->Flash->set(__($mensagem), 'default', ['class' => "alert alert-danger"]);
                 }
             } else {
-                $this->Session->setFlash(__('O desconto não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O desconto não pode ser salvo, por favor tente novamente.'), 'default', ['class' => "alert alert-danger"]);
             }
         }
 
@@ -1650,7 +1529,7 @@ class CustomersController extends AppController
         $data = ['CustomerDiscount' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->CustomerDiscount->save($data)) {
-            $this->Session->setFlash(__('O desconto foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O desconto foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect(['action' => 'descontos/'.$id]);
         }
     }
@@ -1666,7 +1545,7 @@ class CustomersController extends AppController
         $data = ['CustomerDiscountsProduct' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->CustomerDiscountsProduct->save($data)) {
-            $this->Session->setFlash(__('O desconto foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Flash->set(__('O desconto foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
             $this->redirect(['action' => 'edit_desconto/'.$id.'/'.$desconto_id]);
         }
     }
@@ -1709,7 +1588,7 @@ class CustomersController extends AppController
 
         $this->LoginConsulta->save($this->request->data);
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set($msg, 'default', ['class' => "alert alert-success"]);
         $this->redirect(['action' => 'login_consulta/'.$id]);
     }
 
@@ -1731,7 +1610,7 @@ class CustomersController extends AppController
             $this->LoginConsulta->save($this->request->data);
         }
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set($msg, 'default', ['class' => "alert alert-success"]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1754,7 +1633,7 @@ class CustomersController extends AppController
             $this->LoginConsulta->save($this->request->data);
         }
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set($msg, 'default', ['class' => "alert alert-success"]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1772,7 +1651,7 @@ class CustomersController extends AppController
 
         $msg = $this->Robo->reset_password($params);
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set($msg, 'default', ['class' => "alert alert-success"]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1792,7 +1671,7 @@ class CustomersController extends AppController
             $msg_type = 'alert-warning';
         }
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert ".$msg_type]);
+        $this->Flash->set($msg, 'default', ['class' => "alert ".$msg_type]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1812,7 +1691,7 @@ class CustomersController extends AppController
             $msg_type = 'alert-warning';
         }
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert ".$msg_type]);
+        $this->Flash->set($msg, 'default', ['class' => "alert ".$msg_type]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1838,7 +1717,7 @@ class CustomersController extends AppController
 
         $msg = $this->Robo->reset_shield($params);
 
-        $this->Session->setFlash($msg, 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set($msg, 'default', ['class' => "alert alert-success"]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
     }
 
@@ -1865,7 +1744,7 @@ class CustomersController extends AppController
     {
         $this->add_prorede($id);
 
-        $this->Session->setFlash(__('Prorede reenviado com sucesso!'), 'default', ['class' => "alert alert-success"]);
+        $this->Flash->set(__('Prorede reenviado com sucesso!'), 'default', ['class' => "alert alert-success"]);
         $this->redirect($this->referer());
     }
 

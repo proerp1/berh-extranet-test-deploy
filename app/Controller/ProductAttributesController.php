@@ -39,7 +39,7 @@ class ProductAttributesController extends AppController
     public function add($productId)
     {
         $this->Permission->check(5, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['ProductAttribute']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['ProductAttribute']['product_id'] = $productId;
             

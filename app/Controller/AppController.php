@@ -38,7 +38,8 @@ class AppController extends Controller {
 			'loginRedirect' => array('controller' => 'dashboard', 'action' => 'index'),
 			'logoutRedirect' => array('controller' => 'users', 'action' => 'login'),
 			'authenticate' => array('Form' => array( 'scope' => array('User.status_id' => 1)))
-		)
+		),
+		'Flash'
 	);
 
 	public $uses = ['Atendimento'];

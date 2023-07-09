@@ -40,7 +40,7 @@ class DepartmentsController extends AppController
     public function add()
     {
         $this->Permission->check(20, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Department->create();
             if ($this->Department->validates()) {
                 $this->request->data['Department']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class DepartmentsController extends AppController
     {
         $this->Permission->check(20, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Department->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Department->validates();
             $this->request->data['Department']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Department->save($this->request->data)) {

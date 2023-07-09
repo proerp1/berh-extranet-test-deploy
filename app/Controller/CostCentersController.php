@@ -40,7 +40,7 @@ class CostCentersController extends AppController
     public function add()
     {
         $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CostCenter->create();
             if ($this->CostCenter->validates()) {
                 $this->request->data['CostCenter']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -67,7 +67,7 @@ class CostCentersController extends AppController
     {
         $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CostCenter->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->CostCenter->validates();
             $this->request->data['CostCenter']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CostCenter->save($this->request->data)) {

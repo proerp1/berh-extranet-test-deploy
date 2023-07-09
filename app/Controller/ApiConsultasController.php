@@ -15,7 +15,7 @@ class ApiConsultasController extends AppController
         $this->layout = 'api';
         $this->response->type('json');
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $check = $this->ApiCheckToken->check($this->request->data);
             if (!empty($check['error'])) {
                 return json_encode(['success' => false, 'message' => $check['error']]);
@@ -36,7 +36,7 @@ class ApiConsultasController extends AppController
         $this->layout = 'api';
         $this->response->type('json');
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $requiredFields = [
                 'api_token', 
                 'tipo_pessoa', // '1',
@@ -91,7 +91,7 @@ class ApiConsultasController extends AppController
         $this->layout = 'api';
         $this->response->type('json');
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $requiredFields = [
                 'api_token', 
                 'tipo_pessoa', // '1',
@@ -146,7 +146,7 @@ class ApiConsultasController extends AppController
         $this->layout = 'api';
         $this->response->type('json');
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $requiredFields = [
                 'api_token', 
                 'tipo_pessoa', // '1',

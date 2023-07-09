@@ -42,7 +42,7 @@ class AtendimentosController extends AppController
     {
         $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Atendimento->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
@@ -78,7 +78,7 @@ class AtendimentosController extends AppController
     {
         $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
         
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['Atendimento']['mostrar_cliente'] = 0;

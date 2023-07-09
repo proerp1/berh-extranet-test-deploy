@@ -64,7 +64,7 @@ class PlansController extends AppController
     public function add()
     {
         $this->Permission->check(6, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Plan->create();
             if ($this->Plan->validates()) {
                 $this->request->data['Plan']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -91,7 +91,7 @@ class PlansController extends AppController
     {
         $this->Permission->check(6, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Plan->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Plan->validates();
             
             if ($this->Plan->save($this->request->data)) {
@@ -214,7 +214,7 @@ class PlansController extends AppController
         public function add_composition()
         {
             $this->Permission->check(6, "escrita") ? "" : $this->redirect("/not_allowed");
-            if ($this->request->is('post')) {
+            if ($this->request->is(['post', 'put'])) {
                 $this->PlanProduct->create();
                 if ($this->PlanProduct->validates()) {
                     $this->request->data['PlanProduct']['user_creator_id'] = CakeSession::read("Auth.User.id");

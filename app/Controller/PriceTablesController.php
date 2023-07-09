@@ -45,7 +45,7 @@ class PriceTablesController extends AppController
     public function add()
     {
         $this->Permission->check(6, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->PriceTable->create();
             if ($this->PriceTable->validates()) {
                 $this->request->data['PriceTable']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -72,7 +72,7 @@ class PriceTablesController extends AppController
     {
         $this->Permission->check(6, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->PriceTable->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->PriceTable->validates();
             
             if ($this->PriceTable->save($this->request->data)) {
@@ -131,7 +131,7 @@ class PriceTablesController extends AppController
 
     public function atualiza_precos($id)
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             if (!empty($this->request->data['product_price_id'])) {
                 foreach ($this->request->data['product_price_id'] as $key => $priceId) {
                     $this->ProductPrice->save([

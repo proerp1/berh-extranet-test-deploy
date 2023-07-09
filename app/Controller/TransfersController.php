@@ -40,7 +40,7 @@ class TransfersController extends AppController
     public function add()
     {
         $this->Permission->check(22, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Transfer->create();
             if ($this->Transfer->validates()) {
                 $this->request->data['Transfer']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -122,7 +122,7 @@ class TransfersController extends AppController
     {
         $this->Permission->check(22, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Transfer->id = $id;
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->Transfer->validates();
             $this->request->data['Transfer']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Transfer->save($this->request->data)) {

@@ -70,7 +70,7 @@ class CobrancasController extends AppController
         $this->Permission->check(18, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = ['limit' => 10, 'order' => ['DistribuicaoCobranca.created' => 'desc']];
 
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $de = !empty($_POST['de']) ? date("Y-m-d", strtotime(str_replace("/", "-", $_POST['de']))) : null;
             $ate = !empty($_POST['de']) ? date("Y-m-d", strtotime(str_replace("/", "-", $_POST['ate']))) : null;
             $sContas = empty($_POST['sContas']) ? null : $_POST['sContas'];
@@ -393,7 +393,7 @@ class CobrancasController extends AppController
 
     public function save_historico($id)
     {
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->ChargesHistory->create();
             $this->ChargesHistory->validates();
             $cobranca = $this->DistribuicaoCobranca->find('first', ['conditions' => ['DistribuicaoCobranca.status_id' => 1]]);

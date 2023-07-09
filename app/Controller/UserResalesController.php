@@ -49,7 +49,7 @@ class UserResalesController extends AppController
     public function add($id)
     {
         $this->Permission->check(60, "escrita") ? "" : $this->redirect("/not_allowed");
-        if ($this->request->is('post')) {
+        if ($this->request->is(['post', 'put'])) {
             $this->request->data['UserResale']['user_id'] = $id;
             $this->request->data['UserResale']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
