@@ -45,10 +45,10 @@ class NoticesController extends AppController
 
             $this->Notice->create();
             if ($this->Notice->save($this->request->data)) {
-                $this->Session->setFlash(__('O aviso foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O aviso foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O aviso não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O aviso não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -73,10 +73,10 @@ class NoticesController extends AppController
             $this->Notice->validates();
             $this->request->data['Notice']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Notice->save($this->request->data)) {
-                $this->Session->setFlash(__('O aviso foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O aviso foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O aviso não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O aviso não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -109,7 +109,7 @@ class NoticesController extends AppController
         $this->request->data['Notice']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Notice->save($this->request->data)) {
-            $this->Session->setFlash(__('O aviso foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O aviso foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

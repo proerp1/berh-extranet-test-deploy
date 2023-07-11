@@ -46,13 +46,13 @@ class TransfersController extends AppController
                 $this->request->data['Transfer']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 $this->request->data['Transfer']['status_id'] = 29;
                 if ($this->Transfer->save($this->request->data)) {
-                    $this->Session->setFlash(__('A transferência foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('A transferência foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('A transferência não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('A transferência não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A transferência não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A transferência não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -100,7 +100,7 @@ class TransfersController extends AppController
             $this->Outcome->create();
             $this->Outcome->save($conta_pagar);
 
-            $this->Session->setFlash(__('A transferência foi reprovada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A transferência foi reprovada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -113,7 +113,7 @@ class TransfersController extends AppController
         $data = ['Transfer' => ['status_id' => 31]];
 
         if ($this->Transfer->save($data)) {
-            $this->Session->setFlash(__('A transferência foi reprovada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A transferência foi reprovada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -126,10 +126,10 @@ class TransfersController extends AppController
             $this->Transfer->validates();
             $this->request->data['Transfer']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Transfer->save($this->request->data)) {
-                $this->Session->setFlash(__('A transferência foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('A transferência foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('A transferência não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A transferência não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -157,7 +157,7 @@ class TransfersController extends AppController
         $data = ['Transfer' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->Transfer->save($data)) {
-            $this->Session->setFlash(__('A transferência foi excluida com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A transferência foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

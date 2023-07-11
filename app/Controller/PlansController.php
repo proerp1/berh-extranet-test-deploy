@@ -69,13 +69,13 @@ class PlansController extends AppController
             if ($this->Plan->validates()) {
                 $this->request->data['Plan']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Plan->save($this->request->data)) {
-                    $this->Session->setFlash(__('O plano foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('O plano foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Plan->id]);
                 } else {
-                    $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -95,9 +95,9 @@ class PlansController extends AppController
             $this->Plan->validates();
             
             if ($this->Plan->save($this->request->data)) {
-                $this->Session->setFlash(__('O plano foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O plano foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O plano não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O plano não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -125,7 +125,7 @@ class PlansController extends AppController
         $this->request->data['Plan']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Plan->save($this->request->data)) {
-            $this->Session->setFlash(__('O plano foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O plano foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -165,7 +165,7 @@ class PlansController extends AppController
             $this->PlanProduct->save($planProduct);
         }
 
-        $this->Session->setFlash(__('O plano foi clonado com sucesso'), 'default', ['class' => "alert alert-success"]);
+        $this->Session->setFlash(__('O plano foi clonado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect($this->referer());
     }
 
@@ -219,14 +219,14 @@ class PlansController extends AppController
                 if ($this->PlanProduct->validates()) {
                     $this->request->data['PlanProduct']['user_creator_id'] = CakeSession::read("Auth.User.id");
                     if ($this->PlanProduct->save($this->request->data)) {
-                        $this->Session->setFlash(__('Salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                        $this->Session->setFlash(__('Salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                         
                         $this->redirect($this->referer());
                     } else {
-                        $this->Session->setFlash(__('Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                        $this->Session->setFlash(__('Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                     }
                 } else {
-                    $this->Session->setFlash(__('Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             }
         }
@@ -240,7 +240,7 @@ class PlansController extends AppController
             $this->request->data['PlanProduct']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
             if ($this->PlanProduct->save($this->request->data)) {
-                $this->Session->setFlash(__('Excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('Excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect($this->referer());
             }
         }

@@ -45,13 +45,13 @@ class RevenuesController extends AppController
             if ($this->Revenue->validates()) {
                 $this->request->data['Revenue']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Revenue->save($this->request->data)) {
-                    $this->Session->setFlash(__('A receita foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('A receita foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('A receita não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('A receita não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A receita não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A receita não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,10 +71,10 @@ class RevenuesController extends AppController
             $this->Revenue->validates();
             $this->request->data['Revenue']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Revenue->save($this->request->data)) {
-                $this->Session->setFlash(__('A receita foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('A receita foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('A receita não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A receita não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -102,7 +102,7 @@ class RevenuesController extends AppController
         $this->request->data['Revenue']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Revenue->save($this->request->data)) {
-            $this->Session->setFlash(__('A receita foi excluida com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A receita foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

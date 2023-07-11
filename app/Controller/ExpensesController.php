@@ -45,13 +45,13 @@ class ExpensesController extends AppController
             if ($this->Expense->validates()) {
                 $this->request->data['Expense']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Expense->save($this->request->data)) {
-                    $this->Session->setFlash(__('A despesa foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('A despesa foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('A despesa não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('A despesa não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A despesa não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A despesa não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,10 +71,10 @@ class ExpensesController extends AppController
             $this->Expense->validates();
             $this->request->data['Expense']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Expense->save($this->request->data)) {
-                $this->Session->setFlash(__('A despesa foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('A despesa foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('A despesa não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A despesa não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -102,7 +102,7 @@ class ExpensesController extends AppController
         $this->request->data['Expense']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Expense->save($this->request->data)) {
-            $this->Session->setFlash(__('A despesa foi excluida com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A despesa foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

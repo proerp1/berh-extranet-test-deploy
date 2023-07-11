@@ -127,9 +127,9 @@ class CnabController extends AppController
                 }
                 $this->CnabItemSicoob->saveMany($dados_itens);
 
-                $this->Session->setFlash(__('Lote gerado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('Lote gerado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('Cadastro dos clientes incompletos - Favor verificar Cliente, Endereço de Cliente e Boletos da Conta Bancária das contas a receber.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('Cadastro dos clientes incompletos - Favor verificar Cliente, Endereço de Cliente e Boletos da Conta Bancária das contas a receber.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 

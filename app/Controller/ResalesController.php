@@ -48,13 +48,13 @@ class ResalesController extends AppController
             if ($this->Resale->validates()) {
                 $this->request->data['Resale']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Resale->save($this->request->data)) {
-                    $this->Session->setFlash(__('A revenda foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('A revenda foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Resale->id]);
                 } else {
-                    $this->Session->setFlash(__('A revenda não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('A revenda não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A revenda não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A revenda não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -75,9 +75,9 @@ class ResalesController extends AppController
             $this->Resale->validates();
             $this->request->data['Resale']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Resale->save($this->request->data)) {
-                $this->Session->setFlash(__('A revenda foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('A revenda foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('A revenda não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A revenda não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -106,7 +106,7 @@ class ResalesController extends AppController
         $this->request->data['Resale']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Resale->save($this->request->data)) {
-            $this->Session->setFlash(__('A revenda foi excluida com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A revenda foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -152,13 +152,13 @@ class ResalesController extends AppController
             if ($this->Seller->validates()) {
                 $this->request->data['Seller']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Seller->save($this->request->data)) {
-                    $this->Session->setFlash(__('O vendedor foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('O vendedor foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'sellers/'.$resale_id]);
                 } else {
-                    $this->Session->setFlash(__('O vendedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('O vendedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O vendedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O vendedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -185,10 +185,10 @@ class ResalesController extends AppController
             $this->Seller->validates();
             $this->request->data['Seller']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Seller->save($this->request->data)) {
-                $this->Session->setFlash(__('O vendedor foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O vendedor foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'sellers/'.$resale_id]);
             } else {
-                $this->Session->setFlash(__('O vendedor não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O vendedor não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -224,7 +224,7 @@ class ResalesController extends AppController
         $this->request->data['Seller']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Seller->save($this->request->data)) {
-            $this->Session->setFlash(__('O vendedor foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O vendedor foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'sellers/'.$resale_id]);
         }
     }
@@ -344,10 +344,10 @@ class ResalesController extends AppController
             if ($this->CustomerUser->save($this->request->data)) {
                 $this->envia_email($this->request->data);
 
-                $this->Session->setFlash(__('O usuário foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
             } else {
-                $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -386,10 +386,10 @@ class ResalesController extends AppController
             $this->CustomerUser->validates();
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerUser->save($this->request->data)) {
-                $this->Session->setFlash(__('O usuário foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
             } else {
-                $this->Session->setFlash(__('O usuário não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -417,7 +417,7 @@ class ResalesController extends AppController
         $data = ['CustomerUser' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->CustomerUser->save($data)) {
-            $this->Session->setFlash(__('O usuário foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'users/'.$customer_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
     }
@@ -436,7 +436,7 @@ class ResalesController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -453,7 +453,7 @@ class ResalesController extends AppController
         if ($this->CustomerUser->save($this->request->data)) {
             $this->envia_email($this->request->data);
 
-            $this->Session->setFlash(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect("/customers/users/".$id);
         }
     }

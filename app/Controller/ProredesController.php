@@ -109,10 +109,10 @@ class ProredesController extends AppController
 
             $this->ProredeCustomer->saveMany($data_prorede_clientes);
 
-            $this->Session->setFlash(__('O prorede foi gerado com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O prorede foi gerado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         } else {
-            $this->Session->setFlash(__('O prorede não pode ser gerado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('O prorede não pode ser gerado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
         }
     }
 

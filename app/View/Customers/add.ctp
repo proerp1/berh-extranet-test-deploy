@@ -247,31 +247,12 @@
                     <?php echo $this->Form->input('cod_franquia', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2 required">Faturar?</label>
-                    <?php echo $this->Form->input('faturar', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => array('N' => 'Não', 'S' => 'Sim')]);?>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Vendedores</label>
                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Senha</label>
                     <?php echo $this->Form->input('senha', ["placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"]);?>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Tipo de cobrança</label>
-                    <?php echo $this->Form->input('tipo_envio_cobranca', array("div" => false, "label" => false, 'value' => 'E', 'type' => 'hidden'));  ?>
-                    <p>E-mail</p>
-                </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Cobrar M. Pefin?</label>
-                    <?php echo $this->Form->input('pefin_maintenance', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => array('0' => 'Não', '1' => 'Sim')]);?>
                 </div>
             </div>
 
@@ -299,16 +280,9 @@
 
             <div class="row">
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2 required">Ramo de Atividade</label>
-                    <?php echo $this->Form->input('activity_area_id', array("class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"));  ?>
-                </div>
-                <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">IE</label>
                     <?php echo $this->Form->input('ie', array("id" => "ie", "placeholder" => "IE", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
-            </div>
-
-            <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">CPF Responsável</label>
                     <?php echo $this->Form->input('cpf_responsavel', array("placeholder" => "CPF Responsável", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
@@ -388,7 +362,7 @@
                 </div>
             </div>
 
-            <?php for ($i=0; $i < 6; $i++) { ?>
+            <?php for ($i=0; $i < 1; $i++) { ?>
                 <div class="row">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2">Operadora</label>
@@ -413,22 +387,8 @@
                 </div>
 
                 <div class="mb-7 col col-sm-6">
-                    <label class="fw-semibold fs-6 mb-2">Enviar sms e email na negativação?</label>
-                    <?php echo $this->Form->input('enviar_email_sms_negativacao', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", "class" => "form-select mb-3 mb-lg-0"));  ?>
-                </div>
-
-                <div class="mb-7 col col-sm-6">
                     <label class="fw-semibold fs-6 mb-2">Cobrar taxa do boleto?</label>
                     <?php echo $this->Form->input('cobrar_taxa_boleto', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
-                </div>
-                <div class="mb-7 col col-sm-6">
-                    <label class="fw-semibold fs-6 mb-2">Visualizar demonstrativo?</label>
-                    <?php echo $this->Form->input('visualizar_demonstrativo', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
-                </div>
-
-                <div class="mb-7 col col-sm-6">
-                    <label class="fw-semibold fs-6 mb-2">WinBack?</label>
-                    <?php echo $this->Form->input('winback', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
 
@@ -443,7 +403,9 @@
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base; ?>/customers/" class="btn btn-light-dark">Voltar</a>
                     <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
-                    <a href="javascript:" onclick="confirm('<h3>Deseja mesmo disponibilizar esse registro para o PROREDE?</h3>', '<?php echo $this->base.'/customers/reenviar/'.$id ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i>Reenviar PROREDE</a>
+                    <?php if(isset($id)) { ?>
+                        <a href="javascript:" onclick="confirm('<h3>Deseja mesmo disponibilizar esse registro para o PROREDE?</h3>', '<?php echo $this->base.'/customers/reenviar/'.$id ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i>Reenviar PROREDE</a>
+                    <?php } ?>
                     <?php if (!empty($lastProrede)) { ?>
                         <?php $response = json_decode($lastProrede['ProredeCustomerError']['response'], true); ?>
                         <p>

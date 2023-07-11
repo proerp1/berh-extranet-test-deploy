@@ -45,10 +45,10 @@ class ProductAttributesController extends AppController
             
             $this->ProductAttribute->create();
             if ($this->ProductAttribute->save($this->request->data)) {
-                $this->Session->setFlash(__('O atributo foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O atributo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index', $productId]);
             } else {
-                $this->Session->setFlash(__('O atributo não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O atributo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -70,7 +70,7 @@ class ProductAttributesController extends AppController
         $data['ProductAttribute']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->ProductAttribute->save($data)) {
-            $this->Session->setFlash(__('O atributo foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O atributo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
         }
     }

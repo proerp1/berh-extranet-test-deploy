@@ -45,13 +45,13 @@ class SuppliersController extends AppController
             if ($this->Supplier->validates()) {
                 $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Supplier->save($this->request->data)) {
-                    $this->Session->setFlash(__('O fornecedor foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('O fornecedor foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Supplier->id]);
                 } else {
-                    $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,9 +71,9 @@ class SuppliersController extends AppController
             $this->Supplier->validates();
             $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Supplier->save($this->request->data)) {
-                $this->Session->setFlash(__('O fornecedor foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O fornecedor foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O fornecedor não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O fornecedor não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -101,7 +101,7 @@ class SuppliersController extends AppController
         $this->request->data['Supplier']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Supplier->save($this->request->data)) {
-            $this->Session->setFlash(__('O fornecedor foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O fornecedor foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

@@ -50,13 +50,13 @@ class GroupsController extends AppController
             if ($this->Group->validates()) {
                 $this->request->data['Group']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Group->save($this->request->data)) {
-                    $this->Session->setFlash(__('O grupo foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('O grupo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Group->id]);
                 } else {
-                    $this->Session->setFlash(__('O grupo não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('O grupo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O grupo não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O grupo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
@@ -76,9 +76,9 @@ class GroupsController extends AppController
             $this->Group->validates();
             
             if ($this->Group->save($this->request->data)) {
-                $this->Session->setFlash(__('O grupo foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O grupo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O grupo não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O grupo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -107,7 +107,7 @@ class GroupsController extends AppController
         $this->request->data['Group']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Group->save($this->request->data)) {
-            $this->Session->setFlash(__('O grupo foi excluido com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O grupo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -145,7 +145,7 @@ class GroupsController extends AppController
             ];
             $this->Permission->save($perm);
         }
-        $this->Session->setFlash(__('A permissao foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+        $this->Session->setFlash(__('A permissao foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect("/groups/permission/".$_POST["group_id"]);
     }
 }

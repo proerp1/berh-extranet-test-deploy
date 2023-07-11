@@ -45,13 +45,13 @@ class BankAccountsController extends AppController
             if ($this->BankAccount->validates()) {
                 $this->request->data['BankAccount']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->BankAccount->save($this->request->data)) {
-                    $this->Session->setFlash(__('A conta bancária foi salva com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('A conta bancária foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->BankAccount->id]);
                 } else {
-                    $this->Session->setFlash(__('A conta bancária não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('A conta bancária não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A conta bancária não pode ser salva, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A conta bancária não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -72,9 +72,9 @@ class BankAccountsController extends AppController
             $this->BankAccount->validates();
             $this->request->data['BankAccount']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->BankAccount->save($this->request->data)) {
-                $this->Session->setFlash(__('A conta bancária foi alterada com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('A conta bancária foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('A conta bancária não pode ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A conta bancária não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -103,7 +103,7 @@ class BankAccountsController extends AppController
         $this->request->data['BankAccount']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->BankAccount->save($this->request->data)) {
-            $this->Session->setFlash(__('A conta bancária foi excluida com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('A conta bancária foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

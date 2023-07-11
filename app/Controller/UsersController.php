@@ -54,13 +54,13 @@ class UsersController extends AppController
 
                     $this->envia_email($this->request->data);
 
-                    $this->Session->setFlash(__('O usuário foi salvo com sucesso'), 'default', ['class' => "alert alert-success"]);
+                    $this->Session->setFlash(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->User->id]);
                 } else {
-                    $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                    $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -84,9 +84,9 @@ class UsersController extends AppController
             $this->User->validates();
             
             if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash(__('O usuário foi alterado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O usuário não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -117,7 +117,7 @@ class UsersController extends AppController
         $this->request->data['User']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->User->save($this->request->data)) {
-            $this->Session->setFlash(__('O usuário foi excluído com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O usuário foi excluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -134,7 +134,7 @@ class UsersController extends AppController
 
         if ($this->User->save($this->request->data)) {
             $this->envia_email($this->request->data);
-            $this->Session->setFlash(__('Senha reenviada com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -152,7 +152,7 @@ class UsersController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -162,7 +162,7 @@ class UsersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->User->id = CakeSession::read("Auth.User.id");
             if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash('A senha foi alterada com sucesso.', 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash('A senha foi alterada com sucesso.', ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             }
         }
@@ -180,12 +180,12 @@ class UsersController extends AppController
 
             if ($this->User->save($this->request->data)) {
                 CakeSession::write("Auth.User.primeiro_acesso", $this->request->data['User']['primeiro_acesso']);
-                $this->Session->setFlash('A senha foi alterada com sucesso.', 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash('A senha foi alterada com sucesso.', ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect("/dashboard");
             }
         }
 
-        $this->Session->setFlash('Este é o seu primeiro acesso! Altere sua senha para continuar.', 'default', ['class' => "alert alert-success"]);
+        $this->Session->setFlash('Este é o seu primeiro acesso! Altere sua senha para continuar.', ['params' => ['class' => "alert alert-success"]]);
 
         $this->set("action", "Primeiro acesso");
         $this->set("form_action", "primeiro_acesso");
@@ -251,7 +251,7 @@ class UsersController extends AppController
             if ($user) {
                 $this->reenviar_senha($user['User']['id']);
             } else {
-                $this->Session->setFlash(__('Email não cadastrado'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('Email não cadastrado'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
     }

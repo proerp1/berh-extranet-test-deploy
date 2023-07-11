@@ -66,7 +66,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
             } else {
-                $this->Flash->set(__('O usuário não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -98,7 +98,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
             } else {
-                $this->Flash->set(__('O usuário não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -182,7 +182,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'addresses/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -213,7 +213,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'addresses/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O endereço não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -301,7 +301,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'bank_info/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -330,7 +330,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'bank_info/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O endereço não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -395,7 +395,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'itineraries/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -424,7 +424,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O itinerário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'itineraries/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O itinerário não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Flash->set(__('O itinerário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -517,7 +517,7 @@ class CustomerUsersController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => "alert alert-danger"]);
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect(['action' => 'index']);
         }
     }

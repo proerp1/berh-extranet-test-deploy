@@ -170,15 +170,15 @@ class BoletosController extends AppController
                             $message .= $erro->message.'<br>';
                         }
 
-                        $this->Session->setFlash(__($message), 'default', ['class' => "alert alert-danger"]);
+                        $this->Session->setFlash(__($message), ['params' => ['class' => "alert alert-danger"]]);
 
                         $this->redirect($this->referer());
                     }
                 }
 
-                $this->Session->setFlash(__('Lote gerado com sucesso'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('Lote gerado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('Cadastro dos clientes incompletos - Favor verificar Cliente, Endereço de Cliente e Boletos da Conta Bancária das contas a receber.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('Cadastro dos clientes incompletos - Favor verificar Cliente, Endereço de Cliente e Boletos da Conta Bancária das contas a receber.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -311,9 +311,9 @@ class BoletosController extends AppController
         $response = $ApiBoleto->alterarBoleto($idWeb, $boleto);
 
         if ($response['success']) {
-            $this->Session->setFlash(__('Boleto alterado com sucesso!'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Boleto alterado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
         } else {
-            $this->Session->setFlash(__('O boleto não pode ser alterado!'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('O boleto não pode ser alterado!'), ['params' => ['class' => "alert alert-danger"]]);
         }
 
 
@@ -345,7 +345,7 @@ class BoletosController extends AppController
 
             unlink('file.pdf');
         } else {
-            $this->Session->setFlash(__($boleto['error']->erros->item->message), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__($boleto['error']->erros->item->message), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
         }
     }

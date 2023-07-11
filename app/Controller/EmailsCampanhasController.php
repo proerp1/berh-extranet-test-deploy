@@ -47,7 +47,7 @@ class EmailsCampanhasController extends AppController
                 $id = $save['EmailsCampanha']['id'];
                 $this->redirect("edit/".$id);
             } else {
-                $this->Session->setFlash(__('Erro ao salvar a campanha, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('Erro ao salvar a campanha, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -69,9 +69,9 @@ class EmailsCampanhasController extends AppController
             $this->request->data['EmailsCampanha']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->EmailsCampanha->save($this->request->data)) {
-                $this->Session->setFlash(__('Campanha alterada com sucesso.'), 'default', ['class' => "alert alert-success"]);
+                $this->Session->setFlash(__('Campanha alterada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('A campanha não pôde ser alterada, Por favor tente de novo.'), 'default', ['class' => "alert alert-danger"]);
+                $this->Session->setFlash(__('A campanha não pôde ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -83,7 +83,7 @@ class EmailsCampanhasController extends AppController
         $processing = $this->request->data['EmailsCampanha']['processing'];
 
         if (!$send) {
-            $this->Session->setFlash(__('Emails ainda não enviados'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('Emails ainda não enviados'), ['params' => ['class' => "alert alert-danger"]]);
         }
 
         if ($send && $processing) {
@@ -91,7 +91,7 @@ class EmailsCampanhasController extends AppController
             $this->Session->setFlash(__('Os emails estão sendo enviados! Aguarde até o processo finalizar'), 'default', ['class' => "alert alert-warning"]);
         } elseif ($send && !$processing) {
             $buscar = false;
-            $this->Session->setFlash(__('Processo de envio finalizado!'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Processo de envio finalizado!'), ['params' => ['class' => "alert alert-success"]]);
         }
 
         $action = 'Emails';
@@ -137,7 +137,7 @@ class EmailsCampanhasController extends AppController
 
             $this->MailList->saveMany($dados_mail_list);
 
-            $this->Session->setFlash(__('Destinatários adicionados. Você já pode enviar a mensagem.'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Destinatários adicionados. Você já pode enviar a mensagem.'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => "view_emails/".$id]);
         }
 
@@ -201,7 +201,7 @@ class EmailsCampanhasController extends AppController
         $processing = $emails_campanhas['EmailsCampanha']['processing'];
 
         if (!$send) {
-            $this->Session->setFlash(__('Emails ainda não enviados'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('Emails ainda não enviados'), ['params' => ['class' => "alert alert-danger"]]);
         }
 
         if ($send && $processing) {
@@ -209,7 +209,7 @@ class EmailsCampanhasController extends AppController
             $this->Session->setFlash(__('Os emails estão sendo enviados! Aguarde até o processo finalizar'), 'default', ['class' => "alert alert-warning"]);
         } elseif ($send && !$processing) {
             $buscar = false;
-            $this->Session->setFlash(__('Processo de envio finalizado!'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Processo de envio finalizado!'), ['params' => ['class' => "alert alert-success"]]);
         }
 
         $action = 'Emails';
@@ -239,13 +239,13 @@ class EmailsCampanhasController extends AppController
         $processing = $emails_campanhas['EmailsCampanha']['processing'];
 
         if (!$send) {
-            $this->Session->setFlash(__('Emails ainda não enviados'), 'default', ['class' => "alert alert-danger"]);
+            $this->Session->setFlash(__('Emails ainda não enviados'), ['params' => ['class' => "alert alert-danger"]]);
         }
 
         if ($send && $processing) {
             $this->Session->setFlash(__('Os emails estão sendo enviados! Aguarde até o processo finalizar'), 'default', ['class' => "alert alert-warning"]);
         } elseif ($send && !$processing) {
-            $this->Session->setFlash(__('Processo de envio finalizado!'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Processo de envio finalizado!'), ['params' => ['class' => "alert alert-success"]]);
         }
 
         $action = 'Emails';
@@ -261,7 +261,7 @@ class EmailsCampanhasController extends AppController
         $data = ['MailList' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->MailList->save($data)) {
-            $this->Session->setFlash(__('O cliente foi excluido da lista com sucesso'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('O cliente foi excluido da lista com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'view_emails/'.$id]);
         }
     }
@@ -281,7 +281,7 @@ class EmailsCampanhasController extends AppController
             //setar flag processando para enviar os dados pelo cron
             $this->EmailsCampanha->updateAll(['send' => true, 'processing' => true], ['id' => $id]);
 
-            $this->Session->setFlash(__('Campanha programada com sucesso! Em breve o disparo será realizado.'), 'default', ['class' => "alert alert-success"]);
+            $this->Session->setFlash(__('Campanha programada com sucesso! Em breve o disparo será realizado.'), ['params' => ['class' => "alert alert-success"]]);
         }
 
         $this->redirect("/emails_campanhas");
