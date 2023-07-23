@@ -25,7 +25,7 @@ class CustoSerasaController extends AppController {
 		if (!empty($condition['and'])) {
 			$data = $this->Negativacao->find('all', ['conditions' => $condition, 'group' => ['Customer.id'], 'fields' => ['Customer.nome_secundario', 'round(SUM(Negativacao.valor_total_excel), 2) as total'], 'order' => ['Customer.nome_secundario' => 'asc']]);
 		} else {
-			$this->Session->setFlash(__('Você deve filtrar por um faturamento.'), 'default', array('class' => "alert alert-warning"));
+			$this->Flash->set(__('Você deve filtrar por um faturamento.'), 'default', array('class' => "alert alert-warning"));
 		}
 
 		$faturamentos = $this->Billing->find('all', ['conditions' => ['Billing.status_id' => 1]]);
@@ -51,7 +51,7 @@ class CustoSerasaController extends AppController {
 		if (!empty($condition['and'])) {
 			$data = $this->Negativacao->find('all', ['conditions' => $condition, 'group' => ['Product.id'], 'fields' => ['Product.name', 'round(SUM(Negativacao.valor_total_excel), 2) as total'], 'order' => ['Product.name' => 'asc']]);
 		} else {
-			$this->Session->setFlash(__('Você deve filtrar por um faturamento.'), 'default', array('class' => "alert alert-warning"));
+			$this->Flash->set(__('Você deve filtrar por um faturamento.'), 'default', array('class' => "alert alert-warning"));
 		}
 
 		$faturamentos = $this->Billing->find('all', ['conditions' => ['Billing.status_id' => 1]]);

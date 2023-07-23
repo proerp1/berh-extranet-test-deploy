@@ -45,13 +45,13 @@ class ActivityAreasController extends AppController
             if ($this->ActivityArea->validates()) {
                 $this->request->data['ActivityArea']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->ActivityArea->save($this->request->data)) {
-                    $this->Session->setFlash(__('O ramo de atividade foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O ramo de atividade foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('O ramo de atividade não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O ramo de atividade não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O ramo de atividade não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O ramo de atividade não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,10 +71,10 @@ class ActivityAreasController extends AppController
             $this->ActivityArea->validates();
             $this->request->data['ActivityArea']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->ActivityArea->save($this->request->data)) {
-                $this->Session->setFlash(__('O ramo de atividade foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O ramo de atividade foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O ramo de atividade não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O ramo de atividade não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -102,7 +102,7 @@ class ActivityAreasController extends AppController
         $this->request->data['ActivityArea']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->ActivityArea->save($this->request->data)) {
-            $this->Session->setFlash(__('O ramo de atividade foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O ramo de atividade foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

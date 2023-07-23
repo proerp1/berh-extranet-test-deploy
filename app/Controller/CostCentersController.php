@@ -45,13 +45,13 @@ class CostCentersController extends AppController
             if ($this->CostCenter->validates()) {
                 $this->request->data['CostCenter']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->CostCenter->save($this->request->data)) {
-                    $this->Session->setFlash(__('O centro de custo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O centro de custo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('O centro de custo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O centro de custo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O centro de custo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O centro de custo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,10 +71,10 @@ class CostCentersController extends AppController
             $this->CostCenter->validates();
             $this->request->data['CostCenter']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CostCenter->save($this->request->data)) {
-                $this->Session->setFlash(__('O centro de custo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O centro de custo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O centro de custo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O centro de custo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -102,7 +102,7 @@ class CostCentersController extends AppController
         $this->request->data['CostCenter']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->CostCenter->save($this->request->data)) {
-            $this->Session->setFlash(__('O centro de custo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O centro de custo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

@@ -62,21 +62,8 @@
             </div>
 
             <div class="mb-7">
-                <label class="fw-semibold fs-6 mb-2">Gerar Prorede?</label>
-                <?php echo $this->Form->input('gerar_prorede', array("empty" => "Selecione", "data-control" => "select2", 'options' => array('1' => 'Sim', '2' => 'Não'), "class" => "form-select mb-3 mb-lg-0"));  ?>
-            </div>
-
-            <div class="mb-7">
                 <label class="fw-semibold fs-6 mb-2">Procuração?</label>
                 <?php echo $this->Form->input('procuracao', array("empty" => "Selecione", "data-control" => "select2", 'options' => array('1' => 'Sim', '2' => 'Não'), "class" => "form-select mb-3 mb-lg-0"));  ?>
-            </div>
-
-            <div class="mb-7">
-                <label for="cep" class="form-label">Data Prorede</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                    <?php echo $this->Form->input('data_prorede', array("id" => "data_prorede", "type" => "text", "placeholder" => "Data Prorede", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
-                </div>
             </div>
 
             <div class="mb-7">

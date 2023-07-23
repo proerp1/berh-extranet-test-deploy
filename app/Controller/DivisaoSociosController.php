@@ -85,7 +85,7 @@ class DivisaoSociosController extends AppController {
 
 		$this->Income->saveMany($update_income);
 
-		$this->Session->setFlash(__('Mês '.$_GET['mes'].' dividido com sucesso!'), 'default', array('class' => "alert alert-success"));
+		$this->Flash->set(__('Mês '.$_GET['mes'].' dividido com sucesso!'), 'default', array('class' => "alert alert-success"));
 		$this->redirect(['action' => 'index']);
 		/*echo 'dividido mes '.$_GET['mes'];
 		die();*/

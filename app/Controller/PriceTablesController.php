@@ -50,13 +50,13 @@ class PriceTablesController extends AppController
             if ($this->PriceTable->validates()) {
                 $this->request->data['PriceTable']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->PriceTable->save($this->request->data)) {
-                    $this->Session->setFlash(__('O plano foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O plano foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->PriceTable->id]);
                 } else {
-                    $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O plano não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -76,9 +76,9 @@ class PriceTablesController extends AppController
             $this->PriceTable->validates();
             
             if ($this->PriceTable->save($this->request->data)) {
-                $this->Session->setFlash(__('O plano foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O plano foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O plano não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O plano não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -106,7 +106,7 @@ class PriceTablesController extends AppController
         $this->request->data['PriceTable']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->PriceTable->save($this->request->data)) {
-            $this->Session->setFlash(__('O plano foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O plano foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -143,7 +143,7 @@ class PriceTablesController extends AppController
                     ]);
                 }
 
-                $this->Session->setFlash(__('Preços atualizados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('Preços atualizados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             }
         }
 

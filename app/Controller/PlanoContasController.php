@@ -100,16 +100,16 @@ class PlanoContasController extends AppController
                 $planocontas = $this->PlanoConta->find('list', ['conditions' => ['PlanoConta.numero' => $this->request->data['PlanoConta']['numero']]]);
                 if (empty($planocontas)) {
                     if ($this->PlanoConta->save($this->request->data)) {
-                        $this->Session->setFlash(__('O plano de conta foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                        $this->Flash->set(__('O plano de conta foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                         $this->redirect(['action' => 'edit/'.$this->PlanoConta->id]);
                     } else {
-                        $this->Session->setFlash(__('O plano de conta não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                        $this->Flash->set(__('O plano de conta não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                     }
                 } else {
-                    $this->Session->setFlash(__('O plano de conta não pode ser salvo, este número de identificação já existe.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O plano de conta não pode ser salvo, este número de identificação já existe.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O plano de conta não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O plano de conta não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -137,13 +137,13 @@ class PlanoContasController extends AppController
 
             if (empty($planocontas)) {
                 if ($this->PlanoConta->save($this->request->data)) {
-                    $this->Session->setFlash(__('O plano de conta foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O plano de conta foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->PlanoConta->id]);
                 } else {
-                    $this->Session->setFlash(__('O plano de conta não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O plano de conta não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O plano de conta não pode ser salvo, este número de identificação já existe.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O plano de conta não pode ser salvo, este número de identificação já existe.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
         $temp_errors = $this->PlanoConta->validationErrors;
@@ -175,7 +175,7 @@ class PlanoContasController extends AppController
         $this->request->data['PlanoConta']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->PlanoConta->save($this->request->data)) {
-            $this->Session->setFlash(__('O plano de conta foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O plano de conta foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
         }
     }

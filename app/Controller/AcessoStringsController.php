@@ -78,7 +78,7 @@ class AcessoStringsController extends AppController
             }
         }
 
-        $this->Session->setFlash(__('Acessos alterados com sucesso'), 'default', ['class' => "alert alert-success text-center"]);
+        $this->Flash->set(__('Acessos alterados com sucesso'), 'default', ['class' => "alert alert-success text-center"]);
         $this->redirect(['action'=> 'index', $id]);
     }
 }

@@ -45,13 +45,13 @@ class DepartmentsController extends AppController
             if ($this->Department->validates()) {
                 $this->request->data['Department']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Department->save($this->request->data)) {
-                    $this->Session->setFlash(__('O departamento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O departamento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('O departamento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O departamento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O departamento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O departamento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -71,10 +71,10 @@ class DepartmentsController extends AppController
             $this->Department->validates();
             $this->request->data['Department']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Department->save($this->request->data)) {
-                $this->Session->setFlash(__('O departamento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O departamento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O departamento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O departamento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -102,7 +102,7 @@ class DepartmentsController extends AppController
         $this->request->data['Department']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Department->save($this->request->data)) {
-            $this->Session->setFlash(__('O departamento foi excluidi com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O departamento foi excluidi com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

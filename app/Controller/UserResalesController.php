@@ -55,10 +55,10 @@ class UserResalesController extends AppController
 
             $this->UserResale->create();
             if ($this->UserResale->save($this->request->data)) {
-                $this->Session->setFlash(__('A franquia foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('A franquia foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect($this->referer());
             } else {
-                $this->Session->setFlash(__('A franquia não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A franquia não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
     }
@@ -72,7 +72,7 @@ class UserResalesController extends AppController
         $data['UserResale']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->UserResale->save($data)) {
-            $this->Session->setFlash(__('A franquia foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A franquia foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
         }
     }

@@ -1,10 +1,9 @@
 <?php
-App::uses('ProredeHelper', 'Lib');
 class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'BillingMonthlyPayment', 'Negativacao', 'Pefin', 'Billing', 'CustomerUser', 'CadastroPefin', 'MovimentacaoCredor', 'Income', 'CustomerPefin', 'NaturezaOperacao', 'Resale', 'BillingNovaVida', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'ProredeCustomer', 'Log', 'NegativacaoLogon', 'ProredeCustomerError'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'BillingMonthlyPayment', 'Negativacao', 'Pefin', 'Billing', 'CustomerUser', 'CadastroPefin', 'MovimentacaoCredor', 'Income', 'CustomerPefin', 'NaturezaOperacao', 'Resale', 'BillingNovaVida', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'NegativacaoLogon'];
 
     public $paginate = [
         'Customer' => [
@@ -271,15 +270,13 @@ class CustomersController extends AppController
             $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         }
 
-        $lastProrede = $this->ProredeCustomerError->find('first', ['conditions' => ['ProredeCustomerError.customer_id' => $id], 'order' => ['ProredeCustomerError.id' => 'desc'], 'recursive' => -1]);
-        $tem_prorede = $this->ProredeCustomer->find('count', ['conditions' => ['ProredeCustomer.customer_id' => $id], 'recursive' => -1]);
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
         $hash = base64_encode($this->request->data['Customer']['codigo_associado']);
         $this->set('hash', rawurlencode($hash));
 
         $this->set("action", $this->request->data['Customer']['nome_secundario']);
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'tem_prorede','lastProrede'));
+        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers'));
             
         $this->render("add");
     }
@@ -1719,33 +1716,6 @@ class CustomersController extends AppController
 
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
-    }
-
-    public function add_prorede($id)
-    {
-        $customer = $this->Customer->findById($id);
-
-        $ProredeHelper = new ProredeHelper();
-
-        $response = $ProredeHelper->adicionar($customer);
-
-        $this->ProredeCustomer->create();
-        $this->ProredeCustomer->save([
-            'ProredeCustomer' => [
-                'customer_id' => $id, 
-                'status' => empty($response['error']) ? 1 : 2,
-                'response' => json_encode($response), 
-                'user_creator_id' => CakeSession::read('Auth.User.id')
-            ]
-        ]);
-    }
-
-    public function reenviar($id)
-    {
-        $this->add_prorede($id);
-
-        $this->Flash->set(__('Prorede reenviado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
-        $this->redirect($this->referer());
     }
 
 }

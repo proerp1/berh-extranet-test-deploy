@@ -91,8 +91,10 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 
 			<div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
 				<?php echo $this->element("menu_superior"); ?>
-				<?php echo $this->Flash->render() ?>
 				<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+					<div id="kt_content_container" class="container-fluid">
+						<?php echo $this->Flash->render() ?>
+					</div>
 					<?php echo $this->element("breadcrumb"); ?>
 
 					<div class="post d-flex flex-column-fluid" id="kt_post">

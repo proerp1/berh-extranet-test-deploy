@@ -56,10 +56,10 @@ class AtendimentosController extends AppController
             }
 
             if ($this->Atendimento->save($this->request->data)) {
-                $this->Session->setFlash(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -96,10 +96,10 @@ class AtendimentosController extends AppController
             
             $this->Atendimento->create();
             if ($this->Atendimento->save($this->request->data)) {
-                $this->Session->setFlash(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -129,7 +129,7 @@ class AtendimentosController extends AppController
         ];
 
         if (!$this->Email->send($dados)) {
-            $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect(['action' => 'index']);
         }
     }

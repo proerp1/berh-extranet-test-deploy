@@ -58,13 +58,13 @@ class BankTicketsController extends AppController
 
 
                 if ($this->BankTicket->save($this->request->data)) {
-                    $this->Session->setFlash(__('O registro foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O registro foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect("/bank_tickets/edit/".$this->BankTicket->id);
                 } else {
-                    $this->Session->setFlash(__('Registro não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('Registro não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('Registro não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Registro não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
         
@@ -90,9 +90,9 @@ class BankTicketsController extends AppController
             $this->BankTicket->validates();
             
             if ($this->BankTicket->save($this->request->data)) {
-                $this->Session->setFlash(__('O fundo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O fundo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('O fundo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O fundo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -151,7 +151,7 @@ class BankTicketsController extends AppController
         $data = ['BankTicket' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->BankTicket->save($data)) {
-            $this->Session->setFlash(__('O associado foi excluido com sucesso'), 'default', ['class' => 'alert alert-success']);
+            $this->Flash->set(__('O associado foi excluido com sucesso'), 'default', ['class' => 'alert alert-success']);
             $this->redirect(['action' => 'index']);
         }
     }

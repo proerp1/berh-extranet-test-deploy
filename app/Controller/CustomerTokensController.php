@@ -48,10 +48,10 @@ class CustomerTokensController extends AppController {
 
 			$this->CustomerToken->create();
 			if ($this->CustomerToken->save($this->request->data)) {
-				$this->Session->setFlash(__('O token foi salvo com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O token foi salvo com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect(array('action' => 'index', $id));
 			} else {
-				$this->Session->setFlash(__('O token não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
+				$this->Flash->set(__('O token não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
 
@@ -96,10 +96,10 @@ class CustomerTokensController extends AppController {
 			];
 			if ($this->CustomerToken->save($this->request->data)) {
 				$this->Log->save($dados_log);
-				$this->Session->setFlash(__('O token foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O token foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect(array('action' => 'index', $id));
 			} else {
-				$this->Session->setFlash(__('O token não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
+				$this->Flash->set(__('O token não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
 			} 
 		}
 
@@ -132,7 +132,7 @@ class CustomerTokensController extends AppController {
 		$data = ['CustomerToken' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
 		if ($this->CustomerToken->save($data)) {
-			$this->Session->setFlash(__('O token foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('O token foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
 			$this->redirect(array('action' => 'index', $customer_id));
 		}
 	}

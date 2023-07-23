@@ -45,13 +45,13 @@ class ProspectsController extends AppController
             if ($this->Prospect->validates()) {
                 $this->request->data['Prospect']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Prospect->save($this->request->data)) {
-                    $this->Session->setFlash(__('O cadastro foi realizado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O cadastro foi realizado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index']);
                 } else {
-                    $this->Session->setFlash(__('O cadastro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O cadastro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('O cadastro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O cadastro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -72,10 +72,10 @@ class ProspectsController extends AppController
             $this->Prospect->validates();
             $this->request->data['Prospect']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Prospect->save($this->request->data)) {
-                $this->Session->setFlash(__('Os dados foram alterados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('Os dados foram alterados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('Os dados não poderam ser alterados, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Os dados não poderam ser alterados, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -103,7 +103,7 @@ class ProspectsController extends AppController
         $this->request->data['Prospect']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Prospect->save($this->request->data)) {
-            $this->Session->setFlash(__('Os dados foram excluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('Os dados foram excluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

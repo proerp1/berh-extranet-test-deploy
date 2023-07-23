@@ -75,7 +75,7 @@ class ReportsController extends AppController {
 			}
 		} else {
 			if (($get_de == "" or $get_ate == "") and !($get_de == "" and $get_ate == "")) {
-				$this->Session->setFlash(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
+				$this->Flash->set(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
 
@@ -115,7 +115,7 @@ class ReportsController extends AppController {
 				$condition['and'] = array_merge($condition['and'], ['Income.vencimento >=' => $de.' 00:00:00', 'Income.vencimento <=' => $ate.' 23:59:59']);
 			} else {
 				if (($get_de == "" or $get_ate == "") and !($get_de == "" and $get_ate == "")) {
-					$this->Session->setFlash(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
+					$this->Flash->set(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
 				}
 			}
 
@@ -195,7 +195,7 @@ class ReportsController extends AppController {
 			$condition['and'] = array_merge($condition['and'], ['Income.vencimento >=' => $de.' 00:00:00', 'Income.vencimento <=' => $ate.' 23:59:59']);
 		} else {
 			if (($get_de == "" or $get_ate == "") and !($get_de == "" and $get_ate == "")) {
-				$this->Session->setFlash(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
+				$this->Flash->set(__('As duas datas precisam ser preenchidas.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
 
@@ -554,7 +554,7 @@ class ReportsController extends AppController {
 				['CustomerPefin.id in ('.$ids.')'] //where
 			);
 
-			$this->Session->setFlash(__('As negativações foram geradas com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('As negativações foram geradas com sucesso'), 'default', array('class' => "alert alert-success"));
 			$this->redirect(['action' => 'negativacoes_cliente']);
 		}
 
@@ -657,7 +657,7 @@ class ReportsController extends AppController {
 			} else {
 				$buscar = false;
 				$grupo = "";
-				$this->Session->setFlash(__('O nome do grupo deve ser preenchido'), 'default', array('class' => "alert alert-danger"));
+				$this->Flash->set(__('O nome do grupo deve ser preenchido'), 'default', array('class' => "alert alert-danger"));
 			}
 
 			$data = [];
@@ -1018,7 +1018,7 @@ class ReportsController extends AppController {
 
 			$this->LoginConsulta->blinda_logon($ids);
 
-			$this->Session->setFlash(__('Blindagem efetuada com sucesso!.'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('Blindagem efetuada com sucesso!.'), 'default', array('class' => "alert alert-success"));
 			$this->redirect($this->referer());
 		}
 
@@ -1155,7 +1155,7 @@ class ReportsController extends AppController {
 
 				$this->CadastroPefin->saveMany($save_novo, ['validate' => false]);
 
-				$this->Session->setFlash(__('As negativações foram copiadas com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('As negativações foram copiadas com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect($this->referer());
 			}
 
@@ -1317,7 +1317,7 @@ class ReportsController extends AppController {
             ]);
 
             if ($msg != '') {
-                $this->Session->setFlash(__($msg), 'default', array('class' => "alert alert-danger"));
+                $this->Flash->set(__($msg), 'default', array('class' => "alert alert-danger"));
             }
         }
 

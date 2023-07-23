@@ -1,5 +1,4 @@
 <?php
-App::uses('ProredeHelper', 'Lib');
 class CustomerUsersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -51,7 +50,6 @@ class CustomerUsersController extends AppController
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
-            debug($this->request->data);die;
             $this->CustomerUser->create();
             $this->CustomerUser->validates();
 
@@ -64,7 +62,7 @@ class CustomerUsersController extends AppController
                 $this->envia_email($this->request->data);
 
                 $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
+                $this->redirect(['action' => 'edit/'.$id.'/'.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
             } else {
                 $this->Flash->set(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -83,7 +81,7 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Novo Usuário' => ''
         ];
-        $this->set("form_action", "../customers/add_user/".$id);
+        $this->set("form_action", "../customer_users/add/".$id);
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'departamentos', 'cargos'));
     }
 
@@ -96,7 +94,7 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerUser->save($this->request->data)) {
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'users/'.$id.'/?'.$this->request->data['query_string']]);
+                $this->redirect(['action' => 'index/'.$id.'/?'.$this->request->data['query_string']]);
             } else {
                 $this->Flash->set(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -124,7 +122,7 @@ class CustomerUsersController extends AppController
         $cargos = $this->CustomerPosition->find('list');
 
         $this->set('hash', rawurlencode($hash));
-        $this->set("form_action", "../customers/edit_user/".$id);
+        $this->set("form_action", "../customer_users/edit/".$id.'/'.$user_id);
         $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos'));
             
         $this->render("add");

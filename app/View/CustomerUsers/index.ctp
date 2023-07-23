@@ -1,4 +1,4 @@
-<?php $url_novo = $this->base."/customers/add_user/".$id;  ?>
+<?php $url_novo = $this->base."/customer_users/add/".$id;  ?>
 <?php
     echo $this->element("abas_customers", array('id' => $id));
 ?>

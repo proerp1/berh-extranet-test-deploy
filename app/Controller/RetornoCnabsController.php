@@ -52,10 +52,10 @@ class RetornoCnabsController extends AppController
                 $Bancoob = new Bancoob();
                 $retorno = $Bancoob->processarRetorno($this->RetornoCnab->id, $arquivo);
 
-                $this->Session->setFlash(__('Arquivo importado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('Arquivo importado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O arquivo não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O arquivo não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -171,7 +171,7 @@ class RetornoCnabsController extends AppController
 
         $this->RetornoCnab->save($data_retorno);
 
-        $this->Session->setFlash(__('Contas baixadas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->Flash->set(__('Contas baixadas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'index']);
     }
 
@@ -183,7 +183,7 @@ class RetornoCnabsController extends AppController
         $data = ['RetornoCnab' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->RetornoCnab->save($data)) {
-            $this->Session->setFlash(__('O arquivo foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O arquivo foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

@@ -46,7 +46,7 @@
 <?php
 $url = $this->base . '/customers_users/index';
 echo $this->element('abas_customers', ['id' => $id, 'url' => $url]);
-if($user_id){
+if(isset($user_id)){
     echo $this->element('abas_customer_users', ['id' => $id, 'url' => $url]);
 }
 ?>

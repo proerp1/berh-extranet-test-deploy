@@ -403,17 +403,6 @@
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base; ?>/customers/" class="btn btn-light-dark">Voltar</a>
                     <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
-                    <?php if(isset($id)) { ?>
-                        <a href="javascript:" onclick="confirm('<h3>Deseja mesmo disponibilizar esse registro para o PROREDE?</h3>', '<?php echo $this->base.'/customers/reenviar/'.$id ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i>Reenviar PROREDE</a>
-                    <?php } ?>
-                    <?php if (!empty($lastProrede)) { ?>
-                        <?php $response = json_decode($lastProrede['ProredeCustomerError']['response'], true); ?>
-                        <p>
-                            Status do útimo envio:
-                            <br>
-                            <?php echo date('d/m/Y H:i:s', strtotime($lastProrede['ProredeCustomerError']['created'])) ?> - <?php echo empty($response['error']) ? $response['contents']['descricaoRetorno'] : $response['error'] ?>
-                        </p>
-                    <?php } ?>
                 </div>
             </div>
         </form>

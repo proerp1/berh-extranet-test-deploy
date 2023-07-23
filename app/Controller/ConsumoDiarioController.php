@@ -53,10 +53,10 @@ class ConsumoDiarioController extends AppController
                 $arquivo = APP.'webroot/files/consumo_diario/arquivo/'.$this->ConsumoDiario->id.'/'.$this->request->data['ConsumoDiario']['arquivo']['name'];
                 $this->LerConsumoDiario->ler($this->ConsumoDiario->id, $arquivo);
 
-                $this->Session->setFlash(__('Arquivo importado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('Arquivo importado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
-                $this->Session->setFlash(__('O arquivo não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O arquivo não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -95,7 +95,7 @@ class ConsumoDiarioController extends AppController
         $data = ['ConsumoDiario' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->ConsumoDiario->save($data)) {
-            $this->Session->setFlash(__('O arquivo foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O arquivo foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }

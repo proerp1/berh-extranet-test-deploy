@@ -74,13 +74,13 @@ class BillingsController extends AppController
                     //comentado rodolfo (Adicionei essa função no final da importação do arquivo serasa)
                     
 
-                    $this->Session->setFlash(__('O faturamento foi salvo com sucesso'), 'default', ['class' => 'alert alert-success']);
+                    $this->Flash->set(__('O faturamento foi salvo com sucesso'), 'default', ['class' => 'alert alert-success']);
                     $this->redirect(['action' => 'edit/'.$this->Billing->id]);
                 } else {
-                    $this->Session->setFlash(__('O faturamento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
+                    $this->Flash->set(__('O faturamento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
                 }
             } else {
-                $this->Session->setFlash(__('O faturamento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
+                $this->Flash->set(__('O faturamento não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
             }
         }
 
@@ -264,9 +264,9 @@ class BillingsController extends AppController
             $this->Billing->validates();
             $this->request->data['Billing']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Billing->save($this->request->data)) {
-                $this->Session->setFlash(__('O faturamento foi alterado com sucesso'), 'default', ['class' => 'alert alert-success']);
+                $this->Flash->set(__('O faturamento foi alterado com sucesso'), 'default', ['class' => 'alert alert-success']);
             } else {
-                $this->Session->setFlash(__('O faturamento não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
+                $this->Flash->set(__('O faturamento não pode ser alterado, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
             }
         }
 
@@ -294,7 +294,7 @@ class BillingsController extends AppController
         $this->request->data['Billing']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
 
         if ($this->Billing->save($this->request->data)) {
-            $this->Session->setFlash(__('O faturamento foi excluido com sucesso'), 'default', ['class' => 'alert alert-success']);
+            $this->Flash->set(__('O faturamento foi excluido com sucesso'), 'default', ['class' => 'alert alert-success']);
             $this->redirect(['action' => 'index']);
         }
     }
@@ -425,7 +425,7 @@ class BillingsController extends AppController
         $this->Billing->save(['Billing' => ['conta_gerada' => 1]]);
 
         $this->Income->saveAll($dados_income);
-        $this->Session->setFlash(__('Contas a receber geradas com sucesso'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Contas a receber geradas com sucesso'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'mensalidade/'.$id]);
     }
 
@@ -471,7 +471,7 @@ class BillingsController extends AppController
         //cobra juros, documentado 05/05/2021
         //$this->add_interest($this->request->data['Negativacao']['billing_id']);
 
-        $this->Session->setFlash(__('Importado com sucesso'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Importado com sucesso'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'negativacao/'.$this->request->data['Negativacao']['billing_id']]);
     }
 
@@ -527,7 +527,7 @@ class BillingsController extends AppController
                 ['Income.billing_id' => $billing_id, 'Income.customer_id' => $customer_id] //where
         );
 
-        $this->Session->setFlash(__('Status alterado com sucesso'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Status alterado com sucesso'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'demonstrativo/'.$billing_id.'/'.$customer_id]);
     }
 
@@ -544,7 +544,7 @@ class BillingsController extends AppController
                 'valor_total' => $this->request->data['quantidade']*$valor_unitario,
             ]]);
 
-            $this->Session->setFlash(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
+            $this->Flash->set(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
         }
         $this->redirect($this->referer());
     }
@@ -562,7 +562,7 @@ class BillingsController extends AppController
                 'valor_total' => $this->request->data['quantidade']*$valor_unitario,
             ]]);
 
-            $this->Session->setFlash(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
+            $this->Flash->set(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
         }
         $this->redirect($this->referer());
     }
@@ -580,7 +580,7 @@ class BillingsController extends AppController
                 'valor_total' => $this->request->data['quantidade']*$valor_unitario,
             ]]);
 
-            $this->Session->setFlash(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
+            $this->Flash->set(__('Registros atualizados com sucesso!'), 'default', ['class' => 'alert alert-success']);
         }
         $this->redirect($this->referer());
     }
@@ -638,7 +638,7 @@ class BillingsController extends AppController
 
         $this->ImportarNegativacao->importar_pefin($dados, $id);
 
-        $this->Session->setFlash(__('Importado com sucesso'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Importado com sucesso'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'pefin/'.$id]);
     }
 
@@ -766,7 +766,7 @@ class BillingsController extends AppController
             ["NovaVidaLogConsulta.faturado" => 0, "date_format(NovaVidaLogConsulta.created, '%m-%Y')" => date('m-Y', strtotime(str_replace('/', '-', $faturamento['Billing']['date_billing'])))] //where
         );*/
 
-        $this->Session->setFlash(__('Registros processdos com sucesso!'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Registros processdos com sucesso!'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'berh/'.$id]);
     }
 
@@ -861,7 +861,7 @@ class BillingsController extends AppController
             $this->BillingMonthlyPayment->save($mensalidade);
         }
 
-        $this->Session->setFlash(__('Registros processdos com sucesso!'), 'default', ['class' => 'alert alert-success']);
+        $this->Flash->set(__('Registros processdos com sucesso!'), 'default', ['class' => 'alert alert-success']);
         $this->redirect(['action' => 'meproteja/'.$id]);
     }
 
@@ -951,7 +951,7 @@ class BillingsController extends AppController
                 ];
 
                 if (!$this->Email->send($dados)) {
-                    $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
+                    $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
                     //$this->redirect(['action' => 'mensalidade/'.$id]);
                 }
             }
@@ -1042,7 +1042,7 @@ class BillingsController extends AppController
                 ];
 
                 if (!$this->Email->send($dados)) {
-                    $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
+                    $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
                     //$this->redirect(['action' => 'mensalidade/'.$id]);
                 }
 
@@ -1105,7 +1105,7 @@ class BillingsController extends AppController
                 ];
 
                 if (!$this->Email->send($dados)) {
-                    $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
+                    $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
                     //$this->redirect(['action' => 'mensalidade/'.$id]);
                 }
 
@@ -1171,7 +1171,7 @@ class BillingsController extends AppController
             ];
 
             if (!$this->Email->send($dados)) {
-                $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), 'default', ['class' => 'alert alert-danger']);
             //$this->redirect(['action' => 'mensalidade/'.$id]);
             } else {
                 echo 'enviado para '.$mensalidade['Customer']['email'].' - codigo '.$mensalidade['Customer']['codigo_associado'];

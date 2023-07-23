@@ -80,7 +80,7 @@ class CobrancasController extends AppController
 
             $this->divide_cobrancas($this->request->data['DistribuicaoCobranca']['cobrador_id'], $de, $ate, $sContas, $sCliente, $period, $resale);
 
-            $this->Session->setFlash(__('A divisão foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A divisão foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'divisao_cobradores']);
         }
 
@@ -155,7 +155,7 @@ class CobrancasController extends AppController
                 ["DistribuicaoCobrancaUsuario.distribuicao_cobranca_id" => $id] //where
             );
 
-            $this->Session->setFlash(__('A divisão foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A divisão foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
         }
     }
@@ -232,7 +232,7 @@ class CobrancasController extends AppController
         $dividido = count($cobrancas_por_cliente) / count($cobradores);
 
         if (count($cobrancas_por_cliente) < count($cobradores)) {
-            $this->Session->setFlash(__("Você selecionou ".count($cobradores)." cobradores para somente ".count($cobrancas_por_cliente)." contas encontradas. O número de cobradores deve ser menor ou igual ao número de contas selecionadas."), 'default', ['class' => "alert alert-warning"]);
+            $this->Flash->set(__("Você selecionou ".count($cobradores)." cobradores para somente ".count($cobrancas_por_cliente)." contas encontradas. O número de cobradores deve ser menor ou igual ao número de contas selecionadas."), 'default', ['class' => "alert alert-warning"]);
             $this->redirect(['action' => 'divisao_cobradores']);
         }
 
@@ -458,10 +458,10 @@ class CobrancasController extends AppController
                     $this->enviar_email($enviarEmailID);
                 }
                 
-                $this->Session->setFlash(__('O histórico foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O histórico foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'historico/'.$id]);
             } else {
-                $this->Session->setFlash(__('O histórico não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O histórico não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
     }
@@ -506,7 +506,7 @@ class CobrancasController extends AppController
             ];
 
             if (!$this->Email->send($dados)) {
-                $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect($this->referer());
             }
         }
@@ -525,7 +525,7 @@ class CobrancasController extends AppController
             ];
 
             if (!$this->Email->send($dados)) {
-                $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect($this->referer());
             }
         }
@@ -544,7 +544,7 @@ class CobrancasController extends AppController
             ];
 
             if (!$this->Email->send($dados)) {
-                $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect($this->referer());
             }
         }
@@ -563,7 +563,7 @@ class CobrancasController extends AppController
             ];
 
             if (!$this->Email->send($dados)) {
-                $this->Session->setFlash(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect($this->referer());
             }
         }
@@ -629,7 +629,7 @@ class CobrancasController extends AppController
         $this->request->data['ChargesHistory']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->ChargesHistory->save($this->request->data)) {
-            $this->Session->setFlash(__('O histórico foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O histórico foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'historico/'.$id]);
         }
     }

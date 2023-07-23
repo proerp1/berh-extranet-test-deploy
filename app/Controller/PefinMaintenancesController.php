@@ -27,9 +27,9 @@ class PefinMaintenancesController extends AppController
             $this->PefinMaintenance->validates();
             $this->request->data['PefinMaintenance']['user_created_id'] = CakeSession::Read('Auth.User.id');
             if ($this->PefinMaintenance->save($this->request->data)) {
-                $this->Session->setFlash(__('Salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('Salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Session->setFlash(__('Não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('Não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 

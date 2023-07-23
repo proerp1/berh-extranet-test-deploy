@@ -28,7 +28,7 @@
                 <label class="fw-semibold fs-6 mb-2">Data do Faturamento (Mês/Ano)</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                    <?php echo $this->Form->input('date_billing', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker2"]);  ?>
+                    <?php echo $this->Form->input('created', array("type" => "text", "required" => true, "placeholder" => "Data de Cadastro", "class" => "form-control datepicker2 mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
 

@@ -177,13 +177,13 @@ class IncomesController extends AppController
                         }
                     }
 
-                    $this->Session->setFlash(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'index/?'.$this->request->data['query_string']]);
                 } else {
-                    $this->Session->setFlash(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Session->setFlash(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -225,10 +225,10 @@ class IncomesController extends AppController
             if ($this->Income->save($this->request->data)) {
                 $this->TmpRetornoCnab->save(['TmpRetornoCnab' => ['income_id' => $this->Income->id, 'encontrado' => 1, 'user_updated_id' => CakeSession::read('Auth.User.id')]]);
 
-                $this->Session->setFlash(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['controller' => 'retorno_cnabs', 'action' => 'detalhes/'.$retorno_id]);
             } else {
-                $this->Session->setFlash(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
         $retorno = $this->TmpRetornoCnab->read();
@@ -304,10 +304,10 @@ class IncomesController extends AppController
                     }
                 }
 
-                $this->Session->setFlash(__('A conta a receber foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('A conta a receber foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index/?'.$this->request->data['query_string']]);
             } else {
-                $this->Session->setFlash(__('A conta a receber não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A conta a receber não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -345,7 +345,7 @@ class IncomesController extends AppController
         $data = ['Income' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
         if ($this->Income->save($data)) {
-            $this->Session->setFlash(__('A conta a receber foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A conta a receber foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
     }
@@ -402,7 +402,7 @@ class IncomesController extends AppController
         }
 
         if ($this->Income->save($data, ['validate' => false])) {
-            $this->Session->setFlash(__('Status alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
     }
@@ -420,7 +420,7 @@ class IncomesController extends AppController
         $this->request->data['Income']['data_baixa'] = date('Y-m-d H:i:s');
 
         if ($this->Income->save($this->request->data)) {
-            $this->Session->setFlash(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'edit/'.$id]);
         }
     }
@@ -616,9 +616,9 @@ class IncomesController extends AppController
         $response = $this->Email->send_many($dados);
 
         if (empty($response)) {
-        	$this->Session->setFlash(__('Enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        	$this->Flash->set(__('Enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } else {
-        	$this->Session->setFlash(__('Houve um problema'), ['params' => ['class' => "alert alert-danger"]]);
+        	$this->Flash->set(__('Houve um problema'), ['params' => ['class' => "alert alert-danger"]]);
         }
 
         $this->redirect($this->referer());
