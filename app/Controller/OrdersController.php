@@ -3,7 +3,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
@@ -30,7 +30,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'customers'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'status'));
     }
 
     public function createOrder() {
@@ -39,10 +39,7 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
         $period = '01/'.$this->request->data['period'];
 
-        if ($this->request->is('post')) {
-            $customer = $this->Customer->findById($customerId);
-            $commissionFeePercentage = $customer['Customer']['commission_fee_percentage'];
-    
+        if ($this->request->is('post')) {    
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
                 'conditions' => ['CustomerUserItinerary.customer_id' => $customerId],
                 'recursive' => 2
@@ -53,62 +50,17 @@ class OrdersController extends AppController
                 'working_days' => $workingDays,
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
                 'order_period' => $period,
+                'status_id' => 83,
             ];
     
             $this->Order->create();
             if ($this->Order->save($orderData)) {
                 $orderId = $this->Order->getLastInsertId();
     
-                $totalTransferFee = 0;
-                $totalSubtotal = 0;
-                $totalOrder = 0;
-    
-                foreach ($customerItineraries as $itinerary) {
-                    $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
-                    $workingDaysUser = $this->CustomerUserVacation->calculateWorkingDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period);
-
-                    
-                    if($workingDaysUser > $workingDays){
-                        $workingDaysUser = $workingDays;
-                    }
-
-                    $subtotal = $workingDaysUser * $pricePerDay; 
-                    
-                    $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
-                    $benefit = $this->Benefit->findById($benefitId);
-                    $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage'];
-                    $transferFee = $subtotal * ($transferFeePercentage / 100);
-    
-                    $total = $subtotal + $transferFee;
-    
-                    $totalTransferFee += $transferFee;
-                    $totalSubtotal += $subtotal;
-                    $totalOrder += $total;
-    
-                    $orderItemData = [
-                        'order_id' => $orderId,
-                        'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
-                        'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
-                        'working_days' => $workingDaysUser,
-                        'price_per_day' => $pricePerDay,
-                        'subtotal' => $subtotal,
-                        'transfer_fee' => $transferFee,
-                        'total' => $total,
-                    ];
-    
-                    $this->OrderItem->create();
-                    $this->OrderItem->save($orderItemData);
-                }
-    
-                $commissionFee = $totalSubtotal * ($commissionFeePercentage / 100);
+                $this->processItineraries($customerItineraries, $orderId, $workingDays, $period);
     
                 $this->Order->id = $orderId;
-                $this->Order->save([
-                    'transfer_fee' => $totalTransferFee,
-                    'subtotal' => $totalSubtotal,
-                    'commission_fee' => $commissionFee,
-                    'total' => $totalOrder + $commissionFee + $totalTransferFee,
-                ]);
+                $this->Order->reProcessAmounts($orderId);
     
                 $this->Flash->set(__('Pedido gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
             } else {
@@ -119,16 +71,65 @@ class OrdersController extends AppController
         }
     }
 
+    public function processItineraries($customerItineraries, $orderId, $workingDays, $period){
+        $totalTransferFee = 0;
+        $totalSubtotal = 0;
+        $totalOrder = 0;
+
+        foreach ($customerItineraries as $itinerary) {
+            $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
+            $workingDaysUser = $this->CustomerUserVacation->calculateWorkingDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period);
+            
+            if($workingDaysUser > $workingDays){
+                $workingDaysUser = $workingDays;
+            }
+
+            $subtotal = $workingDaysUser * $pricePerDay; 
+            
+            $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
+            $benefit = $this->Benefit->findById($benefitId);
+            $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage'];
+            $transferFee = $subtotal * ($transferFeePercentage / 100);
+
+            $total = $subtotal + $transferFee;
+
+            $totalTransferFee += $transferFee;
+            $totalSubtotal += $subtotal;
+            $totalOrder += $total;
+
+            $orderItemData = [
+                'order_id' => $orderId,
+                'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
+                'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
+                'working_days' => $workingDaysUser,
+                'price_per_day' => $pricePerDay,
+                'subtotal' => $subtotal,
+                'transfer_fee' => $transferFee,
+                'total' => $total,
+            ];
+
+            $this->OrderItem->create();
+            $this->OrderItem->save($orderItemData);
+        }
+    }
+
     public function edit($id = null)
     {
         $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
+        $old_order = $this->Order->read();
         if ($this->request->is(['post', 'put'])) {
-            $this->Order->validates();
-            $this->request->data['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
-            if ($this->Order->save($this->request->data)) {
+            
+            if($old_order['Order']['status_id'] < 85){
+                $order = ['Order' => []];
+                $order['Order']['id'] = $id;
+                $order['Order']['observation'] = $this->request->data['Order']['observation'];
+                $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+            }
+
+            if ($this->Order->save($order)) {
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'index']);
+                $this->redirect(['action' => 'edit/'.$id]);
             } else {
                 $this->Flash->set(__('O Pedido não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -141,12 +142,94 @@ class OrdersController extends AppController
 
         $items = $this->Paginator->paginate('OrderItem', ['and' => ['Order.id' => $id]]);
 
+        $progress = 1;
+        switch ($order['Order']['status_id']) {
+            case 83:
+                $progress = 1;
+                break;
+
+            case 84:
+                $progress = 3;
+                break;
+
+            case 85:
+                $progress = 5;
+                break;
+
+            case 86:
+                $progress = 7;
+                break;
+        }
+        
+        $order_customer_users = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.customer_user_id'],
+            'fields' => ['OrderItem.customer_user_id']
+        ]);
+
+        $arr_cst_in_order = Hash::extract($order_customer_users, '{n}.OrderItem.customer_user_id');
+
+        $users_with_itinerary = $this->CustomerUserItinerary->find('all', [
+            'conditions' => [
+                'CustomerUserItinerary.customer_id' => $order['Order']['customer_id'],
+                'CustomerUserItinerary.customer_user_id NOT IN' => $arr_cst_in_order
+            ],
+            'group' => ['CustomerUserItinerary.customer_user_id'],
+            'fields' => ['CustomerUserItinerary.customer_user_id']
+        ]);
+
+        $arr_ust_with_itinerary = Hash::extract($users_with_itinerary, '{n}.CustomerUserItinerary.customer_user_id');
+
+        $customer_users_pending = $this->CustomerUser->find('list', [
+            'conditions' => [
+                'CustomerUser.customer_id' => $order['Order']['customer_id'], 
+                'CustomerUser.id NOT IN' => $arr_cst_in_order,
+                'CustomerUser.id IN' => $arr_ust_with_itinerary,
+            ],
+        ]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending'));
         
         $this->render("add");
+    }
+
+    public function changeStatusToSent($id){
+        $this->autoRender = false;
+
+        $order = ['Order' => []];
+        $order['Order']['id'] = $id;
+        $order['Order']['status_id'] = 84;
+        $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
+        if ($this->Order->save($order)) {
+            $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'edit/'.$id]);
+        } else {
+            $this->Flash->set(__('O Pedido não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+    }
+
+    public function addCustomerUserToOrder(){
+        $orderId = $this->request->data['order_id'];
+        $customerUserId = $this->request->data['customer_user_id'];
+        $workingDays = $this->request->data['working_days'];
+
+        $order = $this->Order->findById($orderId);
+
+        $customerItineraries = $this->CustomerUserItinerary->find('all', [
+            'conditions' => ['CustomerUserItinerary.customer_user_id' => $customerUserId],
+        ]);
+
+        $this->processItineraries($customerItineraries, $orderId, $workingDays, '01/'.$order['Order']['order_period']);
+
+        $this->Order->id = $orderId;
+        $this->Order->reProcessAmounts($orderId);
+
+        $this->Flash->set(__('Beneficiário incluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'edit/'.$orderId]);
     }
 
     public function delete($id)

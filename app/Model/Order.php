@@ -4,22 +4,27 @@ class Order extends AppModel {
     public $useTable = 'orders';
     public $primaryKey = 'id';
 
-    public $belongsTo = array(
-        'Customer' => array(
+    public $belongsTo = [
+        'Customer' => [
             'className' => 'Customer',
             'foreignKey' => 'customer_id'
-        ),
-		'Creator' => array(
+        ],
+		'Creator' => [
 			'className' => 'User',
 			'foreignKey' => 'user_creator_id'
-		),
-    );
-    public $hasMany = array(
-        'OrderItem' => array(
+		],
+        'Status' => [
+            'className' => 'Status',
+            'foreignKey' => 'status_id',
+            'conditions' => ['Status.categoria' => 18]
+        ]
+    ];
+    public $hasMany = [
+        'OrderItem' => [
             'className' => 'OrderItem',
             'foreignKey' => 'order_id'
-        )
-    );
+        ]
+    ];
 
     public function afterFind($results, $primary = false)
     {
@@ -76,6 +81,46 @@ class Order extends AppModel {
 		
 		return true;
 	}
+
+    public function reProcessAmounts(){
+        $items = $this->OrderItem->find('first', [
+            'conditions' => [
+                'Order.id' => $this->id
+            ],
+            'fields' => [
+                'SUM(OrderItem.transfer_fee) as transfer_fee',
+                'SUM(OrderItem.subtotal) as subtotal',
+                'SUM(OrderItem.total) as total'
+            ],
+        ]);
+
+        $order = $this->findById($this->id);
+
+        $transferFee = $items[0]['transfer_fee'];
+        $subtotal = $items[0]['subtotal'];
+        $total = $items[0]['total'];
+        
+        $customer = $this->Customer->find('first', [
+            'conditions' => [
+                'Customer.id' => $order['Order']['customer_id']
+            ],
+            'fields' => [
+                'Customer.commission_fee_percentage'
+            ]
+        ]);
+
+        $commissionFeePercentage = $customer['Customer']['commission_fee_percentage'];
+
+        $commissionFee = $subtotal * ($commissionFeePercentage / 100);
+
+        $this->save(['Order' => [
+            'id' => $this->id,
+            'transfer_fee' => $transferFee,
+            'commission_fee' => $commissionFee,
+            'subtotal' => $subtotal,
+            'total' => $total + $commissionFee
+        ]]);
+    }
 
     public function priceFormatBeforeSave($price)
 	{

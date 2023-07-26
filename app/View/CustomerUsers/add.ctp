@@ -136,7 +136,7 @@ if(isset($user_id)){
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
-                <a href="<?php echo $this->base . '/customers/users/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
+                <a href="<?php echo $this->base . '/customer_users/index/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
                 <button type="submit" class="btn btn-success js-salvar">Salvar</button>
                 <?php if (isset($this->request->data['CustomerUser'])) { ?>
                     <a href="javascript:" onclick="confirm('<h3>Deseja mesmo reenviar a senha?</h3>', '<?php echo $this->base . '/customers/reenviar_senha/' . $id . '/' . $user_id; ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i> Reenviar senha</a>

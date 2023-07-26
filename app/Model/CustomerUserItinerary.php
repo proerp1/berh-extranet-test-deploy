@@ -34,7 +34,7 @@ class CustomerUserItinerary extends AppModel
                 $results[$key][$this->alias]['total'] = number_format($results[$key][$this->alias]['total'], 2, ',', '.');
             }
 
-            if(!isset($val['Benefit'])){
+            if(!isset($val['Benefit']) && isset($val['CustomerUserItinerary']['benefit_id'])){
                 $benefit = $this->query('select name from benefits where id = '.$val['CustomerUserItinerary']['benefit_id']);
                 $results[$key][$this->alias]['benefit_name'] = $benefit[0]['benefits']['name'];
             }

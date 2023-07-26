@@ -28,6 +28,7 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
+                    <th>Status</th>
                     <th>Cliente</th>
                     <th>Período</th>
                     <th>Subtotal</th>
@@ -41,12 +42,17 @@
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
                         <tr>
+                            <td class="fw-bold fs-7 ps-4">
+                                <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
+                                    <?php echo $data[$i]["Status"]["name"] ?>
+                                </span>
+                            </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$data[$i]["Order"]["subtotal"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$data[$i]["Order"]["transfer_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$data[$i]["Order"]["commission_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$data[$i]["Order"]["total"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
@@ -114,7 +120,7 @@
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                        <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]);?>
+                        <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
                     </div>
                 </div>
                 <div class="modal-footer">

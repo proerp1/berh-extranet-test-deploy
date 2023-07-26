@@ -14,126 +14,229 @@
     })
 </script>
 
-<div class="card mb-5 mb-xl-8">
-    <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+<?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+    <div class="row">
+        <div class="col-sm-12 col-md-9">
+            <div class="card mb-5 mb-xl-8">
+                <div class="card-body pt-0 py-3">
+                    <?php echo $this->element("aba_orders"); ?>
+                </div>
+                <div class="card-body pt-7 py-3">
 
-        <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Cliente</label>
-                <p><?php echo $order['Customer']['nome_primario']; ?></p>
-            </div>
+                    <div class="row">
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Cliente</label>
+                            <p><?php echo $order['Customer']['nome_primario']; ?></p>
+                        </div>
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Período</label>
-                <p><?php echo $order['Order']['order_period']; ?></p>
-            </div>
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Período</label>
+                            <p><?php echo $order['Order']['order_period']; ?></p>
+                        </div>
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Dias Úteis</label>
-                <p><?php echo $order['Order']['working_days']; ?></p>
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Dias Úteis</label>
+                            <p><?php echo $order['Order']['working_days']; ?></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Subtotal</label>
+                            <p>R$<?php echo $order['Order']['subtotal']; ?></p>
+                        </div>
+
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Repasse</label>
+                            <p>R$<?php echo $order['Order']['transfer_fee']; ?></p>
+                        </div>
+
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Comissão</label>
+                            <p>R$<?php echo $order['Order']['commission_fee']; ?></p>
+                        </div>
+
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Total</label>
+                            <p>R$<?php echo $order['Order']['total']; ?></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2 required">Criado em</label>
+                            <p><?php echo date('d/m/Y', strtotime($order['Order']['created'])); ?></p>
+                        </div>
+
+                        <div class="mb-7 col">
+                            <label class="fw-semibold fs-6 mb-2">Criado por</label>
+                            <p><?php echo $order['Creator']['name']; ?></p>
+                        </div>
+                    </div>
+
+                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Enviar SPTrans
+                                </a>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    
+                </div>
+
+
             </div>
         </div>
 
-        <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Subtotal</label>
-                <p>R$<?php echo $order['Order']['subtotal']; ?></p>
-            </div>
+        <div class="col-sm-12 col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2">Total</label>
+                        <p>R$<?php echo $order['Order']['total']; ?></p>
+                    </div>
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2">Observação da Nota Fiscal</label>
+                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                    </div>
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Repasse</label>
-                <p>R$<?php echo $order['Order']['transfer_fee']; ?></p>
-            </div>
-
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Comissão</label>
-                <p>R$<?php echo $order['Order']['commission_fee']; ?></p>
-            </div>
-
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Total</label>
-                <p>R$<?php echo $order['Order']['total']; ?></p>
+                    <div class="mb-7 col">
+                        <button type="submit" class="btn btn-success" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar</button>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Criado em</label>
-                <p><?php echo date('d/m/Y', strtotime($order['Order']['created'])); ?></p>
-            </div>
-
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Criado por</label>
-                <p><?php echo $order['Creator']['name']; ?></p>
-            </div>
-        </div>
-
-        </form>
     </div>
+</form>
 
-</div>
+<div class="row mt-10">
+    <div class="card mb-5 mb-xl-8">
+        <div class="card-body pt-0 py-3 mt-10">
+            <div class="row">
+                <div class="col-9">
+                    <h3>Itens</h3>
+                </div>
+                <?php if ($order['Order']['status_id'] == 83) { ?>
+                    <div class="col-3">
+                        <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
+                            <i class="fas fa-file"></i>
+                            Novo Beneficiário
+                        </a>
+                    </div>
+                <?php } ?>
 
-<div class="card mb-5 mb-xl-8">
-    <div class="card-body pt-0 py-3 mt-10">
-        <h3>Itens</h3>
-        <div class="table-responsive">
-            <?php echo $this->element("table"); ?>
-            <thead>
-                <tr class="fw-bolder text-muted bg-light">
-                    <th>Cliente</th>
-                    <th>Benefício</th>
-                    <th width="80px">Dias Úteis</th>
-                    <th>Valor por dia</th>
-                    <th>Subtotal</th>
-                    <th>Repasse</th>
-                    <th>Total</th>
-                    <th class="w-200px min-w-200px rounded-end">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php 
+            </div>
+            <div class="table-responsive">
+                <?php echo $this->element("table"); ?>
+                <thead>
+                    <tr class="fw-bolder text-muted bg-light">
+                        <th>Status SPTrans</th>
+                        <th>Beneficiário</th>
+                        <th>Benefício</th>
+                        <th width="80px">Dias Úteis</th>
+                        <th>Valor por dia</th>
+                        <th>Subtotal</th>
+                        <th>Repasse</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
                     $subtotal = 0;
                     $transfer_fee = 0;
                     $total = 0;
                     if ($items) { ?>
-                    <?php for ($i = 0; $i < count($items); $i++) { 
-                        $subtotal += $items[$i]["OrderItem"]["subtotal_not_formated"];
-                        $transfer_fee += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
-                        $total += $items[$i]["OrderItem"]["total_not_formated"];
+                        <?php for ($i = 0; $i < count($items); $i++) {
+                            $subtotal += $items[$i]["OrderItem"]["subtotal_not_formated"];
+                            $transfer_fee += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
+                            $total += $items[$i]["OrderItem"]["total_not_formated"];
                         ?>
-                        <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><input type="text" class="form-control" value="<?php echo $items[$i]["OrderItem"]["working_days"]; ?>"></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["CustomerUserItinerary"]["price_per_day"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4">
-                                <a href="<?php echo $this->base . '/orders/edit/' . $items[$i]["OrderItem"]["id"]; ?>" class="btn btn-info btn-sm">
-                                    Editar
-                                </a>
-                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $items[$i]["OrderItem"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                    Excluir
-                                </a>
-                            </td>
+                            <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
+                                <td class="fw-bold fs-7 ps-4">Pendente</td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                                        <input type="text" class="form-control" value="<?php echo $items[$i]["OrderItem"]["working_days"]; ?>">
+                                    <?php } else { ?>
+                                        <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
+                                    <?php } ?>
+                                </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["CustomerUserItinerary"]["price_per_day"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
+                            </tr>
+                        <?php } ?>
+                        <tr>
+                            <td colspan="5"></td>
+                            <td>R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
+                            <td>R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
+                            <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
+                        </tr>
+                    <?php } else { ?>
+                        <tr>
+                            <td class="fw-bold fs-7 ps-4" colspan="8">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
-                    <tr>
-                        <td colspan="4"></td>
-                        <td>R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
-                        <td>R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
-                        <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
-                    </tr>
-                <?php } else { ?>
-                    <tr>
-                        <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-            </table>
+                </tbody>
+                </table>
+            </div>
+            <?php echo $this->element("pagination"); ?>
         </div>
-        <?php echo $this->element("pagination"); ?>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="modal_enviar_sptrans" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/changeStatusToSent/' . $id; ?>" class="form-horizontal" method="post">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja enviar o pedido para a SPTrans?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_add_beneficiarios" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Incluir Beneficiário</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/addCustomerUserToOrder/'; ?>" class="form-horizontal" method="post">
+                <input type="hidden" name="order_id" value="<?php echo $id; ?>">
+                <input type="hidden" name="working_days" value="<?php echo $order['Order']['working_days']; ?>">
+                <div class="modal-body">
+                    <label for="customer_user_id">Beneficário</label>
+                    <select name="customer_user_id" id="customer_user_id" class="form-select mb-3 mb-lg-0" data-control="select2">
+                        <option value="">Selecione...</option>
+                        <?php foreach ($customer_users_pending as $k => $user) { ?>
+                            <option value="<?php echo $k; ?>"><?php echo $user; ?></option>
+                        <?php } ?>
+                    </select>
+                    <p class="mt-3">Esta lista contém somente os beneficiários ainda não adicionados ao pedido. Para cadastrar novos beneficiários clique <a href="<?php echo $this->base; ?>/customer_users/index/<?php echo $order['Order']['customer_id']; ?>" target="_blank">aqui</a></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Incluir</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
