@@ -26,9 +26,6 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
-      - name: Debug SSH
-        run: ssh -v ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'echo "SSH connection test"'
-
       - name: Deploy with rsync
         run: rsync -avuz -P --exclude=".*" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
 
