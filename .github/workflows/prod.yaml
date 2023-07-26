@@ -24,16 +24,19 @@ jobs:
           known_hosts: unnecessary
 
       - name: Adding Known Hosts
-        run: ssh-keyscan 52.86.91.231  >> ~/.ssh/known_hosts
+        run: ssh-keyscan ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
+
+      - name: Debug SSH
+        run: ssh -v ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'echo "SSH connection test"'
 
       - name: Deploy with rsync
-        run: rsync -avuz -P --exclude=".*" . berhl_ftp1_user1@52.86.91.231:/var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
+        run: rsync -avuz -P --exclude=".*" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
 
       - name: Install composer and run migration
         uses: appleboy/ssh-action@master
         with:
-          host: 52.86.91.231
-          username: berhl_ftp1_user1
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
