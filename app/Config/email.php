@@ -6,7 +6,7 @@ class EmailConfig {
 	
 	public $default = array(
 		'transport' => 'Smtp',
-		'from' => ['no-reply@credcheck.com.br' => 'BeRH'],
+		'from' => ['no-reply@berh.com.br' => 'BeRH'],
         'host' => 'smtplw.com.br',
         'port' => 587,
         'username' => 'credch11',
@@ -16,7 +16,7 @@ class EmailConfig {
 
 	public $fatura = array(
 		'transport' => 'Smtp',
-		'from' => ['financeiro@credcheck.com.br' => 'BeRH'],
+		'from' => ['financeiro@berh.com.br' => 'BeRH'],
         'host' => 'smtplw.com.br',
         'port' => 587,
         'username' => 'credch11',
@@ -27,21 +27,21 @@ class EmailConfig {
 	/*
 	public $default = array(
 		'transport' => 'Smtp',
-		'from' => ['no-reply@credcheck.com.br' => 'BeRH'],
-        'host' => 'mail.credcheck.com.br',
+		'from' => ['no-reply@berh.com.br' => 'BeRH'],
+        'host' => 'mail.berh.com.br',
         'port' => 587,
-        'username' => 'no-reply@credcheck.com.br',
-        'password' => 'credcheck@1',
+        'username' => 'no-reply@berh.com.br',
+        'password' => 'berh@1',
 		'charset' => 'utf-8'
 	);
 
 	public $fatura = array(
 		'transport' => 'Smtp',
-		'from' => ['no-reply@credcheck.com.br' => 'BeRH'],
-        'host' => 'mail.credcheck.com.br',
+		'from' => ['no-reply@berh.com.br' => 'BeRH'],
+        'host' => 'mail.berh.com.br',
         'port' => 587,
-        'username' => 'no-reply@credcheck.com.br',
-        'password' => 'credcheck@1',
+        'username' => 'no-reply@berh.com.br',
+        'password' => 'berh@1',
 		'charset' => 'utf-8'
 	);
 	
