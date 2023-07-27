@@ -3,9 +3,6 @@
 		<a class="nav-link <?php echo $this->request->params['controller'] == 'customers' && $this->request->params['action'] == 'edit' ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/edit/'.$id; ?>">Cliente</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['plans', 'edit_plan', 'add_plan']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/plans/'.$id; ?>">Planos</a>
-	</li>
-	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['mensalidade', 'historico', 'demonstrativo']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/mensalidade/'.$id; ?>">Faturas</a>
 	</li>
 	<li class="nav-item">
@@ -16,8 +13,5 @@
 	</li>
 	<li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['action'] == 'log_status' ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/log_status/'.$id; ?>">Log de status</a>
-	</li>
-	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['descontos', 'add_desconto', 'edit_desconto']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/descontos/'.$id; ?>">Descontos</a>
 	</li>
 </ul>
