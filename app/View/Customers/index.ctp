@@ -27,10 +27,6 @@
                         Exportar
                     </a>
 
-                    <a href="#" class="btn btn-light-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_filtro">
-                        <i class="fas fa-search"></i>
-                        Simular Filtro de Adesão
-                    </a>
 
                     <a type="button" class="btn btn-primary" href="<?php echo $url_novo;?>">Novo</a>
                     
@@ -84,6 +80,8 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
+                                <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
+                                
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
                             </div>
                         </div>
