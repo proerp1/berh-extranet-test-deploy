@@ -115,7 +115,7 @@ class CustomerUsersController extends AppController
         $hash = base64_encode($this->request->data['CustomerUser']['username']);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Alterar Usuário' => ''
+            'Alterar Beneficiário' => ''
         ];
         $estados = $this->CepbrEstado->find('list');
         $departamentos = $this->CustomerDepartment->find('list');
