@@ -52,38 +52,41 @@ if(isset($user_id)){
 ?>
 
 <div class="card mb-5 mb-xl-8">
-    <div class="card-body pt-7 py-3">
+    
         <?php echo $this->Form->create('CustomerUser', ['id' => 'js-form-submit', 'action' => $form_action, 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
         <input type="hidden" name="data[CustomerUser][customer_id]" value="<?php echo $id; ?>">
         <input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''; ?>">
+        <div class="card-body pt-7 py-3">
+           <div class="row">
+               <div class="mb-7 col">
+                   <label class="fw-semibold fs-6 mb-2">Status</label>
+                   <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
+               </div>
 
-        <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Status</label>
-                <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
-            </div>
+               <div class="mb-7 col">
+                   <label class="fw-semibold fs-6 mb-2">Nome</label>
+                   <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+               </div>
+           </div>
+         </div>
+         <div class="card-body pt-7 py-3">
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome</label>
-                <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-            </div>
-        </div>
+           <div class="row">
+               <div class="mb-7 col">
+                   <label class="fw-semibold fs-6 mb-2">Email</label>
+                   <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+               </div>
 
-        <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Email</label>
-                <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-            </div>
+               <div class="mb-7 col">
+                   <label class="fw-semibold fs-6 mb-2">Telefone</label>
+                   <?php echo $this->Form->input('tel', ['placeholder' => 'Telefone', 'class' => 'form-control tel mb-3 mb-lg-0']); ?>
+               </div>
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Telefone</label>
-                <?php echo $this->Form->input('tel', ['placeholder' => 'Telefone', 'class' => 'form-control tel mb-3 mb-lg-0']); ?>
-            </div>
-
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Celular</label>
-                <?php echo $this->Form->input('cel', ['placeholder' => 'Celular', 'class' => 'form-control cel mb-3 mb-lg-0']); ?>
-            </div>
+               <div class="mb-7 col">
+                   <label class="fw-semibold fs-6 mb-2">Celular</label>
+                   <?php echo $this->Form->input('cel', ['placeholder' => 'Celular', 'class' => 'form-control cel mb-3 mb-lg-0']); ?>
+               </div>
+           </div>
         </div>
 
         <div class="row">
@@ -148,5 +151,5 @@ if(isset($user_id)){
             </div>
         </div>
         </form>
-    </div>
+    
 </div>
