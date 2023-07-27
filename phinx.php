@@ -12,9 +12,9 @@ return
         'production' => [
             'adapter' => 'mysql',
             'host' => 'localhost',
-            'name' => 'production_db',
-            'user' => 'root',
-            'pass' => '',
+            'name' => 'berhl_db1_1',
+            'user' => 'berhl_user1_db1',
+            'pass' => 'Iu1qtG3n@%i@~Xf$xkn8hU#',
             'port' => '3306',
             'charset' => 'utf8',
         ],

@@ -38,4 +38,4 @@ jobs:
           script: |
             cd /var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
             php composer.phar install
-            vendor/bin/phinx migrate -e prod
+            vendor/bin/phinx migrate -e production
