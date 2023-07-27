@@ -2,7 +2,8 @@
 App::uses('AuthComponent', 'Controller/Component');
 class Seller extends AppModel {
 	public $name = 'Seller';
-	public $displayField = 'nome_fantasia';
+	public $displayField = 'name';
+	public $useTable = 'users';
 
 	public $belongsTo = array(
 		'Status' => array(
@@ -15,7 +16,7 @@ class Seller extends AppModel {
 
 	public function beforeFind($queryData) {
 
-		$queryData['conditions'][] = array('Seller.data_cancel' => '1901-01-01 00:00:00');
+		$queryData['conditions'][] = array('Seller.data_cancel' => '1901-01-01 00:00:00', 'Seller.is_seller' => 1);
 		
 		return $queryData;
 	}

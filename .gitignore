@@ -8,6 +8,4 @@
 _sftp-config.json
 *.DS_Store
 *.local
-arquivos_meproteja/*
-arquivos_meproteja/lidos/*
 composer.lock

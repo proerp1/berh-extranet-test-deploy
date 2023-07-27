@@ -2,7 +2,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class ChangeCrednetDiscountsTableName extends AbstractMigration
+class AddIsSellerColumnToUsers extends AbstractMigration
 {
     /**
      * Change Method.
@@ -22,21 +22,20 @@ class ChangeCrednetDiscountsTableName extends AbstractMigration
      *    addIndex
      *    addForeignKey
      *
+     * Any other destructive changes will result in an error when trying to
+     * rollback the migration.
+     *
      * Remember to call "create()" or "update()" and NOT "save()" when working
      * with the Table class.
      */
-    public function up()
+    public function change()
     {
-        $table = $this->table('crednet_discounts');
-        $table->rename('customer_discounts');
-    }
-
-    /**
-     * Migrate Down.
-     */
-    public function down()
-    {
-        $table = $this->table('customer_discounts');
-        $table->rename('crednet_discounts');
+        $table = $this->table('users');
+        $table->addColumn('is_seller', 'boolean', [
+            'default' => false,
+            'null' => false,
+            'after' => 'password', // You can specify the position of the column here if needed
+        ]);
+        $table->update();
     }
 }

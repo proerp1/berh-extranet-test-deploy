@@ -204,7 +204,7 @@ class CustomersController extends AppController
         }
             
         $activityAreas = $this->ActivityArea->find('list', ['conditions' => ['ActivityArea.status_id' => 1], 'order' => 'ActivityArea.name']);
-        $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => CakeSession::read("Auth.User.resales")], 'order' => 'Seller.nome_fantasia']);
+        $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => CakeSession::read("Auth.User.resales")], 'order' => 'Seller.name']);
         $codFranquias = $this->Resale->find('list', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2, 'not' => ['Status.id' => 6]], 'order' => 'Status.name']);
         $senha = substr(sha1(time()), 0, 6);
@@ -261,7 +261,7 @@ class CustomersController extends AppController
         $this->Customer->validationErrors = $temp_errors;
             
         $activityAreas = $this->ActivityArea->find('list', ['conditions' => ['ActivityArea.status_id' => 1], 'order' => 'ActivityArea.name']);
-        $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1], 'order' => 'Seller.nome_fantasia']);
+        $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1], 'order' => 'Seller.name']);
         $codFranquias = $this->Resale->find('list', ['conditions' => ['Resale.status_id' => 1], ['order' => 'Resale.nome_fantasia']]);
 
         if ($this->request->data['Status']['id'] != 6) {

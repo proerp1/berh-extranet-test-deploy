@@ -52,7 +52,7 @@ class UsersController extends AppController
                 if ($this->User->save($this->request->data)) {
                     $id = $this->User->id;
 
-                    $this->envia_email($this->request->data);
+                    // $this->envia_email($this->request->data);
 
                     $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->User->id]);
@@ -85,6 +85,7 @@ class UsersController extends AppController
             
             if ($this->User->save($this->request->data)) {
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect('/users/edit/'.$id);
             } else {
                 $this->Flash->set(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
