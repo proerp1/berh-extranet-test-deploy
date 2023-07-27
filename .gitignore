@@ -10,3 +10,4 @@ _sftp-config.json
 *.local
 arquivos_meproteja/*
 arquivos_meproteja/lidos/*
+composer.lock
