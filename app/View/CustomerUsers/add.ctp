@@ -3,6 +3,7 @@
         $("#cep").mask("99999-999");
         $(".tel").mask("(99) 9999-9999");
         $(".cpf").mask("999.999.999-99");
+        $(".data").mask("99/99/9999");
         $(".cel").focusout(function() {
             var phone, element;
             element = $(this);
@@ -119,7 +120,7 @@ if(isset($user_id)){
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Data Nascimento</label>
-                <?php echo $this->Form->input('data_nascimento', ['placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                <?php echo $this->Form->input('data_nascimento', ['placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0']); ?>
             </div>
         </div>
 
