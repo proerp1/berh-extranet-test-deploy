@@ -45,15 +45,11 @@ if($user_id){
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Quantidade</label>
-                <?php echo $this->Form->input('quantity', array("id" => "agencia", "placeholder" => "Quantidade", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('quantity', array("id" => "quantity", "placeholder" => "Quantidade", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Valor por dia</label>
-                <?php echo $this->Form->input('price_per_day', array("id" => "price_per_day", 'type' => 'text', "placeholder" => "Conta", "required" => false, "class" => "form-control mb-3 mb-lg-0 money_field"));  ?>
-            </div>
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Total</label>
-                <?php echo $this->Form->input('total', array("id" => "total", 'type' => 'text', "placeholder" => "Conta", "required" => false, "class" => "form-control mb-3 mb-lg-0 money_field"));  ?>
+                <?php echo $this->Form->input('price_per_day', array("id" => "price_per_day", 'type' => 'text', "placeholder" => "Valor por dia", "required" => false, "class" => "form-control mb-3 mb-lg-0 money_field", 'disabled'));  ?>
             </div>
         </div>
 
@@ -66,3 +62,29 @@ if($user_id){
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+      function calculatePricePerDay() {
+        // Get the values from the fields
+        var unitPrice = $('#unit_price').val().replace('.', '');
+        unitPrice = unitPrice.replace(',', '.');
+        var quantity = $('#quantity').val();
+
+        // Convert unitPrice to float
+        unitPrice = parseFloat(unitPrice);
+
+        // Calculate the price per day
+        var pricePerDay = unitPrice * quantity;
+
+        // Insert the calculated value into the price_per_day field
+        var pricePerDayFormatted = pricePerDay.toFixed(2).replace('.', ',');
+        $('#price_per_day').val(pricePerDayFormatted);
+      }
+
+      // Listen to changes in unit_price and quantity fields
+      $('#unit_price, #quantity').on('change', function() {
+        calculatePricePerDay();
+      });
+    });
+  </script>

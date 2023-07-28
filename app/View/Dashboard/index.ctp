@@ -1,9 +1,9 @@
-<a href="<?php echo $this->base; ?>/dashboard/cliente">Cliente</a><br>
-<a href="<?php echo $this->base; ?>/dashboard/comercial">Comercial</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/compras">Compras</a><br>
+<a href="<?php echo $this->base; ?>/dashboard/comercial">Comercial</a><br>
+<a href="<?php echo $this->base; ?>/dashboard/financeiro">Financeiro</a><br>
+<a href="<?php echo $this->base; ?>/dashboard/cliente">Cliente</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/outros">Outros</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/expedicao">Expedição</a><br>
-<a href="<?php echo $this->base; ?>/dashboard/financeiro">Financeiro</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/fornecedores">Fornecedores</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/oportunidade">Oportunidades</a><br>
 <a href="<?php echo $this->base; ?>/dashboard/orcamentos">Orçamentos</a><br>

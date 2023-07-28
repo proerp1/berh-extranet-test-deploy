@@ -90,7 +90,7 @@ class OutcomesController extends AppController {
 						}
 					}
 
-					$this->Flash->set(__('A conta a pagar foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('A conta a pagar foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
 				} else {
 					$this->Flash->set(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -168,7 +168,7 @@ class OutcomesController extends AppController {
 					}
 				}
 
-				$this->Flash->set(__('A conta a pagar foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A conta a pagar foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
 			} else {
 				$this->Flash->set(__('A conta a pagar não pode ser alterada, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -204,7 +204,7 @@ class OutcomesController extends AppController {
 		$data = ['Outcome' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
 		if ($this->Outcome->save($data)) {
-			$this->Flash->set(__('A conta a pagar foi excluida com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A conta a pagar foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(array('action' => 'index'));
 		}
 	}
@@ -216,7 +216,7 @@ class OutcomesController extends AppController {
 		$data = ['Outcome' => ['status_id' => $status]];
 
 		if ($this->Outcome->save($data)) {
-			$this->Flash->set(__('Status alterado com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(array('action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')));
 		}
 	}
@@ -232,7 +232,7 @@ class OutcomesController extends AppController {
 		$this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
 
 		if ($this->Outcome->save($this->request->data)) {
-			$this->Flash->set(__('A conta a pagar foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A conta a pagar foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect($this->referer());
 		}
 	}

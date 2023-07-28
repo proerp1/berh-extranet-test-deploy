@@ -76,24 +76,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($data) { ?>
-                        <?php foreach ($data as $key => $value) { ?>
+                    <?php if ($data) { $total = 0; ?>
+                        <?php foreach ($data as $key => $value) { 
+                            $total += $value['CustomerUserItinerary']['total_not_formated'];
+                            ?>
                             <tr>
                                 <td><?php echo $value['Benefit']['code'].' - '.$value['Benefit']['name']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['working_days']; ?></td>
-                                <td><?php echo $value['CustomerUserItinerary']['unit_price']; ?></td>
+                                <td>R$<?php echo $value['CustomerUserItinerary']['unit_price']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['quantity']; ?></td>
-                                <td><?php echo $value['CustomerUserItinerary']['price_per_day']; ?></td>
-                                <td><?php echo $value['CustomerUserItinerary']['total']; ?></td>
+                                <td>R$<?php echo $value['CustomerUserItinerary']['price_per_day']; ?></td>
+                                <td>R$<?php echo $value['CustomerUserItinerary']['total']; ?></td>
                                 <td>
                                     <a href="<?php echo $this->base.'/customer_users/edit_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
 
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customers/delete_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customer_users/delete_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
                                 </td>
+                            </tr>
+                        <?php } ?>
+                        <?php if($total > 0) { ?>
+                            <tr>
+                                <td colspan="5" class="fs-7 ps-4" style="text-align:right">Total</td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

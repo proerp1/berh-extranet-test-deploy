@@ -59,7 +59,7 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['password'] = $senha;
             $this->request->data['CustomerUser']['username'] = $this->request->data['CustomerUser']['email'];
             if ($this->CustomerUser->save($this->request->data)) {
-                $this->envia_email($this->request->data);
+                // $this->envia_email($this->request->data);
 
                 $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'edit/'.$id.'/'.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
@@ -137,7 +137,7 @@ class CustomerUsersController extends AppController
         $this->request->data['CustomerUser']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->CustomerUser->save($this->request->data)) {
-            $this->Flash->set(__('O usuário foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+            $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'users/'.$customer_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
     }
@@ -192,12 +192,13 @@ class CustomerUsersController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $states = $this->CepbrEstado->find('list');
         $address_type = $this->AddressType->find('list', ['fields' => ['id', 'description']]);
+        $estados = $this->CepbrEstado->find('list');
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
             'Novo Endereço' => ''
         ];
         // $this->set("form_action", "../customers/add_user/".$id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'states', 'user_id', 'address_type'));
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'states', 'user_id', 'address_type', 'estados'));
     }
 
     public function edit_address($id, $user_id, $add_id)
@@ -449,6 +450,20 @@ class CustomerUsersController extends AppController
         $this->render("add_itinerary");
     }
 
+    public function delete_itinerary($customer_id, $user_id, $id){
+        $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->CustomerUserItinerary->id = $id;
+        $this->request->data = $this->CustomerUserItinerary->read();
+
+        $this->request->data['CustomerUserItinerary']['data_cancel'] = date("Y-m-d H:i:s");
+        $this->request->data['CustomerUserItinerary']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->CustomerUserItinerary->save($this->request->data)) {
+            $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'itineraries/'.$customer_id.'/'.$user_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
+        }
+    }
+
     /*******************
                 Transações
     ********************/
@@ -494,7 +509,7 @@ class CustomerUsersController extends AppController
             $this->CustomerUser->create();
             $this->CustomerUser->save($customer_user, ['validate' => false]);
 
-            $this->envia_email($customer_user);
+            // $this->envia_email($customer_user);
         }
 
     }

@@ -91,7 +91,7 @@ class NegativacaoController extends AppController {
 			}
 
 			if ($this->CadastroPefin->save($this->request->data)) {
-				$this->Flash->set(__('A negativação foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A negativação foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(['action' => 'detalhes_lote/'.$lote_id]);
 			} else {
 				$this->Flash->set(__('A negativação não pode ser alterada, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -116,7 +116,7 @@ class NegativacaoController extends AppController {
 			$this->request->data['CadastroPefin']['data_solic_baixa'] = date('Y-m-d H:i:s');
 			$this->request->data['CadastroPefin']['status_id'] = 33;
 			if ($this->CadastroPefin->save($this->request->data)) {
-				$this->Flash->set(__('A negativação foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A negativação foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(['controller' => 'customers', 'action' => 'negativacoes/'.$this->request->data['CadastroPefin']['customer_id']]);
 			} else {
 				$this->Flash->set(__('A negativação não pode ser alterada, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -217,7 +217,7 @@ class NegativacaoController extends AppController {
 		
 		$this->LerErroSerasa->ler($path.$files['nome']);
 
-		$this->Flash->set(__('Retorno importado com sucesso'), 'default', array('class' => "alert alert-success"));
+		$this->Flash->set(__('Retorno importado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 		$this->redirect('/negativacao/lotes');
 	}
 
@@ -257,7 +257,7 @@ class NegativacaoController extends AppController {
 			['CadastroPefin.id in ('.$ids.')'] //where
 		);
 
-		$this->Flash->set(__('Lote gerado com sucesso'), 'default', array('class' => "alert alert-success"));
+		$this->Flash->set(__('Lote gerado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 		$this->redirect('/negativacao/lotes/');
 	}
 
@@ -269,7 +269,7 @@ class NegativacaoController extends AppController {
 		$this->request->data['CadastroPefin']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->CadastroPefin->save($this->request->data)) {
-			$this->Flash->set(__('O registro foi excluído com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('O registro foi excluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect($this->referer());
 		}
 	}

@@ -554,7 +554,7 @@ class ReportsController extends AppController {
 				['CustomerPefin.id in ('.$ids.')'] //where
 			);
 
-			$this->Flash->set(__('As negativações foram geradas com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('As negativações foram geradas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(['action' => 'negativacoes_cliente']);
 		}
 
@@ -1018,7 +1018,7 @@ class ReportsController extends AppController {
 
 			$this->LoginConsulta->blinda_logon($ids);
 
-			$this->Flash->set(__('Blindagem efetuada com sucesso!.'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('Blindagem efetuada com sucesso!.'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect($this->referer());
 		}
 
@@ -1155,7 +1155,7 @@ class ReportsController extends AppController {
 
 				$this->CadastroPefin->saveMany($save_novo, ['validate' => false]);
 
-				$this->Flash->set(__('As negativações foram copiadas com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('As negativações foram copiadas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect($this->referer());
 			}
 

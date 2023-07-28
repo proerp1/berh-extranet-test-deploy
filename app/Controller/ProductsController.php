@@ -48,7 +48,7 @@ class ProductsController extends AppController {
 			if($this->Product->validates()){
 				$this->request->data['Product']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				if ($this->Product->save($this->request->data)) {
-					$this->Flash->set(__('O produto foi salvo com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('O produto foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect(array('action' => 'edit/'.$this->Product->id));
 				} else {
 					$this->Flash->set(__('O produto não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -71,7 +71,7 @@ class ProductsController extends AppController {
 		$this->Product->id = $id;
 		if ($this->request->is(['post', 'put'])) {
 			if ($this->Product->save($this->request->data)) {
-				$this->Flash->set(__('O produto foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O produto foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			} else {
 				$this->Flash->set(__('O produto não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
 			} 
@@ -112,7 +112,7 @@ class ProductsController extends AppController {
 		$this->request->data['Product']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->Product->save($this->request->data)) {
-			$this->Flash->set(__('O produto foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('O produto foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(array('action' => 'index'));
 		}
 	}
@@ -122,7 +122,7 @@ class ProductsController extends AppController {
 			$this->ProductPrice->create();
 			$this->request->data['ProductPrice']['user_creator_id'] = CakeSession::read("Auth.User.id");
 			if ($this->ProductPrice->save($this->request->data)) {
-				$this->Flash->set(__('O preço foi adicionado com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O preço foi adicionado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(array('action' => 'edit/'.$this->request->data['ProductPrice']['product_id']));
 			} else {
 				$this->Flash->set(__('O preço não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -139,7 +139,7 @@ class ProductsController extends AppController {
 		$this->request->data['ProductPrice']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->ProductPrice->save($this->request->data)) {
-			$this->Flash->set(__('Excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('Excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(array('action' => 'edit/'.$product_id));
 		}
 	}
@@ -157,7 +157,7 @@ class ProductsController extends AppController {
 			
 			$this->request->data['ProductFeature']['user_creator_id'] = CakeSession::read("Auth.User.id");
 			if ($this->ProductFeature->save($this->request->data)) {
-				$this->Flash->set(__('A feature foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A feature foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect("/products/features/".$id);
 			} else {
 				$this->Flash->set(__('A feature não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -214,7 +214,7 @@ class ProductsController extends AppController {
 		$data = ['ProductFeature' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
 		if ($this->ProductFeature->save($data)) {
-			$this->Flash->set(__('A feature foi excluida com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A feature foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect("/products/features/".$id);
 		}
 	}
@@ -249,7 +249,7 @@ class ProductsController extends AppController {
 		$this->Feature->id = $featureID;
 		if ($this->request->is(['post', 'put'])) {
 			if ($this->Feature->save($this->request->data)) {
-				$this->Flash->set(__('A feature foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A feature foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect($this->referer());
 			} else {
 				$this->Flash->set(__('A feature não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -307,7 +307,7 @@ class ProductsController extends AppController {
 			if($this->Feature->validates()){        
 				$this->request->data['Feature']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				if ($this->Feature->save($this->request->data)) {
-					$this->Flash->set(__('A feature foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('A feature foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect("/products/features/".$this->request->data['Feature']['product_id']);
 				} else {
 					$this->Flash->set(__('A feature não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -332,7 +332,7 @@ class ProductsController extends AppController {
 		
 		if ($this->request->is(['post', 'put'])) {
 			if ($this->Feature->save($this->request->data)) {
-				$this->Flash->set(__('A feature foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A feature foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect("/products/features/".$id);
 			} else {
 				$this->Flash->set(__('A feature não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -361,7 +361,7 @@ class ProductsController extends AppController {
 		$this->request->data['Feature']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->Feature->save($this->request->data)) {
-			$this->Flash->set(__('A feature foi excluida com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A feature foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect("/products/features/".$id);
 		}
 	}*/
@@ -399,7 +399,7 @@ class ProductsController extends AppController {
 			if($this->Answer->validates()){        
 				$this->request->data['Answer']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				if ($this->Answer->save($this->request->data)) {
-					$this->Flash->set(__('A resposta foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('A resposta foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect("/products/answer/".$this->request->data['Answer']['product_id']);
 				} else {
 					$this->Flash->set(__('A resposta não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -421,7 +421,7 @@ class ProductsController extends AppController {
 		
 		if ($this->request->is(['post', 'put'])) {
 			if ($this->Answer->save($this->request->data)) {
-				$this->Flash->set(__('A resposta foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A resposta foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect("/products/answer/".$id);
 			} else {
 				$this->Flash->set(__('A resposta não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -452,7 +452,7 @@ class ProductsController extends AppController {
 		$this->request->data['Answer']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->Answer->save($this->request->data)) {
-			$this->Flash->set(__('A resposta foi excluida com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A resposta foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect("/products/answer/".$id);
 		}
 	}
@@ -491,7 +491,7 @@ class ProductsController extends AppController {
 			if($this->AnswerItem->validates()){        
 				$this->request->data['AnswerItem']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				if ($this->AnswerItem->save($this->request->data)) {
-					$this->Flash->set(__('O item da resposta foi salvo com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('O item da resposta foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect("/products/answer_item/".$this->request->data['AnswerItem']['product_id']);
 				} else {
 					$this->Flash->set(__('O item da resposta não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -520,7 +520,7 @@ class ProductsController extends AppController {
 			$this->request->data['AnswerItem']['name'] = $str;
 
 			if ($this->AnswerItem->save($this->request->data)) {
-				$this->Flash->set(__('O item da resposta foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O item da resposta foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect("/products/answer_item/".$id."/".$answer_id);
 			} else {
 				$this->Flash->set(__('O item da resposta não pode ser salvo, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -547,7 +547,7 @@ class ProductsController extends AppController {
 		$this->request->data['AnswerItem']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->AnswerItem->save($this->request->data)) {
-			$this->Flash->set(__('O item da resposta foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('O item da resposta foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect("/products/answer_item/".$id);
 		}
 	}
@@ -587,7 +587,7 @@ class ProductsController extends AppController {
 			if($this->ItemOption->validates()){        
 				$this->request->data['ItemOption']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				if ($this->ItemOption->save($this->request->data)) {
-					$this->Flash->set(__('A opção foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
+					$this->Flash->set(__('A opção foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 					$this->redirect("/products/option/".$id."/".$answer_id."/".$answer_item_id);
 				} else {
 					$this->Flash->set(__('A opção não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -611,7 +611,7 @@ class ProductsController extends AppController {
 		
 		if ($this->request->is(['post', 'put'])) {
 			if ($this->ItemOption->save($this->request->data)) {
-				$this->Flash->set(__('A opção foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('A opção foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect("/products/option/".$id."/".$answer_id."/".$answer_item_id);
 			} else {
 				$this->Flash->set(__('A opção não pode ser salva, por favor tente novamente.'), 'default', array('class' => "alert alert-danger"));
@@ -639,7 +639,7 @@ class ProductsController extends AppController {
 		$this->request->data['ItemOption']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
 		if ($this->ItemOption->save($this->request->data)) {
-			$this->Flash->set(__('A opção foi excluida com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('A opção foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect("/products/option/".$id."/".$answer_id."/".$answer_item_id);
 		}
 	}

@@ -43,7 +43,7 @@ class BillingSalesController extends AppController {
 			if ($this->BillingSale->save($this->request->data)) {
 				$id = $this->BillingSale->id;
 
-				$this->Flash->set(__('O faturamento foi salvo com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O faturamento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(['action' => 'index']);
 			} else {
 				$this->Flash->set(__('O faturamento não pode ser salvo, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -73,7 +73,7 @@ class BillingSalesController extends AppController {
 			if ($this->BillingSale->save($this->request->data)) {
 				$id = $this->BillingSale->id;
 
-				$this->Flash->set(__('O faturamento foi alterado com sucesso'), 'default', array('class' => "alert alert-success"));
+				$this->Flash->set(__('O faturamento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 				$this->redirect(['action' => 'index']);
 			} else {
 				$this->Flash->set(__('O faturamento não pode ser alterado, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
@@ -111,7 +111,7 @@ class BillingSalesController extends AppController {
 				['Outcome.billing_sales_id' => $id] //where
 			);
 
-			$this->Flash->set(__('O faturamento de vendas foi excluido com sucesso'), 'default', array('class' => "alert alert-success"));
+			$this->Flash->set(__('O faturamento de vendas foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 			$this->redirect(array('action' => 'index'));
 		}
 	}
@@ -229,7 +229,7 @@ class BillingSalesController extends AppController {
 		}
 		//$this->Outcome->saveMany($dados_outcome);
 
-		$this->Flash->set(__('Faturado com sucesso'), 'default', array('class' => "alert alert-success"));
+		$this->Flash->set(__('Faturado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 		$this->redirect($this->referer());
 	}
 
@@ -367,7 +367,7 @@ class BillingSalesController extends AppController {
 		}
 		$this->Outcome->saveMany($dados_outcome);
 
-		$this->Flash->set(__('Faturado com sucesso'), 'default', array('class' => "alert alert-success"));
+		$this->Flash->set(__('Faturado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 		$this->redirect($this->referer());
 	}
 
