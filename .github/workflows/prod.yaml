@@ -37,5 +37,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
+            echo $PATH
             php composer.phar install
             vendor/bin/phinx migrate -e production
