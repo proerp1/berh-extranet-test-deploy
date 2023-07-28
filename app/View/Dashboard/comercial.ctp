@@ -120,28 +120,28 @@
              <div class="card-body">
                  <h3 class="box-title">Indicadores</h3>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">R$25.563,23</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$25.563,23</a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Meta Diária</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
                      <div class="bg-success rounded h-10px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">R$145.652,54</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$145.652,54</a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Vendas previsto</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
                      <div class="bg-success rounded h-10px" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">R$45.123,78</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$45.123,78</a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Saldo</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
                      <div class="bg-danger rounded h-10px" role="progressbar" style="width: 12%;" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-6">R$565.434,13</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$565.434,13</a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Orçamentos</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
