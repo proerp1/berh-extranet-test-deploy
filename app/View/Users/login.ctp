@@ -7,7 +7,7 @@
         <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-100px" />
         <!--end::Title-->
     </div>
-    <?php echo $this->Session->flash(); ?>
+    <?php echo $this->Flash->render() ?>
     <!--begin::Heading-->
     <!--begin::Input group-->
     <div class="fv-row mb-10">
