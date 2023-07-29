@@ -160,6 +160,10 @@ class OrdersController extends AppController
                 $progress = 7;
                 break;
         }
+
+        $conditions = [
+            'CustomerUser.customer_id' => $order['Order']['customer_id']
+        ];
         
         $order_customer_users = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
@@ -168,6 +172,10 @@ class OrdersController extends AppController
         ]);
 
         $arr_cst_in_order = Hash::extract($order_customer_users, '{n}.OrderItem.customer_user_id');
+
+        if(!empty($arr_cst_in_order)){
+            $conditions['CustomerUser.id NOT IN'] = $arr_cst_in_order;
+        }
 
         $users_with_itinerary = $this->CustomerUserItinerary->find('all', [
             'conditions' => [
@@ -180,12 +188,12 @@ class OrdersController extends AppController
 
         $arr_ust_with_itinerary = Hash::extract($users_with_itinerary, '{n}.CustomerUserItinerary.customer_user_id');
 
+        if(!empty($arr_ust_with_itinerary)){
+            $conditions['CustomerUser.id IN'] = $arr_ust_with_itinerary;
+        }
+
         $customer_users_pending = $this->CustomerUser->find('list', [
-            'conditions' => [
-                'CustomerUser.customer_id' => $order['Order']['customer_id'], 
-                'CustomerUser.id NOT IN' => $arr_cst_in_order,
-                'CustomerUser.id IN' => $arr_ust_with_itinerary,
-            ],
+            'conditions' => $conditions,
         ]);
 
         $action = 'Pedido';
