@@ -56,15 +56,7 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
 
             <!--begin::Aside-->
             <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10" style="background-image: url('<?php echo $this->base ?>/img/login_berh.jpg'); background-size: cover;">
-                <!--begin::Aside-->
-                <div class="d-flex flex-center flex-lg-start flex-column">
-                    <!--begin::Logo-->
-                    <a href="#" >
-                        <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-100px" />
-                    </a>
-                    <!--end::Logo-->
-                </div>
-                <!--begin::Aside-->
+                
             </div>
             <!--end::Aside-->
 
