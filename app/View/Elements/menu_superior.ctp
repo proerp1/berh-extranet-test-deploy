@@ -30,7 +30,7 @@
             </div>
             <!--end::Navbar-->
             <!--begin::Toolbar wrapper-->
-            <div class="d-flex align-items-stretch flex-shrink-0"  style="padding: 0 30px;">
+            <div class="d-flex align-items-stretch flex-shrink-0"  style="padding: 0 30px !important;">
                 <!--begin::User menu-->
                 <div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
                     <!--begin::Menu wrapper-->
