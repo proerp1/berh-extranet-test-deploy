@@ -23,7 +23,7 @@
         </div>
         <!--end::Mobile logo-->
         <!--begin::Wrapper-->
-        <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
+        <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1" style="background-color: #ED0677 !important;">
             <!--begin::Navbar-->
             <div class="d-flex align-items-stretch" id="kt_header_nav">
                 
