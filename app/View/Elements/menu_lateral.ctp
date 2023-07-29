@@ -223,24 +223,6 @@
                             </a>
                         </div>
 
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'billings') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'billings', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Faturamento</span>
-                            </a>
-                        </div>
-
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'billing_sales') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'billing_sales', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Faturamento Vendas</span>
-                            </a>
-                        </div>
-
                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                             <span class="menu-link">
                                 <span class="menu-bullet">
