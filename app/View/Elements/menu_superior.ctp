@@ -1,4 +1,4 @@
-<div id="kt_header" style="" class="header align-items-stretch">
+<div id="kt_header" style="" class="header align-items-stretch" style="background-color: #ED0677">
     <!--begin::Container-->
     <div class="container-fluid d-flex align-items-stretch justify-content-between">
         <!--begin::Aside mobile toggle-->
