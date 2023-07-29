@@ -276,7 +276,7 @@
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                     <span class="menu-link">
                         <span class="menu-icon">
-                            <i class="fas fa-cog"></i>
+                            <i class="fas fa-minus-circle"></i>
                         </span>
                         <span class="menu-title">Cadastros</span>
                         <span class="menu-arrow"></span>
