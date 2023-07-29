@@ -1,6 +1,6 @@
 <div id="kt_header" style="" class="header align-items-stretch" >
     <!--begin::Container-->
-    <div class="container-fluid d-flex align-items-stretch justify-content-between" style="padding: 0px;">
+    <div class="container-fluid d-flex align-items-stretch justify-content-between" style="padding: 0px !important;">
         <!--begin::Aside mobile toggle-->
         <div class="d-flex align-items-center d-lg-none ms-n2 me-2" title="Show aside menu">
             <div class="btn btn-icon btn-active-light-primary w-30px h-30px w-md-40px h-md-40px" id="kt_aside_mobile_toggle">
