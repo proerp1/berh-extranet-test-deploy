@@ -545,10 +545,10 @@ class CustomerUsersController extends AppController
         $this->request->data['CustomerUser']['password'] = $senha;
             
         if ($this->CustomerUser->save($this->request->data)) {
-            $this->envia_email($this->request->data);
+            // $this->envia_email($this->request->data);
 
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect("/customers/users/".$id);
+            $this->redirect("/customer_users/index/".$id);
         }
     }
 

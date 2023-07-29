@@ -70,7 +70,7 @@
 
                         <div class="mb-7 col">
                             <label class="fw-semibold fs-6 mb-2">Criado por</label>
-                            <p><?php echo $order['Creator']['name']; ?></p>
+                            <p><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></p>
                         </div>
                     </div>
 

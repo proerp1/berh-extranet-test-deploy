@@ -28,7 +28,7 @@ class CustomersController extends AppController
         'LoginConsulta'                 => ['limit' => 10, 'order' => ['LoginConsulta.status_id' => 'asc']],
         'BillingMonthlyPayment' => ['limit' => 10,
             'order' => ['Billing.date_billing' => 'desc'],
-            'fields'  => ['StatusIncome.*', 'Billing.*', 'BillingMonthlyPayment.*', 'PefinMaintenance.*', 'Customer.*'],
+            'fields'  => ['StatusIncome.*', 'Billing.*', 'BillingMonthlyPayment.*', 'Customer.*'],
             'joins' => [['table' => 'incomes',
                 'alias' => 'Income',
                 'type' => 'left',

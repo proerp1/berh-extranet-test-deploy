@@ -6,7 +6,6 @@ class BillingMonthlyPayment extends AppModel {
 	public $belongsTo = array(
 		'Billing',
 		'Customer',
-		'PefinMaintenance',
 		'Status' => array(
 			'className' => 'Status',
 			'foreignKey' => 'status_id',
