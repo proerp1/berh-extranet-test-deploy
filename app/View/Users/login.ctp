@@ -3,7 +3,8 @@
     <!--begin::Heading-->
     <div class="text-center mb-10">
         <!--begin::Title-->
-        <h1 class="text-dark mb-3">Entrar</h1>
+        
+        <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-100px" />
         <!--end::Title-->
     </div>
     <?php echo $this->Session->flash(); ?>
@@ -38,7 +39,7 @@
     <!--begin::Actions-->
     <div class="text-center">
         <!--begin::Submit button-->
-        <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-facebook w-100 mb-5" style="background-color: #e61c72;">
+        <button type="submit" id="kt_sign_in_submit" class="btn btn-lg btn-facebook w-100 mb-5" style="background-color: #ED0677;">
             <span class="indicator-label">Entrar</span>
             <span class="indicator-progress">Please wait...
             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
