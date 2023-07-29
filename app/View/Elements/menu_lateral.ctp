@@ -434,6 +434,15 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'suppliers') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'suppliers', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Fornecedores</span>
+                            </a>
+                        </div>
 
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'benefits') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'benefits', 'action' => 'index']) ?>">
@@ -452,6 +461,15 @@
                                 <span class="menu-title">Centro de custo</span>
                             </a>
                         </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'departments') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'departments', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Departamentos</span>
+                            </a>
+                        </div>
                         
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'expenses') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'expenses', 'action' => 'index']) ?>">
@@ -459,42 +477,6 @@
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Despesas</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'suppliers') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'suppliers', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Fornecedores</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'plans') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'plans', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Planos</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(in_array($this->request->params['controller'], ['products', 'product_attributes']) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'products', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Produtos</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'activity_areas') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'activity_areas', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Ramo de atividades</span>
                             </a>
                         </div>
                         
@@ -521,24 +503,6 @@
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
                         
                         <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'departments') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'departments', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Departamentos</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'cobrancas' && $this->request->params['action'] == 'divisao_cobradores') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'cobrancas', 'action' => 'divisao_cobradores']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Divisao de cobradores</span>
-                            </a>
-                        </div>
-                        
-                        <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'groups') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'groups', 'action' => 'index']) ?>">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
@@ -547,14 +511,7 @@
                             </a>
                         </div>
                         
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'price_tables') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'price_tables', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Tabela de preços</span>
-                            </a>
-                        </div>
+                        
                         
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(in_array($this->request->params['controller'], ['users', 'user_resales']) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'users', 'action' => 'index']) ?>">
