@@ -1,6 +1,6 @@
 <div id="kt_header" style="" class="header align-items-stretch" >
     <!--begin::Container-->
-    <div class="container-fluid d-flex align-items-stretch justify-content-between" style="padding: 0px !important;">
+    <div class="container-fluid d-flex align-items-stretch justify-content-between">
         <!--begin::Aside mobile toggle-->
         <div class="d-flex align-items-center d-lg-none ms-n2 me-2" title="Show aside menu">
             <div class="btn btn-icon btn-active-light-primary w-30px h-30px w-md-40px h-md-40px" id="kt_aside_mobile_toggle">
@@ -23,14 +23,14 @@
         </div>
         <!--end::Mobile logo-->
         <!--begin::Wrapper-->
-        <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1" style="background-color: #ED0677;">
+        <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
             <!--begin::Navbar-->
             <div class="d-flex align-items-stretch" id="kt_header_nav">
                 
             </div>
             <!--end::Navbar-->
             <!--begin::Toolbar wrapper-->
-            <div class="d-flex align-items-stretch flex-shrink-0"  style="padding: 0 30px !important;">
+            <div class="d-flex align-items-stretch flex-shrink-0">
                 <!--begin::User menu-->
                 <div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
                     <!--begin::Menu wrapper-->
