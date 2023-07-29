@@ -52,8 +52,6 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
 <body id="kt_body" class="bg-body">
 
     <div class="d-flex flex-column flex-root">
-        <style>body { background-image: url('<?php echo $this->base ?>/img/background_image.jpg'); background-size: cover;} [data-theme="dark"] body { background-image: url('assets/media/auth/bg4-dark.jpg'); }</style>
-
         <div class="d-flex flex-column flex-lg-row flex-column-fluid">
 
             <!--begin::Aside-->
@@ -77,34 +75,7 @@ $cakeDescription = __d('cake_dev', 'BeRH - Extranet');
             </div>
         </div>
 
-        <!-- <div class="d-flex flex-end pe-10 align-items-center" style="gap: 15rem;">
-            <div>
-                <p>
-                    <strong>Central de atendimento</strong> <br>
-                    Segunda a Sexta das 8h às 18h <br>
-                    (69) 3225-0442 ou 3225-0443 <br>
-                    Outras Localidades 0800 084 0996
-                </p>
-            </div>
-            <div>
-                <p>
-                    www.grupoberh.com.br <br>
-                    ouvidoria@grupoberh.com.br <br>
-                    faleconosco@grupoberh.com.br
-                </p>
-            </div>
-            <div class="d-flex gap-15">
-                <a href="#">
-                    <i class="fab fa-square-facebook" style="font-size: 4em; color: #4267B2;"></i>
-                </a>
-                <a href="#">
-                    <i class="fab fa-square-youtube" style="font-size: 4em; color: #FF0000;"></i>
-                </a>
-                <a href="#">
-                    <img src="<?php echo $this->base.'/img/Instagram_icon.png' ?>" style="width: 4em;">
-                </a>
-            </div>
-        </div> -->
+        
 
     </div>
     
