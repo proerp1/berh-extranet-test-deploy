@@ -47,7 +47,7 @@
                             <i class="fas fa-bullhorn"></i> 
                         </span>
                         <span class="menu-title">
-                            Atendimento <?php echo $pendentes > 0 ? '<span class="label label-warning js-count-alert">'.$pendentes.'</span>' : '' ?>
+                            Atendimentos <?php echo $pendentes > 0 ? '<span class="label label-warning js-count-alert">'.$pendentes.'</span>' : '' ?>
                         </span>
                     </a>
                 </div>
