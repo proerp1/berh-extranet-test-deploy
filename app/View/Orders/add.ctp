@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mb-7 col">
-                            <label class="fw-semibold fs-6 mb-2">Comissão</label>
+                            <label class="fw-semibold fs-6 mb-2">Taxa</label>
                             <p>R$<?php echo $order['Order']['commission_fee']; ?></p>
                         </div>
 
