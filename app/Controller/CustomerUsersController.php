@@ -38,10 +38,10 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Funcionários' => ''
+            'Beneficiários' => ''
         ];
         $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb'));
     }
@@ -71,7 +71,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $estados = $this->CepbrEstado->find('list');
@@ -109,7 +109,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
         $hash = base64_encode($this->request->data['CustomerUser']['username']);
@@ -159,7 +159,7 @@ class CustomerUsersController extends AppController
 
         $action = 'Endereços';
         $breadcrumb = [
-            'Funcionários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Endereços' => ''
         ];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
@@ -187,7 +187,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $states = $this->CepbrEstado->find('list');
@@ -225,7 +225,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -256,7 +256,7 @@ class CustomerUsersController extends AppController
 
         $action = 'Férias';
         $breadcrumb = [
-            'Funcionários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Férias' => ''
         ];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
@@ -279,7 +279,7 @@ class CustomerUsersController extends AppController
 
         $action = 'Dados Bancários';
         $breadcrumb = [
-            'Funcionários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Dados Bancários' => ''
         ];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
@@ -307,7 +307,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $states = $this->CepbrEstado->find('list');
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
@@ -342,7 +342,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -373,7 +373,7 @@ class CustomerUsersController extends AppController
 
         $action = 'Dados Bancários';
         $breadcrumb = [
-            'Funcionários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Dados Bancários' => ''
         ];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
@@ -401,7 +401,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $states = $this->CepbrEstado->find('list');
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
@@ -436,7 +436,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Funcionários';
+        $action = 'Beneficiários';
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -471,7 +471,7 @@ class CustomerUsersController extends AppController
     public function transactions($id, $user_id){
         $action = 'Extrato';
         $breadcrumb = [
-            'Funcionários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Extrato' => ''
         ];
         $this->set(compact('action', 'breadcrumb', 'id', 'user_id'));
