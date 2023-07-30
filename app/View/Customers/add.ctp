@@ -208,10 +208,6 @@
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
-        <?php if (isset($id) && $this->request->data['Customer']['winback'] == 1) { ?>
-            <span class="badge badge-danger w-100">Cliente WINBACK</span>
-        <?php } ?>
-
         <?php echo $this->Form->create('Customer', array("id" => "js-form-submit", "action" => "/".$form_action."/", "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
             <?php if (isset($id)) { ?>
                 <textarea name="log_old_value" style="display:none"><?php echo json_encode(array('Customer' => $this->request->data['Customer'])); ?></textarea>
@@ -227,9 +223,7 @@
                         <label class="fw-semibold fs-6 mb-2">Situação</label>
                         <p><?php echo $this->request->data["Status"]['name'] ?></p>
                     </div>
-                </div>
-
-                <div class="row">
+                
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Data de cadastro</label>
                         <?php echo $this->Form->input('created', array("type" => "text", "required" => true, "placeholder" => "Data de Cadastro", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
@@ -247,12 +241,8 @@
                     <?php echo $this->Form->input('cod_franquia', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Vendedore</label>
+                    <label class="fw-semibold fs-6 mb-2">Vendedor</label>
                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
-                </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2 required">Senha</label>
-                    <?php echo $this->Form->input('senha', ["placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"]);?>
                 </div>
             </div>
 
@@ -265,9 +255,7 @@
                     <label class="fw-semibold fs-6 mb-2 required">CNPJ</label>
                     <?php echo $this->Form->input('documento', array("id" => "documento", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
-            </div>
-
-            <div class="row">
+            
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Razão social</label>
                     <?php echo $this->Form->input('nome_primario', array("id" => "nome_primario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"));  ?>
@@ -294,6 +282,7 @@
             </div>
 
             <div class="row">
+
                 <div class="mb-7 col">
                     <label for="cep" class="form-label required">CEP</label>
                     <div class="input-group">
@@ -305,17 +294,17 @@
                     <label class="fw-semibold fs-6 mb-2 required">Endereço</label>
                     <?php echo $this->Form->input('endereco', array("id" => "endereco", "placeholder" => "Endereço", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Complemento</label>
-                    <?php echo $this->Form->input('complemento', array("id" => "complemento", "placeholder" => "Complemento", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
-                </div>
+            
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Número</label>
                     <?php echo $this->Form->input('numero', array("id" => "numero", "placeholder" => "Número", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Complemento</label>
+                    <?php echo $this->Form->input('complemento', array("id" => "complemento", "placeholder" => "Complemento", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+                
             </div>
 
             <div class="row">
@@ -327,23 +316,25 @@
                     <label class="fw-semibold fs-6 mb-2 required">Bairro</label>
                     <?php echo $this->Form->input('bairro', array("id" => "bairro", "placeholder" => "Bairro", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
-            </div>
-
-            <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Estado</label>
                     <?php echo $this->Form->input('estado', array("id" => "estado", "placeholder" => "Estado", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Ramal</label>
-                    <?php echo $this->Form->input('ramal', array("placeholder" => "Ramal", "class" => "form-control mb-3 mb-lg-0"));  ?>
-                </div>
+            </div>
+
+            <div class="row">
+                
+                
             </div>
 
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Telefone 1</label>
                     <?php echo $this->Form->input('telefone1', array("placeholder" => "Telefone 1", "class" => "form-control telefone mb-3 mb-lg-0")); ?>
+                </div>
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Ramal</label>
+                    <?php echo $this->Form->input('ramal', array("placeholder" => "Ramal", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Telefone 2</label>
