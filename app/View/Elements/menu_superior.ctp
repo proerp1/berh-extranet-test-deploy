@@ -18,7 +18,7 @@
         <!--begin::Mobile logo-->
         <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
             <a href="<?php echo $this->base ?>" class="d-lg-none">
-                <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" width="100" ?>" />
+                <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="w-100px"/>
             </a>
         </div>
         <!--end::Mobile logo-->
