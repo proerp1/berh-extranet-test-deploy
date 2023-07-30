@@ -33,7 +33,7 @@
                     <th>Período</th>
                     <th>Subtotal</th>
                     <th>Repasse</th>
-                    <th>Comissão</th>
+                    <th>Taxa</th>
                     <th>Total</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
