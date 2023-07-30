@@ -181,7 +181,7 @@ class CustomersController extends AppController
 
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
-
+		/*
                     $customer_user = ['CustomerUser' => ['name' => $this->request->data['Customer']['nome_primario'],
                         'email' => $this->request->data['Customer']['email'],
                         'username' => $this->request->data['Customer']['email'],
@@ -191,7 +191,7 @@ class CustomersController extends AppController
                     ]];
 
                     $this->CustomerUser->save($customer_user, ['validate' => false]);
-
+		*/
 
                     $this->Flash->set(__('O cliente foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect("/customers/edit/".$id);
