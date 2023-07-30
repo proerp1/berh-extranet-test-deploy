@@ -323,11 +323,6 @@
             </div>
 
             <div class="row">
-                
-                
-            </div>
-
-            <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Telefone 1</label>
                     <?php echo $this->Form->input('telefone1', array("placeholder" => "Telefone 1", "class" => "form-control telefone mb-3 mb-lg-0")); ?>
@@ -367,17 +362,17 @@
             <?php } ?>
 
             <div class="row">
-                <div class="mb-7 col col-sm-6">
+                <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Juros e multa?</label>
                     <?php echo $this->Form->input('cobrar_juros', array('options' => array('N' => 'Não', 'S' => 'Sim'), "data-control" => "select2", "empty" => "Selecione", "class" => "form-select mb-3 mb-lg-0"));  ?>
                 </div>
 
-                <div class="mb-7 col col-sm-6">
+                <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Enviar email?</label>
                     <?php echo $this->Form->input('enviar_email', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", "empty" => "Selecione", "class" => "form-select mb-3 mb-lg-0"));  ?>
                 </div>
 
-                <div class="mb-7 col col-sm-6">
+                <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Cobrar taxa do boleto?</label>
                     <?php echo $this->Form->input('cobrar_taxa_boleto', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
                 </div>
