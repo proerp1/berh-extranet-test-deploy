@@ -67,7 +67,7 @@ class OrdersController extends AppController
                 $this->Flash->set(__('Falha ao criar pedido. Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
     
-            $this->redirect(['action' => 'index']);
+            $this->redirect(['action' => 'edit/'.$orderId]);
         }
     }
 
