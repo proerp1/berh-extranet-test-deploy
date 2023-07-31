@@ -223,7 +223,7 @@ class UsersController extends AppController
                     $this->redirect($this->Auth->redirect());
                 }
             } else {
-                $this->Flash->set(__('Usuário e senha incorretos'), "default", ["class" => "alert alert-danger"]);
+                $this->Flash->set(__('Usuário e senha incorretos'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect("/");
             }
         }
