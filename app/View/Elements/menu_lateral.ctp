@@ -10,7 +10,7 @@
     <div class="aside-logo flex-column-auto" id="kt_aside_logo" style="background-color: #ED0677 !important;">
         <!--begin::Logo-->
         <a href="<?php echo $this->base ?>">
-            <img alt="Logo" src="<?php echo $this->base."/img/berh_2.png" ?>" class="w-125px logo" />
+            <img alt="Logo" src="<?php echo $this->base."/img/BE_Logo_Horizontal_Branco.png" ?>" class="w-125px logo" />
         </a>
         <!--end::Logo-->
         <!--begin::Aside toggler-->
