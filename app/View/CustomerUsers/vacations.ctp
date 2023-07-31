@@ -19,7 +19,7 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                    <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
+                    <!-- <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a> -->
                 </div>
             </div>
         </div>
