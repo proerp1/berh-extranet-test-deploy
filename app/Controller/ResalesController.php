@@ -7,7 +7,7 @@ class ResalesController extends AppController
 
     public $paginate = [
         'Resale'			 => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'Resale.nome_fantasia' => 'asc']],
-        'Seller'			 => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'Seller.nome_fantasia' => 'asc']],
+        'Seller'			 => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'Seller.name' => 'asc']],
         'Customer'		 => ['limit' => 10, 'order' => ['Seller.nome_fantasia' => 'asc', 'Customer.nome_secundario' => 'asc']],
         'CustomerUser' => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'CustomerUser.name' => 'asc']]
     ];
@@ -259,7 +259,7 @@ class ResalesController extends AppController
 
         $data = $this->Paginator->paginate('Customer', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
-        $vendedor = $this->Seller->find('all', ['conditions' => ['Status.id' => 1, 'Seller.resale_id' => $resale_id], 'order' => 'Seller.nome_fantasia']);
+        $vendedor = $this->Seller->find('all', ['conditions' => ['Status.id' => 1, 'Seller.resale_id' => $resale_id], 'order' => 'Seller.name']);
         $breadcrumb = [
             $resale['Resale']['nome_fantasia'] => ['controller' => 'resales', 'action' => 'edit', $resale_id], 
             'Carteira' => ''

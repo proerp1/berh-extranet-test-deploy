@@ -65,10 +65,41 @@ class CustomerUser extends AppModel {
 	  return $queryData;
 	}
 
+	public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            if (isset($val[$this->alias]['data_nascimento'])) {
+                $results[$key][$this->alias]['data_nascimento_nao_formatado'] = $results[$key][$this->alias]['data_nascimento'];
+                $results[$key][$this->alias]['data_nascimento'] = date("d/m/Y", strtotime($results[$key][$this->alias]['data_nascimento']));
+            }
+        }
+
+        return $results;
+    }
+
 	public function beforeSave($options = array()) {
 		if (isset($this->data[$this->alias]['password'])) {
-			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password']);
+		}
+
+		if (!empty($this->data[$this->alias]['data_nascimento'])) {
+			$this->data[$this->alias]['data_nascimento'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_nascimento']);
 		}
 		return true;
 	}
+
+	public function dateFormatBeforeSave($dateString)
+    {
+        return date('Y-m-d', strtotime($this->date_converter($dateString)));
+    }
+
+    public function date_converter($_date = null)
+    {
+        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+        if ($_date != null && preg_match($format, $_date, $partes)) {
+            return $partes[3].'-'.$partes[2].'-'.$partes[1];
+        }
+        
+        return false;
+    }
 }

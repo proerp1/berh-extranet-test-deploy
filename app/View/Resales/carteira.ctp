@@ -96,7 +96,7 @@
         								<?php echo $data[$i]["Status"]["name"] ?>
         							</span>
         						</td>
-        						<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["nome_fantasia"]; ?></td>
+        						<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["name"]; ?></td>
         						<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
         						<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
         						<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["email"]; ?></td>

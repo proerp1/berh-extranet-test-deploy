@@ -1,4 +1,4 @@
-<?php $url_novo = $this->base."/customer_users/add/".$id;  ?>
+<?php $url_novo = $is_admin ? $this->base."/customer_users/add_user/".$id : $this->base."/customer_users/add/".$id;  ?>
 <?php
     echo $this->element("abas_customers", array('id' => $id));
 ?>
@@ -71,6 +71,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $urlEdit = $is_admin ? 'edit_user' : 'edit'; ?>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
@@ -82,7 +83,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["email"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
-                                    <a href="<?php echo $this->base.'/customer_users/edit/'.$id.'/'.$data[$i]["CustomerUser"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
+                                    <a href="<?php echo $this->base.'/customer_users/'.$urlEdit.'/'.$id.'/'.$data[$i]["CustomerUser"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
 

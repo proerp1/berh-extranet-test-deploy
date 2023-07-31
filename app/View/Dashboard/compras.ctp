@@ -13,7 +13,7 @@
             <!--begin::Col-->
             <div class="col-md-8 mb-md-5 mb-xl-10">
                 <!--begin::Card widget 16-->
-                <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center h-md-100 mb-5 mb-xl-10" style="background-color: #080655;background-image:url('assets/media/svg/shapes/wave-bg-dark.svg')">
+                <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-center h-md-100 mb-5 mb-xl-10" style="background-color: #472F92;">
                     <!--begin::Header-->
                     <div class="card-header pt-5">
                         <!--begin::Title-->

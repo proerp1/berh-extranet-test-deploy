@@ -352,7 +352,7 @@ class CustomersController extends AppController
         $this->autoRender = false;
         $this->layout = 'ajax';
 
-        $sellers = $this->Seller->find("all", ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => $_POST['resale_id']], 'order' => ['Seller.nome_fantasia' => "asc"] ]);
+        $sellers = $this->Seller->find("all", ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => $_POST['resale_id']], 'order' => ['Seller.name' => "asc"] ]);
 
         echo json_encode($sellers);
     }

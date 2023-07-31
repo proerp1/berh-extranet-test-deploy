@@ -17,12 +17,23 @@ class CustomerUsersController extends AppController
     /*******************
                 USUARIOS
     ********************/
-    public function index($id)
+    public function index_users($id){
+        $this->index($id, true);
+        $this->render('index');
+    }
+
+    public function index($id, $is_admin = false)
     {
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
+        
+        if($is_admin){
+            $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin' => 1]);
+        } else {
+            $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin !=' => 1]);
+        }
 
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%".$_GET['q']."%", 'CustomerUser.email LIKE' => "%".$_GET['q']."%"]);
@@ -38,31 +49,38 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Beneficiários';
+        $action = $is_admin ? 'Usuários' : 'Beneficiários';
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Beneficiários' => ''
         ];
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb'));
+        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin'));
     }
 
-    public function add($id)
+    public function add_user($id){
+        $this->add($id, true);
+        $this->render('add');
+    }
+
+    public function add($id, $is_admin = false)
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUser->create();
             $this->CustomerUser->validates();
 
+            $this->request->data['CustomerUser']['is_admin'] = $is_admin ? 1 : 0;
+
             $senha = substr(sha1(time()), 0, 6);
 
             $this->request->data['CustomerUser']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerUser']['password'] = $senha;
-            $this->request->data['CustomerUser']['username'] = $this->request->data['CustomerUser']['email'];
             if ($this->CustomerUser->save($this->request->data)) {
                 // $this->envia_email($this->request->data);
 
+                $action = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
                 $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'edit/'.$id.'/'.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
+                $this->redirect(['action' => $action.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
             } else {
                 $this->Flash->set(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -81,11 +99,16 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Novo Usuário' => ''
         ];
-        $this->set("form_action", "../customer_users/add/".$id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'departamentos', 'cargos'));
+        $form_action = $is_admin ? "../customer_users/add/".$id.'/true' : "../customer_users/add/".$id;
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
     }
 
-    public function edit($id, $user_id = null)
+    public function edit_user($id, $user_id){
+        $this->edit($id, $user_id, true);
+        $this->render('add');
+    }
+
+    public function edit($id, $user_id = null, $is_admin = false)
     {
         $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUser->id = $user_id;
@@ -93,8 +116,10 @@ class CustomerUsersController extends AppController
             $this->CustomerUser->validates();
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerUser->save($this->request->data)) {
+                $action = $is_admin ? 'index_users/'.$id.'/' : 'index/'.$id.'/';
+                
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'index/'.$id.'/?'.$this->request->data['query_string']]);
+                $this->redirect(['action' => $action]);
             } else {
                 $this->Flash->set(__('O usuário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -112,7 +137,7 @@ class CustomerUsersController extends AppController
         $action = 'Beneficiários';
 
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
-        $hash = base64_encode($this->request->data['CustomerUser']['username']);
+        $hash = base64_encode($this->request->data['CustomerUser']['email']);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Beneficiário' => ''
@@ -122,8 +147,8 @@ class CustomerUsersController extends AppController
         $cargos = $this->CustomerPosition->find('list');
 
         $this->set('hash', rawurlencode($hash));
-        $this->set("form_action", "../customer_users/edit/".$id.'/'.$user_id);
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos'));
+        $form_action = $is_admin ? "../customer_users/edit/".$id.'/'.$user_id.'/true' : "../customer_users/edit/".$id.'/'.$user_id;
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
             
         $this->render("add");
     }

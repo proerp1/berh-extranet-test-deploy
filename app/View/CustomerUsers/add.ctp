@@ -47,7 +47,7 @@
 <?php
 $url = $this->base . '/customers_users/index';
 echo $this->element('abas_customers', ['id' => $id, 'url' => $url]);
-if(isset($user_id)){
+if(isset($user_id) && !$is_admin){
     echo $this->element('abas_customer_users', ['id' => $id, 'url' => $url]);
 }
 ?>
@@ -57,6 +57,7 @@ if(isset($user_id)){
         <?php echo $this->Form->create('CustomerUser', ['id' => 'js-form-submit', 'action' => $form_action, 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
         <input type="hidden" name="data[CustomerUser][customer_id]" value="<?php echo $id; ?>">
         <input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''; ?>">
+        <input type="hidden" name="data[CustomerUser][tip]" value="<?php echo $is_admin ? 'U' : 'B'; ?>">
 
         <div class="row">
             <div class="mb-7 col">
@@ -120,7 +121,7 @@ if(isset($user_id)){
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Data Nascimento</label>
-                <?php echo $this->Form->input('data_nascimento', ['placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0']); ?>
+                <?php echo $this->Form->input('data_nascimento', ['type' => 'text', 'placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0']); ?>
             </div>
         </div>
 
@@ -137,7 +138,8 @@ if(isset($user_id)){
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
-                <a href="<?php echo $this->base . '/customer_users/index/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
+                <?php $urlVoltar = $is_admin ? 'index_users' : 'index'; ?>
+                <a href="<?php echo $this->base . '/customer_users/'.$urlVoltar.'/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
                 <button type="submit" class="btn btn-success js-salvar">Salvar</button>
                 <?php if (isset($this->request->data['CustomerUser'])) { ?>
                     <a href="javascript:" onclick="confirm('<h3>Deseja mesmo reenviar a senha?</h3>', '<?php echo $this->base . '/customer_users/reenviar_senha/' . $id . '/' . $user_id; ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i> Reenviar senha</a>
