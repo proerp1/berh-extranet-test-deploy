@@ -93,7 +93,7 @@ class CustomerUsersController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $estados = $this->CepbrEstado->find('list');
-        $departamentos = $this->CustomerDepartment->find('list');
+        $departamentos = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
         $cargos = $this->CustomerPosition->find('list');
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -143,7 +143,7 @@ class CustomerUsersController extends AppController
             'Alterar Beneficiário' => ''
         ];
         $estados = $this->CepbrEstado->find('list');
-        $departamentos = $this->CustomerDepartment->find('list');
+        $departamentos = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
         $cargos = $this->CustomerPosition->find('list');
 
         $this->set('hash', rawurlencode($hash));
