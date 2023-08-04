@@ -67,4 +67,50 @@ class OrderItem extends AppModel {
 
 		return $valueFormatado;
 	}
+
+    public function apiLastOrders(){
+        $sql = "
+        SELECT
+            sum(OrderItem.subtotal) AS pedido_valor,
+            CONCAT(CONCAT(CONCAT('5803-', Order.id), '-'), CustomerUser.id) AS pedido_id,
+            CustomerUser.id AS customer_user_id,
+            CustomerUser.name AS colaborador_nome,
+            CustomerUser.cpf AS colaborador_cpf,
+            CustomerUser.rg AS colaborador_rg,
+            CustomerUser.emissor_rg AS colaborador_emissor_rg,
+            CustomerUser.emissor_estado AS colaborador_estado_emissao_rg,
+            CustomerUser.sexo AS colaborador_sexo,
+            CustomerUser.data_nascimento AS colaborador_data_nascimento,
+            CustomerUser.nome_mae AS colaborador_nome_mae,
+            CustomerUser.email AS colaborador_email,
+            CustomerUserAddress.address_line AS colaborador_endereco_logradouro,
+            CustomerUserAddress.address_number AS colaborador_endereco_numero,
+            CustomerUserAddress.neighborhood AS colaborador_endereco_bairro,
+            CustomerUserAddress.city AS colaborador_endereco_cidade,
+            CustomerUserAddress.state AS colaborador_endereco_estado,
+            CustomerUserAddress.zip_code AS colaborador_endereco_cep,
+            CustomerUserAddress.address_complement AS colaborador_endereco_complemento,
+            Customer.nome_primario AS empresa_razao_social,
+            Customer.documento AS empresa_cnpj,
+            Customer.nome_secundario AS empresa_nome_reduzido,
+            Customer.endereco AS empresa_endereco_logradouro,
+            Customer.numero AS empresa_endereco_numero,
+            Customer.bairro AS empresa_endereco_bairro,
+            Customer.cidade AS empresa_endereco_cidade,
+            Customer.estado AS empresa_endereco_estado,
+            Customer.cep AS empresa_endereco_cep,
+            Customer.complemento AS empresa_endereco_complemento
+        FROM
+            order_items OrderItem
+        INNER JOIN orders `Order` on OrderItem.order_id = Order.id
+        INNER JOIN customer_users CustomerUser ON OrderItem.customer_user_id = CustomerUser.id
+        INNER JOIN customer_user_addresses CustomerUserAddress on CustomerUser.id = CustomerUserAddress.customer_user_id
+        INNER JOIN customers Customer ON CustomerUser.customer_id = Customer.id
+        GROUP BY
+            Order.id, OrderItem.customer_user_id
+
+        ";
+
+        return $this->query($sql);
+    }
 }
