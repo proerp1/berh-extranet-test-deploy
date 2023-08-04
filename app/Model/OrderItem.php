@@ -106,9 +106,12 @@ class OrderItem extends AppModel {
         INNER JOIN customer_users CustomerUser ON OrderItem.customer_user_id = CustomerUser.id
         INNER JOIN customer_user_addresses CustomerUserAddress on CustomerUser.id = CustomerUserAddress.customer_user_id
         INNER JOIN customers Customer ON CustomerUser.customer_id = Customer.id
+        WHERE OrderItem.data_cancel = '1901-01-01 00:00:00'
+        and `Order`.data_cancel = '1901-01-01 00:00:00'
+        and CustomerUser.data_cancel = '1901-01-01 00:00:00'
+        and Customer.data_cancel = '1901-01-01 00:00:00'
         GROUP BY
             Order.id, OrderItem.customer_user_id
-
         ";
 
         return $this->query($sql);
