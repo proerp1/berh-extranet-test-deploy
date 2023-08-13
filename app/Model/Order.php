@@ -30,6 +30,13 @@ class Order extends AppModel {
         ]
     ];
 
+    public function beforeFind($queryData)
+    {
+        $queryData['conditions'][] = ['Order.data_cancel' => '1901-01-01 00:00:00'];
+        
+        return $queryData;
+    }
+
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
