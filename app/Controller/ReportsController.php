@@ -22,7 +22,7 @@ class ReportsController extends AppController {
                 'NovaVidaLogConsulta.id',
                 'Customer.codigo_associado',
                 'Customer.nome_secundario',
-                'Product.name'
+                'Product.name',
             ],
             'joins' => [
                 [

@@ -1,5 +1,7 @@
 <?php
-require_once 'PHPExcel.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class ExcelGeneratorComponent extends Component {
 
 	private $template;
@@ -24,14 +26,14 @@ class ExcelGeneratorComponent extends Component {
 	}
 
 	public function gerarExcelCnabLotes($nome, $dados){
-		$objPHPExcel = new PHPExcel();
+		$spreadsheet = new Spreadsheet();
 
-		$this->templates_list->getCnabLotes($objPHPExcel, $dados);
+		$this->templates_list->getCnabLotes($spreadsheet, $dados);
 
 		$local_salva = APP.'webroot/files/excel/'.$nome.'.xlsx';
 
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-		$objWriter->save($local_salva);
+		$writer = new Xlsx($spreadsheet);
+		$writer->save($local_salva);
 	}
 
 	public function gerarExcelBloqueioDiario($nome, $dados){

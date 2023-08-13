@@ -14,9 +14,13 @@
                 </li>
                 <li class="bullet-3">
                     <div class="el"><i class='fa fa-credit-card'></i></div>
-                    <div class="txt">Aguardando Pagamento</div>
+                    <div class="txt">Aguardando Emissão</div>
                 </li>
                 <li class="bullet-4">
+                    <div class="el"><i class='fa fa-check'></i></div>
+                    <div class="txt">Aguardando Pagamento</div>
+                </li>
+                <li class="bullet-5">
                     <div class="el"><i class='fa fa-check'></i></div>
                     <div class="txt">Finalizado</div>
                 </li>
@@ -132,30 +136,38 @@
     }
 
     .tracking .progress-1 .color-bar {
-        width: 15%;
+        width: 12%;
     }
 
     .tracking .progress-2 .color-bar {
-        width: 30%;
+        width: 34%;
     }
 
     .tracking .progress-3 .color-bar {
-        width: 45%;
+        width: 34%;
     }
 
     .tracking .progress-4 .color-bar {
-        width: 60%;
+        width: 56%;
     }
 
     .tracking .progress-5 .color-bar {
-        width: 75%;
+        width: 56%;
     }
 
     .tracking .progress-6 .color-bar {
-        width: 90%;
+        width: 80%;
     }
 
     .tracking .progress-7 .color-bar {
+        width: 80%;
+    }
+
+    .tracking .progress-8 .color-bar {
+        width: 90%;
+    }
+
+    .tracking .progress-9 .color-bar {
         width: 90%;
     }
 
@@ -166,7 +178,9 @@
     .tracking .progress-4>ul>li.bullet-1,
     .tracking .progress-5>ul>li.bullet-1,
     .tracking .progress-6>ul>li.bullet-1,
-    .tracking .progress-7>ul>li.bullet-1 {
+    .tracking .progress-7>ul>li.bullet-1,
+    .tracking .progress-8>ul>li.bullet-1,
+    .tracking .progress-9>ul>li.bullet-1 {
         background-color: var(--blue);
     }
 
@@ -175,23 +189,34 @@
     .tracking .progress-4>ul>li.bullet-2,
     .tracking .progress-5>ul>li.bullet-2,
     .tracking .progress-6>ul>li.bullet-2,
-    .tracking .progress-7>ul>li.bullet-2 {
+    .tracking .progress-7>ul>li.bullet-2,
+    .tracking .progress-8>ul>li.bullet-2,
+    .tracking .progress-9>ul>li.bullet-2 {
         background-color: var(--blue);
     }
 
     .tracking .progress-4>ul>li.bullet-3,
     .tracking .progress-5>ul>li.bullet-3,
     .tracking .progress-6>ul>li.bullet-3,
-    .tracking .progress-7>ul>li.bullet-3 {
+    .tracking .progress-7>ul>li.bullet-3,
+    .tracking .progress-8>ul>li.bullet-3,
+    .tracking .progress-9>ul>li.bullet-3 {
         background-color: var(--blue);
     }
 
     .tracking .progress-6>ul>li.bullet-4,
-    .tracking .progress-7>ul>li.bullet-4 {
+    .tracking .progress-7>ul>li.bullet-4,
+    .tracking .progress-8>ul>li.bullet-4,
+    .tracking .progress-9>ul>li.bullet-4 {
         background-color: var(--blue);
     }
 
-    .tracking .progress-7>ul>li.bullet-4 {
+    .tracking .progress-8>ul>li.bullet-5,
+    .tracking .progress-9>ul>li.bullet-5 {
+        background-color: var(--blue);
+    }
+
+    .tracking .progress-9>ul>li.bullet-5 {
         background-color: var(--green);
     }
 
@@ -201,7 +226,9 @@
     .tracking .progress-4>ul>li.bullet-1 .el i,
     .tracking .progress-5>ul>li.bullet-1 .el i,
     .tracking .progress-6>ul>li.bullet-1 .el i,
-    .tracking .progress-7>ul>li.bullet-1 .el i {
+    .tracking .progress-7>ul>li.bullet-1 .el i,
+    .tracking .progress-8>ul>li.bullet-1 .el i,
+    .tracking .progress-9>ul>li.bullet-1 .el i {
         display: block;
     }
 
@@ -209,17 +236,27 @@
     .tracking .progress-4>ul>li.bullet-2 .el i,
     .tracking .progress-5>ul>li.bullet-2 .el i,
     .tracking .progress-6>ul>li.bullet-2 .el i,
-    .tracking .progress-7>ul>li.bullet-2 .el i {
+    .tracking .progress-7>ul>li.bullet-2 .el i,
+    .tracking .progress-8>ul>li.bullet-2 .el i,
+    .tracking .progress-9>ul>li.bullet-2 .el i {
         display: block;
     }
 
     .tracking .progress-5>ul>li.bullet-3 .el i,
     .tracking .progress-6>ul>li.bullet-3 .el i,
-    .tracking .progress-7>ul>li.bullet-3 .el i {
+    .tracking .progress-7>ul>li.bullet-3 .el i,
+    .tracking .progress-8>ul>li.bullet-3 .el i,
+    .tracking .progress-9>ul>li.bullet-3 .el i {
         display: block;
     }
 
-    .tracking .progress-7>ul>li.bullet-4 .el i {
+    .tracking .progress-7>ul>li.bullet-4 .el i,
+    .tracking .progress-8>ul>li.bullet-4 .el i,
+    .tracking .progress-9>ul>li.bullet-4 .el i {
+        display: block;
+    }
+
+    .tracking .progress-9>ul>li.bullet-5 .el i {
         display: block;
     }
 
@@ -229,7 +266,9 @@
     .tracking .progress-4>ul>li.bullet-1 .txt,
     .tracking .progress-5>ul>li.bullet-1 .txt,
     .tracking .progress-6>ul>li.bullet-1 .txt,
-    .tracking .progress-7>ul>li.bullet-1 .txt {
+    .tracking .progress-7>ul>li.bullet-1 .txt,
+    .tracking .progress-8>ul>li.bullet-1 .txt,
+    .tracking .progress-9>ul>li.bullet-1 .txt {
         color: var(--blue);
     }
 
@@ -237,17 +276,27 @@
     .tracking .progress-4>ul>li.bullet-2 .txt,
     .tracking .progress-5>ul>li.bullet-2 .txt,
     .tracking .progress-6>ul>li.bullet-2 .txt,
-    .tracking .progress-7>ul>li.bullet-2 .txt {
+    .tracking .progress-7>ul>li.bullet-2 .txt,
+    .tracking .progress-8>ul>li.bullet-2 .txt,
+    .tracking .progress-9>ul>li.bullet-2 .txt {
         color: var(--blue);
     }
 
     .tracking .progress-5>ul>li.bullet-3 .txt,
     .tracking .progress-6>ul>li.bullet-3 .txt,
-    .tracking .progress-7>ul>li.bullet-3 .txt {
+    .tracking .progress-7>ul>li.bullet-3 .txt,
+    .tracking .progress-8>ul>li.bullet-3 .txt,
+    .tracking .progress-9>ul>li.bullet-3 .txt {
         color: var(--blue);
     }
 
-    .tracking .progress-7>ul>li.bullet-4 .txt {
+    .tracking .progress-7>ul>li.bullet-4 .txt,
+    .tracking .progress-8>ul>li.bullet-4 .txt,
+    .tracking .progress-9>ul>li.bullet-4 .txt {
+        color: var(--blue);
+    }
+
+    .tracking .progress-9>ul>li.bullet-5 .txt {
         color: var(--blue);
     }
 </style>

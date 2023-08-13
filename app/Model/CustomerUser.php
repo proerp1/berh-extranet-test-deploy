@@ -21,6 +21,14 @@ class CustomerUser extends AppModel {
 		  'className' => 'Status',
 		  'foreignKey' => 'status_id',
 		  'conditions' => array('Status.categoria' => 1)
+		),
+		'CustomerDepartment' => array(
+		  'className' => 'CustomerDepartment',
+		  'foreignKey' => 'customer_departments_id'
+		),
+		'CostCenter' => array(
+		  'className' => 'CostCenter',
+		  'foreignKey' => 'customer_cost_center_id'
 		)
 	);
 
@@ -71,6 +79,18 @@ class CustomerUser extends AppModel {
             if (isset($val[$this->alias]['data_nascimento'])) {
                 $results[$key][$this->alias]['data_nascimento_nao_formatado'] = $results[$key][$this->alias]['data_nascimento'];
                 $results[$key][$this->alias]['data_nascimento'] = date("d/m/Y", strtotime($results[$key][$this->alias]['data_nascimento']));
+            }
+
+			if (isset($val[$this->alias]['cel'])) {
+				$cel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['cel']);
+                $results[$key][$this->alias]['cel_sem_ddd'] = substr($cel, 2);
+                $results[$key][$this->alias]['ddd_cel'] = substr($cel, 0, 2);
+            }
+
+			if (isset($val[$this->alias]['tel'])) {
+				$tel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['tel']);
+                $results[$key][$this->alias]['tel_sem_ddd'] = substr($tel, 2);
+                $results[$key][$this->alias]['ddd_tel'] = substr($cel, 0, 2);
             }
         }
 

@@ -1,13 +1,13 @@
 <?php
-App::uses('Bancoob', 'Lib');
+App::uses('BoletoItau', 'Lib');
 class CnabController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Uploader', 'GerarTxtCaixa', 'GerarRemessaCnab', 'ExcelGenerator'];
-    public $uses = ['Income', 'BankAccount', 'CnabLoteSicoob', 'CnabItemSicoob', 'Status', 'Bank', 'ChargesHistory'];
+    public $uses = ['Income', 'BankAccount', 'CnabLote', 'CnabItem', 'Status', 'Bank', 'ChargesHistory'];
 
     public $paginate = [
-        'CnabLoteSicoob' => ['limit' => 20, 'order' => ['CnabLoteSicoob.remessa' => 'desc']]
+        'CnabLote' => ['limit' => 20, 'order' => ['CnabLote.remessa' => 'desc']]
     ];
 
     public function beforeFilter()
@@ -55,7 +55,7 @@ class CnabController extends AppController
 
         $data = [];
         if ($buscar) {
-            $this->Income->unbindModel(['belongsTo' => ['UsuarioBaixa', 'UsuarioCancelamento', 'BankAccount', 'Revenue', 'CostCenter', 'Billing', 'BillingMonthlyPayment'], 'hasOne' => ['CnabItem', 'CnabItemSicoob']]);
+            $this->Income->unbindModel(['belongsTo' => ['UsuarioBaixa', 'UsuarioCancelamento', 'BankAccount', 'Revenue', 'CostCenter', 'Billing', 'BillingMonthlyPayment']]);
             $data = $this->Income->find('all', ['conditions' => $condition, 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc']]);
         }
 
@@ -76,25 +76,25 @@ class CnabController extends AppController
             $contas = $this->Income->getDadosBoleto($ids, 'all');
 
             if (!empty($contas)) {
-                $remessas = $this->CnabLoteSicoob->find('first', ['order' => ['CnabLoteSicoob.id' => 'desc'], 'callbacks' => false]);
-                $remessa = isset($remessas['CnabLoteSicoob']) ? $remessas['CnabLoteSicoob']['remessa'] + 1 : 1;
+                $remessas = $this->CnabLote->find('first', ['order' => ['CnabLote.id' => 'desc'], 'callbacks' => false]);
+                $remessa = isset($remessas['CnabLote']) ? $remessas['CnabLote']['remessa'] + 1 : 1;
 
                 $nome_arquivo = "S".$this->zerosEsq($remessa, 6).".REM";
 
                 $data_pefin_lote = [
-                    'CnabLoteSicoob' => [
+                    'CnabLote' => [
                         'status_id'                 => 46,
                         'arquivo'                   => $nome_arquivo,
                         'remessa'                   => $remessa,
-                        'bank_id'                   => 8,
+                        'bank_id'                   => 1,
                         'user_creator_id'   => CakeSession::read('Auth.User.id')
                     ]
                 ];
 
-                $this->CnabLoteSicoob->create();
-                $this->CnabLoteSicoob->save($data_pefin_lote);
+                $this->CnabLote->create();
+                $this->CnabLote->save($data_pefin_lote);
 
-                $Bancoob = new Bancoob();
+                $Bancoob = new BoletoItau();
                 $Bancoob->gerarRemessa($contas, $nome_arquivo, $remessa);
 
                 $dados_itens = [];
@@ -103,14 +103,14 @@ class CnabController extends AppController
                     $historico[] = [
                         'ChargesHistory' => [
                             'income_id' => $conta['Income']['id'],
-                            'text' => 'Lote cnab '.$this->CnabLoteSicoob->id.' criado',
+                            'text' => 'Lote cnab '.$this->CnabLote->id.' criado',
                             'user_creator_id' => CakeSession::read('Auth.User.id')
                         ]
                     ];
 
                     $dados_itens[] = [
-                        'CnabItemSicoob' => [
-                            'cnab_lote_sicoob_id' => $this->CnabLoteSicoob->id,
+                        'CnabItem' => [
+                            'cnab_lote_id' => $this->CnabLote->id,
                             'income_id' => $conta['Income']['id'],
                             'status_id' => 48,
                             'user_creator_id' => CakeSession::read('Auth.User.id')
@@ -118,14 +118,14 @@ class CnabController extends AppController
                     ];
 
                     $this->Income->updateAll(
-                        ['Income.status_id' => 16, 'Income.cnab_gerado' => 1, 'Income.cnab_lote_id' => $this->CnabLoteSicoob->id, 'Income.cnab_num_sequencial' => "'".$this->zerosEsq($remessa, 6)."'", 'Income.user_updated_id' => CakeSession::read('Auth.User.id'), 'Income.updated' => 'current_timestamp'], //set
+                        ['Income.status_id' => 16, 'Income.cnab_gerado' => 1, 'Income.cnab_lote_id' => $this->CnabLote->id, 'Income.cnab_num_sequencial' => "'".$this->zerosEsq($remessa, 6)."'", 'Income.user_updated_id' => CakeSession::read('Auth.User.id'), 'Income.updated' => 'current_timestamp'], //set
                         ['Income.id' => $conta['Income']['id']] //where
                     );
                 }
                 if (!empty($historico)) {
                     $this->ChargesHistory->saveMany($historico);
                 }
-                $this->CnabItemSicoob->saveMany($dados_itens);
+                $this->CnabItem->saveMany($dados_itens);
 
                 $this->Flash->set(__('Lote gerado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
@@ -144,23 +144,23 @@ class CnabController extends AppController
         $condition = "";
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition .= "AND CnabLoteSicoob.remessa LIKE '%".$_GET['q']."%' ";
+            $condition .= "AND CnabLote.remessa LIKE '%".$_GET['q']."%' ";
         }
 
         if (isset($_GET['t']) and $_GET['t'] != "") {
-            $condition .= "AND CnabLoteSicoob.status_id = ".$_GET['t']." ";
+            $condition .= "AND CnabLote.status_id = ".$_GET['t']." ";
         }
 
-        //$data = $this->Paginator->paginate('CnabLoteSicoob', $condition);
+        //$data = $this->Paginator->paginate('CnabLote', $condition);
 
-        $data = $this->CnabLoteSicoob->query("
+        $data = $this->CnabLote->query("
                     SELECT CnabLote.id, CnabLote.remessa, CnabLote.created, CnabLote.arquivo, 
                     Status.name, Status.label, Bank.name,
                     COUNT(ci.id) AS qtde, SUM(i.valor_total) AS valor_total
-                    FROM cnab_lotes_sicoob CnabLote
+                    FROM cnab_lotes CnabLote
                         INNER JOIN banks Bank ON Bank.id = CnabLote.bank_id
                         LEFT JOIN statuses Status ON Status.id = CnabLote.status_id
-                        INNER JOIN cnab_items_sicoob ci ON ci.cnab_lote_sicoob_id = CnabLote.id AND ci.data_cancel = '1901-01-01'
+                        INNER JOIN cnab_items ci ON ci.cnab_lote_id = CnabLote.id AND ci.data_cancel = '1901-01-01'
                         INNER JOIN incomes i ON i.id = ci.income_id 
                     WHERE CnabLote.data_cancel = '1901-01-01' 
                     ".$condition."
@@ -185,9 +185,9 @@ class CnabController extends AppController
     {
         $this->Permission->check(53, "leitura") ? "" : $this->redirect("/not_allowed");
 
-        $data = $this->CnabItemSicoob->find('all', ['conditions' => ['CnabItemSicoob.cnab_lote_sicoob_id' => $id], 'recursive' => 2]);
+        $data = $this->CnabItem->find('all', ['conditions' => ['CnabItem.cnab_lote_id' => $id], 'recursive' => 2]);
 
-        $action = 'Detalhes lote - '.str_pad($data[0]['CnabLoteSicoob']['remessa'], 6, 0, STR_PAD_LEFT);
+        $action = 'Detalhes lote - '.str_pad($data[0]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT);
         $breadcrumb = ['Financeiro' => '', 'CNAB' => ['controller' => 'cnab', 'action' => 'lotes'], 'Lotes CNAB' => ['controller' => 'cnab', 'action' => 'lotes'], $action => ''];
         $this->set(compact("data", "action", "breadcrumb"));
     }

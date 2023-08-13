@@ -33,8 +33,10 @@
 	Router::connect('/transparencies/add', array('controller' => 'transparency', 'action' => 'add' ));
 	Router::connect('/transparencies/edit/*', array('controller' => 'transparency', 'action' => 'edit' ));
 
-	Router::connect('/wh_serasa/webhook/*', ['controller' => 'webhookMeproteja', 'action' => 'webhook']);
-	Router::connect('/wh_serasa/login', ['controller' => 'webhookMeproteja', 'action' => 'login']);
+	// Router::connect('/private_files/baixar/:folder/:fileName', array('controller' => 'private_files', 'action' => 'baixar'), ['pass' => ['folder', 'fileName'], 'folder' => '[.a-zA-Z0-9_-]+', 'fileName' => '[.a-zA-Z0-9_-]+']);
+
+
+	
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

@@ -26,12 +26,12 @@ class CustomerUserItinerary extends AppModel
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
-            if (isset($val[$this->alias]['unit_price'])) {
+            if (isset($val[$this->alias]['unit_price']) && !isset($val[$this->alias]['unit_price_not_formated'])) {
                 $results[$key][$this->alias]['unit_price_not_formated'] = $results[$key][$this->alias]['unit_price'];
                 $results[$key][$this->alias]['unit_price'] = number_format($results[$key][$this->alias]['unit_price'], 2, ',', '.');
             }
 
-            if (isset($val[$this->alias]['price_per_day'])) {
+            if (isset($val[$this->alias]['price_per_day']) && !isset($val[$this->alias]['price_per_day_not_formated'])) {
                 $results[$key][$this->alias]['price_per_day_not_formated'] = $results[$key][$this->alias]['price_per_day'];
                 $results[$key][$this->alias]['price_per_day'] = number_format($results[$key][$this->alias]['price_per_day'], 2, ',', '.');
 

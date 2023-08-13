@@ -2,7 +2,7 @@
 App::uses('Controller', 'Controller');
 use Carbon\Carbon;
 
-class Bancoob extends Controller
+class BoletoItau extends Controller
 {
     public $uses = ['TmpRetornoCnab', 'Income', 'RetornoCnab'];
 
@@ -34,7 +34,7 @@ class Bancoob extends Controller
 
     private function boleto($boleto)
     {
-        return new Eduardokum\LaravelBoleto\Boleto\Banco\Bancoob([
+        return new Eduardokum\LaravelBoleto\Boleto\Banco\Itau([
             'logo' => APP.'webroot/img/logo-berh-colorido.png',
             'dataVencimento' => Carbon::parse($boleto['Income']['vencimento_nao_formatado']),
             'valor' => $boleto['Income']['valor_total_nao_formatado'],
@@ -44,7 +44,7 @@ class Bancoob extends Controller
             'numeroDocumento' => $boleto['Income']['id'],
             'pagador' => $this->pagador($boleto['Customer']),
             'beneficiario' => $this->beneficiario($boleto['Resale']),
-            'carteira' => 1,
+            'carteira' => $boleto['BankTicket']['carteira'],
             'agencia' => $boleto['BankAccount']['agency'],
             'conta' =>  $boleto['BankAccount']['account_number'],
             'convenio' => $boleto['BankAccount']['convenio'],
@@ -61,29 +61,30 @@ class Bancoob extends Controller
             ],
             'aceite' => 'S',
             'especieDoc' => 'DM',
+            'diasBaixaAutomatica'    => 58,
         ]);
     }
 
     public function printBoleto($boleto, $pdf = false, $pdfPath = false)
     {
-        $bancoob = $this->boleto($boleto);
+        $Itau = $this->boleto($boleto);
 
         if ($pdf) {
-            $this->downloadPdf($bancoob);
+            $this->downloadPdf($Itau);
         } if ($pdfPath) {
-            $this->savePdf($bancoob, $pdfPath);
+            $this->savePdf($Itau, $pdfPath);
         } else {
-            echo $bancoob->renderHTML(true);
+            echo $Itau->renderHTML(true);
         }
     }
 
     public function gerarRemessa($contas, $nome, $remessa)
     {
-        $remessa = new Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab240\Banco\Bancoob(
+        $remessa = new Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab240\Banco\Itau(
             [
                 'idRemessa' => $remessa,
                 'beneficiario' => $this->beneficiario($contas[0]['Resale']),
-                'carteira' => 1,
+                'carteira' => $contas[0]['BankTicket']['carteira'],
                 'agencia' => $contas[0]['BankAccount']['agency'],
                 'conta' =>  $contas[0]['BankAccount']['account_number'],
                 'convenio' => $contas[0]['BankAccount']['convenio'],
@@ -95,12 +96,12 @@ class Bancoob extends Controller
         }
 
         // Saves the string to a file on the disk whose path was passed in $path argument.
-        $remessa->save(APP.'webroot'.DS.'files'.DS.'remessa_sicoob'.DS.$nome);
+        $remessa->save(APP.'Private'.DS.'remessa_itau'.DS.$nome);
     }
 
     public function processarRetorno($id, $arquivo)
     {
-        $return = new \Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240\Banco\Bancoob($arquivo);
+        $return = new \Eduardokum\LaravelBoleto\Cnab\Retorno\Cnab240\Banco\Itau($arquivo);
 
         $return->processar();
 

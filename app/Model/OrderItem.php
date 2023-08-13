@@ -27,6 +27,12 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['transfer_fee'] = number_format($results[$key][$this->alias]['transfer_fee'], 2, ',', '.');
             }
 
+            // var = desconto
+            if (isset($val[$this->alias]['var'])) {
+                $results[$key][$this->alias]['var_not_formated'] = $results[$key][$this->alias]['var'];
+                $results[$key][$this->alias]['var'] = number_format($results[$key][$this->alias]['var'], 2, ',', '.');
+            }
+
             if (isset($val[$this->alias]['subtotal'])) {
                 $results[$key][$this->alias]['subtotal_not_formated'] = $results[$key][$this->alias]['subtotal'];
                 $results[$key][$this->alias]['subtotal'] = number_format($results[$key][$this->alias]['subtotal'], 2, ',', '.');
@@ -110,6 +116,7 @@ class OrderItem extends AppModel {
         and `Order`.data_cancel = '1901-01-01 00:00:00'
         and CustomerUser.data_cancel = '1901-01-01 00:00:00'
         and Customer.data_cancel = '1901-01-01 00:00:00'
+        and `Order`.status_id = 84
         GROUP BY
             Order.id, OrderItem.customer_user_id
         ";

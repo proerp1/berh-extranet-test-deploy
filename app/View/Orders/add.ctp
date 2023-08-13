@@ -77,9 +77,20 @@
                     <?php if ($order['Order']['status_id'] == 83) { ?>
                         <div class="row">
                             <div class="col-12">
-                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                <a href="#" class="btn btn-sm btn-primary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                                     <i class="fas fa-arrow-right"></i>
                                     Enviar SPTrans
+                                </a>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                    <?php if ($order['Order']['status_id'] == 85) { ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#" class="btn btn-sm btn-primary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_gera_boleto">
+                                    <i class="fas fa-file"></i>
+                                    Gerar Boleto
                                 </a>
                             </div>
                         </div>
@@ -101,11 +112,11 @@
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2">Observação da Nota Fiscal</label>
-                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 86 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
                     <div class="mb-7 col">
-                        <button type="submit" class="btn btn-success" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar</button>
+                        <button type="submit" class="btn btn-success" style="float:right" <?php echo $order['Order']['status_id'] >= 86 ? 'disabled="disabled"' : ''; ?>>Salvar</button>
                     </div>
                 </div>
             </div>
@@ -202,6 +213,26 @@
             <form action="<?php echo $this->base . '/orders/changeStatusToSent/' . $id; ?>" class="form-horizontal" method="post">
                 <div class="modal-body">
                     <p>Tem certeza que deseja enviar o pedido para a SPTrans?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_gera_boleto" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/changeStatusIssued/' . $id; ?>" class="form-horizontal" method="post">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja gerar a conta a receber e o boleto?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>

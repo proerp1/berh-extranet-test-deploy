@@ -30,10 +30,7 @@ class Income extends AppModel
     public $hasOne = [
         'CnabItem' => [
             'order' => ['CnabItem.id' => 'desc']
-        ],
-        'CnabItemSicoob' => [
-            'order' => ['CnabItemSicoob.id' => 'desc']
-        ],
+        ]
     ];
 
     public function beforeFind($queryData)

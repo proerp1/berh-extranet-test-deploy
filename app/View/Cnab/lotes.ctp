@@ -95,7 +95,11 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Bank']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['qtde'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo number_format($data[$i][0]['valor_total'],2,',','.') ?></td>
-                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base."/files/remessa_sicoob/".$data[$i]['CnabLote']['arquivo']; ?>" download="<?php echo $data[$i]['CnabLote']['arquivo']; ?>" target="_blank"><?php echo $data[$i]['CnabLote']['arquivo'] ?></a></td>
+                                <?php
+                                    // hack para trocar ponto para underline
+                                    $nome_arquivo = str_replace('.', '_', $data[$i]['CnabLote']['arquivo']);
+                                ?>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base."/private_files/baixar/remessa_itau/".$nome_arquivo; ?>" download="<?php echo $nome_arquivo; ?>" target="_blank"><?php echo $data[$i]['CnabLote']['arquivo'] ?></a></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/cnab/detalhes_lote/'.$data[$i]["CnabLote"]["id"]; ?>" class="btn btn-info btn-sm">Visualizar</a>
                                 </td>

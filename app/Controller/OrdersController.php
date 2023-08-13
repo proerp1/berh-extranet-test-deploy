@@ -159,6 +159,10 @@ class OrdersController extends AppController
             case 86:
                 $progress = 7;
                 break;
+
+            case 87:
+                $progress = 9;
+                break;
         }
 
         $conditions = [
@@ -210,6 +214,22 @@ class OrdersController extends AppController
         $order = ['Order' => []];
         $order['Order']['id'] = $id;
         $order['Order']['status_id'] = 84;
+        $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
+        if ($this->Order->save($order)) {
+            $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'edit/'.$id]);
+        } else {
+            $this->Flash->set(__('O Pedido não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+    }
+
+    public function changeStatusIssued($id){
+        $this->autoRender = false;
+
+        $order = ['Order' => []];
+        $order['Order']['id'] = $id;
+        $order['Order']['status_id'] = 86;
         $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
         if ($this->Order->save($order)) {
