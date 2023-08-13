@@ -179,15 +179,16 @@ class OrdersController extends AppController
 
         $arr_cst_in_order = Hash::extract($order_customer_users, '{n}.OrderItem.customer_user_id');
 
+        $second_condition = [
+            'CustomerUserItinerary.customer_id' => $order['Order']['customer_id']
+        ];
         if (!empty($arr_cst_in_order)) {
             $conditions['CustomerUser.id NOT IN'] = $arr_cst_in_order;
+            $second_conditionp['CustomerUserItinerary.customer_user_id NOT IN'] = $arr_cst_in_order;
         }
 
         $users_with_itinerary = $this->CustomerUserItinerary->find('all', [
-            'conditions' => [
-                'CustomerUserItinerary.customer_id' => $order['Order']['customer_id'],
-                'CustomerUserItinerary.customer_user_id NOT IN' => $arr_cst_in_order
-            ],
+            'conditions' => $second_condition,
             'group' => ['CustomerUserItinerary.customer_user_id'],
             'fields' => ['CustomerUserItinerary.customer_user_id']
         ]);
