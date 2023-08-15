@@ -7,7 +7,8 @@
         "firebase/php-jwt": "6.0",
         "laravel/framework": "^7.30",
         "symfony/yaml": "^5.4",
-        "phpoffice/phpspreadsheet": "^1.19"
+        "phpoffice/phpspreadsheet": "^1.19",
+        "league/csv": "^9.6"
     },
     "config": {
         "allow-plugins": {

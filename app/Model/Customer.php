@@ -55,6 +55,10 @@ class Customer extends AppModel
         if (!empty($this->data[$this->alias]['created'])) {
           $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
+
+        if (!empty($this->data[$this->alias]['cnpj'])) {
+            $this->data[$this->alias]['cnpj'] = preg_replace('/\D/', '', $this->data[$this->alias]['cnpj']);
+          }
     }
 
     public function beforeFind($queryData)

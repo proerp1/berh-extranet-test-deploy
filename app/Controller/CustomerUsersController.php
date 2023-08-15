@@ -1,4 +1,5 @@
 <?php
+App::uses('ItineraryCSVParser', 'Lib');
 class CustomerUsersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -574,6 +575,30 @@ class CustomerUsersController extends AppController
 
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect("/customer_users/index/".$id);
+        }
+    }
+
+    public function upload_csv(){
+        if ($this->request->is('post') && !empty($this->request->data['file'])) {
+        
+            $uploadedFile = $this->request->data['file'];
+            
+            $csv = new ItineraryCSVParser();
+            $ret = $csv->parse($uploadedFile['tmp_name'], $this->request->data['customer_id']);
+
+            if($ret['has_inner_error'] && isset($ret['rows'])){
+                foreach ($ret['rows'] as $row) {
+                    $this->Flash->set($row['error'].' | Usuario '.$row['userId']. ' - Benefício ('.$row['benefit_code'].')', ['params' => ['class' => "alert alert-danger"]]);
+                }
+                $this->redirect("/customer_users/index/".CakeSession::read("Auth.User.customer_id"));
+            }
+
+            if($ret['success'] == false && isset($ret['error'])){
+                $this->Flash->set($ret['error'], ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect("/customer_users/index/".CakeSession::read("Auth.User.customer_id"));
+            }
+
+            debug($ret);die;
         }
     }
 

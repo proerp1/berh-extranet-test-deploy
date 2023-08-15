@@ -90,7 +90,7 @@ class CustomerUser extends AppModel {
 			if (isset($val[$this->alias]['tel'])) {
 				$tel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['tel']);
                 $results[$key][$this->alias]['tel_sem_ddd'] = substr($tel, 2);
-                $results[$key][$this->alias]['ddd_tel'] = substr($cel, 0, 2);
+                $results[$key][$this->alias]['ddd_tel'] = substr($tel, 0, 2);
             }
         }
 
