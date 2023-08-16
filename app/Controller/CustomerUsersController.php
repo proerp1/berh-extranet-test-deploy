@@ -4,7 +4,10 @@ class CustomerUsersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit'];
+    public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
+                    'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
+                    'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
+                    'CSVImport', 'CSVImportLine'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']]
@@ -584,22 +587,35 @@ class CustomerUsersController extends AppController
             $uploadedFile = $this->request->data['file'];
             
             $csv = new ItineraryCSVParser();
-            $ret = $csv->parse($uploadedFile['tmp_name'], $this->request->data['customer_id']);
+            $ret = $csv->parse($uploadedFile['tmp_name'], $uploadedFile['name'], $this->request->data['customer_id'], CakeSession::read("Auth.User.id"));
 
-            if($ret['has_inner_error'] && isset($ret['rows'])){
-                foreach ($ret['rows'] as $row) {
-                    $this->Flash->set($row['error'].' | Usuario '.$row['userId']. ' - Benefício ('.$row['benefit_code'].')', ['params' => ['class' => "alert alert-danger"]]);
-                }
-                $this->redirect("/customer_users/index/".CakeSession::read("Auth.User.customer_id"));
-            }
-
-            if($ret['success'] == false && isset($ret['error'])){
-                $this->Flash->set($ret['error'], ['params' => ['class' => "alert alert-danger"]]);
-                $this->redirect("/customer_users/index/".CakeSession::read("Auth.User.customer_id"));
-            }
-
-            debug($ret);die;
+            $this->redirect("/customer_users/csv_import_result/".$this->request->data['customer_id'].'/'.$ret['file_id']);
         }
+    }
+
+    public function csv_import_result($customerId, $fileId){
+        $action = 'Resultado Importação';
+        $breadcrumb = [
+            'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $customerId],
+            'Resultado Importação' => ''
+        ];
+
+        $cond = ['CSVImport.id' => $fileId];
+        if(isset($_GET['t'])){
+            $cond['CSVImportLine.status_id'] = $_GET['t'];
+        }
+
+        $this->CSVImport->unbindModel(['hasMany' => ['CSVImportLine']]);
+        $csv_file = $this->CSVImport->find('first', ['conditions' => ['CSVImport.id' => $fileId]]);
+        $csv_file_lines = $this->CSVImportLine->find('all', ['conditions' => $cond]);
+
+        if($customerId != $csv_file['CSVImport']['customer_id']){
+            $this->redirect("/not_allowed");
+        }
+
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 19, 'Status.id != 90'], 'order' => 'Status.name desc']);
+
+        $this->set(compact('csv_file', 'action', 'breadcrumb', 'customerId', 'fileId', 'status', 'csv_file_lines'));
     }
 
 }
