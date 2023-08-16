@@ -38,7 +38,9 @@ class OrdersController extends AppController
         $this->autoRender = false;
         $customerId = $this->request->data['customer_id'];
         $workingDays = $this->request->data['working_days'];
-        $period = '01/' . $this->request->data['period'];
+        $period_from = $this->request->data['period_from'];
+        $period_to = $this->request->data['period_to'];
+        $credit_release_date = $this->request->data['credit_release_date'];
 
         if ($this->request->is('post')) {
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
@@ -50,15 +52,17 @@ class OrdersController extends AppController
                 'customer_id' => $customerId,
                 'working_days' => $workingDays,
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
-                'order_period' => $period,
+                'order_period_from' => $period_from,
+                'order_period_to' => $period_to,
                 'status_id' => 83,
+                'credit_release_date' => $credit_release_date
             ];
 
             $this->Order->create();
             if ($this->Order->save($orderData)) {
                 $orderId = $this->Order->getLastInsertId();
 
-                $this->processItineraries($customerItineraries, $orderId, $workingDays, $period);
+                $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
 
                 $this->Order->id = $orderId;
                 $this->Order->reProcessAmounts($orderId);
@@ -72,7 +76,7 @@ class OrdersController extends AppController
         }
     }
 
-    public function processItineraries($customerItineraries, $orderId, $workingDays, $period)
+    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to)
     {
         $totalTransferFee = 0;
         $totalSubtotal = 0;
@@ -80,7 +84,11 @@ class OrdersController extends AppController
 
         foreach ($customerItineraries as $itinerary) {
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
-            $workingDaysUser = $this->CustomerUserVacation->calculateWorkingDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period);
+            $workingDaysUser = $this->CustomerUserVacation->calculateWorkingDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
+
+            if($workingDaysUser == null){
+                $workingDaysUser = 0;
+            }
 
             if ($workingDaysUser > $workingDays) {
                 $workingDaysUser = $workingDays;
@@ -203,10 +211,40 @@ class OrdersController extends AppController
             'conditions' => $conditions,
         ]);
 
+        $suppliersCount = $this->OrderItem->find('count', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'joins' => [
+                [
+                    'table'=> 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id'],
+            'fields' => ['Supplier.id']
+        ]);
+
+        $usersCount = $this->OrderItem->find('count', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.customer_user_id'],
+            'fields' => ['OrderItem.customer_user_id']
+        ]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending', 'suppliersCount', 'usersCount'));
 
         $this->render("add");
     }
@@ -257,7 +295,7 @@ class OrdersController extends AppController
             'conditions' => ['CustomerUserItinerary.customer_user_id' => $customerUserId],
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $workingDays, '01/' . $order['Order']['order_period']);
+        $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to']);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -269,14 +307,25 @@ class OrdersController extends AppController
     public function updateWorkingDays()
     {
         $this->autoRender = false;
-        $workingDays = $this->request->data['newValue'];
+        
         $itemId = $this->request->data['orderItemId'];
 
         $orderItem = $this->OrderItem->findById($itemId);
 
-        $orderItem['OrderItem']['working_days'] = $workingDays;
+        if($this->request->data['newValue'] == 'working_days'){
+            $workingDays = $this->request->data['newValue'];
+            $orderItem['OrderItem']['working_days'] = $workingDays;
+            $var = $orderItem['OrderItem']['var'];
+        } else {
+            $workingDays = $orderItem['OrderItem']['working_days'];
+            $var_raw = $this->request->data['newValue'];
+            $var = str_replace(".", "", $var_raw);
+            $var = (float)str_replace(",", ".", $var);
+            $orderItem['OrderItem']['var'] = $var_raw;
+        }
         $orderItem['OrderItem']['updated_user_id'] = CakeSession::read("Auth.User.id");
         $orderItem['OrderItem']['subtotal'] = $workingDays * $orderItem['OrderItem']['price_per_day'];
+        $orderItem['OrderItem']['subtotal'] = $orderItem['OrderItem']['subtotal'] - $var;
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);

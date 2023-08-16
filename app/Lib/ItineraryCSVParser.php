@@ -10,7 +10,7 @@ class ItineraryCSVParser extends Controller
         'CustomerUserBankAccount', 'CustomerPosition', 'CSVImport', 'CSVImportLine'
     ];
 
-    public function parse($tmpFile, $fileName, $customerId, $userId, $importedByCustomer = false)
+    public function parse($tmpFile, $fileName, $customerId, $userId, $importedByCustomer = false, $shouldDeleteItinerary)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
@@ -76,11 +76,10 @@ class ItineraryCSVParser extends Controller
 
             $cpf = preg_replace('/\D/', '', $row[3]);
             $currentUserId = 0;
-
-            if (in_array($cpf, $docs)) {
+            if (isset($docs[$cpf])) {
                 $currentUserId = $docs[$cpf];
             } else {
-                $retUser = $this->processUser($row, $customerId);
+                $retUser = $this->processUser($row, $customerId, $shouldDeleteItinerary);
 
                 if($retUser['success'] == false){
                     $this->CSVImportLine->create();
@@ -146,7 +145,7 @@ class ItineraryCSVParser extends Controller
         return ['success' => true, 'file_id' => $csvImportFileId];
     }
 
-    private function processUser($row, $customerId)
+    private function processUser($row, $customerId, $shouldDeleteItinerary)
     {
         $cpf = preg_replace('/\D/', '', $row[3]);
 
@@ -193,6 +192,21 @@ class ItineraryCSVParser extends Controller
             $userId = $this->CustomerUser->id;
         } else {
             $userId = $existingUser['CustomerUser']['id'];
+
+            if($shouldDeleteItinerary == 1){
+                $this->CustomerUserItinerary->unbindModel([
+                    'belongsTo' => ['Benefit', 'CustomerUser']
+                ]);
+                
+                $this->CustomerUserItinerary->updateAll(
+                    ['CustomerUserItinerary.data_cancel' => 'NOW()'],
+                    ['CustomerUserItinerary.customer_user_id' => $userId]
+                );
+
+                $this->CustomerUserItinerary->bindModel([
+                    'belongsTo' => ['Benefit', 'CustomerUser']
+                ]);
+            }
         }
 
         if ($row[23] != '' && $row[24] != '') {

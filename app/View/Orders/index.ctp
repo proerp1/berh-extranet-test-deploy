@@ -48,7 +48,7 @@
                                 </span>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"].' - '.$data[$i]["Order"]["order_period_to"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
@@ -114,8 +114,18 @@
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Período</label>
                         <div class="input-group">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input class="form-control" id="period_from" name="period_from">
+                                <span class="input-group-text" style="padding: 5px;"> até </span>
+                                <input class="form-control" id="period_to" name="period_to">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Data de Liberação do Crédito</label>
+                        <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                            <?php echo $this->Form->input('period', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker2", 'required' => true, 'div' => false, 'label' => false]);  ?>
+                            <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker", 'required' => true, 'div' => false, 'label' => false]);  ?>
                         </div>
                     </div>
                     <div class="mb-7 col">

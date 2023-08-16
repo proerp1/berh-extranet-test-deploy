@@ -60,9 +60,19 @@ class Order extends AppModel {
                 $results[$key][$this->alias]['total'] = number_format($results[$key][$this->alias]['total'], 2, ',', '.');
             }
 
-            if (isset($val[$this->alias]['order_period'])) {
-				$results[$key][$this->alias]['order_period_nao_formatado'] = $val[$this->alias]['order_period'];
-				$results[$key][$this->alias]['order_period'] = date("m/Y", strtotime($val[$this->alias]['order_period']));
+            if (isset($val[$this->alias]['order_period_from'])) {
+				$results[$key][$this->alias]['order_period_from_nao_formatado'] = $val[$this->alias]['order_period_from'];
+				$results[$key][$this->alias]['order_period_from'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_from']));
+			}
+
+            if (isset($val[$this->alias]['order_period_to'])) {
+				$results[$key][$this->alias]['order_period_to_nao_formatado'] = $val[$this->alias]['order_period_to'];
+				$results[$key][$this->alias]['order_period_to'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_to']));
+			}
+
+            if (isset($val[$this->alias]['credit_release_date'])) {
+				$results[$key][$this->alias]['credit_release_date_nao_formatado'] = $val[$this->alias]['credit_release_date'];
+				$results[$key][$this->alias]['credit_release_date'] = date("d/m/Y", strtotime($val[$this->alias]['credit_release_date']));
 			}
         }
 
@@ -86,8 +96,16 @@ class Order extends AppModel {
 			$this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
 		}
 
-        if (!empty($this->data[$this->alias]['order_period'])) {
-			$this->data[$this->alias]['order_period'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period']);
+        if (!empty($this->data[$this->alias]['order_period_from'])) {
+			$this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
+		}
+
+        if (!empty($this->data[$this->alias]['order_period_to'])) {
+			$this->data[$this->alias]['order_period_to'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_to']);
+		}
+
+        if (!empty($this->data[$this->alias]['credit_release_date'])) {
+			$this->data[$this->alias]['credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['credit_release_date']);
 		}
 		
 		return true;

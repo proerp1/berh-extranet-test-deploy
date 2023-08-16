@@ -585,9 +585,10 @@ class CustomerUsersController extends AppController
         if ($this->request->is('post') && !empty($this->request->data['file'])) {
         
             $uploadedFile = $this->request->data['file'];
+            $deleteItinerary = $this->request->data['option_itinerary'];
             
             $csv = new ItineraryCSVParser();
-            $ret = $csv->parse($uploadedFile['tmp_name'], $uploadedFile['name'], $this->request->data['customer_id'], CakeSession::read("Auth.User.id"));
+            $ret = $csv->parse($uploadedFile['tmp_name'], $uploadedFile['name'], $this->request->data['customer_id'], CakeSession::read("Auth.User.id"), false, $deleteItinerary);
 
             $this->redirect("/customer_users/csv_import_result/".$this->request->data['customer_id'].'/'.$ret['file_id']);
         }

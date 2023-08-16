@@ -21,6 +21,8 @@ class AddVarToOrderItem extends AbstractMigration
         $table->addColumn('var', 'decimal', [ // New column
             'null' => false, // or false if it cannot be null
             'after' => 'subtotal',
+            'precision' => 10,
+            'scale' => 2
         ])
         ->update();
     }

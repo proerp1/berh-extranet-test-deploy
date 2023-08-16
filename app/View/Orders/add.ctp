@@ -15,118 +15,398 @@
 </script>
 
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+
 <div class="row">
-    <div class="col-sm-12 col-md-9">
+    <div class="col-sm-12 col-md-4">
+        <!--begin::Order details-->
+        <div class="card card-flush py-4 flex-row-fluid">
+            <!--begin::Card header-->
+            <div class="card-header">
+                <div class="card-title">
+                    <h2><?php echo $order['Customer']['nome_secundario']; ?></h2>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card body-->
+            <div class="card-body pt-0">
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table align-middle table-row-bordered mb-0 fs-6 gy-5 min-w-300px">
+                        <!--begin::Table body-->
+                        <tbody class="fw-bold text-gray-600">
+                            <!--begin::Date-->
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Dias Úteis
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['working_days']; ?></td>
+                            </tr>
+                            <!--end::Date-->
+                            <!--begin::Payment method-->
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Período
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></td>
+                            </tr>
+                            <!--end::Payment method-->
+                            <!--begin::Date-->
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Liberação do crédito
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['credit_release_date']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Criado em
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo date('d/m/Y', strtotime($order['Order']['created'])); ?></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Criado por
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></td>
+                            </tr>
+                            <!--end::Date-->
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+            </div>
+            <!--end::Card body-->
+        </div>
+
+    </div>
+
+    <div class="col-sm-12 col-md-8">
         <div class="card mb-5 mb-xl-8">
             <div class="card-body pt-0 py-3">
                 <?php echo $this->element("aba_orders"); ?>
             </div>
-            <div class="card-body pt-7 py-3">
+            <!--end::Order details-->
+            <div class="card">
+                <div class="card-body">
 
-                <div class="row">
                     <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Cliente</label>
-                        <p><?php echo $order['Customer']['nome_primario']; ?></p>
+                        <label class=" form-label">Observação da Nota Fiscal</label>
+                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
                     <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Período</label>
-                        <p><?php echo $order['Order']['order_period']; ?></p>
+                        <button type="submit" class="btn btn-sm btn-success me-3" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
                     </div>
 
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Dias Úteis</label>
-                        <p><?php echo $order['Order']['working_days']; ?></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Subtotal</label>
-                        <p>R$<?php echo $order['Order']['subtotal']; ?></p>
-                    </div>
-
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Repasse</label>
-                        <p>R$<?php echo $order['Order']['transfer_fee']; ?></p>
-                    </div>
-
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Taxa</label>
-                        <p>R$<?php echo $order['Order']['commission_fee']; ?></p>
-                    </div>
-
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Total</label>
-                        <p>R$<?php echo $order['Order']['total']; ?></p>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2 required">Criado em</label>
-                        <p><?php echo date('d/m/Y', strtotime($order['Order']['created'])); ?></p>
-                    </div>
-
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Criado por</label>
-                        <p><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></p>
-                    </div>
-                </div>
-
-                <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="#" class="btn btn-sm btn-primary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
-                                <i class="fas fa-arrow-right"></i>
-                                Enviar SPTrans
-                            </a>
+                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Enviar Operadoras
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                <?php } ?>
+                    <?php } ?>
 
-                <?php if ($order['Order']['status_id'] == 85) { ?>
-                    <div class="row">
-                        <div class="col-12">
-                            <a href="#" class="btn btn-sm btn-primary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_gera_boleto">
-                                <i class="fas fa-file"></i>
-                                Gerar Boleto
-                            </a>
+                    <?php if ($order['Order']['status_id'] == 85) { ?>
+                        <div class="row">
+                            <div class="col-12">
+                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                    <i class="fas fa-download"></i>
+                                    Baixar Boleto
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                <?php } ?>
+                    <?php } ?>
 
-
+                </div>
             </div>
-
 
         </div>
     </div>
 
-    <div class="col-sm-12 col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Total</label>
-                    <p>R$<?php echo $order['Order']['total']; ?></p>
-                </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Observação da Nota Fiscal</label>
-                    <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 86 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
-                </div>
 
-                <div class="mb-7 col">
-                    <button type="submit" class="btn btn-success" style="float:right" <?php echo $order['Order']['status_id'] >= 86 ? 'disabled="disabled"' : ''; ?>>Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </form>
 
-<input type="hidden" id="order_id" value="<?php echo $order['Order']['id']; ?>">
+<!--begin::Row-->
+<div class="row gy-5 g-xl-10">
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
 
-<div class="row mt-10">
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo $usersCount; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Beneficiários</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
+
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo $suppliersCount; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Operadoras</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
+
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['subtotal']; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Subtotal</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
+
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['transfer_fee']; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Repasse</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
+
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['commission_fee']; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Taxa</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+    <!--begin::Col-->
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
+        <!--begin::Card widget 2-->
+        <div class="card h-lg-100">
+
+            <!--begin::Body-->
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <!--begin::Icon-->
+                <div class="m-0">
+                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
+                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Icon-->
+
+                <!--begin::Section-->
+                <div class="d-flex flex-column my-7">
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['total']; ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Total</span>
+                    </div>
+                    <!--end::Follower-->
+                </div>
+                <!--end::Section-->
+
+            </div>
+            <!--end::Body-->
+        </div>
+        <!--end::Card widget 2-->
+    </div>
+    <!--end::Col-->
+
+</div>
+<!--end::Row-->
+
+<div class="row">
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
             <div class="row">
@@ -150,7 +430,8 @@
                         <th>Status SPTrans</th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
-                        <th width="80px">Dias Úteis</th>
+                        <th width="90px">Dias Úteis</th>
+                        <th width="120px">Desconto</th>
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
@@ -182,11 +463,18 @@
                                         <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
                                     <?php } ?>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                                        <input type="text" class="form-control money_field var_days_input" value="<?php echo $items[$i]["OrderItem"]["var"]; ?>">
+                                    <?php } else { ?>
+                                        <?php echo $items[$i]["OrderItem"]["var"]; ?>
+                                    <?php } ?>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["CustomerUserItinerary"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><button class="btn btn-secondary btn-sm" onclick="confirm('<h3>Deseja mesmo remove este beneficiário?</h3>', '<?php echo $this->base.'/orders/removeOrderItem/'.$items[$i]["OrderItem"]["order_id"].'/'.$items[$i]["OrderItem"]["customer_user_id"]; ?>')"><i class="fa fa-times"></i></button></td>
+                                <td class="fw-bold fs-7 ps-4"><button class="btn btn-secondary btn-sm" onclick="confirm('<h3>Deseja mesmo remove este beneficiário?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["customer_user_id"]; ?>')"><i class="fa fa-times"></i></button></td>
                             </tr>
                         <?php } ?>
                         <tr>
@@ -229,26 +517,6 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_gera_boleto" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <form action="<?php echo $this->base . '/orders/changeStatusIssued/' . $id; ?>" class="form-horizontal" method="post">
-                <div class="modal-body">
-                    <p>Tem certeza que deseja gerar a conta a receber e o boleto?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Sim</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" tabindex="-1" id="modal_add_beneficiarios" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -280,6 +548,12 @@
 
 <script>
     $(document).ready(function() {
+        $('.money_field').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
+
         $('.working_days_input').on('change', function() {
             const newValue = $(this).val();
             const orderItemId = $(this).parent().find('.item_id').val();
@@ -291,7 +565,8 @@
                     url: <?php echo $this->base; ?> '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
                     data: {
                         newValue,
-                        orderItemId
+                        orderItemId,
+                        'campo': 'working_days'
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -305,6 +580,37 @@
                     }
                 });
             }
+        });
+
+        $('.var_days_input').on('change', function() {
+            let newValue = $(this).val();
+            const orderItemId = $(this).parent().parent().find('.item_id').val();
+            const line = $(this).parent().parent();
+
+            if (newValue == '') {
+                newValue = 0;
+                $(this).val('0,00');
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: <?php echo $this->base; ?> '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
+                data: {
+                    newValue,
+                    orderItemId,
+                    'campo': 'var'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    line.find('.total_line').html('R$' + response.total);
+                    line.find('.subtotal_line').html('R$' + response.subtotal);
+                    line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+
+                    $('#subtotal_sum').html('R$' + response.pedido_subtotal);
+                    $('#transfer_fee_sum').html('R$' + response.pedido_transfer_fee);
+                    $('#total_sum').html('R$' + response.pedido_total);
+                }
+            });
         });
 
         $('.remove_line').on('click', function() {

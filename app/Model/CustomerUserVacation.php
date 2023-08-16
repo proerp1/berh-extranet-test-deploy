@@ -19,11 +19,12 @@ class CustomerUserVacation extends AppModel
         return $queryData;
     }
 
-    public function calculateWorkingDays($userId, $period)
+    public function calculateWorkingDays($userId, $period_from, $period_to)
     {
-        $period = $this->dateFormatBeforeSave($period);
-        $periodInit = date('Y-m-d', strtotime($period));
-        $periodEnd = date('Y-m-t', strtotime($period));
+        $period_from_raw = $this->dateFormatBeforeSave($period_from);
+        $period_to_raw = $this->dateFormatBeforeSave($period_to);
+        $periodInit = date('Y-m-d', strtotime($period_from_raw));
+        $periodEnd = date('Y-m-d', strtotime($period_to_raw));
 
         $query = "SELECT
                     SUM(

@@ -59,6 +59,10 @@ class OrderItem extends AppModel {
 			$this->data[$this->alias]['transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee']);
 		}
 
+        if (!empty($this->data[$this->alias]['var'])) {
+			$this->data[$this->alias]['var'] = $this->priceFormatBeforeSave($this->data[$this->alias]['var']);
+		}
+
         if (!empty($this->data[$this->alias]['subtotal'])) {
 			$this->data[$this->alias]['subtotal'] = $this->priceFormatBeforeSave($this->data[$this->alias]['subtotal']);
 		}
