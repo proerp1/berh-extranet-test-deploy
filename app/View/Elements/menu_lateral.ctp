@@ -72,6 +72,16 @@
                     </a>
                 </div>
                 <div class="menu-item">
+                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && !isset($_GET['logon'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'index']) ?>"">
+                        <span class="menu-icon">
+                            <i class="fas fa-table"></i> 
+                        </span>
+                        <span class="menu-title">
+                            Relatórios
+                        </span>
+                    </a>
+                </div>
+                <div class="menu-item">
                     <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'resales') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'resales', 'action' => 'index']) ?>">
                         <span class="menu-icon">
                             <i class="fas fa-briefcase"></i> 
