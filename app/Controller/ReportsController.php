@@ -79,7 +79,7 @@ class ReportsController extends AppController
 		parent::beforeFilter();
 	}
 
-	public function index()
+	public function index($cliente_id)
 	{
 		// $this->Permission->check(1, "leitura")? "" : $this->redirect("/not_allowed");
 		$this->Paginator->settings = $this->paginate;

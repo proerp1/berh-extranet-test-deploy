@@ -48,7 +48,7 @@
                                 </span>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"].' - '.$data[$i]["Order"]["order_period_to"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"] . ' - ' . $data[$i]["Order"]["order_period_to"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
@@ -105,7 +105,7 @@
                 <h4 class="modal-title">Gerar Pedido</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form action="<?php echo $this->base . '/orders/createOrder' ?>" class="form-horizontal" method="post">
+            <form action="<?php echo $this->base . '/orders/createOrder' ?>" id="order_creation_form" class="form-horizontal" method="post">
                 <div class="modal-body">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
@@ -141,3 +141,29 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#order_creation_form').on('submit', function(event) {
+            const inputValue = $('#credit_release_date').val();
+
+            // Check if the input value is empty
+            if (!inputValue) {
+                alert('Please enter a credit release date.');
+                event.preventDefault();
+                return;
+            }
+
+            // Convert inputValue to a Date object and today's date to a Date object
+            const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // reset the time part
+
+            // Check if inputDate is greater than today
+            if (inputDate > today) {
+                alert('The credit release date cannot be in the future.');
+                event.preventDefault();
+            }
+        });
+    });
+</script>

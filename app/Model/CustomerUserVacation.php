@@ -19,6 +19,33 @@ class CustomerUserVacation extends AppModel
         return $queryData;
     }
 
+    public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['start_date'])) {
+			$this->data[$this->alias]['start_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['start_date']);
+		}
+        if (!empty($this->data[$this->alias]['end_date'])) {
+			$this->data[$this->alias]['end_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['end_date']);
+		}
+
+		return true;
+	}
+
+    public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            if (isset($val[$this->alias]['start_date'])) {
+                $results[$key][$this->alias]['start_date_nao_formatado'] = $results[$key][$this->alias]['start_date'];
+                $results[$key][$this->alias]['start_date'] = date("d/m/Y", strtotime($results[$key][$this->alias]['start_date']));
+            }
+            if (isset($val[$this->alias]['end_date'])) {
+                $results[$key][$this->alias]['end_date_nao_formatado'] = $results[$key][$this->alias]['end_date'];
+                $results[$key][$this->alias]['end_date'] = date("d/m/Y", strtotime($results[$key][$this->alias]['end_date']));
+            }
+        }
+
+        return $results;
+    }
+
     public function calculateWorkingDays($userId, $period_from, $period_to)
     {
         $period_from_raw = $this->dateFormatBeforeSave($period_from);

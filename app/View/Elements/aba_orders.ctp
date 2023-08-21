@@ -6,7 +6,7 @@
             <ul>
                 <li class="bullet-1">
                     <div class="el"><i class='fa fa-cog'></i></div>
-                    <div class="txt">Configuração</div>
+                    <div class="txt">Início</div>
                 </li>
                 <li class="bullet-2">
                     <div class="el"><i class='fa fa-list'></i></div>

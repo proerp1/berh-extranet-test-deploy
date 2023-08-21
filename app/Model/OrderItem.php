@@ -40,6 +40,11 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['var'] = number_format($results[$key][$this->alias]['var'], 2, ',', '.');
             }
 
+            if (isset($val[$this->alias]['price_per_day'])) {
+                $results[$key][$this->alias]['price_per_day_not_formated'] = $results[$key][$this->alias]['price_per_day'];
+                $results[$key][$this->alias]['price_per_day'] = number_format($results[$key][$this->alias]['price_per_day'], 2, ',', '.');
+            }
+
             if (isset($val[$this->alias]['subtotal'])) {
                 $results[$key][$this->alias]['subtotal_not_formated'] = $results[$key][$this->alias]['subtotal'];
                 $results[$key][$this->alias]['subtotal'] = number_format($results[$key][$this->alias]['subtotal'], 2, ',', '.');
@@ -61,6 +66,10 @@ class OrderItem extends AppModel {
 
         if (!empty($this->data[$this->alias]['var'])) {
 			$this->data[$this->alias]['var'] = $this->priceFormatBeforeSave($this->data[$this->alias]['var']);
+		}
+
+        if (!empty($this->data[$this->alias]['price_per_day'])) {
+			$this->data[$this->alias]['price_per_day'] = $this->priceFormatBeforeSave($this->data[$this->alias]['price_per_day']);
 		}
 
         if (!empty($this->data[$this->alias]['subtotal'])) {

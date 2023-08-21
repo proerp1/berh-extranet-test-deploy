@@ -39,8 +39,8 @@
                     <?php if ($data) { ?>
                         <?php foreach ($data as $key => $value) { ?>
                             <tr>
-                                <td><?php echo date('d/m/Y', strtotime($value['CustomerUserVacation']['start_date'])); ?></td>
-                                <td><?php echo date('d/m/Y', strtotime($value['CustomerUserVacation']['end_date'])); ?></td>
+                                <td><?php echo $value['CustomerUserVacation']['start_date']; ?></td>
+                                <td><?php echo $value['CustomerUserVacation']['end_date']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

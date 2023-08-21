@@ -54,7 +54,7 @@ if(isset($user_id) && !$is_admin){
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('CustomerUser', ['id' => 'js-form-submit', 'action' => $form_action, 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+        <?php echo $this->Form->create('CustomerUser', ['id' => 'js-form-submit', 'url' => $form_action, 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
         <input type="hidden" name="data[CustomerUser][customer_id]" value="<?php echo $id; ?>">
         <input type="hidden" name="query_string" value="<?php echo isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''; ?>">
         <input type="hidden" name="data[CustomerUser][tip]" value="<?php echo $is_admin ? 'U' : 'B'; ?>">
@@ -128,11 +128,26 @@ if(isset($user_id) && !$is_admin){
         <div class="row">
             <div class="mb-7 col-sm-4">
                 <label class="form-label fs-5 fw-bold mb-3">Departamento:</label>
-                <?php echo $this->Form->input('customer_departments_id', array("id" => "customer_departments_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $departamentos)); ?>
+                <?php echo $this->Form->input('customer_departments_id', array("id" => "customer_departments_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customer_departments, 'empty' => 'Selecione')); ?>
             </div>
             <div class="mb-7 col-sm-4">
                 <label class="form-label fs-5 fw-bold mb-3">Cargo:</label>
-                <?php echo $this->Form->input('customer_positions_id', array("id" => "customer_positions_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $cargos)); ?>
+                <?php echo $this->Form->input('customer_positions_id', array("id" => "customer_positions_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customer_positions, 'empty' => 'Selecione')); ?>
+            </div>
+            <div class="mb-7 col-sm-4">
+                <label class="form-label fs-5 fw-bold mb-3">Centro de Custo:</label>
+                <?php echo $this->Form->input('customer_cost_center_id', array("id" => "customer_cost_center_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customer_cost_centers, 'empty' => 'Selecione')); ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="mb-7 col-sm-4">
+                <label class="form-label fs-5 fw-bold mb-3">Salário:</label>
+                <?php echo $this->Form->input('customer_salary_id', array("id" => "customer_salary_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customer_salaries, 'empty' => 'Selecione')); ?>
+            </div>
+            <div class="mb-7 col-sm-4">
+                <label class="form-label fs-5 fw-bold mb-3">Estado Civil:</label>
+                <?php echo $this->Form->input('marital_status_id', array("id" => "marital_status_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $marital_statuses, 'empty' => 'Selecione')); ?>
             </div>
         </div>
 

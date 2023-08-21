@@ -7,7 +7,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']]
@@ -97,14 +97,19 @@ class CustomerUsersController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $estados = $this->CepbrEstado->find('list');
-        $departamentos = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
-        $cargos = $this->CustomerPosition->find('list');
+        $customer_departments = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
+        $customer_positions = $this->CustomerPosition->find('list', ['conditions' => ['CustomerPosition.customer_id' => $id]]);
+        $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
+        $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
+        $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
+
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Novo Usuário' => ''
         ];
         $form_action = $is_admin ? "../customer_users/add/".$id.'/true' : "../customer_users/add/".$id;
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
+        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses'));
     }
 
     public function edit_user($id, $user_id){
@@ -147,12 +152,16 @@ class CustomerUsersController extends AppController
             'Alterar Beneficiário' => ''
         ];
         $estados = $this->CepbrEstado->find('list');
-        $departamentos = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
-        $cargos = $this->CustomerPosition->find('list');
+        $customer_departments = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
+        $customer_positions = $this->CustomerPosition->find('list', ['conditions' => ['CustomerPosition.customer_id' => $id]]);
+        $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
+        $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
+        $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
 
         $this->set('hash', rawurlencode($hash));
-        $form_action = $is_admin ? "../customer_users/edit/".$id.'/'.$user_id.'/true' : "../customer_users/edit/".$id.'/'.$user_id;
+        $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
         $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
+        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses'));
             
         $this->render("add");
     }
