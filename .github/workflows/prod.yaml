@@ -27,7 +27,7 @@ jobs:
         run: ssh-keyscan ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
-        run: rsync -avuz -P --exclude=".*" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
+        run: rsync -avuz -P --exclude=".*" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
 
       - name: Install composer and run migration
         uses: appleboy/ssh-action@master
@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/vhosts/berhl.cfr.net.br/httpdocs/admin/
-            export PATH=/var/www/vhosts/berhl.cfr.net.br/.phpenv/shims:$PATH
+            cd /var/www/vhosts/berh.com.br/httpdocs/admin/
+            export PATH=/var/www/vhosts/berh.com.br/.phpenv/shims:$PATH
             php composer.phar install
             vendor/bin/phinx migrate -e production
