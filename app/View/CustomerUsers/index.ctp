@@ -3,7 +3,7 @@
 echo $this->element("abas_customers", array('id' => $id));
 ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array("controller" => "customers", "action" => "users", $id)); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "index", $id)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -39,7 +39,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option></option>
+                                    <option>Selecione</option>
                                     <?php
                                     for ($a = 0; $a < count($status); $a++) {
                                         $selected = "";
@@ -49,6 +49,40 @@ echo $this->element("abas_customers", array('id' => $id));
                                             }
                                         }
                                         echo '<option value="' . $status[$a]['Status']['id'] . '" ' . $selected . '>' . $status[$a]['Status']['name'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Centro de Custo:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cc" id="cc">
+                                    <option>Selecione</option>
+                                    <?php
+                                    for ($a = 0; $a < count($cost_centers); $a++) {
+                                        $selected = "";
+                                        if (isset($_GET["cc"])) {
+                                            if ($cost_centers[$a]['CostCenter']['id'] == $_GET["cc"]) {
+                                                $selected = "selected";
+                                            }
+                                        }
+                                        echo '<option value="' . $cost_centers[$a]['CostCenter']['id'] . '" ' . $selected . '>' . $cost_centers[$a]['CostCenter']['name'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Departamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="d" id="d">
+                                    <option>Selecione</option>
+                                    <?php
+                                    for ($a = 0; $a < count($departments); $a++) {
+                                        $selected = "";
+                                        if (isset($_GET["d"])) {
+                                            if ($departments[$a]['CustomerDepartment']['id'] == $_GET["d"]) {
+                                                $selected = "selected";
+                                            }
+                                        }
+                                        echo '<option value="' . $departments[$a]['CustomerDepartment']['id'] . '" ' . $selected . '>' . $departments[$a]['CustomerDepartment']['name'] . '</option>';
                                     }
                                     ?>
                                 </select>
@@ -71,7 +105,10 @@ echo $this->element("abas_customers", array('id' => $id));
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Nome</th>
-                    <th>Email</th>
+                    <th>E-mail</th>
+                    <th>CPF</th>
+                    <th>Departamento</th>
+                    <th>Centro de Custo</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
             </thead>
@@ -87,6 +124,9 @@ echo $this->element("abas_customers", array('id' => $id));
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["email"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerDepartment"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CostCenter"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customer_users/' . $urlEdit . '/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                     Editar

@@ -1,4 +1,4 @@
-<?php $url_novo = $this->base."/customers/add_user/".$id;  ?>
+<?php $url_novo = $this->base."/customer_users/add_vacation/".$id."/".$user_id;  ?>
 <?php
     $url = $this->base . '/customers_users/addresses';
     echo $this->element("abas_customers", array('id' => $id));
@@ -19,7 +19,7 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                    <!-- <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a> -->
+                    <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                 </div>
             </div>
         </div>
@@ -41,6 +41,15 @@
                             <tr>
                                 <td><?php echo $value['CustomerUserVacation']['start_date']; ?></td>
                                 <td><?php echo $value['CustomerUserVacation']['end_date']; ?></td>
+                                <td>
+                                    <a href="<?php echo $this->base.'/customer_users/edit_vacation/'.$user_id.'/'.$value["CustomerUserVacation"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
+                                        Editar
+                                    </a>
+
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customer_users/delete_vacation/'. $id .'/'.$user_id.'/'.$value["CustomerUserVacation"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                        Excluir
+                                    </a>
+                                </td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

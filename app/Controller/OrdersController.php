@@ -257,6 +257,7 @@ class OrdersController extends AppController
         $order['Order']['id'] = $id;
         $order['Order']['status_id'] = 84;
         $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+        $order['Order']['validation_date'] = date('Y-m-d');
 
         if ($this->Order->save($order)) {
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -274,6 +275,7 @@ class OrdersController extends AppController
         $order['Order']['id'] = $id;
         $order['Order']['status_id'] = 86;
         $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+        $order['Order']['issuing_date'] = date('Y-m-d');
 
         if ($this->Order->save($order)) {
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);

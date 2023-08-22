@@ -74,6 +74,26 @@ class Order extends AppModel {
 				$results[$key][$this->alias]['credit_release_date_nao_formatado'] = $val[$this->alias]['credit_release_date'];
 				$results[$key][$this->alias]['credit_release_date'] = date("d/m/Y", strtotime($val[$this->alias]['credit_release_date']));
 			}
+
+            if (isset($val[$this->alias]['validation_date'])) {
+				$results[$key][$this->alias]['validation_date_nao_formatado'] = $val[$this->alias]['validation_date'];
+				$results[$key][$this->alias]['validation_date'] = date("d/m/Y", strtotime($val[$this->alias]['validation_date']));
+			}
+
+            if (isset($val[$this->alias]['issuing_date'])) {
+				$results[$key][$this->alias]['issuing_date_nao_formatado'] = $val[$this->alias]['issuing_date'];
+				$results[$key][$this->alias]['issuing_date'] = date("d/m/Y", strtotime($val[$this->alias]['issuing_date']));
+			}
+
+            if (isset($val[$this->alias]['payment_date'])) {
+				$results[$key][$this->alias]['payment_date_nao_formatado'] = $val[$this->alias]['payment_date'];
+				$results[$key][$this->alias]['payment_date'] = date("d/m/Y", strtotime($val[$this->alias]['payment_date']));
+			}
+
+            if (isset($val[$this->alias]['created'])) {
+				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+				$results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+			}
         }
 
         return $results;

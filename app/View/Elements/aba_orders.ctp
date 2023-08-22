@@ -6,19 +6,19 @@
             <ul>
                 <li class="bullet-1">
                     <div class="el"><i class='fa fa-cog'></i></div>
-                    <div class="txt">Início</div>
+                    <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
                     <div class="el"><i class='fa fa-list'></i></div>
-                    <div class="txt">Aguardando Validação</div>
+                    <div class="txt">Aguardando Validação <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
                     <div class="el"><i class='fa fa-credit-card'></i></div>
-                    <div class="txt">Aguardando Emissão</div>
+                    <div class="txt">Aguardando Emissão <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
                 <li class="bullet-4">
                     <div class="el"><i class='fa fa-check'></i></div>
-                    <div class="txt">Aguardando Pagamento</div>
+                    <div class="txt">Aguardando Pagamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
                 <li class="bullet-5">
                     <div class="el"><i class='fa fa-check'></i></div>

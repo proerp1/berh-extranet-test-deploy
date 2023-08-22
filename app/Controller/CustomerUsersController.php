@@ -7,10 +7,24 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem'];
 
     public $paginate = [
-        'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']]
+        'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
+        'OrderItem' => [
+            'limit' => 100, 
+            'order' => ['OrderItem.id' => 'asc'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ]
+        ]]
     ];
 
     public function beforeFilter()
@@ -47,8 +61,18 @@ class CustomerUsersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.status_id' => $_GET['t']]);
         }
 
+        if (!empty($_GET["cc"])) {
+            $condition['and'] = array_merge($condition['and'], ['CustomerUser.customer_cost_center_id' => $_GET['cc']]);
+        }
+
+        if (!empty($_GET["d"])) {
+            $condition['and'] = array_merge($condition['and'], ['CustomerUser.customer_departments_id' => $_GET['d']]);
+        }
+
         $data = $this->Paginator->paginate('CustomerUser', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1], 'order' => 'Status.name']);
+        $cost_centers = $this->CostCenter->find('all', ['conditions' => ['CostCenter.customer_id' => $id]]);
+        $departments = $this->CustomerDepartment->find('all', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
@@ -58,7 +82,7 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Beneficiários' => ''
         ];
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin'));
+        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments'));
     }
 
     public function add_user($id){
@@ -300,6 +324,89 @@ class CustomerUsersController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
     }
 
+    public function add_vacation($customer_id, $user_id)
+    {
+        // $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
+        if ($this->request->is(['post', 'put'])) {
+            $this->CustomerUserVacation->create();
+            $this->CustomerUserVacation->validates();
+
+            $this->request->data['CustomerUserVacation']['user_creator_id'] = CakeSession::read("Auth.User.id");
+            $this->request->data['CustomerUserVacation']['customer_id'] = $customer_id;
+            $this->request->data['CustomerUserVacation']['customer_user_id'] = $user_id;
+
+            if ($this->CustomerUserVacation->save($this->request->data)) {
+                $this->Flash->set(__('As férias foram incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => 'vacations/' . $customer_id . '/' . $user_id]);
+            } else {
+                $this->Flash->set(__('As férias não puderam ser salvas, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            }
+        }
+
+        $this->Customer->id = $customer_id;
+        $cliente = $this->Customer->read();
+
+        $action = 'Férias';
+
+        $states = $this->CepbrEstado->find('list');
+        $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $user_id],
+            'Novas Férias' => ''
+        ];
+        $this->set(compact('action', 'customer_id', 'breadcrumb', 'user_id'));
+    }
+
+    public function edit_vacation($customer_id, $user_id, $id_vacation)
+    {
+        // $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->CustomerUserVacation->id = $id_vacation;
+        if ($this->request->is(['post', 'put'])) {
+            $this->CustomerUserVacation->validates();
+            $this->request->data['CustomerUserVacation']['user_updated_id'] = CakeSession::read("Auth.User.id");
+            if ($this->CustomerUserVacation->save($this->request->data)) {
+                $this->Flash->set(__('As férias foram alteradas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => 'vacations/' . $user_id]);
+            } else {
+                $this->Flash->set(__('As férias não puderam ser alteradas, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            }
+        }
+
+        $temp_errors = $this->CustomerUserVacation->validationErrors;
+        $this->request->data = $this->CustomerUserVacation->read();
+        $this->CustomerUserVacation->validationErrors = $temp_errors;
+
+        $this->Customer->id = $customer_id;
+        $cliente = $this->Customer->read();
+
+        $action = 'Férias';
+
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $this->Customer->id],
+            'Alterar Conta Bancária' => ''
+        ];
+
+        $this->set("form_action", "../customers/edit_user/" . $user_id);
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb'));
+
+        $this->render("add_vacation");
+    }
+
+    public function delete_vacation($customer_id, $user_id, $id)
+    {
+        // $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->CustomerUserVacation->id = $id;
+
+        $this->request->data['CustomerUserVacation']['id'] = $id;
+        $this->request->data['CustomerUserVacation']['data_cancel'] = date("Y-m-d H:i:s");
+        $this->request->data['CustomerUserVacation']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->CustomerUserVacation->save($this->request->data)) {
+            $this->Flash->set(__('As férias foram excluidas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'vacations/' . $customer_id . '/' . $user_id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
+        }
+    }
+
      /*******************
                 Dados Bancários
     ********************/
@@ -506,13 +613,25 @@ class CustomerUsersController extends AppController
                 Transações
     ********************/
 
-    public function transactions($id, $user_id){
+    public function transactions($customer_id, $user_id)
+    {
         $action = 'Extrato';
         $breadcrumb = [
             'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Extrato' => ''
         ];
-        $this->set(compact('action', 'breadcrumb', 'id', 'user_id'));
+
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => ['OrderItem.customer_user_id' => $user_id, 'Order.customer_id' => $customer_id], "or" => []];
+
+        if (!empty($_GET['q'])) {
+            $condition['or'] = array_merge($condition['or'], ['Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $data = $this->Paginator->paginate('OrderItem', $condition);
+
+        $this->set(compact('action', 'breadcrumb', 'customer_id', 'user_id', 'data'));
     }
 
 

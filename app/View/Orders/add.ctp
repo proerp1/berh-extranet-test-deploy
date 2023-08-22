@@ -85,7 +85,7 @@
                                         <!--end::Svg Icon-->Criado em
                                     </div>
                                 </td>
-                                <td class="fw-bolder text-end"><?php echo date('d/m/Y', strtotime($order['Order']['created'])); ?></td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['created']; ?></td>
                             </tr>
                             <tr>
                                 <td class="text-muted">
