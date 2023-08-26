@@ -61,18 +61,18 @@ if($user_id){
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Tipo Endereço</label>
-                <?php echo $this->Form->input('address_type_id', array("id" => "tipo_endereço", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $address_type)); ?>
+                <?php echo $this->Form->input('address_type_id', array("id" => "tipo_endereço", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $address_type)); ?>
             </div>
             <div class="mb-7 col">
                 <label for="cep" class="form-label required">CEP</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
-                    <?php echo $this->Form->input('zip_code', array("id" => "cep", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('zip_code', array("id" => "cep", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Endereço</label>
-                <?php echo $this->Form->input('address_line', array("id" => "endereco", "placeholder" => "Endereço", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('address_line', array("id" => "endereco", "placeholder" => "Endereço", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
         </div>
 
@@ -90,15 +90,15 @@ if($user_id){
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Cidade</label>
-                <?php echo $this->Form->input('city', array("id" => "cidade", "placeholder" => "Cidade", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('city', array("id" => "cidade", "placeholder" => "Cidade", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Bairro</label>
-                <?php echo $this->Form->input('neighborhood', array("id" => "bairro", "placeholder" => "Bairro", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('neighborhood', array("id" => "bairro", "placeholder" => "Bairro", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Estado</label>
-                <?php echo $this->Form->input('state', array("id" => "estado", "placeholder" => "Estado", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $estados)); ?>
+                <?php echo $this->Form->input('state', array("id" => "estado", "placeholder" => "Estado", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $estados)); ?>
             </div>
         </div>
 
