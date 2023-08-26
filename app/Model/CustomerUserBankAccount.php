@@ -12,6 +12,10 @@ class CustomerUserBankAccount extends AppModel {
         'BankAccountType' => [
             'className' => 'BankAccountType',
             'foreignKey' => 'account_type_id'
+        ],
+        'BankCode' => [
+            'className' => 'BankCode',
+            'foreignKey' => 'bank_code_id'
         ]
     ];
 

@@ -1,6 +1,5 @@
 <?php 
 
-App::uses('AuthComponent', 'Controller/Component');
 class Bank extends AppModel {
 	public $name = 'Bank';
 

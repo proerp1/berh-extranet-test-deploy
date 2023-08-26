@@ -6,7 +6,8 @@ class ExcelConfigurationComponent extends Component {
 	{
 		$arr = [
 			'OrderItem'	=> [
-				'limit' => 20, 'order' => ['OrderItem.id' => 'desc'],
+				'limit' => 1000000,
+				'order' => ['OrderItem.customer_user_id' => 'desc'],
 				'fields' => [
 					'Customer.nome_primario',
 					'Customer.documento',
@@ -32,8 +33,8 @@ class ExcelConfigurationComponent extends Component {
 					'MAX(CustomerAddress.state) as estado_empresa',
 
 					'MAX(CustomerUserBankAccount.account_type_id) as tipo_conta',
-					'MAX(CustomerUserBankAccount.bank_name) as nome_banco',
-					'MAX(CustomerUserBankAccount.bank_code) as codigo_banco',
+					'MAX(BankCode.name) as nome_banco',
+					'MAX(BankCode.code) as codigo_banco',
 					'MAX(CustomerUserBankAccount.acc_number) as numero_conta',
 					'MAX(CustomerUserBankAccount.acc_digit) as digito_conta',
 					'MAX(CustomerUserBankAccount.branch_number) as numero_agencia',
@@ -110,6 +111,12 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'CustomerUserBankAccount',
 						'type' => 'LEFT',
 						'conditions' => ['CustomerUserBankAccount.customer_user_id = CustomerUser.id']
+					],
+					[
+						'table' => 'bank_codes',
+						'alias' => 'BankCode',
+						'type' => 'LEFT',
+						'conditions' => ['BankCode.id = CustomerUserBankAccount.bank_code_id']
 					],
 					[
 						'table' => 'customer_positions',

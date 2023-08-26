@@ -78,7 +78,7 @@
                         <?php foreach ($data as $key => $value) { ?>
                             <tr>
                                 <td><?php echo $value['BankAccountType']['description']; ?></td>
-                                <td><?php echo $value['CustomerUserBankAccount']['bank_code'].' - '.$value['CustomerUserBankAccount']['bank_name']; ?></td>
+                                <td><?php echo $value['BankCode']['code'].' - '.$value['BankCode']['name']; ?></td>
                                 <td><?php echo $value['CustomerUserBankAccount']['branch_number'].'-'.$value['CustomerUserBankAccount']['branch_digit']; ?></td>
                                 <td><?php echo $value['CustomerUserBankAccount']['acc_number'].'-'.$value['CustomerUserBankAccount']['acc_digit']; ?></td>
                                 <td>

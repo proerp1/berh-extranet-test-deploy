@@ -85,13 +85,19 @@ class CustomerUser extends AppModel {
 				$cel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['cel']);
                 $results[$key][$this->alias]['cel_sem_ddd'] = substr($cel, 2);
                 $results[$key][$this->alias]['ddd_cel'] = substr($cel, 0, 2);
-            }
+            } else {
+				$results[$key][$this->alias]['cel_sem_ddd'] = null;
+                $results[$key][$this->alias]['ddd_cel'] = null;
+			}
 
 			if (isset($val[$this->alias]['tel'])) {
 				$tel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['tel']);
                 $results[$key][$this->alias]['tel_sem_ddd'] = substr($tel, 2);
                 $results[$key][$this->alias]['ddd_tel'] = substr($tel, 0, 2);
-            }
+            } else {
+				$results[$key][$this->alias]['tel_sem_ddd'] = null;
+                $results[$key][$this->alias]['ddd_tel'] = null;
+			}
         }
 
         return $results;

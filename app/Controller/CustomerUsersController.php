@@ -7,7 +7,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -417,7 +417,7 @@ class CustomerUsersController extends AppController
         $condition = ["and" => ['CustomerUserBankAccount.customer_user_id' => $user_id], "or" => []];
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUserBankAccount.bank_name LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.bank_code LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_digit LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_digit LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['BankCode.name LIKE' => "%" . $_GET['q'] . "%", 'BankCode.code LIKE' => "%" . $_GET['q'] . "%", 'CustomerUserBankAccount.acc_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_digit LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_digit LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('CustomerUserBankAccount', $condition);
@@ -455,12 +455,13 @@ class CustomerUsersController extends AppController
         $action = 'Beneficiários';
 
         $states = $this->CepbrEstado->find('list');
+        $banks = $this->BankCode->find('list');
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
             'Nova Conta Bancária' => ''
         ];
-        $this->set(compact('action', 'id', 'breadcrumb', 'states', 'user_id', 'bank_account_type'));
+        $this->set(compact('action', 'id', 'breadcrumb', 'states', 'user_id', 'bank_account_type', 'banks'));
     }
 
     public function edit_bank_info($id, $user_id, $id_bank)
@@ -494,9 +495,10 @@ class CustomerUsersController extends AppController
             'Alterar Conta Bancária' => ''
         ];
         $estados = $this->CepbrEstado->find('list');
+        $banks = $this->BankCode->find('list');
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
-        $this->set("form_action", "../customers/edit_user/".$id);
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'bank_account_type'));
+        $this->set("form_action", "../customer_users/edit_bank_info/".$id.'/'. $user_id . '/' . $id_bank);
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'bank_account_type', 'banks'));
             
         $this->render("add_bank_info");
     }
