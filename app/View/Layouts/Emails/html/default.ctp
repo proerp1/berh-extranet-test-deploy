@@ -14,8 +14,8 @@
               <tbody>
                 <tr>
                   <td>
-                    <a href="https://berh.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
-                      <img src="<?php echo "https://berh.com.br/extranet/img/logo-berhb-branco-alta.png" ?>" width="175" style="">                      
+                    <a href="https://admin.berh.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
+                      <img src="<?php echo "https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" ?>" style="width:100px">
                     </a>
                   </td>                  
                 </tr>

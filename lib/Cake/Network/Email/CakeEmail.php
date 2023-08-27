@@ -1559,6 +1559,10 @@ class CakeEmail {
 		return $msg;
 	}
 
+	public function customRender(){
+		$this->_message = $this->_render([]);
+	}
+
 /**
  * Render the body of the email.
  *

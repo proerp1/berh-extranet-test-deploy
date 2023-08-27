@@ -7,25 +7,43 @@ class EmailComponent extends Component
 {
     public function send($dados)
     {
-        $email = new CakeEmail();
+        $key = Configure::read('sendgridKey');
+        $email = new \SendGrid\Mail\Mail(); 
+        $email->setFrom("noreply@berh.com.br", "BeRH");
+        $email->setSubject($dados['subject']);
+        $email->addTo($dados['viewVars']['email'], $dados['viewVars']['nome']);
 
-        $email->config($dados['config']);
+        $html = $this->generateHTML($dados);
 
-        $email->to($dados['viewVars']['email']);
-        $email->subject($dados['subject']);
-        $email->viewVars($dados['viewVars']);
-        if (isset($dados['layout'])) {
-            $email->template($dados['template'], $dados['layout']);
-        } else {
-            $email->template($dados['template']);
-        }
-        $email->emailFormat('html');
-
-        if ($email->send()) {
+        $email->addContent("text/html", $html);
+        $sendgrid = new \SendGrid($key);
+        try
+        {
+            $sendgrid->send($email);
+            
             return true;
-        } else {
+        }
+        catch (Exception $e)
+        {
             return false;
         }
+    }
+
+    private function generateHTML($dados){
+        $ce = new CakeEmail();
+        $ce->viewVars($dados['viewVars']);
+        if (isset($dados['layout'])) {
+            $ce->template($dados['template'], $dados['layout']);
+        } else {
+            $ce->template($dados['template']);
+        }
+
+        $ce->emailFormat('html');
+
+        // Funcao customizada, se atualizara o cakephp, verificar se ainda funciona
+        $ce->customRender();
+
+        return $ce->message('html');
     }
 
     public function send_many($dados)
