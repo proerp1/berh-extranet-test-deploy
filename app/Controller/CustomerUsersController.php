@@ -104,7 +104,7 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerUser']['password'] = $senha;
             if ($this->CustomerUser->save($this->request->data)) {
-                // $this->envia_email($this->request->data);
+                $this->envia_email($this->request->data);
 
                 $action = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
                 $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -636,43 +636,6 @@ class CustomerUsersController extends AppController
         $this->set(compact('action', 'breadcrumb', 'customer_id', 'user_id', 'data'));
     }
 
-
-    public function salva_usuarios()
-    {
-
-        $customers = $this->Customer->query("SELECT c.id, c.nome_primario, c.email, c.senha
-            FROM customers c
-            LEFT JOIN customer_users cu ON cu.customer_id = c.id AND cu.data_cancel = '1901-01-01'
-            WHERE cu.id IS NULL 
-            AND c.status_id IN (3,4)
-            AND c.data_cancel = '1901-01-01'
-            limit 5
-            ");
-
-        foreach ($customers as $customer) {
-            
-            $senha = substr(sha1(time()), 0, 6);
-
-            $customer_user = [
-                'CustomerUser' => [
-                    'name' => $customer['c']['nome_primario'],
-                    'email' => $customer['c']['email'],
-                    'username' => $customer['c']['email'],
-                    'customer_id' => $customer['c']['id'],
-                    'password' => $senha,
-                    'main_user' => 1
-                ]
-            ];
-            print $customer['c']['email']." - ".$customer['c']['nome_primario']."</br>";
-
-            $this->CustomerUser->create();
-            $this->CustomerUser->save($customer_user, ['validate' => false]);
-
-            // $this->envia_email($customer_user);
-        }
-
-    }
-
     public function envia_email($data)
     {
         $dados = [
@@ -704,7 +667,7 @@ class CustomerUsersController extends AppController
         $this->request->data['CustomerUser']['password'] = $senha;
             
         if ($this->CustomerUser->save($this->request->data)) {
-            // $this->envia_email($this->request->data);
+            $this->envia_email($this->request->data);
 
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect("/customer_users/index/".$id);
