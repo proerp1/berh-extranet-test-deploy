@@ -211,7 +211,7 @@ class CustomersController extends AppController
 
         $this->set("action", "Novo Cliente");
         $this->set("form_action", "add");
-        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers', 'tipo_credor'));
+        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers'));
     }
 
     public function edit($id = null)
