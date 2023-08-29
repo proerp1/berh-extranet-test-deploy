@@ -33,6 +33,9 @@
                     <tr>
                         <th>Número</th>
                         <th>Data</th>
+                        <th>Data prev. fechamento</th>
+                        <th>Data fechamento</th>
+                        <th>Taxa Adm Vale Transporte</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -42,6 +45,9 @@
                             <tr>
                                 <td><?php echo $data[$i]["Proposal"]["number"]; ?></td>
                                 <td><?php echo $data[$i]["Proposal"]["date"]; ?></td>
+                                <td><?php echo $data[$i]["Proposal"]["expected_closing_date"]; ?></td>
+                                <td><?php echo $data[$i]["Proposal"]["closing_date"]; ?></td>
+                                <td><?php echo $data[$i]["Proposal"]["transport_adm_fee"]; ?>%</td>
                                 <td>
                                     <a href="<?php echo $this->base.'/proposals/edit/'.$id.'/'.$data[$i]["Proposal"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
