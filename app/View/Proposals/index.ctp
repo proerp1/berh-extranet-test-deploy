@@ -60,7 +60,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="4">Nenhum registro encontrado</td>
+                            <td colspan="6">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>
