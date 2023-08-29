@@ -35,7 +35,16 @@ return
             'pass' => '',
             'port' => '3306',
             'charset' => 'utf8',
-        ]
+        ],
+        'dev_docker' => [
+            'adapter' => 'mysql',
+            'host' => 'database',
+            'name' => 'berh',
+            'user' => 'root',
+            'pass' => 'inter123',
+            'port' => '3306',
+            'charset' => 'utf8',
+        ],
     ],
     'version_order' => 'creation'
 ];

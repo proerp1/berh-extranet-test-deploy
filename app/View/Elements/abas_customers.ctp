@@ -15,6 +15,9 @@
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['documents', 'add_document', 'edit_document']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/documents/'.$id; ?>">Documentos</a>
 	</li>
 	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['proposals']) ? 'active' : '' ?>" href="<?php echo $this->base.'/proposals/index/'.$id; ?>">Proposta</a>
+	</li>
+	<li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['action'] == 'log_status' ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/log_status/'.$id; ?>">Log de status</a>
 	</li>
 </ul>
