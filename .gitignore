@@ -8,5 +8,4 @@
 _sftp-config.json
 *.DS_Store
 *.local
-composer.lock
 /app/Config/email.php
