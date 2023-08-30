@@ -151,7 +151,7 @@ if(isset($user_id) && !$is_admin){
             </div>
             <div class="mb-7 col-sm-4">
                 <label class="form-label fs-5 fw-bold mb-3">Grupo econômico:</label>
-                <?php echo $this->Form->input(($is_admin ? 'EconomicGroup.EconomicGroup' : 'economic_group_id'), array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, 'multiple' => $is_admin)); ?>
+                <?php echo $this->Form->input('EconomicGroup.EconomicGroup', array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, 'multiple' => true)); ?>
             </div>
         </div>
 

@@ -4,6 +4,7 @@ App::uses('AuthComponent', 'Controller/Component');
 class CustomerUser extends AppModel
 {
     public $name = 'CustomerUser';
+    public $actsAs = ['Containable'];
 
     public $belongsTo = [
         'Customer' => [
