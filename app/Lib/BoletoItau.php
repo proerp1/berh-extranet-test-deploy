@@ -38,9 +38,9 @@ class BoletoItau extends Controller
             'logo' => APP.'webroot/img/logo-berh-colorido.png',
             'dataVencimento' => Carbon::parse($boleto['Income']['vencimento_nao_formatado']),
             'valor' => $boleto['Income']['valor_total_nao_formatado'],
-            'multa' => 1, // 1% do valor do boleto após o vencimento
+            'multa' => $boleto['BankTicket']['multa_boleto'], // 1% do valor do boleto após o vencimento
             'juros' => 1, // 1% ao mês do valor do boleto
-            'numero' => $boleto['Income']['id'],
+            'numero' => $boleto['Income']['nosso_numero'],
             'numeroDocumento' => $boleto['Income']['id'],
             'pagador' => $this->pagador($boleto['Customer']),
             'beneficiario' => $this->beneficiario($boleto['Resale']),

@@ -1,5 +1,5 @@
 <?php
-App::uses('Bancoob', 'Lib');
+App::uses('BoletoItau', 'Lib');
 class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -432,7 +432,7 @@ class IncomesController extends AppController
 
         $conta = $this->Income->getDadosBoleto($id);
 
-        $Bancoob = new Bancoob();
+        $Bancoob = new BoletoItau();
         $Bancoob->printBoleto($conta, $pdf);
     }
 

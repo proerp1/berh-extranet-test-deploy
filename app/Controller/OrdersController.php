@@ -3,7 +3,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
@@ -241,10 +241,14 @@ class OrdersController extends AppController
             'fields' => ['OrderItem.customer_user_id']
         ]);
 
+        $income = $this->Income->find('first', [
+            'conditions' => ['Income.order_id' => $id]
+        ]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending', 'suppliersCount', 'usersCount'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending', 'suppliersCount', 'usersCount', 'income'));
 
         $this->render("add");
     }
@@ -260,6 +264,31 @@ class OrdersController extends AppController
         $order['Order']['validation_date'] = date('Y-m-d');
 
         if ($this->Order->save($order)) {
+
+            $order = $this->Order->findById($id);
+
+            $bankTicket = $this->BankTicket->find('first', [
+                'conditions' => ['BankTicket.status_id' => 1]
+            ]);
+
+            $this->Income->create();
+            $income = [];
+            
+            $income['Income']['order_id'] = $id;
+            $income['Income']['parcela'] = 1;
+            $income['Income']['status_id'] = 15;
+            $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
+            $income['Income']['customer_id'] = $order['Order']['customer_id'];
+            $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
+            $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
+            $income['Income']['valor_total'] = $order['Order']['subtotal'];
+            $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 2 day'));;
+            $income['Income']['data_competencia'] = date('01/m/Y');
+            $income['Income']['created'] = date('Y-m-d H:i:s');
+            $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
+
+            $this->Income->save($income);
+
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'edit/' . $id]);
         } else {

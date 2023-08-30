@@ -55,7 +55,7 @@ class CnabController extends AppController
 
         $data = [];
         if ($buscar) {
-            $this->Income->unbindModel(['belongsTo' => ['UsuarioBaixa', 'UsuarioCancelamento', 'BankAccount', 'Revenue', 'CostCenter', 'Billing', 'BillingMonthlyPayment']]);
+            $this->Income->unbindModel(['belongsTo' => ['UsuarioBaixa', 'UsuarioCancelamento', 'BankAccount', 'Revenue', 'CostCenter', 'Order']]);
             $data = $this->Income->find('all', ['conditions' => $condition, 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc']]);
         }
 

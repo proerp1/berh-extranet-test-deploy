@@ -1,5 +1,5 @@
 <?php
-App::uses('Bancoob', 'Lib');
+App::uses('BoletoItau', 'Lib');
 class RetornoCnabsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -49,8 +49,8 @@ class RetornoCnabsController extends AppController
             if ($this->RetornoCnab->save($this->request->data)) {
                 $arquivo = APP.'webroot/files/retorno_cnab/arquivo/'.$this->RetornoCnab->id.'/'.$this->request->data['RetornoCnab']['arquivo']['name'];
                 
-                $Bancoob = new Bancoob();
-                $retorno = $Bancoob->processarRetorno($this->RetornoCnab->id, $arquivo);
+                $itau = new BoletoItau();
+                $retorno = $itau->processarRetorno($this->RetornoCnab->id, $arquivo);
 
                 $this->Flash->set(__('Arquivo importado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);

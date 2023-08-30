@@ -10,15 +10,15 @@
                 </li>
                 <li class="bullet-2">
                     <div class="el"><i class='fa fa-list'></i></div>
-                    <div class="txt">Aguardando Validação <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
+                    <div class="txt">Aguardando Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
                     <div class="el"><i class='fa fa-credit-card'></i></div>
-                    <div class="txt">Aguardando Emissão <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
+                    <div class="txt">Pagamento Confirmado <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
                 <li class="bullet-4">
                     <div class="el"><i class='fa fa-check'></i></div>
-                    <div class="txt">Aguardando Pagamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
+                    <div class="txt">Em Processamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
                 <li class="bullet-5">
                     <div class="el"><i class='fa fa-check'></i></div>

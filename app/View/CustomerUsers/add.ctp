@@ -151,6 +151,27 @@ if(isset($user_id) && !$is_admin){
             </div>
         </div>
 
+        <div class="row">
+            <div class="mb-7 col">
+                <?php
+                $options = [
+                    '' => 'Selecione',
+                    'cnpj' => 'CNPJ',
+                    'cpf' => 'CPF',
+                    'email' => 'e-mail',
+                    'celular' => 'celular',
+                    'chave' => 'chave'
+                ];
+            ?>
+                <label class="fw-semibold fs-6 mb-2">Tipo Chave</label>
+                <?php echo $this->Form->input('pix_type', ['placeholder' => 'Tipo PIX', "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $options]); ?>
+            </div>
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Chave PIX</label>
+                <?php echo $this->Form->input('pix_id', ['type' => 'text', 'placeholder' => 'PIX', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+            </div>
+        </div>
+
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
                 <?php $urlVoltar = $is_admin ? 'index_users' : 'index'; ?>

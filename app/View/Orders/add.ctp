@@ -134,16 +134,16 @@
                             <div class="col-12">
                                 <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                                     <i class="fas fa-arrow-right"></i>
-                                    Enviar Operadoras
+                                    Gerar Boleto
                                 </a>
                             </div>
                         </div>
                     <?php } ?>
 
-                    <?php if ($order['Order']['status_id'] == 85) { ?>
+                    <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
                         <div class="row">
                             <div class="col-12">
-                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$income["Income"]["id"].'/1'; ?>" class="btn btn-sm btn-success me-3" style="float:right">
                                     <i class="fas fa-download"></i>
                                     Baixar Boleto
                                 </a>
@@ -506,7 +506,7 @@
             </div>
             <form action="<?php echo $this->base . '/orders/changeStatusToSent/' . $id; ?>" class="form-horizontal" method="post">
                 <div class="modal-body">
-                    <p>Tem certeza que deseja enviar o pedido para a SPTrans?</p>
+                    <p>Tem certeza que deseja gerar o boleto?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>

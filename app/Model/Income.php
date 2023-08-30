@@ -23,8 +23,7 @@ class Income extends AppModel
         'Customer' => [
             'order' => ['Customer.nome_secundario' => 'asc']
         ],
-        'Billing',
-        'BillingMonthlyPayment'
+        'Order'
     ];
 
     public $hasOne = [
