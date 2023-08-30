@@ -7,7 +7,7 @@
     <table align="center" cellpadding="0" cellspacing="0" border="0" width="670" style="border: 1px solid #ccc; background:#fff;">
       <!-- header -->
       <thead>
-        <tr style="background:#1d4f91; table-layout:fixed; height: 60px;">
+        <tr style="background:#472F92; table-layout:fixed; height: 60px;">
           <td width="50"></td>
           <td>
             <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
@@ -15,7 +15,7 @@
                 <tr>
                   <td>
                     <a href="https://admin.berh.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
-                      <img src="<?php echo "https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" ?>" style="width:100px">
+                      <img src="https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" style="width:100px">
                     </a>
                   </td>                  
                 </tr>
@@ -46,10 +46,6 @@
 
                   </td>
                   <td width="20"></td>
-                </tr>
-                <tr>
-                  <td style="text-align: right;" colspan="3"><img src="https://berh.com.br/cliente/img/logo-serasa-novo.png" width="120"></td>
-
                 </tr>
               </tbody>
             </table>
