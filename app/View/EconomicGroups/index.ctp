@@ -1,4 +1,5 @@
 <?php
+    $url_novo = $this->base."/economic_groups/add/".$id;
     echo $this->element("abas_customers", array('id' => $id));
 ?>
 
@@ -21,6 +22,8 @@
                         <i class="fas fa-filter"></i>
                         Filtro
                     </button>
+
+                    <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
 
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
@@ -65,7 +68,8 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
                         <th>Razão Social</th>
-                        <th class="w-200px min-w-200px rounded-end">CNPJ</th>
+                        <th>CNPJ</th>
+                        <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,6 +84,15 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["EconomicGroup"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["EconomicGroup"]["razao_social"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["EconomicGroup"]["document"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <a href="<?php echo $this->base.'/economic_groups/edit/'.$id.'/'.$data[$i]["EconomicGroup"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
+                                        Editar
+                                    </a>
+
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/economic_groups/delete/'.$data[$i]["EconomicGroup"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                        Excluir
+                                    </a>
+                                </td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
