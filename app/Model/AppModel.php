@@ -13,12 +13,12 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Model
+ *
+ * @see          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 0.2.9
+ *
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 App::uses('Model', 'Model');
 
 /**
@@ -26,8 +26,28 @@ App::uses('Model', 'Model');
  *
  * Add your application-wide methods in the class below, your models
  * will inherit them.
- *
- * @package       app.Model
  */
-class AppModel extends Model {
+class AppModel extends Model
+{
+    public function priceFormatBeforeSave($price)
+    {
+        $valueFormatado = str_replace('.', '', $price);
+
+        return str_replace(',', '.', $valueFormatado);
+    }
+
+    public function dateFormatBeforeSave($dateString)
+    {
+        return date('Y-m-d', strtotime($this->date_converter($dateString)));
+    }
+
+    public function date_converter($_date = null)
+    {
+        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+        if ($_date != null && preg_match($format, $_date, $partes)) {
+            return $partes[3].'-'.$partes[2].'-'.$partes[1];
+        }
+
+        return false;
+    }
 }

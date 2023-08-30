@@ -99,7 +99,6 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
                         <th>Nome fantasia</th>
                         <th>CNPJ</th>
-                        <th>Plano</th>
                         <th>Cidade</th>
                         <th>UF</th>
                         <th>Revenda</th>
@@ -114,7 +113,6 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["PlanoAtivo"]['Plan']) ? $data[$i]["PlanoAtivo"]["Plan"]["description"] : 'Sem plano ativo' ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
@@ -140,7 +138,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="9">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="8">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>
