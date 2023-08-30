@@ -20,4 +20,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['action'] == 'log_status' ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/log_status/'.$id; ?>">Log de status</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['economic_groups']) ? 'active' : '' ?>" href="<?php echo $this->base.'/economic_groups/index/'.$id; ?>">Grupos econômicos</a>
+	</li>
 </ul>
