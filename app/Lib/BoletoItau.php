@@ -80,7 +80,7 @@ class BoletoItau extends Controller
 
     public function gerarRemessa($contas, $nome, $remessa)
     {
-        $remessa = new Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab240\Banco\Itau(
+        $remessa = new Eduardokum\LaravelBoleto\Cnab\Remessa\Cnab400\Banco\Itau(
             [
                 'idRemessa' => $remessa,
                 'beneficiario' => $this->beneficiario($contas[0]['Resale']),
