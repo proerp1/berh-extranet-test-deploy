@@ -239,7 +239,6 @@ class LerErroSerasaComponent extends Component
                 'pefin'  => $pefin
             ],
             'template' => 'carta_negativacao',
-            'layout' => 'new_layout',
             'subject'  => 'Carta negativação',
             'config'   => 'default'
         ];

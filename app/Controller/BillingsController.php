@@ -945,7 +945,6 @@ class BillingsController extends AppController
                     'link' => Configure::read('Areadoassociado.link').'users/bypass_login/'.$hash.'/?em_aberto',
                 ],
                     'template' => 'pague_fatura',
-                    'layout' => 'new_layout',
                     'subject' => 'BeRH - Comunicado importante',
                     'config' => 'fatura',
                 ];
@@ -998,7 +997,6 @@ class BillingsController extends AppController
                     'link' => Configure::read('Areadoassociado.link').'users/bypass_login/'.$hash.'/?em_aberto',
                 ],
                     'template' => 'boleto',
-                    'layout' => 'new_layout',
                     'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];
@@ -1036,7 +1034,6 @@ class BillingsController extends AppController
                     'link' => Configure::read('Areadoassociado.link').'users/bypass_login/'.$hash.'/?em_aberto',
                 ],
                     'template' => 'boleto',
-                    'layout' => 'new_layout',
                     'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];
@@ -1099,7 +1096,6 @@ class BillingsController extends AppController
                     'link' => Configure::read('Areadoassociado.link').'users/bypass_login/'.$hash.'/?em_aberto',
                 ],
                     'template' => 'payment_not_found',
-                    'layout' => 'new_layout',
                     'subject' => 'BeRH - Distribuidor Autorizado Serasa Experian',
                     'config' => 'fatura',
                 ];

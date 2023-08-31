@@ -7,7 +7,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -126,6 +126,7 @@ class CustomerUsersController extends AppController
         $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
         $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
         $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
+        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1]]);
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -133,7 +134,7 @@ class CustomerUsersController extends AppController
         ];
         $form_action = $is_admin ? "../customer_users/add/".$id.'/true' : "../customer_users/add/".$id;
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
-        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses'));
+        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));
     }
 
     public function edit_user($id, $user_id){
@@ -146,8 +147,8 @@ class CustomerUsersController extends AppController
         $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUser->id = $user_id;
         if ($this->request->is(['post', 'put'])) {
-            $this->CustomerUser->validates();
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
             if ($this->CustomerUser->save($this->request->data)) {
                 $action = $is_admin ? 'index_users/'.$id.'/' : 'index/'.$id.'/';
                 
@@ -181,11 +182,12 @@ class CustomerUsersController extends AppController
         $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
         $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
         $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
+        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1]]);
 
         $this->set('hash', rawurlencode($hash));
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
         $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
-        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses'));
+        $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));
             
         $this->render("add");
     }

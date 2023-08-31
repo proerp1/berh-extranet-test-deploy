@@ -149,6 +149,10 @@ if(isset($user_id) && !$is_admin){
                 <label class="form-label fs-5 fw-bold mb-3">Estado Civil:</label>
                 <?php echo $this->Form->input('marital_status_id', array("id" => "marital_status_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $marital_statuses, 'empty' => 'Selecione')); ?>
             </div>
+            <div class="mb-7 col-sm-4">
+                <label class="form-label fs-5 fw-bold mb-3">Grupo econômico:</label>
+                <?php echo $this->Form->input('EconomicGroup.EconomicGroup', array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, 'multiple' => true)); ?>
+            </div>
         </div>
 
         <div class="mb-7">

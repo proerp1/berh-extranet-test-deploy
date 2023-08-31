@@ -1,78 +1,35 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body style="font-family:\'Helvetica Neue\', Helvetica, Arial, sans-serif; color: #333; border: 0; background-color: #eee; padding: 20px 0;">
-    <table align="center" cellpadding="0" cellspacing="0" border="0" width="670" style="border: 1px solid #ccc; background:#fff;">
-      <!-- header -->
-      <thead>
-        <tr style="background:#1d4f91; table-layout:fixed; height: 60px;">
-          <td width="50"></td>
-          <td>
-            <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
-              <tbody>
-                <tr>
-                  <td>
-                    <a href="https://admin.berh.com.br" target="_blank" style="text-decoration: none;color: #fff;font-weight: bold;font-size: 22px;" title="clique aqui para acessar o nosso site">
-                      <img src="<?php echo "https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" ?>" style="width:100px">
-                    </a>
-                  </td>                  
-                </tr>
-              </tbody>
-            </table>
-          </td>
-          <td width="50"></td>
-        </tr>
-      </thead>
-      <!-- /header -->
-
-      <!-- body -->
-      <tbody>
-        <tr>
-          <td style="background: #fff; height: 17px;">&nbsp;</td>
-        </tr>
-        <tr>
-          <td width="50">&nbsp;</td>
-          <td>
-            <table border="0" cellspacing="0" cellpadding="0" width="568" style="-webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; border:1px solid #dddddd;">
-              <tbody>
-                <tr>
-                  <td height="10"></td>
-                </tr>
-                <tr>
-                  <td valign="top" style="padding-left: 20px;">
-                    <?php echo $this->fetch('content');?>
-
-                  </td>
-                  <td width="20"></td>
-                </tr>
-                <tr>
-                  <td style="text-align: right;" colspan="3"><img src="https://berh.com.br/cliente/img/logo-serasa-novo.png" width="120"></td>
-
-                </tr>
-              </tbody>
-            </table>
-          </td>
-          <td width="50">&nbsp;</td>
-        </tr>
-        <tr>
-          <td style="background: #fff; height: 17px;">&nbsp;</td>
-        </tr>
-      </tbody>
-      <!-- /body -->
-
-      <!-- footer -->
-      <tfoot>
-          <tr style="height: 40px; background: #eee ; border-top: 1px solid #ddd;">
-            <td width="50">&nbsp;</td>
-            <td style="color:#999999; font-size:11px;">
-                Atendimento: 0800 084 0996 | <a href="mailto:berh@berh.com.br" style="border:none; color:#0084b4; text-decoration:none">berh@berh.com.br </a>
-            </td>
-            <td width="50"></td>
-          </tr>
-      </tfoot>
-      <!-- /footer -->
+<style>html,body { padding: 0; margin:0; }</style>
+<div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#494c50">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 auto; padding:0; max-width:100%">
+        <tbody>
+            <tr>
+                <td align="center" valign="center" style="text-align:center;">
+                    <div style="margin: 0 20px; background-color: #472F92;border-top-left-radius: 6px;border-top-right-radius: 6px; padding: 10px 0 10px 0;">
+                        <a href="https://grupoberh.com.br/" rel="noopener" target="_blank">
+                            <img alt="Logo" src="https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" width="100" />
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" valign="center">
+                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#eee; border-radius: 6px">
+                        <?php echo $this->fetch('content');?>
+                        
+                        <!--end:Email content-->
+                        <div style="padding-bottom: 10px">Atenciosamente,
+                            <br>BeRH
+                            <tr>
+                                <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #fff;">
+                                    <p>Atendimento 0800 084 0996 | <a href="mailto:berh@berh.com.br" style="border:none; color:#fff;">berh@berh.com.br </a></p>
+                                    <p>Copyright © <a href="https://grupoberh.com.br/" rel="noopener" target="_blank" style="border:none; color:#fff;">BeRH</a>.</p>
+                                </td>
+                            </tr>
+                            </br>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
     </table>
-  </body>
-</html>
+</div>

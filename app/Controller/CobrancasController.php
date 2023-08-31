@@ -500,7 +500,6 @@ class CobrancasController extends AppController
                 'link' => Configure::read('Areadoassociado.link').'financeiro/gerar_boleto/'.base64_encode($id)
             ],
                 'template' => 'boleto_negociado',
-                'layout'   => 'new_layout',
                 'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
@@ -519,7 +518,6 @@ class CobrancasController extends AppController
                 'link' => Configure::read('Areadoassociado.link').'financeiro/gerar_boleto/'.base64_encode($id)
             ],
                 'template' => 'boleto_negociado',
-                'layout'   => 'new_layout',
                 'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
@@ -538,7 +536,6 @@ class CobrancasController extends AppController
                 'link' => Configure::read('Areadoassociado.link').'financeiro/gerar_boleto/'.base64_encode($id)
             ],
                 'template' => 'boleto_negociado',
-                'layout'   => 'new_layout',
                 'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
@@ -557,7 +554,6 @@ class CobrancasController extends AppController
                 'link' => Configure::read('Areadoassociado.link').'financeiro/gerar_boleto/'.base64_encode($id)
             ],
                 'template' => 'boleto_negociado',
-                'layout'   => 'new_layout',
                 'subject'  => 'BeRH - Distribuidor Autorizado Serasa Experian',
                 'config'   => 'fatura'
             ];
