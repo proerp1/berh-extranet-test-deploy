@@ -3,7 +3,7 @@
     <!--begin::Heading-->
     <div class="text-center mb-10">
         <!--begin::Title-->
-        
+        <h3>Admin</h3>
         <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-100px" />
         <!--end::Title-->
     </div>
