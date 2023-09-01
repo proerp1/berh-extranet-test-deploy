@@ -427,7 +427,7 @@
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th>Status SPTrans</th>
+                        <th class="ps-4 rounded-start">Status SPTrans</th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -435,8 +435,10 @@
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
-                        <th>Total</th>
-                        <th></th>
+                        <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
+                        <?php if ($order['Order']['status_id'] == 83) { ?>
+                            <th class="rounded-end"></th>
+                        <?php } ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -474,7 +476,13 @@
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><button class="btn btn-secondary btn-sm" onclick="confirm('<h3>Deseja mesmo remove este beneficiário?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["customer_user_id"]; ?>')"><i class="fa fa-times"></i></button></td>
+                                <?php if ($order['Order']['status_id'] == 83) { ?>
+                                    <td class="fw-bold fs-7 ps-4">
+                                        <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este beneficiário?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["customer_user_id"]; ?>')">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </td>
+                                <?php } ?>
                             </tr>
                         <?php } ?>
                         <tr>
