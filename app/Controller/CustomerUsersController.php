@@ -646,10 +646,10 @@ class CustomerUsersController extends AppController
                 'email' => $data['CustomerUser']['email'],
                 'username' => $data['CustomerUser']['email'],
                 'senha' => $data['CustomerUser']['password'],
-                'link'  => 'http://berh.com.br/cliente'
+                'link'  => 'https://cliente.berh.com.br'
             ],
             'template' => 'nova_senha_usuario_cliente',
-            'subject'  => 'BeRH - Nova senha',
+            'subject'  => 'Be RH - Acesso Admin - Nova senha',
             'config'   => 'default'
         ];
 
