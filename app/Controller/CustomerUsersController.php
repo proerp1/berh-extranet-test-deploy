@@ -139,7 +139,6 @@ class CustomerUsersController extends AppController
 
     public function edit_user($id, $user_id){
         $this->edit($id, $user_id, true);
-        $this->render('add');
     }
 
     public function edit($id, $user_id = null, $is_admin = false)
