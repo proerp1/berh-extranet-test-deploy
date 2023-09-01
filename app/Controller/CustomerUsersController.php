@@ -186,7 +186,7 @@ class CustomerUsersController extends AppController
 
         $this->set('hash', rawurlencode($hash));
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'cargos', 'is_admin', 'form_action'));
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
         $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));
             
         $this->render("add");
