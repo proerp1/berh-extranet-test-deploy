@@ -186,7 +186,7 @@ class CustomerUsersController extends AppController
 
         $this->set('hash', rawurlencode($hash));
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'cargos', 'is_admin', 'form_action'));
         $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));
             
         $this->render("add");
@@ -662,17 +662,18 @@ class CustomerUsersController extends AppController
     public function reenviar_senha($id, $user_id)
     {
         $this->CustomerUser->id = $user_id;
+        $this->CustomerUser->recursive = -1;
         $this->request->data = $this->CustomerUser->read();
 
         $senha = substr(sha1(time()), 0, 6);
 
         $this->request->data['CustomerUser']['password'] = $senha;
-            
+
         if ($this->CustomerUser->save($this->request->data)) {
             $this->envia_email($this->request->data);
 
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect("/customer_users/index/".$id);
+            $this->redirect($this->referer());
         }
     }
 
