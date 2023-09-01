@@ -163,9 +163,6 @@ if(isset($user_id) && !$is_admin){
                 <?php if (isset($this->request->data['CustomerUser'])) { ?>
                     <a href="javascript:" onclick="confirm('<h3>Deseja mesmo reenviar a senha?</h3>', '<?php echo $this->base . '/customer_users/reenviar_senha/' . $id . '/' . $user_id; ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i> Reenviar senha</a>
 
-                    <?php if (CakeSession::read('Auth.User.group_id') == 1) { ?>
-                        <a href="javascript:" onclick="confirm('<h3>Antes de acessar a area do cliente, verifique se todas as sessões foram encerradas.</h3>', '<?php echo Configure::read('Areadoassociado.link') . 'users/bypass_login/' . $hash; ?>')" class="btn btn-primary"><i class="fa fa-key"></i> Bypass</a>
-                    <?php } ?>
                 <?php } ?>
             </div>
         </div>
