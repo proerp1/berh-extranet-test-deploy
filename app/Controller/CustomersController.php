@@ -61,7 +61,6 @@ class CustomersController extends AppController
 
     }*/
 
-<<<<<<< HEAD
 
     /*******************
                 CLIENTES
@@ -69,12 +68,6 @@ class CustomersController extends AppController
     public function index()
     {
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
-=======
-    // CLIENTES
-    public function index()
-    {
-        $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
         $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
 
@@ -82,7 +75,6 @@ class CustomersController extends AppController
         if (isset($_GET['logon'])) {
             $joins = [
                 'fields' => ['Status.*', 'Customer.*', 'LoginConsulta.*'],
-<<<<<<< HEAD
                 'joins' => [
                     [
                         'table' => 'login_consulta',
@@ -91,32 +83,16 @@ class CustomersController extends AppController
                         'conditions' => ['LoginConsulta.customer_id = Customer.id', 'LoginConsulta.data_cancel' => '1901-01-01 00:00:00']
                     ]
                 ]
-=======
-                'joins' => [['table' => 'login_consulta',
-                    'alias' => 'LoginConsulta',
-                    'type' => 'LEFT',
-                    'conditions' => ['LoginConsulta.customer_id = Customer.id', 'LoginConsulta.data_cancel' => '1901-01-01 00:00:00'],
-                ],
-                ],
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             ];
 
             $this->paginate['Customer'] = array_merge($this->paginate['Customer'], $joins);
 
             if (!empty($_GET['q'])) {
-<<<<<<< HEAD
                 $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%"]);
             }
         } else {
             if (!empty($_GET['q'])) {
                 $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'Customer.nome_secundario LIKE' => "%" . $_GET['q'] . "%", 'Customer.email LIKE' => "%" . $_GET['q'] . "%", 'Customer.documento LIKE' => "%" . $_GET['q'] . "%", 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular1 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular2 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular3 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular4 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular5 LIKE' => "%" . $_GET['q'] . "%"]);
-=======
-                $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => '%'.$_GET['q'].'%']);
-            }
-        } else {
-            if (!empty($_GET['q'])) {
-                $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => '%'.$_GET['q'].'%', 'Customer.nome_secundario LIKE' => '%'.$_GET['q'].'%', 'Customer.email LIKE' => '%'.$_GET['q'].'%', 'Customer.documento LIKE' => '%'.$_GET['q'].'%', 'Customer.codigo_associado LIKE' => '%'.$_GET['q'].'%', 'Customer.celular LIKE' => '%'.$_GET['q'].'%', 'Customer.celular1 LIKE' => '%'.$_GET['q'].'%', 'Customer.celular2 LIKE' => '%'.$_GET['q'].'%', 'Customer.celular3 LIKE' => '%'.$_GET['q'].'%', 'Customer.celular4 LIKE' => '%'.$_GET['q'].'%', 'Customer.celular5 LIKE' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             }
         }
 
@@ -156,32 +132,20 @@ class CustomersController extends AppController
 
             $this->ExcelGenerator->gerarExcelLocaweb($nome, $data);
 
-<<<<<<< HEAD
             $this->redirect("/files/excel/" . $nome);
-=======
-            $this->redirect('/files/excel/'.$nome);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
-<<<<<<< HEAD
 
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
-=======
-        $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read('Auth.User.resales')], ['order' => 'Resale.nome_fantasia']]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $action = 'Clientes';
         $this->set(compact('status', 'data', 'codFranquias', 'action'));
     }
 
     public function add()
     {
-<<<<<<< HEAD
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-=======
-        $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
         if ($this->request->is(['post', 'put'])) {
             $this->Customer->create();
@@ -206,7 +170,6 @@ class CustomersController extends AppController
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
                     /*
-<<<<<<< HEAD
                     $customer_user = ['CustomerUser' => ['name' => $this->request->data['Customer']['nome_primario'],
                         'email' => $this->request->data['Customer']['email'],
                         'username' => $this->request->data['Customer']['email'],
@@ -214,26 +177,12 @@ class CustomersController extends AppController
                         'password' => $this->request->data['Customer']['senha'],
                         'main_user' => 1
                     ]];
-=======
-                                $customer_user = ['CustomerUser' => ['name' => $this->request->data['Customer']['nome_primario'],
-                                    'email' => $this->request->data['Customer']['email'],
-                                    'username' => $this->request->data['Customer']['email'],
-                                    'customer_id' => $id,
-                                    'password' => $this->request->data['Customer']['senha'],
-                                    'main_user' => 1
-                                ]];
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
                                 $this->CustomerUser->save($customer_user, ['validate' => false]);
                     */
 
-<<<<<<< HEAD
                     $this->Flash->set(__('O cliente foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect("/customers/edit/" . $id);
-=======
-                    $this->Flash->set(__('O cliente foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                    $this->redirect('/customers/edit/'.$id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
                 } else {
                     $this->Flash->set(__('O cliente não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
                 }
@@ -317,11 +266,7 @@ class CustomersController extends AppController
         $this->set('form_action', 'edit');
         $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers'));
 
-<<<<<<< HEAD
         $this->render("add");
-=======
-        $this->render('add');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function delete($id)
@@ -374,11 +319,7 @@ class CustomersController extends AppController
 
             $this->CustomerUser->save($customer_user, ['validate' => false]);
 
-<<<<<<< HEAD
             $this->Flash->set(__('O cliente foi duplicado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-=======
-            $this->Flash->set(__('O cliente foi duplicado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         } else {
             $mensagem = '';
             foreach ($this->Customer->validationErrors as $key => $value) {
@@ -396,11 +337,7 @@ class CustomersController extends AppController
         $this->autoRender = false;
         $this->layout = 'ajax';
 
-<<<<<<< HEAD
         $sellers = $this->Seller->find("all", ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => $_POST['resale_id']], 'order' => ['Seller.name' => "asc"]]);
-=======
-        $sellers = $this->Seller->find('all', ['conditions' => ['Seller.status_id' => 1, 'Seller.resale_id' => $_POST['resale_id']], 'order' => ['Seller.name' => 'asc']]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
         echo json_encode($sellers);
     }
@@ -425,7 +362,6 @@ class CustomersController extends AppController
         echo json_encode($contas);
     }
 
-<<<<<<< HEAD
     /*****************
                 PLANOS
      ******************/
@@ -433,23 +369,12 @@ class CustomersController extends AppController
     public function plans($id)
     {
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
-=======
-    // PLANOS
-
-    public function plans($id)
-    {
-        $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
 
         if (!empty($_GET['q'])) {
-<<<<<<< HEAD
             $condition['or'] = array_merge($condition['or'], ['Plan.description LIKE' => "%" . $_GET['q'] . "%", 'PlanCustomer.mensalidade LIKE' => "%" . $_GET['q'] . "%"]);
-=======
-            $condition['or'] = array_merge($condition['or'], ['Plan.description LIKE' => '%'.$_GET['q'].'%', 'PlanCustomer.mensalidade LIKE' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         if (!empty($_GET['t'])) {
@@ -478,13 +403,8 @@ class CustomersController extends AppController
 
             $this->PlanCustomer->create();
             if ($this->PlanCustomer->save($this->request->data)) {
-<<<<<<< HEAD
                 $this->Flash->set(__('O plano foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'plans/' . $id]);
-=======
-                $this->Flash->set(__('O plano foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'plans/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('O plano não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -505,15 +425,9 @@ class CustomersController extends AppController
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-<<<<<<< HEAD
             'Novo Plano' => ''
         ];
         $this->set("form_action", "../customers/add_plan/" . $id);
-=======
-            'Novo Plano' => '',
-        ];
-        $this->set('form_action', '../customers/add_plan/'.$id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'cancelarPlano', 'breadcrumb'));
     }
 
@@ -528,12 +442,9 @@ class CustomersController extends AppController
             $log_old_value = $this->request->data['log_old_value'];
             unset($this->request->data['log_old_value']);
 
-<<<<<<< HEAD
             $log_old_value = $this->request->data["log_old_value"];
             unset($this->request->data["log_old_value"]);
 
-=======
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             $dados_log = [
                 'old_value' => $log_old_value,
                 'new_value' => json_encode($this->request->data),
@@ -553,13 +464,8 @@ class CustomersController extends AppController
 
             if ($this->PlanCustomer->save($this->request->data)) {
                 $this->Log->save($dados_log);
-<<<<<<< HEAD
                 $this->Flash->set(__('O plano foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'plans/' . $id]);
-=======
-                $this->Flash->set(__('O plano foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'plans/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('O plano não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -592,17 +498,10 @@ class CustomersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Plano' => '',
         ];
-<<<<<<< HEAD
         $this->set("form_action", "../customers/edit_plan/" . $id);
         $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'plan_id', 'cancelarPlano', 'breadcrumb', 'action'));
 
         $this->render("add_plan");
-=======
-        $this->set('form_action', '../customers/edit_plan/'.$id);
-        $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'plan_id', 'cancelarPlano', 'breadcrumb', 'action'));
-
-        $this->render('add_plan');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function delete_plan($customer_id, $id)
@@ -641,7 +540,6 @@ class CustomersController extends AppController
         echo json_encode($plano['Plan']['value']);
     }
 
-<<<<<<< HEAD
     /*************************
                 LOGIN CONSULTA
      **************************/
@@ -649,23 +547,12 @@ class CustomersController extends AppController
     public function login_consulta($id)
     {
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
-=======
-    // LOGIN CONSULTA
-
-    public function login_consulta($id)
-    {
-        $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
 
         if (!empty($_GET['q'])) {
-<<<<<<< HEAD
             $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%", 'LoginConsulta.senha LIKE' => "%" . $_GET['q'] . "%", 'LoginConsulta.descricao LIKE' => "%" . $_GET['q'] . "%"]);
-=======
-            $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => '%'.$_GET['q'].'%', 'LoginConsulta.senha LIKE' => '%'.$_GET['q'].'%', 'LoginConsulta.descricao LIKE' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         if (!empty($_GET['t'])) {
@@ -687,18 +574,11 @@ class CustomersController extends AppController
         $usuarios = $this->CustomerUser->find('all', ['conditions' => ['CustomerUser.customer_id' => $id, 'CustomerUser.status_id' => 1]]);
         $usuarios_json = [];
         foreach ($usuarios as $key => $u) {
-<<<<<<< HEAD
             $usuarios_json[] = [
                 'id' => $u['CustomerUser']['id'],
                 'email' => $u['CustomerUser']['email'],
                 'cpf' => $u['CustomerUser']['cpf'],
                 'filial' => $u['CustomerUser']['filial']
-=======
-            $usuarios_json[] = ['id' => $u['CustomerUser']['id'],
-                'email' => $u['CustomerUser']['email'],
-                'cpf' => $u['CustomerUser']['cpf'],
-                'filial' => $u['CustomerUser']['filial'],
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             ];
         }
 
@@ -708,11 +588,7 @@ class CustomersController extends AppController
 
         $tipos = [
             ['id' => '1', 'name' => 'Manual'],
-<<<<<<< HEAD
             ['id' => '2', 'name' => 'Robô']
-=======
-            ['id' => '2', 'name' => 'Robô'],
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         ];
 
         $breadcrumb = [
@@ -727,11 +603,7 @@ class CustomersController extends AppController
         $this->Customer->id = $id;
         $customer = $this->Customer->read();
 
-<<<<<<< HEAD
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-=======
-        $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         if ($this->request->is(['post', 'put'])) {
             $this->LoginConsulta->create();
 
@@ -745,22 +617,12 @@ class CustomersController extends AppController
                 }
 
                 if ($this->LoginConsulta->save($this->request->data)) {
-<<<<<<< HEAD
                     $this->Flash->set(__('O login foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'login_consulta/' . $id]);
                 } else {
                     var_dump($this->LoginConsulta);
                     die;
                     $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
-=======
-                    $this->Flash->set(__('O login foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                    $this->redirect(['action' => 'login_consulta/'.$id]);
-                } else {
-                    var_dump($this->LoginConsulta);
-
-                    exit;
-                    $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
                 }
             } else {
                 $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
@@ -786,11 +648,7 @@ class CustomersController extends AppController
             'Novo login' => '',
         ];
 
-<<<<<<< HEAD
         $this->set("form_action", "../customers/add_login_consulta/" . $id);
-=======
-        $this->set('form_action', '../customers/add_login_consulta/'.$id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'breadcrumb', 'action'));
     }
 
@@ -804,13 +662,8 @@ class CustomersController extends AppController
             $this->request->data['LoginConsulta']['user_updated_id'] = CakeSession::read('Auth.User.id');
 
             if ($this->LoginConsulta->save($this->request->data)) {
-<<<<<<< HEAD
                 $this->Flash->set(__('O login foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'login_consulta/' . $id]);
-=======
-                $this->Flash->set(__('O login foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'login_consulta/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('O login não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -836,10 +689,6 @@ class CustomersController extends AppController
         $tel = str_replace([' ', '-', '(', ')'], '', $cliente['Customer']['telefone1']);
         $ddd = substr($tel, 0, 2);
         $tel = substr($tel, 2);
-<<<<<<< HEAD
-
-=======
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
         $plans = $this->Plan->find('list', ['conditions' => ['Plan.status_id' => 1], 'order' => 'Plan.description']);
         $priceTables = $this->PriceTable->find('list', ['conditions' => ['PriceTable.status_id' => 1]]);
@@ -848,17 +697,10 @@ class CustomersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar login' => '',
         ];
-<<<<<<< HEAD
         $this->set("form_action", "../customers/edit_login_consulta/" . $id);
         $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'login_id', 'tel', 'ddd', 'usuarios', 'usuarios_json', 'cliente', 'breadcrumb'));
 
         $this->render("add_login_consulta");
-=======
-        $this->set('form_action', '../customers/edit_login_consulta/'.$id);
-        $this->set(compact('statuses', 'action', 'plans', 'priceTables', 'id', 'login_id', 'tel', 'ddd', 'usuarios', 'usuarios_json', 'cliente', 'breadcrumb'));
-
-        $this->render('add_login_consulta');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function reenviar_senha_consulta($customer_id, $id)
@@ -872,13 +714,8 @@ class CustomersController extends AppController
 
         if ($this->LoginConsulta->save($this->request->data)) {
             $this->envia_email_consulta($this->request->data);
-<<<<<<< HEAD
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'edit_login_consulta/' . $customer_id . '/' . $id]);
-=======
-            $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect(['action' => 'edit_login_consulta/'.$customer_id.'/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
     }
 
@@ -927,10 +764,6 @@ class CustomersController extends AppController
             ");
 
         foreach ($customers as $customer) {
-<<<<<<< HEAD
-
-=======
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             $senha = substr(sha1(time()), 0, 6);
 
             $customer_user = [
@@ -943,11 +776,7 @@ class CustomersController extends AppController
                     'main_user' => 1,
                 ],
             ];
-<<<<<<< HEAD
             print $customer['c']['email'] . " - " . $customer['c']['nome_primario'] . "</br>";
-=======
-            echo $customer['c']['email'].' - '.$customer['c']['nome_primario'].'</br>';
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
             $this->CustomerUser->create();
             $this->CustomerUser->save($customer_user, ['validate' => false]);
@@ -989,7 +818,6 @@ class CustomersController extends AppController
         if ($this->CustomerUser->save($this->request->data)) {
             $this->envia_email($this->request->data);
 
-<<<<<<< HEAD
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect("/customers/users/" . $id);
         }
@@ -1022,119 +850,6 @@ class CustomersController extends AppController
                     ]
                 ]
             ]
-=======
-            $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect('/customers/users/'.$id);
-        }
-    }
-
-    // MENSALIDADE
-    public function mensalidade($id)
-    {
-        $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = $this->paginate;
-
-        $condition = ['and' => ['BillingMonthlyPayment.customer_id' => $id, 'Customer.data_cancel' => '1901-01-01', 'Billing.data_cancel' => '1901-01-01'], 'or' => []];
-
-        if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => '%'.$_GET['q'].'%', 'Customer.nome_secundario LIKE' => '%'.$_GET['q'].'%', 'Customer.codigo_associado LIKE' => '%'.$_GET['q'].'%']);
-        }
-
-        if (!empty($_GET['t'])) {
-            $condition['and'] = array_merge($condition['and'], ['StatusIncome.id' => $_GET['t']]);
-        }
-
-        $data = $this->Paginator->paginate('BillingMonthlyPayment', $condition);
-
-        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 5], 'order' => 'Status.name']);
-
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
-        $action = 'Faturas';
-
-        $breadcrumb = [
-            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Faturas' => '',
-        ];
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb'));
-    }
-
-    public function demonstrativo($id, $customer_id)
-    {
-        $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
-
-        $this->Billing->id = $id;
-        $faturamento = $this->Billing->read();
-        $action = 'Faturas';
-
-        $faturamento_cliente = $this->BillingMonthlyPayment->find('first', ['conditions' => ['BillingMonthlyPayment.billing_id' => $id, 'Customer.id' => $customer_id]]);
-
-        $negativacao = $this->Negativacao->find_negativacao_cliente($id, $customer_id);
-        $pefin = $this->Pefin->find_pefin_cliente($id, $customer_id);
-
-        $berh = $this->BillingNovaVida->find('all', ['conditions' => ['BillingNovaVida.billing_id' => $id, 'BillingNovaVida.customer_id' => $customer_id]]);
-
-        $faturamento_inicio = $faturamento['Billing']['date_billing'];
-        $mes = date('m', strtotime($faturamento['Billing']['date_billing']));
-        $ano = date('Y', strtotime($faturamento['Billing']['date_billing']));
-
-        $faturamento_fim = date('t', mktime(0, 0, 0, $mes, '01', $ano));
-
-        $tipo = $negativacao ? $negativacao[0]['n']['type'] : 1;
-
-        if (isset($_GET['excel'])) {
-            $nome = 'demonstrativo_fatura';
-
-            $dados = ['negativacao' => $negativacao,
-                'pefin' => $pefin,
-                'berh' => $berh,
-                'periodo' => $faturamento_inicio.' até '.$faturamento_fim.'/'.$mes.'/'.$ano,
-                'min_consulta' => $faturamento_cliente['BillingMonthlyPayment']['quantity'],
-                'mensalidade' => $faturamento_cliente['BillingMonthlyPayment']['monthly_value'],
-                'desconto' => $faturamento_cliente['BillingMonthlyPayment']['desconto'],
-                'manutencao' => ($faturamento_cliente['PefinMaintenance']['value'] ? $faturamento_cliente['PefinMaintenance']['value_nao_formatado'] : 0),
-                'nome' => $faturamento_cliente['Customer']['nome_primario'],
-                'status' => $faturamento_cliente['Status']['name'],
-            ];
-
-            $this->ExcelGenerator->gerarExcelCustomers($nome, $dados);
-            $this->redirect('/files/excel/'.$nome.'.xlsx');
-        }
-
-        $breadcrumb = [
-            $faturamento_cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $customer_id],
-            'Faturamento '.$faturamento['Billing']['date_billing_index'] => ['controller' => 'customers', 'action' => 'mensalidade', $customer_id],
-            'Demonstrativo' => '',
-        ];
-        $this->set(compact('id', 'action', 'faturamento', 'faturamento_cliente', 'negativacao', 'pefin', 'customer_id', 'tipo', 'dados', 'berh', 'breadcrumb'));
-    }
-
-    public function historico($id, $customer_id)
-    {
-        $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
-
-        $this->Billing->id = $id;
-        $faturamento = $this->Billing->read();
-        $action = 'Faturas';
-
-        $faturamento_cliente = $this->BillingMonthlyPayment->find('first', ['conditions' => ['BillingMonthlyPayment.billing_id' => $id, 'Customer.id' => $customer_id]]);
-        $negativacao = $this->Negativacao->find_negativacao_cliente($id, $customer_id);
-        $pefin = $this->Pefin->find_pefin_cliente($id, $customer_id);
-        $logons = $this->NegativacaoLogon->find('all', [
-            'conditions' => [
-                'NegativacaoLogon.billing_id' => $id,
-                'NegativacaoLogon.customer_id' => $customer_id,
-            ],
-        ]);
-
-        $tipo = $negativacao ? $negativacao[0]['n']['type'] : 1;
-
-        $breadcrumb = [
-            $faturamento_cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $customer_id],
-            'Faturamento '.$faturamento['Billing']['date_billing_index'] => ['controller' => 'customers', 'action' => 'mensalidade', $customer_id],
-            'Histórico' => '',
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         ];
 
         $condition = ["and" => [
@@ -1153,13 +868,9 @@ class CustomersController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
 
-<<<<<<< HEAD
     /*********************
                 DOCUMENTOS
      **********************/
-=======
-    // DOCUMENTOS
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     public function documents($id)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
@@ -1167,13 +878,8 @@ class CustomersController extends AppController
 
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
 
-<<<<<<< HEAD
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['Document.name LIKE' => "%" . $_GET['q'] . "%"]);
-=======
-        if (isset($_GET['q']) and $_GET['q'] != '') {
-            $condition['or'] = array_merge($condition['or'], ['Document.name LIKE' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         if (isset($_GET['t']) and $_GET['t'] != '') {
@@ -1202,13 +908,8 @@ class CustomersController extends AppController
             if ($this->Document->validates()) {
                 $this->request->data['Document']['user_creator_id'] = CakeSession::read('Auth.User.id');
                 if ($this->Document->save($this->request->data)) {
-<<<<<<< HEAD
                     $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'documents/' . $id]);
-=======
-                    $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                    $this->redirect(['action' => 'documents/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
                 } else {
                     $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
                 }
@@ -1227,11 +928,7 @@ class CustomersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Novo Documento' => '',
         ];
-<<<<<<< HEAD
         $this->set("form_action", "../customers/add_document/" . $id);
-=======
-        $this->set('form_action', '../customers/add_document/'.$id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
     }
 
@@ -1246,13 +943,8 @@ class CustomersController extends AppController
             }
             $this->request->data['Document']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Document->save($this->request->data)) {
-<<<<<<< HEAD
                 $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'documents/' . $id]);
-=======
-                $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'documents/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -1267,19 +959,11 @@ class CustomersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Documento' => '',
         ];
-<<<<<<< HEAD
         $this->set("action", 'Documentos');
         $this->set("form_action", "../customers/edit_document/" . $id);
         $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
 
         $this->render("add_document");
-=======
-        $this->set('action', 'Documentos');
-        $this->set('form_action', '../customers/edit_document/'.$id);
-        $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
-
-        $this->render('add_document');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function delete_document($customer_id, $id)
@@ -1292,7 +976,6 @@ class CustomersController extends AppController
         $this->request->data['Document']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
 
         if ($this->Document->save($this->request->data)) {
-<<<<<<< HEAD
             unlink(APP . 'webroot/files/document/file/' . $this->request->data["Document"]["id"] . '/' . $this->request->data["Document"]["file"]);
 
             $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -1303,16 +986,6 @@ class CustomersController extends AppController
     /***********************
                 NEGATIVACOES
      ************************/
-=======
-            unlink(APP.'webroot/files/document/file/'.$this->request->data['Document']['id'].'/'.$this->request->data['Document']['file']);
-
-            $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect(['action' => 'documents/'.$customer_id]);
-        }
-    }
-
-    // NEGATIVACOES
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     public function negativacoes($id)
     {
         $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
@@ -1320,13 +993,8 @@ class CustomersController extends AppController
 
         $condition = ['and' => ['CadastroPefin.customer_id' => $id], 'or' => []];
 
-<<<<<<< HEAD
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CadastroPefin.nome LIKE' => "%" . $_GET['q'] . "%", 'NaturezaOperacao.nome LIKE' => "%" . $_GET['q'] . "%", 'CadastroPefin.coobrigado_nome LIKE' => "%" . $_GET['q'] . "%", 'CadastroPefin.documento LIKE' => "%" . $_GET['q'] . "%", 'CadastroPefin.numero_titulo LIKE' => "%" . $_GET['q'] . "%", 'CadastroPefin.valor LIKE' => "%" . $_GET['q'] . "%"]);
-=======
-        if (isset($_GET['q']) and $_GET['q'] != '') {
-            $condition['or'] = array_merge($condition['or'], ['CadastroPefin.nome LIKE' => '%'.$_GET['q'].'%', 'NaturezaOperacao.nome LIKE' => '%'.$_GET['q'].'%', 'CadastroPefin.coobrigado_nome LIKE' => '%'.$_GET['q'].'%', 'CadastroPefin.documento LIKE' => '%'.$_GET['q'].'%', 'CadastroPefin.numero_titulo LIKE' => '%'.$_GET['q'].'%', 'CadastroPefin.valor LIKE' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         if (isset($_GET['t']) and $_GET['t'] != '') {
@@ -1355,11 +1023,7 @@ class CustomersController extends AppController
             $nome = 'negativacao_' . date('d_m_Y');
 
             $this->ExcelGenerator->gerarExcelNegativacao($nome, $dados);
-<<<<<<< HEAD
             $this->redirect("/files/excel/" . $nome . ".xlsx");
-=======
-            $this->redirect('/files/excel/'.$nome.'.xlsx');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         $data = $this->Paginator->paginate('CadastroPefin', $condition);
@@ -1431,15 +1095,9 @@ class CustomersController extends AppController
         }
         $naturezaOperacaos = $this->NaturezaOperacao->find('list', ['order' => ['NaturezaOperacao.nome']]);
 
-<<<<<<< HEAD
         $this->set("action", "Nova negativação");
         $this->set("form_action", "../customers/add_negativacao/" . $id);
         $this->set("acao", "add");
-=======
-        $this->set('action', 'Nova negativação');
-        $this->set('form_action', '../customers/add_negativacao/'.$id);
-        $this->set('acao', 'add');
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->set(compact('statuses', 'naturezaOperacaos', 'id'));
     }
 
@@ -1457,13 +1115,9 @@ class CustomersController extends AppController
         $this->Flash->set(__('Negativações baixadas com sucesso'), ['params' => ['class' => 'alert alert-success']]);
     }
 
-<<<<<<< HEAD
     /***********************
                 LOG DE STATUS
      ************************/
-=======
-    // LOG DE STATUS
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
     public function log_status($id = null)
     {
@@ -1492,10 +1146,6 @@ class CustomersController extends AppController
         $this->request->data = $this->Customer->read();
         $this->Customer->validationErrors = $temp_errors;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         /*if ($this->request->data['Status']['id'] != 6) {
             $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2, 'not' => ['Status.id' => 6]], 'order' => 'Status.name']);
         } else {
@@ -1533,19 +1183,12 @@ class CustomersController extends AppController
         $this->set('form_action', 'log_status');
         $this->set(compact('statuses', 'id', 'data', 'breadcrumb'));
 
-<<<<<<< HEAD
         $this->render("log_status");
     }
 
     /*******************************
                 CLIENTE NEGATIVACOES
      ********************************/
-=======
-        $this->render('log_status');
-    }
-
-    // CLIENTE NEGATIVACOES
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     public function negativacoes_cliente($id)
     {
         $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
@@ -1553,13 +1196,8 @@ class CustomersController extends AppController
 
         $condition = ['and' => ['CustomerPefin.customer_id' => $id], 'or' => []];
 
-<<<<<<< HEAD
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerPefin.nosso_numero LIKE' => "%" . $_GET['q'] . "%", 'NaturezaOperacao.nome' => "%" . $_GET['q'] . "%"]);
-=======
-        if (isset($_GET['q']) and $_GET['q'] != '') {
-            $condition['or'] = array_merge($condition['or'], ['CustomerPefin.nosso_numero LIKE' => '%'.$_GET['q'].'%', 'NaturezaOperacao.nome' => '%'.$_GET['q'].'%']);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
 
         if (isset($_GET['t']) and $_GET['t'] != '') {
@@ -1590,13 +1228,8 @@ class CustomersController extends AppController
             $this->request->data['CustomerPefin']['customer_id'] = $id;
 
             if ($this->CustomerPefin->save($this->request->data)) {
-<<<<<<< HEAD
                 $this->Flash->set(__('A negativação foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'negativacoes_cliente/' . $id]);
-=======
-                $this->Flash->set(__('A negativação foi salva com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'negativacoes_cliente/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('A negativação não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -1611,11 +1244,7 @@ class CustomersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Nova Negativação' => '',
         ];
-<<<<<<< HEAD
         $this->set("form_action", "../customers/add_negativacao_cliente/" . $id);
-=======
-        $this->set('form_action', '../customers/add_negativacao_cliente/'.$id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $this->set(compact('statuses', 'action', 'id', 'naturezaOperacaos', 'breadcrumb'));
     }
 
@@ -1643,7 +1272,6 @@ class CustomersController extends AppController
         $action = $cliente['Customer']['nome_secundario'] . ' - Nova negativação';
         $naturezaOperacaos = $this->NaturezaOperacao->find('list', ['order' => ['NaturezaOperacao.nome']]);
 
-<<<<<<< HEAD
         $this->set("form_action", "../customers/edit_negativacao_cliente/" . $id);
         $this->set(compact('statuses', 'action', 'id', 'naturezaOperacaos', 'negativacao_id'));
 
@@ -1653,15 +1281,6 @@ class CustomersController extends AppController
     /*******************************
                 DESCONTOS
      ********************************/
-=======
-        $this->set('form_action', '../customers/edit_negativacao_cliente/'.$id);
-        $this->set(compact('statuses', 'action', 'id', 'naturezaOperacaos', 'negativacao_id'));
-
-        $this->render('add_negativacao_cliente');
-    }
-
-    // DESCONTOS
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
     public function descontos($id)
     {
@@ -1711,13 +1330,8 @@ class CustomersController extends AppController
 
             $this->CustomerDiscount->create();
             if ($this->CustomerDiscount->save($this->request->data)) {
-<<<<<<< HEAD
                 $this->Flash->set(__('O desconto foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect("/customers/edit_desconto/" . $id . "/" . $this->CustomerDiscount->id);
-=======
-                $this->Flash->set(__('O desconto foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect('/customers/edit_desconto/'.$id.'/'.$this->CustomerDiscount->id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             } else {
                 $this->Flash->set(__('O desconto não pode ser salvo, por favor tente novamente.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -1728,11 +1342,7 @@ class CustomersController extends AppController
         $cliente = $this->Customer->read();
         $this->Customer->validationErrors = $temp_errors;
 
-<<<<<<< HEAD
         $form_action = "../customers/add_desconto/" . $id;
-=======
-        $form_action = '../customers/add_desconto/'.$id;
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $action = 'Descontos';
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $acao = 'add';
@@ -1772,13 +1382,8 @@ class CustomersController extends AppController
 
             if ($this->CustomerDiscount->validates()) {
                 if ($this->CustomerDiscount->save($this->request->data)) {
-<<<<<<< HEAD
                     $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect("/customers/edit_desconto/" . $id . "/" . $desconto_id);
-=======
-                    $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                    $this->redirect('/customers/edit_desconto/'.$id.'/'.$desconto_id);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
                 } else {
                     foreach ($this->CustomerDiscount->validationErrors as $key => $value) {
                         $mensagem .= ucfirst($key) . ': ' . implode(', ', $value) . '.<br>';
@@ -1802,7 +1407,6 @@ class CustomersController extends AppController
         }
         $ids = substr($ids, 0, -1);
 
-<<<<<<< HEAD
         $produtos = $this->Product->find("all", [
             'conditions' => ["Product.id NOT IN (" . ($ids != '' ? $ids : 0) . ")"],
             "fields" => ["Product.id", "Product.name"],
@@ -1811,16 +1415,6 @@ class CustomersController extends AppController
         ]);
 
         $form_action = "../customers/edit_desconto/" . $id . "/" . $desconto_id;
-=======
-        $produtos = $this->Product->find('all', [
-            'conditions' => ['Product.id NOT IN ('.($ids != '' ? $ids : 0).')'],
-            'fields' => ['Product.id', 'Product.name'],
-            'order' => ['Product.name' => 'asc'],
-            'recursive' => -1,
-        ]);
-
-        $form_action = '../customers/edit_desconto/'.$id.'/'.$desconto_id;
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         $action = 'Descontos';
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $acao = 'edit';
@@ -1844,13 +1438,8 @@ class CustomersController extends AppController
         $data = ['CustomerDiscount' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
 
         if ($this->CustomerDiscount->save($data)) {
-<<<<<<< HEAD
             $this->Flash->set(__('O desconto foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'descontos/' . $id]);
-=======
-            $this->Flash->set(__('O desconto foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect(['action' => 'descontos/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
     }
 
@@ -1865,32 +1454,19 @@ class CustomersController extends AppController
         $data = ['CustomerDiscountsProduct' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
 
         if ($this->CustomerDiscountsProduct->save($data)) {
-<<<<<<< HEAD
             $this->Flash->set(__('O desconto foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'edit_desconto/' . $id . '/' . $desconto_id]);
-=======
-            $this->Flash->set(__('O desconto foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect(['action' => 'edit_desconto/'.$id.'/'.$desconto_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         }
     }
 
     public function create_logon_serasa()
     {
         $params = [
-<<<<<<< HEAD
             "email" => $this->request['data']['email'], "cnpj_completo" => $this->request['data']['cnpj'],
             "cnpj_indireto" => $this->request['data']['cnpj'], "filial" => $this->request['data']['filial'],
             "cep" => $this->request['data']['cep'], "numero" => $this->request['data']['numero'],
             "cpf" => $this->request['data']['cpf'], "ddd" => $this->request['data']['ddd'], "tel" => $this->request['data']['tel'],
             "ramal" => $this->request['data']['ramal'], "produtos" => $this->request['data']['produtos'],
-=======
-            'email' => $this->request['data']['email'], 'cnpj_completo' => $this->request['data']['cnpj'],
-            'cnpj_indireto' => $this->request['data']['cnpj'], 'filial' => $this->request['data']['filial'],
-            'cep' => $this->request['data']['cep'], 'numero' => $this->request['data']['numero'],
-            'cpf' => $this->request['data']['cpf'], 'ddd' => $this->request['data']['ddd'], 'tel' => $this->request['data']['tel'],
-            'ramal' => $this->request['data']['ramal'], 'produtos' => $this->request['data']['produtos'],
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
             'razao' => $this->request['data']['razao'], 'logradouro' => $this->request['data']['logradouro'],
             'complemento' => $this->request['data']['complemento'], 'bairro' => $this->request['data']['bairro'],
             'cidade' => $this->request['data']['cidade'], 'uf' => $this->request['data']['uf'],
@@ -1904,10 +1480,6 @@ class CustomersController extends AppController
         $msg = str_replace('O campo Logradouro é obrigatório!', '', $msg);
         $msg = str_replace('CEP não encontrado na base dos correios', '', $msg);
         $msg = str_replace('Já existe um contato cadastrado para esta filial. caso necessário altere o contato existente na filial.', '', $msg);
-<<<<<<< HEAD
-
-=======
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
 
         $pcs = explode('criado', $msg);
         $login = trim(str_replace('Logon ', '', $pcs[0]));
@@ -1925,13 +1497,8 @@ class CustomersController extends AppController
 
         $this->LoginConsulta->save($this->request->data);
 
-<<<<<<< HEAD
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $id]);
-=======
-        $this->Flash->set($msg, ['params' => ['class' => 'alert alert-success']]);
-        $this->redirect(['action' => 'login_consulta/'.$id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function delete_logon_serasa()
@@ -1953,13 +1520,8 @@ class CustomersController extends AppController
             $this->LoginConsulta->save($this->request->data);
         }
 
-<<<<<<< HEAD
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
-=======
-        $this->Flash->set($msg, ['params' => ['class' => 'alert alert-success']]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function act_deact_serasa()
@@ -1982,45 +1544,27 @@ class CustomersController extends AppController
             $this->LoginConsulta->save($this->request->data);
         }
 
-<<<<<<< HEAD
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
     }
 
 
 
-=======
-        $this->Flash->set($msg, ['params' => ['class' => 'alert alert-success']]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
-    }
-
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     public function reset_senha_logon_serasa()
     {
         $login = $this->request->data['login'];
         $cliente_id = $this->request->data['cliente_id'];
 
         $params = [
-<<<<<<< HEAD
             "email" => $this->request['data']['email'], "cnpj_completo" => $this->request['data']['cnpj'],
             "cnpj_indireto" => $this->request['data']['cnpj'], "filial" => $this->request['data']['hidden_filial'],
             "client_logon" => $login, 'razao' => $this->request['data']['razao']
-=======
-            'email' => $this->request['data']['email'], 'cnpj_completo' => $this->request['data']['cnpj'],
-            'cnpj_indireto' => $this->request['data']['cnpj'], 'filial' => $this->request['data']['hidden_filial'],
-            'client_logon' => $login, 'razao' => $this->request['data']['razao'],
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
         ];
 
         $msg = $this->Robo->reset_password($params);
 
-<<<<<<< HEAD
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
-=======
-        $this->Flash->set($msg, ['params' => ['class' => 'alert alert-success']]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function add_access_logon_serasa()
@@ -2040,13 +1584,8 @@ class CustomersController extends AppController
             $msg_type = 'alert-warning';
         }
 
-<<<<<<< HEAD
         $this->Flash->set($msg, 'default', ['class' => "alert " . $msg_type]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
-=======
-        $this->Flash->set($msg, 'default', ['class' => 'alert '.$msg_type]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function remove_access_logon_serasa()
@@ -2066,13 +1605,8 @@ class CustomersController extends AppController
             $msg_type = 'alert-warning';
         }
 
-<<<<<<< HEAD
         $this->Flash->set($msg, 'default', ['class' => "alert " . $msg_type]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
-=======
-        $this->Flash->set($msg, 'default', ['class' => 'alert '.$msg_type]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 
     public function simulate_access_serasa()
@@ -2099,12 +1633,7 @@ class CustomersController extends AppController
 
         $msg = $this->Robo->reset_shield($params);
 
-<<<<<<< HEAD
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
-=======
-        $this->Flash->set($msg, ['params' => ['class' => 'alert alert-success']]);
-        $this->redirect(['action' => 'login_consulta/'.$cliente_id]);
->>>>>>> 5891f07e1e5083dd324d3a29297ec4cf11ac7187
     }
 }
