@@ -5,7 +5,6 @@ class LinhasNaoImportadas extends AppModel {
 	public $useTable = 'linhas_nao_importadas';
 
 	public $belongsTo = array(
-		'Billing',
 		'Product'
 	);
 }

@@ -385,17 +385,6 @@ class ExcelTemplate
 				->setCellValue('D' . $indx, "R$ " . number_format($dados['pefin'][$i]['n']['valor_total'], 2, ',', '.'));
 		}
 
-		for ($i = 0; $i < count($dados['berh']); $i++) {
-			$total += $dados['berh'][$i]['BillingNovaVida']['valor_total'];
-
-			$indx++;
-			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados['berh'][$i]['Product']['name'])
-				->setCellValue('B' . $indx, $dados['berh'][$i]['BillingNovaVida']['quantidade_cobrada'])
-				->setCellValue('C' . $indx, "R$ " . number_format($dados['berh'][$i]['BillingNovaVida']['valor_unitario'], 2, ',', '.'))
-				->setCellValue('D' . $indx, "R$ " . number_format($dados['berh'][$i]['BillingNovaVida']['valor_total'], 2, ',', '.'));
-		}
-
 		$indx++;
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('A' . $indx, "Manutenção PEFIN:")
@@ -797,8 +786,7 @@ class ExcelTemplate
 			if (!empty($dado['PefinMaintenance']['value_nao_formatado']))
 				$valorManutencaoPefin = $dado['PefinMaintenance']['value_nao_formatado'];
 
-			$total_sem_desconto = $dado['BillingMonthlyPayment']['monthly_value_total'] + $valorManutencaoPefin;
-			$total_com_desconto = $total_sem_desconto - (($dado['BillingMonthlyPayment']['desconto'] / 100) * $total_sem_desconto);
+			$total_sem_desconto = 0;
 
 			$campoInicial = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($campoInicial . ($key + 2), $dado['Customer']['codigo_associado']);

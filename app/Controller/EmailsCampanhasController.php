@@ -4,7 +4,7 @@ class EmailsCampanhasController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email'];
-    public $uses = ['EmailsCampanha', 'Customer', 'Billing', 'Income', 'Status', 'MailList', 'Resale'];
+    public $uses = ['EmailsCampanha', 'Customer', 'Income', 'Status', 'MailList', 'Resale'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['EmailsCampanha.id' => 'desc']
@@ -179,8 +179,6 @@ class EmailsCampanhasController extends AppController
                 'BankAccount',
                 'Revenue',
                 'CostCenter',
-                'Billing',
-                'BillingMonthlyPayment',
                 'UsuarioBaixa',
                 'UsuarioCancelamento'
             ], 'hasOne' => ['CnabItem', 'CnabItemSicoob']], false);
@@ -189,7 +187,6 @@ class EmailsCampanhasController extends AppController
 
         // $this->status_envio($id);
 
-        $faturamentos = $this->Billing->find('all', ['conditions' => ['Billing.status_id' => 1], 'order' => ['Billing.id' => 'desc']]);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 5], 'order' => ['Status.name' => 'asc']]);
         $statusClientes = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => ['Status.name' => 'asc']]);
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
@@ -214,7 +211,7 @@ class EmailsCampanhasController extends AppController
 
         $action = 'Emails';
         $breadcrumb = ['Selectionar destinatários' => ''];
-        $this->set(compact('id', 'faturamentos', 'status', 'buscar', 'data', 'statusClientes', 'codFranquias', 'action', 'breadcrumb'));
+        $this->set(compact('id', 'status', 'buscar', 'data', 'statusClientes', 'codFranquias', 'action', 'breadcrumb'));
     }
 
     public function view_emails($id)

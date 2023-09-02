@@ -350,26 +350,6 @@ class IncomesController extends AppController
         }
     }
 
-    public function cancelar_lote(){
-
-        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
-        $contas = $this->Income->query("SELECT *
-                                        FROM incomes i
-                                        WHERE i.vencimento BETWEEN '2022-02-01' AND '2022-02-28' 
-                                        AND i.data_cancel = '1901-01-01' AND i.billing_id = 384
-                                        AND i.user_creator_id = 47");
-
-        foreach ($contas as $conta) {
-
-            print $conta['i']['id']."<br>";
-            $this->change_status($conta['i']['id'], 18);
-            
-        }
-        print "foi";
-        die();
-
-    }
-
     public function change_status($id, $status)
     {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
