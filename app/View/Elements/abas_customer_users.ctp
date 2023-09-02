@@ -15,7 +15,7 @@
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['vacations', 'add_vacation', 'edit_vacation']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/vacations/'.$id.'/'.$user_id; ?>">Férias</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['transactions']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/transactions/'.$id.'/'.$user_id; ?>">Extrato</a>
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['transactions']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/transactions/'.$id.'/'.$user_id; ?>">Transação</a>
 	</li>
 </ul>
 

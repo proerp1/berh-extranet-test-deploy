@@ -139,7 +139,6 @@ class CustomerUsersController extends AppController
 
     public function edit_user($id, $user_id){
         $this->edit($id, $user_id, true);
-        $this->render('add');
     }
 
     public function edit($id, $user_id = null, $is_admin = false)
@@ -186,7 +185,7 @@ class CustomerUsersController extends AppController
 
         $this->set('hash', rawurlencode($hash));
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'departamentos', 'cargos', 'is_admin', 'form_action'));
+        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
         $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));
             
         $this->render("add");
@@ -646,10 +645,10 @@ class CustomerUsersController extends AppController
                 'email' => $data['CustomerUser']['email'],
                 'username' => $data['CustomerUser']['email'],
                 'senha' => $data['CustomerUser']['password'],
-                'link'  => 'http://berh.com.br/cliente'
+                'link'  => 'https://cliente.berh.com.br'
             ],
             'template' => 'nova_senha_usuario_cliente',
-            'subject'  => 'BeRH - Nova senha',
+            'subject'  => 'Be RH - Acesso Admin - Nova senha',
             'config'   => 'default'
         ];
 
@@ -662,17 +661,18 @@ class CustomerUsersController extends AppController
     public function reenviar_senha($id, $user_id)
     {
         $this->CustomerUser->id = $user_id;
+        $this->CustomerUser->recursive = -1;
         $this->request->data = $this->CustomerUser->read();
 
         $senha = substr(sha1(time()), 0, 6);
 
         $this->request->data['CustomerUser']['password'] = $senha;
-            
+
         if ($this->CustomerUser->save($this->request->data)) {
             $this->envia_email($this->request->data);
 
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect("/customer_users/index/".$id);
+            $this->redirect($this->referer());
         }
     }
 

@@ -28,7 +28,7 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th>Status</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
                     <th>Cliente</th>
                     <th>Período</th>
                     <th>Subtotal</th>
@@ -57,9 +57,11 @@
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                    Excluir
-                                </a>
+                                <?php if($data[$i]["Status"]["id"] == '83'){ ?>
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                        Excluir
+                                    </a>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>
