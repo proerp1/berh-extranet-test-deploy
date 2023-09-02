@@ -38,29 +38,6 @@ class CustomersController extends AppController
         parent::beforeFilter();
     }
 
-    public function pdf_demonstrativo($id, $customer_id)
-    {
-        $this->layout = 'ajax';
-
-        $this->demonstrativo($id, $customer_id);
-
-        $view = new View($this, false);
-        $view->layout = false;
-
-        $view->set(['pdf' => true]);
-        $html = $view->render('pdf_demonstrativo');
-
-        $this->HtmltoPdf->convert($html, 'demonstrativo_fatura');
-    }
-
-    /*public function pdf_negativacoes($id){
-        $this->layout = 'ajax';
-
-        $this->negativacoes($id);
-
-
-    }*/
-
 
     /*******************
                 CLIENTES
