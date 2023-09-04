@@ -20,17 +20,17 @@
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Código*</label>
+                <label class="fw-semibold fs-6 mb-2">Código</label>
                 <?php echo $this->Form->input('code', ["placeholder" => "Código", "required" => true, "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome*</label>
+                <label class="fw-semibold fs-6 mb-2">Nome</label>
                 <?php echo $this->Form->input('name', ["placeholder" => "Nome", "required" => true,  "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Fornecedor*</label>
+                <label class="fw-semibold fs-6 mb-2 required">Fornecedor</label>
                 <?php echo $this->Form->input('supplier_id', array("id" => "supplier_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true")); ?>
             </div>
 
@@ -38,7 +38,7 @@
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Tipo*</label>
+                <label class="fw-semibold fs-6 mb-2 required">Tipo</label>
                 <?php echo $this->Form->input('benefit_type_id', array("id" => "benefit_type_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $benefit_types)); ?>
             </div>
 
