@@ -81,7 +81,7 @@ class BenefitsController extends AppController
         $this->request->data = $this->Benefit->read();
         $this->Benefit->validationErrors = $temp_errors;
         
-        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia']]);
+        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']);
         $benefit_types = $this->BenefitType->find('list');
         $states = $this->CepbrEstado->find('list');
 
