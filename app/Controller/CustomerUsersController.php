@@ -93,6 +93,9 @@ class CustomerUsersController extends AppController
     public function add($id, $is_admin = false)
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $action = $is_admin ? 'Usuário' : 'Beneficiário';
+
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUser->create();
             $this->CustomerUser->validates();
@@ -106,18 +109,16 @@ class CustomerUsersController extends AppController
             if ($this->CustomerUser->save($this->request->data)) {
                 $this->envia_email($this->request->data);
 
-                $action = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
-                $this->Flash->set(__('O usuário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => $action.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
+                $urlAction = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
+                $this->Flash->set(__('O '.$action.' foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => $urlAction.$this->CustomerUser->id.'/?'.$this->request->data['query_string']]);
             } else {
-                $this->Flash->set(__('O usuário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O '.$action.' não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-
-        $action = 'Beneficiários';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $estados = $this->CepbrEstado->find('list');
@@ -130,7 +131,7 @@ class CustomerUsersController extends AppController
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Novo Usuário' => ''
+            'Novo '.$action => ''
         ];
         $form_action = $is_admin ? "../customer_users/add/".$id.'/true' : "../customer_users/add/".$id;
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
@@ -144,6 +145,8 @@ class CustomerUsersController extends AppController
     public function edit($id, $user_id = null, $is_admin = false)
     {
         $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        $action = $is_admin ? 'Usuário' : 'Beneficiário';
+
         $this->CustomerUser->id = $user_id;
         if ($this->request->is(['post', 'put'])) {
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
@@ -167,13 +170,11 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $action = 'Beneficiários';
-
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
         $hash = base64_encode($this->request->data['CustomerUser']['email']);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Alterar Beneficiário' => ''
+            'Alterar '.$action => ''
         ];
         $estados = $this->CepbrEstado->find('list');
         $customer_departments = $this->CustomerDepartment->find('list', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
