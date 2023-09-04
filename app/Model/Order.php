@@ -15,7 +15,7 @@ class Order extends AppModel {
 		],
         'CustomerCreator' => [
 			'className' => 'CustomerUser',
-			'foreignKey' => 'customer_user_creator_id'
+			'foreignKey' => 'user_creator_id'
 		],
         'Status' => [
             'className' => 'Status',
