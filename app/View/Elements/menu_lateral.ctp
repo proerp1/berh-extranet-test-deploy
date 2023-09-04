@@ -146,7 +146,7 @@
 
                             </div>
                         </div>
-
+                        <!--
                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                             <span class="menu-link">
                                 <span class="menu-bullet">
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        -->
                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                             <span class="menu-link">
                                 <span class="menu-bullet">
