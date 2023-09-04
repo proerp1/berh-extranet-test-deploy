@@ -19,6 +19,12 @@ class Benefit extends AppModel {
         'complete_name' => "CONCAT(CONCAT(Benefit.code, ' - '), Benefit.name)"
     );
 
+    public function beforeFind($queryData)
+    {
+        $queryData['conditions'][] = ['Benefit.data_cancel' => '1901-01-01 00:00:00'];
+        
+        return $queryData;
+    }
 
     public function beforeSave($options = array())
 	{
