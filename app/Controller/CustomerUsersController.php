@@ -80,7 +80,7 @@ class CustomerUsersController extends AppController
         $action = $is_admin ? 'Usuários' : 'Beneficiários';
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Beneficiários' => ''
+            $action => ''
         ];
         $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments'));
     }
