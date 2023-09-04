@@ -20,12 +20,12 @@
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Código</label>
+                <label class="fw-semibold fs-6 mb-2 required">Código</label>
                 <?php echo $this->Form->input('code', ["placeholder" => "Código", "required" => true, "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome</label>
+                <label class="fw-semibold fs-6 mb-2 required">Nome</label>
                 <?php echo $this->Form->input('name', ["placeholder" => "Nome", "required" => true,  "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
@@ -43,7 +43,7 @@
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Valor Unitário</label>
+                <label class="fw-semibold fs-6 mb-2 required">Valor Unitário</label>
                 <?php echo $this->Form->input('unit_price', ['type' => 'text', "placeholder" => "Nome", "required" => true, "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
