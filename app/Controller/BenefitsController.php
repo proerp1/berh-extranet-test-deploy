@@ -52,7 +52,7 @@ class BenefitsController extends AppController
         }
 
         // $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'nome_fantasia']]);
+        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']]);
         $benefit_types = $this->BenefitType->find('list');
         $states = $this->CepbrEstado->find('list');
 
