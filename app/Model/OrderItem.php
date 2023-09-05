@@ -136,7 +136,7 @@ class OrderItem extends AppModel {
         and `Order`.data_cancel = '1901-01-01 00:00:00'
         and CustomerUser.data_cancel = '1901-01-01 00:00:00'
         and Customer.data_cancel = '1901-01-01 00:00:00'
-        and `Order`.status_id = 84
+        and `Order`.status_id = 85
         GROUP BY
             Order.id, OrderItem.customer_user_id
         ";
