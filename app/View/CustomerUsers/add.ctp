@@ -18,15 +18,15 @@
 
         $("#cep").change(function() {
             var $el = $(this);
-            
+
             $.ajax({
                 url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
                 type: "get",
-                beforeSend: function(){
+                beforeSend: function() {
                     $el.parent().find('span > i').removeClass('fas fa-map-marker');
                     $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
                 },
-                success: function(data){
+                success: function(data) {
                     $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
                     $el.parent().find('span > i').addClass('fas fa-map-marker');
                     $("#endereco").val(data["logradouro"]);
@@ -34,7 +34,7 @@
                     $("#cidade").val(data["cidade"]);
                     $("#estado").val(data["estado"]);
                 },
-                error: function(){
+                error: function() {
                     $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
                     $el.parent().find('span > i').addClass('fas fa-map-marker');
                     alert('Informe um CEP válido.');
@@ -47,7 +47,7 @@
 <?php
 $url = $this->base . '/customers_users/index';
 echo $this->element('abas_customers', ['id' => $id, 'url' => $url]);
-if(isset($user_id) && !$is_admin){
+if (isset($user_id) && !$is_admin) {
     echo $this->element('abas_customer_users', ['id' => $id, 'url' => $url]);
 }
 ?>
@@ -60,6 +60,12 @@ if(isset($user_id) && !$is_admin){
         <input type="hidden" name="data[CustomerUser][tip]" value="<?php echo $is_admin ? 'U' : 'B'; ?>">
 
         <div class="row">
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Usuário Interno</label><br>
+                <div class="form-check form-check-custom form-check-solid">
+                    <?php echo $this->Form->input('is_admin', ['type' => 'checkbox', 'class' => 'form-check-input']); ?>
+                </div>
+            </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Status</label>
                 <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
@@ -158,9 +164,9 @@ if(isset($user_id) && !$is_admin){
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
                 <?php $urlVoltar = $is_admin ? 'index_users' : 'index'; ?>
-                <a href="<?php echo $this->base . '/customer_users/'.$urlVoltar.'/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
+                <a href="<?php echo $this->base . '/customer_users/' . $urlVoltar . '/' . $id . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
                 <button type="submit" class="btn btn-success js-salvar">Salvar</button>
-                <?php if (isset($this->request->data['CustomerUser'])) { ?>
+                <?php if (isset($this->request->data['CustomerUser']) && isset($user_id)) { ?>
                     <a href="javascript:" onclick="confirm('<h3>Deseja mesmo reenviar a senha?</h3>', '<?php echo $this->base . '/customer_users/reenviar_senha/' . $id . '/' . $user_id; ?>')" class="btn btn-warning"><i class="fa fa-retweet"></i> Reenviar senha</a>
 
                 <?php } ?>

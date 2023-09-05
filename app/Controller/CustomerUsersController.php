@@ -49,8 +49,6 @@ class CustomerUsersController extends AppController
         
         if($is_admin){
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin' => 1]);
-        } else {
-            $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin !=' => 1]);
         }
 
         if (!empty($_GET['q'])) {
