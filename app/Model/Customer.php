@@ -2,7 +2,7 @@
 class Customer extends AppModel
 {
     public $name = 'Customer';
-    public $displayField = 'nome_secundario';
+    public $displayField = 'nome_primario';
     public $belongsTo = [
         'Resale' => [
             'className' => 'Resale',

@@ -72,7 +72,7 @@
 						<th>Departamento</th>
 						<th>Assunto</th>
 						<th>Enviado em</th>
-						<th class="min-w-125px rounded-end">Ações</th>
+						<th class="min-w-100px rounded-end">Ações</th>
 					</tr>
 				</thead>
 				<tbody>

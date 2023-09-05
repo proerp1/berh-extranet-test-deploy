@@ -30,7 +30,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'status'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'customers'));
     }
 
     public function createOrder()

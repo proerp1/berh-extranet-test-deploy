@@ -67,7 +67,7 @@ class AtendimentosController extends AppController
         
         $departments = $this->Department->find('list', ['order' => 'Department.name']);
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 9], 'order' => 'Status.name']);
-        $customers = $this->Customer->find('list', ['order' => ['Customer.nome_secundario']]);
+        $customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
 
         $this->set("action", $this->request->data['Atendimento']['subject']);
         $this->set("form_action", "view/".$id);
@@ -103,10 +103,9 @@ class AtendimentosController extends AppController
             }
         }
 
-        // debug($this->Atendimento->validationErrors);die();
         $departments = $this->Department->find('list', ['order' => 'Department.name']);
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 9], 'order' => 'Status.name']);
-        $customers = $this->Customer->find('list', ['fields' => ['Customer.codigo_associado'], 'order' => ['Customer.codigo_associado']]);
+        $customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
 
         $this->set("action", 'Novo Atendimento por Telefone');
         $this->set("form_action", "add");
