@@ -40,7 +40,7 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
         $period_from = $this->request->data['period_from'];
         $period_to = $this->request->data['period_to'];
-        $credit_release_date = $this->request->data['credit_release_date'];
+        $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
 
         if ($this->request->is('post')) {
             $customerItineraries = $this->CustomerUserItinerary->find('all', [

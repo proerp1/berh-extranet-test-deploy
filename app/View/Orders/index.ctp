@@ -124,10 +124,11 @@
                         </div>
                     </div>
                     <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2 required">Data de Liberação do Crédito</label>
+                        <label class="fw-semibold fs-6 mb-2">Data de Liberação do Crédito</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                            <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker", 'required' => true, 'div' => false, 'label' => false]);  ?>
+                            <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker", 'div' => false, 'label' => false]);  ?>
+                            <p id="message_classification" style="color: red; margin: 0; display:none">A Data de Liberação do Crédito deve ser maior que o dia atual e o início do período</p>
                         </div>
                     </div>
                     <div class="mb-7 col">
@@ -148,23 +149,21 @@
     $(document).ready(function() {
         $('#order_creation_form').on('submit', function(event) {
             const inputValue = $('#credit_release_date').val();
+            const initalInputValue = $('#period_from').val();
+            if(inputValue != ''){
+                $('#message_classification').hide();
 
-            // Check if the input value is empty
-            if (!inputValue) {
-                alert('Please enter a credit release date.');
-                event.preventDefault();
-                return;
-            }
+                // Convert inputValue to a Date object and today's date to a Date object
+                const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
+                const periodInitialDate = new Date(initalInputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // reset the time part
 
-            // Convert inputValue to a Date object and today's date to a Date object
-            const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // reset the time part
-
-            // Check if inputDate is greater than today
-            if (inputDate > today) {
-                alert('The credit release date cannot be in the future.');
-                event.preventDefault();
+                // Check if inputDate is greater than today
+                if (today >= inputDate || periodInitialDate >= inputDate ) {
+                    $('#message_classification').show();
+                    event.preventDefault();
+                }
             }
         });
     });
