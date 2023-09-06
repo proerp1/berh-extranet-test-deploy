@@ -143,7 +143,7 @@
                     <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
                         <div class="row">
                             <div class="col-12">
-                                <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$income["Income"]["id"].'/1'; ?>" class="btn btn-sm btn-success me-3" style="float:right">
+                                <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-3" style="float:right">
                                     <i class="fas fa-download"></i>
                                     Baixar Boleto
                                 </a>
@@ -410,13 +410,17 @@
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
             <div class="row">
-                <div class="col-9">
+                <div class="col-8">
                     <h3>Itens</h3>
                 </div>
                 <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="col-3">
+                    <div class="col-4">
+                        <a href="#" class="btn btn-sm btn-info me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_itinerario">
+                            <i class="fas fa-bus"></i>
+                            Novo Itinerário
+                        </a>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
-                            <i class="fas fa-file"></i>
+                            <i class="fas fa-user"></i>
                             Novo Beneficiário
                         </a>
                     </div>
@@ -553,6 +557,65 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" tabindex="-1" id="modal_add_itinerario" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Incluir Intinerário</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <?php echo $this->Form->create('CustomerUserItinerary', ['id' => 'js-form-submit', 'url' => '/orders/addItinerary', 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+                <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
+                <input type="hidden" name="order_id" value="<?php echo $id; ?>">
+
+                <div class="row">
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Beneficiário</label>
+                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $customer_users_all)); ?>
+                    </div>
+
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Benefício</label>
+                        <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione')); ?>
+                    </div>
+
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
+                        <?php echo $this->Form->input('working_days', array("id" => "working_days",  "placeholder" => "Dias Úteis", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Valor Unitário</label>
+                        <?php echo $this->Form->input('unit_price', array("id" => "unit_price", 'type' => 'text', "placeholder" => "Valor Unitário", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field"));  ?>
+                    </div>
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Quantidade</label>
+                        <?php echo $this->Form->input('quantity', array("id" => "quantity", "placeholder" => "Quantidade", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    </div>
+                    <div class="mb-7 col">
+                        <label class="fw-semibold fs-6 mb-2 required">Valor por dia</label>
+                        <?php echo $this->Form->input('price_per_day', array("id" => "price_per_day", 'type' => 'text', "placeholder" => "Valor por dia", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field", 'disabled'));  ?>
+                    </div>
+                </div>
+
+                <div class="mb-7">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <button type="button" class="btn btn-light-dark" tabindex="-1" data-bs-dismiss="modal" aria-label="Fechar">Fechar</button>
+                        <button type="submit" class="btn btn-success js-salvar">Salvar</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
+<?php echo $this->Html->script('itinerary'); ?>
 
 <script>
     $(document).ready(function() {

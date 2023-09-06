@@ -7,15 +7,6 @@ if($user_id){
 ?>
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('.money_field').maskMoney({
-            decimal: ',',
-            thousands: '.',
-            precision: 2
-        });
-    });
-    </script>
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
@@ -28,7 +19,7 @@ if($user_id){
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Benefício</label>
-                <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true")); ?>
+                <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione')); ?>
             </div>
             
             <div class="mb-7 col">
@@ -63,28 +54,4 @@ if($user_id){
     </div>
 </div>
 
-<script>
-    $(document).ready(function() {
-      function calculatePricePerDay() {
-        // Get the values from the fields
-        var unitPrice = $('#unit_price').val().replace('.', '');
-        unitPrice = unitPrice.replace(',', '.');
-        var quantity = $('#quantity').val();
-
-        // Convert unitPrice to float
-        unitPrice = parseFloat(unitPrice);
-
-        // Calculate the price per day
-        var pricePerDay = unitPrice * quantity;
-
-        // Insert the calculated value into the price_per_day field
-        var pricePerDayFormatted = pricePerDay.toFixed(2).replace('.', ',');
-        $('#price_per_day').val(pricePerDayFormatted);
-      }
-
-      // Listen to changes in unit_price and quantity fields
-      $('#unit_price, #quantity').on('change', function() {
-        calculatePricePerDay();
-      });
-    });
-  </script>
+<?php echo $this->Html->script('itinerary'); ?>

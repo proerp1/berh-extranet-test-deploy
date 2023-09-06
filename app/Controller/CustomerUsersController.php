@@ -538,10 +538,10 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUserItinerary']['customer_user_id'] = $user_id;
 
             if ($this->CustomerUserItinerary->save($this->request->data)) {
-                $this->Flash->set(__('O endereço foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O itinerário foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'itineraries/'.$id.'/'.$user_id]);
             } else {
-                $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O itinerário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -550,13 +550,12 @@ class CustomerUsersController extends AppController
 
         $action = 'Beneficiários';
 
-        $states = $this->CepbrEstado->find('list');
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
             'Novo Itinerário' => ''
         ];
-        $this->set(compact('action', 'id', 'breadcrumb', 'states', 'user_id', 'benefits'));
+        $this->set(compact('action', 'id', 'breadcrumb', 'user_id', 'benefits'));
     }
 
     public function edit_itinerary($id, $user_id, $id_itinerary)
@@ -609,6 +608,16 @@ class CustomerUsersController extends AppController
             $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'itineraries/'.$customer_id.'/'.$user_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
+    }
+
+    public function getBenefitUnitPrice(){
+        $this->autoRender = false;
+
+        $benefit_id = $_POST['benefit_id'];
+
+        $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.id' => $benefit_id]]);
+
+        echo json_encode(['unit_price' => $benefit['Benefit']['unit_price']]);
     }
 
     /*******************

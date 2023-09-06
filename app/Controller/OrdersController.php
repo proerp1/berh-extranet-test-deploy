@@ -245,10 +245,17 @@ class OrdersController extends AppController
             'conditions' => ['Income.order_id' => $id]
         ]);
 
+        $customer_users_all = $this->CustomerUser->find('list', [
+            'conditions' => ['CustomerUser.customer_id' => $order['Order']['customer_id']],
+        ]);
+
+        $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'customer_users_pending', 'suppliersCount', 'usersCount', 'income'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
+        $this->set(compact('customer_users_pending', 'suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
 
         $this->render("add");
     }
@@ -413,6 +420,39 @@ class OrdersController extends AppController
         $this->Order->reProcessAmounts($orderId);
 
         $this->redirect('/orders/edit/' . $orderId);
+    }
+
+    public function addItinerary(){
+        $id = $this->request->data['customer_id'];
+        $orderId = $this->request->data['order_id'];
+
+        $this->CustomerUserItinerary->create();
+        $this->CustomerUserItinerary->validates();
+
+        $this->request->data['CustomerUserItinerary']['user_creator_id'] = CakeSession::read("Auth.User.id");
+        $this->request->data['CustomerUserItinerary']['customer_id'] = $id;
+
+        if ($this->CustomerUserItinerary->save($this->request->data)) {
+
+            $idLastInserted = $this->CustomerUserItinerary->getLastInsertId();
+
+            $order = $this->Order->findById($orderId);
+
+            $customerItineraries = $this->CustomerUserItinerary->find('all', [
+                'conditions' => ['CustomerUserItinerary.id' => $idLastInserted],
+                'recursive' => 2
+            ]);
+            
+            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to']);  
+
+            $this->Order->id = $orderId;
+            $this->Order->reProcessAmounts($orderId);
+
+            $this->Flash->set(__('Itinerário adicionado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect('/orders/edit/'.$orderId);
+        } else {
+            $this->Flash->set(__('Itinerário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
     }
 
 
