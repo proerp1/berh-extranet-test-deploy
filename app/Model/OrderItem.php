@@ -98,7 +98,7 @@ class OrderItem extends AppModel {
         $sql = "
         SELECT
             sum(OrderItem.subtotal) AS pedido_valor,
-            CONCAT(CONCAT(CONCAT('5803-', Order.id), '-'), CustomerUser.id) AS pedido_id,
+            CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('5803-', Order.id), '-'), CustomerUser.id), '-'), Supplier.id) AS pedido_id,
             CustomerUser.id AS customer_user_id,
             CustomerUser.name AS colaborador_nome,
             CustomerUser.cpf AS colaborador_cpf,
@@ -125,20 +125,24 @@ class OrderItem extends AppModel {
             Customer.cidade AS empresa_endereco_cidade,
             Customer.estado AS empresa_endereco_estado,
             Customer.cep AS empresa_endereco_cep,
-            Customer.complemento AS empresa_endereco_complemento
+            Customer.complemento AS empresa_endereco_complemento,
+            Supplier.nome_fantasia
         FROM
             order_items OrderItem
         INNER JOIN orders `Order` on OrderItem.order_id = Order.id
         INNER JOIN customer_users CustomerUser ON OrderItem.customer_user_id = CustomerUser.id
         INNER JOIN customer_user_addresses CustomerUserAddress on CustomerUser.id = CustomerUserAddress.customer_user_id
         INNER JOIN customers Customer ON CustomerUser.customer_id = Customer.id
+        INNER JOIN customer_user_itineraries CustomerUserItinerary on OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id
+        INNER JOIN benefits Benefit on CustomerUserItinerary.benefit_id = Benefit.id
+        INNER JOIN suppliers Supplier on Benefit.supplier_id = Supplier.id
         WHERE OrderItem.data_cancel = '1901-01-01 00:00:00'
         and `Order`.data_cancel = '1901-01-01 00:00:00'
         and CustomerUser.data_cancel = '1901-01-01 00:00:00'
         and Customer.data_cancel = '1901-01-01 00:00:00'
         and `Order`.status_id = 85
         GROUP BY
-            Order.id, OrderItem.customer_user_id
+            Order.id, OrderItem.customer_user_id, Supplier.id
         ";
 
         return $this->query($sql);
