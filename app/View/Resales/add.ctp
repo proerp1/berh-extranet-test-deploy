@@ -170,13 +170,6 @@
             </div>
 
             <div class="mb-7">
-                <div class="form-check form-check-custom form-check-solid">
-                    <?php echo $this->Form->input('robo_disponivel', ["type" => "checkbox", "class" => "form-check-input"]);  ?>
-                    <label class="form-check-label" for="ResaleRoboDisponivel">Robô disponível</label>
-                </div>
-            </div>
-
-            <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base.'/resales' ?>" class="btn btn-light-dark">Voltar</a>
                     <button type="submit" class="btn btn-success js-salvar">Salvar</button>
