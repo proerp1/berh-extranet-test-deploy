@@ -289,7 +289,7 @@ class OrdersController extends AppController
             $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
             $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
             $income['Income']['valor_total'] = $order['Order']['subtotal'];
-            $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 2 day'));;
+            $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $income['Income']['data_competencia'] = date('01/m/Y');
             $income['Income']['created'] = date('Y-m-d H:i:s');
             $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
