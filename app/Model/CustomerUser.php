@@ -54,8 +54,8 @@ class CustomerUser extends AppModel
                 'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório',
             ],
-            'isUnique' => [
-                'rule' => 'isUnique',
+            'customUnique' => [
+                'rule' => ['customUnique'],
                 'message' => 'O e-mail fornecido já foi cadastrado',
             ],
         ],
@@ -78,6 +78,15 @@ class CustomerUser extends AppModel
             ],
         ],
     ];
+
+    public function customUnique($check){
+        $cond = array_merge($check, ['CustomerUser.data_cancel' => '1901-01-01 00:00:00']);
+        $emailUnique = $this->find('count', array(
+            'conditions' => $cond,
+            'recursive' => -1
+        ));
+        return $emailUnique < 1;
+    }
 
     public function beforeFind($queryData)
     {
