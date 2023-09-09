@@ -53,10 +53,35 @@ class User extends AppModel {
 	  return $queryData;
 	}
 
+	public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            if (isset($val[$this->alias]['sales_goal']) && !isset($val[$this->alias]['sales_goal_not_formated'])) {
+                $results[$key][$this->alias]['sales_goal_not_formated'] = $results[$key][$this->alias]['sales_goal'];
+                $results[$key][$this->alias]['sales_goal'] = number_format($results[$key][$this->alias]['sales_goal'], 2, ',', '.');
+
+            }
+        }
+
+        return $results;
+    }
+
 	public function beforeSave($options = array()) {
+		if (!empty($this->data[$this->alias]['sales_goal'])) {
+            $this->data[$this->alias]['sales_goal'] = $this->priceFormatBeforeSave($this->data[$this->alias]['sales_goal']);
+        }
+
 		if (isset($this->data[$this->alias]['password'])) {
-			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password']);
 		}
 		return true;
 	}
+
+	public function priceFormatBeforeSave($price)
+    {
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
+
+        return $valueFormatado;
+    }
 }

@@ -17,7 +17,7 @@
                          </div>
                      </div>
                      <div class="col-sm-8 mb-5 mb-xl-10">
-                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1">João Vendedor</a>
+                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo CakeSession::read('Auth.User.name'); ?></a>
 
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
@@ -27,16 +27,7 @@
                                      <path d="M12 22C14.6 22 17 21 18.7 19.4C17.9 16.9 15.2 15 12 15C8.8 15 6.09999 16.9 5.29999 19.4C6.99999 21 9.4 22 12 22Z" fill="currentColor" />
                                  </svg>
                              </span>
-                             <!--end::Svg Icon-->Developer</a>
-                         <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
-                             <!--begin::Svg Icon | path: icons/duotune/general/gen018.svg-->
-                             <span class="svg-icon svg-icon-4 me-1">
-                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                     <path opacity="0.3" d="M18.0624 15.3453L13.1624 20.7453C12.5624 21.4453 11.5624 21.4453 10.9624 20.7453L6.06242 15.3453C4.56242 13.6453 3.76242 11.4453 4.06242 8.94534C4.56242 5.34534 7.46242 2.44534 11.0624 2.04534C15.8624 1.54534 19.9624 5.24534 19.9624 9.94534C20.0624 12.0453 19.2624 13.9453 18.0624 15.3453Z" fill="currentColor" />
-                                     <path d="M12.0624 13.0453C13.7193 13.0453 15.0624 11.7022 15.0624 10.0453C15.0624 8.38849 13.7193 7.04535 12.0624 7.04535C10.4056 7.04535 9.06241 8.38849 9.06241 10.0453C9.06241 11.7022 10.4056 13.0453 12.0624 13.0453Z" fill="currentColor" />
-                                 </svg>
-                             </span>
-                             <!--end::Svg Icon-->São Paulo - SP</a>
+                             <!--end::Svg Icon--><?php echo CakeSession::read('Auth.User.Group.name'); ?></a>
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com011.svg-->
                              <span class="svg-icon svg-icon-4 me-1">
@@ -46,7 +37,7 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             vendedor@vendedor.com
+                             <?php echo CakeSession::read('Auth.User.username'); ?>
                          </a>
                      </div>
 
@@ -63,7 +54,7 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="4500" data-kt-countup-prefix="$">0</div>
+                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $totalSalesRaw; ?>" data-kt-countup-prefix="$">0</div>
                          </div>
                          <!--end::Number-->
                          <!--begin::Label-->
@@ -83,7 +74,7 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="75" data-kt-countup-suffix="%">0</div>
+                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $percentageLeft; ?>" data-kt-countup-suffix="%">0</div>
                          </div>
                          <!--end::Number-->
                          <!--begin::Label-->
@@ -120,28 +111,28 @@
              <div class="card-body">
                  <h3 class="box-title">Indicadores</h3>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$25.563,23</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$<?php echo number_format($dailyGoal, 2, ',', '.') ?></a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Meta Diária</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
                      <div class="bg-success rounded h-10px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$145.652,54</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$<?php echo $totalSalesPreview; ?></a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Vendas previsto</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
                      <div class="bg-success rounded h-10px" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$45.123,78</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$<?php echo number_format($goalLeft, 2, ',', '.'); ?></a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Saldo</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
-                     <div class="bg-danger rounded h-10px" role="progressbar" style="width: 12%;" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
+                     <div class="bg-danger rounded h-10px" role="progressbar" style="width: <?php echo $percentageLeft; ?>%;" aria-valuenow="<?php echo $percentageLeft; ?>" aria-valuemin="0" aria-valuemax="100"></div>
                  </div>
                  <div class="d-flex flex-stack mb-2">
-                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$565.434,13</a>
+                     <a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$<?php echo $totalSalesEstimate; ?></a>
                      <span class="text-muted fw-bold text-muted d-block fs-7">Orçamentos</span>
                  </div>
                  <div class="h-10px mb-10 w-100 bg-light mb-3">
@@ -159,155 +150,179 @@
              <!--begin::Card header-->
              <div class="card-header py-7">
                  <!--begin::Tabs-->
-                 <div class="card-title pt-3 mb-0 gap-4 gap-lg-10 gap-xl-15 nav nav-tabs border-bottom-0" data-kt-table-widget-3="tabs_nav">
-                     <div class="fs-4 fw-bolder pb-3 border-bottom border-3 border-primary cursor-pointer" data-kt-table-widget-3="tab" data-kt-table-widget-3-value="Show All">LEADS</div>
-                     <div class="fs-4 fw-bolder text-muted pb-3 cursor-pointer" data-kt-table-widget-3="tab" data-kt-table-widget-3-value="Pending">EM NEGOCIAÇÃO</div>
-                     <div class="fs-4 fw-bolder text-muted pb-3 cursor-pointer" data-kt-table-widget-3="tab" data-kt-table-widget-3-value="Pending">AGUARDANDO APROVAÇÃO</div>
-                     <div class="fs-4 fw-bolder text-muted pb-3 cursor-pointer" data-kt-table-widget-3="tab" data-kt-table-widget-3-value="Pending">APROVADOS</div>
-                     <div class="fs-4 fw-bolder text-muted pb-3 cursor-pointer" data-kt-table-widget-3="tab" data-kt-table-widget-3-value="Completed">PERDIDOS</div>
-                 </div>
+                 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6 gap-4 gap-lg-10 gap-xl-15">
+                     <li class="nav-item">
+                         <a class="fs-4 fw-bolder nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_1">INÍCIO</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="fs-4 fw-bolder nav-link" data-bs-toggle="tab" href="#kt_tab_pane_2">AGUARDANDO PAGAMENTO</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="fs-4 fw-bolder nav-link" data-bs-toggle="tab" href="#kt_tab_pane_3">PAGAMENTO CONFIRMADO</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="fs-4 fw-bolder nav-link" data-bs-toggle="tab" href="#kt_tab_pane_4">EM PROCESSAMENTO</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="fs-4 fw-bolder nav-link" data-bs-toggle="tab" href="#kt_tab_pane_5">FINALIZADO</a>
+                     </li>
+                 </ul>
              </div>
              <!--end::Card header-->
              <!--begin::Card body-->
              <div class="card-body pt-1">
-                 <!--begin::Table-->
-                 <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
-                     <thead>
-                         <tr>
-                             <td>DATA</td>
-                             <td>PREVISÃO</td>
-                             <td>FECHAMENTO</td>
-                             <td>TEMP.</td>
-                             <td>ORÇAMENTO</td>
-                             <td>CLIENTE </td>
-                             <td>VALOR</td>
-                             <td>EM ABERTO</td>
-                         </tr>
-                     </thead>
-                     <tbody>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                         <tr>
-                             <td>19/04/2018</td>
-                             <td>11/09/2018</td>
-                             <td>11/09/2018</td>
-                             <td>10%</td>
-                             <td>109532</td>
-                             <td>TESTE RODOLFO </td>
-                             <td>520,00</td>
-                             <td>7.557,04</td>
-                         </tr>
-                     </tbody>
-                 </table>
-                 <!--end::Table-->
+                 <div class="tab-content" id="myTabContent">
+                     <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
+                         <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
+                             <thead class="fw-bolder text-muted bg-light">
+                                 <tr>
+                                     <td>DATA</td>
+                                     <td>DE</td>
+                                     <td>ATÉ</td>
+                                     <td>COMISSÃO</td>
+                                     <td>CLIENTE </td>
+                                     <td>SUBTOTAL</td>
+                                     <td>TOTAL</td>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <?php if (isset($groupedOrders[83])) { ?>
+                                     <?php foreach ($groupedOrders[83] as $order) { ?>
+                                         <tr>
+                                             <td><?php echo $order['Order']['created']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                             <td><?php echo $order['Order']['commission_fee']; ?></td>
+                                             <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                             <td><?php echo $order['Order']['subtotal']; ?></td>
+                                             <td><?php echo $order['Order']['total']; ?></td>
+                                         </tr>
+                                     <?php } ?>
+                                 <?php } ?>
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+                         <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
+                             <thead class="fw-bolder text-muted bg-light">
+                                 <tr>
+                                     <td>DATA</td>
+                                     <td>DE</td>
+                                     <td>ATÉ</td>
+                                     <td>COMISSÃO</td>
+                                     <td>CLIENTE </td>
+                                     <td>SUBTOTAL</td>
+                                     <td>TOTAL</td>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <?php if (isset($groupedOrders[84])) { ?>
+                                     <?php foreach ($groupedOrders[84] as $order) { ?>
+                                         <tr>
+                                             <td><?php echo $order['Order']['created']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                             <td><?php echo $order['Order']['commission_fee']; ?></td>
+                                             <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                             <td><?php echo $order['Order']['subtotal']; ?></td>
+                                             <td><?php echo $order['Order']['total']; ?></td>
+                                         </tr>
+                                     <?php } ?>
+                                 <?php } ?>
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
+                         <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
+                             <thead class="fw-bolder text-muted bg-light">
+                                 <tr>
+                                     <td>DATA</td>
+                                     <td>DE</td>
+                                     <td>ATÉ</td>
+                                     <td>COMISSÃO</td>
+                                     <td>CLIENTE </td>
+                                     <td>SUBTOTAL</td>
+                                     <td>TOTAL</td>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <?php if (isset($groupedOrders[85])) { ?>
+                                     <?php foreach ($groupedOrders[85] as $order) { ?>
+                                         <tr>
+                                             <td><?php echo $order['Order']['created']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                             <td><?php echo $order['Order']['commission_fee']; ?></td>
+                                             <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                             <td><?php echo $order['Order']['subtotal']; ?></td>
+                                             <td><?php echo $order['Order']['total']; ?></td>
+                                         </tr>
+                                     <?php } ?>
+                                 <?php } ?>
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="tab-pane fade" id="kt_tab_pane_4" role="tabpanel">
+                         <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
+                             <thead class="fw-bolder text-muted bg-light">
+                                 <tr>
+                                     <td>DATA</td>
+                                     <td>DE</td>
+                                     <td>ATÉ</td>
+                                     <td>COMISSÃO</td>
+                                     <td>CLIENTE </td>
+                                     <td>SUBTOTAL</td>
+                                     <td>TOTAL</td>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <?php if (isset($groupedOrders[86])) { ?>
+                                     <?php foreach ($groupedOrders[86] as $order) { ?>
+                                         <tr>
+                                             <td><?php echo $order['Order']['created']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                             <td><?php echo $order['Order']['commission_fee']; ?></td>
+                                             <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                             <td><?php echo $order['Order']['subtotal']; ?></td>
+                                             <td><?php echo $order['Order']['total']; ?></td>
+                                         </tr>
+                                     <?php } ?>
+                                 <?php } ?>
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="tab-pane fade" id="kt_tab_pane_5" role="tabpanel">
+                         <table id="kt_widget_table_3" class="table table-row-dashed align-middle fs-6 gy-4 my-0 pb-3" data-kt-table-widget-3="all">
+                             <thead class="fw-bolder text-muted bg-light">
+                                 <tr>
+                                     <td>DATA</td>
+                                     <td>DE</td>
+                                     <td>ATÉ</td>
+                                     <td>COMISSÃO</td>
+                                     <td>CLIENTE </td>
+                                     <td>SUBTOTAL</td>
+                                     <td>TOTAL</td>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <?php if (isset($groupedOrders[87])) { ?>
+                                     <?php foreach ($groupedOrders[87] as $order) { ?>
+                                         <tr>
+                                             <td><?php echo $order['Order']['created']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                             <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                             <td><?php echo $order['Order']['commission_fee']; ?></td>
+                                             <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                             <td><?php echo $order['Order']['subtotal']; ?></td>
+                                             <td><?php echo $order['Order']['total']; ?></td>
+                                         </tr>
+                                     <?php } ?>
+                                 <?php } ?>
+                             </tbody>
+                         </table>
+                     </div>
+                 </div>
              </div>
              <!--end::Card body-->
          </div>
@@ -342,7 +357,7 @@
                  </div>
                  <div class="table-responsive">
                      <table class="table">
-                         <thead>
+                         <thead class="fw-bolder text-muted bg-light">
                              <tr>
                                  <th>#</th>
                                  <th>DATA</th>
@@ -423,75 +438,25 @@
                  </div>
                  <div class="table-responsive">
                      <table class="table">
-                         <thead>
+                         <thead class="fw-bolder text-muted bg-light">
                              <tr>
-                                 <th>ORÇAMENTO</th>
+                                 <th>DE</th>
+                                 <th>ATÉ</th>
                                  <th>CLIENTE</th>
-                                 <th>DATA</th>
                                  <th>VALOR</th>
                              </tr>
                          </thead>
                          <tbody>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">115698</td>
-                                 <td><span class="label label-warning label-rouded">TESTE RODOLFO</span> </td>
-                                 <td class="txt-oflo">27/08/2018</td>
-                                 <td><span class="text-warning">R$2.4365,32</span></td>
-                             </tr>
+                             <?php if (isset($groupedOrders[86])) { ?>
+                                 <?php foreach ($groupedOrders[86] as $order) { ?>
+                                     <tr>
+                                         <td><?php echo $order['Order']['order_period_from']; ?></td>
+                                         <td><?php echo $order['Order']['order_period_to']; ?></td>
+                                         <td><?php echo $order['Customer']['nome_primario']; ?></td>
+                                         <td><?php echo $order['Order']['total']; ?></td>
+                                     </tr>
+                                 <?php } ?>
+                             <?php } ?>
                          </tbody>
                      </table>
                  </div>
@@ -506,7 +471,7 @@
                  <div class="row sales-report">
                      <div class="col-md-6 col-sm-6 col-xs-6">
                          <h2> </h2>
-                         <p>Lista dos 10 produtos mais vendidos</p>
+                         <p>Lista dos 10 fornecedores com mais pedidos</p>
                      </div>
                      <div class="col-md-6 col-sm-6 col-xs-6 ">
                          <h1 class="text-right text-info m-t-20">R$3.690,21</h1>
@@ -514,64 +479,21 @@
                  </div>
                  <div class="table-responsive">
                      <table class="table">
-                         <thead>
+                         <thead class="fw-bolder text-muted bg-light">
                              <tr>
                                  <th>#</th>
-                                 <th>PRODUTO</th>
+                                 <th>FORNECEDOR</th>
                                  <th>VALOR</th>
                              </tr>
                          </thead>
                          <tbody>
-                             <tr>
-                                 <td class="txt-oflo">1</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">2</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">3</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">4</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">5</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">6</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">7</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">8</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">9</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
-                             <tr>
-                                 <td class="txt-oflo">10</td>
-                                 <td class="txt-oflo">Produto nome</td>
-                                 <td><span class="text-success">R$2.4365,32</span></td>
-                             </tr>
+                             <?php foreach ($topSuppliers as $k => $order) { ?>
+                                 <tr>
+                                     <td><?php echo $k + 1; ?></td>
+                                     <td><?php echo $order['Supplier']['nome_fantasia']; ?></td>
+                                     <td>R$<?php echo number_format($order[0]['total'], 2, ',', '.'); ?></td>
+                                 </tr>
+                             <?php } ?>
 
                          </tbody>
                      </table>

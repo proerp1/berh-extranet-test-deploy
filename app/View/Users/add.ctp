@@ -41,6 +41,13 @@ if (isset($id)) {
                     <?php echo $this->Form->input('is_seller', ["type" => "checkbox", "class" => "form-check-input"]); ?>
                 </label>
             </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Meta</label>
+                <?php echo $this->Form->input('sales_goal', ["type" => "text", "placeholder" => "Meta", "class" => "form-control mb-3 mb-lg-0 money_field"]);  ?>
+            </div>
+
+
         </div>
 
         <?php if (!isset($id)) { ?>
@@ -60,3 +67,13 @@ if (isset($id)) {
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.money_field').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
+    });
+</script>

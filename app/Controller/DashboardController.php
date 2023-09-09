@@ -1,56 +1,69 @@
 <?php
-class DashboardController extends AppController {
+class DashboardController extends AppController
+{
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Suggestion', 'ContactDirector', 'Outcome', 'Income', 'PedidoCompra', 'Status', 'NaturezaOperacao', 'Estabelecimento', 'CondicaoPagamento','CliRemTri', 'Portador', 'Transportador','Vendedor', 'Pedido', 'CustomerAddress', 'Limite'];
+  public $uses = ['Customer', 'Order', 'OrderItem'];
 
-  public function beforeFilter() { 
-    parent::beforeFilter(); 
+  public function beforeFilter()
+  {
+    parent::beforeFilter();
   }
 
-  public function index(){
-		$breadcrumb = ["Dashboard" => "/"];
+  public function index()
+  {
+    $breadcrumb = ["Dashboard" => "/"];
     $action = "Principal";
+
+    if (CakeSession::read("Auth.User.is_seller")) {
+      $this->redirect('/dashboard/comercial');
+    }
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function oportunidade(){
+  public function oportunidade()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Oportunidades";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function outros(){
+  public function outros()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Outros";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function resumo(){
+  public function resumo()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Resumo";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function compras(){
+  public function compras()
+  {
     $breadcrumb = ["Compras" => "/"];
     $action = "Compras";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function fornecedores(){
+  public function fornecedores()
+  {
     $breadcrumb = ["Fornecedores" => "/"];
     $action = "Fornecedores";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function expedicao(){
+  public function expedicao()
+  {
     $breadcrumb = ["Expedição" => "/"];
     $action = "Expedição";
 
@@ -58,38 +71,41 @@ class DashboardController extends AppController {
   }
 
 
-  public function cliente(){
+  public function cliente()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Cliente";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function orcamentos(){
+  public function orcamentos()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Orçamentos";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function add($clienteID = null){
+  public function add($clienteID = null)
+  {
 
     $breadcrumb = ["Dashboard" => "/"];
     $action = "add";
 
     if ($this->request->is('post')) {
-			$this->Pedido->create();
-			
-      $this->request->data['Pedido']['created'] = date();
-			$this->request->data['Pedido']['usuarioID'] = CakeSession::read("Auth.User.id");
+      $this->Pedido->create();
 
-			if ($this->Pedido->save($this->request->data)) {
-				$this->Session->setFlash(__('O registro foi salvo com sucesso'), 'default', ['class' => 'alert alert-success']);
-				$this->redirect(['action'=> 'edit/'.$this->request->data['Pedido']['clienteID'].'/'.$this->Pedido->id]);
-			} else {
-				$this->Session->setFlash(__('O registro não pode ser salvo, por favor tente novamente.'), 'default', ['class' => 'alert alert-danger']);
-			}
-		}
+      $this->request->data['Pedido']['created'] = date();
+      $this->request->data['Pedido']['usuarioID'] = CakeSession::read("Auth.User.id");
+
+      if ($this->Pedido->save($this->request->data)) {
+        $this->Session->setFlash(__('O registro foi salvo com sucesso'), 'default', ['class' => 'alert alert-success']);
+        $this->redirect(['action' => 'edit/' . $this->request->data['Pedido']['clienteID'] . '/' . $this->Pedido->id]);
+      } else {
+        $this->Session->setFlash(__('O registro não pode ser salvo, por favor tente novamente.'), 'default', ['class' => 'alert alert-danger']);
+      }
+    }
 
     $naturezas = $this->NaturezaOperacao->find('list');
     $estabelecimentos = $this->Estabelecimento->find('list');
@@ -105,29 +121,29 @@ class DashboardController extends AppController {
     $buscaEndereco = $this->CustomerAddress->getDataAddressType($clienteID, 1);
     $buscaLimite = $this->Limite->getDataLimite($clienteID);
 
-    $this->set(compact('breadcrumb', 'action', 'naturezas','estabelecimentos','condicoesPagamento','clis','portadores','transportadores', 'customers', 'customersPayment','vendedores','buscaPedido','buscaCliente','buscaEndereco','buscaLimite'));
-  
+    $this->set(compact('breadcrumb', 'action', 'naturezas', 'estabelecimentos', 'condicoesPagamento', 'clis', 'portadores', 'transportadores', 'customers', 'customersPayment', 'vendedores', 'buscaPedido', 'buscaCliente', 'buscaEndereco', 'buscaLimite'));
   }
 
-  public function edit($clienteID, $pedidoID = null) {
-    
+  public function edit($clienteID, $pedidoID = null)
+  {
+
     $breadcrumb = ["Dashboard" => "/"];
-    
+
     $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-		$this->Pedido->id = $pedidoID;
+    $this->Pedido->id = $pedidoID;
 
-		if ($this->request->is('post')) {
+    if ($this->request->is('post')) {
 
-			$this->request->data['Pedido']['user_updated_id'] = CakeSession::read("Auth.User.id");
+      $this->request->data['Pedido']['user_updated_id'] = CakeSession::read("Auth.User.id");
       $this->request->data['Pedido']['updated'] = date('Y-m-d H:i:s');
 
-			if ($this->Pedido->save($this->request->data)) {
-				$this->Session->setFlash(__('O registro foi alterado com sucesso.'), 'default', ['class' => 'alert alert-success']);
-			} else {
-				$this->Session->setFlash(__('O registro não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
-			}
-		}
-		
+      if ($this->Pedido->save($this->request->data)) {
+        $this->Session->setFlash(__('O registro foi alterado com sucesso.'), 'default', ['class' => 'alert alert-success']);
+      } else {
+        $this->Session->setFlash(__('O registro não pode ser salvo, Por favor tente de novo.'), 'default', ['class' => 'alert alert-danger']);
+      }
+    }
+
     $naturezas = $this->NaturezaOperacao->find('list');
     $estabelecimentos = $this->Estabelecimento->find('list');
     $condicoesPagamento = $this->CondicaoPagamento->find('list');
@@ -144,54 +160,58 @@ class DashboardController extends AppController {
 
     $this->set("action", "edit");
 
-    $this->set(compact('breadcrumb', 'action', 'naturezas','estabelecimentos','condicoesPagamento','clis','portadores','transportadores', 'customers', 'customersPayment','vendedores','buscaPedido','buscaCliente','buscaEndereco','buscaLimite'));
-		
-    $this->render("add");
-	}
+    $this->set(compact('breadcrumb', 'action', 'naturezas', 'estabelecimentos', 'condicoesPagamento', 'clis', 'portadores', 'transportadores', 'customers', 'customersPayment', 'vendedores', 'buscaPedido', 'buscaCliente', 'buscaEndereco', 'buscaLimite'));
 
-  public function produto(){
+    $this->render("add");
+  }
+
+  public function produto()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Produto";
 
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function financeiro(){
+  public function financeiro()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Financeiro";
 
-    $incomes = $this->Income->find("all", ["conditions" => ["Income.status_id" => [19, 20]], 
-                                           "fields" => ["sum(Income.valor_bruto) as total", 'count(Income.id) as qtd_total']
-                                          ]);
+    $incomes = $this->Income->find("all", [
+      "conditions" => ["Income.status_id" => [19, 20]],
+      "fields" => ["sum(Income.valor_bruto) as total", 'count(Income.id) as qtd_total']
+    ]);
     $incomes = $incomes[0][0];
     $totIn = $this->Income->find("all", ["fields" => ["sum(Income.valor_bruto) as total", 'count(Income.id) as qtd_total']]);
     $totIn = $totIn[0][0];
 
     $porcIn = 0;
     if ($totIn['total'] != null) {
-      $porcIn = ($incomes['total']/$totIn['total'])*100;
+      $porcIn = ($incomes['total'] / $totIn['total']) * 100;
     }
-    
-    $outcomesB = $this->Outcome->find("all", ["fields" => ["sum(Outcome.valor_bruto) as total", 'count(Outcome.id) as qtd_total', 'Outcome.status_id'],
-                                              'group' => ['Outcome.status_id']
-                                             ]);
+
+    $outcomesB = $this->Outcome->find("all", [
+      "fields" => ["sum(Outcome.valor_bruto) as total", 'count(Outcome.id) as qtd_total', 'Outcome.status_id'],
+      'group' => ['Outcome.status_id']
+    ]);
     $totOut = $this->Outcome->find("all", ["fields" => ["sum(Outcome.valor_bruto) as total", 'count(Outcome.id) as qtd_total']]);
     $totOut = $totOut[0][0];
 
     $outcomes = [];
     $totPend = 0;
-    for ($i=0; $i < count($outcomesB); $i++) { 
-      $porc = ($outcomesB[$i][0]['total']/$totOut['total'])*100;
+    for ($i = 0; $i < count($outcomesB); $i++) {
+      $porc = ($outcomesB[$i][0]['total'] / $totOut['total']) * 100;
       $outcomes[$outcomesB[$i]['Outcome']['status_id']] = ['total' => $outcomesB[$i][0]['total'], 'qtd_total' => $outcomesB[$i][0]['qtd_total'], 'porc' => $porc];
 
-      if (in_array($outcomesB[$i]['Outcome']['status_id'], [15,16])) {
+      if (in_array($outcomesB[$i]['Outcome']['status_id'], [15, 16])) {
         $totPend += $outcomesB[$i][0]['total'];
       }
     }
 
     $porcPendOut = 0;
     if ($totOut['total'] != null) {
-      $porcPendOut = ($totPend/$totOut['total'])*100;
+      $porcPendOut = ($totPend / $totOut['total']) * 100;
     }
 
     $data = $this->Outcome->find("all", ["conditions" => ["Outcome.status_id" => [15, 16]], 'limit' => 10, 'order' => ["Outcome.id" => "desc"]]);
@@ -201,10 +221,131 @@ class DashboardController extends AppController {
     $this->set(compact('breadcrumb', 'action', 'incomes', 'outcomes', 'porcIn', 'porcPendOut', 'data', 'totPend', 'status'));
   }
 
-  public function comercial(){
+  public function comercial()
+  {
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Comercial";
 
-    $this->set(compact('breadcrumb', 'action'));
+    if (CakeSession::read("Auth.User.is_seller") != true) {
+      $this->redirect('/customers');
+    }
+
+    $orders = $this->Order->find("all", [
+      "conditions" => [
+        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+        'Order.order_period_from >=' => date('Y-m-01'),
+        'Order.order_period_to <=' => date('Y-m-t'),
+      ],
+      "fields" => ["Order.*", "Customer.*"],
+    ]);
+
+    $groupedOrders = [];
+    $totalSalesRaw = 0;
+    $totalSalesPreviewRaw = 0;
+    $totalSalesEstimateRaw = 0;
+    foreach ($orders as $order) {
+      $groupedOrders[$order['Order']['status_id']][] = $order;
+      if ($order['Order']['status_id'] > 84) {
+        $totalSalesRaw = $totalSalesRaw + $order['Order']['total_not_formated'];
+      }
+
+      if ($order['Order']['status_id'] == 83) {
+        $totalSalesEstimateRaw = $totalSalesEstimateRaw + $order['Order']['total_not_formated'];
+      }
+
+      if ($order['Order']['status_id'] == 84) {
+        $totalSalesPreviewRaw = $totalSalesPreviewRaw + $order['Order']['total_not_formated'];
+      }
+    }
+
+    $totalSales = number_format($totalSalesRaw, 2, ',', '.');
+    $totalSalesPreview = number_format($totalSalesPreviewRaw, 2, ',', '.');
+    $totalSalesEstimate = number_format($totalSalesEstimateRaw, 2, ',', '.');
+
+
+    $goal = CakeSession::read("Auth.User.sales_goal_not_formated");
+
+    $percentageLeft = 0;
+    $goalLeft = 0;
+    if ($goal != null) {
+      $percentageLeft = ($totalSalesRaw / $goal) * 100;
+      $goalLeft = $goal - $totalSalesRaw;
+      $goalLeft = $goalLeft < 0 ? 0 : $goalLeft;
+    }
+
+    $workingDaysCurrentMonth = $this->workingDays();
+    $dailyGoal = 0;
+    if ($goal != null) {
+      $dailyGoal = ($goal / $workingDaysCurrentMonth);
+    }
+
+    $topSuppliers = $this->OrderItem->find("all", [
+      "conditions" => [
+        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+        'Order.order_period_from >=' => date('Y-m-01'),
+        'Order.order_period_to <=' => date('Y-m-t'),
+      ],
+      "fields" => ["Supplier.nome_fantasia", "sum(OrderItem.total) as total"],
+      'joins' => [
+        [
+          'table' => 'benefits',
+          'alias' => 'Benefit',
+          'type' => 'INNER',
+          'conditions' => [
+            'Benefit.id = CustomerUserItinerary.benefit_id',
+          ]
+        ],
+        [
+          'table' => 'suppliers',
+          'alias' => 'Supplier',
+          'type' => 'INNER',
+          'conditions' => [
+            'Supplier.id = Benefit.supplier_id',
+          ]
+        ],
+        [
+          'table' => 'customers',
+          'alias' => 'Customer',
+          'type' => 'INNER',
+          'conditions' => [
+            'Customer.id = Order.customer_id',
+          ]
+        ]
+      ],
+      'group' => ['Supplier.id'],
+      'order' => ['total' => 'desc'],
+      'limit' => 10
+    ]);
+
+    $this->set(compact('breadcrumb', 'action', 'groupedOrders', 'totalSales', 'goal', 'percentageLeft', 'totalSalesRaw', 'dailyGoal', 'totalSalesPreview', 'goalLeft', 'totalSalesEstimate', 'topSuppliers'));
+  }
+
+  private function workingDays()
+  {
+    // Get the current year and month
+    $currentYear = date('Y');
+    $currentMonth = date('m');
+
+    // Get the first day and last day of the current month
+    $firstDay = date('Y-m-01');
+    $lastDay = date('Y-m-t', strtotime($firstDay));
+
+    // Initialize a counter for working days
+    $workingDays = 0;
+
+    // Loop through each day in the month
+    $currentDate = $firstDay;
+    while ($currentDate <= $lastDay) {
+      // Check if the current day is a weekend (Saturday or Sunday)
+      $dayOfWeek = date('N', strtotime($currentDate));
+      if ($dayOfWeek < 6) {
+        $workingDays++;
+      }
+
+      // Move to the next day
+      $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+    }
+
+    return $workingDays;
   }
 }
