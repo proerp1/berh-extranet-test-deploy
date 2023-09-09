@@ -425,6 +425,13 @@
      <div class="col-md-4">
          <div class="card">
              <div class="card-body">
+                 <?php
+                    $waitingCredit = 0;
+                    if (isset($groupedOrders[86])) {
+                        foreach ($groupedOrders[86] as $order) {
+                            $waitingCredit += $order['Order']['total_not_formated'];
+                        }
+                    } ?>
 
                  <h3 class="box-title">Confirmação financeira</h3>
                  <div class="row sales-report">
@@ -433,7 +440,7 @@
                          <p>Aguardando liberação de crédito financeiro</p>
                      </div>
                      <div class="col-md-6 col-sm-6 col-xs-6 ">
-                         <h1 class="text-right text-info m-t-20">R$3.690,21</h1>
+                         <h1 class="text-right text-info m-t-20">R$<?php echo number_format($waitingCredit, 2, ',', '.'); ?></h1>
                      </div>
                  </div>
                  <div class="table-responsive">
@@ -472,9 +479,6 @@
                      <div class="col-md-6 col-sm-6 col-xs-6">
                          <h2> </h2>
                          <p>Lista dos 10 fornecedores com mais pedidos</p>
-                     </div>
-                     <div class="col-md-6 col-sm-6 col-xs-6 ">
-                         <h1 class="text-right text-info m-t-20">R$3.690,21</h1>
                      </div>
                  </div>
                  <div class="table-responsive">
