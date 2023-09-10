@@ -340,19 +340,23 @@
                          <h3 class="box-title">Forecast Diário</h3>
                      </div>
                      <div class="col">
-                         <select class="form-control pull-right row b-none">
-                             <option>Janeiro 2021</option>
-                             <option>Fevereiro 2021</option>
-                             <option>Março 2021</option>
-                             <option>Abril 2021</option>
-                             <option>Maio 2021</option>
+                         <select class="form-control pull-right row b-none" id="month_proposal">
+                             <?php foreach ($propMonths as $month) { ?>
+                                 <option value="<?php echo $month[0]['month']; ?>" <?php echo $month[0]['month'] == date('m/Y') ? 'selected="selected"' : ''; ?>><?php echo $month[0]['month']; ?></option>
+                             <?php } ?>
                          </select>
                      </div>
                  </div>
+                 <?php
+                    $proposalsTotal = 0;
+                    foreach ($proposals as $proposal) {
+                        $proposalsTotal += $proposal['Proposal']['workers_price_total_not_formatted'];
+                    }
+                    ?>
                  <div class="row sales-report">
 
                      <div class="col-md-12 col-sm-12 col-xs-12 ">
-                         <h1 class="text-right text-success m-t-20">R$ 69.000,00</h1>
+                         <h1 class="text-right text-success m-t-20" id="total_forecast">R$ <?php echo number_format($proposalsTotal, 2, ',', '.'); ?></h1>
                      </div>
                  </div>
                  <div class="table-responsive">
@@ -364,58 +368,14 @@
                                  <th>VALOR</th>
                              </tr>
                          </thead>
-                         <tbody>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-                             <tr>
-                                 <td>1</td>
-                                 <td class="txt-oflo">01/02/2021</td>
-                                 <td><span class="text-success">R$ 5.490,00</span></td>
-                             </tr>
-
+                         <tbody id="proposals_tbl">
+                             <?php foreach ($proposals as $k => $proposal) { ?>
+                                 <tr>
+                                     <td><?php echo $k + 1; ?></td>
+                                     <td class="txt-oflo"><?php echo $proposal['Proposal']['expected_closing_date']; ?></td>
+                                     <td><span class="text-success">R$ <?php echo $proposal['Proposal']['workers_price_total']; ?></span></td>
+                                 </tr>
+                             <?php } ?>
                          </tbody>
                      </table>
                  </div>
@@ -511,3 +471,34 @@
  <!-- ============================================================== -->
  <!-- city-weather -->
  <!-- ============================================================== -->
+
+ <script>
+     $(document).ready(function() {
+         $("#month_proposal").on("change", function() {
+            var month = $(this).val();
+
+            $.ajax({
+                url: "<?php echo $this->base; ?>/dashboard/getProposalByMonth",
+                type: "POST",
+                data: {
+                    month: month
+                },
+                success: function(data) {
+                    var data = JSON.parse(data);
+                    var html = '';
+                    var total = 0;
+                    $.each(data, function(key, value) {
+                        total += parseFloat(value.Proposal.workers_price_total_not_formatted);
+                        html += '<tr>';
+                        html += '<td>' + (key + 1) + '</td>';
+                        html += '<td class="txt-oflo">' + value.Proposal.expected_closing_date + '</td>';
+                        html += '<td><span class="text-success">R$ ' + value.Proposal.workers_price_total + '</span></td>';
+                        html += '</tr>';
+                    });
+                    $('#proposals_tbl').html(html);
+                    $('#total_forecast').html('R$ ' + total.toFixed(2).replace('.', ','));
+                }
+            });
+         });
+     })
+ </script>

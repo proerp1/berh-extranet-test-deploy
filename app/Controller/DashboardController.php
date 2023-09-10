@@ -3,7 +3,7 @@ class DashboardController extends AppController
 {
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Order', 'OrderItem'];
+  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal'];
 
   public function beforeFilter()
   {
@@ -317,7 +317,49 @@ class DashboardController extends AppController
       'limit' => 10
     ]);
 
-    $this->set(compact('breadcrumb', 'action', 'groupedOrders', 'totalSales', 'goal', 'percentageLeft', 'totalSalesRaw', 'dailyGoal', 'totalSalesPreview', 'goalLeft', 'totalSalesEstimate', 'topSuppliers'));
+    $proposals = $this->getProposals(date('m/Y'));
+
+    $propMonths = $this->Proposal->find("all", [
+      "conditions" => [
+        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+        'Proposal.created >=' => date('Y-m-01'),
+        'Proposal.created <=' => date('Y-m-t'),
+      ],
+      "fields" => ["DATE_FORMAT(Proposal.expected_closing_date, '%m/%Y') as month"],
+      'group' => ["DATE_FORMAT(Proposal.expected_closing_date, '%m/%Y')"],
+    ]);
+
+    $this->set(compact('breadcrumb', 'action', 'groupedOrders', 'totalSales', 'goal'));
+    $this->set(compact('percentageLeft', 'totalSalesRaw', 'dailyGoal', 'totalSalesPreview'));
+    $this->set(compact('goalLeft', 'totalSalesEstimate', 'topSuppliers', 'proposals', 'propMonths'));
+  }
+
+  public function getProposalByMonth(){
+    $this->autoRender = false;
+    $this->layout = 'ajax';
+
+    $month = $this->request->data('month');
+    $proposals = $this->getProposals($month);
+
+    echo json_encode($proposals);
+  }
+
+  private function getProposals($month){
+    $month = explode('/', $month);
+    $initalDate = $month[1] . '-' . $month[0] . '-01';
+    $finalDate = date($month[1] . '-' . $month[0] .'-t');
+
+    $proposals = $this->Proposal->find("all", [
+      "conditions" => [
+        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+        'Proposal.expected_closing_date >=' => $initalDate,
+        'Proposal.expected_closing_date <=' => $finalDate,
+      ],
+      "fields" => ["Proposal.*"],
+      'orderBy' => ['Proposal.expected_closing_date' => 'asc'],
+    ]);
+
+    return $proposals;
   }
 
   private function workingDays()
