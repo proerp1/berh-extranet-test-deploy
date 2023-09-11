@@ -120,7 +120,7 @@ class AtendimentosController extends AppController
             'email' => $data['Customer']['email'],
             'pergunta' => $data["Atendimento"]["message"],
             'resposta' => $data['Atendimento']['answer'],
-            'link'  => 'http://159.203.161.218/cliente'
+            'link'  => 'https://cliente.berh.com.br/'
         ],
             'template' => 'resposta',
             'subject'  => 'Resposta',
