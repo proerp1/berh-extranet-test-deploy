@@ -17,7 +17,7 @@
                          </div>
                      </div>
                      <div class="col-sm-8 mb-5 mb-xl-10">
-                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo CakeSession::read('Auth.User.name'); ?></a>
+                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Vendedores' : CakeSession::read('Auth.User.name'); ?></a>
 
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
@@ -27,7 +27,7 @@
                                      <path d="M12 22C14.6 22 17 21 18.7 19.4C17.9 16.9 15.2 15 12 15C8.8 15 6.09999 16.9 5.29999 19.4C6.99999 21 9.4 22 12 22Z" fill="currentColor" />
                                  </svg>
                              </span>
-                             <!--end::Svg Icon--><?php echo CakeSession::read('Auth.User.Group.name'); ?></a>
+                             <!--end::Svg Icon--><?php echo $is_admin ? '-' : CakeSession::read('Auth.User.Group.name'); ?></a>
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com011.svg-->
                              <span class="svg-icon svg-icon-4 me-1">
@@ -37,7 +37,7 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             <?php echo CakeSession::read('Auth.User.username'); ?>
+                             <?php echo $is_admin ? '-' : CakeSession::read('Auth.User.username'); ?>
                          </a>
                      </div>
 

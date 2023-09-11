@@ -3,7 +3,7 @@ class DashboardController extends AppController
 {
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal'];
+  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller'];
 
   public function beforeFilter()
   {
@@ -226,16 +226,21 @@ class DashboardController extends AppController
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Comercial";
 
-    if (CakeSession::read("Auth.User.is_seller") != true) {
+    if (CakeSession::read("Auth.User.is_seller") != true && CakeSession::read("Auth.User.Group.name") != 'Administrador') {
       $this->redirect('/customers');
     }
 
+    $cond = [
+      'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+      'Order.order_period_from >=' => date('Y-m-01'),
+      'Order.order_period_to <=' => date('Y-m-t'),
+    ];
+    if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
+      unset($cond['Customer.seller_id']);
+    }
+
     $orders = $this->Order->find("all", [
-      "conditions" => [
-        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
-        'Order.order_period_from >=' => date('Y-m-01'),
-        'Order.order_period_to <=' => date('Y-m-t'),
-      ],
+      "conditions" => $cond,
       "fields" => ["Order.*", "Customer.*"],
     ]);
 
@@ -264,6 +269,16 @@ class DashboardController extends AppController
 
 
     $goal = CakeSession::read("Auth.User.sales_goal_not_formated");
+    if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
+      $allGoals = $this->Seller->find("all", [
+        "conditions" => [
+          'Seller.status_id' => 1,
+          'Seller.is_seller' => 1,
+        ],
+        "fields" => ["sum(Seller.sales_goal) as total"],
+      ]);
+      $goal = $allGoals[0][0]['total'];
+    }
 
     $percentageLeft = 0;
     $goalLeft = 0;
@@ -280,11 +295,7 @@ class DashboardController extends AppController
     }
 
     $topSuppliers = $this->OrderItem->find("all", [
-      "conditions" => [
-        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
-        'Order.order_period_from >=' => date('Y-m-01'),
-        'Order.order_period_to <=' => date('Y-m-t'),
-      ],
+      "conditions" => $cond,
       "fields" => ["Supplier.nome_fantasia", "sum(OrderItem.total) as total"],
       'joins' => [
         [
@@ -319,19 +330,26 @@ class DashboardController extends AppController
 
     $proposals = $this->getProposals(date('m/Y'));
 
+    $propCond = [
+      'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+      'Proposal.created >=' => date('Y-m-01'),
+      'Proposal.created <=' => date('Y-m-t'),
+    ];
+    if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
+      unset($propCond['Customer.seller_id']);
+    }
+
     $propMonths = $this->Proposal->find("all", [
-      "conditions" => [
-        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
-        'Proposal.created >=' => date('Y-m-01'),
-        'Proposal.created <=' => date('Y-m-t'),
-      ],
+      "conditions" => $propCond,
       "fields" => ["DATE_FORMAT(Proposal.expected_closing_date, '%m/%Y') as month"],
       'group' => ["DATE_FORMAT(Proposal.expected_closing_date, '%m/%Y')"],
     ]);
 
+    $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
+
     $this->set(compact('breadcrumb', 'action', 'groupedOrders', 'totalSales', 'goal'));
     $this->set(compact('percentageLeft', 'totalSalesRaw', 'dailyGoal', 'totalSalesPreview'));
-    $this->set(compact('goalLeft', 'totalSalesEstimate', 'topSuppliers', 'proposals', 'propMonths'));
+    $this->set(compact('goalLeft', 'totalSalesEstimate', 'topSuppliers', 'proposals', 'propMonths', 'is_admin'));
   }
 
   public function getProposalByMonth(){
@@ -349,12 +367,17 @@ class DashboardController extends AppController
     $initalDate = $month[1] . '-' . $month[0] . '-01';
     $finalDate = date($month[1] . '-' . $month[0] .'-t');
 
+    $cond = [
+      'Customer.seller_id' => CakeSession::read('Auth.User.id'),
+      'Proposal.expected_closing_date >=' => $initalDate,
+      'Proposal.expected_closing_date <=' => $finalDate,
+    ];
+    if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
+      unset($cond['Customer.seller_id']);
+    }
+
     $proposals = $this->Proposal->find("all", [
-      "conditions" => [
-        'Customer.seller_id' => CakeSession::read('Auth.User.id'),
-        'Proposal.expected_closing_date >=' => $initalDate,
-        'Proposal.expected_closing_date <=' => $finalDate,
-      ],
+      "conditions" => $cond,
       "fields" => ["Proposal.*"],
       'orderBy' => ['Proposal.expected_closing_date' => 'asc'],
     ]);
@@ -364,10 +387,6 @@ class DashboardController extends AppController
 
   private function workingDays()
   {
-    // Get the current year and month
-    $currentYear = date('Y');
-    $currentMonth = date('m');
-
     // Get the first day and last day of the current month
     $firstDay = date('Y-m-01');
     $lastDay = date('Y-m-t', strtotime($firstDay));

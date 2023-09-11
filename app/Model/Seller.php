@@ -41,6 +41,11 @@ class Seller extends AppModel {
 			if (isset($val['Plan']['value'])) {
 				$results[$key]['Plan']['value'] = number_format($results[$key]['Plan']['value'],2,',','.');
 			}
+
+			if (isset($val[$this->alias]['sales_goal']) && !isset($val[$this->alias]['sales_goal_not_formated'])) {
+                $results[$key][$this->alias]['sales_goal_not_formated'] = $results[$key][$this->alias]['sales_goal'];
+                $results[$key][$this->alias]['sales_goal'] = number_format($results[$key][$this->alias]['sales_goal'], 2, ',', '.');
+            }
 		}
 
 		return $results;
