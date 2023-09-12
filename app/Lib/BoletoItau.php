@@ -37,9 +37,9 @@ class BoletoItau extends Controller
         return new Eduardokum\LaravelBoleto\Boleto\Banco\Itau([
             'logo' => APP.'webroot/img/logo-berh-colorido.png',
             'dataVencimento' => Carbon::parse($boleto['Income']['vencimento_nao_formatado']),
-            'valor' => $boleto['Income']['valor_total_nao_formatado'],
-            'multa' => ($boleto['Income']['valor_total_nao_formatado']*0.05), // 1% do valor do boleto após o vencimento
-            'juros' => 1, // 1% ao mês do valor do boleto
+            'valor' => (float)$boleto['Income']['valor_total_nao_formatado'],
+            'multa' => 0, // 5% do valor do boleto após o vencimento
+            'juros' => 30, // 30% ao mês do valor do boleto ou 1% ao dia
             'numero' => $boleto['Income']['nosso_numero'],
             'numeroDocumento' => $boleto['Income']['id'],
             'pagador' => $this->pagador($boleto['Customer']),
@@ -59,7 +59,7 @@ class BoletoItau extends Controller
                 $boleto['BankTicket']['instrucao_boleto_3'], 
                 $boleto['BankTicket']['instrucao_boleto_4'], 
             ],
-            'aceite' => 'S',
+            'aceite' => 'A',
             'especieDoc' => 'DM',
             'diasBaixaAutomatica'    => 58,
         ]);
