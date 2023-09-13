@@ -7,7 +7,8 @@ class ItineraryCSVParser extends Controller
     public $uses = [
         'Customer', 'CustomerUser', 'CustomerUserItinerary', 'CustomerDepartment',
         'MaritalStatus', 'Benefit', 'SalaryRange', 'CustomerUserAddress',
-        'CustomerUserBankAccount', 'CustomerPosition', 'CSVImport', 'CSVImportLine'
+        'CustomerUserBankAccount', 'CustomerPosition', 'CSVImport', 'CSVImportLine',
+        'BankCode'
     ];
 
     public function parse($tmpFile, $fileName, $customerId, $userId, $importedByCustomer = false, $shouldDeleteItinerary)
@@ -132,6 +133,8 @@ class ItineraryCSVParser extends Controller
                     'user_id' => $retUser['userId']
                 ]
             ]);
+            
+            $line++;
         }
 
         if($hasPartialError){
@@ -228,6 +231,61 @@ class ItineraryCSVParser extends Controller
                     'neighborhood' => $row[27],
                     'city' => $row[28],
                     'state' => $row[29],
+                    'address_type_id' => 1
+                ];
+
+                $this->CustomerUserAddress->create();
+                $this->CustomerUserAddress->save($addressData);
+            }
+        }
+
+        if ($row[30] != '' && $row[31] != '') {
+            $address = $this->CustomerUserAddress->find('first', [
+                'conditions' => [
+                    'customer_user_id' => $userId,
+                    'zip_code' => $row[30],
+                ]
+            ]);
+
+            if (!$address) {
+                $addressData = [
+                    'customer_id' => $customerId,
+                    'customer_user_id' => $userId,
+                    'zip_code' => $row[30],
+                    'address_line' => $row[31],
+                    'address_number' => $row[32],
+                    'address_complement' => $row[33],
+                    'neighborhood' => $row[34],
+                    'city' => $row[35],
+                    'state' => $row[36],
+                    'address_type_id' => 2
+                ];
+
+                $this->CustomerUserAddress->create();
+                $this->CustomerUserAddress->save($addressData);
+            }
+        }
+
+        if ($row[37] != '' && $row[38] != '') {
+            $address = $this->CustomerUserAddress->find('first', [
+                'conditions' => [
+                    'customer_user_id' => $userId,
+                    'zip_code' => $row[37],
+                ]
+            ]);
+
+            if (!$address) {
+                $addressData = [
+                    'customer_id' => $customerId,
+                    'customer_user_id' => $userId,
+                    'zip_code' => $row[37],
+                    'address_line' => $row[38],
+                    'address_number' => $row[39],
+                    'address_complement' => $row[40],
+                    'neighborhood' => $row[41],
+                    'city' => $row[42],
+                    'state' => $row[43],
+                    'address_type_id' => 3
                 ];
 
                 $this->CustomerUserAddress->create();
@@ -236,24 +294,33 @@ class ItineraryCSVParser extends Controller
         }
 
         if ($row[44] != '') {
+            $bankCode = $this->BankCode->find('first', [
+                'conditions' => [
+                    'code' => $row[46]
+                ]
+            ]);
+            $bank_id = !empty($bankCode['BankCode']['id']) ? $bankCode['BankCode']['id'] : null;
+
             $bankAccount = $this->CustomerUserBankAccount->find('first', [
                 'conditions' => [
                     'customer_user_id' => $userId,
-                    'bank_code' => $row[46],
+                    'bank_code_id' => $bank_id,
                     'acc_number' => $row[49],
                 ]
             ]);
 
-            if (!$bankAccount) {
+            if (!$bankAccount && $bank_id != null) {
                 $bankAccountData = [
                     'customer_id' => $customerId,
                     'customer_user_id' => $userId,
                     'account_type_id' => $row[44],
-                    'bank_code' => $row[46],
+                    'bank_code_id' => $bank_id,
                     'acc_number' => $row[49],
                     'acc_digit' => $row[50],
                     'branch_number' => $row[47],
                     'branch_digit' => $row[48],
+                    'pix_type'=> $row[57],
+                    'pix_id'=> $row[58],
                 ];
 
                 $this->CustomerUserBankAccount->create();
@@ -307,7 +374,7 @@ class ItineraryCSVParser extends Controller
                 'name' => $departmentName,
                 'customer_id' => $customerId
             ]);
-            $customerDepartment = $this->CustomerDepartment->find($this->CustomerDepartment->id);
+            $customerDepartment = $this->CustomerDepartment->find('first', ['conditions' => ['CustomerDepartment.id' => $this->CustomerDepartment->id]]);
         }
 
         return $customerDepartment;
