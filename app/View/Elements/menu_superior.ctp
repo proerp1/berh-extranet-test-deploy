@@ -52,6 +52,10 @@
                                     <div class="fw-bolder d-flex align-items-center fs-5">
                                         <?php echo CakeSession::read("Auth.User.name");?>
                                     </div>
+                                    <div class="d-flex flex-column fs-8" style="color: #666">
+                                        <?php echo CakeSession::read("Auth.User.username");?>
+                                        <span id="doc_text"><?php echo CakeSession::read("Auth.User.Group.name");  ?></span>
+                                    </div>
                                 </div>
                                 <!--end::Username-->
                             </div>
