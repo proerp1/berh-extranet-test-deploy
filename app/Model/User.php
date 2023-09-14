@@ -72,7 +72,7 @@ class User extends AppModel {
         }
 
 		if (isset($this->data[$this->alias]['password'])) {
-			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password']);
+			$this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
 		}
 		return true;
 	}

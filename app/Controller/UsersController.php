@@ -197,6 +197,7 @@ class UsersController extends AppController
 
         if ($this->request->is(['post', 'put'])) {
             $dados = $this->request->data;
+
             if ($this->Auth->login()) {
                 $user = $this->User->find("first", ['conditions' => ['User.username' => $dados['User']['username']]]);
 
@@ -219,7 +220,7 @@ class UsersController extends AppController
                 if ($user['User']['primeiro_acesso'] == 1) {
                     $this->redirect("/users/primeiro_acesso");
                 } else {
-                    $this->redirect($this->Auth->redirect());
+                    $this->redirect($this->Auth->redirectUrl());
                 }
             } else {
                 $this->Flash->set(__('Usuário e senha incorretos'), ['params' => ['class' => "alert alert-danger"]]);
