@@ -30,12 +30,15 @@ class ItineraryCSVParser extends Controller
         $hasPartialError = false;
 
         foreach ($csv->getRecords() as $row) {
-            if ($line == 0) {
-                $line++;
+            if ($line == 0 || empty($row[0])) {
+                if($line == 0){
+                    $line++;
+                }
                 continue;
             }
 
             if (!empty($row[0]) && $line == 1) {
+                $line++;
                 $cnpj = preg_replace('/\D/', '', $row[0]);
                 $file_error = false;
                 $file_error_message = '';
@@ -43,6 +46,7 @@ class ItineraryCSVParser extends Controller
                     // return ['success' => false, 'error' => 'O CNPJ do cliente não foi informado.'];
                     $file_error = true;
                     $file_error_message = 'O CNPJ do cliente não foi informado.';
+                    continue;
                 }
 
                 if ($customer != null) {
@@ -133,8 +137,6 @@ class ItineraryCSVParser extends Controller
                     'user_id' => $retUser['userId']
                 ]
             ]);
-            
-            $line++;
         }
 
         if($hasPartialError){
@@ -422,7 +424,7 @@ class ItineraryCSVParser extends Controller
                 'customer_id' => $customerId
             ]);
 
-            $position = $this->CustomerPosition->find($this->CustomerPosition->id);
+            $position = $this->CustomerPosition->find('first', ['conditions' => ['CustomerPosition.id' => $this->CustomerPosition->id]]);
         }
 
         return $position['CustomerPosition']['id'];
