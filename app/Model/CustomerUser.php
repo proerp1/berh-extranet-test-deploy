@@ -128,7 +128,7 @@ class CustomerUser extends AppModel
     public function beforeSave($options = [])
     {
         if (isset($this->data[$this->alias]['password'])) {
-            $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+            $this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
         }
 
         if (!empty($this->data[$this->alias]['data_nascimento'])) {
