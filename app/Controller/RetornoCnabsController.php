@@ -34,8 +34,8 @@ class RetornoCnabsController extends AppController
         $data = $this->Paginator->paginate('RetornoCnab', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 11]]);
 
-        $action = 'Retorno Sicoob';
-        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Sicoob' => ''];
+        $action = 'Retorno Itaú';
+        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Itaú' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
     }
     
@@ -61,8 +61,8 @@ class RetornoCnabsController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 11]]);
 
-        $action = 'Retorno Sicoob';
-        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Sicoob' => ['action' => 'index'], 'Novo' => ''];
+        $action = 'Retorno Itaú';
+        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Itaú' => ['action' => 'index'], 'Novo' => ''];
         $this->set("form_action", "add");
         $this->set(compact('statuses', 'action', 'breadcrumb'));
     }
@@ -84,7 +84,7 @@ class RetornoCnabsController extends AppController
         $data = $this->Paginator->paginate('TmpRetornoCnab', $condition);
 
         $action = 'Retorno - '.date('d/m/Y', strtotime($retorno['RetornoCnab']['data_arquivo']));
-        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Sicoob' => ['action' => 'index'], 'Detalhes' => ''];
+        $breadcrumb = ['Financeiro' => '', 'Cnab' => '', 'Retorno Itaú' => ['action' => 'index'], 'Detalhes' => ''];
         $this->set(compact('id', 'data', 'retorno', 'action', 'breadcrumb'));
     }
 

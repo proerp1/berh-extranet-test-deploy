@@ -23,7 +23,11 @@ class Income extends AppModel
         'Customer' => [
             'order' => ['Customer.nome_secundario' => 'asc']
         ],
-        'Order'
+        'Order',
+        'UserCreated' => [
+            'className' => 'User',
+            'foreignKey' => 'user_creator_id',
+        ],
     ];
 
     public $hasOne = [
@@ -63,10 +67,6 @@ class Income extends AppModel
 
         if (!empty($this->data[$this->alias]['valor_total'])) {
             $this->data[$this->alias]['valor_total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_total']);
-        }
-
-        if (!empty($this->data[$this->alias]['created'])) {
-            $this->data[$this->alias]['created'] = $this->priceFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
         if (!empty($this->data[$this->alias]['nosso_numero'])) {
@@ -142,7 +142,7 @@ class Income extends AppModel
                 $results[$key][$this->alias]['valor_pago'] = number_format($results[$key][$this->alias]['valor_pago'], 2, ',', '.');
             }
             if (isset($val[$this->alias]['created'])) {
-                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($results[$key][$this->alias]['created']));
+                $results[$key][$this->alias]['created'] = date("d/m/Y H:i:s", strtotime($results[$key][$this->alias]['created']));
             }
         }
 

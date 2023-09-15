@@ -29,12 +29,15 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
+                    <th>Número</th>
                     <th>Cliente</th>
                     <th>Período</th>
                     <th>Subtotal</th>
                     <th>Repasse</th>
                     <th>Taxa</th>
                     <th>Total</th>
+                    <th>Usuário</th>
+                    <th>Data de criação</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
             </thead>
@@ -47,12 +50,15 @@
                                     <?php echo $data[$i]["Status"]["name"] ?>
                                 </span>
                             </td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"] . ' - ' . $data[$i]["Order"]["order_period_to"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
@@ -67,7 +73,7 @@
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
+                        <td class="fw-bold fs-7 ps-4" colspan="12">Nenhum registro encontrado</td>
                     </tr>
                 <?php } ?>
             </tbody>

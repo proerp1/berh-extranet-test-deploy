@@ -130,6 +130,8 @@
                         <th>Vencimento</th>
                         <th>Valor a receber R$</th>
                         <th>Valor recebido R$</th>
+                        <th>Usuário</th>
+                        <th>Data de criação</th>
                         <th class="w-250px min-w-250px rounded-end">Saldo devedor</th>
                     </tr>
                 </thead>
@@ -144,6 +146,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_pago"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserCreated"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["created"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <?php 
                                         if ($data[$i]["Status"]['id'] == 15 and $data[$i]["Income"]['valor_pago'] < $data[$i]["Income"]['valor_total']){
@@ -158,7 +162,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="6">Nenhum registro encontrado</td>
+                            <td colspan="8">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>

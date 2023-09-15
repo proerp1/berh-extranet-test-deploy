@@ -22,7 +22,12 @@ class BenefitsController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Benefit.name LIKE' => "%".$_GET['q']."%", 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], [
+                'Benefit.code LIKE' => "%".$_GET['q']."%", 
+                'BenefitType.name LIKE' => "%".$_GET['q']."%", 
+                'Benefit.name LIKE' => "%".$_GET['q']."%", 
+                'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"
+            ]);
         }
 
         $data = $this->Paginator->paginate('Benefit', $condition);

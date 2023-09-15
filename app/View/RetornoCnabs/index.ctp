@@ -64,6 +64,8 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Arquivo</th>
                         <th>Data do arquivo</th>
+                        <th>Usuário</th>
+                        <th>Data do processamento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -78,6 +80,8 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/retorno_cnab/arquivo/'.$data[$i]["RetornoCnab"]["id"].'/'.$data[$i]["RetornoCnab"]["arquivo"] ?>"><?php echo $data[$i]["RetornoCnab"]["arquivo"]; ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i]["RetornoCnab"]["data_arquivo"])); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserCreated"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["RetornoCnab"]["created"])); ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/retorno_cnabs/detalhes/'.$data[$i]["RetornoCnab"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Detalhes
@@ -92,7 +96,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="5" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+                            <td colspan="6" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>
