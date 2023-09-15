@@ -25,7 +25,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th>Código</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
                         <th>Tipo</th>
                         <th>Name</th>
                         <th>Fornecedor</th>
