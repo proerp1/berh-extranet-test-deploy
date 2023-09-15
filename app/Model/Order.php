@@ -14,6 +14,10 @@ class Order extends AppModel {
 			'foreignKey' => 'user_creator_id'
 		],
         'CustomerCreator' => [
+            'className' => 'CustomerUser',
+            'foreignKey' => 'user_creator_id'
+        ],
+        'CustomerCreator' => [
 			'className' => 'CustomerUser',
 			'foreignKey' => 'user_creator_id'
 		],
