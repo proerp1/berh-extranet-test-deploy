@@ -66,6 +66,8 @@
                         <th>Conta origem</th>
                         <th>Conta destino</th>
                         <th>Valor</th>
+                        <th>Usuário</th>
+                        <th>Data de criação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -82,6 +84,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccountOrigin"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccountDest"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Transfer"]["value"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserCreated"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["Transfer"]["created"])); ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/transfers/edit/'.$data[$i]["Transfer"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

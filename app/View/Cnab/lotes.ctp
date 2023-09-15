@@ -72,11 +72,12 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Número da Remessa</th>
-                        <th>Data</th>
                         <th>Banco</th>
                         <th>Qtde</th>
                         <th>Total</th>
                         <th>Documento</th>
+                        <th>Usuário</th>
+                        <th>Data de criação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -91,7 +92,6 @@
                                     </span>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo str_pad($data[$i]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT) ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['CnabLote']['created'])) ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Bank']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['qtde'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo number_format($data[$i][0]['valor_total'],2,',','.') ?></td>
@@ -100,6 +100,8 @@
                                     $nome_arquivo = str_replace('.', '_', $data[$i]['CnabLote']['arquivo']);
                                 ?>
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base."/private_files/baixar/remessa_itau/".$nome_arquivo; ?>" download="<?php echo $nome_arquivo; ?>" target="_blank"><?php echo $data[$i]['CnabLote']['arquivo'] ?></a></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserCreated"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['CnabLote']['created'])) ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/cnab/detalhes_lote/'.$data[$i]["CnabLote"]["id"]; ?>" class="btn btn-info btn-sm">Visualizar</a>
                                 </td>

@@ -154,14 +154,15 @@ class CnabController extends AppController
         //$data = $this->Paginator->paginate('CnabLote', $condition);
 
         $data = $this->CnabLote->query("
-                    SELECT CnabLote.id, CnabLote.remessa, CnabLote.created, CnabLote.arquivo, 
-                    Status.name, Status.label, Bank.name,
+                    SELECT CnabLote.id, CnabLote.remessa, CnabLote.created, CnabLote.arquivo,
+                    Status.name, Status.label, Bank.name, UserCreated.name, 
                     COUNT(ci.id) AS qtde, SUM(i.valor_total) AS valor_total
                     FROM cnab_lotes CnabLote
                         INNER JOIN banks Bank ON Bank.id = CnabLote.bank_id
                         LEFT JOIN statuses Status ON Status.id = CnabLote.status_id
                         INNER JOIN cnab_items ci ON ci.cnab_lote_id = CnabLote.id AND ci.data_cancel = '1901-01-01'
                         INNER JOIN incomes i ON i.id = ci.income_id 
+                        LEFT JOIN users UserCreated on UserCreated.id = CnabLote.user_creator_id
                     WHERE CnabLote.data_cancel = '1901-01-01' 
                     ".$condition."
                     GROUP BY CnabLote.id 
