@@ -81,6 +81,9 @@ class CustomerUser extends AppModel
 
     public function customUnique($check){
         $cond = array_merge($check, ['CustomerUser.data_cancel' => '1901-01-01 00:00:00']);
+        if(!empty($this->id)){
+            $cond['CustomerUser.id !='] = $this->id;
+        }
         $emailUnique = $this->find('count', array(
             'conditions' => $cond,
             'recursive' => -1
