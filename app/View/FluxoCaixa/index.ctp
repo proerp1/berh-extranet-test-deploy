@@ -1,5 +1,5 @@
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "reports", "action" => "fluxo_caixa")); ?>/" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array( "controller" => "fluxo_caixa", "action" => "index")); ?>/" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -19,7 +19,7 @@
                     </button>
 
                     <?php if ($exportar): ?>
-                        <a href="<?php echo $this->base.'/reports/fluxo_caixa/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <a href="<?php echo $this->base.'/fluxo_caixa/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
                             <i class="fas fa-file-excel"></i>
                             Exportar
                         </a>
