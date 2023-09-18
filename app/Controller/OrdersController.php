@@ -192,7 +192,7 @@ class OrdersController extends AppController
         ];
         if (!empty($arr_cst_in_order)) {
             $conditions['CustomerUser.id NOT IN'] = $arr_cst_in_order;
-            $second_conditionp['CustomerUserItinerary.customer_user_id NOT IN'] = $arr_cst_in_order;
+            $second_condition['CustomerUserItinerary.customer_user_id NOT IN'] = $arr_cst_in_order;
         }
 
         $users_with_itinerary = $this->CustomerUserItinerary->find('all', [
