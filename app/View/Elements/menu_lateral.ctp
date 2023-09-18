@@ -127,7 +127,7 @@
                                 </div>
 
                                 <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'despesas') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'despesas']) ?>">
+                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'despesas_report') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'despesas_report', 'action' => 'index']) ?>">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
@@ -136,7 +136,7 @@
                                 </div>
 
                                 <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'fluxo_caixa') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'fluxo_caixa']) ?>">
+                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'fluxo_caixa') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'fluxo_caixa', 'action' => 'index']) ?>">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>

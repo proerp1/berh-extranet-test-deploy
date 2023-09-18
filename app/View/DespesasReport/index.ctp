@@ -1,5 +1,5 @@
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "reports", "action" => "despesas")); ?>/" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array( "controller" => "despesas_report", "action" => "index")); ?>/" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -19,7 +19,7 @@
                     </button>
 
                     <?php if ($exportar): ?>
-                        <a href="<?php echo $this->base.'/reports/despesas/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <a href="<?php echo $this->base.'/despesas_report/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
                             <i class="fas fa-file-excel"></i>
                             Exportar
                         </a>
@@ -85,9 +85,9 @@
                     <?php if (!empty($conta)): ?>
                         <tr>
                             <td colspan="4" class="fw-bold fs-7 ps-4"><?php echo $conta['BankAccount']['name'] ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $conta['BankAccount']['initial_balance_formated'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $conta['BankAccount']['initial_balance'] ?></td>
                         </tr>
-                        <?php $saldo = $conta['BankAccount']['initial_balance'] ?>
+                        <?php $saldo = $conta['BankAccount']['initial_balance_not_formated'] ?>
                     <?php endif ?>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>

@@ -280,12 +280,12 @@ class ExcelTemplate
 		$indx = 2;
 		$saldo = 0;
 		if (!empty($conta)) {
-			$saldo = $conta['BankAccount']['initial_balance'];
+			$saldo = $conta['BankAccount']['initial_balance_not_formated'];
 
 			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':D' . $indx);
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $indx, $conta['BankAccount']['name'])
-				->setCellValue('E' . $indx, $conta['BankAccount']['initial_balance_formated']);
+				->setCellValue('E' . $indx, $conta['BankAccount']['initial_balance']);
 		}
 
 		for ($i = 0; $i < count($dados); $i++) {
