@@ -63,4 +63,16 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+
+    public function gerarExcelDespesas($nome, $dados, $conta)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getDespesas($spreadsheet, $dados, $conta);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
 }
