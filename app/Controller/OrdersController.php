@@ -249,7 +249,7 @@ class OrdersController extends AppController
             'conditions' => ['CustomerUser.customer_id' => $order['Order']['customer_id']],
         ]);
 
-        $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
+        $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name'], 'order' => ['cast(Benefit.code as unsigned)' => 'asc']]);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
