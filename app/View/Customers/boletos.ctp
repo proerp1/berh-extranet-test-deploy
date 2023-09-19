@@ -20,13 +20,11 @@
     </form>
 
     <div class="card-body pt-0 py-3">
-    <?php echo $this->element("pagination"); ?>
-    <br>
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th>Status</th>
+                    <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Período</th>
                     <th>Vencimento</th>
                     <th>Subtotal</th>

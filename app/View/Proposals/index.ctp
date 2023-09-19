@@ -30,25 +30,25 @@
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
                 <thead>
-                    <tr>
-                        <th>Número</th>
+                    <tr class="fw-bolder text-muted bg-light">
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Número</th>
                         <th>Data</th>
                         <th>Data prev. fechamento</th>
                         <th>Data fechamento</th>
                         <th>Taxa Adm Vale Transporte</th>
-                        <th>Ações</th>
+                        <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
-                                <td><?php echo $data[$i]["Proposal"]["number"]; ?></td>
-                                <td><?php echo $data[$i]["Proposal"]["date"]; ?></td>
-                                <td><?php echo $data[$i]["Proposal"]["expected_closing_date"]; ?></td>
-                                <td><?php echo $data[$i]["Proposal"]["closing_date"]; ?></td>
-                                <td><?php echo $data[$i]["Proposal"]["transport_adm_fee"]; ?>%</td>
-                                <td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["number"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["date"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["expected_closing_date"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["closing_date"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["transport_adm_fee"]; ?>%</td>
+                                <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/proposals/edit/'.$id.'/'.$data[$i]["Proposal"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
@@ -60,7 +60,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="6">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="6">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>
