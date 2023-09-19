@@ -52,11 +52,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Período
+                                        Período
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></td>
@@ -66,11 +62,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Liberação do crédito
+                                        Liberação do crédito
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['credit_release_date']; ?></td>
@@ -78,11 +70,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Criado em
+                                        Criado em
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['created']; ?></td>
@@ -90,14 +78,22 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin008.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Criado por
+                                        Criado por
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->N° Pedido
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['id']; ?></td>
                             </tr>
                             <!--end::Date-->
                         </tbody>
@@ -162,7 +158,7 @@
 </form>
 
 <!--begin::Row-->
-<div class="row gy-5 g-xl-10">
+<div class="row gy-5 g-xl-10 mt-1">
     <!--begin::Col-->
     <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
@@ -415,13 +411,13 @@
                 </div>
                 <?php if ($order['Order']['status_id'] == 83) { ?>
                     <div class="col-4">
-                        <a href="#" class="btn btn-sm btn-info me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_itinerario">
-                            <i class="fas fa-bus"></i>
-                            Novo Itinerário
-                        </a>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
                             <i class="fas fa-user"></i>
                             Novo Beneficiário
+                        </a>
+                        <a href="#" class="btn btn-sm btn-info me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_itinerario">
+                            <i class="fas fa-bus"></i>
+                            Novo Itinerário
                         </a>
                     </div>
                 <?php } ?>
@@ -431,7 +427,7 @@
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 rounded-start">Status SPTrans</th>
+                        <th class="ps-4 rounded-start">Status</th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -558,7 +554,7 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_add_itinerario" role="dialog">
+<div class="modal fade" id="modal_add_itinerario" role="dialog">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -573,12 +569,12 @@
                 <div class="row">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Beneficiário</label>
-                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $customer_users_all)); ?>
+                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id_iti", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $customer_users_all)); ?>
                     </div>
 
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Benefício</label>
-                        <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione')); ?>
+                        <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione')); ?>
                     </div>
 
                     <div class="mb-7 col">
@@ -623,6 +619,14 @@
             decimal: ',',
             thousands: '.',
             precision: 2
+        });
+
+        $('#customer_user_id_iti').select2({
+            dropdownParent: $('#modal_add_itinerario')
+        });
+
+        $('#benefit_id').select2({
+            dropdownParent: $('#modal_add_itinerario')
         });
 
         $('.working_days_input').on('change', function() {

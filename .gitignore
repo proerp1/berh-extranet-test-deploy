@@ -9,3 +9,4 @@ _sftp-config.json
 *.DS_Store
 *.local
 /app/Config/email.php
+/composer.lock

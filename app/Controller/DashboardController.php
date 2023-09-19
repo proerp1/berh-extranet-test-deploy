@@ -3,7 +3,7 @@ class DashboardController extends AppController
 {
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller'];
+  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller', 'Income', 'Outcome', 'Status'];
 
   public function beforeFilter()
   {

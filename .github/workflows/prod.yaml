@@ -38,5 +38,5 @@ jobs:
           script: |
             cd /var/www/vhosts/berh.com.br/httpdocs/admin/
             export PATH=/var/www/vhosts/berh.com.br/.phpenv/shims:$PATH
-            php composer.phar install
+            php composer.phar update
             vendor/bin/phinx migrate -e production
