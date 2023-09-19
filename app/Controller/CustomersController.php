@@ -103,7 +103,7 @@ class CustomersController extends AppController
         }
 
         if (isset($_GET['exportar'])) {
-            $nome = 'clientes_locaweb_' . date('d_m_Y_H_i_s') . '.csv';
+            $nome = 'clientes_locaweb_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Customer->find('all', ['conditions' => $condition, 'recursive' => -1, 'fields' => ['nome_primario', 'nome_secundario', 'email']]);
 
