@@ -345,9 +345,9 @@
                  <?php
                     $proposalsTotal = 0;
                     foreach ($proposals as $proposal) {
-                        $proposalsTotal += $proposal['Proposal']['workers_price_total_not_formatted'];
+                        $proposalsTotal += $proposal['Proposal']['total_price_not_formatted'];
                     }
-                    ?>
+                ?>
                  <div class="row sales-report">
 
                      <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -356,19 +356,19 @@
                  </div>
                  <div class="table-responsive">
                      <table class="table">
-                         <thead class="fw-bolder text-muted bg-light">
-                             <tr>
-                                 <th>#</th>
+                         <thead>
+                             <tr class="fw-bolder text-muted bg-light">
+                                 <th class="ps-4 rounded-start">#</th>
                                  <th>DATA</th>
-                                 <th>VALOR</th>
+                                 <th class="rounded-end">VALOR</th>
                              </tr>
                          </thead>
                          <tbody id="proposals_tbl">
                              <?php foreach ($proposals as $k => $proposal) { ?>
                                  <tr>
-                                     <td><?php echo $k + 1; ?></td>
-                                     <td class="txt-oflo"><?php echo $proposal['Proposal']['expected_closing_date']; ?></td>
-                                     <td><span class="text-success">R$ <?php echo $proposal['Proposal']['workers_price_total']; ?></span></td>
+                                     <td class="fw-bold fs-7 ps-4"><?php echo $k + 1; ?></td>
+                                     <td class="fw-bold fs-7 ps-4 txt-oflo"><?php echo $proposal['Proposal']['expected_closing_date']; ?></td>
+                                     <td class="fw-bold fs-7 ps-4"><span class="text-success">R$ <?php echo $proposal['Proposal']['total_price']; ?></span></td>
                                  </tr>
                              <?php } ?>
                          </tbody>
@@ -401,21 +401,21 @@
                  <div class="table-responsive">
                      <table class="table">
                          <thead class="fw-bolder text-muted bg-light">
-                             <tr>
-                                 <th>DE</th>
+                             <tr class="fw-bolder text-muted bg-light">
+                                 <th class="ps-4 rounded-start">DE</th>
                                  <th>ATÉ</th>
                                  <th>CLIENTE</th>
-                                 <th>VALOR</th>
+                                 <th class="rounded-end">VALOR</th>
                              </tr>
                          </thead>
                          <tbody>
                              <?php if (isset($groupedOrders[86])) { ?>
                                  <?php foreach ($groupedOrders[86] as $order) { ?>
                                      <tr>
-                                         <td><?php echo $order['Order']['order_period_from']; ?></td>
-                                         <td><?php echo $order['Order']['order_period_to']; ?></td>
-                                         <td><?php echo $order['Customer']['nome_primario']; ?></td>
-                                         <td><?php echo $order['Order']['total']; ?></td>
+                                         <td class="fw-bold fs-7 ps-4"><?php echo $order['Order']['order_period_from']; ?></td>
+                                         <td class="fw-bold fs-7 ps-4"><?php echo $order['Order']['order_period_to']; ?></td>
+                                         <td class="fw-bold fs-7 ps-4"><?php echo $order['Customer']['nome_primario']; ?></td>
+                                         <td class="fw-bold fs-7 ps-4"><?php echo $order['Order']['total']; ?></td>
                                      </tr>
                                  <?php } ?>
                              <?php } ?>
@@ -439,18 +439,18 @@
                  <div class="table-responsive">
                      <table class="table">
                          <thead class="fw-bolder text-muted bg-light">
-                             <tr>
-                                 <th>#</th>
+                             <tr class="fw-bolder text-muted bg-light">
+                                 <th class="ps-4 rounded-start">#</th>
                                  <th>FORNECEDOR</th>
-                                 <th>VALOR</th>
+                                 <th class="rounded-end">VALOR</th>
                              </tr>
                          </thead>
                          <tbody>
                              <?php foreach ($topSuppliers as $k => $order) { ?>
                                  <tr>
-                                     <td><?php echo $k + 1; ?></td>
-                                     <td><?php echo $order['Supplier']['nome_fantasia']; ?></td>
-                                     <td>R$<?php echo number_format($order[0]['total'], 2, ',', '.'); ?></td>
+                                     <td class="fw-bold fs-7 ps-4"><?php echo $k + 1; ?></td>
+                                     <td class="fw-bold fs-7 ps-4"><?php echo $order['Supplier']['nome_fantasia']; ?></td>
+                                     <td class="fw-bold fs-7 ps-4">R$<?php echo number_format($order[0]['total'], 2, ',', '.'); ?></td>
                                  </tr>
                              <?php } ?>
 
@@ -483,11 +483,11 @@
                     var html = '';
                     var total = 0;
                     $.each(data, function(key, value) {
-                        total += parseFloat(value.Proposal.workers_price_total_not_formatted);
+                        total += parseFloat(value.Proposal.total_price_not_formatted);
                         html += '<tr>';
                         html += '<td>' + (key + 1) + '</td>';
                         html += '<td class="txt-oflo">' + value.Proposal.expected_closing_date + '</td>';
-                        html += '<td><span class="text-success">R$ ' + value.Proposal.workers_price_total + '</span></td>';
+                        html += '<td><span class="text-success">R$ ' + value.Proposal.total_price + '</span></td>';
                         html += '</tr>';
                     });
                     $('#proposals_tbl').html(html);

@@ -120,12 +120,14 @@ class Proposal extends AppModel
 
     private function formatPriceFieldAfterFind(&$results,  $val, $fieldName, $decimalpoint = ',', $separator = '.')
     {
+        $notFormattedFieldName = $fieldName.'_not_formatted';
+        $price = 0;
         if (!empty($val[$this->alias][$fieldName])) {
-            $notFormattedFieldName = $fieldName.'_not_formatted';
-
-            $results[$this->alias][$notFormattedFieldName] = $val[$this->alias][$fieldName];
-            $results[$this->alias][$fieldName] = number_format($val[$this->alias][$fieldName], 2, $decimalpoint, $separator);
+            $price = $val[$this->alias][$fieldName];
         }
+
+        $results[$this->alias][$notFormattedFieldName] = $price;
+        $results[$this->alias][$fieldName] = number_format($price, 2, $decimalpoint, $separator);
     }
 
     public function getNextNumber()
