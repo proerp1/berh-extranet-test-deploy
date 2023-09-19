@@ -10,13 +10,8 @@
          <div class="card mb-5 mb-xl-10">
              <div class="card-body pt-9 pb-0">
                  <div class="row">
-                     <div class="col-sm-4 mb-5 mb-xl-10">
-                         <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
-                             <img src="<?php echo $this->base . '/img/profiles/avatar.png'; ?>" alt="image" />
-                             <div class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-white h-20px w-20px"></div>
-                         </div>
-                     </div>
-                     <div class="col-sm-8 mb-5 mb-xl-10">
+                     
+                     <div class="col-sm-12 mb-5 mb-xl-10">
                          <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Vendedores' : CakeSession::read('Auth.User.name'); ?></a>
 
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
