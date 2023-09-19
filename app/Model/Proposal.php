@@ -45,12 +45,19 @@ class Proposal extends AppModel
         $this->formatDateFieldBeforeSave('expected_closing_date');
         $this->formatDateFieldBeforeSave('closing_date');
 
-        $this->formatPriceFieldBeforeSave('workers_price');
-        $this->formatPriceFieldBeforeSave('workers_price_total');
+        $this->formatPriceFieldBeforeSave('transport_workers_price');
+        $this->formatPriceFieldBeforeSave('transport_workers_price_total');
         $this->formatPriceFieldBeforeSave('transport_deli_fee');
+        $this->formatPriceFieldBeforeSave('meal_workers_price');
+        $this->formatPriceFieldBeforeSave('meal_workers_price_total');
         $this->formatPriceFieldBeforeSave('meal_deli_fee');
+        $this->formatPriceFieldBeforeSave('fuel_workers_price');
+        $this->formatPriceFieldBeforeSave('fuel_workers_price_total');
         $this->formatPriceFieldBeforeSave('fuel_deli_fee');
+        $this->formatPriceFieldBeforeSave('multi_card_workers_price');
+        $this->formatPriceFieldBeforeSave('multi_card_workers_price_total');
         $this->formatPriceFieldBeforeSave('multi_card_deli_fee');
+        $this->formatPriceFieldBeforeSave('total_price');
 
         return true;
     }
@@ -63,17 +70,24 @@ class Proposal extends AppModel
             $this->formatDateFieldAfterFind($results[$key], $val, 'expected_closing_date');
             $this->formatDateFieldAfterFind($results[$key], $val, 'closing_date');
 
-            $this->formatPriceFieldAfterFind($results[$key], $val, 'workers_price');
-            $this->formatPriceFieldAfterFind($results[$key], $val, 'workers_price_total');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'transport_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'transport_workers_price_total');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'management_feel', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'transport_adm_fee', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'transport_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'meal_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'meal_workers_price_total');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'meal_adm_fee', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'meal_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'fuel_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'fuel_workers_price_total');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'fuel_adm_fee', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'fuel_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_workers_price_total');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_adm_fee', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'total_price');
         }
 
         return $results;

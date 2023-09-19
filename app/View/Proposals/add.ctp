@@ -30,27 +30,6 @@
                         <?php echo $this->Form->input('closing_date', ['type' => 'text', 'placeholder' => 'Data do fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
                     </div>
                 </div>
-
-                <div class="mb-7 col-4">
-                    <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
-                    <?php echo $this->Form->input('workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-                </div>
-
-                <div class="mb-7 col-4">
-                    <label class="form-label">Valor por colaborador</label>
-                    <div class="input-group">
-                        <span class="input-group-text">R$</span>
-                        <?php echo $this->Form->input('workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
-                    </div>
-                </div>
-
-                <div class="mb-7 col-4">
-                    <label class="form-label">Total por colaborador</label>
-                    <div class="input-group">
-                        <span class="input-group-text">R$</span>
-                        <?php echo $this->Form->input('workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-                    </div>
-                </div>
             </div>
 
             <div class="row">
@@ -82,6 +61,27 @@
                                     <?php echo $this->Form->input('management_feel', ['type' => 'text', 'placeholder' => 'Feel da gestão', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('transport_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('transport_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('transport_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -104,6 +104,27 @@
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
                                     <?php echo $this->Form->input('meal_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('meal_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('meal_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('meal_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
                         </div>
@@ -130,6 +151,27 @@
                                     <?php echo $this->Form->input('fuel_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('fuel_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('fuel_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('fuel_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,7 +196,36 @@
                                     <?php echo $this->Form->input('multi_card_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('multi_card_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('multi_card_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('multi_card_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="mb-7 col-4">
+                    <label class="form-label">Total geral</label>
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <?php echo $this->Form->input('total_price', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total geral', 'class' => 'form-control mb-3 mb-lg-0']); ?>
                     </div>
                 </div>
             </div>
@@ -184,24 +255,51 @@
             precision: 2
         });
 
-        $("#ProposalWorkersQty, #ProposalWorkersPrice").on("change", function(){
-            var qty = parseInt(transformPrice($("#ProposalWorkersQty").val()));
-            var price = parseFloat(transformPrice($("#ProposalWorkersPrice").val()));
+        $("#ProposalTransportWorkersQty, #ProposalTransportWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalTransportWorkersQty", "#ProposalTransportWorkersPrice", "#ProposalTransportWorkersPriceTotal");
+        });
 
-            var total = 0;
-            if (qty > 0 && price > 0) {
-                total = qty * price;
-            }
+        $("#ProposalMealWorkersQty, #ProposalMealWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalMealWorkersQty", "#ProposalMealWorkersPrice", "#ProposalMealWorkersPriceTotal");
+        });
 
-            $("#ProposalWorkersPriceTotal").val(formata_dinheiro(total, 2, ',', '.'));
+        $("#ProposalFuelWorkersQty, #ProposalFuelWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalFuelWorkersQty", "#ProposalFuelWorkersPrice", "#ProposalFuelWorkersPriceTotal");
+        });
+
+        $("#ProposalMultiCardWorkersQty, #ProposalMultiCardWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalMultiCardWorkersQty", "#ProposalMultiCardWorkersPrice", "#ProposalMultiCardWorkersPriceTotal");
+        });
+
+        $("#ProposalTransportWorkersPriceTotal, #ProposalMealWorkersPriceTotal, #ProposalFuelWorkersPriceTotal, #ProposalMultiCardWorkersPriceTotal").on("change", function () {
+            var total = parseFloat(transformPrice($('#ProposalTransportWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMealWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalFuelWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMultiCardWorkersPriceTotal').val()));
+
+            $('#ProposalTotalPrice').val(formata_dinheiro(total, 2, ',', '.'));
         });
     });
 
+    function calculateTotal(qtyInputId, priceInputId, totalInputId) {
+        var qty = parseInt(transformPrice($(qtyInputId).val()));
+        var price = parseFloat(transformPrice($(priceInputId).val()));
+
+        var total = 0;
+        if (qty > 0 && price > 0) {
+            total = qty * price;
+        }
+
+        $(totalInputId).val(formata_dinheiro(total, 2, ',', '.'));
+        $(totalInputId).change();
+    }
+
     function transformPrice(price)
     {
-        var newPrice = replaceAll(price, ".", "");
-        newPrice = replaceAll(newPrice, ",", ".");
+        if (price != '') {
+            var newPrice = replaceAll(price, ".", "");
+            newPrice = replaceAll(newPrice, ",", ".");
 
-        return newPrice;
+            return newPrice;
+        }
+
+        return 0;
     }
 </script>
