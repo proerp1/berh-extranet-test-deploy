@@ -98,13 +98,13 @@ class ExcelConfigurationComponent extends Component {
 						'table' => 'customer_user_addresses',
 						'alias' => 'CustomerUserAddress',
 						'type' => 'LEFT',
-						'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id']
+						'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id and CustomerUserAddress.address_type_id = 1']
 					],
 					[
-						'table' => 'customer_addresses',
+						'table' => 'customer_user_addresses',
 						'alias' => 'CustomerAddress',
 						'type' => 'LEFT',
-						'conditions' => ['CustomerAddress.customer_id = Customer.id']
+						'conditions' => ['CustomerAddress.customer_user_id = CustomerUser.id and CustomerAddress.address_type_id = 2']
 					],
 					[
 						'table' => 'customer_user_bank_accounts',
