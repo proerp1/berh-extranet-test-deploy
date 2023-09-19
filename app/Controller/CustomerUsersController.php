@@ -685,7 +685,7 @@ class CustomerUsersController extends AppController
     }
 
     public function upload_csv(){
-        if ($this->request->is('post') && !empty($this->request->data['file'])) {
+        if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
         
             $uploadedFile = $this->request->data['file'];
             $deleteItinerary = $this->request->data['option_itinerary'];
@@ -694,6 +694,9 @@ class CustomerUsersController extends AppController
             $ret = $csv->parse($uploadedFile['tmp_name'], $uploadedFile['name'], $this->request->data['customer_id'], CakeSession::read("Auth.User.id"), false, $deleteItinerary);
 
             $this->redirect("/customer_users/csv_import_result/".$this->request->data['customer_id'].'/'.$ret['file_id']);
+        } else {
+            $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
         }
     }
 
