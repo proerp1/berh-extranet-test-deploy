@@ -161,7 +161,7 @@ echo $this->element("abas_customers", array('id' => $id));
                 <input type="hidden" name="customer_id" value="<?php echo $id; ?>">
                 <div class="modal-body">
                     <p>Importar Beneficiários e Itinerários</p>
-                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
                     <div class="mt-10">
                         <div class="form-check form-check-custom form-check-solid">
                             <input class="form-check-input" type="radio" name="option_itinerary" value="2" id="flexRadioChecked1" checked="checked" />
