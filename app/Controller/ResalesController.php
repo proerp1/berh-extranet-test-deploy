@@ -112,7 +112,7 @@ class ResalesController extends AppController
     }
 
     /*********************
-                VENDEDORES
+                EXECUTIVOS
     **********************/
     public function sellers($resale_id)
     {
@@ -132,14 +132,14 @@ class ResalesController extends AppController
         $this->Resale->id = $resale_id;
         $resale = $this->Resale->read();
 
-        $action = 'Vendedores';
+        $action = 'Executivos';
 
         $data = $this->Paginator->paginate('Seller', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
 
         $breadcrumb = [
             $resale['Resale']['nome_fantasia'] => ['controller' => 'resales', 'action' => 'edit', $resale_id], 
-            'Vendedores' => ''
+            'Executivos' => ''
         ];
         $this->set(compact('status', 'data', 'resale_id', 'action', 'breadcrumb'));
     }
@@ -152,20 +152,20 @@ class ResalesController extends AppController
             if ($this->Seller->validates()) {
                 $this->request->data['Seller']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Seller->save($this->request->data)) {
-                    $this->Flash->set(__('O vendedor foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O executivo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'sellers/'.$resale_id]);
                 } else {
-                    $this->Flash->set(__('O vendedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O executivo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Flash->set(__('O vendedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O executivo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
         $this->Resale->id = $resale_id;
         $resale = $this->Resale->read();
 
-        $action = 'Vendedores';
+        $action = 'Executivos';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $vencimentos = $this->Vencimento->find('list');
@@ -185,10 +185,10 @@ class ResalesController extends AppController
             $this->Seller->validates();
             $this->request->data['Seller']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Seller->save($this->request->data)) {
-                $this->Flash->set(__('O vendedor foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O executivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'sellers/'.$resale_id]);
             } else {
-                $this->Flash->set(__('O vendedor não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O executivo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -199,13 +199,13 @@ class ResalesController extends AppController
         $this->Resale->id = $resale_id;
         $resale = $this->Resale->read();
 
-        $action = 'Vendedores';
+        $action = 'Executivos';
             
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $vencimentos = $this->Vencimento->find('list');
         $breadcrumb = [
             $resale['Resale']['nome_fantasia'] => ['controller' => 'resales', 'action' => 'edit', $resale_id], 
-            'Alterar Vendedor' => ''
+            'Alterar Executivo' => ''
         ];
 
         $this->set("form_action", "../resales/edit_seller/".$resale_id);
@@ -224,7 +224,7 @@ class ResalesController extends AppController
         $this->request->data['Seller']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Seller->save($this->request->data)) {
-            $this->Flash->set(__('O vendedor foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('O executivo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'sellers/'.$resale_id]);
         }
     }

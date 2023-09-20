@@ -241,7 +241,7 @@
                     <?php echo $this->Form->input('cod_franquia', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Vendedor</label>
+                    <label class="fw-semibold fs-6 mb-2">Executivo</label>
                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
 

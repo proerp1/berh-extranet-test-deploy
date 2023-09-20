@@ -94,7 +94,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="control-label">Vendedor</label>
+                                        <label class="control-label">Executivo</label>
                                         <select class="form-control" name="data[Pedido][vendedorIDDatasul]">
                                             <option value="">Selecione...</option>
                                             <?php 

@@ -12,7 +12,7 @@
                  <div class="row">
                      
                      <div class="col-sm-12 mb-5 mb-xl-10">
-                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Vendedores' : CakeSession::read('Auth.User.name'); ?></a>
+                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Executivos' : CakeSession::read('Auth.User.name'); ?></a>
 
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
@@ -49,11 +49,11 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $totalSalesRaw; ?>" data-kt-countup-prefix="$">0</div>
+                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $goal; ?>" data-kt-countup-prefix="R$">0</div>
                          </div>
                          <!--end::Number-->
                          <!--begin::Label-->
-                         <div class="fw-bold fs-6 text-gray-400">Vendas</div>
+                         <div class="fw-bold fs-6 text-gray-400">Meta Mensal</div>
                          <!--end::Label-->
                      </div>
                      <!--end::Stat-->
@@ -69,11 +69,11 @@
                                  </svg>
                              </span>
                              <!--end::Svg Icon-->
-                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $percentageLeft; ?>" data-kt-countup-suffix="%">0</div>
+                             <div class="fs-2 fw-bolder" data-kt-countup="true" data-kt-countup-value="<?php echo $totalSalesRaw; ?>" data-kt-countup-prefix="R$">0</div>
                          </div>
                          <!--end::Number-->
                          <!--begin::Label-->
-                         <div class="fw-bold fs-6 text-gray-400">Realizado</div>
+                         <div class="fw-bold fs-6 text-gray-400">Vendas</div>
                          <!--end::Label-->
                      </div>
                      <!--end::Stat-->
@@ -93,7 +93,7 @@
                          </div>
                          <!--end::Number-->
                          <!--begin::Label-->
-                         <div class="fw-bold fs-6 text-gray-400">Success Rate</div>
+                         <div class="fw-bold fs-6 text-gray-400">% Meta</div>
                          <!--end::Label-->
                      </div>
                      <!--end::Stat-->

@@ -9,7 +9,7 @@
 		<a class="nav-link <?php echo (in_array($this->request->params['action'], ['users', 'edit_user', 'add_user']) and $tipo == 'revenda') ? 'active' : '' ?>" href="<?php echo $this->base.'/resales/users/'.$id.'?tipo=revenda'; ?>">Usuários da revenda</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['sellers', 'edit_seller', 'add_seller']) ? 'active' : '' ?>" href="<?php echo $this->base.'/resales/sellers/'.$id; ?>">Vendedores</a>
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['sellers', 'edit_seller', 'add_seller']) ? 'active' : '' ?>" href="<?php echo $this->base.'/resales/sellers/'.$id; ?>">Executivos</a>
 	</li>
 	<?php if (isset($seller_id)) { ?>
 		<li class="nav-item">

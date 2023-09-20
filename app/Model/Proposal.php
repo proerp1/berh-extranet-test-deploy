@@ -88,6 +88,7 @@ class Proposal extends AppModel
             $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_adm_fee', '.', '');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_deli_fee');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'total_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'workers_price_total');
         }
 
         return $results;
