@@ -55,10 +55,10 @@
                             </div>
 
                             <div class="mb-7 col-4">
-                                <label class="form-label">Feel da gestão</label>
+                                <label class="form-label">PGE*</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('management_feel', ['type' => 'text', 'placeholder' => 'Feel da gestão', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('management_feel', ['type' => 'text', 'placeholder' => 'PGE', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
 
@@ -82,6 +82,8 @@
                                     <?php echo $this->Form->input('transport_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
                                 </div>
                             </div>
+
+                            <i>*PGE Participação Gestão Eficiente</i>
                         </div>
                     </div>
                 </div>

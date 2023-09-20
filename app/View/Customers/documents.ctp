@@ -65,25 +65,25 @@
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
                 <thead>
-                    <tr>
-                        <th>Status</th>
+                    <tr class="fw-bolder text-muted bg-light">
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
                         <th>Documento</th>
-                        <th>Ações</th>
+                        <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
-                                <td>
+                                <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
-                                <td><?php echo $data[$i]["Document"]["name"]; ?></td>
-                                <td><a href="<?php echo $this->base.'/files/document/file/'.$data[$i]["Document"]["id"].'/'.$data[$i]["Document"]["file"] ?>"><?php echo $data[$i]["Document"]["file"] ?></a></td>
-                                <td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Document"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/document/file/'.$data[$i]["Document"]["id"].'/'.$data[$i]["Document"]["file"] ?>"><?php echo $data[$i]["Document"]["file"] ?></a></td>
+                                <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/customers/edit_document/'.$id.'/'.$data[$i]["Document"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
@@ -95,7 +95,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td colspan="4">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>
