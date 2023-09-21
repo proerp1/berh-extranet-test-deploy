@@ -246,7 +246,7 @@
                 </div>
 
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Comissão (%)</label>
+                    <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
                     <?php echo $this->Form->input('commission_fee_percentage', ["class" => "form-control mb-3 mb-lg-0", "Placeholder" => "Comissão"]);?>
                 </div>
             </div>
