@@ -46,7 +46,7 @@ class ExcelGeneratorComponent extends Component
 
         $this->templates_list->getBaixaManual($spreadsheet, $dados);
 
-        $local_salva = APP.'Private/excel/'.$nome;
+        $local_salva = APP.'webroot/files/excel/'.$nome;
 
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);

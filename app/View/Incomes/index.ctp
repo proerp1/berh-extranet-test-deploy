@@ -145,10 +145,10 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
+                        <th>Status</th>
                         <th>Código</th>
                         <th>Cliente</th>
-                        <th>Descrição</th>
                         <th>Conta bancária</th>
                         <th>Data competência</th>
                         <th>Vencimento</th>
@@ -162,6 +162,7 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>
@@ -169,7 +170,6 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_competencia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
