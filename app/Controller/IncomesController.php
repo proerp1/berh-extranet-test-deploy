@@ -77,10 +77,10 @@ class IncomesController extends AppController
             if (isset($_GET['exportar'])) {
                 $data = $this->Income->find('all', ['conditions' => $condition, 'order' => ['Income.vencimento' => 'desc'], 'group' => 'Income.id']);
 
-                $nome = 'contas_receber_'.date('d_m_Y');
+                $nome = 'contas_receber_'.date('d_m_Y').".xlsx";
                 
                 $this->ExcelGenerator->gerarExcelContasReceber($nome, $data);
-                $this->redirect("/files/excel/".$nome.".xlsx");
+                $this->redirect("/files/excel/".$nome);
             } else {
 
                 $this->Income->recursive = -1;

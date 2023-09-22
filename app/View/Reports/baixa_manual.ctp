@@ -54,7 +54,7 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-						<th class="ps-4 w-150px min-w-150px rounded-start">Código associado</th>
+						<th class="ps-4 w-150px min-w-150px rounded-start">CNPJ associado</th>
 						<th>Cliente</th>
 						<th>Mensalidade</th>
 						<th>Vencimento</th>
@@ -69,14 +69,14 @@
 					<?php if ($data) { ?>
 						<?php for ($i=0; $i < count($data); $i++) { ?>
 							<tr>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['c']['codigo_associado'] ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['c']['documento'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['c']['nome_secundario'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['i']['mensalidade'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i]['i']['vencimento'])) ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i]['i']['data_pagamento'])) ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['i']['data_pagamento'] ? date('d/m/Y', strtotime($data[$i]['i']['data_pagamento'])) : '' ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo number_format($data[$i]['i']['valor_total'],2,',','.') ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo number_format($data[$i]['i']['valor_pago'],2,',','.') ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i]['i']['data_baixa'])) ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['i']['data_baixa'] ? date('d/m/Y', strtotime($data[$i]['i']['data_baixa'])) : '' ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['u']['usuarioBaixa'] ?></td>
 							</tr>
 						<?php } ?>

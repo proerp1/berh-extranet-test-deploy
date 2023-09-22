@@ -1100,7 +1100,7 @@ class ExcelTemplate
 	public function getBaixaManual($objPHPExcel, $dados)
 	{
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Código associado")
+			->setCellValue('A1', "CNPJ associado")
 			->setCellValue('B1', "Cliente")
 			->setCellValue('C1', "Mensalidade")
 			->setCellValue('D1', "Vencimento")
@@ -1115,14 +1115,14 @@ class ExcelTemplate
 			$indx++;
 
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]['c']['codigo_associado'])
+				->setCellValue('A' . $indx, $dados[$i]['c']['documento'])
 				->setCellValue('B' . $indx, $dados[$i]['c']['nome_secundario'])
 				->setCellValue('C' . $indx, $dados[$i]['i']['mensalidade'])
 				->setCellValue('D' . $indx, date('d/m/Y', strtotime($dados[$i]['i']['vencimento'])))
-				->setCellValue('E' . $indx, date('d/m/Y', strtotime($dados[$i]['i']['data_pagamento'])))
+				->setCellValue('E' . $indx, $dados[$i]['i']['data_pagamento'] ? date('d/m/Y', strtotime($dados[$i]['i']['data_pagamento'])) : '')
 				->setCellValue('F' . $indx, number_format($dados[$i]['i']['valor_total'], 2, ',', '.'))
 				->setCellValue('G' . $indx, number_format($dados[$i]['i']['valor_pago'], 2, ',', '.'))
-				->setCellValue('H' . $indx, date('d/m/Y', strtotime($dados[$i]['i']['data_baixa'])))
+				->setCellValue('H' . $indx, $dados[$i]['i']['data_baixa'] ? date('d/m/Y', strtotime($dados[$i]['i']['data_baixa'])) : '')
 				->setCellValue('I' . $indx, $dados[$i]['u']['usuarioBaixa']);
 		}
 	}

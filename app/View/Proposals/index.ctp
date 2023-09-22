@@ -31,11 +31,16 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Número</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th>Número</th>
                         <th>Data</th>
                         <th>Data prev. fechamento</th>
                         <th>Data fechamento</th>
-                        <th>Taxa Adm Vale Transporte</th>
+                        <th>Valor VT</th>
+                        <th>Valor VR/VA</th>
+                        <th>Valor Combustível</th>
+                        <th>Valor Multi</th>
+                        <th>Valor Total</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -43,11 +48,20 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
+                                        <?php echo $data[$i]["Status"]["name"] ?>
+                                    </span>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["number"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["expected_closing_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["closing_date"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["transport_adm_fee"]; ?>%</td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["Proposal"]["transport_workers_price_total"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["Proposal"]["meal_workers_price_total"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["Proposal"]["fuel_workers_price_total"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["Proposal"]["multi_card_workers_price_total"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["Proposal"]["total_price"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/proposals/edit/'.$id.'/'.$data[$i]["Proposal"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

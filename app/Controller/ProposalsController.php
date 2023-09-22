@@ -66,10 +66,12 @@ class ProposalsController extends AppController
         $this->Customer->recursive = -1;
         $cliente = $this->Customer->read();
 
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 20]]);
+
         $action = 'Propostas';
         $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id], 'Propostas' => '', 'Nova proposta' => ''];
         $this->set('form_action', 'add/'.$id);
-        $this->set(compact('action', 'breadcrumb', 'id'));
+        $this->set(compact('action', 'breadcrumb', 'id', 'statuses'));
     }
 
     public function edit($id, $proposalId = null)
@@ -95,10 +97,12 @@ class ProposalsController extends AppController
         $this->Customer->recursive = -1;
         $cliente = $this->Customer->read();
 
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 20]]);
+
         $action = 'Propostas';
         $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id], 'Propostas' => '', 'Alterar proposta' => ''];
         $this->set('form_action', 'edit/'.$id);
-        $this->set(compact('id', 'proposalId', 'action', 'breadcrumb'));
+        $this->set(compact('id', 'proposalId', 'action', 'breadcrumb', 'statuses'));
 
         $this->render('add');
     }
