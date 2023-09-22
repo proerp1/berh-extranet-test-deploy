@@ -86,7 +86,7 @@ class ReportsController extends AppController
 
 	public function index()
 	{
-		// $this->Permission->check(1, "leitura")? "" : $this->redirect("/not_allowed");
+		 $this->Permission->check(64, "leitura")? "" : $this->redirect("/not_allowed");
 		$this->Paginator->settings = $this->paginate;
 
 		$condition = ["and" => [], "or" => []];

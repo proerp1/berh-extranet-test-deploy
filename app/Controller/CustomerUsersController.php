@@ -142,7 +142,7 @@ class CustomerUsersController extends AppController
 
     public function edit($id, $user_id = null, $is_admin = false)
     {
-        $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         $action = $is_admin ? 'Usuário' : 'Beneficiário';
 
         $this->CustomerUser->id = $user_id;
@@ -191,7 +191,7 @@ class CustomerUsersController extends AppController
     }
 
     public function delete_user($customer_id, $id){
-        $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUser->id = $id;
         $this->request->data = $this->CustomerUser->read();
 

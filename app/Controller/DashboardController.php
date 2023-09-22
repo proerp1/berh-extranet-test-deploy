@@ -12,6 +12,7 @@ class DashboardController extends AppController
 
   public function index()
   {
+    $this->Permission->check(4, "leitura") ? "" : $this->redirect("/not_allowed");
     $breadcrumb = ["Dashboard" => "/"];
     $action = "Principal";
 

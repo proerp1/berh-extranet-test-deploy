@@ -76,7 +76,7 @@ class AtendimentosController extends AppController
 
     public function add()
     {
-        $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(21, "escrita") ? "" : $this->redirect("/not_allowed");
         
         if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();

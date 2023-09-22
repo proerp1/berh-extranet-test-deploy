@@ -16,7 +16,7 @@ class OrdersController extends AppController
 
     public function index()
     {
-        $this->Permission->check(16, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => [], "or" => []];
@@ -125,7 +125,7 @@ class OrdersController extends AppController
 
     public function edit($id = null)
     {
-        $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $old_order = $this->Order->read();
         if ($this->request->is(['post', 'put'])) {
@@ -458,7 +458,7 @@ class OrdersController extends AppController
 
     public function delete($id)
     {
-        $this->Permission->check(16, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(63, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $this->request->data = $this->Order->read();
 
