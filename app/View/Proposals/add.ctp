@@ -298,6 +298,12 @@
 
     function showDescField()
     {
+        if ($("#ProposalStatusId").val() == 93) {
+            $("#ProposalClosingDate").attr('required', true);
+        } else {
+            $("#ProposalClosingDate").attr('required', false);
+        }
+
         if ($("#ProposalStatusId").val() == 92) {
             $("#ProposalCancelledDescription").parent().show();
             $("#ProposalCancelledDescription").attr('required', true);
