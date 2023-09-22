@@ -6,6 +6,7 @@ class Proposal extends AppModel
 
     public $belongsTo = [
         'Customer',
+        'Status'
     ];
 
     public $validate = [

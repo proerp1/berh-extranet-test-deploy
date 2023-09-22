@@ -1,13 +1,18 @@
 <?php
     echo $this->element('abas_customers', ['id' => $id]);
-    ?>
+?>
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Proposal', ['id' => 'js-form-submit', 'action' => $form_action, 'method' => 'post', 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 
             <div class="row">
-                <div class="mb-7 col-4">
+                <div class="mb-7 col-3">
+                    <label class="fw-semibold fs-6 mb-2">Status</label>
+                    <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
+                </div>
+
+                <div class="mb-7 col-3">
                     <label class="form-label">Data da proposta</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -15,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="mb-7 col-4">
+                <div class="mb-7 col-3">
                     <label class="form-label">Data da previsão de fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -23,12 +28,17 @@
                     </div>
                 </div>
 
-                <div class="mb-7 col-4">
+                <div class="mb-7 col-3">
                     <label class="form-label">Data do fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                         <?php echo $this->Form->input('closing_date', ['type' => 'text', 'placeholder' => 'Data do fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
                     </div>
+                </div>
+
+                <div class="mb-7 col-6" style="display: none;">
+                    <label class="fw-semibold fs-6 mb-2">Motivo cancelamento</label>
+                    <?php echo $this->Form->input('cancelled_description', ["class" => "form-control mb-3 mb-lg-0"]); ?>
                 </div>
             </div>
 
@@ -273,12 +283,29 @@
             calculateTotal("#ProposalMultiCardWorkersQty", "#ProposalMultiCardWorkersPrice", "#ProposalMultiCardWorkersPriceTotal");
         });
 
+        $("#ProposalStatusId").on("change", function () {
+            showDescField();
+        });
+
+        showDescField();
+
         $("#ProposalTransportWorkersPriceTotal, #ProposalMealWorkersPriceTotal, #ProposalFuelWorkersPriceTotal, #ProposalMultiCardWorkersPriceTotal").on("change", function () {
             var total = parseFloat(transformPrice($('#ProposalTransportWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMealWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalFuelWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMultiCardWorkersPriceTotal').val()));
 
             $('#ProposalTotalPrice').val(formata_dinheiro(total, 2, ',', '.'));
         });
     });
+
+    function showDescField()
+    {
+        if ($("#ProposalStatusId").val() == 92) {
+            $("#ProposalCancelledDescription").parent().show();
+            $("#ProposalCancelledDescription").attr('required', true);
+        } else {
+            $("#ProposalCancelledDescription").parent().hide();
+            $("#ProposalCancelledDescription").attr('required', false);
+        }
+    }
 
     function calculateTotal(qtyInputId, priceInputId, totalInputId) {
         var qty = parseInt(transformPrice($(qtyInputId).val()));

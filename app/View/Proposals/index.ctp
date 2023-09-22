@@ -31,7 +31,8 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Número</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th>Número</th>
                         <th>Data</th>
                         <th>Data prev. fechamento</th>
                         <th>Data fechamento</th>
@@ -47,6 +48,11 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
+                                        <?php echo $data[$i]["Status"]["name"] ?>
+                                    </span>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["number"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Proposal"]["expected_closing_date"]; ?></td>
