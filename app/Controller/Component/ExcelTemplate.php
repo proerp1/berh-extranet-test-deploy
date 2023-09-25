@@ -505,15 +505,29 @@ class ExcelTemplate
 		}
 	}
 
-	public function getLocawebRelatorio($objPHPExcel, $dados)
+	public function getClientesRelatorio($objPHPExcel, $dados)
 	{
-		$indx = 0;
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('A1', "Código")
+			->setCellValue('B1', "Nome fantasia")
+			->setCellValue('C1', "CNPJ")
+			->setCellValue('D1', "Cidade")
+			->setCellValue('E1', "UF")
+			->setCellValue('F1', "Revenda")
+			->setCellValue('G1', "Status");
+
+		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]['Customer']['nome_primario'] . ' - ' . $dados[$i]['Customer']['nome_secundario'])
-				->setCellValue('B' . $indx, $dados[$i]['Customer']['email']);
+				->setCellValue('A' . $indx, $dados[$i]['Customer']['codigo_associado'])
+				->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
+				->setCellValue('C' . $indx, $dados[$i]['Customer']['documento'])
+				->setCellValue('D' . $indx, $dados[$i]['Customer']['cidade'])
+				->setCellValue('E' . $indx, $dados[$i]['Customer']['estado'])
+				->setCellValue('F' . $indx, $dados[$i]['Resale']['nome_fantasia'])
+				->setCellValue('G' . $indx, $dados[$i]['Status']['name']);
 		}
 	}
 
