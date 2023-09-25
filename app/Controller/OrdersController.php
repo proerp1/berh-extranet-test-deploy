@@ -175,42 +175,6 @@ class OrdersController extends AppController
                 break;
         }
 
-        $conditions = [
-            'CustomerUser.customer_id' => $order['Order']['customer_id']
-        ];
-
-        $order_customer_users = $this->OrderItem->find('all', [
-            'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['OrderItem.customer_user_id'],
-            'fields' => ['OrderItem.customer_user_id']
-        ]);
-
-        $arr_cst_in_order = Hash::extract($order_customer_users, '{n}.OrderItem.customer_user_id');
-
-        $second_condition = [
-            'CustomerUserItinerary.customer_id' => $order['Order']['customer_id']
-        ];
-        if (!empty($arr_cst_in_order)) {
-            $conditions['CustomerUser.id NOT IN'] = $arr_cst_in_order;
-            $second_condition['CustomerUserItinerary.customer_user_id NOT IN'] = $arr_cst_in_order;
-        }
-
-        $users_with_itinerary = $this->CustomerUserItinerary->find('all', [
-            'conditions' => $second_condition,
-            'group' => ['CustomerUserItinerary.customer_user_id'],
-            'fields' => ['CustomerUserItinerary.customer_user_id']
-        ]);
-
-        $arr_ust_with_itinerary = Hash::extract($users_with_itinerary, '{n}.CustomerUserItinerary.customer_user_id');
-
-        if (!empty($arr_ust_with_itinerary)) {
-            $conditions['CustomerUser.id IN'] = $arr_ust_with_itinerary;
-        }
-
-        $customer_users_pending = $this->CustomerUser->find('list', [
-            'conditions' => $conditions,
-        ]);
-
         $suppliersCount = $this->OrderItem->find('count', [
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
@@ -258,6 +222,26 @@ class OrdersController extends AppController
         $this->set(compact('customer_users_pending', 'suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
 
         $this->render("add");
+    }
+
+    // ajax function listOfCustomerUsers
+    public function listOfCustomerUsers(){
+        $this->autoRender = false;
+
+        $customerId = $_GET['customer_id'];
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+
+        $customerUsers = $this->CustomerUser->find('list', [
+            'conditions' => ['CustomerUser.customer_id' => $customerId, 'CustomerUser.name LIKE' => '%' . $search . '%', 'CustomerUser.status_id' => 1],
+            'fields' => ['id', 'name']
+        ]);
+
+        $cst_u = [];
+        foreach ($customerUsers as $k => $user) {
+            $cst_u[] = ['id' => $k, 'text' => $user];
+        }
+
+        echo json_encode(['results' => $cst_u, 'pagination' => ['more' => false]]);
     }
 
     public function changeStatusToSent($id)
@@ -328,9 +312,19 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
 
         $order = $this->Order->findById($orderId);
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
 
+        $orderItems = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $orderId, 'OrderItem.customer_user_id' => $customerUserId],
+        ]);
+
+        if(!empty($orderItems)){
+            $arr_itineraries = Hash::extract($orderItems, '{n}.OrderItem.customer_user_itinerary_id');
+            $cond['CustomerUserItinerary.id NOT IN'] = $arr_itineraries;
+        }
+        
         $customerItineraries = $this->CustomerUserItinerary->find('all', [
-            'conditions' => ['CustomerUserItinerary.customer_user_id' => $customerUserId],
+            'conditions' => $cond,
         ]);
 
         $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to']);
@@ -350,7 +344,7 @@ class OrdersController extends AppController
 
         $orderItem = $this->OrderItem->findById($itemId);
 
-        if($this->request->data['newValue'] == 'working_days'){
+        if($this->request->data['campo'] == 'working_days'){
             $workingDays = $this->request->data['newValue'];
             $orderItem['OrderItem']['working_days'] = $workingDays;
             $var = $orderItem['OrderItem']['var'];
@@ -399,7 +393,7 @@ class OrdersController extends AppController
         ]);
     }
 
-    public function removeOrderItem($orderId, $customerUserId)
+    public function removeOrderItem($orderId, $itemOrderId)
     {
         $this->autoRender = false;
 
@@ -409,7 +403,7 @@ class OrdersController extends AppController
         
         $this->OrderItem->updateAll(
             ['OrderItem.data_cancel' => 'CURRENT_DATE', 'OrderItem.usuario_id_cancel' => CakeSession::read("Auth.User.id")],
-            ['OrderItem.order_id' => $orderId, 'OrderItem.customer_user_id' => $customerUserId]
+            ['OrderItem.id' => $itemOrderId]
         );
 
         $this->OrderItem->bindModel(

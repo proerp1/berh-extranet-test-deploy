@@ -478,7 +478,7 @@
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
-                                        <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este beneficiário?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["customer_user_id"]; ?>')">
+                                        <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este beneficiário?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["id"]; ?>')">
                                             <i class="fa fa-times"></i>
                                         </button>
                                     </td>
@@ -537,11 +537,8 @@
                 <input type="hidden" name="working_days" value="<?php echo $order['Order']['working_days']; ?>">
                 <div class="modal-body">
                     <label for="customer_user_id">Beneficário</label>
-                    <select name="customer_user_id" id="customer_user_id" class="form-select mb-3 mb-lg-0" data-control="select2">
+                    <select name="customer_user_id" id="customer_user_id" class="form-select mb-3 mb-lg-0">
                         <option value="">Selecione...</option>
-                        <?php foreach ($customer_users_pending as $k => $user) { ?>
-                            <option value="<?php echo $k; ?>"><?php echo $user; ?></option>
-                        <?php } ?>
                     </select>
                     <p class="mt-3">Esta lista contém somente os beneficiários ainda não adicionados ao pedido. Para cadastrar novos beneficiários clique <a href="<?php echo $this->base; ?>/customer_users/index/<?php echo $order['Order']['customer_id']; ?>" target="_blank">aqui</a></p>
                 </div>
@@ -709,5 +706,24 @@
                 });
             }
         });
+
+        $('#customer_user_id').select2({
+            ajax: {
+                url: base_url + '/orders/listOfCustomerUsers',
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        customer_id: <?php echo $order['Order']['customer_id']; ?>
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            },
+            dropdownParent: $('#modal_add_beneficiarios')
+        });
+        
+
     })
 </script>
