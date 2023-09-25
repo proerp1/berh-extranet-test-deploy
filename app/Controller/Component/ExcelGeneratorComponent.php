@@ -76,11 +76,11 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
-    public function gerarExcelLocaweb($nome, $dados)
+    public function gerarExcelClientes($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
 
-        $this->templates_list->getLocawebRelatorio($spreadsheet, $dados);
+        $this->templates_list->getClientesRelatorio($spreadsheet, $dados);
 
         $local_salva = APP.'webroot/files/excel/'.$nome;
 

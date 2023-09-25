@@ -161,11 +161,11 @@ class ExcelTemplate
 	{
 
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Status")
-			->setCellValue('B1', "Número do documento")
-			->setCellValue('C1', "Código")
-			->setCellValue('D1', "Cliente")
-			->setCellValue('E1', "Descrição da conta")
+			->setCellValue('A1', "Descrição da conta")
+			->setCellValue('B1', "Status")
+			->setCellValue('C1', "Número do documento")
+			->setCellValue('D1', "Código")
+			->setCellValue('E1', "Cliente")
 			->setCellValue('F1', "Valor bruto")
 			->setCellValue('G1', "Valor multa")
 			->setCellValue('H1', "Valor liquido")
@@ -182,11 +182,11 @@ class ExcelTemplate
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]['Status']['name'])
-				->setCellValue('B' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'")
-				->setCellValue('C' . $indx, $dados[$i]['Customer']['codigo_associado'])
-				->setCellValue('D' . $indx, $dados[$i]['Customer']['nome_secundario'])
-				->setCellValue('E' . $indx, $dados[$i]['Income']['name'])
+				->setCellValue('A' . $indx, $dados[$i]['Income']['name'])
+				->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
+				->setCellValue('C' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'")
+				->setCellValue('D' . $indx, $dados[$i]['Customer']['codigo_associado'])
+				->setCellValue('E' . $indx, $dados[$i]['Customer']['nome_secundario'])
 				->setCellValue('F' . $indx, $dados[$i]['Income']['valor_bruto'])
 				->setCellValue('G' . $indx, $dados[$i]['Income']['valor_multa'])
 				->setCellValue('H' . $indx, $dados[$i]['Income']['valor_total'])
@@ -204,26 +204,28 @@ class ExcelTemplate
 	{
 
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Status")
-			->setCellValue('B1', "Nome")
+			->setCellValue('A1', "Descrição")
+			->setCellValue('B1', "Status")
 			->setCellValue('C1', "Conta bancária")
 			->setCellValue('D1', "Vencimento")
 			->setCellValue('E1', "Parcela")
 			->setCellValue('F1', "Valor a pagar R$")
-			->setCellValue('G1', "Valor pago R$");
+			->setCellValue('G1', "Data pagamento")
+			->setCellValue('H1', "Valor pago R$");
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]['Status']['name'])
-				->setCellValue('B' . $indx, $dados[$i]["Outcome"]["name"])
+				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["name"])
+				->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
 				->setCellValue('C' . $indx, $dados[$i]["BankAccount"]["name"])
 				->setCellValue('D' . $indx, $dados[$i]["Outcome"]["vencimento"])
 				->setCellValue('E' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
 				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["valor_total"])
-				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["valor_pago"]);
+				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
+				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_pago"]);
 		}
 	}
 
@@ -503,15 +505,29 @@ class ExcelTemplate
 		}
 	}
 
-	public function getLocawebRelatorio($objPHPExcel, $dados)
+	public function getClientesRelatorio($objPHPExcel, $dados)
 	{
-		$indx = 0;
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('A1', "Código")
+			->setCellValue('B1', "Nome fantasia")
+			->setCellValue('C1', "CNPJ")
+			->setCellValue('D1', "Cidade")
+			->setCellValue('E1', "UF")
+			->setCellValue('F1', "Revenda")
+			->setCellValue('G1', "Status");
+
+		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]['Customer']['nome_primario'] . ' - ' . $dados[$i]['Customer']['nome_secundario'])
-				->setCellValue('B' . $indx, $dados[$i]['Customer']['email']);
+				->setCellValue('A' . $indx, $dados[$i]['Customer']['codigo_associado'])
+				->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
+				->setCellValue('C' . $indx, $dados[$i]['Customer']['documento'])
+				->setCellValue('D' . $indx, $dados[$i]['Customer']['cidade'])
+				->setCellValue('E' . $indx, $dados[$i]['Customer']['estado'])
+				->setCellValue('F' . $indx, $dados[$i]['Resale']['nome_fantasia'])
+				->setCellValue('G' . $indx, $dados[$i]['Status']['name']);
 		}
 	}
 

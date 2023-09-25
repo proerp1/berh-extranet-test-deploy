@@ -3,6 +3,8 @@ class Customer extends AppModel
 {
     public $name = 'Customer';
     public $displayField = 'nome_primario';
+    public $actsAs = ['Containable'];
+
     public $belongsTo = [
         'Resale' => [
             'className' => 'Resale',
