@@ -219,7 +219,7 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('customer_users_pending', 'suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
 
         $this->render("add");
     }
