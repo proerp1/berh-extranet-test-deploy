@@ -125,14 +125,7 @@
                                     <a href="<?php echo $this->base; ?>/customers/edit/<?php echo $data[$i]["Customer"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customers/delete/'.$data[$i]["Customer"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                        Excluir
-                                    </a>
-                                    <?php if ($data[$i]["Status"]["id"] == 5): ?>
-                                        <a href="javascript:" onclick="confirm('<h3>Deseja mesmo duplicar esse registro?</h3>', '<?php echo $this->base.'/customers/duplicate/'.$data[$i]["Customer"]["id"]; ?>')" rel="tooltip" title="Duplicar" class="btn btn-primary btn-sm">
-                                         <i class="fa fa-copy"></i> Duplicar
-                                        </a>
-                                    <?php endif ?>
+                                    
                                 </td>
                             </tr>
                         <?php } ?>
