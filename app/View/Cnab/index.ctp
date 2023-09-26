@@ -119,6 +119,7 @@
     </form>
 
     <div class="card-body pt-0 py-3">
+        
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
                 <thead>
