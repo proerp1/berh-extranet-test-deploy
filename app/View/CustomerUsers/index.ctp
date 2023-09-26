@@ -132,9 +132,6 @@ echo $this->element("abas_customers", array('id' => $id));
                                     Editar
                                 </a>
 
-                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customers/delete_user/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                    Excluir
-                                </a>
                             </td>
                         </tr>
                     <?php } ?>
