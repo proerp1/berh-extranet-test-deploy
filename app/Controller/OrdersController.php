@@ -347,7 +347,7 @@ class OrdersController extends AppController
         if($this->request->data['campo'] == 'working_days'){
             $workingDays = $this->request->data['newValue'];
             $orderItem['OrderItem']['working_days'] = $workingDays;
-            $var = $orderItem['OrderItem']['var'];
+            $var = $orderItem['OrderItem']['var_not_formated'];
         } else {
             $workingDays = $orderItem['OrderItem']['working_days'];
             $var_raw = $this->request->data['newValue'];
@@ -356,7 +356,7 @@ class OrdersController extends AppController
             $orderItem['OrderItem']['var'] = $var_raw;
         }
         $orderItem['OrderItem']['updated_user_id'] = CakeSession::read("Auth.User.id");
-        $orderItem['OrderItem']['subtotal'] = $workingDays * $orderItem['OrderItem']['price_per_day'];
+        $orderItem['OrderItem']['subtotal'] = $workingDays * $orderItem['OrderItem']['price_per_day_not_formated'];
         $orderItem['OrderItem']['subtotal'] = $orderItem['OrderItem']['subtotal'] - $var;
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
