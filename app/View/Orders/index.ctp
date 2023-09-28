@@ -1,6 +1,6 @@
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array("controller" => "benefits", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">

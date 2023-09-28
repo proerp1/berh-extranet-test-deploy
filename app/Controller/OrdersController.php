@@ -22,7 +22,7 @@ class OrdersController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Order.name LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
@@ -272,7 +272,7 @@ class OrdersController extends AppController
             $income['Income']['customer_id'] = $order['Order']['customer_id'];
             $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
             $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
-            $income['Income']['valor_total'] = $order['Order']['subtotal'];
+            $income['Income']['valor_total'] = $order['Order']['total'];
             $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $income['Income']['data_competencia'] = date('01/m/Y');
             $income['Income']['created'] = date('Y-m-d H:i:s');
