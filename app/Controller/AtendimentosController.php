@@ -16,7 +16,7 @@ class AtendimentosController extends AppController
 
     public function index()
     {
-        $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(21, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['Customer.cod_franquia' => CakeSession::read("Auth.User.resales")], "or" => []];

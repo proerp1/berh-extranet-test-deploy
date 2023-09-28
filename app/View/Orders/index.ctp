@@ -24,6 +24,8 @@
     </form>
 
     <div class="card-body pt-0 py-3">
+    <?php echo $this->element("pagination"); ?>
+    <br>
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
             <thead>
@@ -117,7 +119,7 @@
                 <div class="modal-body">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                        <?php echo $this->Form->input('customer_id', array("id" => "customer_positions_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                        <?php echo $this->Form->input('customer_id', array("id" => "customer_positions_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Período</label>

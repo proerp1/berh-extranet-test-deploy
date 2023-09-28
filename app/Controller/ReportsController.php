@@ -85,17 +85,10 @@ class ReportsController extends AppController
         parent::beforeFilter();
     }
 
-<<<<<<< HEAD
-	public function index()
-	{
-		 $this->Permission->check(64, "leitura")? "" : $this->redirect("/not_allowed");
-		$this->Paginator->settings = $this->paginate;
-=======
     public function index()
     {
-        // $this->Permission->check(1, "leitura")? "" : $this->redirect("/not_allowed");
+         $this->Permission->check(64, "leitura")? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
->>>>>>> da220af3ed2da3da8972757fad4d7de20ca092a1
 
         $condition = ['and' => [], 'or' => []];
 

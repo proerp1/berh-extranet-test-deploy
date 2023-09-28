@@ -57,6 +57,8 @@
     </form>
 
     <div class="card-body pt-0 py-3">
+    <?php echo $this->element("pagination"); ?>
+    <br>
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
                 <thead>
@@ -80,7 +82,7 @@
                                     <a href="<?php echo $this->base; ?>/groups/edit/<?php echo $data[$i]["Group"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-                                    <?php if ($data[$i]['Group']['id'] != 1 && $data[$i]['Group']['id'] != 3): ?>
+                                    <?php if ($data[$i]['Group']['id'] != 1 && $data[$i]['Group']['id'] != 12): ?>
                                     <a href="javascript:" onclick="verConfirm('<?php echo $this->base; ?>/groups/delete/<?php echo $data[$i]["Group"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
