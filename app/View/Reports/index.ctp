@@ -11,6 +11,16 @@
                         </span>
                         <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar" />
                     </div>
+                    <div class="col d-flex align-items-center">
+                        <?php
+                        $tp = isset($_GET['tp']) ? $_GET['tp'] : 'default'; ?>
+                        <select name="tp" id="tp" class="form-select">
+                            <option value="default" <?php echo $tp == 'default' ? 'selected="selected"' : ''; ?>>Itinerários</option>
+                            <option value="dados_bancarios" <?php echo $tp == 'dados_bancarios' ? 'selected="selected"' : ''; ?>>Dados Bancários</option>
+                            <option value="residencia" <?php echo $tp == 'residencia' ? 'selected="selected"' : ''; ?>>Residencia</option>
+                            <option value="trabalho" <?php echo $tp == 'trabalho' ? 'selected="selected"' : ''; ?>>Trabalho</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="card-toolbar">
@@ -107,150 +117,26 @@
         <?php echo $this->element("pagination"); ?>
         <br>
         <div class="table-responsive">
-            <?php echo $this->element("table");
-            $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
-            $is_first = strpos($_SERVER['REQUEST_URI'], '?') !== false ? false : true;
-            $qs = $is_first ? $qs : $qs . '&';
-            $o = isset($_GET['o']) ? $_GET['o'] : '';
-            $dir = isset($_GET['dir']) ? $_GET['dir'] : 'u';
+            <?php echo $this->element("table"); ?>
+            <?php
+            switch ($tp) {
+                case 'dados_bancarios':
+                    echo $this->element("../Reports/_report_dados_bancarios");
+                    break;
 
-            $o_icon = [
-                'nome' => 'fa-sort',
-                'cpf' => 'fa-sort',
-                'dep' => 'fa-sort',
-                'cod_o' => 'fa-sort',
-                'cod_b' => 'fa-sort',
-                'val_u' => 'fa-sort',
-                'qty' => 'fa-sort',
-                'wd' => 'fa-sort',
-                'var' => 'fa-sort',
-                'total' => 'fa-sort',
-            ];
-            $dir_icon = [
-                'nome' => '&dir=u',
-                'cpf' => '&dir=u',
-                'dep' => '&dir=u',
-                'cod_o' => '&dir=u',
-                'cod_b' => '&dir=u',
-                'val_u' => '&dir=u',
-                'qty' => '&dir=u',
-                'wd' => '&dir=u',
-                'var' => '&dir=u',
-                'total' => '&dir=u',
-            ];
-            if (isset($o_icon[$o])) {
-                $o_icon[$o] = $dir == 'u' ? 'fa-sort-up' : 'fa-sort-down';
-                $dir_icon[$o] = $dir == 'u' ? '&dir=d' : '&dir=u';
-                $option = $is_first ? 'o=' . $o : '&o=' . $o;
-                $option2 = '&dir=' . $dir;
-                $qs = str_replace([$option, $option2], '', $qs);
+                case 'residencia':
+                    echo $this->element("../Reports/_report_residencia");
+                    break;
+
+                case 'trabalho':
+                    echo $this->element("../Reports/_report_trabalho");
+                    break;
+
+                default:
+                    echo $this->element("../Reports/_report_default");
+                    break;
             }
-
             ?>
-            <thead>
-                <tr class="fw-bolder text-muted bg-light">
-                    <th>CNPJ</th>
-                    <th>
-                        Cliente
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=nome<?php echo $dir_icon['nome']; ?>">
-                            <i class="fa <?php echo $o_icon['nome']; ?>"></i>
-                            Nome
-                        </a> -->
-                        Nome
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=cpf<?php echo $dir_icon['cpf']; ?>">
-                            <i class="fa <?php echo $o_icon['cpf']; ?>"></i>
-                            CPF
-                        </a> -->
-                        CPF
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=dep<?php echo $dir_icon['dep']; ?>">
-                            <i class="fa <?php echo $o_icon['dep']; ?>"></i>
-                            Departamenrto
-                        </a> -->
-                        Departamento
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=cod_o<?php echo $dir_icon['cod_o']; ?>">
-                            <i class="fa <?php echo $o_icon['cod_o']; ?>"></i>
-                            Código Operadora
-                        </a> -->
-                        Código Operadora
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=cod_b<?php echo $dir_icon['cod_b']; ?>">
-                            <i class="fa <?php echo $o_icon['cod_b']; ?>"></i>
-                            Código do Benefício (Ìtem)
-                        </a> -->
-                        Código do Benefício (Ìtem)
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=val_u<?php echo $dir_icon['val_u']; ?>">
-                            <i class="fa <?php echo $o_icon['val_u']; ?>"></i>
-                            Valor Unitário
-                        </a> -->
-                        Valor Unitário
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=qty<?php echo $dir_icon['qty']; ?>">
-                            <i class="fa <?php echo $o_icon['qty']; ?>"></i>
-                            Quantidade
-                        </a> -->
-                        Quantidade
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=wd<?php echo $dir_icon['wd']; ?>">
-                            <i class="fa <?php echo $o_icon['wd']; ?>"></i>
-                            Dias Úteis
-                        </a> -->
-                        Dias Úteis
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=var<?php echo $dir_icon['var']; ?>">
-                            <i class="fa <?php echo $o_icon['var']; ?>"></i>
-                            Var
-                        </a> -->
-                        Var
-                    </th>
-                    <th>
-                        <!-- <a href="/reports/?<?php echo $qs; ?>o=total<?php echo $dir_icon['total']; ?>">
-                            <i class="fa <?php echo $o_icon['total']; ?>"></i>
-                            Total
-                        </a> -->
-                        Total
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $total = 0; ?>
-                <?php for ($i = 0; $i < count($data); $i++) {
-                    $total += $data[$i]["OrderItem"]["subtotal_not_formated"];
-                ?>
-                    <tr>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['CustomerDepartment']["name"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["code"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Benefit']["code"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["CustomerUserItinerary"]["unit_price"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["subtotal"]; ?></td>
-                    </tr>
-                <?php } ?>
-                <tr>
-                    <td colspan="10"></td>
-                    <td>Total</td>
-                    <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
-                </tr>
-            </tbody>
             </table>
         </div>
         <?php echo $this->element("pagination"); ?>
@@ -289,7 +175,7 @@
     }
     $(document).ready(function() {
         trigger_cst_change();
-        
+
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
             $("#q").val(null);
@@ -303,6 +189,10 @@
 
         $('#c').on('change', function() {
             trigger_cst_change();
+        });
+
+        $('#tp').on('change', function() {
+            $("#busca").submit();
         });
     });
 </script>

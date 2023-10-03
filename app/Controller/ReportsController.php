@@ -4,81 +4,8 @@ App::import('Controller', 'Incomes');
 class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports'];
     public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome'];
-
-    public $paginate = [
-        'OrderItem' => [
-            'limit' => 100,
-            'order' => ['OrderItem.id' => 'desc'],
-            'fields' => [
-                'Customer.nome_primario',
-                'Customer.nome_secundario',
-                'Customer.documento',
-                'CustomerUser.name',
-                'CustomerUser.cpf',
-                'CustomerUser.tel',
-                'CustomerUser.cel',
-                'CustomerDepartment.name',
-                'CustomerUserItinerary.unit_price',
-                'CustomerUserItinerary.quantity',
-                'OrderItem.*',
-                'Benefit.code',
-                'Supplier.code',
-            ],
-            'joins' => [
-                [
-                    'table' => 'orders',
-                    'alias' => 'Order',
-                    'type' => 'INNER',
-                    'conditions' => ['Order.id = OrderItem.order_id'],
-                ],
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'INNER',
-                    'conditions' => ['Customer.id = Order.customer_id'],
-                ],
-                [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'INNER',
-                    'conditions' => ['CustomerUser.id = OrderItem.customer_user_id'],
-                ],
-                [
-                    'table' => 'customer_departments',
-                    'alias' => 'CustomerDepartment',
-                    'type' => 'LEFT',
-                    'conditions' => ['CustomerDepartment.id = CustomerUser.customer_departments_id'],
-                ],
-                [
-                    'table' => 'cost_center',
-                    'alias' => 'CostCenter',
-                    'type' => 'LEFT',
-                    'conditions' => ['CostCenter.id = CustomerUser.customer_departments_id'],
-                ],
-                [
-                    'table' => 'customer_user_itineraries',
-                    'alias' => 'CustomerUserItinerary',
-                    'type' => 'INNER',
-                    'conditions' => ['CustomerUserItinerary.id = OrderItem.customer_user_itinerary_id'],
-                ],
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'INNER',
-                    'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
-                ],
-                [
-                    'table' => 'suppliers',
-                    'alias' => 'Supplier',
-                    'type' => 'INNER',
-                    'conditions' => ['Supplier.id = Benefit.supplier_id'],
-                ],
-            ],
-            'recursive' => -1,
-        ],
-    ];
 
     public function beforeFilter()
     {
@@ -87,15 +14,21 @@ class ReportsController extends AppController
 
     public function index()
     {
-         $this->Permission->check(64, "leitura")? "" : $this->redirect("/not_allowed");
-        $this->Paginator->settings = $this->paginate;
+        $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        if (isset($_GET['tp'])) {
+            $paginationConfig = $this->CustomReports->configPagination($_GET['tp']);
+        } else {
+            $paginationConfig = $this->CustomReports->configPagination('default');
+        }
+        $this->Paginator->settings = $paginationConfig;
 
         $condition = ['and' => [], 'or' => []];
 
         if (!isset($_GET['de']) && !isset($_GET['para'])) {
             $dates = $this->getCurrentDates();
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $dates['from']]);
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $dates['to'].' 23:59:59']);
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $dates['to'] . ' 23:59:59']);
 
             $de = $dates['from'];
             $para = $dates['to'];
@@ -112,7 +45,7 @@ class ReportsController extends AppController
             $paraRaw = $_GET['para'];
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para.' 23:59:59']);
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
         if (isset($_GET['d']) and $_GET['d'] != 'Selecione') {
@@ -131,11 +64,11 @@ class ReportsController extends AppController
 
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.name LIKE' => '%'.$_GET['q'].'%',
-                'CustomerUser.email LIKE' => '%'.$_GET['q'].'%',
-                'CustomerUser.cpf LIKE' => '%'.$_GET['q'].'%',
-                'Customer.nome_primario LIKE' => '%'.$_GET['q'].'%',
-                'Customer.documento LIKE' => '%'.$_GET['q'].'%',
+                'CustomerUser.name LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.email LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.nome_primario LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
             ]);
         }
 
@@ -162,7 +95,7 @@ class ReportsController extends AppController
             $dir = isset($_GET['dir']) ? $_GET['dir'] : 'u';
             $direction = $dir == 'u' ? 'asc' : 'desc';
 
-            $this->Paginator->settings['OrderItem']['order'] = $order.' '.$direction;
+            $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
 
         $data = $this->Paginator->paginate('OrderItem', $condition);
@@ -240,7 +173,7 @@ class ReportsController extends AppController
             $nome = 'baixa_manual.xlsx';
 
             $this->ExcelGenerator->gerarBaixaManual($nome, $data);
-            $this->redirect('/files/excel/'.$nome);
+            $this->redirect('/files/excel/' . $nome);
         }
 
         $action = 'Baixa manual';
@@ -260,4 +193,6 @@ class ReportsController extends AppController
 
         return compact('from', 'to');
     }
+
+    
 }
