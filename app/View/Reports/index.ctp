@@ -67,34 +67,12 @@
                                 <label class="form-label fs-5 fw-bold mb-3">Centro de Custo:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cc" id="cc">
                                     <option>Selecione</option>
-                                    <?php
-                                    foreach ($costCenters as $keyCC => $costCenter) {
-                                        $selected = "";
-                                        if (isset($_GET["cc"])) {
-                                            if ($keyCC == $_GET["cc"]) {
-                                                $selected = "selected";
-                                            }
-                                        }
-                                        echo '<option value="' . $keyCC . '" ' . $selected . '>' . $costCenter . '</option>';
-                                    }
-                                    ?>
                                 </select>
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Departamento:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="d" id="d">
                                     <option>Selecione</option>
-                                    <?php
-                                    foreach ($departments as $keyD => $department) {
-                                        $selected = "";
-                                        if (isset($_GET["d"])) {
-                                            if ($keyD == $_GET["d"]) {
-                                                $selected = "selected";
-                                            }
-                                        }
-                                        echo '<option value="' . $keyD . '" ' . $selected . '>' . $department . '</option>';
-                                    }
-                                    ?>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-end">

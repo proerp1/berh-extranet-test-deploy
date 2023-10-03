@@ -113,7 +113,7 @@ class ReportsController extends AppController
 
         $action = 'Itinerários';
         $breadcrumb = ['Relatórios' => '', 'Itinerários' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'departments', 'de', 'para', 'customers'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers'));
     }
 
     public function getDepAndCCByCustomer()
