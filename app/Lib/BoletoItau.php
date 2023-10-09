@@ -34,6 +34,9 @@ class BoletoItau extends Controller
 
     private function boleto($boleto)
     {
+        $num_pedido = $boleto['Income']['order_id'];
+        $num_pedido_demonstrativo = $num_pedido != '' ? 'Pedido N°: '.$num_pedido : '';
+
         return new Eduardokum\LaravelBoleto\Boleto\Banco\Itau([
             'logo' => APP.'webroot/img/logo-berh-colorido.png',
             'dataVencimento' => Carbon::parse($boleto['Income']['vencimento_nao_formatado']),
@@ -51,7 +54,8 @@ class BoletoItau extends Controller
             'descricaoDemonstrativo' => [
                 $boleto['BankTicket']['informativo_boleto'], 
                 '-',
-                '-'
+                '-',
+                $num_pedido_demonstrativo, 
             ],
             'instrucoes' => [
                 $boleto['BankTicket']['instrucao_boleto_1'], 

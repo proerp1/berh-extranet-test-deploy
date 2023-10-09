@@ -1,6 +1,6 @@
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array("controller" => "benefits", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -119,7 +119,7 @@
                 <div class="modal-body">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                        <?php echo $this->Form->input('customer_id', array("id" => "customer_positions_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                        <?php echo $this->Form->input('customer_id', array("id" => "customer_positions_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Período</label>

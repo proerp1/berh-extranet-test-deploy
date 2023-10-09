@@ -104,6 +104,7 @@
                         <th>Cidade</th>
                         <th>UF</th>
                         <th>Revenda</th>
+                        <th>Executivo</th>
                         <th>Status</th>
                         <th class="w-300px min-w-300px rounded-end">Ações</th>
                     </tr>
@@ -118,6 +119,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>

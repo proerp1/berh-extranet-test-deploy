@@ -171,7 +171,7 @@ class Order extends AppModel {
             'transfer_fee' => $transferFee,
             'commission_fee' => $commissionFee,
             'subtotal' => $subtotal,
-            'total' => $total + $commissionFee
+            'total' => $total
         ]]);
     }
 

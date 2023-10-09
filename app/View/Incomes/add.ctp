@@ -88,7 +88,7 @@
     }
 </script>
 
-<?php $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto', '10' => 'Outros']; ?>
+<?php $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto', '11' => 'Pix', '10' => 'Outros']; ?>
 <?php 
     if(isset($id)){
         echo $this->element("abas_incomes", ['id' => $id]);
@@ -286,11 +286,9 @@
                             <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
                         <?php } ?>
                         <?php if ($this->request->data['Status']['id'] == 15 || $this->request->data['Status']['id'] == 16){ ?>
+                            <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$this->request->data["Income"]["id"].'/1'; ?>" class="btn btn-success">Ver boleto</a>
                             <?php if ($this->request->data["CnabItem"]["id_web"]){ ?>
-                                <a href="<?php echo $this->base.'/boletos/ver_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-success">Ver boleto</a>
-                                <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto - Credisis</a>
-                            <?php } else { ?>
-                                <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$this->request->data["Income"]["id"].'/1'; ?>" class="btn btn-success">Ver boleto</a>
+                                <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto - Itaú</a>
                             <?php } ?>
                         <?php } ?>
                         <?php if ($this->request->data['Status']['id'] == 16 || $this->request->data['Status']['id'] == 19 || $this->request->data['Status']['id'] == 51){ ?>

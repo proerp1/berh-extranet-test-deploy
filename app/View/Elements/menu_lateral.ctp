@@ -192,34 +192,25 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Cnab</span>
+                                <span class="menu-title">Boletos</span>
                                 <span class="menu-arrow"></span>
                             </span>
                             <div class="menu-sub menu-sub-accordion menu-active-bg">
                                 <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'cnab' && $this->request->params['action'] == 'index') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'cnab', 'action' => 'index']) ?>">
+                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'boletos' && $this->request->params['action'] == 'index') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'boletos', 'action' => 'index']) ?>">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Gerar arquivo CNAB</span>
+                                        <span class="menu-title">Emitir Boletos</span>
                                     </a>
                                 </div>
 
                                 <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'cnab' && in_array($this->request->params['action'], ['lotes', 'detalhes_lote'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'cnab', 'action' => 'lotes']) ?>">
+                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'boletos' && in_array($this->request->params['action'], ['lotes', 'detalhes_lote'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'boletos', 'action' => 'lotes']) ?>">
                                         <span class="menu-bullet">
                                             <span class="bullet bullet-dot"></span>
                                         </span>
-                                        <span class="menu-title">Lotes CNAB</span>
-                                    </a>
-                                </div>
-
-                                <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'retorno_cnabs' && in_array($this->request->params['action'], ['index', 'add', 'detalhes'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'retorno_cnabs', 'action' => 'index']) ?>">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Retorno Itau</span>
+                                        <span class="menu-title">Lotes Boleto</span>
                                     </a>
                                 </div>
                             </div>

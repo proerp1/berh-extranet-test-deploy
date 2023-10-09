@@ -35,7 +35,7 @@
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"]; ?>" class="btn btn-info btn-sm">Detalhes</a>
                                     <?php if ($data[$i]["CnabItem"]["id_web"]) { ?>
-                                        <a href="<?php echo $this->base.'/boletos/ver_boleto_logo/'.$data[$i]["CnabItem"]["id_web"]; ?>" class="btn btn-success btn-sm">Ver boleto</a>
+                                        <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$data[$i]["Income"]["id"].'/true'; ?>" class="btn btn-success btn-sm">Ver boleto</a>
                                     <?php } ?>
                                 </td>
                             </tr>

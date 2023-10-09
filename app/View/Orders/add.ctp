@@ -432,6 +432,7 @@
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
                         <th width="120px">Desconto</th>
+                        <th width="120px">Quantidade por dia</th>
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
@@ -472,6 +473,7 @@
                                         <?php echo $items[$i]["OrderItem"]["var"]; ?>
                                     <?php } ?>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["CustomerUserItinerary"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
@@ -486,14 +488,14 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="5"></td>
+                            <td colspan="7"></td>
                             <td id="subtotal_sum">R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
                             <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
                             <td id="total_sum">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                         </tr>
                     <?php } else { ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="8">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="10">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>

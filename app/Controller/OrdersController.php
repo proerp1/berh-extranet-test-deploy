@@ -22,7 +22,7 @@ class OrdersController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Order.name LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
@@ -219,7 +219,7 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('customer_users_pending', 'suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
 
         $this->render("add");
     }
@@ -272,7 +272,7 @@ class OrdersController extends AppController
             $income['Income']['customer_id'] = $order['Order']['customer_id'];
             $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
             $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
-            $income['Income']['valor_total'] = $order['Order']['subtotal'];
+            $income['Income']['valor_total'] = $order['Order']['total'];
             $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $income['Income']['data_competencia'] = date('01/m/Y');
             $income['Income']['created'] = date('Y-m-d H:i:s');
@@ -347,7 +347,7 @@ class OrdersController extends AppController
         if($this->request->data['campo'] == 'working_days'){
             $workingDays = $this->request->data['newValue'];
             $orderItem['OrderItem']['working_days'] = $workingDays;
-            $var = $orderItem['OrderItem']['var'];
+            $var = $orderItem['OrderItem']['var_not_formated'];
         } else {
             $workingDays = $orderItem['OrderItem']['working_days'];
             $var_raw = $this->request->data['newValue'];
@@ -356,7 +356,7 @@ class OrdersController extends AppController
             $orderItem['OrderItem']['var'] = $var_raw;
         }
         $orderItem['OrderItem']['updated_user_id'] = CakeSession::read("Auth.User.id");
-        $orderItem['OrderItem']['subtotal'] = $workingDays * $orderItem['OrderItem']['price_per_day'];
+        $orderItem['OrderItem']['subtotal'] = $workingDays * $orderItem['OrderItem']['price_per_day_not_formated'];
         $orderItem['OrderItem']['subtotal'] = $orderItem['OrderItem']['subtotal'] - $var;
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];

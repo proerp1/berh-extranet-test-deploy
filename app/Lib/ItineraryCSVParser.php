@@ -37,6 +37,7 @@ class ItineraryCSVParser extends Controller
                 continue;
             }
 
+            // Processamento da primeira linha, para identificar o cliente
             if (!empty($row[0]) && $line == 1) {
                 $line++;
                 $cnpj = preg_replace('/\D/', '', $row[0]);
@@ -78,12 +79,15 @@ class ItineraryCSVParser extends Controller
                     return ['success' => false, 'file_id' => $csvImportFileId];
                 }
             }
+            // fim processamento da primeira linha
 
             $cpf = preg_replace('/\D/', '', $row[3]);
             $currentUserId = 0;
+            // se o usuário já foi importado, já pula para o processamento do itinerário
             if (isset($docs[$cpf])) {
                 $currentUserId = $docs[$cpf];
             } else {
+                // se não, importa o usuário primeiro
                 $retUser = $this->processUser($row, $customerId, $shouldDeleteItinerary);
 
                 if($retUser['success'] == false){
@@ -107,6 +111,7 @@ class ItineraryCSVParser extends Controller
                 $currentUserId = $docs[$cpf];
             }
 
+            // processa o itinerário
             $retItinerary = $this->processItinerary($row, $currentUserId, $customerId);
             if($retItinerary['success'] == false){
                 $this->CSVImportLine->create();

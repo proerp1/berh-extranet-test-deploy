@@ -345,11 +345,11 @@
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">E-mail Principal 1</label>
-                    <?php echo $this->Form->input('email', array("placeholder" => "E-mail", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('email', array("placeholder" => "E-mail Principal 1", "type" => "text", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">E-mail</label>
-                    <?php echo $this->Form->input('email1', array("placeholder" => "E-mail", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('email1', array("placeholder" => "E-mail", "type" => "text", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
 
