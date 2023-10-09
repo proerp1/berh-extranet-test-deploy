@@ -161,7 +161,8 @@ class ItineraryCSVParser extends Controller
 
         $existingUser = $this->CustomerUser->find('first', [
             'conditions' => [
-                'cpf' => $cpf
+                'cpf' => $cpf,
+                'customer_id' => $customerId,
             ]
         ]);
 

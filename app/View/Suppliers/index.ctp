@@ -64,6 +64,7 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th>ID</th>
                         <th>Nome</th>
                         <th>Documento</th>
                         <th>Telefone</th>
@@ -79,6 +80,7 @@
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["tel_comercial"]; ?></td>
