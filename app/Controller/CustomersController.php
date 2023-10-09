@@ -9,6 +9,7 @@ class CustomersController extends AppController
     public $paginate = [
         'Customer' => [
             'limit' => 10,
+            'contain' => ['Status', 'Resale', 'PlanoAtivo', 'Seller'],
             'order' => ['Customer.codigo_associado' => 'asc'],
             'group' => 'Customer.id',
             'fields' => [
@@ -21,9 +22,10 @@ class CustomersController extends AppController
                 'Customer.id',
                 'Status.*',
                 'Resale.nome_fantasia',
+                'Seller.name',
                 'PlanoAtivo.plan_id',
             ],
-            'recursive' => 2,
+            // 'recursive' => 2,
         ],
         'PlanCustomer'                  => ['limit' => 10, 'order' => ['PlanCustomer.status_id' => 'asc']],
         'LoginConsulta'                 => ['limit' => 10, 'order' => ['LoginConsulta.status_id' => 'asc']],
@@ -48,7 +50,6 @@ class CustomersController extends AppController
 
         $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
 
-        $this->Customer->unbindModel(['belongsTo' => ['Franquia', 'Seller', 'ActivityArea']], false);
         if (isset($_GET['logon'])) {
             $joins = [
                 'fields' => ['Status.*', 'Customer.*', 'LoginConsulta.*'],

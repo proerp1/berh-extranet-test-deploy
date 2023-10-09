@@ -88,7 +88,7 @@
     }
 </script>
 
-<?php $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto', '10' => 'Outros']; ?>
+<?php $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto', '11' => 'Pix', '10' => 'Outros']; ?>
 <?php 
     if(isset($id)){
         echo $this->element("abas_incomes", ['id' => $id]);
