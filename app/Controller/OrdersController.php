@@ -48,6 +48,11 @@ class OrdersController extends AppController
                 'recursive' => 2
             ]);
 
+            if(empty($customerItineraries)){
+                $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect(['action' => 'index']);
+            }
+
             $orderData = [
                 'customer_id' => $customerId,
                 'working_days' => $workingDays,
