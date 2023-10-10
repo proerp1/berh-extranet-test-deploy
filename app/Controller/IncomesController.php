@@ -559,11 +559,6 @@ class IncomesController extends AppController
         $this->autoRender = false;
         $this->layout = false;
 
-        $view = new View($this, false);
-        $view->layout=false;
-
-        $html=$view->render('../EmailsCampanhas/template_email2');
-
         $conta = $this->Income->find('first', [
         	'fields' => [
                 'Customer.id', 'Customer.codigo_associado', 'Customer.nome_secundario', 'Customer.documento', 'Customer.email','Customer.email1', 'Income.id'
@@ -572,33 +567,23 @@ class IncomesController extends AppController
         ]);
 
         $dados = [
-            'subject' => 'Envio de boleto',
-            'content' => $html,
-            'config' => 'fatura',
-            'avulso' => true,
-            'customers' => [
-                [
-                	'Customer' => [
-                        'id' => $conta['Customer']['id'],
-                        'codigo_associado' => $conta['Customer']['codigo_associado'],
-                        'nome_secundario' => $conta['Customer']['nome_secundario'],
-                        'documento' => $conta['Customer']['documento'],
-                        'email' => $conta['Customer']['email'],
-                        'email1' => $conta['Customer']['email1'],
-                    ],
-                    'MailList' => [
-                        'income_id' => $conta['Income']['id']
-                    ]
-                ]
+            'viewVars' => [
+                'nome_fantasia' => $conta['Customer']['nome_secundario'],
+                'cnpj' => $conta['Customer']['documento'],
+                'codigo_associado' => $conta['Customer']['codigo_associado'],
+                'nome'  => $conta['Customer']['nome_secundario'],
+                'email' => $conta['Customer']['email'],
+                'link'  => Configure::read('Areadoassociado.link').'billings?em_aberto'
             ],
+            'template' => 'envia_boleto',
+            'subject'  => 'Envio de boleto',
+            'config'   => 'default'
         ];
 
-        $response = $this->Email->send_many($dados);
-
-        if (empty($response)) {
-        	$this->Flash->set(__('Enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        if (!$this->Email->send($dados)) {
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
         } else {
-        	$this->Flash->set(__('Houve um problema'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->Flash->set(__('Enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         }
 
         $this->redirect($this->referer());

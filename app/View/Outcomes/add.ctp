@@ -134,7 +134,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Forma de pagamento</label>
-                <?php echo $this->Form->input('payment_method', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito',  '7' => 'Débito em conta',  '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto']]);?>
+                <?php echo $this->Form->input('payment_method', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito',  '7' => 'Débito em conta',  '8' => 'Dinheiro', '2' => 'Transfêrencia', '11' => 'Pix', '9' => 'Desconto']]);?>
             </div>
 
             <div class="mb-7 col">
