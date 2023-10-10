@@ -1,6 +1,5 @@
 <?php
 App::uses('CakeEmail', 'Network/Email');
-App::uses('ApiBoleto', 'Lib/Credsis');
 App::uses('Bancoob', 'Lib');
 
 class EmailComponent extends Component
@@ -19,7 +18,11 @@ class EmailComponent extends Component
         $sendgrid = new \SendGrid($key);
         try
         {
-            $sendgrid->send($email);
+            $response = $sendgrid->send($email);
+
+            if ($response->statusCode() != '202') {
+                return false;    
+            }
             
             return true;
         }
@@ -55,7 +58,6 @@ class EmailComponent extends Component
         $error = [];
 
         $email = new CakeEmail();
-        $ApiBoleto = new ApiBoleto();
     
         $email->config($dados['config']);
         $email->subject($dados['subject']);
@@ -68,7 +70,7 @@ class EmailComponent extends Component
                 'fields' => ['BankAccount.bank_id'],
                 'conditions' => ['Income.id' => $ca['MailList']['income_id']]
             ]);
-            $isSicoob = $conta['BankAccount']['bank_id'] == 8;
+            /*$isSicoob = $conta['BankAccount']['bank_id'] == 8;
 
             if ($isSicoob) {
                 $dadosBoleto = $Income->getDadosBoleto($ca['MailList']['income_id']);
@@ -98,7 +100,7 @@ class EmailComponent extends Component
 
                     $email->attachments(APP.'webroot/'.$name.'.pdf');
                 }
-            }
+            }*/
             
             if (!isset($dados['avulso'])) {
                 //registra envio
