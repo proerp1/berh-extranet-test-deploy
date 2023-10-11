@@ -5,10 +5,10 @@
 			thousands: '.',
 			precision: 2
 		});
-		$('.money_exchange_3').maskMoney({
+		$('.money_exchange_juros').maskMoney({
 			decimal: ',',
 			thousands: '.',
-			precision: 3
+			precision: 5
 		});
 	});
 </script>
@@ -60,7 +60,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Juros Boleto por dia</label>
-                <?php echo $this->Form->input('juros', ["placeholder" => "Juros Boleto por dia", "class" => "form-control mb-3 mb-lg-0 money_exchange_3"]);  ?>
+                <?php echo $this->Form->input('juros', ["placeholder" => "Juros Boleto por dia", "class" => "form-control mb-3 mb-lg-0 money_exchange_juros"]);  ?>
             </div>
 
             <div class="mb-7 col">
