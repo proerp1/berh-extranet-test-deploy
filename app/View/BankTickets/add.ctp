@@ -6,8 +6,8 @@
 			precision: 2
 		});
 		$('.money_exchange_juros').maskMoney({
-			decimal: ',',
-			thousands: '.',
+			decimal: '.',
+			thousands: '',
 			precision: 5
 		});
 	});

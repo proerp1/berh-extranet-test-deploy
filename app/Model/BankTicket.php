@@ -55,10 +55,6 @@ class BankTicket extends AppModel
 			$this->data[$this->alias]['multa_boleto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['multa_boleto']);
 		}
 
-		if (!empty($this->data[$this->alias]['juros_boleto_dia'])) {
-			$this->data[$this->alias]['juros_boleto_dia'] = $this->priceFormatBeforeSave($this->data[$this->alias]['juros_boleto_dia']);
-		}
-
 		return true;
 	}
 
