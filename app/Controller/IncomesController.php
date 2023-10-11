@@ -1,5 +1,6 @@
 <?php
 App::uses('BoletoItau', 'Lib');
+App::uses('ApiItau', 'Lib');
 class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -411,6 +412,13 @@ class IncomesController extends AppController
         $this->layout = 'ajax';
 
         $conta = $this->Income->getDadosBoleto($id);
+
+        $ApiItau = new ApiItau();
+        $boleto = $ApiItau->buscarBoleto($conta);
+
+        if ($boleto['success']) {
+            $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
+        }
 
         $Bancoob = new BoletoItau();
         $Bancoob->printBoleto($conta, $pdf);

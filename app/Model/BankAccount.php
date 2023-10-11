@@ -77,6 +77,10 @@ class BankAccount extends AppModel
 				$results[$key][$this->alias]['start_date_nao_formatado'] = $val[$this->alias]['start_date'];
 				$results[$key][$this->alias]['start_date'] = date("d/m/Y", strtotime($val[$this->alias]['start_date']));
 			}
+
+			if (isset($val[$this->alias]['agency']) && isset($val[$this->alias]['account_number'])) {
+				$results[$key][$this->alias]['id_beneficiario'] = $val[$this->alias]['agency'].str_pad(str_replace('-', '', $val[$this->alias]['account_number']), 8, '0', STR_PAD_LEFT);
+			}
 		}
 
 		return $results;
