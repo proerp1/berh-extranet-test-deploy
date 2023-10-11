@@ -44,7 +44,10 @@ class OrdersController extends AppController
 
         if ($this->request->is('post')) {
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
-                'conditions' => ['CustomerUserItinerary.customer_id' => $customerId],
+                'conditions' => [
+                    'CustomerUserItinerary.customer_id' => $customerId,
+                    'CustomerUser.id is not null'
+                ],
                 'recursive' => 2
             ]);
 

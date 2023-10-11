@@ -1,10 +1,4 @@
-<div class="page page-profile">
-  <div class="panel panel-profile">
-    <div class="panel-heading bg-danger clearfix mini-box">
-      <span class="box-icon">
-        <i class="fa fa-ban"></i>
-      </span>
-      <h3>Ação não permitida</h3>
-    </div>
-  </div>
-</div> <!-- /page-profile -->
+<div class="bg-danger p-7 rounded" style="display: flex;align-items: center;gap: 10px;">
+  <i class="fa fa-ban fa-2x text-white"></i>
+  <h2 class="text-white m-0">Ação não permitida</h2>
+</div>
