@@ -96,6 +96,10 @@ class ApiItau extends Controller
                 $message = $error['mensagem'];
             }
 
+            if (isset($error['campos'])) {
+                $message = Hash::extract($error['campos'], '{n}.mensagem');
+            }
+
             return ['success' => false, 'code' => $e->getCode(), 'error' => $message, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         } catch (ServerException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true);
