@@ -31,7 +31,7 @@
                          <th>ID</th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
                         <th>Tipo</th>
-                        <th>Name</th>
+                        <th>Nome</th>
                         <th>Fornecedor</th>
                         <th>CNPJ</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
