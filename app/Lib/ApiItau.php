@@ -41,7 +41,7 @@ class ApiItau extends Controller
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
-                'cert' => APP.'Lib/chave_itau/berh.pem'
+                'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
             ]);
 
             $contents = json_decode($response->getBody()->getContents(), true);
@@ -72,7 +72,7 @@ class ApiItau extends Controller
                         'x-itau-correlationID' => 2,
                         'Authorization' => 'Bearer '.CakeSession::read('ApiItau.token'),
                     ],
-                    'cert' => APP.'Lib/chave_itau/berh.pem'
+                    'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
                 ])
             );
 
@@ -81,15 +81,6 @@ class ApiItau extends Controller
             return ['success' => true, 'contents' => $contents, 'params' => $params, 'requestedUrl' => $requestedUrl, 'code' => $response->getStatusCode()];
         } catch (ClientException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true);
-
-            /*if (
-                ($e->getCode() == 403 && strpos($e->getMessage(), 'Authentication Failed') !== false) 
-                || $e->getCode() == 401
-            ) {
-                $this->authenticate();
-
-                return $this->makeRequest($method, $endpoint, $params);
-            }*/
 
             $message = $e->getMessage();
             if (isset($error['mensagem'])) {
