@@ -169,7 +169,7 @@ echo $this->element("abas_customers", array('id' => $id));
                         <div class="form-check form-check-custom form-check-solid mt-2">
                             <input class="form-check-input" type="radio" name="option_itinerary" value="1" id="flexRadioChecked2" />
                             <label class="form-check-label" for="flexRadioChecked2">
-                                Excluir Itinerários Existentes
+                                Inativar Itinerários Existentes
                             </label>
                         </div>
                     </div>
