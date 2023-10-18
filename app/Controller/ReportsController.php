@@ -73,8 +73,8 @@ class ReportsController extends AppController
         }
 
         if (isset($_GET['excel'])) {
-            $this->paginate['OrderItem'] = $this->ExcelConfiguration->getConfiguration('OrderItem');
-            $this->Paginator->settings = $this->paginate;
+            $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
+            $this->Paginator->settings = ['OrderItem' => $pag];
         }
 
         if (isset($_GET['o'])) {
