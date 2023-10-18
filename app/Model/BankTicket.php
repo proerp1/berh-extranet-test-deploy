@@ -35,11 +35,6 @@ class BankTicket extends AppModel
 				$results[$key][$this->alias]['multa_boleto_nao_formatada'] = $val[$this->alias]['multa_boleto'];
 				$results[$key][$this->alias]['multa_boleto'] = number_format($val[$this->alias]['multa_boleto'], 2, ',', '.');
 			}
-
-			if (isset($val[$this->alias]['juros_boleto_dia'])) {
-				$results[$key][$this->alias]['juros_boleto_dia_nao_formatada'] = $val[$this->alias]['juros_boleto_dia'];
-				$results[$key][$this->alias]['juros_boleto_dia'] = number_format($val[$this->alias]['juros_boleto_dia'], 3, ',', '.');
-			}
 		}
 
 		return $results;
@@ -53,10 +48,6 @@ class BankTicket extends AppModel
 
 		if (!empty($this->data[$this->alias]['multa_boleto'])) {
 			$this->data[$this->alias]['multa_boleto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['multa_boleto']);
-		}
-
-		if (!empty($this->data[$this->alias]['juros_boleto_dia'])) {
-			$this->data[$this->alias]['juros_boleto_dia'] = $this->priceFormatBeforeSave($this->data[$this->alias]['juros_boleto_dia']);
 		}
 
 		return true;

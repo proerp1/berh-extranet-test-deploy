@@ -27,10 +27,13 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        
+                         <th>ID</th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
                         <th>Tipo</th>
-                        <th>Name</th>
+                        <th>Nome</th>
                         <th>Fornecedor</th>
+                        <th>CNPJ</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -38,10 +41,12 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BenefitType"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/benefits/edit/'.$data[$i]["Benefit"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

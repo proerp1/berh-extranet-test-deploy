@@ -43,13 +43,13 @@ class BoletoItau extends Controller
             'valor' => (float)$boleto['Income']['valor_total_nao_formatado'],
             'multa' => 0, // 5% do valor do boleto após o vencimento
             'juros' => 30, // 30% ao mês do valor do boleto ou 1% ao dia
-            'numero' => $boleto['Income']['nosso_numero'],
+            'numero' => $boleto['Income']['id'],
             'numeroDocumento' => $boleto['Income']['id'],
             'pagador' => $this->pagador($boleto['Customer']),
             'beneficiario' => $this->beneficiario($boleto['Resale']),
             'carteira' => $boleto['BankTicket']['carteira'],
             'agencia' => $boleto['BankAccount']['agency'],
-            'conta' =>  $boleto['BankAccount']['account_number'],
+            'conta' => explode('-', $boleto['BankAccount']['account_number'])[0],
             'convenio' => $boleto['BankAccount']['convenio'],
             'descricaoDemonstrativo' => [
                 $boleto['BankTicket']['informativo_boleto'], 
@@ -57,7 +57,7 @@ class BoletoItau extends Controller
                 '-',
                 $num_pedido_demonstrativo, 
             ],
-            'instrucoes' => [
+            'instrucoes' => isset($boleto['mensagens_cobranca']) ? $boleto['mensagens_cobranca'] : [
                 $boleto['BankTicket']['instrucao_boleto_1'], 
                 $boleto['BankTicket']['instrucao_boleto_2'], 
                 $boleto['BankTicket']['instrucao_boleto_3'], 

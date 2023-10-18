@@ -4,6 +4,7 @@ App::uses('Controller', 'Controller');
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7;
 
 class ApiItau extends Controller
@@ -21,36 +22,45 @@ class ApiItau extends Controller
         $this->clientSecret = Configure::read('Itau.ClientSecret');
     }
 
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = $url;
+    }
+
     public function authenticate()
     {
         $client = new Client();
 
         try {
-            $response = $client->post('https://devportal.itau.com.br/api/jwt', [
-                'json' => [
+            $response = $client->post('https://sts.itau.com.br/api/oauth/token', [
+                'form_params' => [
+                    'grant_type' => 'client_credentials',
                     'client_id' => $this->clientId,
                     'client_secret' => $this->clientSecret,
                 ],
                 'headers' => [
-                    'Content-Type' => 'application/json',
+                    'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
+                'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
             ]);
 
             $contents = json_decode($response->getBody()->getContents(), true);
 
             if (isset($contents['access_token'])) {
-                Configure::write('ApiItau.token', $contents['access_token']);
+                CakeSession::write('ApiItau.token', $contents['access_token']);
             }
 
             return true;
         } catch (Exception $e) {
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $e->getMessage(), 'params' => $params, 'requestedUrl' => $requestedUrl];
+            return ['success' => false, 'code' => $e->getCode(), 'error' => $e->getMessage()];
         }
     }
 
-    public function makeRequest($method, $endpoint, $params = [])
+    public function makeRequest($method, $endpoint, $params = [], $baseUrl = '')
     {
         $requestedUrl = $this->baseUrl.$endpoint;
+
+        $this->authenticate();
 
         $client = new Client();
 
@@ -58,8 +68,11 @@ class ApiItau extends Controller
             $response = $client->request($method, $requestedUrl, 
                 array_merge($params, [
                     'headers' => [
-                        'x-sandbox-token' => Configure::read('ApiItau.token'),
-                    ]
+                        'x-itau-apikey' => $this->clientId,
+                        'x-itau-correlationID' => 2,
+                        'Authorization' => 'Bearer '.CakeSession::read('ApiItau.token'),
+                    ],
+                    'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
                 ])
             );
 
@@ -69,90 +82,92 @@ class ApiItau extends Controller
         } catch (ClientException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true);
 
-            if (
-                ($e->getCode() == 400 && isset($error['message']) && $error['message'] == 'Missing required request parameters: [x-sandbox-token]') 
-                || $e->getCode() == 401
-            ) {
-                $this->authenticate();
-                return $this->makeRequest($method, $endpoint, $params);
-            }
-
             $message = $e->getMessage();
-            if (isset($error['arquivos'])) {
-                $message = $error['arquivos'];
+            if (isset($error['mensagem'])) {
+                $message = $error['mensagem'];
             }
 
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $message, 'params' => $params, 'requestedUrl' => $requestedUrl];
+            if (isset($error['campos'])) {
+                $message = Hash::extract($error['campos'], '{n}.mensagem');
+            }
+
+            return ['success' => false, 'code' => $e->getCode(), 'error' => $message, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
+        } catch (ServerException $e) {
+            $error = json_decode($e->getResponse()->getBody()->getContents(), true);
+
+            return ['success' => false, 'code' => $e->getCode(), 'error' => $error, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         }
     }
 
     public function gerarBoleto($conta)
     {
+        $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
+        $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
+        $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);
+        $juros = str_pad(str_replace('.', '', $conta['BankTickets']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
+
         $params = [
-            'etapa_processo_boleto' => 'efetivacao',
-            'codigo_canal_operacao' => 'BKL',
-            'beneficiario' => [
-                'id_beneficiario' => $conta['BankAccount']['agency'].str_replace('-', '', $conta['BankAccount']['account_number']),
-            ],
-            'dado_boleto' => [
-                'descricao_instrumento_cobranca' => 'boleto',
-                'tipo_boleto' => 'a vista',
-                'codigo_carteira' => $conta['BankTickets']['carteira'],
-                'valor_total_titulo' => $conta['Income']['valor_total_nao_formatado'],
-                'codigo_especie' => '01',
-                'forma_envio' => 'impressão',
-                'pagador' => [
-                    'pessoa' => [
-                        'nome_pessoa' => $conta['Customer']['nome_primario'],
-                        'tipo_pessoa' => [
-                            'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
-                            'numero_cadastro_nacional_pessoa_juridica' => $conta['Customer']['documento'],
+            'data' => [
+                'etapa_processo_boleto' => 'efetivacao',
+                'codigo_canal_operacao' => 'API',
+                'beneficiario' => [
+                    'id_beneficiario' => $conta['BankAccount']['id_beneficiario'],
+                ],
+                'dado_boleto' => [
+                    'descricao_instrumento_cobranca' => 'boleto',
+                    'tipo_boleto' => 'a vista',
+                    'codigo_carteira' => $conta['BankTickets']['carteira'],
+                    'valor_total_titulo' => $valor,
+                    'codigo_especie' => '01',
+                    "valor_abatimento" => "000",
+                    "data_emissao" => date('Y-m-d'),
+                    'forma_envio' => 'impressao',
+                    'pagador' => [
+                        'pessoa' => [
+                            'nome_pessoa' => $this->removeAccents($conta['Customer']['nome_primario']),
+                            'tipo_pessoa' => [
+                                'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
+                                $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
+                            ],
+                        ],
+                        'endereco' => [
+                            'nome_logradouro' => $this->removeAccents($conta['Customer']['endereco']),
+                            'nome_bairro' => $this->removeAccents($conta['Customer']['bairro']),
+                            'nome_cidade' => $this->removeAccents($conta['Customer']['cidade']),
+                            'sigla_UF' => $conta['Customer']['estado'],
+                            'numero_CEP' => str_replace('-', '', $conta['Customer']['cep']),
+                        ]
+                    ],
+                    'dados_individuais_boleto' => [
+                        [
+                            'numero_nosso_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
+                            'data_vencimento' => $conta['Income']['vencimento_nao_formatado'],
+                            'valor_titulo' => $valor,
+                            'texto_seu_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
                         ],
                     ],
-                    'endereco' => [
-                        'nome_logradouro' => $conta['Customer']['endereco'],
-                        'nome_bairro' => $conta['Customer']['bairro'],
-                        'nome_cidade' => $conta['Customer']['cidade'],
-                        'sigla_UF' => $conta['Customer']['estado'],
-                        'numero_CEP' => str_replace('-', '', $conta['Customer']['cep']),
-                    ]
-                ],
-                'dados_individuais_boleto' => [
-                    [
-                        'data_vencimento' => $conta['Income']['vencimento_nao_formatado'],
-                        'valor_titulo' => $conta['Income']['valor_total_nao_formatado'],
-                        'texto_seu_numero' => $conta['Income']['id'],
+                    'multa' => [
+                        'codigo_tipo_multa' => '01',
+                        'quantidade_dias_multa' => 1,
+                        'valor_multa' => $multa,
                     ],
-                ],
-                'desconto_expresso' => false,
-                'codigo_tipo_vencimento' => 1,
-                'descricao_especie' => 'BDP Boleto proposta',
-                'codigo_aceite' => 'S',
-                'data_emissao' => '2000-01-01',
-                'pagamento_parcial' => true,
-                'quantidade_maximo_parcial' => 2,
-                'valor_abatimento' => '100.00',
-                'juros' => [
-                    'codigo_tipo_juros' => '91',
-                    'quantidade_dias_juros' => 1,
-                    'percentual_juros' => $conta['BankTickets']['juros_boleto_dia'],
-                ],
-                'multa' => [
-                    'codigo_tipo_multa' => '01',
-                    'quantidade_dias_multa' => 1,
-                    'valor_multa' => $conta['BankTickets']['multa_boleto'],
-                ],
-                'desconto' => [
-                    'codigo_tipo_desconto' => '00'
-                ],
-                /*'mensagens_cobranca' => [
-                    [
-                        'mensagem' => 'abc',
+                    'juros' => [
+                        'codigo_tipo_juros' => '91',
+                        'quantidade_dias_juros' => 1,
+                        'percentual_juros' => $juros,
                     ],
-                ],*/
-                'recebimento_divergente' => [
-                    'codigo_tipo_autorizacao' => '03'
-                ],
+                    'recebimento_divergente' => [
+                        'codigo_tipo_autorizacao' => '03'
+                    ],
+                    "instrucao_cobranca" => [
+                        [
+                            "codigo_instrucao_cobranca" =>  "1",
+                            "quantidade_dias_apos_vencimento" => 2,
+                            "dia_util" => false
+                        ]        
+                    ],
+                    'desconto_expresso' => false,
+                ]
             ]
         ];
 
@@ -161,14 +176,15 @@ class ApiItau extends Controller
         ]);
     }
 
-    public function buscarBoleto($conta, $nosso_numero)
+    public function buscarBoleto($conta)
     {
+        $this->setBaseUrl(Configure::read('Itau.BaseUrlBusca'));
         return $this->makeRequest('GET', '/boletos', [
             'query' => [
-                'id_beneficiario' => $conta['BankAccount']['agency'].str_replace('-', '', $conta['BankAccount']['account_number']),
-                // 'codigo_carteira' => '12',
-                'nosso_numero' => $nosso_numero,
-                'view' => 'specific',
+                'id_beneficiario' => $conta['BankAccount']['id_beneficiario'],
+                // 'codigo_carteira' => $conta['BankTickets']['carteira'],
+                'nosso_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
+                // 'view' => 'specific',
             ]
         ]);
     }
@@ -225,5 +241,44 @@ class ApiItau extends Controller
                 ],
             ]
         ]);
+    }
+
+    private function removeAccents($string)
+    {
+        return preg_replace(
+            array(
+                    '/\xc3[\x80-\x85]/',
+                    '/\xc3\x87/',
+                    '/\xc3[\x88-\x8b]/',
+                    '/\xc3[\x8c-\x8f]/',
+                    '/\xc3([\x92-\x96]|\x98)/',
+                    '/\xc3[\x99-\x9c]/',
+
+                    '/\xc3[\xa0-\xa5]/',
+                    '/\xc3\xa7/',
+                    '/\xc3[\xa8-\xab]/',
+                    '/\xc3[\xac-\xaf]/',
+                    '/\xc3([\xb2-\xb6]|\xb8)/',
+                    '/\xc3[\xb9-\xbc]/',
+            ),
+            str_split('ACEIOUaceiou', 1),
+            $this->isUtf8($string) ? $string : utf8_encode($string)
+        );
+    }
+
+    private function isUtf8($string)
+    {
+        return preg_match('%^(?:
+                 [\x09\x0A\x0D\x20-\x7E]
+                | [\xC2-\xDF][\x80-\xBF]
+                | \xE0[\xA0-\xBF][\x80-\xBF]
+                | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}
+                | \xED[\x80-\x9F][\x80-\xBF]
+                | \xF0[\x90-\xBF][\x80-\xBF]{2}
+                | [\xF1-\xF3][\x80-\xBF]{3}
+                | \xF4[\x80-\x8F][\x80-\xBF]{2}
+                )*$%xs',
+                $string
+        );
     }
 }

@@ -146,7 +146,7 @@ class BoletosController extends AppController
                             'CnabItem' => [
                                 'cnab_lote_id' => $this->CnabLote->id,
                                 'income_id' => $conta['Income']['id'],
-                                'id_web' => $boleto['contents']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
+                                'id_web' => $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
                                 'status_id' => 48,
                                 'user_creator_id' => CakeSession::read('Auth.User.id'),
                             ],
@@ -161,17 +161,14 @@ class BoletosController extends AppController
                             ],
                         ]);
                     } else {
-                        debug($boleto);
-
-                        exit;
-                        $erros = $boleto['error']->erros->item;
-                        if (!is_array($boleto['error']->erros->item)) {
-                            $erros = [$boleto['error']->erros->item];
+                        $erros = $boleto['error'];
+                        if (!is_array($boleto['error'])) {
+                            $erros = [$boleto['error']];
                         }
 
                         $message = '';
                         foreach ($erros as $erro) {
-                            $message .= $erro->message.'<br>';
+                            $message .= $erro.'<br>';
                         }
 
                         $this->Session->setFlash(__($message), 'default', ['class' => 'alert alert-danger']);

@@ -107,7 +107,7 @@ class CustomersController extends AppController
             $nome = 'clientes_locaweb_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Customer->find('all', [
-                'contain' => ['Resale', 'Status'],
+                'contain' => ['Resale', 'Status', 'Seller'],
                 'conditions' => $condition, 
             ]);
 
