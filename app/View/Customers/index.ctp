@@ -106,7 +106,7 @@
                         <th>Revenda</th>
                         <th>Executivo</th>
                         <th>Status</th>
-                        <th class="w-300px min-w-300px rounded-end">Ações</th>
+                        <th class="w-150px min-w-150px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
