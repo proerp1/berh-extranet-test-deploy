@@ -18,6 +18,37 @@ class Supplier extends AppModel
         return $queryData;
     }
 
+    public function beforeSave($options = [])
+    {
+       
+        if (!empty($this->data[$this->alias]['transfer_fee_percentage'])) {
+            $this->data[$this->alias]['transfer_fee_percentage'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee_percentage']);
+        }
+    
+        return true;
+    }
+
+    public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            
+            if (isset($val[$this->alias]['transfer_fee_percentage'])) {
+                $results[$key][$this->alias]['transfer_fee_percentage_nao_formatado'] = $results[$key][$this->alias]['transfer_fee_percentage'];
+                $results[$key][$this->alias]['transfer_fee_percentage'] = number_format($results[$key][$this->alias]['transfer_fee_percentage'], 2, ',', '.');
+            }
+        }
+
+        return $results;
+    }
+
+    public function priceFormatBeforeSave($price)
+    {
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
+
+        return $valueFormatado;
+    }
+
     public $validate = [
         'nome_fantasia' => [
             'required' => [

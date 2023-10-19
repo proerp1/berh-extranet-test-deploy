@@ -1,3 +1,4 @@
+<?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Supplier', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
@@ -26,10 +27,10 @@
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Repasse</label>
-                <?php echo $this->Form->input('transfer_fee_percentage', ["placeholder" => "Repasse", "class" => "form-control mb-3 mb-lg-0"]);  ?>
-            </div>
-        </div>
+    <label class="fw-semibold fs-6 mb-2">Repasse</label>
+    <?php echo $this->Form->input('transfer_fee_percentage', [ "placeholder" => "Repasse", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+</div>
+
 
         <div class="row">
             <div class="mb-7 col">
@@ -201,12 +202,20 @@
         });
 
         tipo_cliente();
+        
 
         $("#tipo_pessoa").change(function() {
             tipo_cliente();
         });
 
         $("#cep").mask("99999-999");
+
+        $('.money_exchange').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
+
         $(".telefone").focusout(function() {
             var phone, element;
             element = $(this);
