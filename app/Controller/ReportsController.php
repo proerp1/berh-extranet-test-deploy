@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports'];
-    public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome'];
+    public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order'];
 
     public function beforeFilter()
     {
@@ -77,6 +77,85 @@ class ReportsController extends AppController
             $this->Paginator->settings = ['OrderItem' => $pag];
         }
 
+        $data = $this->Paginator->paginate('OrderItem', $condition);
+
+        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
+
+        if (isset($_GET['excel'])) {
+            $this->ExcelGenerator->gerarExcelItineraries('itinerarios', $data);
+
+            $this->redirect('/private_files/baixar/excel/itinerarios_xlsx');
+        }
+
+        $de = date('d/m/Y', strtotime($de));
+        $para = date('d/m/Y', strtotime($para));
+
+        $action = 'Itinerários';
+        $breadcrumb = ['Relatórios' => '', 'Itinerários' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers'));
+    }
+
+    public function pedidos()
+    {
+        $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        $paginationConfig = $this->CustomReports->configPagination('pedidos');
+        $this->Paginator->settings = $paginationConfig;
+
+        $condition = ['and' => [], 'or' => []];
+
+        if (!isset($_GET['de']) && !isset($_GET['para'])) {
+            $dates = $this->getCurrentDates();
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $dates['from']]);
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $dates['to'] . ' 23:59:59']);
+
+            $de = $dates['from'];
+            $para = $dates['to'];
+        }
+
+        if (isset($_GET['de']) and $_GET['de'] != '') {
+            $deRaw = $_GET['de'];
+            $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
+            $de = $dateObjectDe->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
+        }
+
+        if (isset($_GET['para']) and $_GET['para'] != '') {
+            $paraRaw = $_GET['para'];
+            $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
+            $para = $dateObjectPara->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
+        }
+
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
+        if (isset($_GET['st']) and $_GET['st'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
+        }
+
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
+        } else {
+            $condition['and'] = array_merge($condition['and'], ['1 = 2']);
+        }
+
+        if (!empty($_GET['q'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.email LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.nome_primario LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
+            ]);
+        }
+
+        if (isset($_GET['excel'])) {
+            $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
+            $this->Paginator->settings = ['OrderItem' => $pag];
+        }
+
         if (isset($_GET['o'])) {
             $order_field = [
                 'nome' => 'CustomerUser.name',
@@ -103,17 +182,25 @@ class ReportsController extends AppController
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
         if (isset($_GET['excel'])) {
-            $this->ExcelGenerator->gerarExcelItineraries('itinerarios', $data);
+            $this->ExcelGenerator->gerarExcelOrders('PedidoCompras', $data);
 
-            $this->redirect('/private_files/baixar/excel/itinerarios_xlsx');
+            $this->redirect('/private_files/baixar/excel/PedidoCompras_xlsx');
         }
+
+        $statuses = [
+            83 => 'Início',
+            84 => 'Aguardando Pagamento',
+            85 => 'Pagamento Confirmado',
+            86 => 'Em Processamento',
+            87 => 'Finalizado'
+        ];
 
         $de = date('d/m/Y', strtotime($de));
         $para = date('d/m/Y', strtotime($para));
 
         $action = 'Itinerários';
         $breadcrumb = ['Relatórios' => '', 'Itinerários' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
 
     public function getDepAndCCByCustomer()
@@ -126,6 +213,87 @@ class ReportsController extends AppController
         $costCenters = $this->CostCenter->find('all', ['fields' => ['id', 'name'], 'conditions' => ['CostCenter.customer_id' => $customer_id], 'recursive' => -1]);
 
         echo json_encode(['departments' => $departments, 'costCenters' => $costCenters]);
+    }
+
+    public function getSupplierAndCustomerByDate()
+    {
+        $this->autoRender = false;
+
+        // convert brazilian date to mysql date
+        $ini = $this->Order->date_converter($_POST['ini']);
+        $end = $this->Order->date_converter($_POST['end']);
+
+        if($ini == '' && $end == '') {
+            echo json_encode(['suppliers' => [], 'customers' => []]);
+            return;
+        }
+
+        if($ini != '' && $end == ''){
+            $cond = ['OrderItem.created > ?' => [$ini]];
+        }
+
+        if($ini == '' && $end != ''){
+            $cond = ['OrderItem.created < ?' => [$end]];
+        }
+
+        if($ini != '' && $end != ''){
+            $cond = ['OrderItem.created BETWEEN ? AND ?' => [$ini, $end]];
+        }
+
+        $suppliers = $this->OrderItem->find('all',
+            [
+                'fields' => ['Supplier.id', 'Supplier.nome_fantasia'],
+                'conditions' => $cond,
+                'group' => ['Supplier.id'],
+                'recursive' => -1,
+                'joins' => [
+                    [
+                        'table' => 'customer_user_itineraries',
+                        'alias' => 'CustomerUserItinerary',
+                        'type' => 'INNER',
+                        'conditions' => ['CustomerUserItinerary.id = OrderItem.customer_user_itinerary_id'],
+                    ],
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => ['Supplier.id = Benefit.supplier_id'],
+                    ]
+                ]
+            ]
+        );
+
+        $customers = $this->OrderItem->find('all',
+            [
+                'fields' => ['Customer.id', 'Customer.nome_primario'],
+                'conditions' => $cond,
+                'group' => ['Customer.id'],
+                'recursive' => -1,
+                'joins' => [
+                    [
+                        'table' => 'orders',
+                        'alias' => 'Order',
+                        'type' => 'INNER',
+                        'conditions' => ['Order.id = OrderItem.order_id'],
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => ['Customer.id = Order.customer_id'],
+                    ]
+                ]
+            ]
+        );
+        
+
+        echo json_encode(['suppliers' => $suppliers, 'customers' => $customers]);
     }
 
     public function baixa_manual()
@@ -193,6 +361,4 @@ class ReportsController extends AppController
 
         return compact('from', 'to');
     }
-
-    
 }

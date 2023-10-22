@@ -82,15 +82,32 @@
                     </a>
                 </div>
 
-                <div class="menu-item">
-                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && !isset($_GET['logon'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'index']) ?>"">
+                <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                    <span class="menu-link">
                         <span class="menu-icon">
                             <i class="fas fa-table"></i> 
                         </span>
-                        <span class="menu-title">
-                            Relatórios
-                        </span>
-                    </a>
+                        <span class="menu-title">Relatórios</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion menu-active-bg">
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && !isset($_GET['logon'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Itinerários</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['controller'] == 'reports') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Pedidos</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">

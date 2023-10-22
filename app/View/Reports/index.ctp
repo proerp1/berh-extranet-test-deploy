@@ -133,7 +133,6 @@
             success: function(data) {
                 var obj = JSON.parse(data);
                 var html = '<option>Selecione</option>';
-                console.log(obj);
                 for (var i = 0; i < obj.departments.length; i++) {
                     html += '<option value="' + obj.departments[i].CustomerDepartment.id + '">' + obj.departments[i].CustomerDepartment.name + '</option>';
                 }

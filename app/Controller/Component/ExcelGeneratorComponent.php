@@ -39,6 +39,18 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+    
+    public function gerarExcelOrders($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getOrder($spreadsheet, $dados);
+
+        $local_salva = APP.'Private/excel/'.$nome.'.xlsx';
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
 
     public function gerarBaixaManual($nome, $dados)
     {
