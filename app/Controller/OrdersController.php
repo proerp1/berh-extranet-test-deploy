@@ -106,7 +106,9 @@ class OrdersController extends AppController
 
             $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
             $benefit = $this->Benefit->findById($benefitId);
-            $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage'];
+            $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado']) 
+                                    ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado'] 
+                                    : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
 
             $total = $subtotal + $transferFee;
