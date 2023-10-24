@@ -844,8 +844,12 @@ class CustomersController extends AppController
 
         $data = $this->Paginator->paginate('Order', $condition);
 
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
         $action = 'Pedido';
-        $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
+        $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'boletos', $id],
+        'Boletos' => '',];
         $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
 

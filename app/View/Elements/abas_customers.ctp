@@ -6,7 +6,7 @@
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['proposals']) ? 'active' : '' ?>" href="<?php echo $this->base.'/proposals/index/'.$id; ?>">Proposta</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['boletos']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/boletos/'.$id; ?>">Faturas</a>
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['boletos']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/boletos/'.$id; ?>">Boletos</a>
 	</li>
 	<li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['controller'] == 'customer_users' && in_array($this->request->params['action'], ['index_users', 'add_user', 'edit_user']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/index_users/'.$id; ?>">Usuários</a>

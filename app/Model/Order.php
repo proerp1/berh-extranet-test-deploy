@@ -98,6 +98,7 @@ class Order extends AppModel {
 				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
 				$results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
 			}
+            
         }
 
         return $results;
