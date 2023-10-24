@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports'];
-    public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order'];
+    public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
 
     public function beforeFilter()
     {
@@ -48,12 +48,12 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($_GET['d']) and $_GET['d'] != 'Selecione') {
-            $condition['and'] = array_merge($condition['and'], ['CustomerDepartment.id' => $_GET['d']]);
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
-        if (isset($_GET['cc']) and $_GET['cc'] != 'Selecione') {
-            $condition['and'] = array_merge($condition['and'], ['CostCenter.id' => $_GET['cc']]);
+        if (isset($_GET['st']) and $_GET['st'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
         if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
@@ -82,17 +82,19 @@ class ReportsController extends AppController
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
         if (isset($_GET['excel'])) {
-            $this->ExcelGenerator->gerarExcelItineraries('itinerarios', $data);
+            $this->ExcelGenerator->gerarExcelItineraries('itinerarios_admin', $data);
 
-            $this->redirect('/private_files/baixar/excel/itinerarios_xlsx');
+            $this->redirect('/private_files/baixar/excel/itinerarios-admin_xlsx');
         }
 
         $de = date('d/m/Y', strtotime($de));
         $para = date('d/m/Y', strtotime($para));
 
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+
         $action = 'Itinerários';
         $breadcrumb = ['Relatórios' => '', 'Itinerários' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
 
     public function pedidos()
@@ -187,13 +189,7 @@ class ReportsController extends AppController
             $this->redirect('/private_files/baixar/excel/PedidoCompras_xlsx');
         }
 
-        $statuses = [
-            83 => 'Início',
-            84 => 'Aguardando Pagamento',
-            85 => 'Pagamento Confirmado',
-            86 => 'Em Processamento',
-            87 => 'Finalizado'
-        ];
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
 
         $de = date('d/m/Y', strtotime($de));
         $para = date('d/m/Y', strtotime($para));
