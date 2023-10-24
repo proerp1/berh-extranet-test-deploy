@@ -12,6 +12,7 @@ class PrivateFilesController extends AppController
     public function baixar($pasta, $arquivo)
     {
         $arquivo = str_replace('_', '.', $arquivo);
+        $arquivo = str_replace('-', '_', $arquivo);
         $this->autoRender = false;
         $this->response->file(APP.'Private/'.$pasta.'/'.$arquivo, ['download' => true, 'name' => $arquivo]);
     }

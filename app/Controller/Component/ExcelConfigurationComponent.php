@@ -43,6 +43,12 @@ class ExcelConfigurationComponent extends Component {
 					'CustomerPosition.name',
 					'SalaryRange.range',
 					'MaritalStatus.status',
+
+					'Order.id',
+					'Order.order_period_from',
+					'Order.order_period_to',
+
+					'OrderStatus.name'
 					
 				],
 				'joins' => [
@@ -51,6 +57,12 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'Order',
 						'type' => 'INNER',
 						'conditions' => ['Order.id = OrderItem.order_id']
+					],
+					[
+						'table' => 'statuses',
+						'alias' => 'OrderStatus',
+						'type' => 'INNER',
+						'conditions' => ['Order.status_id = OrderStatus.id']
 					],
 					[
 						'table' => 'customers',

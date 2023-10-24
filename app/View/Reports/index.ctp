@@ -37,23 +37,7 @@
                         <div class="separator border-gray-200"></div>
 
                         <div class="px-7 py-5">
-                            <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
-                                    <option>Selecione</option>
-                                    <?php
-                                    foreach ($customers as $keyCst => $customer) {
-                                        $selected = "";
-                                        if (isset($_GET["c"])) {
-                                            if ($keyCst == $_GET["c"]) {
-                                                $selected = "selected";
-                                            }
-                                        }
-                                        echo '<option value="' . $keyCst . '" ' . $selected . '>' . $customer . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
+                            
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>
                                 <div class="input-daterange input-group" id="datepicker">
@@ -64,15 +48,32 @@
                                 </div>
                             </div>
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Centro de Custo:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cc" id="cc">
+                                <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
                                     <option>Selecione</option>
                                 </select>
                             </div>
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Departamento:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="d" id="d">
+                                <label class="form-label fs-5 fw-bold mb-3">Fornecedores:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="sup" id="sup">
                                     <option>Selecione</option>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status Pedido:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="st" id="st">
+                                    <option>Selecione</option>
+                                    <?php
+                                    foreach ($statuses as $keySt => $status) {
+                                        $selected = "";
+                                        if (isset($_GET["st"])) {
+                                            if ($keySt == $_GET["st"]) {
+                                                $selected = "selected";
+                                            }
+                                        }
+                                        echo '<option value="' . $keySt . '" ' . $selected . '>' . $status . '</option>';
+                                    }
+                                    ?>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -122,36 +123,57 @@
 </div>
 
 <script>
-    function trigger_cst_change() {
-        var v_cst_id = $('#c').val()
+    function trigger_date_change() {
+        var v_ini = $("#de").val();
+        var v_end = $("#ate").val();
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const curr_c = urlParams.get('c');
+        const curr_sup = urlParams.get('sup');
+
         $.ajax({
-            url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getDepAndCCByCustomer")); ?>',
+            url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getSupplierAndCustomerByDate")); ?>',
             type: 'POST',
             data: {
-                customer_id: v_cst_id
+                ini: v_ini,
+                end: v_end
             },
             success: function(data) {
+
                 var obj = JSON.parse(data);
                 var html = '<option>Selecione</option>';
-                for (var i = 0; i < obj.departments.length; i++) {
-                    html += '<option value="' + obj.departments[i].CustomerDepartment.id + '">' + obj.departments[i].CustomerDepartment.name + '</option>';
+                var sel = '';
+                for (var i = 0; i < obj.customers.length; i++) {
+                    if (obj.customers[i].Customer.id == curr_c) {
+                        sel = 'selected';
+                    } else {
+                        sel = '';
+                    }
+                    html += '<option value="' + obj.customers[i].Customer.id + '" '+sel+'>' + obj.customers[i].Customer.nome_primario + '</option>';
                 }
-                $("#d").html(html);
+                $("#c").html(html);
 
                 html = '<option>Selecione</option>';
-                for (var i = 0; i < obj.costCenters.length; i++) {
-                    html += '<option value="' + obj.costCenters[i].CostCenter.id + '">' + obj.costCenters[i].CostCenter.name + '</option>';
+                var sel_sup = '';
+                for (var i = 0; i < obj.suppliers.length; i++) {
+                    if (obj.suppliers[i].Supplier.id == curr_sup) {
+                        sel_sup = 'selected';
+                    } else {
+                        sel_sup = '';
+                    }
+                    html += '<option value="' + obj.suppliers[i].Supplier.id + '" '+sel_sup+'>' + obj.suppliers[i].Supplier.nome_fantasia + '</option>';
                 }
-                $("#cc").html(html);
+                $("#sup").html(html);
 
                 // reload select2
-                $("#d").select2();
-                $("#cc").select2();
+                $("#c").select2();
+                $("#sup").select2();
             }
         });
     }
     $(document).ready(function() {
-        trigger_cst_change();
+        trigger_date_change();
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
@@ -164,8 +186,12 @@
             $("#busca").submit();
         });
 
-        $('#c').on('change', function() {
-            trigger_cst_change();
+        $('#de').on('change', function() {
+            trigger_date_change();
+        });
+        
+        $('#ate').on('change', function() {
+            trigger_date_change();
         });
 
         $('#tp').on('change', function() {

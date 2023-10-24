@@ -162,7 +162,7 @@
 </div>
 
 <script>
-    function trigger_cst_change() {
+    function trigger_date_change() {
         var v_ini = $("#de").val();
         var v_end = $("#ate").val();
 
@@ -212,7 +212,7 @@
         });
     }
     $(document).ready(function() {
-        trigger_cst_change();
+        trigger_date_change();
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
@@ -226,11 +226,11 @@
         });
 
         $('#de').on('change', function() {
-            trigger_cst_change();
+            trigger_date_change();
         });
         
         $('#ate').on('change', function() {
-            trigger_cst_change();
+            trigger_date_change();
         });
 
         $('#tp').on('change', function() {

@@ -1321,7 +1321,11 @@ class ExcelTemplate
 		->setCellValue('BB1', "E-Mail")
 		->setCellValue('BC1', "Ddd - Telefone ")
 		->setCellValue('BD1', "Número Do Telefone ")
-		->setCellValue('BE1', "Cargo");
+		->setCellValue('BE1', "Cargo")
+		->setCellValue('BF1', "Pedido")
+		->setCellValue('BG1', "Status")
+		->setCellValue('BH1', "Data")
+		;
 
 		$indx = 1;
 		$total = 0;
@@ -1394,7 +1398,10 @@ class ExcelTemplate
 				->setCellValue('BB'. $indx, $dados[$i]['CustomerUser']['email'])
 				->setCellValue('BC'. $indx, $dados[$i]['CustomerUser']['ddd_cel'])
 				->setCellValue('BD'. $indx, $dados[$i]['CustomerUser']['cel_sem_ddd'])
-				->setCellValue('BE'. $indx, $dados[$i]['CustomerPosition']['name']);
+				->setCellValue('BE'. $indx, $dados[$i]['CustomerPosition']['name'])
+				->setCellValue('BF'. $indx, $dados[$i]['Order']['id'])
+				->setCellValue('BG'. $indx, $dados[$i]['OrderStatus']['name'])
+				->setCellValue('BH'. $indx, $dados[$i]['Order']['order_period_from'].' a '.$dados[$i]['Order']['order_period_to']);
 		}
 	}
 
