@@ -50,6 +50,7 @@ class CustomerUser extends AppModel
                 'rule' => 'email',
                 'message' => 'O e-mail deve ser válido',
             ],
+            /* retirando campo obrigatorio 
             'required' => [
                 'rule' => ['notBlank'],
                 'message' => 'Campo obrigatório',
@@ -57,7 +58,7 @@ class CustomerUser extends AppModel
             'customUnique' => [
                 'rule' => ['customUnique'],
                 'message' => 'O e-mail fornecido já foi cadastrado',
-            ],
+            ], */
         ],
         'password' => [
             'required' => [
