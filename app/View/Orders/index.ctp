@@ -24,8 +24,8 @@
     </form>
 
     <div class="card-body pt-0 py-3">
-    <?php echo $this->element("pagination"); ?>
-    <br>
+        <?php echo $this->element("pagination"); ?>
+        <br>
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
             <thead>
@@ -65,7 +65,7 @@
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-                                <?php if($data[$i]["Status"]["id"] == '83'){ ?>
+                                <?php if ($data[$i]["Status"]["id"] == '83') { ?>
                                     <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
@@ -115,7 +115,8 @@
                 <h4 class="modal-title">Gerar Pedido</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form action="<?php echo $this->base . '/orders/createOrder' ?>" id="order_creation_form" class="form-horizontal" method="post">
+            <form autocomplete="off" action="<?php echo $this->base . '/orders/createOrder' ?>" id="order_creation_form" class="form-horizontal" method="post">
+                <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
@@ -125,18 +126,18 @@
                         <label class="fw-semibold fs-6 mb-2 required">Período</label>
                         <div class="input-group">
                             <div class="input-daterange input-group" id="datepicker">
-                                <input class="form-control" id="period_from" name="period_from">
+                                <input class="form-control" id="period_from" role="presentation" autocomplete="off" name="period_from">
                                 <span class="input-group-text" style="padding: 5px;"> até </span>
-                                <input class="form-control" id="period_to" name="period_to">
+                                <input class="form-control" id="period_to" role="presentation" autocomplete="off" name="period_to">
                             </div>
                         </div>
                     </div>
                     <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Data de Liberação do Crédito</label>
+                        <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                            <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker", 'div' => false, 'label' => false]);  ?>
-                            <p id="message_classification" style="color: red; margin: 0; display:none">A Data de Liberação do Crédito deve ser maior que o dia atual e o início do período</p>
+                            <input name="data[credit_release_date]" class="form-control mb-3 mb-lg-0 datepicker" role="presentation" type="text" id="credit_release_date">
+                            <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
                     </div>
                     <div class="mb-7 col">
@@ -154,25 +155,41 @@
 </div>
 
 <script>
+    function addWorkingDays(startDate, daysToAdd) {
+        let endDate = startDate;
+        while (daysToAdd > 0) {
+            endDate.setDate(endDate.getDate() + 1); // Move to next day
+            if (endDate.getDay() !== 0 && endDate.getDay() !== 6) { // If it's not a weekend
+                daysToAdd--; // Decrement the days to add
+            }
+        }
+        return endDate;
+    }
+
     $(document).ready(function() {
         $('#order_creation_form').on('submit', function(event) {
+
             const inputValue = $('#credit_release_date').val();
             const initalInputValue = $('#period_from').val();
-            if(inputValue != ''){
+
+            let currDate = new Date();
+            currDate.setHours(0, 0, 0, 0); // reset the time part
+            const futureDate = addWorkingDays(currDate, 5);
+
+            if (inputValue != '') {
                 $('#message_classification').hide();
 
                 // Convert inputValue to a Date object and today's date to a Date object
-                const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
-                const periodInitialDate = new Date(initalInputValue.split('/').reverse().join('-') + 'T00:00:00'); // Convert dd/mm/YYYY to YYYY-mm-dd
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // reset the time part
+                const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00');
+                const periodInitialDate = new Date(initalInputValue.split('/').reverse().join('-') + 'T00:00:00');
 
-                // Check if inputDate is greater than today
-                if (today >= inputDate || periodInitialDate >= inputDate ) {
+                // Check if dates is greater than today +5 working days
+                if (inputDate < futureDate || periodInitialDate < futureDate) {
                     $('#message_classification').show();
                     event.preventDefault();
                 }
             }
+
         });
     });
 </script>

@@ -179,7 +179,7 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 				KTApp.setThemeMode(mode); // set dark mode
 			});
 
-			$(".datepicker").attr("autocomplete", false);
+			$(".datepicker").attr("autocomplete", "off");
 			$(".datepicker").datepicker({
 				format: 'dd/mm/yyyy',
 				weekStart: 1,
