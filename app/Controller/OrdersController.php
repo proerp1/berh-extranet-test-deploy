@@ -1,9 +1,10 @@
 <?php
+App::uses('ApiItau', 'Lib');
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
@@ -264,6 +265,8 @@ class OrdersController extends AppController
         $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
         $order['Order']['validation_date'] = date('Y-m-d');
 
+        $this->Order->begin();
+
         if ($this->Order->save($order)) {
 
             $order = $this->Order->findById($id);
@@ -272,7 +275,6 @@ class OrdersController extends AppController
                 'conditions' => ['BankTicket.status_id' => 1]
             ]);
 
-            $this->Income->create();
             $income = [];
             
             $income['Income']['order_id'] = $id;
@@ -288,13 +290,118 @@ class OrdersController extends AppController
             $income['Income']['created'] = date('Y-m-d H:i:s');
             $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
-            $this->Income->save($income);
+            $this->Income->begin();
+            $this->Income->create();
+            if ($this->Income->save($income) && $this->emitirBoleto($this->Income->id)) {
+    
+                $this->Income->commit();
+                $this->Order->commit();
+                $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            } else {
+                $this->Income->rollback();
+                $this->Order->rollback();
+            }
 
-            $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'edit/' . $id]);
         } else {
             $this->Flash->set(__('O Pedido não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
         }
+    }
+
+    public function emitirBoleto($id)
+    {
+        $conta = $this->Income->find('first', ['conditions' => ['Income.id' => $id], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
+            'recursive' => -1,
+            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'Customer.id = Income.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'bank_accounts',
+                    'alias' => 'BankAccount',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'BankAccount.id = Income.bank_account_id', 'BankAccount.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'bank_tickets',
+                    'alias' => 'BankTickets',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
+                    ],
+                ],
+            ],
+        ]);
+
+        if (!empty($conta)) {
+            $remessas = $this->CnabLote->find('first', ['order' => ['CnabLote.id' => 'desc'], 'callbacks' => false]);
+            $remessa = isset($remessas['CnabLote']) ? $remessas['CnabLote']['remessa'] + 1 : 1;
+
+            $nome_arquivo = 'E'.$this->zerosEsq($remessa, 6).'.REM';
+
+            $data_pefin_lote = [
+                'CnabLote' => [
+                    'status_id' => 46,
+                    'arquivo' => $nome_arquivo,
+                    'remessa' => $remessa,
+                    'bank_id' => 1,
+                    'user_creator_id' => CakeSession::read("Auth.User.id"),
+                ],
+            ];
+
+            $this->CnabLote->create();
+            $this->CnabLote->save($data_pefin_lote);
+
+            $ApiItau = new ApiItau();
+
+            $boleto = $ApiItau->gerarBoleto($conta);
+
+            if ($boleto['success']) {
+                $this->CnabItem->create();
+                $this->CnabItem->save([
+                    'CnabItem' => [
+                        'cnab_lote_id' => $this->CnabLote->id,
+                        'income_id' => $conta['Income']['id'],
+                        'id_web' => $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
+                        'status_id' => 48,
+                        'user_creator_id' => CakeSession::read("Auth.User.id"),
+                    ],
+                ]);
+
+                $this->Income->id = $conta['Income']['id'];
+                $this->Income->save([
+                    'Income' => [
+                        'cnab_gerado' => 1,
+                        'cnab_lote_id' => $this->CnabLote->id,
+                        'user_updated_id' => CakeSession::read("Auth.User.id"),
+                    ],
+                ]);
+
+                return true;
+            } else {
+                $erros = $boleto['error'];
+                if (!is_array($boleto['error'])) {
+                    $erros = [$boleto['error']];
+                }
+
+                $message = '';
+                foreach ($erros as $erro) {
+                    $message .= $erro.'<br>';
+                }
+
+                $this->Session->setFlash(__($message), 'default', ['class' => 'alert alert-danger']);
+            }
+        }
+
+        return false;
     }
 
     public function changeStatusIssued($id)
@@ -473,5 +580,12 @@ class OrdersController extends AppController
             $this->Flash->set(__('O Pedido foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
+    }
+
+    public function zerosEsq($campo, $tamanho)
+    {
+        $campo = substr($campo, 0, $tamanho);
+
+        return str_pad($campo, $tamanho, 0, STR_PAD_LEFT);
     }
 }
