@@ -125,7 +125,7 @@ class CustomerUsersController extends AppController
         $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
         $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
         $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
-        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1]]);
+        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $id]]);
 
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
@@ -180,7 +180,7 @@ class CustomerUsersController extends AppController
         $customer_cost_centers = $this->CostCenter->find('list', ['conditions' => ['CostCenter.customer_id' => $id]]);
         $customer_salaries = $this->SalaryRange->find('list', ['fields' => ['id', 'range']]);
         $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
-        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1]]);
+        $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $id]]);
 
         $this->set('hash', rawurlencode($hash));
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
