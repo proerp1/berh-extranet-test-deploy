@@ -112,8 +112,6 @@ class OrdersController extends AppController
                                     : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
 
-            debug($subtotal); die();
-
             $total = $subtotal + $transferFee;
 
             $totalTransferFee += $transferFee;
