@@ -108,7 +108,7 @@
     });
 </script>
 
-<div class="modal fade" tabindex="-1" id="modal_gerar_arquivo" role="dialog">
+<div class="modal fade" id="modal_gerar_arquivo" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -120,7 +120,7 @@
                 <div class="modal-body">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                        <?php echo $this->Form->input('customer_id', array("id" => "customer_positions_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                        <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Período</label>
@@ -167,6 +167,10 @@
     }
 
     $(document).ready(function() {
+        $("#customer_id").select2({
+            dropdownParent: $("#modal_gerar_arquivo")
+        });
+
         $('#order_creation_form').on('submit', function(event) {
 
             const inputValue = $('#credit_release_date').val();
