@@ -64,7 +64,8 @@ class OrdersController extends AppController
                 'order_period_from' => $period_from,
                 'order_period_to' => $period_to,
                 'status_id' => 83,
-                'credit_release_date' => $credit_release_date
+                'credit_release_date' => $credit_release_date,
+                'created_at' => date('Y-m-d H:i:s')
             ];
 
             $this->Order->create();
@@ -93,15 +94,9 @@ class OrdersController extends AppController
 
         foreach ($customerItineraries as $itinerary) {
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
-            $workingDaysUser = $this->CustomerUserVacation->calculateWorkingDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
+            $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
 
-            if($workingDaysUser == null){
-                $workingDaysUser = 0;
-            }
-
-            if ($workingDaysUser > $workingDays) {
-                $workingDaysUser = $workingDays;
-            }
+            $workingDaysUser = $workingDays - $vacationDays;
 
             $subtotal = $workingDaysUser * $pricePerDay;
 
