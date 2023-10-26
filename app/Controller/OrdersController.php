@@ -98,6 +98,10 @@ class OrdersController extends AppController
 
             $workingDaysUser = $workingDays - $vacationDays;
 
+            if($workingDaysUser < 0){
+                $workingDaysUser = 0;
+            }
+
             $subtotal = $workingDaysUser * $pricePerDay;
 
             $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
