@@ -27,7 +27,7 @@ class OrdersController extends AppController
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
-        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario']]);
+        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'order' => ['nome_primario' => 'asc']]);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];

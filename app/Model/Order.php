@@ -113,23 +113,25 @@ class Order extends AppModel {
 			$this->data[$this->alias]['commission_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['commission_fee']);
 		}
 
-        if (!empty($this->data[$this->alias]['subtotal'])) {
+        	if (!empty($this->data[$this->alias]['subtotal'])) {
 			$this->data[$this->alias]['subtotal'] = $this->priceFormatBeforeSave($this->data[$this->alias]['subtotal']);
 		}
 
-        if (!empty($this->data[$this->alias]['total'])) {
+        	if (!empty($this->data[$this->alias]['total'])) {
 			$this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
 		}
 
-        if (!empty($this->data[$this->alias]['order_period_from'])) {
+        	if (!empty($this->data[$this->alias]['order_period_from'])) {
 			$this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
 		}
 
-        if (!empty($this->data[$this->alias]['order_period_to'])) {
+        	if (!empty($this->data[$this->alias]['order_period_to'])) {
 			$this->data[$this->alias]['order_period_to'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_to']);
 		}
-
-        if (!empty($this->data[$this->alias]['credit_release_date'])) {
+		if (!empty($this->data[$this->alias]['created'])) {
+	          $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+	        }
+        	if (!empty($this->data[$this->alias]['credit_release_date'])) {
 			$this->data[$this->alias]['credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['credit_release_date']);
 		}
 		
