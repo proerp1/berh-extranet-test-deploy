@@ -111,7 +111,8 @@ class OrdersController extends AppController
                                     ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado'] 
                                     : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
-            
+
+            debug($transferFeePercentage); die();
 
             $total = $subtotal + $transferFee;
 
