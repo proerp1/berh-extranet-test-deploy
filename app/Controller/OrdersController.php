@@ -110,9 +110,9 @@ class OrdersController extends AppController
             $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado']) 
                                     ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado'] 
                                     : 0;
-            $transferFee = $subtotal * round(($transferFeePercentage / 100),4);
+            $transferFee = $subtotal * ($transferFeePercentage / 100);
 
-            debug($transferFee); die();
+            debug($subtotal); die();
 
             $total = $subtotal + $transferFee;
 
