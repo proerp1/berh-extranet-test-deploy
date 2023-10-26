@@ -27,7 +27,7 @@ class OrdersController extends AppController
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
-        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario']]);
+        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario']], 'order' => ['nome_primario' => 'asc']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
@@ -111,6 +111,7 @@ class OrdersController extends AppController
                                     ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado'] 
                                     : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
+            
 
             $total = $subtotal + $transferFee;
 
