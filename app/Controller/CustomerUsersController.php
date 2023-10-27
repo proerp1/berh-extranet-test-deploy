@@ -105,7 +105,9 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerUser']['password'] = $senha;
             if ($this->CustomerUser->save($this->request->data)) {
-                $this->envia_email($this->request->data);
+                if(isset($data['CustomerUser']['email'])){
+                    $this->envia_email($this->request->data);
+                }
 
                 $urlAction = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
                 $this->Flash->set(__('O '.$action.' foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);

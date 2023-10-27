@@ -46,14 +46,15 @@ class CustomerUser extends AppModel
 
     public $validate = [
         'email' => [
-            'email' => [
-                'rule' => 'email',
-                'message' => 'O e-mail deve ser válido',
-            ],
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório',
-            ],
+            // 'email' => [
+            //     'rule' => 'email',
+            //     'message' => 'O e-mail deve ser válido',
+            // ],
+            
+            // 'required' => [
+            //     'rule' => ['notBlank'],
+            //     'message' => 'Campo obrigatório',
+            // ],
             'customUnique' => [
                 'rule' => ['customUnique'],
                 'message' => 'O e-mail fornecido já foi cadastrado',
@@ -80,6 +81,9 @@ class CustomerUser extends AppModel
     ];
 
     public function customUnique($check){
+        if(empty(trim($check['email']))){
+            return true;
+        }
         $cond = array_merge($check, ['CustomerUser.data_cancel' => '1901-01-01 00:00:00']);
         if(!empty($this->id)){
             $cond['CustomerUser.id !='] = $this->id;

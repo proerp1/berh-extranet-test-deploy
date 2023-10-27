@@ -174,9 +174,10 @@ class ItineraryCSVParser extends Controller
 
         $customerPositionId = $this->getCustomerPositionId($row[56], $customerId);
 
-        if ($row[53] == '') {
-            return ['success' => false, 'message' => 'E-mail não é válido', 'userId' => 0, 'cpf' => $cpf, 'benefit_code' => $row[13]];
-        }
+        // Por enquanto vão permitir e-mail vazio
+        // if ($row[53] == '') {
+        //     return ['success' => false, 'message' => 'E-mail não é válido', 'userId' => 0, 'cpf' => $cpf, 'benefit_code' => $row[13]];
+        // }
 
         $userData = [
             'cpf' => $cpf,
@@ -200,6 +201,9 @@ class ItineraryCSVParser extends Controller
         if (!$existingUser) {
             $this->CustomerUser->create();
             $this->CustomerUser->save($userData);
+            if(isset($this->CustomerUser->validationErrors['email'])){
+                return ['success' => false, 'message' => $this->CustomerUser->validationErrors['email'][0], 'userId' => 0, 'cpf' => $cpf, 'benefit_code' => $row[13]];
+            }
             $userId = $this->CustomerUser->id;
         } else {
             $userId = $existingUser['CustomerUser']['id'];

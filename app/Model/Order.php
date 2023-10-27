@@ -1,5 +1,6 @@
 <?php
-class Order extends AppModel {
+class Order extends AppModel
+{
     public $name = 'Order';
     public $useTable = 'orders';
     public $primaryKey = 'id';
@@ -9,18 +10,18 @@ class Order extends AppModel {
             'className' => 'Customer',
             'foreignKey' => 'customer_id'
         ],
-		'Creator' => [
-			'className' => 'User',
-			'foreignKey' => 'user_creator_id'
-		],
+        'Creator' => [
+            'className' => 'User',
+            'foreignKey' => 'user_creator_id'
+        ],
         'CustomerCreator' => [
             'className' => 'CustomerUser',
             'foreignKey' => 'user_creator_id'
         ],
         'CustomerCreator' => [
-			'className' => 'CustomerUser',
-			'foreignKey' => 'user_creator_id'
-		],
+            'className' => 'CustomerUser',
+            'foreignKey' => 'user_creator_id'
+        ],
         'Status' => [
             'className' => 'Status',
             'foreignKey' => 'status_id',
@@ -37,7 +38,7 @@ class Order extends AppModel {
     public function beforeFind($queryData)
     {
         $queryData['conditions'][] = ['Order.data_cancel' => '1901-01-01 00:00:00'];
-        
+
         return $queryData;
     }
 
@@ -65,78 +66,79 @@ class Order extends AppModel {
             }
 
             if (isset($val[$this->alias]['order_period_from'])) {
-				$results[$key][$this->alias]['order_period_from_nao_formatado'] = $val[$this->alias]['order_period_from'];
-				$results[$key][$this->alias]['order_period_from'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_from']));
-			}
+                $results[$key][$this->alias]['order_period_from_nao_formatado'] = $val[$this->alias]['order_period_from'];
+                $results[$key][$this->alias]['order_period_from'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_from']));
+            }
 
             if (isset($val[$this->alias]['order_period_to'])) {
-				$results[$key][$this->alias]['order_period_to_nao_formatado'] = $val[$this->alias]['order_period_to'];
-				$results[$key][$this->alias]['order_period_to'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_to']));
-			}
+                $results[$key][$this->alias]['order_period_to_nao_formatado'] = $val[$this->alias]['order_period_to'];
+                $results[$key][$this->alias]['order_period_to'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_to']));
+            }
 
             if (isset($val[$this->alias]['credit_release_date'])) {
-				$results[$key][$this->alias]['credit_release_date_nao_formatado'] = $val[$this->alias]['credit_release_date'];
-				$results[$key][$this->alias]['credit_release_date'] = date("d/m/Y", strtotime($val[$this->alias]['credit_release_date']));
-			}
+                $results[$key][$this->alias]['credit_release_date_nao_formatado'] = $val[$this->alias]['credit_release_date'];
+                $results[$key][$this->alias]['credit_release_date'] = date("d/m/Y", strtotime($val[$this->alias]['credit_release_date']));
+            }
 
             if (isset($val[$this->alias]['validation_date'])) {
-				$results[$key][$this->alias]['validation_date_nao_formatado'] = $val[$this->alias]['validation_date'];
-				$results[$key][$this->alias]['validation_date'] = date("d/m/Y", strtotime($val[$this->alias]['validation_date']));
-			}
+                $results[$key][$this->alias]['validation_date_nao_formatado'] = $val[$this->alias]['validation_date'];
+                $results[$key][$this->alias]['validation_date'] = date("d/m/Y", strtotime($val[$this->alias]['validation_date']));
+            }
 
             if (isset($val[$this->alias]['issuing_date'])) {
-				$results[$key][$this->alias]['issuing_date_nao_formatado'] = $val[$this->alias]['issuing_date'];
-				$results[$key][$this->alias]['issuing_date'] = date("d/m/Y", strtotime($val[$this->alias]['issuing_date']));
-			}
+                $results[$key][$this->alias]['issuing_date_nao_formatado'] = $val[$this->alias]['issuing_date'];
+                $results[$key][$this->alias]['issuing_date'] = date("d/m/Y", strtotime($val[$this->alias]['issuing_date']));
+            }
 
             if (isset($val[$this->alias]['payment_date'])) {
-				$results[$key][$this->alias]['payment_date_nao_formatado'] = $val[$this->alias]['payment_date'];
-				$results[$key][$this->alias]['payment_date'] = date("d/m/Y", strtotime($val[$this->alias]['payment_date']));
-			}
+                $results[$key][$this->alias]['payment_date_nao_formatado'] = $val[$this->alias]['payment_date'];
+                $results[$key][$this->alias]['payment_date'] = date("d/m/Y", strtotime($val[$this->alias]['payment_date']));
+            }
 
             if (isset($val[$this->alias]['created'])) {
-				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
-				$results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
-			}
-            
+                $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+            }
         }
 
         return $results;
     }
 
-    public function beforeSave($options = array()) {
-		if (!empty($this->data[$this->alias]['transfer_fee'])) {
-			$this->data[$this->alias]['transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee']);
-		}
+    public function beforeSave($options = array())
+    {
+        if (!empty($this->data[$this->alias]['transfer_fee'])) {
+            $this->data[$this->alias]['transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee']);
+        }
 
-		if (!empty($this->data[$this->alias]['commission_fee'])) {
-			$this->data[$this->alias]['commission_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['commission_fee']);
-		}
+        if (!empty($this->data[$this->alias]['commission_fee'])) {
+            $this->data[$this->alias]['commission_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['commission_fee']);
+        }
 
         if (!empty($this->data[$this->alias]['subtotal'])) {
-			$this->data[$this->alias]['subtotal'] = $this->priceFormatBeforeSave($this->data[$this->alias]['subtotal']);
-		}
+            $this->data[$this->alias]['subtotal'] = $this->priceFormatBeforeSave($this->data[$this->alias]['subtotal']);
+        }
 
         if (!empty($this->data[$this->alias]['total'])) {
-			$this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
-		}
+            $this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
+        }
 
         if (!empty($this->data[$this->alias]['order_period_from'])) {
-			$this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
-		}
+            $this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
+        }
 
         if (!empty($this->data[$this->alias]['order_period_to'])) {
-			$this->data[$this->alias]['order_period_to'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_to']);
-		}
+            $this->data[$this->alias]['order_period_to'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_to']);
+        }
 
         if (!empty($this->data[$this->alias]['credit_release_date'])) {
-			$this->data[$this->alias]['credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['credit_release_date']);
-		}
-		
-		return true;
-	}
+            $this->data[$this->alias]['credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['credit_release_date']);
+        }
 
-    public function reProcessAmounts(){
+        return true;
+    }
+
+    public function reProcessAmounts()
+    {
         $items = $this->OrderItem->find('first', [
             'conditions' => [
                 'Order.id' => $this->id
@@ -153,7 +155,7 @@ class Order extends AppModel {
         $transferFee = $items[0]['transfer_fee'];
         $subtotal = $items[0]['subtotal'];
         $total = $items[0]['total'];
-        
+
         $customer = $this->Customer->find('first', [
             'conditions' => [
                 'Customer.id' => $order['Order']['customer_id']
@@ -177,28 +179,28 @@ class Order extends AppModel {
     }
 
     public function priceFormatBeforeSave($price)
-	{
-        if(is_numeric($price)){
+    {
+        if (is_numeric($price)) {
             return $price;
         }
-		$valueFormatado = str_replace('.', '', $price);
-		$valueFormatado = str_replace(',', '.', $valueFormatado);
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
 
-		return $valueFormatado;
-	}
+        return $valueFormatado;
+    }
 
-	public function dateFormatBeforeSave($dateString)
-	{
-		return date('Y-m-d', strtotime($this->date_converter($dateString)));
-	}
+    public function dateFormatBeforeSave($dateString)
+    {
+        return date('Y-m-d', strtotime($this->date_converter($dateString)));
+    }
 
-	public function date_converter($_date = null)
-	{
-		$format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
-		if ($_date != null && preg_match($format, $_date, $partes)) {
-			return $partes[3] . '-' . $partes[2] . '-' . $partes[1];
-		}
+    public function date_converter($_date = null)
+    {
+        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+        if ($_date != null && preg_match($format, $_date, $partes)) {
+            return $partes[3] . '-' . $partes[2] . '-' . $partes[1];
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

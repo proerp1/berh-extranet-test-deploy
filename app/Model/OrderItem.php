@@ -132,6 +132,8 @@ class OrderItem extends AppModel {
         INNER JOIN orders `Order` on OrderItem.order_id = Order.id
         INNER JOIN customer_users CustomerUser ON OrderItem.customer_user_id = CustomerUser.id
         INNER JOIN customer_user_addresses CustomerUserAddress on CustomerUser.id = CustomerUserAddress.customer_user_id
+		AND CustomerUserAddress.address_type_id = 1 
+		AND CustomerUserAddress.data_cancel = '1901-01-01'
         INNER JOIN customers Customer ON CustomerUser.customer_id = Customer.id
         INNER JOIN customer_user_itineraries CustomerUserItinerary on OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id
         INNER JOIN benefits Benefit on CustomerUserItinerary.benefit_id = Benefit.id
