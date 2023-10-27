@@ -8,6 +8,14 @@ class Supplier extends AppModel
             'className' => 'Status',
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 1]
+        ],
+        'BankAccountType' => [
+            'className' => 'BankAccountType',
+            'foreignKey' => 'account_type_id'
+        ],
+        'BankCode' => [
+            'className' => 'BankCode',
+            'foreignKey' => 'bank_code_id'
         ]
     ];
 
@@ -24,6 +32,15 @@ class Supplier extends AppModel
         if (!empty($this->data[$this->alias]['transfer_fee_percentage'])) {
             $this->data[$this->alias]['transfer_fee_percentage'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee_percentage']);
         }
+        if (!empty($this->data[$this->alias]['valor_boleto'])) {
+            $this->data[$this->alias]['valor_boleto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_boleto']);
+        }
+        if (!empty($this->data[$this->alias]['valor_1_via'])) {
+            $this->data[$this->alias]['valor_1_via'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_1_via']);
+        }
+        if (!empty($this->data[$this->alias]['valor_2_via'])) {
+            $this->data[$this->alias]['valor_2_via'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_2_via']);
+        }
     
         return true;
     }
@@ -35,6 +52,27 @@ class Supplier extends AppModel
             if (isset($val[$this->alias]['transfer_fee_percentage'])) {
                 $results[$key][$this->alias]['transfer_fee_percentage_nao_formatado'] = $results[$key][$this->alias]['transfer_fee_percentage'];
                 $results[$key][$this->alias]['transfer_fee_percentage'] = number_format($results[$key][$this->alias]['transfer_fee_percentage'], 2, ',', '.');
+            }
+        }
+        foreach ($results as $key => $val) {
+            
+            if (isset($val[$this->alias]['valor_boleto'])) {
+                $results[$key][$this->alias]['valor_boleto'] = $results[$key][$this->alias]['valor_boleto'];
+                $results[$key][$this->alias]['valor_boleto'] = number_format($results[$key][$this->alias]['valor_boleto'], 2, ',', '.');
+            }
+        }
+        foreach ($results as $key => $val) {
+            
+            if (isset($val[$this->alias]['valor_1_via'])) {
+                $results[$key][$this->alias]['valor_1_via'] = $results[$key][$this->alias]['valor_1_via'];
+                $results[$key][$this->alias]['valor_1_via'] = number_format($results[$key][$this->alias]['valor_1_via'], 2, ',', '.');
+            }
+        }
+        foreach ($results as $key => $val) {
+            
+            if (isset($val[$this->alias]['valor_2_via'])) {
+                $results[$key][$this->alias]['valor_2_via'] = $results[$key][$this->alias]['valor_2_via'];
+                $results[$key][$this->alias]['valor_2_via'] = number_format($results[$key][$this->alias]['valor_2_via'], 2, ',', '.');
             }
         }
 
