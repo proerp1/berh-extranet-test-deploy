@@ -5,7 +5,7 @@ App::uses('AppShell', 'Console/Command');
 
 class UpdateBoletoStatusShell extends AppShell
 {
-    public $uses = ['Income', 'CnabItem'];
+    public $uses = ['Income', 'CnabItem', 'Order'];
 
     public function getOptionParser()
     {
@@ -54,6 +54,16 @@ class UpdateBoletoStatusShell extends AppShell
                                 'valor_pago' => $dadoBoleto[0]['valor_titulo'],
                             ]
                         ]);
+
+                        if ($item['Income']['order_id'] != null) {
+                            $this->Order->id = $item['Income']['order_id'];
+                            $this->Order->save([
+                                'Order' => [
+                                    'status_id' => 87,
+                                    'payment_date' => date('Y-m-d'),
+                                ]
+                            ]);
+                        }
 
                         $this->out("Boleto {$item['CnabItem']['income_id']} {$dadoBoleto[0]['situacao_geral_boleto']}");
                     } else if ($dadoBoleto[0]['situacao_geral_boleto'] == 'Em Aberto' && $dadoBoleto[0]['status_vencimento'] == 'Vencida') {
