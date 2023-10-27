@@ -380,6 +380,7 @@ class OrdersController extends AppController
                 $this->Income->save([
                     'Income' => [
                         'cnab_gerado' => 1,
+                        'status_id' => 16,
                         'cnab_lote_id' => $this->CnabLote->id,
                         'user_updated_id' => CakeSession::read("Auth.User.id"),
                     ],

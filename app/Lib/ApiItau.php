@@ -182,7 +182,7 @@ class ApiItau extends Controller
         return $this->makeRequest('GET', '/boletos', [
             'query' => [
                 'id_beneficiario' => $conta['BankAccount']['id_beneficiario'],
-                // 'codigo_carteira' => $conta['BankTickets']['carteira'],
+                'codigo_carteira' => $conta['BankTicket']['carteira'],
                 'nosso_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
                 // 'view' => 'specific',
             ]
