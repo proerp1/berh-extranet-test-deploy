@@ -52,7 +52,7 @@ class CustomerUsersController extends AppController
         }
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%".$_GET['q']."%", 'CustomerUser.email LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.cpf LIKE' => "%".$_GET['q']."%",'CustomerUser.name LIKE' => "%".$_GET['q']."%", 'CustomerUser.email LIKE' => "%".$_GET['q']."%"]);
         }
 
         if (!empty($_GET["t"])) {
@@ -66,6 +66,7 @@ class CustomerUsersController extends AppController
         if (!empty($_GET["d"])) {
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.customer_departments_id' => $_GET['d']]);
         }
+        
 
         $data = $this->Paginator->paginate('CustomerUser', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1], 'order' => 'Status.name']);

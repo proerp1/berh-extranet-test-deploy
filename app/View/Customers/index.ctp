@@ -40,7 +40,7 @@
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option></option>
+                                    <option value=''></option>
                                     <?php
                                         for($a = 0; $a < count($status); $a++){
                                             $selected = "";
@@ -57,7 +57,7 @@
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Franquias:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="f" id="f">
-                                    <option></option>
+                                    <option value=''></option>
                                     <?php
                                         for($a = 0; $a < count($codFranquias); $a++){
                                             $selected = "";

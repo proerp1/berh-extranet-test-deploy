@@ -39,7 +39,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option>Selecione</option>
+                                    <option value=''>Selecione</option>
                                     <?php
                                     for ($a = 0; $a < count($status); $a++) {
                                         $selected = "";
@@ -56,7 +56,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Centro de Custo:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cc" id="cc">
-                                    <option>Selecione</option>
+                                    <option value=''>Selecione</option>
                                     <?php
                                     for ($a = 0; $a < count($cost_centers); $a++) {
                                         $selected = "";
@@ -73,7 +73,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Departamento:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="d" id="d">
-                                    <option>Selecione</option>
+                                    <option value=''>Selecione</option>
                                     <?php
                                     for ($a = 0; $a < count($departments); $a++) {
                                         $selected = "";
