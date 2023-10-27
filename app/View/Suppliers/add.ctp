@@ -195,14 +195,14 @@
                 </div>
                 <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Valor Boleto</label>
-                <?php echo $this->Form->input('valor_boleto', [ "placeholder" => "00,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+                <?php echo $this->Form->input('valor_boleto', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Valor 1° Via</label>
-                    <?php echo $this->Form->input('valor_1_via', [ "placeholder" => "00,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+                    <?php echo $this->Form->input('valor_1_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
                 </div>           <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Valor 2° Via</label>
-                    <?php echo $this->Form->input('valor_2_via', [ "placeholder" => "00,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+                    <?php echo $this->Form->input('valor_2_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
                 </div>
                 </div>
                  </div>
