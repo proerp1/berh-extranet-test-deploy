@@ -597,7 +597,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Boletos' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'id'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
 
     public function baixar_boleto_fornecedor($id){
