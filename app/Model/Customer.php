@@ -54,9 +54,7 @@ class Customer extends AppModel
     }
 
     public function beforeSave($options = array()) {
-        if (!empty($this->data[$this->alias]['created'])) {
-          $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
-        }
+       
 
         if (!empty($this->data[$this->alias]['cnpj'])) {
             $this->data[$this->alias]['cnpj'] = preg_replace('/\D/', '', $this->data[$this->alias]['cnpj']);

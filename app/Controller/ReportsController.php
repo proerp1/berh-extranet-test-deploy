@@ -194,8 +194,8 @@ class ReportsController extends AppController
         $de = date('d/m/Y', strtotime($de));
         $para = date('d/m/Y', strtotime($para));
 
-        $action = 'Itinerários';
-        $breadcrumb = ['Relatórios' => '', 'Itinerários' => ''];
+        $action = 'Pedidos';
+        $breadcrumb = ['Relatórios' => '', 'Pedidos' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
 

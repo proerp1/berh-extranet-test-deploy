@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="mb-7 col">
-                        <button type="submit" class="btn btn-sm btn-success me-3" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
+                        <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
                     </div>
 
                     <?php if ($order['Order']['status_id'] == 83) { ?>
@@ -529,7 +529,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Sim</button>
+                    <button type="submit" class="btn btn-success js-salvar">Sim</button>
                 </div>
             </form>
         </div>
