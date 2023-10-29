@@ -587,7 +587,7 @@ class OrdersController extends AppController
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
-        $condition = ["and" => [], "or" => []];
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
