@@ -26,19 +26,22 @@ class ProcessNewPaymentShell extends AppShell {
             $orderCode = str_replace('5803-', '', $orderCode);
             $pieces = explode('-', $orderCode);
             $orderId = $pieces[0];
-            $customerId = $pieces[1];
+            $customerUserId = $pieces[1];
             $supplierId = $pieces[2];
 
-            // TODO - Add your payment processing logic here...
+            $this->PaymentImportLog->id = $paymentLog['PaymentImportLog']['id'];
 
-            // Your payment processing logic here...
-            // Example: Save the payment data to another table
-            $payment = $orderData;
+            $payment = [
+                'PaymentImportLog' => [
+                    'id' => $paymentLog['PaymentImportLog']['id'],
+                    'order_id' => $orderId,
+                    'customer_user_id' => $customerUserId,
+                    'supplier_id' => $supplierId,
+                    'processed' => true,
+                ] 
+            ];
             if ($this->PaymentImportLog->save($payment)) {
-                // Mark the payment log as processed
-                $this->PaymentImportLog->id = $paymentLog['PaymentImportLog']['id'];
-                $this->PaymentImportLog->saveField('processed', true);
-                $this->out('Processed payment ID: ' . $payment['id']);
+                $this->out('Processed payment ID: ' . $payment['PaymentImportLog']['id']);
             } else {
                 $this->err('Failed to process payment.');
             }

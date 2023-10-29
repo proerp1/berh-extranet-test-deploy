@@ -4,7 +4,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
@@ -579,6 +579,32 @@ class OrdersController extends AppController
             $this->Flash->set(__('O Pedido foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
+    }
+
+    public function boletos($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $data = $this->Paginator->paginate('PaymentImportLog', $condition);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Boletos' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'id'));
+    }
+
+    public function baixar_boleto_fornecedor($id){
+        $this->autoRender = false;
+
+        $log = $this->PaymentImportLog->findById($id);
+        $this->redirect('/private_files/baixar_boleto/boletos_operadoras/'.$log['PaymentImportLog']['customer_user_id'].'/boleto-'.$log['PaymentImportLog']['order_id'].'-'.$log['PaymentImportLog']['supplier_id'].'_pdf');
+
     }
 
     public function zerosEsq($campo, $tamanho)
