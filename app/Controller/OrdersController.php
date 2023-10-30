@@ -3,7 +3,7 @@ App::uses('ApiItau', 'Lib');
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
+    public $components = ['Paginator', 'Permission', "HtmltoPdf"];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem'];
 
     public $paginate = [
@@ -225,11 +225,13 @@ class OrdersController extends AppController
 
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name'], 'order' => ['cast(Benefit.code as unsigned)' => 'asc']]);
 
+        $gerarNota = $this->Permission->check(66, "leitura");
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits', 'gerarNota'));
 
         $this->render("add");
     }
@@ -587,5 +589,34 @@ class OrdersController extends AppController
         $campo = substr($campo, 0, $tamanho);
 
         return str_pad($campo, $tamanho, 0, STR_PAD_LEFT);
+    }
+
+    public function nota_debito($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => ['CustomerUserItinerary.benefit_id', 'count(CustomerUserItinerary.quantity) as qtd', 'sum(CustomerUserItinerary.price_per_day) as valor'],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['CustomerUserItinerary.benefit_id']
+        ]);
+
+        $view = new View($this, false);
+        $view->layout=false;
+
+        $link = APP.'webroot';
+        // $link = '';
+        $view->set(compact("link", "itens", "order"));
+        $html=$view->render('../Elements/nota_debito');
+ 
+        // echo $html;die();
+
+        $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
     }
 }

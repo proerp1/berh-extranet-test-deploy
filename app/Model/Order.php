@@ -5,6 +5,8 @@ class Order extends AppModel
     public $useTable = 'orders';
     public $primaryKey = 'id';
 
+    public $actsAs = ['Containable'];
+
     public $belongsTo = [
         'Customer' => [
             'className' => 'Customer',
