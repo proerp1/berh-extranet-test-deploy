@@ -14,6 +14,15 @@
     })
 </script>
 
+<ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" disabled>Pedido</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
+    </li>
+</ul>
+
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 
 <div class="row">
@@ -727,7 +736,7 @@
             },
             dropdownParent: $('#modal_add_beneficiarios')
         });
-        
+
 
     })
 </script>

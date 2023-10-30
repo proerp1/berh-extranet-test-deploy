@@ -3,7 +3,7 @@ class SuppliersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Supplier', 'Status'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.nome_fantasia' => 'asc']
@@ -22,8 +22,9 @@ class SuppliersController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Supplier.id LIKE' => "%".$_GET['q']."%",'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
         }
+        
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
@@ -56,10 +57,11 @@ class SuppliersController extends AppController
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-
+        $banks = $this->BankCode->find('list');
+        $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Novo fornecedor' => ''];
-        $this->set(compact('statuses', 'action', 'breadcrumb'));
+        $this->set(compact('statuses', 'action', 'breadcrumb', 'banks', 'bank_account_type'));
         $this->set("form_action", "add");
     }
 
@@ -82,11 +84,12 @@ class SuppliersController extends AppController
         $this->Supplier->validationErrors = $temp_errors;
         
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-
+        $banks = $this->BankCode->find('list');
+        $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Alterar fornecedor' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('statuses', 'id', 'action', 'breadcrumb','banks','bank_account_type'));
         
         $this->render("add");
     }
