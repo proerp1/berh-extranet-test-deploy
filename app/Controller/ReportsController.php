@@ -23,7 +23,7 @@ class ReportsController extends AppController
         }
         $this->Paginator->settings = $paginationConfig;
 
-        $condition = ['and' => [], 'or' => []];
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
 
         if (!isset($_GET['de']) && !isset($_GET['para'])) {
             $dates = $this->getCurrentDates();
@@ -104,7 +104,7 @@ class ReportsController extends AppController
         $paginationConfig = $this->CustomReports->configPagination('pedidos');
         $this->Paginator->settings = $paginationConfig;
 
-        $condition = ['and' => [], 'or' => []];
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
 
         if (!isset($_GET['de']) && !isset($_GET['para'])) {
             $dates = $this->getCurrentDates();
