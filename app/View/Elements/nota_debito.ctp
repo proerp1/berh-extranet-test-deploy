@@ -272,12 +272,14 @@
             </table>
         </div>
         <div class="cell p-10"></div>
-        <div class="cell text-center">
-            <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
-        </div>
-        <div class="cell">
-            <?php echo $order['Order']['observation'] ?>
-        </div>
+        <?php if ($order['Order']['observation'] != '') { ?>
+            <div class="cell text-center">
+                <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
+            </div>
+            <div class="cell">
+                <?php echo $order['Order']['observation'] ?>
+            </div>
+        <?php } ?>
         <div class="cell text-center">
             <b>PEDIDO(S):</b>
         </div>
@@ -304,13 +306,6 @@
                     <?php } ?>
                 <?php } ?>
             </table>
-        </div>
-        <div class="cell p-10"></div>
-        <div class="cell d-flex justify-center">
-            Informações adicionais:
-        </div>
-        <div class="cell d-flex justify-center p-10" style="height: 250px">
-            <p></p>
         </div>
     </div>
 </body>
