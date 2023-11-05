@@ -201,7 +201,7 @@
         <div class="cell text-right">
             <p class="pr-50 bold m-0">Nº <?php echo $order['Order']['id'] ?></p>
         </div>
-        <div class="cell p-20 d-flex flex-col">
+        <div class="cell p-10 d-flex flex-col">
             <table>
                 <tr>
                     <td class="pb-10" colspan="3"><p class="m-0 bold">Dados da Prestação de Serviços:</p></td>
@@ -220,7 +220,7 @@
         <div class="cell text-center">
             <b>PRESTADOR DE SERVIÇOS:</b>
         </div>
-        <div class="cell p-20 d-flex flex-col">
+        <div class="cell p-10 d-flex flex-col">
             <table>
                 <tr>
                     <td width="25%"><b>Razão Social/Nome:</b></td>
@@ -247,7 +247,7 @@
         <div class="cell text-center">
             <b>TOMADOR DE SERVIÇOS:</b>
         </div>
-        <div class="cell p-20 d-flex flex-col">
+        <div class="cell p-10 d-flex flex-col">
             <table>
                 <tr>
                     <td width="25%"><b>Razão Social/Nome:</b></td>
@@ -272,12 +272,14 @@
             </table>
         </div>
         <div class="cell p-10"></div>
-        <div class="cell text-center">
-            <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
-        </div>
-        <div class="cell">
-            <?php echo $order['Order']['observation'] ?>
-        </div>
+        <?php if ($order['Order']['observation'] != '') { ?>
+            <div class="cell text-center">
+                <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
+            </div>
+            <div class="cell">
+                <p class="m-0 p-10"><?php echo $order['Order']['observation'] ?></p>
+            </div>
+        <?php } ?>
         <div class="cell text-center">
             <b>PEDIDO(S):</b>
         </div>
@@ -293,6 +295,7 @@
                     <th>Benefício</th>
                     <th style="text-align: center;">Quantidade</th>
                     <th style="text-align: center;">Valor por dia</th>
+                    <th style="text-align: center;">Total com repasse</th>
                 </tr>
                 <?php if (!empty($itens)) { ?>
                     <?php foreach ($itens as $item) { ?>
@@ -300,17 +303,11 @@
                             <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?></td>
                             <td style="text-align: center;"><?php echo $item[0]['qtd'] ?></td>
                             <td style="text-align: center;">R$ <?php echo number_format($item[0]['valor'],2,',','.') ?></td>
+                            <td style="text-align: center;">R$ <?php echo number_format($item[0]['total'],2,',','.') ?></td>
                         </tr>
                     <?php } ?>
                 <?php } ?>
             </table>
-        </div>
-        <div class="cell p-10"></div>
-        <div class="cell d-flex justify-center">
-            Informações adicionais:
-        </div>
-        <div class="cell d-flex justify-center p-10" style="height: 250px">
-            <p></p>
         </div>
     </div>
 </body>
