@@ -137,12 +137,13 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                             <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 datepicker", 'div' => false, 'label' => false]);  ?>
-                            <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
+                        <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
                         <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
+                        <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -166,34 +167,52 @@
         return endDate;
     }
 
-    $(document).ready(function() {
-        $("#customer_id").select2({
-            dropdownParent: $("#modal_gerar_arquivo")
-        });
+    $('#order_creation_form').on('submit', function(event) {
+        const creditReleaseDateValue = $('#credit_release_date').val();
+        const periodFromValue = $('#period_from').val();
+        const periodToValue = $('#period_to').val();
+        const workingDaysValue = $('#working_days').val();
 
-        $('#order_creation_form').on('submit', function(event) {
+        $('#message_wd').val('');
+        $('#message_classification').val('');
 
-            const inputValue = $('#credit_release_date').val();
-            const initalInputValue = $('#period_from').val();
+        // Mostra uma mensagem de erro se algum dos campos estiver vazio
+        if (!creditReleaseDateValue || !periodFromValue || !periodToValue) {
+            $('#message_classification').text('Todos os campos de data devem ser preenchidos.').show();
+            event.preventDefault();
+            return; // Evita a execução adicional
+        }
 
-            let currDate = new Date();
-            currDate.setHours(0, 0, 0, 0); // reset the time part
-            const futureDate = addWorkingDays(currDate, 5);
+        if (workingDaysValue <= 0) {
+            $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
+            event.preventDefault();
+            return; // Evita a execução adicional
+        }
 
-            if (inputValue != '') {
-                $('#message_classification').hide();
+        let currDate = new Date();
+        currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
+        const futureDate = addWorkingDays(currDate, 5);
 
-                // Convert inputValue to a Date object and today's date to a Date object
-                const inputDate = new Date(inputValue.split('/').reverse().join('-') + 'T00:00:00');
-                const periodInitialDate = new Date(initalInputValue.split('/').reverse().join('-') + 'T00:00:00');
+        // Converte os valores de string para objetos Date
+        const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
+        const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
+        const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
 
-                // Check if dates is greater than today +5 working days
-                if (inputDate < futureDate || periodInitialDate < futureDate) {
-                    $('#message_classification').show();
-                    event.preventDefault();
-                }
-            }
+        // Verifica se period_to é posterior a period_from
+        if (periodToDate <= periodFromDate) {
+            $('#message_classification').text('A data "Até" deve ser posterior à data "De".').show();
+            event.preventDefault();
+            return; // Evita a execução adicional
+        }
 
-        });
+        // Verifica se as datas são maiores que hoje + 5 dias úteis
+        if (creditReleaseDate < futureDate || periodFromDate < futureDate) {
+            $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis.').show();
+            event.preventDefault();
+            return; // Evita a execução adicional
+        }
+
+        // Se todas as validações passarem, esconde a mensagem
+        $('#message_classification').hide();
     });
 </script>
