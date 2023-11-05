@@ -438,7 +438,6 @@
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 rounded-start">Status</th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -465,7 +464,6 @@
                             $total += $items[$i]["OrderItem"]["total_not_formated"];
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
-                                <td class="fw-bold fs-7 ps-4">Pendente</td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
