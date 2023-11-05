@@ -147,6 +147,7 @@ class CustomersController extends AppController
                 $this->request->data['Customer']['codigo_associado'] = $code;
                 $this->request->data['Customer']['status_id'] = 3;
                 $this->request->data['Customer']['tipo_credor'] = 'C';
+                $this->request->data['Customer']['created'] = date('Y-m-d H:i:s');
 
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
@@ -190,6 +191,7 @@ class CustomersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read('Auth.User.id');
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
+            unset($this->request->data['Customer']['created']);
 
             $log_old_value = $this->request->data['log_old_value'];
             unset($this->request->data['log_old_value']);
