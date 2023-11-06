@@ -497,14 +497,14 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="7"></td>
+                            <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
                             <td id="subtotal_sum">R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
                             <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
                             <td id="total_sum">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                         </tr>
                     <?php } else { ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="10">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="<?php echo $order['Order']['status_id'] == 83 ? 10 : 9 ?>">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>

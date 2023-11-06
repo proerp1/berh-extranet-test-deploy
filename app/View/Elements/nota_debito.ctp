@@ -271,15 +271,15 @@
                 </tr>
             </table>
         </div>
-        <div class="cell p-10"></div>
-        <?php if ($order['Order']['observation'] != '') { ?>
-            <div class="cell text-center">
-                <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
-            </div>
-            <div class="cell">
-                <p class="m-0 p-10"><?php echo $order['Order']['observation'] ?></p>
-            </div>
-        <?php } ?>
+        <div class="cell p-10">
+            <p class="m-0">ATIVIDADE ADMINISTRACAO E GERENCIAMENTO DAS AQUISICOES DE BENEFICIOS P/ TERCEIROS EM SISTEMA CONVENCIONAL E OU ELETRONICO POR MEIO MAGNETICO OU SIMILAR</p>
+        </div>
+        <div class="cell text-center">
+            <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
+        </div>
+        <div class="cell">
+            <p class="m-0 p-10">REEMBOLSO DE PAGAMENTO REFERENTE A AQUISIÇÃO DE BENEFÍCIOS DE VALES-TRANSPORTES, VALES-REFEIÇÃO, VALES-ALIMENTAÇÃO E SIMILARES PARA TERCEIROS.</p>
+        </div>
         <div class="cell text-center">
             <b>PEDIDO(S):</b>
         </div>
@@ -294,8 +294,7 @@
                 <tr>
                     <th>Benefício</th>
                     <th style="text-align: center;">Quantidade</th>
-                    <th style="text-align: center;">Valor por dia</th>
-                    <th style="text-align: center;">Total com repasse</th>
+                    <th style="text-align: center;">Valor Itens</th>
                 </tr>
                 <?php if (!empty($itens)) { ?>
                     <?php foreach ($itens as $item) { ?>
@@ -303,12 +302,31 @@
                             <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?></td>
                             <td style="text-align: center;"><?php echo $item[0]['qtd'] ?></td>
                             <td style="text-align: center;">R$ <?php echo number_format($item[0]['valor'],2,',','.') ?></td>
-                            <td style="text-align: center;">R$ <?php echo number_format($item[0]['total'],2,',','.') ?></td>
                         </tr>
                     <?php } ?>
                 <?php } ?>
+                <tr>
+                    <th colspan="2" style="text-align: right;" class="pr-10">VALOR TOTAL ITENS (A)</th>
+                    <td style="text-align: center;">R$ <?php echo $order['Order']['subtotal']; ?></td>
+                </tr>
+                <tr>
+                    <th colspan="2" style="text-align: right;" class="pr-10">VALOR TOTAL REPASSE OPERADORA (B)</th>
+                    <td style="text-align: center;">R$ <?php echo $order['Order']['transfer_fee']; ?></td>
+                </tr>
+                <tr>
+                    <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B)</th>
+                    <td style="text-align: center;">R$ <?php echo number_format($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'],2,',','.') ?></td>
+                </tr>
             </table>
         </div>
+        <?php if ($order['Order']['observation'] != '') { ?>
+            <div class="cell text-center">
+                <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
+            </div>
+            <div class="cell">
+                <p class="m-0 p-10"><?php echo $order['Order']['observation'] ?></p>
+            </div>
+        <?php } ?>
     </div>
 </body>
 </html>

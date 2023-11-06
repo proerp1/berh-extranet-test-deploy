@@ -630,8 +630,8 @@ class OrdersController extends AppController
         $itens = $this->OrderItem->find('all', [
             'fields' => [
                 'CustomerUserItinerary.benefit_id', 
-                'count(CustomerUserItinerary.quantity) as qtd', 
-                'sum(CustomerUserItinerary.price_per_day) as valor',
+                'sum(CustomerUserItinerary.quantity) as qtd', 
+                'sum(OrderItem.subtotal) as valor',
                 'sum(OrderItem.total) as total',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
