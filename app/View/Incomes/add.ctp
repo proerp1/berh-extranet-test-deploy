@@ -291,7 +291,7 @@
                                 <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto - Itaú</a>
                             <?php } ?>
                         <?php } ?>
-                        <?php if ($this->request->data['Status']['id'] == 16 || $this->request->data['Status']['id'] == 19 || $this->request->data['Status']['id'] == 51){ ?>
+                        <?php if (in_array($this->request->data['Status']['id'], [15, 16, 19, 51])){ ?>
                             <a href="#" data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-success">Baixar conta</a>
                         <?php } ?>
                         <?php if (($this->request->data['Status']['id'] == 16 || $this->request->data['Status']['id'] == 19) && $cancelarConta) { ?>

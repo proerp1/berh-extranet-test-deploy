@@ -50,9 +50,11 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
-                                <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$data[$i]["Income"]["id"].'/1'; ?>" class="btn btn-info btn-sm">
-                                    Baixar Boleto
-                                </a>
+                                <?php if ($data[$i]["Income"]["id"] != null) { ?>
+                                    <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"]; ?>" class="btn btn-info btn-sm">
+                                        Detalhes do boleto
+                                    </a>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>
