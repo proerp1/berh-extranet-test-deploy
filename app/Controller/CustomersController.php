@@ -837,7 +837,7 @@ class CustomersController extends AppController
 
         $condition = ["and" => [
             'Order.customer_id' => $id,
-            'Order.status_id' => 84,
+            //'Order.status_id' => 84,
         ], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
