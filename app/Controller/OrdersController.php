@@ -3,8 +3,8 @@ App::uses('ApiItau', 'Lib');
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem'];
+    public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
@@ -225,11 +225,13 @@ class OrdersController extends AppController
 
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name'], 'order' => ['cast(Benefit.code as unsigned)' => 'asc']]);
 
+        $gerarNota = $this->Permission->check(66, "leitura");
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits', 'gerarNota'));
 
         $this->render("add");
     }
@@ -582,10 +584,70 @@ class OrdersController extends AppController
         }
     }
 
+    public function boletos($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $data = $this->Paginator->paginate('PaymentImportLog', $condition);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Boletos' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'id'));
+    }
+
+    public function baixar_boleto_fornecedor($id){
+        $this->autoRender = false;
+
+        $log = $this->PaymentImportLog->findById($id);
+        $this->redirect('/private_files/baixar_boleto/boletos_operadoras/'.$log['PaymentImportLog']['customer_user_id'].'/boleto-'.$log['PaymentImportLog']['order_id'].'-'.$log['PaymentImportLog']['supplier_id'].'_pdf');
+
+    }
+
     public function zerosEsq($campo, $tamanho)
     {
         $campo = substr($campo, 0, $tamanho);
 
         return str_pad($campo, $tamanho, 0, STR_PAD_LEFT);
+    }
+
+    public function nota_debito($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUserItinerary.benefit_id', 
+                'count(CustomerUserItinerary.quantity) as qtd', 
+                'sum(CustomerUserItinerary.price_per_day) as valor',
+                'sum(OrderItem.total) as total',
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['CustomerUserItinerary.benefit_id']
+        ]);
+
+        $view = new View($this, false);
+        $view->layout=false;
+
+        $link = APP.'webroot';
+        // $link = '';
+        $view->set(compact("link", "itens", "order"));
+        $html=$view->render('../Elements/nota_debito');
+ 
+        // echo $html;die();
+
+        $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
     }
 }

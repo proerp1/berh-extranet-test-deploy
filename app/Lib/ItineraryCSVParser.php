@@ -198,6 +198,34 @@ class ItineraryCSVParser extends Controller
             'customer_positions_id' => $customerPositionId,
         ];
 
+        $encoding = mb_detect_encoding($userData['name'], "UTF-8, ISO-8859-1, Windows-1252", true);
+        $endereco = $row[24];
+        $bairro = $row[27];
+        $cidade = $row[28];
+
+        $enderecoTrabalho = $row[31];
+        $bairroTrabalho = $row[34];
+        $cidadeTrabalho = $row[35];
+
+        $enderecoEntrega = $row[38];
+        $bairroEntrega = $row[41];
+        $cidadeEntrega = $row[42];
+
+        if($encoding != 'UTF-8'){
+            $userData['name'] = mb_convert_encoding($userData['name'], "UTF-8", "Windows-1252");
+            $userData['nome_mae'] = mb_convert_encoding($userData['nome_mae'], "UTF-8", "Windows-1252");
+            $endereco = mb_convert_encoding($endereco, "UTF-8", "Windows-1252");
+            $bairro = mb_convert_encoding($bairro, "UTF-8", "Windows-1252");
+            $cidade = mb_convert_encoding($cidade, "UTF-8", "Windows-1252");
+            $enderecoTrabalho = mb_convert_encoding($enderecoTrabalho, "UTF-8", "Windows-1252");
+            $bairroTrabalho = mb_convert_encoding($bairroTrabalho, "UTF-8", "Windows-1252");
+            $cidadeTrabalho = mb_convert_encoding($cidadeTrabalho, "UTF-8", "Windows-1252");
+            $enderecoEntrega = mb_convert_encoding($enderecoEntrega, "UTF-8", "Windows-1252");
+            $bairroEntrega = mb_convert_encoding($bairroEntrega, "UTF-8", "Windows-1252");
+            $cidadeEntrega = mb_convert_encoding($cidadeEntrega, "UTF-8", "Windows-1252");
+        }
+
+
         if (!$existingUser) {
             $this->CustomerUser->create();
             $this->CustomerUser->save($userData);
@@ -237,11 +265,11 @@ class ItineraryCSVParser extends Controller
                     'customer_id' => $customerId,
                     'customer_user_id' => $userId,
                     'zip_code' => $row[23],
-                    'address_line' => $row[24],
+                    'address_line' => $endereco,
                     'address_number' => $row[25],
                     'address_complement' => $row[26],
-                    'neighborhood' => $row[27],
-                    'city' => $row[28],
+                    'neighborhood' => $bairro,
+                    'city' => $cidade,
                     'state' => $row[29],
                     'address_type_id' => 1
                 ];
@@ -264,11 +292,11 @@ class ItineraryCSVParser extends Controller
                     'customer_id' => $customerId,
                     'customer_user_id' => $userId,
                     'zip_code' => $row[30],
-                    'address_line' => $row[31],
+                    'address_line' => $enderecoTrabalho,
                     'address_number' => $row[32],
                     'address_complement' => $row[33],
-                    'neighborhood' => $row[34],
-                    'city' => $row[35],
+                    'neighborhood' => $bairroTrabalho,
+                    'city' => $cidadeTrabalho,
                     'state' => $row[36],
                     'address_type_id' => 2
                 ];
@@ -291,11 +319,11 @@ class ItineraryCSVParser extends Controller
                     'customer_id' => $customerId,
                     'customer_user_id' => $userId,
                     'zip_code' => $row[37],
-                    'address_line' => $row[38],
+                    'address_line' => $enderecoEntrega,
                     'address_number' => $row[39],
                     'address_complement' => $row[40],
-                    'neighborhood' => $row[41],
-                    'city' => $row[42],
+                    'neighborhood' => $bairroEntrega,
+                    'city' => $cidadeEntrega,
                     'state' => $row[43],
                     'address_type_id' => 3
                 ];

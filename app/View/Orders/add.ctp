@@ -14,6 +14,15 @@
     })
 </script>
 
+<ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" disabled>Pedido</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
+    </li>
+</ul>
+
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 
 <div class="row">
@@ -121,31 +130,33 @@
                         <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
-                    <div class="mb-7 col">
-                        <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="float:right" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
-                    </div>
-
-                    <?php if ($order['Order']['status_id'] == 83) { ?>
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="#" class="btn btn-sm btn-success me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                    <div class="row">
+                        <div class="mb-7 col" style="text-align: right;">
+                            <?php if ($order['Order']['status_id'] == 83) { ?>
+                                <a href="#" class="btn btn-sm btn-success me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                                     <i class="fas fa-arrow-right"></i>
                                     Gerar Boleto
                                 </a>
-                            </div>
-                        </div>
-                    <?php } ?>
+                            <?php } ?>
 
-                    <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
-                        <div class="row">
-                            <div class="col-12">
-                                <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-3" style="float:right">
+                            <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
+                                <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-3">
                                     <i class="fas fa-download"></i>
                                     Baixar Boleto
                                 </a>
-                            </div>
+                            <?php } ?>
+
+                            <?php if ($gerarNota) { ?>
+                                <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i>
+                                    Gerar nota de débito
+                                </a>
+                            <?php } ?>
+
+                            <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
+
                         </div>
-                    <?php } ?>
+                    </div>
 
                 </div>
             </div>
@@ -427,7 +438,6 @@
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 rounded-start">Status</th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -454,7 +464,6 @@
                             $total += $items[$i]["OrderItem"]["total_not_formated"];
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
-                                <td class="fw-bold fs-7 ps-4">Pendente</td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
@@ -725,7 +734,7 @@
             },
             dropdownParent: $('#modal_add_beneficiarios')
         });
-        
+
 
     })
 </script>
