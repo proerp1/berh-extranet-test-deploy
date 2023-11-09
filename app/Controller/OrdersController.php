@@ -47,7 +47,8 @@ class OrdersController extends AppController
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
                 'conditions' => [
                     'CustomerUserItinerary.customer_id' => $customerId,
-                    'CustomerUser.id is not null'
+                    'CustomerUser.id is not null',
+                    'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ],
                 'recursive' => 2
             ]);
