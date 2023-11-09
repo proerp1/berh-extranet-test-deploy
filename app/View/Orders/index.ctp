@@ -191,7 +191,7 @@
 
         let currDate = new Date();
         currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
-        const futureDate = addWorkingDays(currDate, 5);
+        const futureDate = addWorkingDays(currDate, 4);
 
         // Converte os valores de string para objetos Date
         const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
@@ -205,9 +205,9 @@
             return; // Evita a execução adicional
         }
 
-        // Verifica se as datas são maiores que hoje + 5 dias úteis
-        if (creditReleaseDate < futureDate || periodFromDate < futureDate) {
-            $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis.').show();
+        // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
+        if (creditReleaseDate < futureDate) {
+            $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 4 dias úteis.').show();
             event.preventDefault();
             return; // Evita a execução adicional
         }
