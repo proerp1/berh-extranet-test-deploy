@@ -139,73 +139,90 @@
         </div>
         
         <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Tipo Conta</label>
-                <?php echo $this->Form->input('account_type_id', array("id" => "tipo_conta", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $bank_account_type)); ?>
-            </div>
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2 required">Tipo Conta</label>
+        <?php echo $this->Form->input('account_type_id', array("id" => "tipo_conta", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $bank_account_type)); ?>
+    </div>
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Banco</label>
-                <?php echo $this->Form->input('bank_code_id', array("id" => "bank_name", "placeholder" => "Nome Banco", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $banks));  ?>
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2 required">Banco</label>
+        <?php echo $this->Form->input('bank_code_id', array("id" => "bank_name", "placeholder" => "Nome Banco", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $banks));  ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-7">
+        <?php $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transferência', '9' => 'Desconto', '11' => 'Pix', '10' => 'Outros']; ?>
+        <label class="fw-semibold fs-6 mb-2">Forma de pagamento</label>
+        <?php echo $this->Form->input('payment_method', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => $payment_method]);?>
+    </div>
+
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2 required">Agência</label>
+        <div class="row">
+            <div class="col-md-6">
+                <?php echo $this->Form->input('branch_number', array("id" => "agencia", "placeholder" => "Agência", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+            </div>
+            <div class="col-md-6">
+                <?php echo $this->Form->input('branch_digit', array("id" => "agencia_digito", "placeholder" => "Dígito", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
         </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2 required">Conta</label>
         <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Agência</label>
-                <div class="row">
-                    <div class="col">
-                        <?php echo $this->Form->input('branch_number', array("id" => "agencia", "placeholder" => "Agência", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
-                    </div>
-                    <div class="col">
-                        <?php echo $this->Form->input('branch_digit', array("id" => "agencia_digito", "placeholder" => "Dígito", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
-                    </div>
-                </div>
+            <div class="col-md-6">
+                <?php echo $this->Form->input('acc_number', array("id" => "conta", "placeholder" => "Conta", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Conta</label>
-                <div class="row">
-                    <div class="col">
-                        <?php echo $this->Form->input('acc_number', array("id" => "conta", "placeholder" => "Conta", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
-                    </div>
-                    <div class="col">
-                        <?php echo $this->Form->input('acc_digit', array("id" => "conta_digito", "placeholder" => "Dígito", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
-                    </div>
-                </div>
+            <div class="col-md-6">
+                <?php echo $this->Form->input('acc_digit', array("id" => "conta_digito", "placeholder" => "Dígito", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
+        </div>
+    </div>
 
-            <div class="row">
-                <div class="mb-7 col">
-                    <?php
-                    $options = [
-                        '' => 'Selecione',
-                        'cnpj' => 'CNPJ',
-                        'cpf' => 'CPF',
-                        'email' => 'e-mail',
-                        'celular' => 'celular',
-                        'chave' => 'chave'
-                    ];
-                    ?>
-                    <label class="fw-semibold fs-6 mb-2">Tipo Chave</label>
-                    <?php echo $this->Form->input('pix_type', ['placeholder' => 'Tipo PIX', "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $options]); ?>
-                </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Chave PIX</label>
-                    <?php echo $this->Form->input('pix_id', ['type' => 'text', 'placeholder' => 'PIX', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-                </div>
-                <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Valor Boleto</label>
-                <?php echo $this->Form->input('valor_boleto', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
-                </div>
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Valor 1° Via</label>
-                    <?php echo $this->Form->input('valor_1_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
-                </div>           <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Valor 2° Via</label>
-                    <?php echo $this->Form->input('valor_2_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
-                </div>
-                </div>
-                 </div>
+    <div class="col-md-6 mb-7">
+        <?php
+        $options = [
+            '' => 'Selecione',
+            'cnpj' => 'CNPJ',
+            'cpf' => 'CPF',
+            'email' => 'e-mail',
+            'celular' => 'celular',
+            'chave' => 'chave'
+        ];
+        ?>
+        <label class="fw-semibold fs-6 mb-2">Tipo Chave</label>
+        <?php echo $this->Form->input('pix_type', ['placeholder' => 'Tipo PIX', "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $options]); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2">Chave PIX</label>
+        <?php echo $this->Form->input('pix_id', ['type' => 'text', 'placeholder' => 'PIX', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+    </div>
+
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2">Valor Boleto</label>
+        <?php echo $this->Form->input('valor_boleto', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2">Valor 1° Via</label>
+        <?php echo $this->Form->input('valor_1_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+    </div>
+
+    <div class="col-md-6 mb-7">
+        <label class="fw-semibold fs-6 mb-2">Valor 2° Via</label>
+        <?php echo $this->Form->input('valor_2_via', [ "placeholder" => "0,00", "class" => "form-control mb-3 mb-lg-0 money_exchange","type" => "text" ]); ?>
+    </div>
+</div>
+
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">

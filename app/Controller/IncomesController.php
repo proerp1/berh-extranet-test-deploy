@@ -5,7 +5,7 @@ class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Boleto', 'HtmltoPdf', 'ExcelGenerator', 'GerarCaixaNossoNumero', 'Email'];
-    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale'];
+    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order'];
 
     public $paginate = [
         'Income' => ['limit' => 10, 'order' => ['Income.vencimento' => 'desc'], 'group' => 'Income.id'],
@@ -400,10 +400,35 @@ class IncomesController extends AppController
         $this->request->data['Income']['usuario_id_baixa'] = CakeSession::read("Auth.User.id");
         $this->request->data['Income']['data_baixa'] = date('Y-m-d H:i:s');
 
-        if ($this->Income->save($this->request->data)) {
-            $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect(['action' => 'edit/'.$id]);
+        $itens = $this->CnabItem->find('all', [
+            'conditions' => [
+                'Income.id' => $id,
+            ],
+        ]);
+
+        foreach ($itens as $item) {
+            $this->CnabItem->id = $item['CnabItem']['id'];
+            $this->CnabItem->save([
+                'CnabItem' => [
+                    'status_id' => 61
+                ]
+            ]);
+
+            if ($item['Income']['order_id'] != null) {
+                $this->Order->id = $item['Income']['order_id'];
+                $this->Order->save([
+                    'Order' => [
+                        'status_id' => 87,
+                        'payment_date' => date('Y-m-d'),
+                    ]
+                ]);
+            }
         }
+
+        $this->Income->save($this->request->data);
+
+        $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect($this->referer());
     }
 
     public function gerar_boleto($id, $pdf = false)
