@@ -224,7 +224,7 @@ class CustomReportsComponent extends Component
             ],
             'pedidos' => [
                 'OrderItem' => [
-                    'limit' => 10,
+                    'limit' => 100,
                     'order' => ['OrderItem.id' => 'desc'],
                     'fields' => [
                         'Customer.nome_primario',
