@@ -7,6 +7,7 @@ class ExcelConfigurationComponent extends Component {
 		$arr = [
 			'OrderItem'	=> [
 				'limit' => 1000000,
+				'maxLimit' => 1000000,
 				'order' => ['OrderItem.customer_user_id' => 'desc'],
 				'fields' => [
 					'Customer.nome_primario',
@@ -156,6 +157,7 @@ class ExcelConfigurationComponent extends Component {
 			],
 			'OrderItemReportsPedido'	=> [
 				'limit' => 1000000,
+				'maxLimit' => 1000000,
 				'order' => ['OrderItem.customer_user_id' => 'desc'],
 				'fields' => [
 					'Customer.nome_primario',

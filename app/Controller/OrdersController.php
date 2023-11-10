@@ -47,7 +47,8 @@ class OrdersController extends AppController
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
                 'conditions' => [
                     'CustomerUserItinerary.customer_id' => $customerId,
-                    'CustomerUser.id is not null'
+                    'CustomerUser.id is not null',
+                    'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ],
                 'recursive' => 2
             ]);
@@ -480,7 +481,7 @@ class OrdersController extends AppController
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
-        $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage'];
+        $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
         $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
 
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
