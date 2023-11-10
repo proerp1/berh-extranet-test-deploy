@@ -124,16 +124,16 @@ class ApiItau extends Controller
                     'forma_envio' => 'impressao',
                     'pagador' => [
                         'pessoa' => [
-                            'nome_pessoa' => $this->removeAccents($conta['Customer']['nome_primario']),
+                            'nome_pessoa' => substr($this->removeAccents($conta['Customer']['nome_primario']), 0, 50),
                             'tipo_pessoa' => [
                                 'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
                                 $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
                             ],
                         ],
                         'endereco' => [
-                            'nome_logradouro' => $this->removeAccents($conta['Customer']['endereco']),
-                            'nome_bairro' => $this->removeAccents($conta['Customer']['bairro']),
-                            'nome_cidade' => $this->removeAccents($conta['Customer']['cidade']),
+                            'nome_logradouro' => substr($this->removeAccents($conta['Customer']['endereco']), 0, 45),
+                            'nome_bairro' => substr($this->removeAccents($conta['Customer']['bairro']), 0, 15),
+                            'nome_cidade' => substr($this->removeAccents($conta['Customer']['cidade']), 0, 20),
                             'sigla_UF' => $conta['Customer']['estado'],
                             'numero_CEP' => str_replace('-', '', $conta['Customer']['cep']),
                         ]
