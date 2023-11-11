@@ -220,10 +220,6 @@ class OrdersController extends AppController
             'conditions' => ['Income.order_id' => $id]
         ]);
 
-        $customer_users_all = $this->CustomerUser->find('list', [
-            'conditions' => ['CustomerUser.customer_id' => $order['Order']['customer_id']],
-        ]);
-
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name'], 'order' => ['cast(Benefit.code as unsigned)' => 'asc']]);
 
         $gerarNota = $this->Permission->check(66, "leitura");
@@ -232,7 +228,7 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits', 'gerarNota'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota'));
 
         $this->render("add");
     }
@@ -246,7 +242,8 @@ class OrdersController extends AppController
 
         $customerUsers = $this->CustomerUser->find('list', [
             'conditions' => ['CustomerUser.customer_id' => $customerId, 'CustomerUser.name LIKE' => '%' . $search . '%', 'CustomerUser.status_id' => 1],
-            'fields' => ['id', 'name']
+            'fields' => ['id', 'name'],
+            'order' => ['name' => 'asc']
         ]);
 
         $cst_u = [];

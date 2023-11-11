@@ -566,7 +566,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Incluir Intinerário</h4>
+                <h4 class="modal-title">Incluir Itinerário</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
@@ -577,7 +577,7 @@
                 <div class="row">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Beneficiário</label>
-                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id_iti", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $customer_users_all)); ?>
+                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id_iti", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true")); ?>
                     </div>
 
                     <div class="mb-7 col">
@@ -627,10 +627,6 @@
             decimal: ',',
             thousands: '.',
             precision: 2
-        });
-
-        $('#customer_user_id_iti').select2({
-            dropdownParent: $('#modal_add_itinerario')
         });
 
         $('#benefit_id').select2({
@@ -733,6 +729,23 @@
                 }
             },
             dropdownParent: $('#modal_add_beneficiarios')
+        });
+
+        $('#customer_user_id_iti').select2({
+            ajax: {
+                url: base_url + '/orders/listOfCustomerUsers',
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        customer_id: <?php echo $order['Order']['customer_id']; ?>
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            },
+            dropdownParent: $('#modal_add_itinerario')
         });
 
 
