@@ -136,6 +136,10 @@ class Order extends AppModel
             $this->data[$this->alias]['credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['credit_release_date']);
         }
 
+        if (!empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
+
         return true;
     }
 
