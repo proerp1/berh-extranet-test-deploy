@@ -7,7 +7,9 @@ class OrdersController extends AppController
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog'];
 
     public $paginate = [
-        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
+        'Order' => [
+            'limit' => 10, 'order' => ['Order.id' => 'desc']
+        ]
     ];
 
     public function beforeFilter()
