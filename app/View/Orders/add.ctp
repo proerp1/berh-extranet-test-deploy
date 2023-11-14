@@ -130,6 +130,13 @@
                         <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
+                    <?php $is_dt_disabled = $order['Order']['status_id'] != 86; ?>
+
+                    <div class="mb-7 col-3">
+                        <label class=" form-label">Data Finalização</label>
+                        <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 datepicker", 'disabled' => $is_dt_disabled));  ?>
+                    </div>
+
                     <div class="row">
                         <div class="mb-7 col" style="text-align: right;">
                             <?php if ($order['Order']['status_id'] == 83) { ?>
@@ -153,7 +160,7 @@
                                 </a>
                             <?php } ?>
 
-                            <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
+                            <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
 
                         </div>
                     </div>
@@ -434,7 +441,21 @@
                 <?php } ?>
 
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" id="search_form">
+                <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "edit/".$id.'#search_form')); ?>" role="form" id="busca" autocomplete="off">
+                    <div class="card-header border-0 pt-6 pb-6">
+                        <div class="card-title">
+                            <div class="row">
+                                <div class="col d-flex align-items-center">
+                                    <span class="position-absolute ms-6">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
@@ -566,7 +587,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Incluir Intinerário</h4>
+                <h4 class="modal-title">Incluir Itinerário</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
@@ -577,7 +598,7 @@
                 <div class="row">
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Beneficiário</label>
-                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id_iti", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $customer_users_all)); ?>
+                        <?php echo $this->Form->input('customer_user_id', array("id" => "customer_user_id_iti", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true")); ?>
                     </div>
 
                     <div class="mb-7 col">
@@ -627,10 +648,6 @@
             decimal: ',',
             thousands: '.',
             precision: 2
-        });
-
-        $('#customer_user_id_iti').select2({
-            dropdownParent: $('#modal_add_itinerario')
         });
 
         $('#benefit_id').select2({
@@ -733,6 +750,23 @@
                 }
             },
             dropdownParent: $('#modal_add_beneficiarios')
+        });
+
+        $('#customer_user_id_iti').select2({
+            ajax: {
+                url: base_url + '/orders/listOfCustomerUsers',
+                dataType: 'json',
+                data: function(params) {
+                    var query = {
+                        search: params.term,
+                        customer_id: <?php echo $order['Order']['customer_id']; ?>
+                    }
+
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            },
+            dropdownParent: $('#modal_add_itinerario')
         });
 
 

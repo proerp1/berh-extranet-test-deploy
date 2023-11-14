@@ -7,7 +7,9 @@ class OrdersController extends AppController
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog'];
 
     public $paginate = [
-        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Order.name' => 'asc']
+        'Order' => [
+            'limit' => 10, 'order' => ['Order.id' => 'desc']
+        ]
     ];
 
     public function beforeFilter()
@@ -53,7 +55,7 @@ class OrdersController extends AppController
                 'recursive' => 2
             ]);
 
-            if(empty($customerItineraries)){
+            if (empty($customerItineraries)) {
                 $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action' => 'index']);
             }
@@ -99,7 +101,7 @@ class OrdersController extends AppController
 
             $workingDaysUser = $workingDays - $vacationDays;
 
-            if($workingDaysUser < 0){
+            if ($workingDaysUser < 0) {
                 $workingDaysUser = 0;
             }
 
@@ -107,9 +109,9 @@ class OrdersController extends AppController
 
             $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
             $benefit = $this->Benefit->findById($benefitId);
-            $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado']) 
-                                    ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado'] 
-                                    : 0;
+            $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
+                ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
+                : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
 
             $total = $subtotal + $transferFee;
@@ -148,6 +150,12 @@ class OrdersController extends AppController
                 $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
 
+            if ($old_order['Order']['status_id'] == 86 && !empty($this->request->data['Order']['end_date'])) {
+                $order['Order']['id'] = $id;
+                $order['Order']['status_id'] = 87;
+                $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
+            }
+
             if ($this->Order->save($order)) {
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'edit/' . $id]);
@@ -161,7 +169,29 @@ class OrdersController extends AppController
         $order = $this->Order->findById($id);
         $this->Order->validationErrors = $temp_errors;
 
-        $items = $this->Paginator->paginate('OrderItem', ['and' => ['Order.id' => $id]]);
+        $this->Paginator->settings = ['OrderItem' => [
+            'limit' => 50,
+            'order' => ['OrderItem.id' => 'asc'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ]
+            ]
+        ]];
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $progress = 1;
         switch ($order['Order']['status_id']) {
@@ -190,7 +220,7 @@ class OrdersController extends AppController
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
                 [
-                    'table'=> 'benefits',
+                    'table' => 'benefits',
                     'alias' => 'Benefit',
                     'type' => 'INNER',
                     'conditions' => [
@@ -220,10 +250,6 @@ class OrdersController extends AppController
             'conditions' => ['Income.order_id' => $id]
         ]);
 
-        $customer_users_all = $this->CustomerUser->find('list', [
-            'conditions' => ['CustomerUser.customer_id' => $order['Order']['customer_id']],
-        ]);
-
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name'], 'order' => ['cast(Benefit.code as unsigned)' => 'asc']]);
 
         $gerarNota = $this->Permission->check(66, "leitura");
@@ -232,13 +258,14 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'customer_users_all', 'benefits', 'gerarNota'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota'));
 
         $this->render("add");
     }
 
     // ajax function listOfCustomerUsers
-    public function listOfCustomerUsers(){
+    public function listOfCustomerUsers()
+    {
         $this->autoRender = false;
 
         $customerId = $_GET['customer_id'];
@@ -246,7 +273,8 @@ class OrdersController extends AppController
 
         $customerUsers = $this->CustomerUser->find('list', [
             'conditions' => ['CustomerUser.customer_id' => $customerId, 'CustomerUser.name LIKE' => '%' . $search . '%', 'CustomerUser.status_id' => 1],
-            'fields' => ['id', 'name']
+            'fields' => ['id', 'name'],
+            'order' => ['name' => 'asc']
         ]);
 
         $cst_u = [];
@@ -278,7 +306,7 @@ class OrdersController extends AppController
             ]);
 
             $income = [];
-            
+
             $income['Income']['order_id'] = $id;
             $income['Income']['parcela'] = 1;
             $income['Income']['status_id'] = 15;
@@ -295,7 +323,7 @@ class OrdersController extends AppController
             $this->Income->begin();
             $this->Income->create();
             if ($this->Income->save($income) && $this->emitirBoleto($this->Income->id)) {
-    
+
                 $this->Income->commit();
                 $this->Order->commit();
                 $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -312,7 +340,8 @@ class OrdersController extends AppController
 
     public function emitirBoleto($id)
     {
-        $conta = $this->Income->find('first', ['conditions' => ['Income.id' => $id], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
+        $conta = $this->Income->find('first', [
+            'conditions' => ['Income.id' => $id], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'],
             'recursive' => -1,
             'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
             'joins' => [
@@ -347,7 +376,7 @@ class OrdersController extends AppController
             $remessas = $this->CnabLote->find('first', ['order' => ['CnabLote.id' => 'desc'], 'callbacks' => false]);
             $remessa = isset($remessas['CnabLote']) ? $remessas['CnabLote']['remessa'] + 1 : 1;
 
-            $nome_arquivo = 'E'.$this->zerosEsq($remessa, 6).'.REM';
+            $nome_arquivo = 'E' . $this->zerosEsq($remessa, 6) . '.REM';
 
             $data_pefin_lote = [
                 'CnabLote' => [
@@ -397,7 +426,7 @@ class OrdersController extends AppController
 
                 $message = '';
                 foreach ($erros as $erro) {
-                    $message .= $erro.'<br>';
+                    $message .= $erro . '<br>';
                 }
 
                 $this->Session->setFlash(__($message), 'default', ['class' => 'alert alert-danger']);
@@ -438,11 +467,11 @@ class OrdersController extends AppController
             'conditions' => ['OrderItem.order_id' => $orderId, 'OrderItem.customer_user_id' => $customerUserId],
         ]);
 
-        if(!empty($orderItems)){
+        if (!empty($orderItems)) {
             $arr_itineraries = Hash::extract($orderItems, '{n}.OrderItem.customer_user_itinerary_id');
             $cond['CustomerUserItinerary.id NOT IN'] = $arr_itineraries;
         }
-        
+
         $customerItineraries = $this->CustomerUserItinerary->find('all', [
             'conditions' => $cond,
         ]);
@@ -459,12 +488,12 @@ class OrdersController extends AppController
     public function updateWorkingDays()
     {
         $this->autoRender = false;
-        
+
         $itemId = $this->request->data['orderItemId'];
 
         $orderItem = $this->OrderItem->findById($itemId);
 
-        if($this->request->data['campo'] == 'working_days'){
+        if ($this->request->data['campo'] == 'working_days') {
             $workingDays = $this->request->data['newValue'];
             $orderItem['OrderItem']['working_days'] = $workingDays;
             $var = $orderItem['OrderItem']['var_not_formated'];
@@ -520,7 +549,7 @@ class OrdersController extends AppController
         $this->OrderItem->unbindModel(
             ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
         );
-        
+
         $this->OrderItem->updateAll(
             ['OrderItem.data_cancel' => 'CURRENT_DATE', 'OrderItem.usuario_id_cancel' => CakeSession::read("Auth.User.id")],
             ['OrderItem.id' => $itemOrderId]
@@ -536,7 +565,8 @@ class OrdersController extends AppController
         $this->redirect('/orders/edit/' . $orderId);
     }
 
-    public function addItinerary(){
+    public function addItinerary()
+    {
         $id = $this->request->data['customer_id'];
         $orderId = $this->request->data['order_id'];
 
@@ -556,14 +586,14 @@ class OrdersController extends AppController
                 'conditions' => ['CustomerUserItinerary.id' => $idLastInserted],
                 'recursive' => 2
             ]);
-            
-            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to']);  
+
+            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to']);
 
             $this->Order->id = $orderId;
             $this->Order->reProcessAmounts($orderId);
 
             $this->Flash->set(__('Itinerário adicionado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect('/orders/edit/'.$orderId);
+            $this->redirect('/orders/edit/' . $orderId);
         } else {
             $this->Flash->set(__('Itinerário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
         }
@@ -603,12 +633,12 @@ class OrdersController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
 
-    public function baixar_boleto_fornecedor($id){
+    public function baixar_boleto_fornecedor($id)
+    {
         $this->autoRender = false;
 
         $log = $this->PaymentImportLog->findById($id);
-        $this->redirect('/private_files/baixar_boleto/boletos_operadoras/'.$log['PaymentImportLog']['customer_user_id'].'/boleto-'.$log['PaymentImportLog']['order_id'].'-'.$log['PaymentImportLog']['supplier_id'].'_pdf');
-
+        $this->redirect('/private_files/baixar_boleto/boletos_operadoras/' . $log['PaymentImportLog']['customer_user_id'] . '/boleto-' . $log['PaymentImportLog']['order_id'] . '-' . $log['PaymentImportLog']['supplier_id'] . '_pdf');
     }
 
     public function zerosEsq($campo, $tamanho)
@@ -630,8 +660,8 @@ class OrdersController extends AppController
 
         $itens = $this->OrderItem->find('all', [
             'fields' => [
-                'CustomerUserItinerary.benefit_id', 
-                'sum(CustomerUserItinerary.quantity) as qtd', 
+                'CustomerUserItinerary.benefit_id',
+                'sum(CustomerUserItinerary.quantity) as qtd',
                 'sum(OrderItem.subtotal) as valor',
                 'sum(OrderItem.total) as total',
             ],
@@ -640,13 +670,13 @@ class OrdersController extends AppController
         ]);
 
         $view = new View($this, false);
-        $view->layout=false;
+        $view->layout = false;
 
-        $link = APP.'webroot';
+        $link = APP . 'webroot';
         // $link = '';
         $view->set(compact("link", "itens", "order"));
-        $html=$view->render('../Elements/nota_debito');
- 
+        $html = $view->render('../Elements/nota_debito');
+
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
