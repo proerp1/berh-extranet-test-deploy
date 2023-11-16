@@ -641,9 +641,14 @@
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
-
 <script>
     $(document).ready(function() {
+        var should_scroll = <?php echo isset($this->params['named']['page']) ? 'true': 'false'; ?>;
+        if(should_scroll){
+            $('html, body').animate({
+                scrollTop: $("#total_sum").offset().top
+            }, 100);
+        }
         $('.money_field').maskMoney({
             decimal: ',',
             thousands: '.',
