@@ -50,6 +50,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     'CustomerUserItinerary.customer_id' => $customerId,
                     'CustomerUser.id is not null',
+                    'CustomerUser.status_id' => 1,
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ],
                 'recursive' => 2
@@ -170,7 +171,7 @@ class OrdersController extends AppController
         $this->Order->validationErrors = $temp_errors;
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 50,
+            'limit' => 100,
             'order' => ['OrderItem.id' => 'asc'],
             'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
             'joins' => [
