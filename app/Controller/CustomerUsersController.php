@@ -308,7 +308,7 @@ class CustomerUsersController extends AppController
                 FERIAS
     ********************/
     public function vacations($id, $user_id){
-        $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['CustomerUserVacation.customer_user_id' => $user_id], "or" => []];
@@ -329,7 +329,7 @@ class CustomerUsersController extends AppController
 
     public function add_vacation($customer_id, $user_id)
     {
-        // $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
+        // $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserVacation->create();
             $this->CustomerUserVacation->validates();
@@ -362,7 +362,7 @@ class CustomerUsersController extends AppController
 
     public function edit_vacation($customer_id, $user_id, $id_vacation)
     {
-        // $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        // $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserVacation->id = $id_vacation;
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserVacation->validates();
@@ -397,7 +397,7 @@ class CustomerUsersController extends AppController
 
     public function delete_vacation($customer_id, $user_id, $id)
     {
-        // $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
+        // $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserVacation->id = $id;
 
         $this->request->data['CustomerUserVacation']['id'] = $id;
@@ -414,7 +414,7 @@ class CustomerUsersController extends AppController
                 Dados Bancários
     ********************/
     public function bank_info($id, $user_id){
-        $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['CustomerUserBankAccount.customer_user_id' => $user_id], "or" => []];
@@ -435,7 +435,7 @@ class CustomerUsersController extends AppController
 
     public function add_bank_info($id, $user_id)
     {
-        $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserBankAccount->create();
             $this->CustomerUserBankAccount->validates();
@@ -469,7 +469,7 @@ class CustomerUsersController extends AppController
 
     public function edit_bank_info($id, $user_id, $id_bank)
     {
-        $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserBankAccount->id = $id_bank;
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserBankAccount->validates();
@@ -510,7 +510,7 @@ class CustomerUsersController extends AppController
                 Itinerário
     ********************/
     public function itineraries($id, $user_id){
-        $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['CustomerUserItinerary.customer_user_id' => $user_id], "or" => []];
@@ -531,7 +531,7 @@ class CustomerUsersController extends AppController
 
     public function add_itinerary($id, $user_id)
     {
-        $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserItinerary->create();
             $this->CustomerUserItinerary->validates();
@@ -563,7 +563,7 @@ class CustomerUsersController extends AppController
 
     public function edit_itinerary($id, $user_id, $id_itinerary)
     {
-        $this->Permission->check(11, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserItinerary->id = $id_itinerary;
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserItinerary->validates();
@@ -600,7 +600,7 @@ class CustomerUsersController extends AppController
     }
 
     public function delete_itinerary($customer_id, $user_id, $id){
-        $this->Permission->check(11, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserItinerary->id = $id;
         $this->request->data = $this->CustomerUserItinerary->read();
 
