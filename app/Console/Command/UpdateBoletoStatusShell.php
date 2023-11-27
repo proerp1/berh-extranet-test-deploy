@@ -59,7 +59,7 @@ class UpdateBoletoStatusShell extends AppShell
                             $this->Order->id = $item['Income']['order_id'];
                             $this->Order->save([
                                 'Order' => [
-                                    'status_id' => 87,
+                                    'status_id' => 85,
                                     'payment_date' => date('Y-m-d'),
                                 ]
                             ]);
