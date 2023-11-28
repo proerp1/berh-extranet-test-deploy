@@ -145,6 +145,18 @@ class Order extends AppModel
             $this->data[$this->alias]['end_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['end_date']);
         }
 
+        if (!empty($this->data[$this->alias]['validation_date'])) {
+            $this->data[$this->alias]['validation_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['validation_date']);
+        }
+
+        if (!empty($this->data[$this->alias]['issuing_date'])) {
+            $this->data[$this->alias]['issuing_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['issuing_date']);
+        }
+
+        if (!empty($this->data[$this->alias]['payment_date'])) {
+            $this->data[$this->alias]['payment_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['payment_date']);
+        }
+
         if (!empty($this->data[$this->alias]['created'])) {
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }

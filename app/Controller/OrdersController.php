@@ -429,7 +429,7 @@ class OrdersController extends AppController
                     $message .= $erro . '<br>';
                 }
 
-                $this->Session->setFlash(__($message), 'default', ['class' => 'alert alert-danger']);
+                $this->Flash->set(__($message), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
