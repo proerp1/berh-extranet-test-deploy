@@ -50,6 +50,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     'CustomerUserItinerary.customer_id' => $customerId,
                     'CustomerUser.id is not null',
+                    'CustomerUser.status_id' => 1,
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ],
                 'recursive' => 2
