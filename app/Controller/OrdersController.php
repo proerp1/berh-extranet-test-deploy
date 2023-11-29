@@ -310,12 +310,11 @@ class OrdersController extends AppController
         $income['Income']['data_competencia'] = date('01/m/Y');
         $income['Income']['created'] = date('Y-m-d H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
-
-        $dataSource = $this->Income->getDataSource();
-        $dataSource->begin();
-        $this->Income->create();
-        $this->Income->save($income);
+        
         if ($this->emitirBoleto($this->Income->id)) {
+            $this->Income->create();
+            $this->Income->save($income);
+
             $this->Order->save([
                 'Order' => [
                     'id' => $id,
@@ -325,11 +324,7 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            $dataSource->commit();
-            
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-        } else {
-            $dataSource->rollback();
         }
 
         $this->redirect(['action' => 'edit/' . $id]);
