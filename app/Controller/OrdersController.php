@@ -313,8 +313,8 @@ class OrdersController extends AppController
 
         $this->Income->getDataSource()->begin();
         $this->Income->create();
-        if ($this->emitirBoleto($this->Income->id) && $this->Income->save($income)) {
-
+        $this->Income->save($income)
+        if ($this->emitirBoleto($this->Income->id)) {
             $this->Order->save([
                 'Order' => [
                     'id' => $id,
