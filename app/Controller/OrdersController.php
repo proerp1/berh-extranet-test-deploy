@@ -69,7 +69,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s')
+                'created' => date('Y-m-d H:i:s')
             ];
 
             $this->Order->create();
