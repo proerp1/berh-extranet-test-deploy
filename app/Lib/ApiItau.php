@@ -101,6 +101,23 @@ class ApiItau extends Controller
 
     public function gerarBoleto($conta)
     {
+        if(Configure::read('App.type') == 'dev'){
+            // fake para testarmos no ambiente de desenvolvimento
+            return [
+                'success' => true,
+                'contents' => [
+                    'data' => [
+                        'dado_boleto' => [
+                            'dados_individuais_boleto' => [
+                                [
+                                    'numero_nosso_numero' => '00000001'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
         $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
         $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
         $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);

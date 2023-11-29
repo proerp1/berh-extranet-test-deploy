@@ -4,7 +4,7 @@ App::uses('AppShell', 'Console/Command');
 
 class ProcessNewPaymentShell extends AppShell {
 
-    public $uses = array('PaymentImportLog');
+    public $uses = array('PaymentImportLog', 'Order');
 
     public function main() {
         $this->out('Processing new payments...');
@@ -40,6 +40,20 @@ class ProcessNewPaymentShell extends AppShell {
                     'processed' => true,
                 ] 
             ];
+            // find first order
+            $curr_order = $this->Order->find('first', ['conditions' => ['Order.id' => $orderId]]);
+
+            if ($curr_order['Order']['status_id'] == 85) {
+                $order = [
+                    'Order' => [
+                        'id' => $orderId,
+                        'status_id' => 86,
+                        'issuing_date' => date('Y-m-d'),
+                    ]
+                ];
+                $this->Order->save($order);
+            }
+
             if ($this->PaymentImportLog->save($payment)) {
                 $this->out('Processed payment ID: ' . $payment['PaymentImportLog']['id']);
             } else {

@@ -218,16 +218,12 @@ class Order extends AppModel
 
     public function dateFormatBeforeSave($dateString)
     {
-        return date('Y-m-d', strtotime($this->date_converter($dateString)));
-    }
+        $date = DateTime::createFromFormat('d/m/Y', $dateString);
 
-    public function date_converter($_date = null)
-    {
-        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
-        if ($_date != null && preg_match($format, $_date, $partes)) {
-            return $partes[3] . '-' . $partes[2] . '-' . $partes[1];
+        if ($date === false) {
+            $date = new DateTime($dateString);
         }
-
-        return false;
+        
+        return $date->format('Y-m-d');
     }
 }
