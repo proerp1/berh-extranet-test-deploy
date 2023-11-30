@@ -69,7 +69,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
-                'created' => date('Y-m-d H:i:s')
+                'created_at' => date('Y-m-d H:i:s')
             ];
 
             $this->Order->create();
@@ -143,10 +143,18 @@ class OrdersController extends AppController
         $this->Order->id = $id;
         $old_order = $this->Order->read();
         if ($this->request->is(['post', 'put'])) {
-
             if ($old_order['Order']['status_id'] < 85) {
+                if($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] =='' ){
+                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated'] )+ isset($old_order['Order']['desconto_not_formated']);
+
+                }else{
+                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated'] )- $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
+
+                }
                 $order = ['Order' => []];
                 $order['Order']['id'] = $id;
+                $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
+                $order['Order']['total'] = $total;
                 $order['Order']['observation'] = $this->request->data['Order']['observation'];
                 $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
@@ -681,5 +689,17 @@ class OrdersController extends AppController
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
+    }
+
+    
+    public function priceFormatBeforeSave($price)
+    {
+        if (is_numeric($price)) {
+            return $price;
+        }
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
+
+        return $valueFormatado;
     }
 }

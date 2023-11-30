@@ -67,6 +67,11 @@ class Order extends AppModel
                 $results[$key][$this->alias]['total'] = number_format($results[$key][$this->alias]['total'], 2, ',', '.');
             }
 
+            if (isset($val[$this->alias]['desconto'])) {
+                $results[$key][$this->alias]['desconto_not_formated'] = $results[$key][$this->alias]['desconto'];
+                $results[$key][$this->alias]['desconto'] = number_format($results[$key][$this->alias]['desconto'], 2, ',', '.');
+            }
+
             if (isset($val[$this->alias]['order_period_from'])) {
                 $results[$key][$this->alias]['order_period_from_nao_formatado'] = $val[$this->alias]['order_period_from'];
                 $results[$key][$this->alias]['order_period_from'] = date("d/m/Y", strtotime($val[$this->alias]['order_period_from']));
@@ -106,6 +111,7 @@ class Order extends AppModel
                 $results[$key][$this->alias]['end_date_nao_formatado'] = $val[$this->alias]['end_date'];
                 $results[$key][$this->alias]['end_date'] = date("d/m/Y", strtotime($val[$this->alias]['end_date']));
             }
+            
         }
 
         return $results;
@@ -127,6 +133,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['total'])) {
             $this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
+        }
+
+        if (!empty($this->data[$this->alias]['desconto'])) {
+            $this->data[$this->alias]['desconto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['desconto']);
         }
 
         if (!empty($this->data[$this->alias]['order_period_from'])) {
