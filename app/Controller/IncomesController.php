@@ -441,7 +441,7 @@ class IncomesController extends AppController
         $ApiItau = new ApiItau();
         $boleto = $ApiItau->buscarBoleto($conta);
 
-        if ($boleto['success']) {
+        if ($boleto['success'] && !empty($boleto['contents']['data'])) {
             $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
         }
 
