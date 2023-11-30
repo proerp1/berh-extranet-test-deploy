@@ -430,7 +430,7 @@
 <!--end::Col-->
 
 <!--begin::Col-->
-<div class="col-sm-6 col-xl-3 mb-xl-10">
+<div class="col-sm-6 col-xl-4 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
