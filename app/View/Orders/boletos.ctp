@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-    <li class="nav-item">
-        <a class="nav-link " data-bs-toggle="tab" disabled>Pedido</a>
+<li class="nav-item">
+        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
