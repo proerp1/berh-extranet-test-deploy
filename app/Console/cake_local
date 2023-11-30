@@ -37,5 +37,5 @@ canonicalize() {
 CONSOLE=$(dirname -- "$(canonicalize "$0")")
 APP=$(dirname "$CONSOLE")
 
-exec /var/www/vhosts/berh.com.br/.phpenv/shims/php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
 exit

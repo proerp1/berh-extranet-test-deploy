@@ -298,53 +298,44 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
-        $order = ['Order' => []];
-        $order['Order']['id'] = $id;
-        $order['Order']['status_id'] = 84;
-        $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
-        $order['Order']['validation_date'] = date('Y-m-d');
+        $order = $this->Order->findById($id);
 
-        $this->Order->begin();
+        $bankTicket = $this->BankTicket->find('first', [
+            'conditions' => ['BankTicket.status_id' => 1]
+        ]);
 
-        if ($this->Order->save($order)) {
+        $income = [];
 
-            $order = $this->Order->findById($id);
+        $income['Income']['order_id'] = $id;
+        $income['Income']['parcela'] = 1;
+        $income['Income']['status_id'] = 15;
+        $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
+        $income['Income']['customer_id'] = $order['Order']['customer_id'];
+        $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
+        $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
+        $income['Income']['valor_total'] = $order['Order']['total'];
+        $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
+        $income['Income']['data_competencia'] = date('01/m/Y');
+        $income['Income']['created'] = date('Y-m-d H:i:s');
+        $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
+        
+        if ($this->emitirBoleto($this->Income->id)) {
+            $this->Income->create();
+            $this->Income->save($income);
 
-            $bankTicket = $this->BankTicket->find('first', [
-                'conditions' => ['BankTicket.status_id' => 1]
+            $this->Order->save([
+                'Order' => [
+                    'id' => $id,
+                    'status_id' => 84,
+                    'user_updated_id' => CakeSession::read("Auth.User.id"),
+                    'validation_date' => date('Y-m-d'),
+                ]
             ]);
 
-            $income = [];
-
-            $income['Income']['order_id'] = $id;
-            $income['Income']['parcela'] = 1;
-            $income['Income']['status_id'] = 15;
-            $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
-            $income['Income']['customer_id'] = $order['Order']['customer_id'];
-            $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
-            $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
-            $income['Income']['valor_total'] = $order['Order']['total'];
-            $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
-            $income['Income']['data_competencia'] = date('01/m/Y');
-            $income['Income']['created'] = date('Y-m-d H:i:s');
-            $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
-
-            $this->Income->begin();
-            $this->Income->create();
-            if ($this->Income->save($income) && $this->emitirBoleto($this->Income->id)) {
-
-                $this->Income->commit();
-                $this->Order->commit();
-                $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            } else {
-                $this->Income->rollback();
-                $this->Order->rollback();
-            }
-
-            $this->redirect(['action' => 'edit/' . $id]);
-        } else {
-            $this->Flash->set(__('O Pedido não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         }
+
+        $this->redirect(['action' => 'edit/' . $id]);
     }
 
     public function emitirBoleto($id)
