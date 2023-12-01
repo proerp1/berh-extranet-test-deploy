@@ -162,7 +162,7 @@ class OrdersController extends AppController
             if ($old_order['Order']['status_id'] == 86 && !empty($this->request->data['Order']['end_date'])) {
                 $order['Order']['id'] = $id;
                 $order['Order']['status_id'] = 87;
-                $order['Order']['end_date'] = $this->dateFormatBeforeSave($this->request->data['Order']['end_date']);
+                $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
             }
 
             if ($this->Order->save($order)) {
@@ -692,16 +692,5 @@ class OrdersController extends AppController
         $valueFormatado = str_replace(',', '.', $valueFormatado);
 
         return $valueFormatado;
-    }
-
-    public function dateFormatBeforeSave($dateString)
-    {
-        $date = DateTime::createFromFormat('d/m/Y', $dateString);
-
-        if ($date === false) {
-            $date = new DateTime($dateString);
-        }
-        
-        return $date->format('Y-m-d');
     }
 }
