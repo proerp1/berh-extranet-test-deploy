@@ -160,7 +160,6 @@ class OrdersController extends AppController
             }
 
             if ($old_order['Order']['status_id'] == 86 && !empty($this->request->data['Order']['end_date'])) {
-                debug($this->dateFormatBeforeSave($this->request->data['Order']['end_date']));die;
                 $order['Order']['id'] = $id;
                 $order['Order']['status_id'] = 87;
                 $order['Order']['end_date'] = $this->dateFormatBeforeSave($this->request->data['Order']['end_date']);
