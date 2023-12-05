@@ -4,7 +4,7 @@
     <div class="text-center mb-10">
         <!--begin::Title-->
         <img alt="Logo" src="<?php echo $this->base."/img/Terra_GIF_sig" ?>" class="h-100px" />
-        <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-100px" />
+        <img alt="Logo" src="<?php echo $this->base."/img/logo-berh-colorido.png" ?>" class="h-101px" />
         <!--end::Title-->
     </div>
     <?php echo $this->Flash->render() ?>
