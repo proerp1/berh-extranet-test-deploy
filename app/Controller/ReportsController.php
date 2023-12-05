@@ -48,15 +48,15 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
+        if (isset($_GET['sup']) and $_GET['sup'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
-        if (isset($_GET['st']) and $_GET['st'] != 'Selecione') {
+        if (isset($_GET['st']) and $_GET['st'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
+        if (isset($_GET['c']) and $_GET['c'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         } else {
             $condition['and'] = array_merge($condition['and'], ['1 = 2']);
@@ -129,19 +129,19 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
+        if (isset($_GET['sup']) and $_GET['sup'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
-        if (isset($_GET['st']) and $_GET['st'] != 'Selecione') {
+        if (isset($_GET['st']) and $_GET['st'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
+        if (isset($_GET['c']) and $_GET['c'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
-        } else {
+        } /*else {
             $condition['and'] = array_merge($condition['and'], ['1 = 2']);
-        }
+        }*/
 
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], [
