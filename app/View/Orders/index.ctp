@@ -147,6 +147,48 @@
                         <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
                         <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                     </div>
+                    <div class="mt-10">
+                        <label class="mb-2">Criação de Pedidos</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[is_consolidated]" value="1" id="flexRadioChecked1" checked="checked" />
+                                    <label class="form-check-label" for="flexRadioChecked1">
+                                        Consolidado
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[is_consolidated]" value="2" id="flexRadioChecked2" />
+                                    <label class="form-check-label" for="flexRadioChecked2">
+                                        Por Grupo Econômico
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <label class="mb-2">Pedido Parcial</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="flexRadioChecked1" />
+                                    <label class="form-check-label" for="flexRadioChecked1">
+                                        Sim
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[is_partial]" value="2" id="flexRadioChecked2" checked="checked" />
+                                    <label class="form-check-label" for="flexRadioChecked2">
+                                        Não
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>

@@ -4,7 +4,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup'];
 
     public $paginate = [
         'Order' => [
@@ -38,28 +38,43 @@ class OrdersController extends AppController
 
     public function createOrder()
     {
+
         $this->autoRender = false;
         $customerId = $this->request->data['customer_id'];
         $workingDays = $this->request->data['working_days'];
         $period_from = $this->request->data['period_from'];
         $period_to = $this->request->data['period_to'];
+        $is_consolidated = $this->request->data['is_consolidated'];
+        $is_partial = $this->request->data['is_partial'];
         $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
 
-        if ($this->request->is('post')) {
-            $customerItineraries = $this->CustomerUserItinerary->find('all', [
-                'conditions' => [
-                    'CustomerUserItinerary.customer_id' => $customerId,
-                    'CustomerUser.id is not null',
-                    'CustomerUser.status_id' => 1,
-                    'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                ],
-                'recursive' => 2
-            ]);
 
-            if (empty($customerItineraries)) {
-                $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
-                $this->redirect(['action' => 'index']);
+        if ($this->request->is('post')) {
+            if ($is_consolidated == 2) {
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date);
+                if ($orderId) {
+                    // se já foi processado, acaba a função aqui
+                    $this->redirect(['action' => 'index']);
+                }
             }
+
+            if ($is_partial == 2) {
+                $customerItineraries = $this->CustomerUserItinerary->find('all', [
+                    'conditions' => [
+                        'CustomerUserItinerary.customer_id' => $customerId,
+                        'CustomerUser.id is not null',
+                        'CustomerUser.status_id' => 1,
+                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                    ],
+                    'recursive' => 2
+                ]);
+
+                if (empty($customerItineraries)) {
+                    $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->redirect(['action' => 'index']);
+                }
+            }
+
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -76,7 +91,9 @@ class OrdersController extends AppController
             if ($this->Order->save($orderData)) {
                 $orderId = $this->Order->getLastInsertId();
 
-                $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
+                if ($is_partial == 2) {
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
+                }
 
                 $this->Order->id = $orderId;
                 $this->Order->reProcessAmounts($orderId);
@@ -144,12 +161,10 @@ class OrdersController extends AppController
         $old_order = $this->Order->read();
         if ($this->request->is(['post', 'put'])) {
             if ($old_order['Order']['status_id'] < 85) {
-                if($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] =='' ){
-                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated'] )+ isset($old_order['Order']['desconto_not_formated']);
-
-                }else{
-                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated'] )- $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
-
+                if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
+                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) + isset($old_order['Order']['desconto_not_formated']);
+                } else {
+                    $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) - $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
                 }
                 $order = ['Order' => []];
                 $order['Order']['id'] = $id;
@@ -263,11 +278,16 @@ class OrdersController extends AppController
 
         $gerarNota = $this->Permission->check(66, "leitura");
 
+        $economic_group = null;
+        if ($order['Order']['economic_group_id'] != null) {
+            $economic_group = $this->EconomicGroup->findById($order['Order']['economic_group_id']);
+        }
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group'));
 
         $this->render("add");
     }
@@ -318,7 +338,7 @@ class OrdersController extends AppController
         $income['Income']['data_competencia'] = date('01/m/Y');
         $income['Income']['created'] = date('Y-m-d H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
-        
+
         if ($this->emitirBoleto($this->Income->id)) {
             $this->Income->create();
             $this->Income->save($income);
@@ -599,6 +619,80 @@ class OrdersController extends AppController
         }
     }
 
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date)
+    {
+
+        $economic_groups = $this->CustomerUserItinerary->find('all', [
+            'conditions' => [
+                'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUser.id is not null',
+                'CustomerUser.status_id' => 1,
+                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+            ],
+            'recursive' => 2,
+            'group' => ['CustomerUser.economic_group_id'],
+            'fields' => ['CustomerUser.economic_group_id', 'count(1) as cont']
+        ]);
+
+        if (empty($economic_groups)) {
+            return false;
+        }
+
+        foreach ($economic_groups as $k => $eg) {
+            if ($is_partial == 2) {
+                $customerItineraries = $this->CustomerUserItinerary->find('all', [
+                    'conditions' => [
+                        'CustomerUserItinerary.customer_id' => $customerId,
+                        'CustomerUser.id is not null',
+                        'CustomerUser.status_id' => 1,
+                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                        'CustomerUser.economic_group_id' => $eg['CustomerUser']['economic_group_id']
+                    ],
+                    'recursive' => 2
+                ]);
+
+                if (empty($customerItineraries)) {
+                    $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->redirect(['action' => 'index']);
+                }
+            }
+
+            $orderData = [
+                'customer_id' => $customerId,
+                'working_days' => $workingDays,
+                'user_creator_id' => CakeSession::read("Auth.User.id"),
+                'order_period_from' => $period_from,
+                'order_period_to' => $period_to,
+                'status_id' => 83,
+                'credit_release_date' => $credit_release_date,
+                'created_at' => date('Y-m-d H:i:s'),
+                'economic_group_id' => $eg['CustomerUser']['economic_group_id']
+            ];
+
+            $this->Order->create();
+            if ($this->Order->save($orderData)) {
+                $orderId = $this->Order->getLastInsertId();
+
+                if ($is_partial == 2) {
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
+                }
+
+                $this->Order->id = $orderId;
+                $this->Order->reProcessAmounts($orderId);
+
+                if ($k == 0) {
+                    $this->Flash->set(__('Pedido gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+                }
+            } else {
+                if ($k == 0) {
+                    $this->Flash->set(__('Falha ao criar pedido. Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                }
+            }
+        }
+
+        return $orderId;
+    }
+
 
     public function delete($id)
     {
@@ -682,7 +776,7 @@ class OrdersController extends AppController
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
     }
 
-    
+
     public function priceFormatBeforeSave($price)
     {
         if (is_numeric($price)) {
