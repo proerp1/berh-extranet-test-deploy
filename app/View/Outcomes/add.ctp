@@ -72,8 +72,9 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Número do documento</label>
-                <?php echo $this->Form->input('doc_num', ["placeholder" => "Número do documento", "class" => "form-control mb-3 mb-lg-0"]);?>
+                <?php echo $this->Form->input('doc_num', ["type" => "text", "placeholder" => "Número do documento", "class" => "form-control mb-3 mb-lg-0"]);?>
             </div>
+
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Fornecedor</label>

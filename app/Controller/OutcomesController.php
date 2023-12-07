@@ -61,10 +61,18 @@ class OutcomesController extends AppController {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 		if ($this->request->is(['post', 'put'])) {
 			$this->Outcome->create();
+
 			if($this->Outcome->validates()){
 				$this->request->data['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
 				$this->request->data['Outcome']['parcela'] = 1;
 				$this->request->data['Outcome']['status_id'] = 11;
+
+				if (isset($this->request->data['Outcome']['valor_bruto']) && isset($this->request->data['Outcome']['valor_multa'])) {
+					$valor_bruto = floatval($this->request->data['Outcome']['valor_bruto']);
+					$valor_multa = floatval($this->request->data['Outcome']['valor_multa']);
+					$this->request->data['Outcome']['valor_total'] = $valor_bruto - $valor_multa;
+				}
+
 				if ($this->Outcome->save($this->request->data)) {
 					$id_origem = $this->Outcome->id;
 					if ($this->request->data['Outcome']['recorrencia'] == 1) {
