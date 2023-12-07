@@ -154,7 +154,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[is_consolidated]" value="1" id="flexRadioChecked1" checked="checked" />
                                     <label class="form-check-label" for="flexRadioChecked1">
-                                        Consolidado
+                                        Por Cliente
                                     </label>
                                 </div>
                             </div>
@@ -173,20 +173,22 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="flexRadioChecked1" />
-                                    <label class="form-check-label" for="flexRadioChecked1">
-                                        Sim
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[is_partial]" value="2" id="flexRadioChecked2" checked="checked" />
                                     <label class="form-check-label" for="flexRadioChecked2">
                                         Não
                                     </label>
                                 </div>
                             </div>
+
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="flexRadioChecked1" />
+                                    <label class="form-check-label" for="flexRadioChecked1">
+                                        Sim
+                                    </label>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
