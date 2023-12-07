@@ -175,7 +175,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[is_partial]" value="2" id="flexRadioChecked2" checked="checked" />
                                     <label class="form-check-label" for="flexRadioChecked2">
-                                        Não
+                                        Todos beneficiários
                                     </label>
                                 </div>
                             </div>
