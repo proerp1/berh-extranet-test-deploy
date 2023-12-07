@@ -71,7 +71,7 @@ class OutcomesController extends AppController {
 					$valor_bruto = floatval($this->request->data['Outcome']['valor_bruto']);
 					$valor_multa = floatval($this->request->data['Outcome']['valor_multa']);
 					$this->request->data['Outcome']['valor_total'] = $valor_bruto - $valor_multa;
-				
+				}
 
 				if ($this->Outcome->save($this->request->data)) {
 					$id_origem = $this->Outcome->id;

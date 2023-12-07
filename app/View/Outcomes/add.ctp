@@ -108,7 +108,7 @@
                     <span class="input-group-text">R$</span>
                     <?php echo $this->Form->input('valor_total', ["type" => "text", "readonly" => true, "placeholder" => "Valor liquido", "class" => "form-control mb-3 mb-lg-0"]);  ?>
                 </div>
-            </div
+            </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Conta bancária</label>
