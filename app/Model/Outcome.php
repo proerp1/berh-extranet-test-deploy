@@ -35,6 +35,10 @@ class Outcome extends AppModel {
 			$this->data['Outcome']['valor_multa'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_multa']);
 		}
 
+		if (!empty($this->data['Outcome']['valor_desconto'])) {
+			$this->data['Outcome']['valor_desconto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_desconto']);
+		}
+
 		if (!empty($this->data['Outcome']['valor_total'])) {
 			$this->data['Outcome']['valor_total'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_total']);
 		}
@@ -75,6 +79,10 @@ class Outcome extends AppModel {
 			}
 			if (isset($val['Outcome']['valor_multa'])) {
 				$results[$key]['Outcome']['valor_multa'] = number_format($results[$key]['Outcome']['valor_multa'],2,',','.');
+			}
+
+			if (isset($val['Outcome']['valor_desconto'])) {
+				$results[$key]['Outcome']['valor_desconto'] = number_format($results[$key]['Outcome']['valor_desconto'],2,',','.');
 			}
 			if (isset($val['Outcome']['valor_total'])) {
 				$results[$key]['Outcome']['valor_total'] = number_format($results[$key]['Outcome']['valor_total'],2,',','.');

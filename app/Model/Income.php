@@ -127,10 +127,14 @@ class Income extends AppModel
                 $results[$key][$this->alias]['valor_bruto_nao_formatado'] = $results[$key][$this->alias]['valor_bruto'];
                 $results[$key][$this->alias]['valor_bruto'] = number_format($results[$key][$this->alias]['valor_bruto'], 2, ',', '.');
             }
+
             if (isset($val[$this->alias]['valor_multa'])) {
+                $results[$key][$this->alias]['valor_multa_nao_formatado'] = $results[$key][$this->alias]['valor_multa'];
                 $results[$key][$this->alias]['valor_multa'] = number_format($results[$key][$this->alias]['valor_multa'], 2, ',', '.');
             }
+
             if (isset($val[$this->alias]['valor_desconto'])) {
+                $results[$key][$this->alias]['valor_desconto_nao_formatado'] = $results[$key][$this->alias]['valor_desconto'];
                 $results[$key][$this->alias]['valor_desconto'] = number_format($results[$key][$this->alias]['valor_desconto'], 2, ',', '.');
             }
             if (isset($val[$this->alias]['valor_total'])) {

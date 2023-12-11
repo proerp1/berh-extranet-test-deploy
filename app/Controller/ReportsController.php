@@ -129,7 +129,7 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($_GET['sup']) and $_GET['sup'] != '') {
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
@@ -137,7 +137,7 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != '') {
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         } /*else {
             $condition['and'] = array_merge($condition['and'], ['1 = 2']);
