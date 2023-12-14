@@ -9,14 +9,14 @@
             <div class="row">
                 <div class="mb-7 col-3">
                     <label class="fw-semibold fs-6 mb-2">Status</label>
-                    <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
+                    <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "disabled" => $disabled]); ?>
                 </div>
 
                 <div class="mb-7 col-3">
                     <label class="form-label">Data da proposta</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                        <?php echo $this->Form->input('date', ['type' => 'text', 'placeholder' => 'Data da proposta', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                        <?php echo $this->Form->input('date', ['type' => 'text', 'placeholder' => 'Data da proposta', 'class' => 'form-control datepicker mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                     </div>
                 </div>
 
@@ -24,7 +24,7 @@
                     <label class="form-label">Data da previsão de fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                        <?php echo $this->Form->input('expected_closing_date', ['type' => 'text', 'placeholder' => 'Data da previsão de fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                        <?php echo $this->Form->input('expected_closing_date', ['type' => 'text', 'placeholder' => 'Data da previsão de fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                     </div>
                 </div>
 
@@ -32,13 +32,13 @@
                     <label class="form-label">Data do fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                        <?php echo $this->Form->input('closing_date', ['type' => 'text', 'placeholder' => 'Data do fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                        <?php echo $this->Form->input('closing_date', ['type' => 'text', 'placeholder' => 'Data do fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                     </div>
                 </div>
 
                 <div class="mb-7 col-6" style="display: none;">
                     <label class="fw-semibold fs-6 mb-2">Motivo cancelamento</label>
-                    <?php echo $this->Form->input('cancelled_description', ["class" => "form-control mb-3 mb-lg-0"]); ?>
+                    <?php echo $this->Form->input('cancelled_description', ["class" => "form-control mb-3 mb-lg-0", "disabled" => $disabled]); ?>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
                                 <label class="form-label">Taxa administrativa</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('transport_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('transport_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -60,7 +60,7 @@
                                 <label class="form-label">Taxa de entrega</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('transport_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('transport_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -68,20 +68,20 @@
                                 <label class="form-label">PGE*</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('management_feel', ['type' => 'text', 'placeholder' => 'PGE', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('management_feel', ['type' => 'text', 'placeholder' => 'PGE', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
-                                <?php echo $this->Form->input('transport_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                <?php echo $this->Form->input('transport_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Valor por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('transport_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('transport_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -89,7 +89,7 @@
                                 <label class="form-label">Total por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('transport_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('transport_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -107,7 +107,7 @@
                                 <label class="form-label">Taxa administrativa</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('meal_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('meal_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -115,20 +115,20 @@
                                 <label class="form-label">Taxa de entrega</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('meal_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('meal_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
-                                <?php echo $this->Form->input('meal_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                <?php echo $this->Form->input('meal_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Valor por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('meal_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('meal_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -136,7 +136,7 @@
                                 <label class="form-label">Total por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('meal_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('meal_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                                 <label class="form-label">Taxa administrativa</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('fuel_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('fuel_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -160,20 +160,20 @@
                                 <label class="form-label">Taxa de entrega</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('fuel_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('fuel_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
-                                <?php echo $this->Form->input('fuel_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                <?php echo $this->Form->input('fuel_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Valor por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('fuel_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('fuel_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -181,7 +181,7 @@
                                 <label class="form-label">Total por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('fuel_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('fuel_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
                         </div>
@@ -197,7 +197,7 @@
                                 <label class="form-label">Taxa administrativa</label>
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
-                                    <?php echo $this->Form->input('multi_card_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('multi_card_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -205,20 +205,20 @@
                                 <label class="form-label">Taxa de entrega</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('multi_card_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('multi_card_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
-                                <?php echo $this->Form->input('multi_card_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                <?php echo $this->Form->input('multi_card_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                             </div>
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Valor por colaborador</label>
                                 <div class="input-group">
                                     <span class="input-group-text">R$</span>
-                                    <?php echo $this->Form->input('multi_card_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                                    <?php echo $this->Form->input('multi_card_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                                 </div>
                             </div>
 
@@ -245,7 +245,9 @@
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base.'/proposals/index/'.$id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
-                    <button type="submit" class="btn btn-success js-salvar">Salvar</button>
+                    <?php if (!$disabled) { ?>
+                        <button type="submit" class="btn btn-success js-salvar">Salvar</button>
+                    <?php } ?>
                 </div>
             </div>
         </form>

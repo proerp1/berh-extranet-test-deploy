@@ -82,6 +82,15 @@ class UpdateBoletoStatusShell extends AppShell
                             ]
                         ]);
 
+                        if ($item['Income']['order_id'] != null) {
+                            $this->Order->id = $item['Income']['order_id'];
+                            $this->Order->save([
+                                'Order' => [
+                                    'status_id' => 94,
+                                ]
+                            ]);
+                        }
+
                         $this->out("Boleto {$item['CnabItem']['income_id']} baixado");
                     }
                 }
