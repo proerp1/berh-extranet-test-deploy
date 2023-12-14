@@ -6,7 +6,7 @@ class SuppliersController extends AppController
     public $uses = ['Supplier', 'Status','BankCode','BankAccountType'];
 
     public $paginate = [
-        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.nome_fantasia' => 'asc']
+        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
     ];
 
     public function beforeFilter()

@@ -69,6 +69,7 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
                         <th>Documento</th>
+                        <th>Data</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -83,6 +84,8 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Document"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/document/file/'.$data[$i]["Document"]["id"].'/'.$data[$i]["Document"]["file"] ?>"><?php echo $data[$i]["Document"]["file"] ?></a></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Document']['created'])) ?></td>
+
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/customers/edit_document/'.$id.'/'.$data[$i]["Document"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
