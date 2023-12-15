@@ -244,12 +244,10 @@
                     <label class="fw-semibold fs-6 mb-2">Executivo</label>
                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
-
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
-                    <?php echo $this->Form->input('commission_fee_percentage', ["class" => "form-control mb-3 mb-lg-0", "Placeholder" => "Comissão"]);?>
-                </div>
-            </div>
+    <div class="mb-7 col">
+    <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
+    <?php echo $this->Form->input('commission_fee_percentage', ["id" => "commission_fee_percentage", "class" => "form-control mb-3 mb-lg-0", "placeholder" => "Comissão"]); ?>
+</div>
 
             <div class="row">
                 <div class="mb-7 col">
