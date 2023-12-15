@@ -228,10 +228,7 @@
                         <label class="fw-semibold fs-6 mb-2 required">Data de cadastro</label>
                         <?php echo $this->Form->input('created', array("type" => "text", "required" => true, "placeholder" => "Data de Cadastro", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
                     </div>
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2 required">Vencimento</label>
-                        <?php echo $this->Form->input('vencimento', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['05' => '05', '10' => '10', '15' => '15', '20' => '20', '25' => '25']]);?>
-                    </div>
+                    
                 </div>
             <?php } ?>
 
@@ -328,7 +325,7 @@
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2 required">Telefone 1</label>
-                    <?php echo $this->Form->input('telefone1', array("placeholder" => "Telefone 1", "class" => "form-control telefone mb-3 mb-lg-0")); ?>
+                    <?php echo $this->Form->input('telefone1', array("placeholder" => "Telefone Fixo", "class" => "form-control telefone mb-3 mb-lg-0")); ?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Ramal</label>
@@ -336,7 +333,7 @@
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Telefone 2</label>
-                    <?php echo $this->Form->input('telefone2', array("placeholder" => "Telefone 2", "required" => false, "class" => "form-control telefone mb-3 mb-lg-0")); ?>
+                    <?php echo $this->Form->input('telefone2', array("placeholder" => "Telefone Celular", "required" => false, "class" => "form-control telefone mb-3 mb-lg-0")); ?>
                 </div>
             </div>
 
@@ -351,18 +348,6 @@
                 </div>
             </div>
 
-            <?php for ($i=0; $i < 1; $i++) { ?>
-                <div class="row">
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Operadora</label>
-                        <?php echo $this->Form->input('operadora'.($i > 0 ? $i : ''), array('options' => array('OI' => 'OI', 'VIVO' => 'VIVO', 'TIM' => 'TIM', 'CLARO' => 'CLARO'), 'empty' => 'Selecione', "data-control" => "select2", "class" => "form-select mb-3 mb-lg-0"));  ?>
-                    </div>
-                    <div class="mb-7 col">
-                        <label class="fw-semibold fs-6 mb-2">Celular</label>
-                        <?php echo $this->Form->input('celular'.($i > 0 ? $i : ''), array("placeholder" => "Celular", "class" => "form-control telefone mb-3 mb-lg-0"));  ?>
-                    </div>
-                </div>
-            <?php } ?>
 
             <div class="row">
                 <div class="mb-7 col">
