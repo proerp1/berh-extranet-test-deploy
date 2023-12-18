@@ -625,13 +625,30 @@ class OrdersController extends AppController
         $economic_groups = $this->CustomerUserItinerary->find('all', [
             'conditions' => [
                 'CustomerUserItinerary.customer_id' => $customerId,
-                'CustomerUser.id is not null',
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
             ],
-            'recursive' => 2,
-            'group' => ['CustomerUser.economic_group_id'],
-            'fields' => ['CustomerUser.economic_group_id', 'count(1) as cont']
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ]
+            ],
+            'recursive' => -1,
+            'group' => ['CustomerUserEconomicGroup.economic_group_id'],
+            'fields' => ['CustomerUserEconomicGroup.economic_group_id', 'count(1) as cont']
         ]);
 
         if (empty($economic_groups)) {
@@ -641,14 +658,31 @@ class OrdersController extends AppController
         foreach ($economic_groups as $k => $eg) {
             if ($is_partial == 2) {
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
+                    'joins' => [
+                        [
+                            'table' => 'customer_users',
+                            'alias' => 'CustomerUser',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'customer_users_economic_groups',
+                            'alias' => 'CustomerUserEconomicGroup',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                            ]
+                        ]
+                    ],
                     'conditions' => [
                         'CustomerUserItinerary.customer_id' => $customerId,
-                        'CustomerUser.id is not null',
                         'CustomerUser.status_id' => 1,
                         'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                        'CustomerUser.economic_group_id' => $eg['CustomerUser']['economic_group_id']
+                        'CustomerUserEconomicGroup.economic_group_id' => $eg['CustomerUserEconomicGroup']['economic_group_id']
                     ],
-                    'recursive' => 2
+                    'recursive' => -1
                 ]);
 
                 if (empty($customerItineraries)) {
@@ -666,7 +700,7 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
                 'created_at' => date('Y-m-d H:i:s'),
-                'economic_group_id' => $eg['CustomerUser']['economic_group_id']
+                'economic_group_id' => $eg['CustomerUserEconomicGroup']['economic_group_id']
             ];
 
             $this->Order->create();
