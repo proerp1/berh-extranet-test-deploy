@@ -625,36 +625,85 @@ class OrdersController extends AppController
         $economic_groups = $this->CustomerUserItinerary->find('all', [
             'conditions' => [
                 'CustomerUserItinerary.customer_id' => $customerId,
-                'CustomerUser.id is not null',
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
             ],
-            'recursive' => 2,
-            'group' => ['CustomerUser.economic_group_id'],
-            'fields' => ['CustomerUser.economic_group_id', 'count(1) as cont']
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ]
+            ],
+            'recursive' => -1,
+            'group' => ['CustomerUser.id'],
+            'fields' => ['CustomerUser.id', 'CustomerUserEconomicGroup.economic_group_id', 'COUNT(DISTINCT CustomerUserEconomicGroup.economic_group_id) as EconomicGroupCount']
         ]);
 
         if (empty($economic_groups)) {
             return false;
         }
 
-        foreach ($economic_groups as $k => $eg) {
+        $economicGroupUsers = array();
+
+        foreach ($economic_groups as $group) {
+            $userId = $group['CustomerUser']['id'];
+            $economicGroupCount = $group[0]['EconomicGroupCount'];
+            $economicGroupId = $group['CustomerUserEconomicGroup']['economic_group_id'];
+        
+            if ($economicGroupCount == 1) {
+                // User belongs to exactly one economic group
+                if (!isset($economicGroupUsers[$economicGroupId])) {
+                    $economicGroupUsers[$economicGroupId] = array();
+                }
+                $economicGroupUsers[$economicGroupId][] = $userId;
+            } else {
+                // User belongs to multiple or no economic groups
+                $economicGroupUsers['NOK'][] = $userId;
+            }
+        }
+
+        foreach ($economicGroupUsers as $k => $user_list) {
             if ($is_partial == 2) {
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
+                    'joins' => [
+                        [
+                            'table' => 'customer_users',
+                            'alias' => 'CustomerUser',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                            ]
+                        ]
+                    ],
                     'conditions' => [
                         'CustomerUserItinerary.customer_id' => $customerId,
-                        'CustomerUser.id is not null',
                         'CustomerUser.status_id' => 1,
                         'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                        'CustomerUser.economic_group_id' => $eg['CustomerUser']['economic_group_id']
+                        'CustomerUser.id' => $user_list
                     ],
-                    'recursive' => 2
+                    'recursive' => -1
                 ]);
 
                 if (empty($customerItineraries)) {
                     $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
                     $this->redirect(['action' => 'index']);
                 }
+            }
+
+            if($k == 'NOK'){
+                $k = null;
             }
 
             $orderData = [
@@ -665,8 +714,8 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s'),
-                'economic_group_id' => $eg['CustomerUser']['economic_group_id']
+                'created' => date('Y-m-d H:i:s'),
+                'economic_group_id' => $k
             ];
 
             $this->Order->create();
