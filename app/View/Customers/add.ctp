@@ -3,6 +3,8 @@
 
 <?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
 <script type="text/javascript">
+
+    
     $(document).ready(function(){
 
         $('#summernote').summernote({
@@ -22,18 +24,9 @@
         });
 
         $('.money_exchange').maskMoney({
-            decimal: '.',
-            thousands: '',
+            decimal: ',',
+            thousands: '.',
             precision: 2
-        });
-
-        $('.money_exchange').on("change", function(){
-            var val = $(this).val();
-
-            if (val > 100) {
-                alert('O desconto não pode ser maior que 100%');
-                $(this).val('');
-            }
         });
 
         $("#cep").change(function() {
@@ -152,6 +145,7 @@
             });
         });
 
+        //$("#cep").mask("99999-999");
         $("#cep").mask("99999-999");
         $("#CustomerCreated").mask("99/99/9999");
         $("#CustomerCpfResponsavel").mask("999.999.999-99")
@@ -224,10 +218,13 @@
                         <p><?php echo $this->request->data["Status"]['name'] ?></p>
                     </div>
                 
+                    
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Data de cadastro</label>
-                        <?php echo $this->Form->input('created', array("type" => "text", "required" => true, "placeholder" => "Data de Cadastro", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
+                        <p><?php echo $this->request->data['Customer']['created'] ?></p>
                     </div>
+
+              
                     
                 </div>
             <?php } ?>
@@ -241,11 +238,11 @@
                     <label class="fw-semibold fs-6 mb-2">Executivo</label>
                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
-    <div class="mb-7 col">
-    <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
-    <?php echo $this->Form->input('commission_fee_percentage', ["id" => "commission_fee_percentage", "class" => "form-control mb-3 mb-lg-0", "placeholder" => "Comissão"]); ?>
-</div>
-
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
+                    <?php echo $this->Form->input('commission_fee_percentage', ["type" => "text", "id" => "commission_fee_percentage", "class" => "form-control money_exchange mb-3 mb-lg-0", "placeholder" => "Comissão"]); ?>
+                </div>
+            </d
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>

@@ -128,6 +128,7 @@ class CustomersController extends AppController
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
 
+        
         if ($this->request->is(['post', 'put'])) {
             $this->Customer->create();
 
@@ -148,7 +149,7 @@ class CustomersController extends AppController
                 $this->request->data['Customer']['status_id'] = 3;
                 $this->request->data['Customer']['tipo_credor'] = 'C';
                 $this->request->data['Customer']['created'] = date('Y-m-d H:i:s');
-
+                //debug($this->request->data);die;
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
                     /*
@@ -189,9 +190,10 @@ class CustomersController extends AppController
         $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Customer->id = $id;
         if ($this->request->is(['post', 'put'])) {
+            //debug($this->request->data);
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read('Auth.User.id');
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
-            unset($this->request->data['Customer']['created']);
+           // unset($this->request->data['Customer']['created']);
 
             $log_old_value = $this->request->data['log_old_value'];
             unset($this->request->data['log_old_value']);
@@ -212,7 +214,7 @@ class CustomersController extends AppController
                 'usuario_data_cancel' => 0,
                 'ip' => $_SERVER['REMOTE_ADDR'],
             ];
-
+            //debug($this->request->data);die;
             if ($this->Customer->save($this->request->data)) {
                 $this->Log->save($dados_log);
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
@@ -230,6 +232,8 @@ class CustomersController extends AppController
         $temp_errors = $this->Customer->validationErrors;
         $this->request->data = $this->Customer->read();
         $this->Customer->validationErrors = $temp_errors;
+        $this->request->data['Customer']['created'] = $this->request->data['Customer']['created'];
+
 
         $activityAreas = $this->ActivityArea->find('list', ['conditions' => ['ActivityArea.status_id' => 1], 'order' => 'ActivityArea.name']);
         $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1], 'order' => 'Seller.name']);

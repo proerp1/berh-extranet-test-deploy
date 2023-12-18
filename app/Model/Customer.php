@@ -23,27 +23,34 @@ class Customer extends AppModel
         ],
     ];
 
-    public function dateFormatBeforeSave($dateString)
-    {
-        return date('Y-m-d', strtotime($this->date_converter($dateString)));
-    }
+    public function dateFormatBeforeSave($dateString) {
+		return date('Y-m-d', strtotime($this->date_converter($dateString)));
+	}
 
-    public function date_converter($_date = null)
-    {
-        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
-        if ($_date != null && preg_match($format, $_date, $partes)) {
-            return $partes[3].'-'.$partes[2].'-'.$partes[1];
-        }
-        
-        return false;
-    }
+	public function date_converter($_date = null) {
+		$format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+		if ($_date != null && preg_match($format, $_date, $partes)) {
+			return $partes[3].'-'.$partes[2].'-'.$partes[1];
+		}
+		
+		return false;
+	}
+
+    public function priceFormatBeforeSave($price) {
+		$valueFormatado = str_replace('.', '', $price);
+		$valueFormatado = str_replace(',', '.', $valueFormatado);
+
+		return $valueFormatado;
+	}
 
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
-            if (isset($val[$this->alias]['desconto'])) {
-                $results[$key][$this->alias]['desconto'] = number_format($val[$this->alias]['desconto'], 2, '.', '');
-            }
+            
+            if (isset($val['Customer']['commission_fee_percentage'])) {
+				$results[$key]['Customer']['commission_fee_percentage'] = number_format($results[$key]['Customer']['commission_fee_percentage'],2,',','.');
+			}
+            
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $results[$key][$this->alias]['created'];
                 $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($results[$key][$this->alias]['created']));
@@ -58,7 +65,14 @@ class Customer extends AppModel
 
         if (!empty($this->data[$this->alias]['cnpj'])) {
             $this->data[$this->alias]['cnpj'] = preg_replace('/\D/', '', $this->data[$this->alias]['cnpj']);
-          }
+        }
+        
+        if (!empty($this->data['Customer']['commission_fee_percentage'])) {
+			$this->data['Customer']['commission_fee_percentage'] = $this->priceFormatBeforeSave($this->data['Customer']['commission_fee_percentage']);
+		}
+
+    return true;
+          
     }
 
     public function beforeFind($queryData)
