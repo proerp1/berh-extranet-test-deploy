@@ -18,24 +18,25 @@ class CostCentersController extends AppController
     {
         $this->Permission->check(16, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-
+    
         $condition = ["and" => [], "or" => []];
-
+    
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['CostCenter.name LIKE' => "%".$_GET['q']."%", 'CostCenter.description LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['CostCenter.name LIKE' => "%".$_GET['q']."%", 'CostCenter.description LIKE' => "%".$_GET['q']."%"], ['customer_id' => null]);
         }
-
+    
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => null]);
         }
 
         $data = $this->Paginator->paginate('CostCenter', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-
+    
         $action = 'Centro de Custo';
         $breadcrumb = ['Cadastros' => '', 'Centro de Custo' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
     }
+    
     
     public function add()
     {

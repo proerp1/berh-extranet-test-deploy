@@ -59,7 +59,7 @@ class OutcomesController extends AppController {
 	
 	public function add() {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
-		if ($this->request->is(['post', 'put'])) {
+		if ($this->request->is('post')) {
 			$this->Outcome->create();
 			if($this->Outcome->validates()){
 				$this->request->data['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -90,13 +90,13 @@ class OutcomesController extends AppController {
 						}
 					}
 
-					$this->Flash->set(__('A conta a pagar foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+					$this->Session->setFlash(__('A conta a pagar foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
 					$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
 				} else {
-					$this->Flash->set(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+					$this->Session->setFlash(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 				}
 			} else {
-				$this->Flash->set(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+				$this->Session->setFlash(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
 
@@ -119,7 +119,7 @@ class OutcomesController extends AppController {
 	public function edit($id = null) {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 		$this->Outcome->id = $id;
-		if ($this->request->is(['post', 'put'])) {
+		if ($this->request->is('post')) {
 			$this->Outcome->validates();
 			$this->request->data['Outcome']['user_updated_id'] = CakeSession::read("Auth.User.id");
 			$log_old_value = $this->request->data["log_old_value"];
@@ -168,10 +168,10 @@ class OutcomesController extends AppController {
 					}
 				}
 
-				$this->Flash->set(__('A conta a pagar foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+				$this->Session->setFlash(__('A conta a pagar foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
 			} else {
-				$this->Flash->set(__('A conta a pagar não pode ser alterada, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+				$this->Session->setFlash(__('A conta a pagar não pode ser alterada, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
 
@@ -195,6 +195,7 @@ class OutcomesController extends AppController {
 		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb'));
 		
 		$this->render("add");
+
 	}
 
 	public function delete($id){

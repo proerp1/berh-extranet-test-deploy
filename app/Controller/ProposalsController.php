@@ -68,10 +68,12 @@ class ProposalsController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 20]]);
 
+        $disabled = false;
+
         $action = 'Propostas';
         $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id], 'Propostas' => '', 'Nova proposta' => ''];
         $this->set('form_action', 'add/'.$id);
-        $this->set(compact('action', 'breadcrumb', 'id', 'statuses'));
+        $this->set(compact('action', 'breadcrumb', 'id', 'statuses', 'disabled'));
     }
 
     public function edit($id, $proposalId = null)
@@ -99,10 +101,12 @@ class ProposalsController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 20]]);
 
+        $disabled = in_array($this->request->data['Proposal']['status_id'], [92, 93]);
+
         $action = 'Propostas';
         $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id], 'Propostas' => '', 'Alterar proposta' => ''];
         $this->set('form_action', 'edit/'.$id);
-        $this->set(compact('id', 'proposalId', 'action', 'breadcrumb', 'statuses'));
+        $this->set(compact('id', 'proposalId', 'action', 'breadcrumb', 'statuses', 'disabled'));
 
         $this->render('add');
     }

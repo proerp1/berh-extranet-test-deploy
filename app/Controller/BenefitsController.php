@@ -6,7 +6,7 @@ class BenefitsController extends AppController
     public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado'];
 
     public $paginate = [
-        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Benefit.name' => 'asc']
+        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
     ];
 
     public function beforeFilter()

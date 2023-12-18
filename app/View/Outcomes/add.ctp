@@ -1,3 +1,5 @@
+<?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
+
 <script type="text/javascript">
     $(document).ready(function(){
         $('.money_exchange').maskMoney({
@@ -14,40 +16,68 @@
             show_recorrencia(formaPgto);
         });
 
-        $("#OutcomeValorBruto").on("focusout", function(event){
-            var outcomeValorBruto = $(this).val();
-            var outcomeValorMulta = $("#OutcomeValorMulta").val();
-            
-            calc_valor_total(outcomeValorMulta, outcomeValorBruto);
-        })
+        $("#OutcomeVencimento").on("change", function(){
+            var vencimento = $("#vencimento_js").val();
+            //var data = $('#data_agendamento_js').val();
+            var valor = $("#valor_js").val();
+            var cobrar_juros = 'N';
+            var el = $(this);
 
-        $("#OutcomeValorMulta").on("focusout", function(event){
-            var outcomeValorMulta = $(this).val();
-            var outcomeValorBruto = $("#OutcomeValorBruto").val();
-            
-            calc_valor_total(outcomeValorMulta, outcomeValorBruto);
+            if (data != '' && vencimento != '') {
+                $.ajax({
+                    url: "<?php echo $this->base?>/outcomes/calc_juros_multa_by_date/",
+                    type: "post",
+                    data: {data: data, valor: valor, cobrar_juros: cobrar_juros, vencimento: vencimento},
+                    dataType: "json",
+                    beforeSend: function(xhr){
+                        $(".loading_img").remove();
+                        el.parent().parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
+                    },
+                    success: function(data){
+                        $(".loading_img").remove();
+
+                        $("#OutcomeValorMulta").val(data.juros);
+                        $("#OutcomeValorTotal").val(data.total);
+                    }
+                });
+            };
+        });
+
+        $("#OutcomeValorBruto, #OutcomeValorMulta, #OutcomeValorDesconto").on("focusout", function(event){
+            calc_valor_total();
         })
     })
 
-    function calc_valor_total(outcomeValorMulta, outcomeValorBruto){
-        var multa = replaceAll(outcomeValorMulta, ".", "");
+   
+   
+
+    
+    function calc_valor_total(){
+        var multa = replaceAll($("#OutcomeValorMulta").val(), ".", "");
         var multa = replaceAll(multa,",", ".");
 
-        var bruto = replaceAll(outcomeValorBruto, ".", "");
+        var bruto = replaceAll($("#OutcomeValorBruto").val(), ".", "");
         var bruto = replaceAll(bruto, ",", ".");
 
+        var desconto = replaceAll($("#OutcomeValorDesconto").val(), ".", "");
+        var desconto = replaceAll(desconto, ",", ".");
+
         if (multa == "") {
-            var liquido = bruto;
+            var liquido = parseFloat(bruto);
         } else if (bruto == "") {
-            var liquido = multa;
+            var liquido = parseFloat(multa);
         } else {
             var liquido = ""+(parseFloat(bruto) + parseFloat(multa));  
         }
         
+        if (desconto != "") {
+            liquido -= parseFloat(desconto);
+        }
 
         $("#OutcomeValorTotal").val(retorna_dinheiro(liquido));
     }
 
+    
     function show_recorrencia(formaPgto){
         if (formaPgto == 1) {
             $("#outcomeRecorrencia").show();
@@ -72,8 +102,9 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Número do documento</label>
-                <?php echo $this->Form->input('doc_num', ["placeholder" => "Número do documento", "class" => "form-control mb-3 mb-lg-0"]);?>
+                <?php echo $this->Form->input('doc_num', ["type" => "text", "placeholder" => "Número do documento", "class" => "form-control mb-3 mb-lg-0"]);?>
             </div>
+
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Fornecedor</label>
@@ -102,10 +133,18 @@
             </div>
 
             <div class="mb-7">
+                <label class="form-label">Valor desconto</label>
+                <div class="input-group">
+                    <span class="input-group-text">R$</span>
+                    <?php echo $this->Form->input('valor_desconto', ["type" => "text", "placeholder" => "Valor desconto", "class" => "form-control money_exchange mb-3 mb-lg-0"]);  ?>
+                </div>
+            </div>
+            
+            <div class="mb-7">
                 <label class="form-label">Valor liquido</label>
                 <div class="input-group">
                     <span class="input-group-text">R$</span>
-                    <?php echo $this->Form->input('valor_total', ["type" => "text", "readonly" => true, "placeholder" => "Valor liquido", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                    <?php echo $this->Form->input('valor_total', ["type" => "text", "readonly" => true, "placeholder" => "Valor liquido", "class" => "form-control money_exchange mb-3 mb-lg-0"]);  ?>
                 </div>
             </div>
 

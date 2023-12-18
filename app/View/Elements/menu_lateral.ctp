@@ -119,14 +119,7 @@
                         <span class="menu-arrow"></span>
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'outcomes') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'outcomes', 'action' => 'index']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Contas a pagar</span>
-                            </a>
-                        </div>
+                        
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'incomes') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'incomes', 'action' => 'index']) ?>">
                                 <span class="menu-bullet">
@@ -135,6 +128,16 @@
                                 <span class="menu-title">Contas a receber</span>
                             </a>
                         </div>
+                        
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'outcomes') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'outcomes', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Contas a pagar</span>
+                            </a>
+                        </div>
+                        
 
                         <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                             <span class="menu-link">

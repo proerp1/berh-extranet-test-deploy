@@ -40,19 +40,19 @@
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
-                                    <option>Selecione</option>
+                                    <option value="">Selecione</option>
                                 </select>
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Fornecedores:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="sup" id="sup">
-                                    <option>Selecione</option>
+                                    <option value="">Selecione</option>
                                 </select>
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status Pedido:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="st" id="st">
-                                    <option>Selecione</option>
+                                    <option value="">Selecione</option>
                                     <?php
                                     foreach ($statuses as $keySt => $status) {
                                         $selected = "";
@@ -90,41 +90,18 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th>CNPJ</th>
-                    <th>
-                        Cliente
-                    </th>
-                    <th>
-                        N° Pedido
-                    </th>
-                    <th>
-                        Status Pedido
-                    </th>
-                    <th>
-                        Nome
-                    </th>
-                    <th>
-                        CPF
-                    </th>
-                    <th>
-                        Dias Úteis
-                    </th>
-                    <th>
-                        Operadora
-                    </th>
-                    <th>
-                        Valor Unitário
-                    </th>
-                    <th>
-                        Quantidade
-                    </th>
-                    <th>
-                        Var
-                    </th>
-                    <th>
-                        Total
-                    </th>
-                    <th>
-                        SIC Ctba
+                    <th>Cliente</th>
+                    <th>N° Pedido</th>
+                    <th>Status Pedido</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Dias Úteis</th>
+                    <th>Operadora</th>
+                    <th>Valor Unitário</th>
+                    <th>Quantidade</th>
+                    <th>Var</th>
+                    <th>Total</th>
+                    <th> SIC Ctba
                     </th>
                 </tr>
             </thead>
