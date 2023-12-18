@@ -233,6 +233,11 @@ class Order extends AppModel
         if ($date === false) {
             $date = new DateTime($dateString);
         }
+
+        # Check if it contains time
+        if (strpos($dateString, ':') !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
         
         return $date->format('Y-m-d');
     }
