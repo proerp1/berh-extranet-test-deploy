@@ -46,11 +46,6 @@ class Customer extends AppModel
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
-            
-            if (isset($val['Customer']['commission_fee_percentage'])) {
-				$results[$key]['Customer']['commission_fee_percentage'] = number_format($results[$key]['Customer']['commission_fee_percentage'],2,',','.');
-			}
-            
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $results[$key][$this->alias]['created'];
                 $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($results[$key][$this->alias]['created']));

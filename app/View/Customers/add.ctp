@@ -24,9 +24,10 @@
         });
 
         $('.money_exchange').maskMoney({
-            decimal: ',',
-            thousands: '.',
-            precision: 2
+            decimal: '.',
+            thousands: '',
+            precision: 2,
+            allowZero: true
         });
 
         $("#cep").change(function() {
