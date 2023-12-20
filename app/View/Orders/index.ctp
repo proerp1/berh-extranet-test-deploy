@@ -142,6 +142,29 @@
                         </div>
                         <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                     </div>
+                    <div class="mt-10 mb-10">
+                        <label class="mb-2">Utilizar Dias Úteis</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[working_days_type]" value="1" id="diasUteisChk1" checked="checked" />
+                                    <label class="form-check-label" for="diasUteisChk1">
+                                        Padrão
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[working_days_type]" value="2" id="diasUteisChk2" />
+                                    <label class="form-check-label" for="diasUteisChk2">
+                                        Cadastro de Beneficiários
+                                    </label>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
                         <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
@@ -229,7 +252,7 @@
             return; // Evita a execução adicional
         }
 
-        if (workingDaysValue <= 0) {
+        if (workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
             $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
             event.preventDefault();
             return; // Evita a execução adicional
@@ -260,5 +283,21 @@
 
         // Se todas as validações passarem, esconde a mensagem
         $('#message_classification').hide();
+    });
+
+    $(function() {
+        $('input[name="data[working_days_type]"]').on('change', function() {
+            alert(1);
+            const isWorkingDaysType1 = $(this).val() == 1;
+            const isWorkingDaysType2 = $(this).val() == 2;
+
+            if (isWorkingDaysType2) {
+                $('#working_days').val(0);
+                $('#working_days').prop('readonly', true);
+            } else {
+                $('#working_days').val(0);
+                $('#working_days').prop('readonly', false);
+            }
+        });
     });
 </script>

@@ -702,6 +702,21 @@ class CustomerUsersController extends AppController
             $this->redirect($this->referer());
         }
     }
+    public function update_working_days(){
+        if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
+        
+            $uploadedFile = $this->request->data['file'];
+            
+            $csv = new ItineraryCSVParser();
+            $csv->parse_working_days_update($uploadedFile['tmp_name'], $this->request->data['customer_id']);
+
+            $this->Flash->set(__('Dias úteis atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect($this->referer());
+        } else {
+            $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+    }
 
     public function csv_import_result($customerId, $fileId){
         $action = 'Resultado Importação';

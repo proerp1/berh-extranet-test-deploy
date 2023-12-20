@@ -46,12 +46,13 @@ class OrdersController extends AppController
         $period_to = $this->request->data['period_to'];
         $is_consolidated = $this->request->data['is_consolidated'];
         $is_partial = $this->request->data['is_partial'];
+        $working_days_type = $this->request->data['working_days_type'];
         $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
 
 
         if ($this->request->is('post')) {
             if ($is_consolidated == 2) {
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -92,7 +93,7 @@ class OrdersController extends AppController
                 $orderId = $this->Order->getLastInsertId();
 
                 if ($is_partial == 2) {
-                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
                 }
 
                 $this->Order->id = $orderId;
@@ -107,7 +108,7 @@ class OrdersController extends AppController
         }
     }
 
-    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to)
+    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type)
     {
         $totalTransferFee = 0;
         $totalSubtotal = 0;
@@ -116,6 +117,10 @@ class OrdersController extends AppController
         foreach ($customerItineraries as $itinerary) {
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
             $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
+
+            if($working_days_type == 2){
+                $workingDays = $itinerary['CustomerUserItinerary']['working_days'];
+            }
 
             $workingDaysUser = $workingDays - $vacationDays;
 
@@ -496,7 +501,7 @@ class OrdersController extends AppController
             'conditions' => $cond,
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to']);
+        $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -607,7 +612,7 @@ class OrdersController extends AppController
                 'recursive' => 2
             ]);
 
-            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to']);
+            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
 
             $this->Order->id = $orderId;
             $this->Order->reProcessAmounts($orderId);
@@ -619,7 +624,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type)
     {
 
         $economic_groups = $this->CustomerUserItinerary->find('all', [
@@ -723,7 +728,7 @@ class OrdersController extends AppController
                 $orderId = $this->Order->getLastInsertId();
 
                 if ($is_partial == 2) {
-                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to);
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
                 }
 
                 $this->Order->id = $orderId;
