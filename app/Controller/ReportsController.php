@@ -41,22 +41,22 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
         }
 
-        if (isset($_GET['para']) and $_GET['para'] != '') {
+        if (isset($_GET['para']) and $_GET['para'] != 'Selecione') {
             $paraRaw = $_GET['para'];
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($_GET['sup']) and $_GET['sup'] != '') {
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
-        if (isset($_GET['st']) and $_GET['st'] != '') {
+        if (isset($_GET['st']) and $_GET['st'] != 'Selecione') {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != '') {
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         } else {
             $condition['and'] = array_merge($condition['and'], ['1 = 2']);

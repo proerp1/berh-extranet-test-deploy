@@ -344,10 +344,10 @@ class OrdersController extends AppController
         $income['Income']['created'] = date('Y-m-d H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
-        if ($this->emitirBoleto($this->Income->id)) {
-            $this->Income->create();
-            $this->Income->save($income);
+        $this->Income->create();
+        $this->Income->save($income);
 
+        if ($this->emitirBoleto($this->Income->id)) {
             $this->Order->save([
                 'Order' => [
                     'id' => $id,
@@ -453,6 +453,8 @@ class OrdersController extends AppController
                 foreach ($erros as $erro) {
                     $message .= $erro . '<br>';
                 }
+
+                $this->Income->deleteAll(['Income.id' => $id], false);
 
                 $this->Flash->set(__($message), ['params' => ['class' => "alert alert-danger"]]);
             }
