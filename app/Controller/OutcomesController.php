@@ -293,7 +293,7 @@ class OutcomesController extends AppController {
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
        
         $this->set("form_action", "../outcomes/add_document/" . $id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+        $this->set(compact('statuses', 'action', 'id'));
     }
 	
 	public function edit_document($id, $document_id = null)
@@ -322,7 +322,7 @@ class OutcomesController extends AppController {
        
         $this->set("action", 'Documentos');
         $this->set("form_action", "../outcomes/edit_document/" . $id);
-        $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
+        $this->set(compact('statuses', 'id', 'document_id'));
 
         $this->render("add_document");
     }
