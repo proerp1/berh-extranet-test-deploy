@@ -399,6 +399,52 @@ class ItineraryCSVParser extends Controller
         return ['success' => true, 'error' => false, 'userId' => $userId, 'benefit_code' => $row[13]];
     }
 
+    public function parse_working_days_update($tmpFile, $customerId)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 2) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                if($line == 0){
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);
+            $working_days = $row[1];
+
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                ]
+            ]);
+
+            if(empty($existingUser)){
+                $line++;
+                continue;
+            }
+
+            $this->CustomerUserItinerary->updateAll(
+                ['CustomerUserItinerary.working_days' => $working_days],
+                ['CustomerUserItinerary.customer_user_id' => $existingUser['CustomerUser']['id']]
+            );
+
+            $line++;
+        }
+    }
+
     private function getOrCreateCustomerDepartment($departmentName, $customerId)
     {
         $customerDepartment = $this->CustomerDepartment->find('first', [
