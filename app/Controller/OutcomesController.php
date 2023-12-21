@@ -263,10 +263,7 @@ class OutcomesController extends AppController {
 
        $data = $this->Paginator->paginate('Docoutcome', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
-            'Documentos' => '',
-        ];
+       
         $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
     }
 	public function add_document($id)
@@ -294,10 +291,7 @@ class OutcomesController extends AppController {
         $action = 'Documentos';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
-            'Novo Documento' => '',
-        ];
+       
         $this->set("form_action", "../outcomes/add_document/" . $id);
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
     }
@@ -325,10 +319,7 @@ class OutcomesController extends AppController {
         $this->Docoutcome->validationErrors = $temp_errors;
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
-            'Alterar Documento' => '',
-        ];
+       
         $this->set("action", 'Documentos');
         $this->set("form_action", "../outcomes/edit_document/" . $id);
         $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
