@@ -2,7 +2,7 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale'];
+	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome'];
 
 	public $paginate = [
 		'limit' => 10, 'order' => ['Status.id' => 'asc', 'Outcome.name' => 'asc']
@@ -237,4 +237,121 @@ class OutcomesController extends AppController {
 			$this->redirect($this->referer());
 		}
 	}
+
+	 /*********************
+                DOCUMENTOS
+     **********************/
+    public function documents($id)
+    {
+		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ['and' => ['Outcome.id' => $id], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $this->Outcome->id = $id;
+        $cliente = $this->Outcome->read();
+
+        $action = 'Documentos';
+
+       $data = $this->Paginator->paginate('Docoutcome', $condition);
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
+            'Documentos' => '',
+        ];
+        $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
+    }
+	public function add_document($id)
+    {
+        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        if ($this->request->is(['post', 'put'])) {
+            $this->Docoutcome->create();
+            if ($this->Docoutcome->validates()) {
+                $this->request->data['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+                if ($this->Docoutcome->save($this->request->data)) {
+                    $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect(['action' => "../outcomes/documents/" . $id]);
+                } else {
+                    $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                }
+            } else {
+                $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+            
+        }
+
+        $this->Outcome->id = $id;
+        $cliente = $this->Outcome->read();
+
+        $action = 'Documentos';
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
+            'Novo Documento' => '',
+        ];
+        $this->set("form_action", "../outcomes/add_document/" . $id);
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+    }
+	
+	public function edit_document($id, $document_id = null)
+    {
+        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Docoutcome->id = $document_id;
+        if ($this->request->is(['post', 'put'])) {
+            $this->Docoutcome->validates();
+            if ($this->request->data['Docoutcome']['file']['name'] == '') {
+                unset($this->request->data['Docoutcome']['file']);
+            }
+            $this->request->data['Docoutcome']['user_updated_id'] = CakeSession::read('Auth.User.id');
+            if ($this->Docoutcome->save($this->request->data)) {
+                $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => 'documents/' . $id]);
+            } else {
+                $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $temp_errors = $this->Docoutcome->validationErrors;
+        $this->request->data = $this->Docoutcome->read();
+        $this->Docoutcome->validationErrors = $temp_errors;
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            $cliente['Outcome']['nome_secundario'] => ['controller' => 'outcomes', 'action' => 'edit', $id],
+            'Alterar Documento' => '',
+        ];
+        $this->set("action", 'Documentos');
+        $this->set("form_action", "../outcomes/edit_document/" . $id);
+        $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
+
+        $this->render("add_document");
+    }
+
+	public function delete_document($outcome_id, $id)
+    {
+        $this->Permission->check(11, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Docoutcome->id = $id;
+        $this->request->data = $this->Docoutcome->read();
+
+        $this->request->data['Docoutcome']['data_cancel'] = date('Y-m-d H:i:s');
+        $this->request->data['Docoutcome']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
+
+        if ($this->Docoutcome->save($this->request->data)) {
+            unlink(APP . 'webroot/files/docoutcome/file/' . $this->request->data["Docoutcome"]["id"] . '/' . $this->request->data["Docoutcome"]["file"]);
+
+            $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'documents/' . $outcome_id]);
+        }
+    }
+    
+
 }

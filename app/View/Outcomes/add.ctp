@@ -1,3 +1,11 @@
+
+<?php
+    if (isset($id)) {
+        $url = $this->here;
+        echo $this->element("abas_outcomes", array('id' => $id, 'url' => $url));
+    }
+?>
+
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 
 <script type="text/javascript">
