@@ -287,7 +287,6 @@
 
     $(function() {
         $('input[name="data[working_days_type]"]').on('change', function() {
-            alert(1);
             const isWorkingDaysType1 = $(this).val() == 1;
             const isWorkingDaysType2 = $(this).val() == 2;
 
