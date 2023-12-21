@@ -133,11 +133,8 @@ class SuppliersController extends AppController
 
        $data = $this->Paginator->paginate('Docsupplier', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Supplier']['nome_secundario'] => ['controller' => 'suppliers', 'action' => 'edit', $id],
-            'Documentos' => '',
-        ];
-        $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
+        
+        $this->set(compact('status', 'data', 'id', 'action'));
     }
 
     public function add_document($id)
@@ -165,12 +162,9 @@ class SuppliersController extends AppController
         $action = 'Documentos';
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Supplier']['nome_secundario'] => ['controller' => 'suppliers', 'action' => 'edit', $id],
-            'Novo Documento' => '',
-        ];
+        
         $this->set("form_action", "../suppliers/add_document/" . $id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+        $this->set(compact('statuses', 'action', 'id'));
     }
 
     public function edit_document($id, $document_id = null)
@@ -196,13 +190,10 @@ class SuppliersController extends AppController
         $this->Docsupplier->validationErrors = $temp_errors;
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $breadcrumb = [
-            $cliente['Supplier']['nome_secundario'] => ['controller' => 'suppliers', 'action' => 'edit', $id],
-            'Alterar Documento' => '',
-        ];
+        
         $this->set("action", 'Documentos');
         $this->set("form_action", "../suppliers/edit_document/" . $id);
-        $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
+        $this->set(compact('statuses', 'id', 'document_id'));
 
         $this->render("add_document");
     }

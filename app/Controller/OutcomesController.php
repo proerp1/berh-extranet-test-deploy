@@ -264,7 +264,7 @@ class OutcomesController extends AppController {
        $data = $this->Paginator->paginate('Docoutcome', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
        
-        $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'id', 'action', ));
     }
 	public function add_document($id)
     {
