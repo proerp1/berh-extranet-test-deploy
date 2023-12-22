@@ -323,6 +323,7 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
+        $this->Order->recursive = -1;
         $order = $this->Order->findById($id);
 
         $bankTicket = $this->BankTicket->find('first', [
