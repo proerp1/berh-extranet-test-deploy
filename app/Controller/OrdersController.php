@@ -337,7 +337,8 @@ class OrdersController extends AppController
         $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
-        $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
+        $income['Income']['valor_multa'] = 0;
+        $income['Income']['valor_bruto'] = $order['Order']['total'];
         $income['Income']['valor_total'] = $order['Order']['total'];
         $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
         $income['Income']['data_competencia'] = date('01/m/Y');
@@ -358,6 +359,8 @@ class OrdersController extends AppController
             ]);
 
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        } else {
+            $this->Income->deleteAll(['Income.id' => $this->Income->id], false);
         }
 
         $this->redirect(['action' => 'edit/' . $id]);
