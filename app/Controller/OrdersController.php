@@ -370,9 +370,9 @@ class OrdersController extends AppController
     public function emitirBoleto($id)
     {
         $conta = $this->Income->find('first', [
-            'conditions' => ['Income.id' => $id], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'],
+            'conditions' => ['Income.id' => $id],
             'recursive' => -1,
-            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
+            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*', 'Order.id', 'Order.economic_group_id'],
             'joins' => [
                 [
                     'table' => 'customers',
@@ -396,6 +396,14 @@ class OrdersController extends AppController
                     'type' => 'inner',
                     'conditions' => [
                         'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'orders',
+                    'alias' => 'Order',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'Order.id = Income.order_id'
                     ],
                 ],
             ],

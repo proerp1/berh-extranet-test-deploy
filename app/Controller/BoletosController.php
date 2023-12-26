@@ -86,7 +86,10 @@ class BoletosController extends AppController
         if ($this->request->is('post')) {
             $ids = substr($_POST['ids'], 0, -1);
 
-            $contas = $this->Income->find('all', ['conditions' => ['Income.id in ('.$ids.')'], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 'recursive' => -1,
+            $contas = $this->Income->find('all', [
+                'conditions' => ['Income.id in ('.$ids.')'], 
+                'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
+                'recursive' => -1,
                 'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
                 'joins' => [
                     [
