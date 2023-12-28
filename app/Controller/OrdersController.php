@@ -179,7 +179,7 @@ class OrdersController extends AppController
                 $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
 
-            if ($old_order['Order']['status_id'] == 86 && !empty($this->request->data['Order']['end_date'])) {
+            if (($old_order['Order']['status_id'] == 86 || $old_order['Order']['status_id'] == 85) && !empty($this->request->data['Order']['end_date'])) {
                 $order['Order']['id'] = $id;
                 $order['Order']['status_id'] = 87;
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
