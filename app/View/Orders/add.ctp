@@ -146,7 +146,7 @@
                         <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
-                    <?php $is_dt_disabled = (($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86) ? 'disabled': ''); ?>
+                    <?php $is_dt_disabled = (($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86) ? '': 'disabled'); ?>
 
                     <div class="row">
                         <div class="mb-7 col-6">
