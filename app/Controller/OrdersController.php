@@ -816,7 +816,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order = $this->Order->find('first', [
-            'contain' => ['Customer'],
+            'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
         ]);
 
