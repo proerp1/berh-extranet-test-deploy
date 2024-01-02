@@ -247,7 +247,7 @@
         <div class="cell text-center">
             <b>TOMADOR DE SERVIÇOS:</b>
         </div>
-        <?php if ($order['Order']['economic_group_id'] != null) { ?>
+        <?php if ($order['Order']['economic_group_id'] == null) { ?>
             <div class="cell p-10 d-flex flex-col">
                 <table>
                     <tr>
