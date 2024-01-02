@@ -37,6 +37,15 @@ class BoletoItau extends Controller
         $num_pedido = $boleto['Income']['order_id'];
         $num_pedido_demonstrativo = $num_pedido != '' ? 'Pedido N°: '.$num_pedido : '';
 
+        if ($boleto['Order']['economic_group_id'] != null) {
+            $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $boleto['Order']['economic_group_id']], 'recursive' => -1]);
+
+            $boleto['EconomicGroup']['documento'] = $boleto['EconomicGroup']['document'];
+            $pagador = $this->pagador($boleto['EconomicGroup']);
+        } else {
+            $pagador = $this->pagador($boleto['Customer']);
+        }
+
         return new Eduardokum\LaravelBoleto\Boleto\Banco\Itau([
             'logo' => APP.'webroot/img/logo-berh-colorido.png',
             'dataVencimento' => Carbon::parse($boleto['Income']['vencimento_nao_formatado']),
@@ -45,7 +54,7 @@ class BoletoItau extends Controller
             'juros' => 30, // 30% ao mês do valor do boleto ou 1% ao dia
             'numero' => $boleto['Income']['id'],
             'numeroDocumento' => $boleto['Income']['id'],
-            'pagador' => $this->pagador($boleto['Customer']),
+            'pagador' => $pagador,
             'beneficiario' => $this->beneficiario($boleto['Resale']),
             'carteira' => $boleto['BankTicket']['carteira'],
             'agencia' => $boleto['BankAccount']['agency'],

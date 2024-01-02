@@ -107,7 +107,6 @@ class ApiItau extends Controller
         $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);
         $juros = str_pad(str_replace('.', '', $conta['BankTickets']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
 
-        $conta['Order']['economic_group_id'] = 1;
         if ($conta['Order']['economic_group_id'] != null) {
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
 
