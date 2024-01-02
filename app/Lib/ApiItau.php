@@ -113,7 +113,7 @@ class ApiItau extends Controller
                 'nome_pessoa' => substr($this->removeAccents($econ['EconomicGroup']['name']), 0, 50),
                 'tipo_pessoa' => [
                     'codigo_tipo_pessoa' => 'J',
-                    'numero_cadastro_nacional_pessoa_juridica' => str_replace(['.', '/', '-'], '', $conta['EconomicGroup']['document']),
+                    'numero_cadastro_nacional_pessoa_juridica' => str_replace(['.', '/', '-'], '', $econ['EconomicGroup']['document']),
                 ],
             ];
             $endereco = [
