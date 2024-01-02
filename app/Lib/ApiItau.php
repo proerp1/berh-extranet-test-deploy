@@ -102,7 +102,6 @@ class ApiItau extends Controller
 
     public function gerarBoleto($conta)
     {
-        $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
         $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
         $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);
         $juros = str_pad(str_replace('.', '', $conta['BankTickets']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
@@ -110,6 +109,13 @@ class ApiItau extends Controller
         if ($conta['Order']['economic_group_id'] != null) {
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
 
+            $pessoa = [
+                'nome_pessoa' => substr($this->removeAccents($econ['EconomicGroup']['name']), 0, 50),
+                'tipo_pessoa' => [
+                    'codigo_tipo_pessoa' => 'J',
+                    'numero_cadastro_nacional_pessoa_juridica' => str_replace(['.', '/', '-'], '', $conta['EconomicGroup']['document']),
+                ],
+            ];
             $endereco = [
                 'nome_logradouro' => substr($this->removeAccents($econ['EconomicGroup']['endereco']), 0, 45),
                 'nome_bairro' => substr($this->removeAccents($econ['EconomicGroup']['bairro']), 0, 15),
@@ -118,6 +124,14 @@ class ApiItau extends Controller
                 'numero_CEP' => str_replace('-', '', $econ['EconomicGroup']['cep']),
             ];
         } else {
+            $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
+            $pessoa = [
+                'nome_pessoa' => substr($this->removeAccents($conta['Customer']['nome_primario']), 0, 50),
+                'tipo_pessoa' => [
+                    'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
+                    $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
+                ],
+            ];
             $endereco = [
                 'nome_logradouro' => substr($this->removeAccents($conta['Customer']['endereco']), 0, 45),
                 'nome_bairro' => substr($this->removeAccents($conta['Customer']['bairro']), 0, 15),
@@ -144,13 +158,7 @@ class ApiItau extends Controller
                     'data_emissao' => date('Y-m-d'),
                     'forma_envio' => 'impressao',
                     'pagador' => [
-                        'pessoa' => [
-                            'nome_pessoa' => substr($this->removeAccents($conta['Customer']['nome_primario']), 0, 50),
-                            'tipo_pessoa' => [
-                                'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
-                                $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
-                            ],
-                        ],
+                        'pessoa' => $pessoa,
                         'endereco' => $endereco,
                     ],
                     'dados_individuais_boleto' => [

@@ -41,6 +41,7 @@ class BoletoItau extends Controller
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $boleto['Order']['economic_group_id']], 'recursive' => -1]);
 
             $boleto['EconomicGroup']['documento'] = $boleto['EconomicGroup']['document'];
+            $boleto['EconomicGroup']['nome_primario'] = $boleto['EconomicGroup']['name'];
             $pagador = $this->pagador($boleto['EconomicGroup']);
         } else {
             $pagador = $this->pagador($boleto['Customer']);
