@@ -4,7 +4,7 @@ use Carbon\Carbon;
 
 class BoletoItau extends Controller
 {
-    public $uses = ['TmpRetornoCnab', 'Income', 'RetornoCnab'];
+    public $uses = ['TmpRetornoCnab', 'Income', 'RetornoCnab', 'EconomicGroup'];
 
     private function pagador($dados)
     {
