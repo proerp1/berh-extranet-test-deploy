@@ -3,7 +3,7 @@ class BenefitsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado'];
+    public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado', 'CustomerUserItinerary'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -72,9 +72,21 @@ class BenefitsController extends AppController
         $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Benefit->id = $id;
         if ($this->request->is(['post', 'put'])) {
+            $ShouldUpdateItinerary = $this->request->data['ShouldUpdateItinerary'];
             $this->Benefit->validates();
             $this->request->data['Benefit']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Benefit->save($this->request->data)) {
+                if($ShouldUpdateItinerary == '1'){
+                    $this->CustomerUserItinerary->unbindModel(
+                        ['belongsTo' => ['Benefit', 'CustomerUser']]
+                    );
+                    // convert to float
+                    $unit_price = str_replace(',', '.', str_replace('.', '', $this->request->data['Benefit']['unit_price']));
+                    $this->CustomerUserItinerary->updateAll(
+                        ['CustomerUserItinerary.unit_price' => $unit_price],
+                        ['CustomerUserItinerary.benefit_id' => $id]
+                    );
+                }
                 $this->Flash->set(__('O Benefício foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
