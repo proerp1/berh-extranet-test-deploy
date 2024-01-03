@@ -66,7 +66,7 @@ class CustomersController extends AppController
             $this->paginate['Customer'] = array_merge($this->paginate['Customer'], $joins);
 
             if (!empty($_GET['q'])) {
-                $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%"]);
+                $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%"]);
             }
         } else {
             if (!empty($_GET['q'])) {
