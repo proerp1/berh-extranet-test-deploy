@@ -247,30 +247,50 @@
         <div class="cell text-center">
             <b>TOMADOR DE SERVIÇOS:</b>
         </div>
-        <div class="cell p-10 d-flex flex-col">
-            <table>
-                <tr>
-                    <td width="25%"><b>Razão Social/Nome:</b></td>
-                    <td><b><?php echo $order['Customer']['nome_primario'] ?></b></td>
-                </tr>
-                <tr>
-                    <td width="25%"><b>CNPJ/CPF:</b></td>
-                    <td><b><?php echo $order['Customer']['documento'] ?></b></td>
-                </tr>
-                <tr>
-                    <td width="25%"><b>Endereço:</b></td>
-                    <td><b><?php echo "{$order['Customer']['endereco']}, {$order['Customer']['numero']} - {$order['Customer']['bairro']} - {$order['Customer']['cidade']}/{$order['Customer']['estado']}" ?></b></td>
-                </tr>
-                <tr>
-                    <td width="25%"><b>Fone:</b></td>
-                    <td><b><?php echo $order['Customer']['telefone1'] ?></b></td>
-                </tr>
-                <tr>
-                    <td width="25%"><b>Email:</b></td>
-                    <td><b><?php echo $order['Customer']['email'] ?></b></td>
-                </tr>
-            </table>
-        </div>
+        <?php if ($order['Order']['economic_group_id'] == null) { ?>
+            <div class="cell p-10 d-flex flex-col">
+                <table>
+                    <tr>
+                        <td width="25%"><b>Razão Social/Nome:</b></td>
+                        <td><b><?php echo $order['Customer']['nome_primario'] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>CNPJ/CPF:</b></td>
+                        <td><b><?php echo $order['Customer']['documento'] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>Endereço:</b></td>
+                        <td><b><?php echo "{$order['Customer']['endereco']}, {$order['Customer']['numero']} - {$order['Customer']['bairro']} - {$order['Customer']['cidade']}/{$order['Customer']['estado']}" ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>Fone:</b></td>
+                        <td><b><?php echo $order['Customer']['telefone1'] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>Email:</b></td>
+                        <td><b><?php echo $order['Customer']['email'] ?></b></td>
+                    </tr>
+                </table>
+            </div>
+        <?php } else { ?>
+            <div class="cell p-10 d-flex flex-col">
+                <table>
+                    <tr>
+                        <td width="25%"><b>Razão Social/Nome:</b></td>
+                        <td><b><?php echo $order['EconomicGroup']['name'] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>CNPJ/CPF:</b></td>
+                        <td><b><?php echo $order['EconomicGroup']['document'] ?></b></td>
+                    </tr>
+                    <tr>
+                        <td width="25%"><b>Endereço:</b></td>
+                        <td><b><?php echo "{$order['EconomicGroup']['endereco']}, {$order['EconomicGroup']['numero']} - {$order['EconomicGroup']['bairro']} - {$order['EconomicGroup']['cidade']}/{$order['EconomicGroup']['estado']}" ?></b></td>
+                    </tr>
+                </table>
+            </div>
+        <?php } ?>
+        
         <div class="cell p-10">
             <p class="m-0">ATIVIDADE ADMINISTRACAO E GERENCIAMENTO DAS AQUISICOES DE BENEFICIOS P/ TERCEIROS EM SISTEMA CONVENCIONAL E OU ELETRONICO POR MEIO MAGNETICO OU SIMILAR</p>
         </div>

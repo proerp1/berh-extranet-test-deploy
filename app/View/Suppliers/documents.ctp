@@ -85,7 +85,7 @@
                                     </span>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Docsupplier"]["name"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/Docsupplier/file/'.$data[$i]["Docsupplier"]["id"].'/'.$data[$i]["Docsupplier"]["file"] ?>"><?php echo $data[$i]["Docsupplier"]["file"] ?></a></td>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/docsupplier/file/'.$data[$i]["Docsupplier"]["id"].'/'.$data[$i]["Docsupplier"]["file"] ?>"><?php echo $data[$i]["Docsupplier"]["file"] ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Docsupplier']['created'])) ?></td>
 
                                 <td class="fw-bold fs-7 ps-4">

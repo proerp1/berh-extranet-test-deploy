@@ -233,7 +233,8 @@ class Income extends AppModel
                 'Resale.bairro',
                 'Resale.cidade',
                 'Resale.estado',
-                'BankTicket.*'
+                'BankTicket.*',
+                'Order.economic_group_id'
             ],
             'joins' => [
                 [
@@ -267,7 +268,15 @@ class Income extends AppModel
                     'conditions' => [
                         'BankAccount.id = BankTicket.bank_account_id', 'BankTicket.data_cancel' => '1901-01-01', 'BankTicket.status_id' => 1
                     ]
-                ]
+                ],
+                [
+                    'table' => 'orders',
+                    'alias' => 'Order',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'Order.id = Income.order_id'
+                    ],
+                ],
             ],
             'recursive' => -1
         ]);

@@ -179,7 +179,7 @@ class OrdersController extends AppController
                 $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
 
-            if ($old_order['Order']['status_id'] == 86 && !empty($this->request->data['Order']['end_date'])) {
+            if (($old_order['Order']['status_id'] == 86 || $old_order['Order']['status_id'] == 85) && !empty($this->request->data['Order']['end_date'])) {
                 $order['Order']['id'] = $id;
                 $order['Order']['status_id'] = 87;
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
@@ -323,6 +323,7 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
+        $this->Order->recursive = -1;
         $order = $this->Order->findById($id);
 
         $bankTicket = $this->BankTicket->find('first', [
@@ -337,7 +338,8 @@ class OrdersController extends AppController
         $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
-        $income['Income']['valor_multa'] = $bankTicket['BankTicket']['multa_boleto_nao_formatada'];
+        $income['Income']['valor_multa'] = 0;
+        $income['Income']['valor_bruto'] = $order['Order']['total'];
         $income['Income']['valor_total'] = $order['Order']['total'];
         $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
         $income['Income']['data_competencia'] = date('01/m/Y');
@@ -358,6 +360,8 @@ class OrdersController extends AppController
             ]);
 
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        } else {
+            $this->Income->deleteAll(['Income.id' => $this->Income->id], false);
         }
 
         $this->redirect(['action' => 'edit/' . $id]);
@@ -366,9 +370,9 @@ class OrdersController extends AppController
     public function emitirBoleto($id)
     {
         $conta = $this->Income->find('first', [
-            'conditions' => ['Income.id' => $id], 'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'],
+            'conditions' => ['Income.id' => $id],
             'recursive' => -1,
-            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
+            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*', 'Order.id', 'Order.economic_group_id'],
             'joins' => [
                 [
                     'table' => 'customers',
@@ -392,6 +396,14 @@ class OrdersController extends AppController
                     'type' => 'inner',
                     'conditions' => [
                         'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'orders',
+                    'alias' => 'Order',
+                    'type' => 'inner',
+                    'conditions' => [
+                        'Order.id = Income.order_id'
                     ],
                 ],
             ],
@@ -804,7 +816,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order = $this->Order->find('first', [
-            'contain' => ['Customer'],
+            'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
         ]);
 

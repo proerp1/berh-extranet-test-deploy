@@ -66,7 +66,11 @@ class UpdateBoletoStatusShell extends AppShell
                         }
 
                         $this->out("Boleto {$item['CnabItem']['income_id']} {$dadoBoleto[0]['situacao_geral_boleto']}");
-                    } else if ($dadoBoleto[0]['situacao_geral_boleto'] == 'Em Aberto' && $dadoBoleto[0]['status_vencimento'] == 'Vencida') {
+                    } else if (
+                        $dadoBoleto[0]['situacao_geral_boleto'] == 'Em Aberto' 
+                        && $dadoBoleto[0]['status_vencimento'] == 'Vencida'
+                        && $this->isMoreThan5DaysFromToday($item['Income']['vencimento_nao_formatado'])
+                    ) {
                         $this->CnabItem->id = $item['CnabItem']['id'];
                         $this->CnabItem->save([
                             'CnabItem' => [
@@ -100,5 +104,15 @@ class UpdateBoletoStatusShell extends AppShell
         }
 
         $this->out('Fim.');
+    }
+
+    public function isMoreThan5DaysFromToday($targetDate) {
+        $currentDate = new DateTime();
+
+        $targetDateObj = DateTime::createFromFormat('Y-m-d', $targetDate);
+
+        $dateInterval = $currentDate->diff($targetDateObj);
+
+        return $dateInterval->days > 5;
     }
 }
