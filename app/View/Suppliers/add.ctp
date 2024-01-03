@@ -1,3 +1,11 @@
+
+<?php
+    if (isset($id)) {
+        $url = $this->here;
+        echo $this->element("abas_suppliers", array('id' => $id, 'url' => $url));
+    }
+?>
+
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
@@ -233,6 +241,8 @@
         </form>
     </div>
 </div>
+
+
 
 <script>
     function tipo_cliente() {

@@ -28,7 +28,8 @@ class Order extends AppModel
             'className' => 'Status',
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 18]
-        ]
+        ],
+        'EconomicGroup'
     ];
     public $hasMany = [
         'OrderItem' => [

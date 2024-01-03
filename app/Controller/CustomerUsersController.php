@@ -556,7 +556,7 @@ class CustomerUsersController extends AppController
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
-            'Novo Itinerário' => ''
+            'Novo Benefício' => ''
         ];
         $this->set(compact('action', 'id', 'breadcrumb', 'user_id', 'benefits'));
     }

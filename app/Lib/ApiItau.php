@@ -5,11 +5,10 @@ App::uses('Controller', 'Controller');
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Psr7;
 
 class ApiItau extends Controller
 {
-    public $uses = ['Pedido'];
+    public $uses = ['Pedido', 'EconomicGroup'];
 
     private $baseUrl;
     private $clientId;
@@ -41,7 +40,7 @@ class ApiItau extends Controller
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
                 ],
-                'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
+                'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem',
             ]);
 
             $contents = json_decode($response->getBody()->getContents(), true);
@@ -65,14 +64,16 @@ class ApiItau extends Controller
         $client = new Client();
 
         try {
-            $response = $client->request($method, $requestedUrl, 
+            $response = $client->request(
+                $method,
+                $requestedUrl,
                 array_merge($params, [
                     'headers' => [
                         'x-itau-apikey' => $this->clientId,
                         'x-itau-correlationID' => 2,
                         'Authorization' => 'Bearer '.CakeSession::read('ApiItau.token'),
                     ],
-                    'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem'
+                    'cert' => Configure::read('Extranet.path').'app/Lib/chave_itau/berh.pem',
                 ])
             );
 
@@ -101,31 +102,48 @@ class ApiItau extends Controller
 
     public function gerarBoleto($conta)
     {
-        if(Configure::read('App.type') == 'dev'){
-            // fake para testarmos no ambiente de desenvolvimento
-            return [
-                'success' => true,
-                'contents' => [
-                    'data' => [
-                        'dado_boleto' => [
-                            'dados_individuais_boleto' => [
-                                [
-                                    'numero_nosso_numero' => '00000001'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ];
-        }
-        $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
         $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
         $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);
         $juros = str_pad(str_replace('.', '', $conta['BankTickets']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
 
+        if ($conta['Order']['economic_group_id'] != null) {
+            $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
+
+            $pessoa = [
+                'nome_pessoa' => substr($this->removeAccents($econ['EconomicGroup']['name']), 0, 50),
+                'tipo_pessoa' => [
+                    'codigo_tipo_pessoa' => 'J',
+                    'numero_cadastro_nacional_pessoa_juridica' => str_replace(['.', '/', '-'], '', $econ['EconomicGroup']['document']),
+                ],
+            ];
+            $endereco = [
+                'nome_logradouro' => substr($this->removeAccents($econ['EconomicGroup']['endereco']), 0, 45),
+                'nome_bairro' => substr($this->removeAccents($econ['EconomicGroup']['bairro']), 0, 15),
+                'nome_cidade' => substr($this->removeAccents($econ['EconomicGroup']['cidade']), 0, 20),
+                'sigla_UF' => $econ['EconomicGroup']['estado'],
+                'numero_CEP' => str_replace('-', '', $econ['EconomicGroup']['cep']),
+            ];
+        } else {
+            $nomeCampoDoc = $conta['Customer']['tipo_pessoa'] == 2 ? 'numero_cadastro_nacional_pessoa_juridica' : 'numero_cadastro_pessoa_fisica';
+            $pessoa = [
+                'nome_pessoa' => substr($this->removeAccents($conta['Customer']['nome_primario']), 0, 50),
+                'tipo_pessoa' => [
+                    'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
+                    $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
+                ],
+            ];
+            $endereco = [
+                'nome_logradouro' => substr($this->removeAccents($conta['Customer']['endereco']), 0, 45),
+                'nome_bairro' => substr($this->removeAccents($conta['Customer']['bairro']), 0, 15),
+                'nome_cidade' => substr($this->removeAccents($conta['Customer']['cidade']), 0, 20),
+                'sigla_UF' => $conta['Customer']['estado'],
+                'numero_CEP' => str_replace('-', '', $conta['Customer']['cep']),
+            ];
+        }
+
         $params = [
             'data' => [
-                'etapa_processo_boleto' => 'efetivacao',
+                'etapa_processo_boleto' => Configure::read('App.type') == 'dev' ? 'validacao' : 'efetivacao', // envia o tipo 'validacao' para testes
                 'codigo_canal_operacao' => 'API',
                 'beneficiario' => [
                     'id_beneficiario' => $conta['BankAccount']['id_beneficiario'],
@@ -136,24 +154,12 @@ class ApiItau extends Controller
                     'codigo_carteira' => $conta['BankTickets']['carteira'],
                     'valor_total_titulo' => $valor,
                     'codigo_especie' => '01',
-                    "valor_abatimento" => "000",
-                    "data_emissao" => date('Y-m-d'),
+                    'valor_abatimento' => '000',
+                    'data_emissao' => date('Y-m-d'),
                     'forma_envio' => 'impressao',
                     'pagador' => [
-                        'pessoa' => [
-                            'nome_pessoa' => substr($this->removeAccents($conta['Customer']['nome_primario']), 0, 50),
-                            'tipo_pessoa' => [
-                                'codigo_tipo_pessoa' => $conta['Customer']['tipo_pessoa'] == 2 ? 'J' : 'F',
-                                $nomeCampoDoc => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
-                            ],
-                        ],
-                        'endereco' => [
-                            'nome_logradouro' => substr($this->removeAccents($conta['Customer']['endereco']), 0, 45),
-                            'nome_bairro' => substr($this->removeAccents($conta['Customer']['bairro']), 0, 15),
-                            'nome_cidade' => substr($this->removeAccents($conta['Customer']['cidade']), 0, 20),
-                            'sigla_UF' => $conta['Customer']['estado'],
-                            'numero_CEP' => str_replace('-', '', $conta['Customer']['cep']),
-                        ]
+                        'pessoa' => $pessoa,
+                        'endereco' => $endereco,
                     ],
                     'dados_individuais_boleto' => [
                         [
@@ -174,35 +180,36 @@ class ApiItau extends Controller
                         'percentual_juros' => $juros,
                     ],
                     'recebimento_divergente' => [
-                        'codigo_tipo_autorizacao' => '03'
+                        'codigo_tipo_autorizacao' => '03',
                     ],
-                    "instrucao_cobranca" => [
+                    'instrucao_cobranca' => [
                         [
-                            "codigo_instrucao_cobranca" =>  "8",
-                            "quantidade_dias_apos_vencimento" => 2,
-                            "dia_util" => false
-                        ]        
+                            'codigo_instrucao_cobranca' => '8',
+                            'quantidade_dias_apos_vencimento' => 2,
+                            'dia_util' => false,
+                        ],
                     ],
                     'desconto_expresso' => false,
-                ]
-            ]
+                ],
+            ],
         ];
 
         return $this->makeRequest('POST', '/boletos', [
-            'json' => $params
+            'json' => $params,
         ]);
     }
 
     public function buscarBoleto($conta)
     {
         $this->setBaseUrl(Configure::read('Itau.BaseUrlBusca'));
+
         return $this->makeRequest('GET', '/boletos', [
             'query' => [
                 'id_beneficiario' => $conta['BankAccount']['id_beneficiario'],
                 'codigo_carteira' => $conta['BankTicket']['carteira'],
                 'nosso_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
                 // 'view' => 'specific',
-            ]
+            ],
         ]);
     }
 
@@ -221,7 +228,7 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/data_vencimento", [
             'json' => [
                 'data_vencimento' => $vencimento,
-            ]
+            ],
         ]);
     }
 
@@ -230,7 +237,7 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/valor_nominal", [
             'json' => [
                 'valor_titulo' => $valor,
-            ]
+            ],
         ]);
     }
 
@@ -243,7 +250,7 @@ class ApiItau extends Controller
                     'quantidade_dias_multa' => 1,
                     'valor_multa' => $multa,
                 ],
-            ]
+            ],
         ]);
     }
 
@@ -256,28 +263,28 @@ class ApiItau extends Controller
                     'quantidade_dias_juros' => 1,
                     'percentual_juros' => $juros,
                 ],
-            ]
+            ],
         ]);
     }
 
     private function removeAccents($string)
     {
         return preg_replace(
-            array(
-                    '/\xc3[\x80-\x85]/',
-                    '/\xc3\x87/',
-                    '/\xc3[\x88-\x8b]/',
-                    '/\xc3[\x8c-\x8f]/',
-                    '/\xc3([\x92-\x96]|\x98)/',
-                    '/\xc3[\x99-\x9c]/',
+            [
+                '/\xc3[\x80-\x85]/',
+                '/\xc3\x87/',
+                '/\xc3[\x88-\x8b]/',
+                '/\xc3[\x8c-\x8f]/',
+                '/\xc3([\x92-\x96]|\x98)/',
+                '/\xc3[\x99-\x9c]/',
 
-                    '/\xc3[\xa0-\xa5]/',
-                    '/\xc3\xa7/',
-                    '/\xc3[\xa8-\xab]/',
-                    '/\xc3[\xac-\xaf]/',
-                    '/\xc3([\xb2-\xb6]|\xb8)/',
-                    '/\xc3[\xb9-\xbc]/',
-            ),
+                '/\xc3[\xa0-\xa5]/',
+                '/\xc3\xa7/',
+                '/\xc3[\xa8-\xab]/',
+                '/\xc3[\xac-\xaf]/',
+                '/\xc3([\xb2-\xb6]|\xb8)/',
+                '/\xc3[\xb9-\xbc]/',
+            ],
             str_split('ACEIOUaceiou', 1),
             $this->isUtf8($string) ? $string : utf8_encode($string)
         );
@@ -285,7 +292,8 @@ class ApiItau extends Controller
 
     private function isUtf8($string)
     {
-        return preg_match('%^(?:
+        return preg_match(
+            '%^(?:
                  [\x09\x0A\x0D\x20-\x7E]
                 | [\xC2-\xDF][\x80-\xBF]
                 | \xE0[\xA0-\xBF][\x80-\xBF]
@@ -295,7 +303,7 @@ class ApiItau extends Controller
                 | [\xF1-\xF3][\x80-\xBF]{3}
                 | \xF4[\x80-\x8F][\x80-\xBF]{2}
                 )*$%xs',
-                $string
+            $string
         );
     }
 }

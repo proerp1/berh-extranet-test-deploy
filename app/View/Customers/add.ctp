@@ -116,35 +116,35 @@
             });
         });
 
-        $("#CustomerCodFranquia").on("change", function(){
-            var el = $(this);
-            var source   = $("#template_cidade").html();
-            var template = Handlebars.compile(source);
+        // $("#CustomerCodFranquia").on("change", function(){
+        //     var el = $(this);
+        //     var source   = $("#template_cidade").html();
+        //     var template = Handlebars.compile(source);
 
-            var resale_id = $(this).val(); 
+        //     var resale_id = $(this).val(); 
 
-            $.ajax({
-                url: base_url+"/customers/find_sellers/",
-                type: "post",
-                data: {resale_id: resale_id},
-                dataType: "json",
-                beforeSend: function(xhr){
-                    $(".loading_img").remove();
-                    el.parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
-                },
-                success: function(data){
-                    $(".loading_img").remove();
-                    var html_opt  = "<option value=''>Selecione</option>";
+        //     $.ajax({
+        //         url: base_url+"/customers/find_sellers/",
+        //         type: "post",
+        //         data: {resale_id: resale_id},
+        //         dataType: "json",
+        //         beforeSend: function(xhr){
+        //             $(".loading_img").remove();
+        //             el.parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
+        //         },
+        //         success: function(data){
+        //             $(".loading_img").remove();
+        //             var html_opt  = "<option value=''>Selecione</option>";
 
-                    $.each(data, function(index, value) {
-                      var context = {name: value.Seller.nome_fantasia, id: value.Seller.id};
-                      html_opt    += template(context);
-                    });
+        //             $.each(data, function(index, value) {
+        //               var context = {name: value.Seller.nome_fantasia, id: value.Seller.id};
+        //               html_opt    += template(context);
+        //             });
 
-                    $("#CustomerSellerId").html(html_opt);
-                }
-            });
-        });
+        //             $("#CustomerSellerId").html(html_opt);
+        //         }
+        //     });
+        // });
 
         //$("#cep").mask("99999-999");
         $("#cep").mask("99999-999");
