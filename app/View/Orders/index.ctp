@@ -40,6 +40,7 @@
                     <th>Desconto</th>
                     <th>Total</th>
                     <th>Usuário</th>
+                    <th>Grupo Econômico</th>
                     <th>Data de criação</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
@@ -62,6 +63,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
