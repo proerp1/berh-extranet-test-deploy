@@ -77,6 +77,9 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
+                        <th>N° Documento</th>
+                        <th>Fornecedor </th>
+                        <th>Observação </th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
                         <th>Status</th>
 						<th>Conta bancária</th>
@@ -92,6 +95,10 @@
 					<?php if ($data) { ?>
 						<?php for ($i=0; $i < count($data); $i++) { ?>
 							<tr>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
+
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4">
 									<span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
