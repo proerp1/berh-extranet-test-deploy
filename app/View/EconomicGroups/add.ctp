@@ -66,7 +66,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Razão social</label>
-                <?php echo $this->Form->input('nome_primario', array("id" => "nome_primario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('razao_social', array("id" => "razao_social", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
         </div>
 

@@ -19,12 +19,18 @@
                         Filtro
                     </button>
 
+                    <button type="submit" class="btn btn-light-primary me-3" name="excel">
+                        <i class="fas fa-table"></i>
+                        Exportar
+                    </button>
+
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                     
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
                         </div>
+                        
                         <div class="separator border-gray-200"></div>
                         
                         <div class="px-7 py-5">

@@ -1,9 +1,11 @@
+
 <?php
 class SuppliersController extends AppController
 {
+    
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'OrderItem'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -29,6 +31,22 @@ class SuppliersController extends AppController
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+        if (isset($_GET['excel'])) {
+            $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
+            $this->Paginator->settings = ['OrderItem' => $pag];
+        }
+
+        $data = $this->Paginator->paginate('OrderItem', $condition);
+
+        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
+
+        if (isset($_GET['excel'])) {
+            $this->ExcelGenerator->gerarExcelItineraries('fornecedores_admin', $data);
+
+            $this->redirect('/private_files/baixar/excel/fornecedores-admin_xlsx');
+        }
+
+        
 
         $data = $this->Paginator->paginate('Supplier', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
@@ -136,6 +154,8 @@ class SuppliersController extends AppController
         
         $this->set(compact('status', 'data', 'id', 'action'));
     }
+
+    
 
     public function add_document($id)
     {
