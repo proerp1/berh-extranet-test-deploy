@@ -5,7 +5,7 @@ class SuppliersController extends AppController
     
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'OrderItem'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -31,19 +31,23 @@ class SuppliersController extends AppController
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
-        if (isset($_GET['excel'])) {
-            $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
-            $this->Paginator->settings = ['OrderItem' => $pag];
-        }
 
-        $data = $this->Paginator->paginate('OrderItem', $condition);
-
-        $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
+        // $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
 
         if (isset($_GET['excel'])) {
-            $this->ExcelGenerator->gerarExcelItineraries('fornecedores_admin', $data);
+            // $this->ExcelGenerator->gerarExcelItineraries('fornecedores_admin', $data);
 
-            $this->redirect('/private_files/baixar/excel/fornecedores-admin_xlsx');
+            // $this->redirect('/private_files/baixar/excel/fornecedores-admin_xlsx');
+            $nome = 'Forncedores_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Supplier->find('all', [
+                'contain' => ['Status'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelFornecedores($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         
