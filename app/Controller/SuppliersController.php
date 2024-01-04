@@ -34,10 +34,10 @@ class SuppliersController extends AppController
 
         // $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
 
-        if (isset($_GET['excel'])) {
-            // $this->ExcelGenerator->gerarExcelItineraries('fornecedores_admin', $data);
+        if (isset($_GET['exportar'])) {
+            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
 
-            // $this->redirect('/private_files/baixar/excel/fornecedores-admin_xlsx');
+            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
             $nome = 'Forncedores_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Supplier->find('all', [
