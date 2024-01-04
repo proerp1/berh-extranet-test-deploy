@@ -79,7 +79,6 @@
 					<tr class="fw-bolder text-muted bg-light">
                         <th>N° Documento</th>
                         <th>Fornecedor </th>
-                        <th>Observação </th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
                         <th>Status</th>
 						<th>Conta bancária</th>
@@ -88,6 +87,7 @@
 						<th>Valor a pagar R$</th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
+                        <th>Observação </th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -97,7 +97,6 @@
 							<tr>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
 
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4">
@@ -111,6 +110,8 @@
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
+
 								<td class="fw-bold fs-7 ps-4">
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
 										Editar
