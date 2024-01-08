@@ -109,10 +109,7 @@ class EconomicGroupsController extends AppController
 
     public function delete($id = null)
     {
-        if (!$id) {
-            $this->Flash->set('ID de grupo econômico inválido.', ['params' => ['class' => 'alert alert-danger']]);
-            $this->redirect(['action' => 'index']);
-        }
+  
 
         $this->EconomicGroup->id = $id;
         $this->request->data = $this->EconomicGroup->read();
@@ -122,7 +119,7 @@ class EconomicGroupsController extends AppController
 
         if ($this->EconomicGroup->save($this->request->data)) {
             $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-            $this->redirect(['action' => 'index', $id]);
+            $this->redirect(['action' => 'index', $this->request->data['EconomicGroup']['customer_id']]);
         }
     }
 }
