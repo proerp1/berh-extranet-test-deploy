@@ -1,8 +1,6 @@
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
-        
-        <?php echo $this->Form->create('Comunicado',['id' => 'js-form-submit','action' => $form_action,'method' => 'post','enctype' => 'multipart/form-data','inputDefaults' => [ 'div' => false, 'label' => false ]]);?>
-
+        <?php echo $this->Form->create('Comunicado', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false], 'enctype' => 'multipart/form-data')); ?>
 
         <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Categoria</label>
