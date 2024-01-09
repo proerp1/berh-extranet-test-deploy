@@ -26,7 +26,7 @@ class ComunicadosController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Comunicado.name LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Comunicado.titulo LIKE' => "%".$_GET['q']."%"]);
         }
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
