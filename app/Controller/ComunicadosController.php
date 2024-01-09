@@ -9,7 +9,7 @@ class ComunicadosController extends AppController
         'limit' => 10,
         'order' => [
             'Status.id' => 'asc',
-            'Comunicado.name' => 'asc'
+            'Comunicado.titulo' => 'asc'
         ]
     ];
 
