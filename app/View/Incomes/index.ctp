@@ -182,9 +182,12 @@
                                     <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
+                                        <?php if($data[$i]["Status"]["id"]!= 17){?>
+
                                     <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/incomes/delete/'.$data[$i]["Income"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
+                                    <?php } ?>
                                 </td>
                             </tr>
                         <?php } ?>

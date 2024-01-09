@@ -116,9 +116,11 @@
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
 										Editar
 									</a>
+                                    <?php if($data[$i]["Status"]["id"]!= 13){?>
 									<a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/outcomes/delete/'.$data[$i]["Outcome"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
 										Excluir
 									</a>
+                                    <?php } ?>
 								</td>
 							</tr>
 						<?php } ?>
