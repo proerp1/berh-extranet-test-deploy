@@ -620,7 +620,7 @@ class ExcelTemplate
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['tipo_pessoa']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ( $dado['Supplier']['tipo_pessoa']==1 ?'Fisica':'Juridica')); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['razao_social']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['nome_fantasia']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['transfer_fee_percentage']); $col++;
