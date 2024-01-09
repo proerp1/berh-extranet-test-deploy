@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor', 'EconomicGroup'];
 
     public $paginate = [
         'Customer' => [
@@ -66,11 +66,11 @@ class CustomersController extends AppController
             $this->paginate['Customer'] = array_merge($this->paginate['Customer'], $joins);
 
             if (!empty($_GET['q'])) {
-                $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%"]);
+                $condition['or'] = array_merge($condition['or'], ['LoginConsulta.login LIKE' => "%" . $_GET['q'] . "%"]);
             }
         } else {
             if (!empty($_GET['q'])) {
-                $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'Customer.nome_secundario LIKE' => "%" . $_GET['q'] . "%", 'Customer.email LIKE' => "%" . $_GET['q'] . "%", 'Customer.documento LIKE' => "%" . $_GET['q'] . "%", 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular1 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular2 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular3 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular4 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular5 LIKE' => "%" . $_GET['q'] . "%"]);
+                $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'Customer.nome_secundario LIKE' => "%" . $_GET['q'] . "%", 'Customer.email LIKE' => "%" . $_GET['q'] . "%", 'Customer.documento LIKE' => "%" . $_GET['q'] . "%", 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular1 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular2 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular3 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular4 LIKE' => "%" . $_GET['q'] . "%", 'Customer.celular5 LIKE' => "%" . $_GET['q'] . "%"]);
             }
         }
 
