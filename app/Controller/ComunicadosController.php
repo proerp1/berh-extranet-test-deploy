@@ -95,7 +95,6 @@ class ComunicadosController extends AppController
         $categorias = $this->Categoria->find('list');
         $action = 'Comunicados';
         $breadcrumb = ['Configurações' => '', 'Comunicados' => '', 'Alterar Comunicado' => ''];
-        $this->set("action", $this->request->data['Comunicado']['name']);
         $this->set("form_action", "edit");
         $this->set(compact('categorias', 'id', 'action', 'breadcrumb'));
         
