@@ -77,7 +77,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["titulo"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["data"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["observacao"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/Comunicado/file/'.$data[$i]["Comunicado"]["id"].'/'.$data[$i]["Comunicado"]["file"] ?>"><?php echo $data[$i]["Comunicado"]["file"] ?></a></td>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/comunicado/file/'.$data[$i]["Comunicado"]["id"].'/'.$data[$i]["Comunicado"]["file"] ?>"><?php echo $data[$i]["Comunicado"]["file"] ?></a></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base; ?>/comunicados/edit/<?php echo $data[$i]["Comunicado"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
