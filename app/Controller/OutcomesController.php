@@ -5,7 +5,7 @@ class OutcomesController extends AppController {
 	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome'];
 
 	public $paginate = [
-		'limit' => 10, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc']
+		'limit' => 10, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
 	];
 
 	public function beforeFilter() { 
@@ -19,9 +19,9 @@ class OutcomesController extends AppController {
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
-			$condition['or'] = array_merge($condition['or'], ['Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
+			$condition['or'] = array_merge($condition['or'], ['Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
 		}
-
+		
 		if(isset($_GET["t"]) and $_GET["t"] != ""){
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
