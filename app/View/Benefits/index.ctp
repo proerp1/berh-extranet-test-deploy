@@ -13,9 +13,16 @@
                 </div>
             </div>
             <div class="card-toolbar">
+
+            <a href="<?php echo $this->base.'/benefits/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        Exportar
+                    </a>
+                
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                 </div>
+                
             </div>
         </div>
     </form>

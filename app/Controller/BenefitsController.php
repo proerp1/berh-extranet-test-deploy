@@ -2,7 +2,7 @@
 class BenefitsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
     public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado', 'CustomerUserItinerary'];
 
     public $paginate = [
@@ -28,6 +28,22 @@ class BenefitsController extends AppController
                 'Benefit.name LIKE' => "%".$_GET['q']."%", 
                 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"
             ]);
+        }
+
+        if (isset($_GET['exportar'])) {
+            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
+
+            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
+            $nome = 'Beneficios_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Benefit->find('all', [
+                'contain' => ['Status'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelBeneficios($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         $data = $this->Paginator->paginate('Benefit', $condition);
