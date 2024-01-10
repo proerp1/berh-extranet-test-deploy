@@ -158,7 +158,7 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
 
             <div class="modal-footer flex-right">
                 <button type="button" class="btn btn-light" id="alterar_beneficio">Alterar Somente Benefício</button>
-                <button type="button" class="btn btn-success" id="alterar_itinerarios">Alterar Itinerários</button>
+                <button type="button" class="btn btn-success" id="alterar_itinerarios">Alterar Cadastro Benefício e Beneficiário</button>
             </div>
         </div>
     </div>
