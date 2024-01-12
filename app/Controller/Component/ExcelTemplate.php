@@ -204,28 +204,34 @@ class ExcelTemplate
 	{
 
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Descrição")
-			->setCellValue('B1', "Status")
-			->setCellValue('C1', "Conta bancária")
-			->setCellValue('D1', "Vencimento")
-			->setCellValue('E1', "Parcela")
-			->setCellValue('F1', "Valor a pagar R$")
-			->setCellValue('G1', "Data pagamento")
-			->setCellValue('H1', "Valor pago R$");
+			->setCellValue('A1', "N° Documento")
+			->setCellValue('B1', "Fornecedor")		
+			->setCellValue('C1', "Descrição")
+			->setCellValue('D1', "Status")
+			->setCellValue('E1', "Conta bancária")
+			->setCellValue('F1', "Vencimento")
+			->setCellValue('G1', "Parcela")
+			->setCellValue('H1', "Valor a pagar R$")
+			->setCellValue('I1', "Data pagamento")
+			->setCellValue('J1', "Valor pago R$")
+			->setCellValue('K1', "Observação");
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["name"])
-				->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
-				->setCellValue('C' . $indx, $dados[$i]["BankAccount"]["name"])
-				->setCellValue('D' . $indx, $dados[$i]["Outcome"]["vencimento"])
-				->setCellValue('E' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
-				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["valor_total"])
-				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
-				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_pago"]);
+				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["doc_num"])
+				->setCellValue('B' . $indx, $dados[$i]["Outcome"]["supplier_id"])
+				->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"])
+				->setCellValue('D' . $indx, $dados[$i]['Status']['name'])
+				->setCellValue('E' . $indx, $dados[$i]["BankAccount"]["name"])
+				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"])
+				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
+				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_total"])
+				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
+				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_pago"])
+				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["observation"]);
 		}
 	}
 
