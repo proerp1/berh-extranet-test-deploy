@@ -864,13 +864,7 @@ class CustomersController extends AppController
      **********************/
     public function documents($id)
     {
-        $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 100,
-            'order' => ['Document.created' => 'desc'],
-            
-            ]
-        ];
+      
 
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
 
