@@ -252,7 +252,7 @@
                 <table>
                     <tr>
                         <td width="25%"><b>Razão Social/Nome:</b></td>
-                        <td><b><?php echo $order['EconomicGroup']['razao_social'] ?></b></td>
+                        <td><b><?php echo $order['Customer']['nome_primario'] ?></b></td>
                     </tr>
                     <tr>
                         <td width="25%"><b>CNPJ/CPF:</b></td>
@@ -277,7 +277,7 @@
                 <table>
                     <tr>
                         <td width="25%"><b>Razão Social/Nome:</b></td>
-                        <td><b><?php echo $order['EconomicGroup']['name'] ?></b></td>
+                        <td><b><?php echo $order['EconomicGroup']['razao_social'] ?></b></td>
                     </tr>
                     <tr>
                         <td width="25%"><b>CNPJ/CPF:</b></td>
