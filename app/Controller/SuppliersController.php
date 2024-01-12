@@ -5,7 +5,7 @@ class SuppliersController extends AppController
     
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier',];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -136,10 +136,10 @@ class SuppliersController extends AppController
     public function documents($id)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = $this->paginate;
-        $this->Paginator->settings = ['Document' => [
+
+        $this->Paginator->settings = ['Docsupplier' => [
             'limit' => 100,
-            'order' => ['Document.created' => 'desc'],
+            'order' => ['Docsupplier.created' => 'desc'],
             
             ]
         ];
