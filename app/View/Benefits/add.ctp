@@ -64,6 +64,13 @@
 </script>
 
 <?php
+    if (isset($id)) {
+        $url = $this->here;
+        echo $this->element("abas_beneficios", array('id' => $id, 'url' => $url));
+    }
+?>
+
+<?php
 $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']) ? $this->request->data['Benefit']['unit_price_not_formated'] : '';
 ?>
 
