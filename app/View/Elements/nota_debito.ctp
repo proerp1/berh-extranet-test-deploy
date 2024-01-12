@@ -207,7 +207,7 @@
                     <td class="pb-10" colspan="3"><p class="m-0 bold">Dados da Prestação de Serviços:</p></td>
                 </tr>
                 <tr>
-                    <td class="pb-10" width="25%"><b>NFS-e Nº <?php echo $order['Order']['id'] ?></b></td>
+                    <td class="pb-10" width="25%"><b>NFD Nº <?php echo $order['Order']['id'] ?></b></td>
                     <td class="pb-10" width="55%"><b>Série: 3</b></td>
                     <td class="pb-10" style="text-align: end"><b>Emitido em: <?php echo date('d/m/Y') ?></b></td>
                 </tr>
