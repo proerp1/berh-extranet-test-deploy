@@ -228,7 +228,7 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>CNPJ/CPF:</b></td>
-                    <td><b>48.984.503/0001-50</b></td>
+                    <td><b>48.503.984/0001-50</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Endereço:</b></td>
