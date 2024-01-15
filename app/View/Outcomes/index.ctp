@@ -142,7 +142,7 @@
 				</tbody>
                 <tfoot>
                 <tr>
-                    <th colspan="7" class="fw-bold fs-5 ps-4"></th>
+                    <th colspan="7" class="fw-bold fs-5 ps-4">Total</th>
                     <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_a_pagar, 2, ',', '.'); ?></th>
 
                     <th class="fw-bold fs-5 ps-4"></th>
