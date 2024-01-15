@@ -228,15 +228,15 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>CNPJ/CPF:</b></td>
-                    <td><b>48.984.503/0001-50</b></td>
+                    <td><b>48.503.984/0001-50</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Endereço:</b></td>
                     <td><b>Rua Werner Von Siemens, 111 - Lapa de Baixo - São Paulo/SP</b></td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Fone:</b></td>
-                    <td><b>(11) 11111-1111</b></td>
+                    <td width="25%"><b>Telefone:</b></td>
+                    <td><b>(11) 2827-4247</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Email:</b></td>
