@@ -85,10 +85,16 @@ class Outcome extends AppModel {
 				$results[$key]['Outcome']['valor_desconto'] = number_format($results[$key]['Outcome']['valor_desconto'],2,',','.');
 			}
 			if (isset($val['Outcome']['valor_total'])) {
+				$results[$key]['Outcome']['valor_total_not_formated'] = $results[$key]['Outcome']['valor_total'];
 				$results[$key]['Outcome']['valor_total'] = number_format($results[$key]['Outcome']['valor_total'],2,',','.');
+				
+                
 			}
 			if (isset($val['Outcome']['valor_pago'])) {
+				$results[$key]['Outcome']['valor_pago_not_formated'] = $results[$key]['Outcome']['valor_pago'];
 				$results[$key]['Outcome']['valor_pago'] = number_format($results[$key]['Outcome']['valor_pago'],2,',','.');
+				
+                
 			}
 		}
 

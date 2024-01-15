@@ -93,7 +93,17 @@
 				</thead>
 				<tbody>
 					<?php if ($data) { ?>
-						<?php for ($i=0; $i < count($data); $i++) { ?>
+						<?php 
+                            $valor_a_pagar = 0;
+                            $valor_pago = 0;
+                            //debug($data);die();
+                            for ($i=0; $i < count($data); $i++) { ?>
+                            <?php
+                                $valor_a_pagar += $data[$i]["Outcome"]["valor_total_not_formated"];
+                                $valor_pago += (isset($data[$i]["Outcome"]["valor_pago_not_formated"]) ? $data[$i]["Outcome"]["valor_pago_not_formated"] : 0);
+                                
+                               
+                            ?>
 							<tr>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
@@ -130,6 +140,16 @@
 						</tr>
 					<?php } ?>
 				</tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="7" class="fw-bold fs-5 ps-4"></th>
+                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_a_pagar, 2, ',', '.'); ?></th>
+
+                    <th class="fw-bold fs-5 ps-4"></th>
+                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_pago, 2, ',', '.'); ?></th>
+                </tr>
+            </tfoot>
+
 			</table>
         </div>
         <?php echo $this->element("pagination"); ?>

@@ -50,6 +50,23 @@ class OutcomesController extends AppController {
 			$this->redirect("/files/excel/".$nome);
 		}
 
+		
+				$saldo = 0;
+
+				if (!empty($data) && is_array($data)) {
+					foreach ($data as $item) {
+						// Verificar se o índice 0 está definido no item atual
+						if (isset($item[0]) && is_array($item[0]) && isset($item[0]['valor_total'])) {
+							$saldo += $item[0]['valor_total'];
+						}
+					}
+				}
+
+				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
+				echo "Saldo: " . $saldo;
+
+
+
 		$data = $this->Paginator->paginate('Outcome', $condition);
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
