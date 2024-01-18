@@ -146,7 +146,7 @@
                         <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
-                    <?php $is_dt_disabled = (($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86) ? '': 'disabled'); ?>
+                    <?php $is_dt_disabled = (($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86) ? '' : 'disabled'); ?>
 
                     <div class="row">
                         <div class="mb-7 col-6">
@@ -453,6 +453,10 @@
                 </div>
                 <?php if ($order['Order']['status_id'] == 83) { ?>
                     <div class="col-4">
+                        <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
+                            <i class="fas fa-arrow-up"></i>
+                            Beneficiários em lote (CSV)
+                        </a>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
                             <i class="fas fa-user"></i>
                             Novo Beneficiário
@@ -659,6 +663,30 @@
                 </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_lote_usuarios" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/upload_user_csv/'.$id; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
+                <input type="hidden" name="order_id" value="<?php echo $id; ?>">
+                <div class="modal-body">
+                    <p>Enviar CSV com beneficiários a serem incluídos</p>
+                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Sim</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
