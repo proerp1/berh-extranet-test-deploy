@@ -1,5 +1,7 @@
 <?php
 App::uses('ApiItau', 'Lib');
+use League\Csv\Reader;
+
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -522,6 +524,74 @@ class OrdersController extends AppController
 
         $this->Flash->set(__('Beneficiário incluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'edit/' . $orderId]);
+    }
+
+    public function upload_user_csv()
+    {
+        $orderId = $this->request->data['order_id'];
+        $customerId = $this->request->data['customer_id'];
+
+        $file = $this->request->data['CustomerUserItinerary'];
+
+        $customerUsersIds = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name']);
+
+        $order = $this->Order->findById($orderId);
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
+
+        $customerItineraries = $this->CustomerUserItinerary->find('all', [
+            'conditions' => $cond,
+        ]);
+
+        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
+
+        $this->Order->id = $orderId;
+        $this->Order->reProcessAmounts($orderId);
+
+        $this->Flash->set(__('Beneficiários incluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'edit/' . $orderId]);
+    }
+
+    private function parseCSVwithCPFColumn($customerId, $tmpFile){
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 2) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        $customerUsersIds = [];
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                if($line == 0){
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);
+
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                ]
+            ]);
+
+            if(empty($existingUser)){
+                $line++;
+                continue;
+            }
+
+            $customerUsersIds[] = $existingUser['CustomerUser']['id'];
+
+            $line++;
+        }
+
+        return $customerUsersIds;
     }
 
     public function updateWorkingDays()
