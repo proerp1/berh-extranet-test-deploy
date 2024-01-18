@@ -26,6 +26,7 @@ class BenefitsController extends AppController
                 'Benefit.code LIKE' => "%".$_GET['q']."%", 
                 'BenefitType.name LIKE' => "%".$_GET['q']."%", 
                 'Benefit.name LIKE' => "%".$_GET['q']."%", 
+                'Supplier.documento LIKE' => "%".$_GET['q']."%", 
                 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"
             ]);
         }
