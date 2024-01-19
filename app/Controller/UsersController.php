@@ -146,8 +146,8 @@ class UsersController extends AppController
             'senha' => $data['User']['password'],
             'link'  => 'https://admin.berh.com.br/'
         ],
-            'template' => 'nova_senha',
-            'subject'  => 'Nova Senha',
+            'template' => 'reenviar_senha',
+            'subject'  => 'Reenviar Senha',
             'config'   => 'default'
         ];
 
