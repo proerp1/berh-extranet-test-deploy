@@ -738,7 +738,10 @@ class OrdersController extends AppController
             $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
         }
         if ($tipo_beneficio != '') {
-            $tipo_beneficio == -1 ? [1,2] : 
+            $tipo_beneficio = (int)$tipo_beneficio;
+            if($tipo_beneficio == -1){
+                $tipo_beneficio = [1,2];
+            }
             $cond['Benefit.benefit_type_id'] = $tipo_beneficio;
         }
 
@@ -807,7 +810,10 @@ class OrdersController extends AppController
             ];
 
             if ($tipo_beneficio != '') {
-                $tipo_beneficio == -1 ? [1,2] : 
+                $tipo_beneficio = (int)$tipo_beneficio;
+                if($tipo_beneficio == -1){
+                    $tipo_beneficio = [1,2];
+                }
                 $cond2['Benefit.benefit_type_id'] = $tipo_beneficio;
             }
 
