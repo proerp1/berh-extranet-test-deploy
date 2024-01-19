@@ -78,7 +78,10 @@ class OrdersController extends AppController
                 ];
 
                 if ($tipo_beneficio != '') {
-                    $tipo_beneficio == -1 ? [1,2] : $tipo_beneficio;
+                    $tipo_beneficio = (int)$tipo_beneficio;
+                    if($tipo_beneficio == -1){
+                        $tipo_beneficio = [1,2];
+                    }
                     $condNotPartial['Benefit.benefit_type_id'] = $tipo_beneficio;
                 }
 
