@@ -141,6 +141,7 @@ class UsersController extends AppController
 
     public function envia_email($data)
     {
+     $headers .= "Reply-To: operacao@berh.com.br";
         $dados = ['viewVars' => ['nome'  => $data['User']['name'],
             'email' => $data['User']['username'],
             'senha' => $data['User']['password'],

@@ -1,4 +1,4 @@
-<?php echo $headers .= "Reply-To: operacao@berh.com.br\r\n";?>
+
 <p>Olá <?php echo $nome; ?>, seja bem-vindo à plataforma be.rh, estas são as suas informações de acesso.
 
 Agora falta pouco para finalizarmos o seu processo. Solicitamos que confirme por favor os seus dados de contato com telefone para que possamos validar suas informações.
