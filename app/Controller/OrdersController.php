@@ -1,12 +1,13 @@
 <?php
 App::uses('ApiItau', 'Lib');
+
 use League\Csv\Reader;
 
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType'];
 
     public $paginate = [
         'Order' => [
@@ -27,20 +28,21 @@ class OrdersController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'order' => ['nome_primario' => 'asc']]);
 
+        $benefit_types = $this->BenefitType->find('list');
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'customers'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'benefit_types'));
     }
 
     public function createOrder()
     {
-
         $this->autoRender = false;
         $customerId = $this->request->data['customer_id'];
         $workingDays = $this->request->data['working_days'];
@@ -50,25 +52,41 @@ class OrdersController extends AppController
         $is_partial = $this->request->data['is_partial'];
         $working_days_type = $this->request->data['working_days_type'];
         $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
+        $grupo_especifico = $this->request->data['grupo_especifico'];
+        $tipo_beneficio = $this->request->data['tipo_beneficio'];
 
 
         if ($this->request->is('post')) {
             if ($is_consolidated == 2) {
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $tipo_beneficio);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
+                    $this->redirect(['action' => 'index']);
+                } else {
+                    // se não foi processado, continua a função
+                    $this->Flash->set(__('Falha ao criar o pedido consolidado.'), ['params' => ['class' => "alert alert-danger"]]);
                     $this->redirect(['action' => 'index']);
                 }
             }
 
             if ($is_partial == 2) {
+                $condNotPartial = [
+                    'CustomerUserItinerary.customer_id' => $customerId,
+                    'CustomerUser.id is not null',
+                    'CustomerUser.status_id' => 1,
+                    'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                ];
+
+                if ($tipo_beneficio != '') {
+                    $tipo_beneficio = (int)$tipo_beneficio;
+                    if($tipo_beneficio == -1){
+                        $tipo_beneficio = [1,2];
+                    }
+                    $condNotPartial['Benefit.benefit_type_id'] = $tipo_beneficio;
+                }
+
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
-                    'conditions' => [
-                        'CustomerUserItinerary.customer_id' => $customerId,
-                        'CustomerUser.id is not null',
-                        'CustomerUser.status_id' => 1,
-                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                    ],
+                    'conditions' => $condNotPartial,
                     'recursive' => 2
                 ]);
 
@@ -120,7 +138,7 @@ class OrdersController extends AppController
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
             $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
 
-            if($working_days_type == 2){
+            if ($working_days_type == 2) {
                 $workingDays = $itinerary['CustomerUserItinerary']['working_days'];
             }
 
@@ -551,7 +569,8 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $orderId]);
     }
 
-    private function parseCSVwithCPFColumn($customerId, $tmpFile){
+    private function parseCSVwithCPFColumn($customerId, $tmpFile)
+    {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
         $csv->setDelimiter(';');
@@ -566,7 +585,7 @@ class OrdersController extends AppController
         $customerUsersIds = [];
         foreach ($csv->getRecords() as $row) {
             if ($line == 0 || empty($row[0])) {
-                if($line == 0){
+                if ($line == 0) {
                     $line++;
                 }
                 continue;
@@ -581,7 +600,7 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if(empty($existingUser)){
+            if (empty($existingUser)) {
                 $line++;
                 continue;
             }
@@ -708,15 +727,26 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $tipo_beneficio)
     {
+        $cond = [
+            'CustomerUserItinerary.customer_id' => $customerId,
+            'CustomerUser.status_id' => 1,
+            'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+        ];
+        if ($grupo_especifico != '') {
+            $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
+        }
+        if ($tipo_beneficio != '') {
+            $tipo_beneficio = (int)$tipo_beneficio;
+            if($tipo_beneficio == -1){
+                $tipo_beneficio = [1,2];
+            }
+            $cond['Benefit.benefit_type_id'] = $tipo_beneficio;
+        }
 
         $economic_groups = $this->CustomerUserItinerary->find('all', [
-            'conditions' => [
-                'CustomerUserItinerary.customer_id' => $customerId,
-                'CustomerUser.status_id' => 1,
-                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-            ],
+            'conditions' => $cond,
             'joins' => [
                 [
                     'table' => 'customer_users',
@@ -732,6 +762,14 @@ class OrdersController extends AppController
                     'type' => 'LEFT',
                     'conditions' => [
                         'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
                     ]
                 ]
             ],
@@ -750,7 +788,7 @@ class OrdersController extends AppController
             $userId = $group['CustomerUser']['id'];
             $economicGroupCount = $group[0]['EconomicGroupCount'];
             $economicGroupId = $group['CustomerUserEconomicGroup']['economic_group_id'];
-        
+
             if ($economicGroupCount == 1) {
                 // User belongs to exactly one economic group
                 if (!isset($economicGroupUsers[$economicGroupId])) {
@@ -764,6 +802,21 @@ class OrdersController extends AppController
         }
 
         foreach ($economicGroupUsers as $k => $user_list) {
+            $cond2 = [
+                'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUser.status_id' => 1,
+                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                'CustomerUser.id' => $user_list
+            ];
+
+            if ($tipo_beneficio != '') {
+                $tipo_beneficio = (int)$tipo_beneficio;
+                if($tipo_beneficio == -1){
+                    $tipo_beneficio = [1,2];
+                }
+                $cond2['Benefit.benefit_type_id'] = $tipo_beneficio;
+            }
+
             if ($is_partial == 2) {
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
                     'joins' => [
@@ -774,14 +827,17 @@ class OrdersController extends AppController
                             'conditions' => [
                                 'CustomerUser.id = CustomerUserItinerary.customer_user_id'
                             ]
+                        ],
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
                         ]
                     ],
-                    'conditions' => [
-                        'CustomerUserItinerary.customer_id' => $customerId,
-                        'CustomerUser.status_id' => 1,
-                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                        'CustomerUser.id' => $user_list
-                    ],
+                    'conditions' => $cond2,
                     'recursive' => -1
                 ]);
 
@@ -791,7 +847,7 @@ class OrdersController extends AppController
                 }
             }
 
-            if($k == 'NOK'){
+            if ($k == 'NOK') {
                 $k = null;
             }
 
@@ -829,6 +885,83 @@ class OrdersController extends AppController
         }
 
         return $orderId;
+    }
+
+    public function getEconomicGroupAndBenefitByCustomer()
+    {
+        $this->autoRender = false;
+
+        $customerId = $this->request->data['customer_id'];
+
+        // find all customer user itineraries by customer
+        $economic_groups = $this->CustomerUserItinerary->find('all', [
+            'conditions' => [
+                'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUser.status_id' => 1,
+                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+            ],
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroup',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'EconomicGroup.id = CustomerUserEconomicGroup.economic_group_id'
+                    ]
+                ]
+            ],
+            'recursive' => -1,
+            'group' => ['CustomerUserEconomicGroup.economic_group_id'],
+            'fields' => ['EconomicGroup.name', 'EconomicGroup.id']
+        ]);
+
+        $benefits = $this->CustomerUserItinerary->find('all', [
+            'conditions' => [
+                'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUser.status_id' => 1,
+                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+            ],
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ]
+            ],
+            'recursive' => -1,
+            'group' => ['CustomerUserItinerary.benefit_id'],
+            'fields' => ['Benefit.name', 'Benefit.id']
+        ]);
+
+
+        echo json_encode(['economicGroups' => $economic_groups, 'benefits' => $benefits]);
     }
 
 
