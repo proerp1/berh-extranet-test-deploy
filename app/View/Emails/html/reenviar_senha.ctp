@@ -17,3 +17,17 @@ Usuário: <?php echo $email; ?>
 	<a href="<?php echo $link; ?>" style="border:none;color:#0084b4;text-decoration:none" target="_blank"><?php echo $link; ?></a>
 
 </p>
+
+<p>
+Resposta:
+
+Confirmo os meus dados de contato com telefone para validação.
+
+Nome:<?php echo $nome; ?>
+
+Email:<?php echo $email; ?>
+
+Telefone:
+
+Estou ansioso para finalizar o processo e aguardarei o contato do time de implantação.
+</p>
