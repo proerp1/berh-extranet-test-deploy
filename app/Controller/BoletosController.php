@@ -290,10 +290,10 @@ class BoletosController extends AppController
             'recursive' => -1,
         ]);
 
-        $idBoleto = substr($boleto['BankAccount']['agency'], 0, 4).
-            substr(str_replace('-', '', $boleto['BankAccount']['account_number']), 0, 8).
-            substr($boleto['BankTickets']['carteira'], 0, 3).
-            $idWeb;
+        $idBoleto = str_pad(substr($boleto['BankAccount']['agency'], 0, 4), 4, 0, STR_PAD_LEFT).
+            str_pad(substr(str_replace('-', '', $boleto['BankAccount']['account_number']), 0, 8), 8, 0, STR_PAD_LEFT).
+            str_pad(substr($boleto['BankTickets']['carteira'], 0, 3), 3, 0, STR_PAD_LEFT).
+            str_pad($idWeb, 8, 0, STR_PAD_LEFT);
 
         $ApiItau = new ApiItau();
         $response = $ApiItau->alterarBoleto($idBoleto, [
@@ -303,10 +303,23 @@ class BoletosController extends AppController
             'juros' => $boleto['BankTickets']['juros_boleto_dia'],
         ]);
 
-        if ($response['success'] && $response['responseValor'] && $response['responseMulta']) {
+        if ($response['response']['success'] && $response['responseValor']['success'] && $response['responseMulta']['success']) {
             $this->Session->setFlash(__('Boleto alterado com sucesso!'), 'default', ['class' => 'alert alert-success']);
         } else {
-            $this->Session->setFlash(__('O boleto não pode ser alterado!'), 'default', ['class' => 'alert alert-danger']);
+            $message = '';
+            foreach ($response['response']['error'] as $res) {
+                $message .= $res.'<br>';
+            }
+
+            foreach ($response['responseValor']['error'] as $res) {
+                $message .= $res.'<br>';
+            }
+
+            foreach ($response['responseMulta']['error'] as $res) {
+                $message .= $res.'<br>';
+            }
+
+            $this->Session->setFlash(__('O boleto não pode ser alterado! <br>'.$message), 'default', ['class' => 'alert alert-danger']);
         }
 
         $this->redirect($this->referer());
