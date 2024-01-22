@@ -9,29 +9,35 @@
         // Máscara para o campo de Documento
         $("#documento").mask("99.999.999/9999-99");
         $("#cep").mask("99999-999");
-
-        $('#cep').change(function () {  
-            var cep = $(this).val();
-
-            cep = cep.replace(/\D/g, '');
-           
-            if (cep.length === 8) {
-                $.ajax({
-                    url: 'https://api.postmon.com.br/v1/cep/' + cep,
-                    dataType: 'json',
-                    success: function (data) {
-                        $('#endereco').val(data.logradouro);
-                        $('#cidade').val(data.cidade);
-                        $('#bairro').val(data.bairro);
-                        $('#estado').val(data.estado);
-                    },
-                    error: function () {
-                        alert('Erro ao buscar o CEP. Verifique se o CEP é válido.');
-                    }
-                });
-            }
+        $("#cep").change(function() {
+            var $el = $(this);
+            
+            $.ajax({
+                url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
+                type: "get",
+                beforeSend: function(){
+                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
+                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
+                },
+                success: function(data){
+                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                    $el.parent().find('span > i').addClass('fas fa-map-marker');
+                    $("#endereco").val(data["logradouro"]);
+                    $("#bairro").val(data["bairro"]);
+                    $("#cidade").val(data["cidade"]);
+                    $("#estado").val(data["estado"]);
+                },
+                error: function(){
+                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                    $el.parent().find('span > i').addClass('fas fa-map-marker');
+                    alert('Informe um CEP válido.');
+                }
+            });
         });
     });
+   
+
+
 </script>
 
 
@@ -60,7 +66,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Razão social</label>
-                <?php echo $this->Form->input('nome_primario', array("id" => "nome_primario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('razao_social', array("id" => "razao_social", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
         </div>
 

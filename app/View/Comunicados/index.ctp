@@ -1,6 +1,6 @@
-<?php $url_novo = $this->base."/suppliers/add/"; ?>
+<?php $url_novo = $this->base."/comunicados/add/"; ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "suppliers", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url([ "controller" => "comunicados", "action" => "index"]); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -19,18 +19,12 @@
                         Filtro
                     </button>
 
-                    <a href="<?php echo $this->base.'/suppliers/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
-                        <i class="fas fa-file-excel"></i>
-                        Exportar
-                    </a>
-
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                     
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
                         </div>
-                        
                         <div class="separator border-gray-200"></div>
                         
                         <div class="px-7 py-5">
@@ -39,10 +33,10 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
                                     <option></option>
                                     <?php
-                                        for($a = 0; $a < count($status); $a++){
+                                        for($a = 0; $a < count($status); $a++) {
                                             $selected = "";
                                             if (isset($_GET["t"])) {
-                                                if($status[$a]['Status']['id'] == $_GET["t"]){
+                                                if($status[$a]['Status']['id'] == $_GET["t"]) {
                                                     $selected = "selected";
                                                 }
                                             }
@@ -69,11 +63,10 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Documento</th>
-                        <th>Telefone</th>
+                        <th>Titulo</th>
+                        <th>Data</th>
+                        <th>Observação</th>
+                        <th>Upload</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -81,28 +74,25 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["titulo"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["data"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["observacao"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/comunicado/file/'.$data[$i]["Comunicado"]["id"].'/'.$data[$i]["Comunicado"]["file"] ?>"><?php echo $data[$i]["Comunicado"]["file"] ?></a></td>
                                 <td class="fw-bold fs-7 ps-4">
-                                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
-                                        <?php echo $data[$i]["Status"]["name"] ?>
-                                    </span>
-                                </td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["tel_comercial"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4">
-                                    <a href="<?php echo $this->base.'/suppliers/edit/'.$data[$i]["Supplier"]["id"]; ?>" class="btn btn-info btn-sm">
+                                    <a href="<?php echo $this->base; ?>/comunicados/edit/<?php echo $data[$i]["Comunicado"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/suppliers/delete/'.$data[$i]["Supplier"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    <?php if ($data[$i]['Comunicado']['id'] != 1 && $data[$i]['Comunicado']['id'] != 12): ?>
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base; ?>/comunicados/delete/<?php echo $data[$i]["Comunicado"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
+                                    <?php endif ?>
                                 </td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="5">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="3">Nenhum registro encontrado.</td>
                         </tr>
                     <?php } ?>
                 </tbody>

@@ -217,7 +217,7 @@ class CustomerUsersController extends AppController
         $condition = ["and" => ['CustomerUserAddress.customer_user_id' => $user_id], "or" => []];
 
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUserAddress.address_line LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.neighborhood LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.city LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.state LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUserAddress.address_line LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.neighborhood LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.city LIKE' => "%".$_GET['q']."%", 'CustomerUser.cpf LIKE' => "%".$_GET['q']."%", 'CustomerUserAddress.state LIKE' => "%".$_GET['q']."%"]);
         }
 
         $data = $this->Paginator->paginate('CustomerUserAddress', $condition);
@@ -556,7 +556,7 @@ class CustomerUsersController extends AppController
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
-            'Novo Itinerário' => ''
+            'Novo Benefício' => ''
         ];
         $this->set(compact('action', 'id', 'breadcrumb', 'user_id', 'benefits'));
     }

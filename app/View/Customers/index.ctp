@@ -11,6 +11,7 @@
                         <span class="position-absolute ms-6">
                             <i class="fas fa-search"></i>
                         </span>
+                   
                         <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="<?php echo isset($_GET['logon']) ? 'Digite o logon' : 'Buscar' ?>" />
                     </div>
                 </div>

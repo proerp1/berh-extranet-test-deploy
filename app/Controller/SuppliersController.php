@@ -1,9 +1,11 @@
+
 <?php
 class SuppliersController extends AppController
 {
+    
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier',];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -29,6 +31,26 @@ class SuppliersController extends AppController
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+
+        // $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
+
+        if (isset($_GET['exportar'])) {
+            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
+
+            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
+            $nome = 'Forncedores_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Supplier->find('all', [
+                'contain' => ['Status'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelFornecedores($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
+        }
+
+        
 
         $data = $this->Paginator->paginate('Supplier', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
@@ -114,8 +136,13 @@ class SuppliersController extends AppController
     public function documents($id)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = $this->paginate;
 
+        $this->Paginator->settings = ['Docsupplier' => [
+            'limit' => 100,
+            'order' => ['Docsupplier.created' => 'desc'],
+            
+            ]
+        ];
         $condition = ['and' => ['Supplier.id' => $id], 'or' => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
@@ -136,6 +163,8 @@ class SuppliersController extends AppController
         
         $this->set(compact('status', 'data', 'id', 'action'));
     }
+
+    
 
     public function add_document($id)
     {

@@ -207,7 +207,7 @@
                     <td class="pb-10" colspan="3"><p class="m-0 bold">Dados da Prestação de Serviços:</p></td>
                 </tr>
                 <tr>
-                    <td class="pb-10" width="25%"><b>NFS-e Nº <?php echo $order['Order']['id'] ?></b></td>
+                    <td class="pb-10" width="25%"><b>ND Nº <?php echo $order['Order']['id'] ?></b></td>
                     <td class="pb-10" width="55%"><b>Série: 3</b></td>
                     <td class="pb-10" style="text-align: end"><b>Emitido em: <?php echo date('d/m/Y') ?></b></td>
                 </tr>
@@ -228,15 +228,15 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>CNPJ/CPF:</b></td>
-                    <td><b>48.984.503/0001-50</b></td>
+                    <td><b>48.503.984/0001-50</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Endereço:</b></td>
                     <td><b>Rua Werner Von Siemens, 111 - Lapa de Baixo - São Paulo/SP</b></td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Fone:</b></td>
-                    <td><b>(11) 11111-1111</b></td>
+                    <td width="25%"><b>Telefone:</b></td>
+                    <td><b>(11) 2827-4247</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Email:</b></td>
@@ -277,7 +277,7 @@
                 <table>
                     <tr>
                         <td width="25%"><b>Razão Social/Nome:</b></td>
-                        <td><b><?php echo $order['EconomicGroup']['name'] ?></b></td>
+                        <td><b><?php echo $order['EconomicGroup']['razao_social'] ?></b></td>
                     </tr>
                     <tr>
                         <td width="25%"><b>CNPJ/CPF:</b></td>

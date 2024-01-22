@@ -362,6 +362,15 @@
                                 <span class="menu-title">Grupos</span>
                             </a>
                         </div>
+
+                         <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'comunicados') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'comunicados', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Comunicados</span>
+                            </a>
+                        </div>
                         
                         
                         

@@ -204,28 +204,34 @@ class ExcelTemplate
 	{
 
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Descrição")
-			->setCellValue('B1', "Status")
-			->setCellValue('C1', "Conta bancária")
-			->setCellValue('D1', "Vencimento")
-			->setCellValue('E1', "Parcela")
-			->setCellValue('F1', "Valor a pagar R$")
-			->setCellValue('G1', "Data pagamento")
-			->setCellValue('H1', "Valor pago R$");
+			->setCellValue('A1', "N° Documento")
+			->setCellValue('B1', "Fornecedor")		
+			->setCellValue('C1', "Descrição")
+			->setCellValue('D1', "Status")
+			->setCellValue('E1', "Conta bancária")
+			->setCellValue('F1', "Vencimento")
+			->setCellValue('G1', "Parcela")
+			->setCellValue('H1', "Valor a pagar R$")
+			->setCellValue('I1', "Data pagamento")
+			->setCellValue('J1', "Valor pago R$")
+			->setCellValue('K1', "Observação");
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$indx++;
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["name"])
-				->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
-				->setCellValue('C' . $indx, $dados[$i]["BankAccount"]["name"])
-				->setCellValue('D' . $indx, $dados[$i]["Outcome"]["vencimento"])
-				->setCellValue('E' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
-				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["valor_total"])
-				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
-				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_pago"]);
+				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["doc_num"])
+				->setCellValue('B' . $indx, $dados[$i]["Outcome"]["supplier_id"])
+				->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"])
+				->setCellValue('D' . $indx, $dados[$i]['Status']['name'])
+				->setCellValue('E' . $indx, $dados[$i]["BankAccount"]["name"])
+				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"])
+				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
+				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_total"])
+				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
+				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_pago"])
+				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["observation"]);
 		}
 	}
 
@@ -576,6 +582,115 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['enviar_email'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cobrar_taxa_boleto'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
+		}
+	}
+
+	public function getFornecedoresRelatorio($objPHPExcel, $dados)
+	{
+
+		$col = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de pessoa "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Razão social"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome Fantasia"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Repasse"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CNPJ"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Rg"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Inscrição Estadual"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Inscrição Municipal"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Contato"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CEP"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Endereço"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Complemento"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Bairro"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Telefone comercial"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Telefone residencial"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Operadora"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Celular"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "E-mail"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Site"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Conta "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Banco"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Forma de pagamento"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Chave "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Chave PIX"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor Boleto"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor 1° Via"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor 2° Via");
+
+		foreach ($dados as $key => $dado) {
+			$col = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ( $dado['Supplier']['tipo_pessoa']==1 ?'Fisica':'Juridica')); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['razao_social']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['nome_fantasia']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['transfer_fee_percentage']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['documento']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['rg']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['inscricao_estadual']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['inscricao_municipal']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['contato']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['cep']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['endereco']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['numero']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['complemento']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['bairro']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['cidade']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['estado']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['tel_comercial']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['tel_residencial']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['operadora']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['celular']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['email']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['site']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['account_type_id']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['bank_code_id']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['payment_method']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['branch_number']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['branch_digit']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['acc_number']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['acc_digit']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['pix_type']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['pix_id']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_boleto'] ? 'S' : 'N'); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_1_via'] ? 'S' : 'N'); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_2_via']);
+		}
+	}
+
+	public function getBeneficioRelatorio($objPHPExcel, $dados)
+	{
+
+		$col = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedor"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor Unitário"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo Recarga"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo Cartão Novo"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Atualizacão Tarifa"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado "); $col++;
+
+		foreach ($dados as $key => $dado) {
+			$col = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['code']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['name']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['nome_fantasia']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['BenefitType']['name']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['unit_price']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['time_to_recharge']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['time_card']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['last_fare_update']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['city']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['state']); $col++;
+			
 		}
 	}
 

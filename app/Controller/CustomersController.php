@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor', 'EconomicGroup'];
 
     public $paginate = [
         'Customer' => [
@@ -865,7 +865,12 @@ class CustomersController extends AppController
     public function documents($id)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = $this->paginate;
+        $this->Paginator->settings = ['Document' => [
+            'limit' => 100,
+            'order' => ['Document.created' => 'desc'],
+            
+            ]
+        ];
 
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
 

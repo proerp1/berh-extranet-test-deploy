@@ -77,6 +77,8 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
+                        <th>N° Documento</th>
+                        <th>Fornecedor </th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
                         <th>Status</th>
 						<th>Conta bancária</th>
@@ -85,13 +87,27 @@
 						<th>Valor a pagar R$</th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
+                        <th>Observação </th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php if ($data) { ?>
-						<?php for ($i=0; $i < count($data); $i++) { ?>
+						<?php 
+                            $valor_a_pagar = 0;
+                            $valor_pago = 0;
+                            //debug($data);die();
+                            for ($i=0; $i < count($data); $i++) { ?>
+                            <?php
+                                $valor_a_pagar += $data[$i]["Outcome"]["valor_total_not_formated"];
+                                $valor_pago += (isset($data[$i]["Outcome"]["valor_pago_not_formated"]) ? $data[$i]["Outcome"]["valor_pago_not_formated"] : 0);
+                                
+                               
+                            ?>
 							<tr>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
+
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4">
 									<span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
@@ -104,13 +120,17 @@
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
+
 								<td class="fw-bold fs-7 ps-4">
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
 										Editar
 									</a>
+                                    <?php if($data[$i]["Status"]["id"]!= 13){?>
 									<a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/outcomes/delete/'.$data[$i]["Outcome"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
 										Excluir
 									</a>
+                                    <?php } ?>
 								</td>
 							</tr>
 						<?php } ?>
@@ -120,6 +140,16 @@
 						</tr>
 					<?php } ?>
 				</tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="7" class="fw-bold fs-5 ps-4">Total</th>
+                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_a_pagar, 2, ',', '.'); ?></th>
+
+                    <th class="fw-bold fs-5 ps-4"></th>
+                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_pago, 2, ',', '.'); ?></th>
+                </tr>
+            </tfoot>
+
 			</table>
         </div>
         <?php echo $this->element("pagination"); ?>

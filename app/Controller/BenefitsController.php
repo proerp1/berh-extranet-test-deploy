@@ -2,8 +2,8 @@
 class BenefitsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
+    public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado', 'CustomerUserItinerary', 'LogBenefits', 'User'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -26,8 +26,25 @@ class BenefitsController extends AppController
                 'Benefit.code LIKE' => "%".$_GET['q']."%", 
                 'BenefitType.name LIKE' => "%".$_GET['q']."%", 
                 'Benefit.name LIKE' => "%".$_GET['q']."%", 
+                'Supplier.documento LIKE' => "%".$_GET['q']."%", 
                 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%"
             ]);
+        }
+
+        if (isset($_GET['exportar'])) {
+            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
+
+            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
+            $nome = 'Beneficios_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Benefit->find('all', [
+                'contain' => ['Status'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelBeneficios($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         $data = $this->Paginator->paginate('Benefit', $condition);
@@ -71,10 +88,38 @@ class BenefitsController extends AppController
     {
         $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Benefit->id = $id;
+        $antigo = $this->Benefit->read();
+        // debug($antigo['Benefit']['unit_price']);die;
         if ($this->request->is(['post', 'put'])) {
+            $unit_price = str_replace(',', '.', str_replace('.', '', $this->request->data['Benefit']['unit_price']));
+
+            if($antigo['Benefit']['unit_price']<>$unit_price){
+                $dados_log = [
+                   
+                    'old_value' => $antigo['Benefit']['unit_price'],
+                    'benefit_id' => $id,
+                    'user_id' => CakeSession::read("Auth.User.id")
+                   
+                ];
+                $this->LogBenefits->save($dados_log);
+            }
+           
+    
+
+            $ShouldUpdateItinerary = $this->request->data['ShouldUpdateItinerary'];
             $this->Benefit->validates();
             $this->request->data['Benefit']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Benefit->save($this->request->data)) {
+                if($ShouldUpdateItinerary == '1'){
+                    $this->CustomerUserItinerary->unbindModel(
+                        ['belongsTo' => ['Benefit', 'CustomerUser']]
+                    );
+                    // convert to float
+                    $this->CustomerUserItinerary->updateAll(
+                        ['CustomerUserItinerary.unit_price' => $unit_price],
+                        ['CustomerUserItinerary.benefit_id' => $id]
+                    );
+                }
                 $this->Flash->set(__('O Benefício foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
             } else {
@@ -82,6 +127,7 @@ class BenefitsController extends AppController
             }
         }
 
+        
         $temp_errors = $this->Benefit->validationErrors;
         $this->request->data = $this->Benefit->read();
         $this->Benefit->validationErrors = $temp_errors;
@@ -98,18 +144,23 @@ class BenefitsController extends AppController
         $this->render("add");
     }
 
-    public function delete($id)
+    public function log_status($id)
     {
-        $this->Permission->check(16, "excluir") ? "" : $this->redirect("/not_allowed");
-        $this->Benefit->id = $id;
-        $this->request->data = $this->Benefit->read();
+        $this->Permission->check(16, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Paginator->settings = $this->paginate;
 
-        $this->request->data['Benefit']['data_cancel'] = date("Y-m-d H:i:s");
-        $this->request->data['Benefit']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+        $condition = ['and' => ['LogBenefits.id' => $id], 'or' => []];
 
-        if ($this->Benefit->save($this->request->data)) {
-            $this->Flash->set(__('O Benefício foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect(['action' => 'index']);
-        }
+        $this->LogBenefits->id = $id;
+        $cliente = $this->LogBenefits->read();
+
+        $action = 'Log Status';
+
+       $data = $this->Paginator->paginate('LogBenefits', $condition);
+     
+        $this->set(compact('data', 'id', 'action'));
     }
+
+
+
 }

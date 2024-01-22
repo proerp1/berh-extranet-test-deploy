@@ -5,7 +5,7 @@ class OutcomesController extends AppController {
 	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome'];
 
 	public $paginate = [
-		'limit' => 10, 'order' => ['Status.id' => 'asc', 'Outcome.name' => 'asc']
+		'limit' => 10, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
 	];
 
 	public function beforeFilter() { 
@@ -19,9 +19,9 @@ class OutcomesController extends AppController {
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
-			$condition['or'] = array_merge($condition['or'], ['Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
+			$condition['or'] = array_merge($condition['or'], ['Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
 		}
-
+		
 		if(isset($_GET["t"]) and $_GET["t"] != ""){
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
@@ -49,6 +49,23 @@ class OutcomesController extends AppController {
 
 			$this->redirect("/files/excel/".$nome);
 		}
+
+		
+				$saldo = 0;
+
+				if (!empty($data) && is_array($data)) {
+					foreach ($data as $item) {
+						// Verificar se o índice 0 está definido no item atual
+						if (isset($item[0]) && is_array($item[0]) && isset($item[0]['valor_total'])) {
+							$saldo += $item[0]['valor_total'];
+						}
+					}
+				}
+
+				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
+				echo "Saldo: " . $saldo;
+
+
 
 		$data = $this->Paginator->paginate('Outcome', $condition);
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));

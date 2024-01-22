@@ -160,6 +160,10 @@ if (isset($user_id) && !$is_admin) {
                 <?php echo $this->Form->input('EconomicGroup.EconomicGroup', array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, 'multiple' => true)); ?>
             </div>
         </div>
+        <div class="mb-7 col">
+    <label class="fw-semibold fs-6 mb-2">Observações</label>
+    <?php echo $this->Form->input('observation', ["placeholder" => "Observações", "class" => "form-control mb-3 mb-lg-0 textarea resize-vertical"]); ?>
+</div>
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">

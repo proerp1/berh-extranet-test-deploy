@@ -26,6 +26,21 @@ class Benefit extends AppModel {
         return $queryData;
     }
 
+	public $validate = [
+        'code' => [
+            'required' => [
+                'rule' => ['notBlank'],
+                'message' => 'O documento é obrigatório',
+                'last' => false,
+            ],
+            'isUnique' => [
+                'rule' => 'isUnique',
+                'message' => 'O codigo fornecido já foi cadastrado',
+                'on' => 'create',
+            ],
+        ],
+	];
+
     public function beforeSave($options = array())
 	{
 		if (!empty($this->data[$this->alias]['last_fare_update'])) {

@@ -9,7 +9,7 @@
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['bank_info', 'add_bank_info', 'edit_bank_info']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/bank_info/'.$id.'/'.$user_id; ?>">Dados Bancários</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['action'], ['itineraries', 'add_itineraries', 'edit_itineraries']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/itineraries/'.$id.'/'.$user_id; ?>">Itinerário</a>
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['itineraries', 'add_itineraries', 'edit_itineraries']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/itineraries/'.$id.'/'.$user_id; ?>">Benefícios</a>
 	</li>
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['vacations', 'add_vacation', 'edit_vacation']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_users/vacations/'.$id.'/'.$user_id; ?>">Férias</a>
