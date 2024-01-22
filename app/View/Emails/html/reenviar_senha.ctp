@@ -7,7 +7,7 @@ Ah, não se preocupe. Aqui todos nós tratamos suas informações com muita segu
 
 Nosso time de implantação está realizando os ajustes no seu perfil e manterá contato para finalizarmos essa etapa. Na sequência formalizará por email esse atendimento.</p>
 <p>
-Usuário: <?php echo $username; ?>
+Usuário: <?php echo $email; ?>
 	<br> 
 	Senha: <?php echo $senha; ?>
 </p>

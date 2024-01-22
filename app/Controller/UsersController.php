@@ -131,7 +131,7 @@ class UsersController extends AppController
 
       
         $senha = substr(sha1(time()), 0, 6);
-         $this->request->data['User']['username'];
+        
         $this->request->data['User']['password'] = $senha;
         $this->request->data['User']['primeiro_acesso'] = 1;
 
