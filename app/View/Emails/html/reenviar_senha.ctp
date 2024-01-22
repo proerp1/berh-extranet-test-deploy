@@ -22,12 +22,12 @@ Usuário: <?php echo $email; ?>
 Resposta:
 
 Confirmo os meus dados de contato com telefone para validação.
-
+<p>
 Nome:<?php echo $nome; ?>
-
+<br> 
 Email:<?php echo $email; ?>
-
+<br> 
 Telefone:
-
+</p>
 Estou ansioso para finalizar o processo e aguardarei o contato do time de implantação.
 </p>
