@@ -220,7 +220,7 @@ class ApiItau extends Controller
         $responseMulta = $this->alterarMulta($id_boleto, $dados['multa']);
         // $responseJuros = $this->alterarJuros($id_boleto, $dados['juros']);
 
-        return compact('response', 'responseValor', 'responseMulta', 'responseJuros');
+        return compact('response', 'responseValor', 'responseMulta');
     }
 
     private function alterarVencimento($id_boleto, $vencimento)
