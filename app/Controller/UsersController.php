@@ -128,7 +128,7 @@ class UsersController extends AppController
         $this->User->id = $id;
         $this->request->data = $this->User->read();
 
-        
+        $username = $this->request->data['User']['username'];
         $senha = substr(sha1(time()), 0, 6);
         $this->request->data['User']['password'] = $senha;
         $this->request->data['User']['primeiro_acesso'] = 1;
