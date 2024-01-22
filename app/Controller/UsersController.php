@@ -124,12 +124,14 @@ class UsersController extends AppController
 
     public function reenviar_senha($id)
     {
+        $headers .= "Reply-To: gporcel49@gmail.com";
         $this->autoRender = false;
         $this->User->id = $id;
         $this->request->data = $this->User->read();
 
-        $username = $this->request->data['User']['username'];
+      
         $senha = substr(sha1(time()), 0, 6);
+        $this->request->data['User']['username'];
         $this->request->data['User']['password'] = $senha;
         $this->request->data['User']['primeiro_acesso'] = 1;
 
