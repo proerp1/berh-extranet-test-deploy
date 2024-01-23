@@ -103,10 +103,10 @@ class ApiItau extends Controller
     public function gerarBoleto($conta)
     {
         $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
-        $multa = str_pad(str_replace('.', '', $conta['BankTickets']['multa_boleto']), 12, '0', STR_PAD_LEFT);
-        $juros = str_pad(str_replace('.', '', $conta['BankTickets']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
+        $multa = str_pad(str_replace('.', '', $conta['BankTicket']['multa_boleto']), 12, '0', STR_PAD_LEFT);
+        $juros = str_pad(str_replace('.', '', $conta['BankTicket']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
 
-        if ($conta['Order']['economic_group_id'] != null) {
+        if (!empty($conta['Order']) && $conta['Order']['economic_group_id'] != null) {
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
 
             $pessoa = [
@@ -151,7 +151,7 @@ class ApiItau extends Controller
                 'dado_boleto' => [
                     'descricao_instrumento_cobranca' => 'boleto',
                     'tipo_boleto' => 'a vista',
-                    'codigo_carteira' => $conta['BankTickets']['carteira'],
+                    'codigo_carteira' => $conta['BankTicket']['carteira'],
                     'valor_total_titulo' => $valor,
                     'codigo_especie' => '01',
                     'valor_abatimento' => '000',

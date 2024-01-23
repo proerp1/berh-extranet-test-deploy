@@ -86,38 +86,7 @@ class BoletosController extends AppController
         if ($this->request->is('post')) {
             $ids = substr($_POST['ids'], 0, -1);
 
-            $contas = $this->Income->find('all', [
-                'conditions' => ['Income.id in ('.$ids.')'], 
-                'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
-                'recursive' => -1,
-                'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*'],
-                'joins' => [
-                    [
-                        'table' => 'customers',
-                        'alias' => 'Customer',
-                        'type' => 'inner',
-                        'conditions' => [
-                            'Customer.id = Income.customer_id', 'Customer.data_cancel' => '1901-01-01',
-                        ],
-                    ],
-                    [
-                        'table' => 'bank_accounts',
-                        'alias' => 'BankAccount',
-                        'type' => 'inner',
-                        'conditions' => [
-                            'BankAccount.id = Income.bank_account_id', 'BankAccount.data_cancel' => '1901-01-01',
-                        ],
-                    ],
-                    [
-                        'table' => 'bank_tickets',
-                        'alias' => 'BankTickets',
-                        'type' => 'inner',
-                        'conditions' => [
-                            'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
-                        ],
-                    ],
-                ],
-            ]);
+            $contas = $this->Income->getDadosBoleto($ids, 'all');
 
             if (!empty($contas)) {
                 $remessas = $this->CnabLote->find('first', ['order' => ['CnabLote.id' => 'desc'], 'callbacks' => false]);
