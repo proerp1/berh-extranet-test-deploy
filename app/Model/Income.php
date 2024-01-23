@@ -240,7 +240,7 @@ class Income extends AppModel
                 [
                     'table' => 'customers',
                     'alias' => 'Customer',
-                    'type' => 'inner',
+                    'type' => 'INNER',
                     'conditions' => [
                         'Customer.id = Income.customer_id', 'Customer.data_cancel' => '1901-01-01'
                     ]
@@ -248,7 +248,7 @@ class Income extends AppModel
                 [
                     'table' => 'resales',
                     'alias' => 'Resale',
-                    'type' => 'inner',
+                    'type' => 'INNER',
                     'conditions' => [
                         'Resale.id = Customer.cod_franquia'
                     ]
@@ -256,7 +256,7 @@ class Income extends AppModel
                 [
                     'table' => 'bank_accounts',
                     'alias' => 'BankAccount',
-                    'type' => 'inner',
+                    'type' => 'INNER',
                     'conditions' => [
                         'BankAccount.id = Income.bank_account_id', 'BankAccount.data_cancel' => '1901-01-01'
                     ]
@@ -264,7 +264,7 @@ class Income extends AppModel
                 [
                     'table' => 'bank_tickets',
                     'alias' => 'BankTicket',
-                    'type' => 'inner',
+                    'type' => 'INNER',
                     'conditions' => [
                         'BankAccount.id = BankTicket.bank_account_id', 'BankTicket.data_cancel' => '1901-01-01', 'BankTicket.status_id' => 1
                     ]
@@ -272,7 +272,7 @@ class Income extends AppModel
                 [
                     'table' => 'orders',
                     'alias' => 'Order',
-                    'type' => 'inner',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'Order.id = Income.order_id'
                     ],
