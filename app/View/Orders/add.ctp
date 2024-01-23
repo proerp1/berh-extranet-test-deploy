@@ -118,6 +118,30 @@
                                     <td class="fw-bolder text-end"><?php echo $economic_group['EconomicGroup']['name']; ?></td>
                                 </tr>
                             <?php } ?>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Tipo Dias Úteis
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $order['Order']['working_days_type'] == 1 ? 'Padrão' : 'Cadastro de Beneficiários'; ?></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
+                                        <span class="svg-icon svg-icon-2 me-2">
+
+                                        </span>
+                                        <!--end::Svg Icon-->Tipo Benefício
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $benefit_type_desc; ?></td>
+                            </tr>
                             <!--end::Date-->
                         </tbody>
                         <!--end::Table body-->
@@ -674,7 +698,7 @@
                 <h4 class="modal-title">Tem certeza?</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form action="<?php echo $this->base . '/orders/upload_user_csv/'.$id; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+            <form action="<?php echo $this->base . '/orders/upload_user_csv/' . $id; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
                 <input type="hidden" name="order_id" value="<?php echo $id; ?>">
                 <div class="modal-body">

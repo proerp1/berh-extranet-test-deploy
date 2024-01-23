@@ -251,7 +251,7 @@
                             </div>
                             <div class="row opcao_tipo_beneficio" style="display:none">
                                 <div class="col mt-5">
-                                    <select name="tipo_beneficio" id="tipo_beneficio" class="form-control">
+                                    <select name="benefit_type" id="tipo_beneficio" class="form-control">
                                         <option value="-1">Transporte</option>
                                         <?php 
                                         foreach ($benefit_types as $benefit_type_id => $benefit_type) {
