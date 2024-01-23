@@ -7,7 +7,7 @@ Ah, não se preocupe. Aqui todos nós tratamos suas informações com muita segu
 
 Nosso time de implantação está realizando os ajustes no seu perfil e manterá contato para finalizarmos essa etapa. Na sequência formalizará por email esse atendimento.</p>
 <p>
-Usuário: <?php echo $username; ?>
+Usuário: <?php echo $email; ?>
 	<br> 
 	Senha: <?php echo $senha; ?>
 </p>
@@ -16,4 +16,18 @@ Usuário: <?php echo $username; ?>
 	<br>
 	<a href="<?php echo $link; ?>" style="border:none;color:#0084b4;text-decoration:none" target="_blank"><?php echo $link; ?></a>
 
+</p>
+
+<p>
+Resposta:
+
+Confirmo os meus dados de contato com telefone para validação.
+<p>
+Nome:<?php echo $nome; ?>
+<br> 
+Email:<?php echo $email; ?>
+<br> 
+Telefone:
+</p>
+Estou ansioso para finalizar o processo e aguardarei o contato do time de implantação.
 </p>
