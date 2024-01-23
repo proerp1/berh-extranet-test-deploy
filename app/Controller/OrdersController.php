@@ -835,6 +835,7 @@ class OrdersController extends AppController
 
             if ($benefit_type != '') {
                 $benefit_type = (int)$benefit_type;
+                $benefit_type_persist = (int)$benefit_type;
                 if($benefit_type == -1){
                     $benefit_type = [1,2];
                 }
@@ -886,7 +887,7 @@ class OrdersController extends AppController
                 'created' => date('Y-m-d H:i:s'),
                 'economic_group_id' => $k,
                 'working_days_type' => $working_days_type,
-                'benefit_type' => $benefit_type,
+                'benefit_type' => $benefit_type_persist,
             ];
 
             $this->Order->create();
