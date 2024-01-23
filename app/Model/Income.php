@@ -220,6 +220,7 @@ class Income extends AppModel
     {
         return $this->find($type, [
             'conditions' => ['Income.id in ('.$id.')'],
+            'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
             "fields" => [
                 "Income.*", 
                 'Customer.*', 
