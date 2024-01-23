@@ -77,6 +77,7 @@ class OrdersController extends AppController
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ];
 
+                $benefit_type_persist = 0;
                 if ($benefit_type != '') {
                     $benefit_type_persist = $benefit_type;
                     $benefit_type = (int)$benefit_type;
@@ -833,6 +834,7 @@ class OrdersController extends AppController
                 'CustomerUser.id' => $user_list
             ];
 
+            $benefit_type_persist = 0;
             if ($benefit_type != '') {
                 $benefit_type = (int)$benefit_type;
                 $benefit_type_persist = (int)$benefit_type;
