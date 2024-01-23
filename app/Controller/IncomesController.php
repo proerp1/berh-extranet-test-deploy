@@ -438,15 +438,20 @@ class IncomesController extends AppController
 
         $conta = $this->Income->getDadosBoleto($id);
 
-        $ApiItau = new ApiItau();
-        $boleto = $ApiItau->buscarBoleto($conta);
+        if (!empty($conta)) {
+            $ApiItau = new ApiItau();
+            $boleto = $ApiItau->buscarBoleto($conta);
 
-        if ($boleto['success'] && !empty($boleto['contents']['data'])) {
-            $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
+            if ($boleto['success'] && !empty($boleto['contents']['data'])) {
+                $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
+            }
+
+            $Bancoob = new BoletoItau();
+            $Bancoob->printBoleto($conta, $pdf);
+        } else {
+            $this->Flash->set(__('Não foi possível gerar o boleto'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
         }
-
-        $Bancoob = new BoletoItau();
-        $Bancoob->printBoleto($conta, $pdf);
     }
 
     public function calc_juros_multa($id)

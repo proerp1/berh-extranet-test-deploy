@@ -53,12 +53,12 @@ class OrdersController extends AppController
         $working_days_type = $this->request->data['working_days_type'];
         $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
         $grupo_especifico = $this->request->data['grupo_especifico'];
-        $tipo_beneficio = $this->request->data['tipo_beneficio'];
+        $benefit_type = $this->request->data['benefit_type'];
 
 
         if ($this->request->is('post')) {
             if ($is_consolidated == 2) {
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $tipo_beneficio);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -77,12 +77,14 @@ class OrdersController extends AppController
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ];
 
-                if ($tipo_beneficio != '') {
-                    $tipo_beneficio = (int)$tipo_beneficio;
-                    if($tipo_beneficio == -1){
-                        $tipo_beneficio = [1,2];
+                $benefit_type_persist = 0;
+                if ($benefit_type != '') {
+                    $benefit_type_persist = $benefit_type;
+                    $benefit_type = (int)$benefit_type;
+                    if($benefit_type == -1){
+                        $benefit_type = [1,2];
                     }
-                    $condNotPartial['Benefit.benefit_type_id'] = $tipo_beneficio;
+                    $condNotPartial['Benefit.benefit_type_id'] = $benefit_type;
                 }
 
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
@@ -105,7 +107,9 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s')
+                'created_at' => date('Y-m-d H:i:s'),
+                'working_days_type' => $working_days_type,
+                'benefit_type' => $benefit_type_persist,
             ];
 
             $this->Order->create();
@@ -308,11 +312,24 @@ class OrdersController extends AppController
             $economic_group = $this->EconomicGroup->findById($order['Order']['economic_group_id']);
         }
 
+        $benefit_type_desc = 'Todos';
+        if ($order['Order']['benefit_type'] != 0) {
+            if($order['Order']['benefit_type'] == -1){
+                $benefit_type_desc = 'Transporte';
+            } else {
+                $benefit_types = $this->BenefitType->find('first', [
+                    'conditions' => ['BenefitType.id' => $order['Order']['benefit_type']]
+                ]);
+                
+                $benefit_type_desc = $benefit_types['BenefitType']['name'];
+            }
+        }
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group', 'benefit_type_desc'));
 
         $this->render("add");
     }
@@ -556,11 +573,19 @@ class OrdersController extends AppController
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
 
+        if ($order['Order']['benefit_type'] != 0) {
+            $benefit_type = $order['Order']['benefit_type'];
+            if($benefit_type == -1){
+                $benefit_type = [1,2];
+            }
+            $cond['Benefit.benefit_type_id'] = $benefit_type;
+        }
+
         $customerItineraries = $this->CustomerUserItinerary->find('all', [
             'conditions' => $cond,
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
+        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type']);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -727,7 +752,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $tipo_beneficio)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -737,12 +762,12 @@ class OrdersController extends AppController
         if ($grupo_especifico != '') {
             $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
         }
-        if ($tipo_beneficio != '') {
-            $tipo_beneficio = (int)$tipo_beneficio;
-            if($tipo_beneficio == -1){
-                $tipo_beneficio = [1,2];
+        if ($benefit_type != '') {
+            $benefit_type = (int)$benefit_type;
+            if($benefit_type == -1){
+                $benefit_type = [1,2];
             }
-            $cond['Benefit.benefit_type_id'] = $tipo_beneficio;
+            $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
 
         $economic_groups = $this->CustomerUserItinerary->find('all', [
@@ -809,12 +834,14 @@ class OrdersController extends AppController
                 'CustomerUser.id' => $user_list
             ];
 
-            if ($tipo_beneficio != '') {
-                $tipo_beneficio = (int)$tipo_beneficio;
-                if($tipo_beneficio == -1){
-                    $tipo_beneficio = [1,2];
+            $benefit_type_persist = 0;
+            if ($benefit_type != '') {
+                $benefit_type = (int)$benefit_type;
+                $benefit_type_persist = (int)$benefit_type;
+                if($benefit_type == -1){
+                    $benefit_type = [1,2];
                 }
-                $cond2['Benefit.benefit_type_id'] = $tipo_beneficio;
+                $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 
             if ($is_partial == 2) {
@@ -860,7 +887,9 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
                 'created' => date('Y-m-d H:i:s'),
-                'economic_group_id' => $k
+                'economic_group_id' => $k,
+                'working_days_type' => $working_days_type,
+                'benefit_type' => $benefit_type_persist,
             ];
 
             $this->Order->create();
