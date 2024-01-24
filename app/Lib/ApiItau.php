@@ -185,7 +185,7 @@ class ApiItau extends Controller
                     'instrucao_cobranca' => [
                         [
                             'codigo_instrucao_cobranca' => '8',
-                            'quantidade_dias_apos_vencimento' => 2,
+                            'quantidade_dias_apos_vencimento' => 5,
                             'dia_util' => false,
                         ],
                     ],
