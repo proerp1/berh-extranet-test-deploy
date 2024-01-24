@@ -5,14 +5,25 @@
      }
  </style>
 
+ <?php $s = isset($_GET['s']) ? $_GET['s'] : ''; ?>
+
  <div class="row">
      <div class="col-sm-4 mb-5 mb-xl-10">
          <div class="card mb-5 mb-xl-10">
              <div class="card-body pt-9 pb-0">
                  <div class="row">
-                     
+
                      <div class="col-sm-12 mb-5 mb-xl-10">
-                         <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Executivos' : CakeSession::read('Auth.User.name'); ?></a>
+                         <div class="row">
+                             <div class="col">
+                                 <a href="#" class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"><?php echo $is_admin ? 'Todos Executivos' : CakeSession::read('Auth.User.name'); ?></a>
+                             </div>
+                             <div class="col">
+                                 <?php if ($is_admin) { ?>
+                                     <?php echo $this->Form->input('seller_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Todos", 'options' => $executivos, 'label' => false, 'selected' => $s]); ?>
+                                 <?php } ?>
+                             </div>
+                         </div>
 
                          <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
                              <!--begin::Svg Icon | path: icons/duotune/communication/com006.svg-->
@@ -347,7 +358,7 @@
                     foreach ($proposals as $proposal) {
                         $proposalsTotal += $proposal['Proposal']['total_price_not_formatted'];
                     }
-                ?>
+                    ?>
                  <div class="row sales-report">
 
                      <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -470,30 +481,35 @@
  <script>
      $(document).ready(function() {
          $("#month_proposal").on("change", function() {
-            var month = $(this).val();
+             var month = $(this).val();
 
-            $.ajax({
-                url: "<?php echo $this->base; ?>/dashboard/getProposalByMonth",
-                type: "POST",
-                data: {
-                    month: month
-                },
-                success: function(data) {
-                    var data = JSON.parse(data);
-                    var html = '';
-                    var total = 0;
-                    $.each(data, function(key, value) {
-                        total += parseFloat(value.Proposal.total_price_not_formatted);
-                        html += '<tr>';
-                        html += '<td>' + (key + 1) + '</td>';
-                        html += '<td class="txt-oflo">' + value.Proposal.expected_closing_date + '</td>';
-                        html += '<td><span class="text-success">R$ ' + value.Proposal.total_price + '</span></td>';
-                        html += '</tr>';
-                    });
-                    $('#proposals_tbl').html(html);
-                    $('#total_forecast').html('R$ ' + total.toFixed(2).replace('.', ','));
-                }
-            });
+             $.ajax({
+                 url: "<?php echo $this->base; ?>/dashboard/getProposalByMonth",
+                 type: "POST",
+                 data: {
+                     month: month
+                 },
+                 success: function(data) {
+                     var data = JSON.parse(data);
+                     var html = '';
+                     var total = 0;
+                     $.each(data, function(key, value) {
+                         total += parseFloat(value.Proposal.total_price_not_formatted);
+                         html += '<tr>';
+                         html += '<td>' + (key + 1) + '</td>';
+                         html += '<td class="txt-oflo">' + value.Proposal.expected_closing_date + '</td>';
+                         html += '<td><span class="text-success">R$ ' + value.Proposal.total_price + '</span></td>';
+                         html += '</tr>';
+                     });
+                     $('#proposals_tbl').html(html);
+                     $('#total_forecast').html('R$ ' + total.toFixed(2).replace('.', ','));
+                 }
+             });
+         });
+
+         $('#seller_id').on('change', function() {
+             var seller_id = $(this).val();
+             window.location.href = "<?php echo $this->base; ?>/dashboard/comercial?s=" + seller_id;
          });
      })
  </script>
