@@ -107,7 +107,7 @@ class AtendimentosController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 9], 'order' => 'Status.name']);
         $customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
 
-        $this->set("action", 'Novo Atendimento por Telefone');
+        $this->set("action", 'Novo Atendimento');
         $this->set("form_action", "add");
         $this->set(compact('departments', 'id', 'statuses', 'customers'));
 
