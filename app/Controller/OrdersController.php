@@ -8,6 +8,11 @@ class OrdersController extends AppController
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType'];
+    public $groupBenefitType = [
+        -1 => [1,2],
+        4 => [4,5],
+        999 => [6,7,8,9,10]
+    ];
 
     public $paginate = [
         'Order' => [
@@ -34,7 +39,7 @@ class OrdersController extends AppController
         $data = $this->Paginator->paginate('Order', $condition);
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'order' => ['nome_primario' => 'asc']]);
 
-        $benefit_types = $this->BenefitType->find('list');
+        $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
@@ -575,9 +580,7 @@ class OrdersController extends AppController
 
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
-            if($benefit_type == -1){
-                $benefit_type = [1,2];
-            }
+            $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
 
@@ -764,9 +767,7 @@ class OrdersController extends AppController
         }
         if ($benefit_type != '') {
             $benefit_type = (int)$benefit_type;
-            if($benefit_type == -1){
-                $benefit_type = [1,2];
-            }
+            $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
 
@@ -838,9 +839,7 @@ class OrdersController extends AppController
             if ($benefit_type != '') {
                 $benefit_type = (int)$benefit_type;
                 $benefit_type_persist = (int)$benefit_type;
-                if($benefit_type == -1){
-                    $benefit_type = [1,2];
-                }
+                $benefit_type = $this->groupBenefitType[$benefit_type];
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 
