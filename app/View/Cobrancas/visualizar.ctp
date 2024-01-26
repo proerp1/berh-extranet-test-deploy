@@ -322,35 +322,6 @@
                 }
             });
 
-            $("#ChargesHistoryDueDate").on("change", function(){
-                var data = $(this).val();
-                var vencimento = $("#vencimento_nao_formatado").val();
-                var valor = $("#valor_contas_unificadas").val();
-                var cobrar_juros = $("#cobrar_juros").val();
-                var el = $(this);
-
-                if (data != '') {
-                    $.ajax({
-                        url: "<?php echo $this->base?>/incomes/calc_juros_multa_by_date/",
-                        type: "post",
-                        data: {data: data, valor: valor, cobrar_juros: cobrar_juros, vencimento: vencimento},
-                        dataType: "json",
-                        beforeSend: function(xhr){
-                            $(".loading_img").remove();
-                            el.parent().parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
-                        },
-                        success: function(data){
-                            $(".loading_img").remove();
-
-                            $("#ChargesHistoryValue").val(data.total);
-                            $("#ChargesHistoryTotalValue").val(data.total);
-
-                            calcDiscount($("#ChargesHistoryDiscount").val(), data.total);
-                        }
-                    });
-                };
-            });
-
             $("#ChargesHistoryDiscount").on("change", function(){
                 var desconto = $(this).val();
                 var valor = $("#ChargesHistoryValue").val();
