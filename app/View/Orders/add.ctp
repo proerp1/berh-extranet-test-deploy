@@ -508,9 +508,18 @@
                         </div>
                     </div>
                 </form>
+                <?php if ($order['Order']['status_id'] == 83) { ?>
+                    <div class="row">
+                        <div class="col-2 offset-10">
+                            <a href="#" id="excluir_sel" class="btn btn-danger btn-sm" style="float:right; margin-bottom: 10px">Excluir Selecionados</a>
+                        </div>
+                    </div>
+                <?php } ?>
+
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <th></th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -537,6 +546,9 @@
                             $total += $items[$i]["OrderItem"]["total_not_formated"];
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
+                                <th>
+                                    <input type="checkbox" name="del_linha" id="">
+                                </th>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
@@ -715,6 +727,25 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_excluir_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Excluir items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="excluir_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
 <script>
@@ -849,6 +880,46 @@
             },
             dropdownParent: $('#modal_add_itinerario')
         });
+
+        $('#excluir_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="del_linha"]:checked').length > 0) {
+                $('#modal_excluir_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ser excluído');
+            }
+        });
+
+        $('#excluir_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const orderId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="del_linha"]:checked');
+            const orderItemIds = [];
+
+            checkboxes.each(function() {
+                orderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            if (orderItemIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: <?php echo $this->base; ?> '/orders/removeOrderItem',
+                    data: {
+                        orderItemIds,
+                        orderId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+
+        })
 
 
     })

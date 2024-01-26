@@ -544,6 +544,12 @@ class OrdersController extends AppController
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
 
+        if ($order['Order']['benefit_type'] != 0) {
+            $benefit_type = $order['Order']['benefit_type'];
+            $benefit_type = $this->groupBenefitType[$benefit_type];
+            $cond['Benefit.benefit_type_id'] = $benefit_type;
+        }
+
         $orderItems = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $orderId, 'OrderItem.customer_user_id' => $customerUserId],
         ]);
@@ -698,9 +704,16 @@ class OrdersController extends AppController
         ]);
     }
 
-    public function removeOrderItem($orderId, $itemOrderId)
+    public function removeOrderItem($orderId = false, $itemOrderId = false)
     {
         $this->autoRender = false;
+
+        $is_multiple = false;
+        if($orderId == false || $itemOrderId == false){
+            $is_multiple = true;
+            $orderId = $this->request->data['orderId'];
+            $itemOrderId = $this->request->data['orderItemIds'];
+        }
 
         $this->OrderItem->unbindModel(
             ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
@@ -718,7 +731,13 @@ class OrdersController extends AppController
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
 
-        $this->redirect('/orders/edit/' . $orderId);
+        if($is_multiple){
+            echo json_encode(['success' => true]);
+        } else {
+            $this->redirect('/orders/edit/' . $orderId);
+        }
+
+        
     }
 
     public function addItinerary()
