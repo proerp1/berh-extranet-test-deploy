@@ -960,37 +960,7 @@ class OrdersController extends AppController
             'fields' => ['EconomicGroup.name', 'EconomicGroup.id']
         ]);
 
-        $benefits = $this->CustomerUserItinerary->find('all', [
-            'conditions' => [
-                'CustomerUserItinerary.customer_id' => $customerId,
-                'CustomerUser.status_id' => 1,
-                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-            ],
-            'joins' => [
-                [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
-                    ]
-                ],
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Benefit.id = CustomerUserItinerary.benefit_id'
-                    ]
-                ]
-            ],
-            'recursive' => -1,
-            'group' => ['CustomerUserItinerary.benefit_id'],
-            'fields' => ['Benefit.name', 'Benefit.id']
-        ]);
-
-
-        echo json_encode(['economicGroups' => $economic_groups, 'benefits' => $benefits]);
+        echo json_encode(['economicGroups' => $economic_groups]);
     }
 
 
