@@ -515,6 +515,19 @@
                     </div>
                 </form>
 
+                <?php
+                $subtotal_head = 0;
+                $transfer_fee_head = 0;
+                $total_head = 0;
+                if ($items) {
+                    for ($i = 0; $i < count($items); $i++) {
+                        $subtotal_head += $items[$i]["OrderItem"]["subtotal_not_formated"];
+                        $transfer_fee_head += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
+                        $total_head += $items[$i]["OrderItem"]["total_not_formated"];
+                    }
+                }
+                ?>
+
                 <div class="row">
                     <div class="col-11" style="width: 88%">
                         <?php echo $this->element("pagination"); ?>
@@ -546,6 +559,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
+                        <td id="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
+                        <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
+                        <td id="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
+                    </tr>
                     <?php
                     $subtotal = 0;
                     $transfer_fee = 0;
@@ -765,7 +784,7 @@
         var should_scroll = <?php echo isset($this->params['named']['page']) ? 'true' : 'false'; ?>;
         if (should_scroll) {
             $('html, body').animate({
-                scrollTop: $("#excluir_sel").offset().top-150
+                scrollTop: $("#excluir_sel").offset().top - 150
             }, 100);
         }
         $('.money_field').maskMoney({
