@@ -14,6 +14,12 @@
     })
 </script>
 
+<style>
+    tbody tr th:first-child {
+        padding: 0px 10px !important;
+    }
+</style>
+
 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
@@ -495,7 +501,7 @@
             </div>
             <div class="table-responsive" id="search_form">
                 <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "edit/" . $id . '#search_form')); ?>" role="form" id="busca" autocomplete="off">
-                    <div class="card-header border-0 pt-6 pb-6">
+                    <div class="card-header border-0 pt-6 pb-6" style="padding-left: 0px;">
                         <div class="card-title">
                             <div class="row">
                                 <div class="col d-flex align-items-center">
@@ -508,13 +514,18 @@
                         </div>
                     </div>
                 </form>
-                <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="row">
-                        <div class="col-2 offset-10">
-                            <a href="#" id="excluir_sel" class="btn btn-danger btn-sm" style="float:right; margin-bottom: 10px">Excluir Selecionados</a>
-                        </div>
+
+                <div class="row">
+                    <div class="col-11" style="width: 88%">
+                        <?php echo $this->element("pagination"); ?>
                     </div>
-                <?php } ?>
+                    <div class="col-1" style="width: 12%">
+                        <?php if ($order['Order']['status_id'] == 83) { ?>
+                            <a href="#" id="excluir_sel" class="btn btn-danger btn-sm" style="float:right; margin-bottom: 10px">Excluir Selecionados</a>
+                        <?php } ?>
+                    </div>
+                </div>
+
 
                 <?php echo $this->element("table"); ?>
                 <thead>
@@ -594,8 +605,9 @@
                     <?php } ?>
                 </tbody>
                 </table>
+
+                <?php echo $this->element("pagination"); ?>
             </div>
-            <?php echo $this->element("pagination"); ?>
         </div>
     </div>
 </div>
@@ -753,7 +765,7 @@
         var should_scroll = <?php echo isset($this->params['named']['page']) ? 'true' : 'false'; ?>;
         if (should_scroll) {
             $('html, body').animate({
-                scrollTop: $("#total_sum").offset().top
+                scrollTop: $("#excluir_sel").offset().top-150
             }, 100);
         }
         $('.money_field').maskMoney({

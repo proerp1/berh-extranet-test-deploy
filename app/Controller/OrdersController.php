@@ -228,7 +228,7 @@ class OrdersController extends AppController
         $this->Order->validationErrors = $temp_errors;
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 100,
+            'limit' => 10,
             'order' => ['OrderItem.id' => 'asc'],
             'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
             'joins' => [
