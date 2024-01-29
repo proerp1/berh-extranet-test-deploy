@@ -156,7 +156,7 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
                 </div>
             </div>
 
-            
+            <br>
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
