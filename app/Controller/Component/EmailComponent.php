@@ -9,7 +9,7 @@ class EmailComponent extends Component
         $key = Configure::read('sendgridKey');
         $email = new \SendGrid\Mail\Mail(); 
         $email->setFrom("noreply@berh.com.br", "BeRH");
-        $email->setReplyTo("operacoes@berh.com.br", "BeRH");
+        $email->setReplyTo("operacao@berh.com.br", "BeRH");
         $email->setSubject($dados['subject']);
         $email->addTo($dados['viewVars']['email'], $dados['viewVars']['nome']);
 
