@@ -135,6 +135,23 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
                 <label class="fw-semibold fs-6 mb-2 required">Estado</label>
                 <?php echo $this->Form->input('state', array("id" => "estado", "placeholder" => "Estado", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true")); ?>
             </div>
+            </div>
+
+            <div class="row">
+
+            <label class="form-label">De</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                    <?php echo $this->Form->input('de', ["type" => "text", "placeholder" => "De", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                </div>
+            </div>
+
+            <label class="form-label">Até</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                    <?php echo $this->Form->input('ate', ["type" => "text", "placeholder" => "Até", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                </div>
+            </div>
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
