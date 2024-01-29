@@ -22,33 +22,6 @@
             show_recorrencia(formaPgto);
         });
 
-        $("#IncomeVencimento").on("change", function(){
-            var vencimento = $("#vencimento_js").val();
-            var data = $('#data_agendamento_js').val();
-            var valor = $("#valor_js").val();
-            var cobrar_juros = 'N';
-            var el = $(this);
-
-            if (data != '' && vencimento != '') {
-                $.ajax({
-                    url: "<?php echo $this->base?>/incomes/calc_juros_multa_by_date/",
-                    type: "post",
-                    data: {data: data, valor: valor, cobrar_juros: cobrar_juros, vencimento: vencimento},
-                    dataType: "json",
-                    beforeSend: function(xhr){
-                        $(".loading_img").remove();
-                        el.parent().parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
-                    },
-                    success: function(data){
-                        $(".loading_img").remove();
-
-                        $("#IncomeValorMulta").val(data.juros);
-                        $("#IncomeValorTotal").val(data.total);
-                    }
-                });
-            };
-        });
-
         $("#IncomeValorBruto, #IncomeValorMulta, #IncomeValorDesconto").on("focusout", function(event){
             calc_valor_total();
         })

@@ -14,6 +14,12 @@
     })
 </script>
 
+<style>
+    tbody tr th:first-child {
+        padding: 0px 10px !important;
+    }
+</style>
+
 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
@@ -495,7 +501,7 @@
             </div>
             <div class="table-responsive" id="search_form">
                 <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "edit/" . $id . '#search_form')); ?>" role="form" id="busca" autocomplete="off">
-                    <div class="card-header border-0 pt-6 pb-6">
+                    <div class="card-header border-0 pt-6 pb-6" style="padding-left: 0px;">
                         <div class="card-title">
                             <div class="row">
                                 <div class="col d-flex align-items-center">
@@ -508,9 +514,36 @@
                         </div>
                     </div>
                 </form>
+
+                <?php
+                $subtotal_head = 0;
+                $transfer_fee_head = 0;
+                $total_head = 0;
+                if ($items) {
+                    for ($i = 0; $i < count($items); $i++) {
+                        $subtotal_head += $items[$i]["OrderItem"]["subtotal_not_formated"];
+                        $transfer_fee_head += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
+                        $total_head += $items[$i]["OrderItem"]["total_not_formated"];
+                    }
+                }
+                ?>
+
+                <div class="row">
+                    <div class="col-11" style="width: 88%">
+                        <?php echo $this->element("pagination"); ?>
+                    </div>
+                    <div class="col-1" style="width: 12%">
+                        <?php if ($order['Order']['status_id'] == 83) { ?>
+                            <a href="#" id="excluir_sel" class="btn btn-danger btn-sm" style="float:right; margin-bottom: 10px">Excluir Selecionados</a>
+                        <?php } ?>
+                    </div>
+                </div>
+
+
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <th></th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -526,6 +559,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
+                        <td id="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
+                        <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
+                        <td id="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
+                    </tr>
                     <?php
                     $subtotal = 0;
                     $transfer_fee = 0;
@@ -537,6 +576,9 @@
                             $total += $items[$i]["OrderItem"]["total_not_formated"];
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
+                                <th>
+                                    <input type="checkbox" name="del_linha" id="">
+                                </th>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
@@ -582,8 +624,9 @@
                     <?php } ?>
                 </tbody>
                 </table>
+
+                <?php echo $this->element("pagination"); ?>
             </div>
-            <?php echo $this->element("pagination"); ?>
         </div>
     </div>
 </div>
@@ -715,6 +758,25 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_excluir_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Excluir items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="excluir_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
 <script>
@@ -722,7 +784,7 @@
         var should_scroll = <?php echo isset($this->params['named']['page']) ? 'true' : 'false'; ?>;
         if (should_scroll) {
             $('html, body').animate({
-                scrollTop: $("#total_sum").offset().top
+                scrollTop: $("#excluir_sel").offset().top - 150
             }, 100);
         }
         $('.money_field').maskMoney({
@@ -849,6 +911,46 @@
             },
             dropdownParent: $('#modal_add_itinerario')
         });
+
+        $('#excluir_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="del_linha"]:checked').length > 0) {
+                $('#modal_excluir_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ser excluído');
+            }
+        });
+
+        $('#excluir_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const orderId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="del_linha"]:checked');
+            const orderItemIds = [];
+
+            checkboxes.each(function() {
+                orderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            if (orderItemIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: <?php echo $this->base; ?> '/orders/removeOrderItem',
+                    data: {
+                        orderItemIds,
+                        orderId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+
+        })
 
 
     })

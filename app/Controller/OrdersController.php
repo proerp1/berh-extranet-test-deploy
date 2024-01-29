@@ -8,6 +8,11 @@ class OrdersController extends AppController
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType'];
+    public $groupBenefitType = [
+        -1 => [1,2],
+        4 => [4,5],
+        999 => [6,7,8,9,10]
+    ];
 
     public $paginate = [
         'Order' => [
@@ -34,7 +39,7 @@ class OrdersController extends AppController
         $data = $this->Paginator->paginate('Order', $condition);
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'order' => ['nome_primario' => 'asc']]);
 
-        $benefit_types = $this->BenefitType->find('list');
+        $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
@@ -223,7 +228,7 @@ class OrdersController extends AppController
         $this->Order->validationErrors = $temp_errors;
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 100,
+            'limit' => 10,
             'order' => ['OrderItem.id' => 'asc'],
             'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
             'joins' => [
@@ -539,6 +544,12 @@ class OrdersController extends AppController
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
 
+        if ($order['Order']['benefit_type'] != 0) {
+            $benefit_type = $order['Order']['benefit_type'];
+            $benefit_type = $this->groupBenefitType[$benefit_type];
+            $cond['Benefit.benefit_type_id'] = $benefit_type;
+        }
+
         $orderItems = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $orderId, 'OrderItem.customer_user_id' => $customerUserId],
         ]);
@@ -575,9 +586,7 @@ class OrdersController extends AppController
 
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
-            if($benefit_type == -1){
-                $benefit_type = [1,2];
-            }
+            $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
 
@@ -695,9 +704,16 @@ class OrdersController extends AppController
         ]);
     }
 
-    public function removeOrderItem($orderId, $itemOrderId)
+    public function removeOrderItem($orderId = false, $itemOrderId = false)
     {
         $this->autoRender = false;
+
+        $is_multiple = false;
+        if($orderId == false || $itemOrderId == false){
+            $is_multiple = true;
+            $orderId = $this->request->data['orderId'];
+            $itemOrderId = $this->request->data['orderItemIds'];
+        }
 
         $this->OrderItem->unbindModel(
             ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
@@ -715,7 +731,13 @@ class OrdersController extends AppController
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
 
-        $this->redirect('/orders/edit/' . $orderId);
+        if($is_multiple){
+            echo json_encode(['success' => true]);
+        } else {
+            $this->redirect('/orders/edit/' . $orderId);
+        }
+
+        
     }
 
     public function addItinerary()
@@ -764,9 +786,7 @@ class OrdersController extends AppController
         }
         if ($benefit_type != '') {
             $benefit_type = (int)$benefit_type;
-            if($benefit_type == -1){
-                $benefit_type = [1,2];
-            }
+            $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
 
@@ -838,9 +858,7 @@ class OrdersController extends AppController
             if ($benefit_type != '') {
                 $benefit_type = (int)$benefit_type;
                 $benefit_type_persist = (int)$benefit_type;
-                if($benefit_type == -1){
-                    $benefit_type = [1,2];
-                }
+                $benefit_type = $this->groupBenefitType[$benefit_type];
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 
@@ -960,37 +978,7 @@ class OrdersController extends AppController
             'fields' => ['EconomicGroup.name', 'EconomicGroup.id']
         ]);
 
-        $benefits = $this->CustomerUserItinerary->find('all', [
-            'conditions' => [
-                'CustomerUserItinerary.customer_id' => $customerId,
-                'CustomerUser.status_id' => 1,
-                'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-            ],
-            'joins' => [
-                [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'CustomerUser.id = CustomerUserItinerary.customer_user_id'
-                    ]
-                ],
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Benefit.id = CustomerUserItinerary.benefit_id'
-                    ]
-                ]
-            ],
-            'recursive' => -1,
-            'group' => ['CustomerUserItinerary.benefit_id'],
-            'fields' => ['Benefit.name', 'Benefit.id']
-        ]);
-
-
-        echo json_encode(['economicGroups' => $economic_groups, 'benefits' => $benefits]);
+        echo json_encode(['economicGroups' => $economic_groups]);
     }
 
 

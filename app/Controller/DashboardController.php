@@ -3,7 +3,7 @@ class DashboardController extends AppController
 {
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller', 'Income', 'Outcome', 'Status'];
+  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller', 'Income', 'Outcome', 'Status', 'User'];
 
   public function beforeFilter()
   {
@@ -232,12 +232,16 @@ class DashboardController extends AppController
     }
 
     $cond = [
-      'Customer.seller_id' => CakeSession::read('Auth.User.id'),
       'Order.order_period_from >=' => date('Y-m-01'),
       'Order.order_period_to <=' => date('Y-m-t'),
     ];
+
     if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
-      unset($cond['Customer.seller_id']);
+      if(isset($_GET['s']) && $_GET['s'] != ''){
+        $cond['Customer.seller_id'] = $_GET['s'];
+      }
+    } else {
+      $cond['Customer.seller_id'] = CakeSession::read('Auth.User.id');
     }
 
     $orders = $this->Order->find("all", [
@@ -271,11 +275,15 @@ class DashboardController extends AppController
 
     $goal = CakeSession::read("Auth.User.sales_goal_not_formated");
     if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
+      $condGoal = [
+        'Seller.status_id' => 1,
+        'Seller.is_seller' => 1,
+      ];
+      if(isset($_GET['s']) && $_GET['s'] != ''){
+        $condGoal['Seller.id'] = $_GET['s'];
+      }
       $allGoals = $this->Seller->find("all", [
-        "conditions" => [
-          'Seller.status_id' => 1,
-          'Seller.is_seller' => 1,
-        ],
+        "conditions" => $condGoal,
         "fields" => ["sum(Seller.sales_goal) as total"],
       ]);
       $goal = $allGoals[0][0]['total'];
@@ -337,7 +345,11 @@ class DashboardController extends AppController
       'Proposal.created <=' => date('Y-m-t'),
     ];
     if(CakeSession::read("Auth.User.Group.name") == 'Administrador'){
-      unset($propCond['Customer.seller_id']);
+      if(isset($_GET['s']) && $_GET['s'] != ''){
+        $propCond['Customer.seller_id'] = $_GET['s'];
+      } else {
+        unset($propCond['Customer.seller_id']);
+      }
     }
 
     $propMonths = $this->Proposal->find("all", [
@@ -348,9 +360,11 @@ class DashboardController extends AppController
 
     $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
 
+    $executivos = $this->User->find('list', ['conditions' => ['User.is_seller' => 1]]);
+
     $this->set(compact('breadcrumb', 'action', 'groupedOrders', 'totalSales', 'goal'));
     $this->set(compact('percentageLeft', 'totalSalesRaw', 'dailyGoal', 'totalSalesPreview'));
-    $this->set(compact('goalLeft', 'totalSalesEstimate', 'topSuppliers', 'proposals', 'propMonths', 'is_admin'));
+    $this->set(compact('goalLeft', 'totalSalesEstimate', 'topSuppliers', 'proposals', 'propMonths', 'is_admin', 'executivos'));
   }
 
   public function getProposalByMonth(){
