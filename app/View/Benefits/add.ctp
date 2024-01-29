@@ -137,21 +137,26 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
             </div>
             </div>
 
+
             <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">De</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        <?php echo $this->Form->input('de', ["type" => "text", "placeholder" => "De", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                    </div>
+                </div>
 
-            <label class="form-label">De</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                    <?php echo $this->Form->input('de', ["type" => "text", "placeholder" => "De", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                <div class="col-md-6">
+                    <label class="form-label">Até</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        <?php echo $this->Form->input('ate', ["type" => "text", "placeholder" => "Até", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                    </div>
                 </div>
             </div>
 
-            <label class="form-label">Até</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                    <?php echo $this->Form->input('ate', ["type" => "text", "placeholder" => "Até", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
-                </div>
-            </div>
+            
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
