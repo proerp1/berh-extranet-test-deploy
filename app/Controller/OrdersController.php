@@ -193,6 +193,7 @@ class OrdersController extends AppController
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+
         if ($this->request->is(['post', 'put'])) {
             if ($old_order['Order']['status_id'] < 85) {
                 if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
@@ -510,7 +511,7 @@ class OrdersController extends AppController
 
                 $this->Income->deleteAll(['Income.id' => $id], false);
 
-                $this->Flash->set(__($message), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__($message), ['element' => 'flash', 'params' => ['class' => "alert alert-danger"]]);
             }
         }
 
