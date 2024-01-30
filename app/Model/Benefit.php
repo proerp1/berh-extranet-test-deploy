@@ -51,6 +51,14 @@ class Benefit extends AppModel {
 			$this->data[$this->alias]['unit_price'] = $this->priceFormatBeforeSave($this->data[$this->alias]['unit_price']);
 		}
 
+		if (!empty($this->data[$this->alias]['ate'])) {
+			$this->data[$this->alias]['ate'] = $this-> dateFormatBeforeSave($this->data[$this->alias]['ate']);
+		}
+
+		if (!empty($this->data[$this->alias]['de'])) {
+			$this->data[$this->alias]['de'] = $this-> dateFormatBeforeSave($this->data[$this->alias]['de']);
+		}
+
 		return true;
 	}
 
@@ -88,6 +96,16 @@ class Benefit extends AppModel {
 			if (isset($val[$this->alias]['last_fare_update'])) {
 				$results[$key][$this->alias]['last_fare_update_nao_formatado'] = $val[$this->alias]['last_fare_update'];
 				$results[$key][$this->alias]['last_fare_update'] = date("d/m/Y", strtotime($val[$this->alias]['last_fare_update']));
+			}
+
+			if (isset($val[$this->alias]['de'])) {
+				$results[$key][$this->alias]['de_nao_formatado'] = $val[$this->alias]['de'];
+				$results[$key][$this->alias]['de'] = date("d/m/Y", strtotime($val[$this->alias]['de']));
+			}
+
+			if (isset($val[$this->alias]['ate'])) {
+				$results[$key][$this->alias]['ate_nao_formatado'] = $val[$this->alias]['ate'];
+				$results[$key][$this->alias]['ate'] = date("d/m/Y", strtotime($val[$this->alias]['ate']));
 			}
 		}
 

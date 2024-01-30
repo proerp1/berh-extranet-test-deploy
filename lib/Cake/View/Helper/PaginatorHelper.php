@@ -427,6 +427,11 @@ class PaginatorHelper extends AppHelper {
 		unset($options['convertKeys']);
 
 		$url = $this->url($url, true, $model);
+		// Hack para manter fazer a primeira pagina ter o texto "page:1"
+		// Isso ajuda no scroll que pediram para quando clica na paginação
+		if($title == 1){
+			$url['page'] = 1;
+		}
 
 		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
 		return $this->{$obj}->link($title, $url, $options);

@@ -72,7 +72,7 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Documento</th>
+                        <th>CNPJ</th>
                         <th>Telefone</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
