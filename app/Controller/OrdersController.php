@@ -409,7 +409,7 @@ class OrdersController extends AppController
         $conta = $this->Income->find('first', [
             'conditions' => ['Income.id' => $id],
             'recursive' => -1,
-            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*', 'Order.id', 'Order.economic_group_id'],
+            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTicket.*', 'Order.id', 'Order.economic_group_id'],
             'joins' => [
                 [
                     'table' => 'customers',
@@ -429,10 +429,10 @@ class OrdersController extends AppController
                 ],
                 [
                     'table' => 'bank_tickets',
-                    'alias' => 'BankTickets',
+                    'alias' => 'BankTicket',
                     'type' => 'inner',
                     'conditions' => [
-                        'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
+                        'BankAccount.id = BankTicket.bank_account_id', 'BankTicket.data_cancel' => '1901-01-01',
                     ],
                 ],
                 [
