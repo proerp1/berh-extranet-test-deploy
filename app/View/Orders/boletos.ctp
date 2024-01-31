@@ -5,6 +5,10 @@
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadores</a>
+    </li>
+</ul>
 </ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">

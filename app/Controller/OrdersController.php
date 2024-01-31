@@ -56,7 +56,6 @@ class OrdersController extends AppController
         $is_consolidated = $this->request->data['is_consolidated'];
         $is_partial = $this->request->data['is_partial'];
         $working_days_type = $this->request->data['working_days_type'];
-        $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
         $grupo_especifico = $this->request->data['grupo_especifico'];
         $benefit_type = $this->request->data['benefit_type'];
 
@@ -995,6 +994,41 @@ class OrdersController extends AppController
             $this->Flash->set(__('O Pedido foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
+    }
+
+    public function Operadoras($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'fields' => ['Supplier.razao_social', 'sum(OrderItem.subtotal) as subtotal'],
+             'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id']
+            
+        ]);
+        //debug( $suppliersAll);die;
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
     public function boletos($id)
