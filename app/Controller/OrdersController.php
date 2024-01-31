@@ -193,6 +193,7 @@ class OrdersController extends AppController
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+
         if ($this->request->is(['post', 'put'])) {
             if ($old_order['Order']['status_id'] < 85) {
                 if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
@@ -414,7 +415,7 @@ class OrdersController extends AppController
         $conta = $this->Income->find('first', [
             'conditions' => ['Income.id' => $id],
             'recursive' => -1,
-            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTickets.*', 'Order.id', 'Order.economic_group_id'],
+            'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'BankTicket.*', 'Order.id', 'Order.economic_group_id'],
             'joins' => [
                 [
                     'table' => 'customers',
@@ -434,10 +435,10 @@ class OrdersController extends AppController
                 ],
                 [
                     'table' => 'bank_tickets',
-                    'alias' => 'BankTickets',
+                    'alias' => 'BankTicket',
                     'type' => 'inner',
                     'conditions' => [
-                        'BankAccount.id = BankTickets.bank_account_id', 'BankTickets.data_cancel' => '1901-01-01',
+                        'BankAccount.id = BankTicket.bank_account_id', 'BankTicket.data_cancel' => '1901-01-01',
                     ],
                 ],
                 [
@@ -510,7 +511,7 @@ class OrdersController extends AppController
 
                 $this->Income->deleteAll(['Income.id' => $id], false);
 
-                $this->Flash->set(__($message), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__($message), ['element' => 'flash', 'params' => ['class' => "alert alert-danger"]]);
             }
         }
 

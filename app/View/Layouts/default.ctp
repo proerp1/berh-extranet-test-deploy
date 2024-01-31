@@ -93,7 +93,7 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 				<?php echo $this->element("menu_superior"); ?>
 				<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
 					<div id="kt_content_container" class="container-fluid">
-						<?php echo $this->Session->flash() ?>
+						<?php echo $this->Flash->render() ?>
 					</div>
 					<?php echo $this->element("breadcrumb"); ?>
 

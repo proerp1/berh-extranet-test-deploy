@@ -124,7 +124,7 @@ class UsersController extends AppController
 
     public function reenviar_senha($id)
     {
-        $headers .= "Reply-To: operacao@berh.com.br";
+       
         $this->autoRender = false;
         $this->User->id = $id;
         $this->request->data = $this->User->read();
@@ -144,7 +144,6 @@ class UsersController extends AppController
 
     public function envia_email($data)
     {
-     $headers .= "Reply-To: operacao@berh.com.br";
         $dados = ['viewVars' => ['nome'  => $data['User']['name'],
             'email' => $data['User']['username'],
             'senha' => $data['User']['password'],
