@@ -14,6 +14,15 @@ class ItineraryCSVParser extends Controller
     public function parse($tmpFile, $fileName, $customerId, $userId, $importedByCustomer = false, $shouldDeleteItinerary)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $encoding = mb_detect_encoding($file, mb_list_encodings(), true);
+
+        if ($encoding != 'UTF-8') {
+            $file = mb_convert_encoding($file, 'UTF-8', 'Windows-1252');
+        }
+
+        // clear tabs from the file
+        $file = str_replace("\t", '', $file);
+
         $csv = Reader::createFromString($file);
         $csv->setDelimiter(';');
 
@@ -157,6 +166,7 @@ class ItineraryCSVParser extends Controller
 
     private function processUser($row, $customerId, $shouldDeleteItinerary)
     {
+        print_r($row);die;
         $cpf = preg_replace('/\D/', '', $row[3]);
 
         $existingUser = $this->CustomerUser->find('first', [
