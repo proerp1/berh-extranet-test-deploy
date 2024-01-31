@@ -1,10 +1,14 @@
 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
 <li class="nav-item">
-        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
+        <a class="nav-link " href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
     </li>
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
+    </li>
+</ul>
 </ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">
