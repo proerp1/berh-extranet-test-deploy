@@ -11,10 +11,7 @@
 </ul>
 </ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
-
-
-                
-                <div class="table-responsive">
+<div class="card-body pt-0 py-3">
     <?php echo $this->element("table"); ?>
     <thead>
         <tr class="fw-bolder text-muted bg-light">
@@ -30,6 +27,7 @@
             </tr>
         <?php } ?>
     </tbody>
+    </div>
 </div>
 
 
