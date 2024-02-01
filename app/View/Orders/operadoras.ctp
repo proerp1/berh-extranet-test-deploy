@@ -9,41 +9,61 @@
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
 </ul>
-</ul>
-<?php $url_novo = $this->base . "/benefits/add/"; ?>
-<div class="card-body pt-0 py-3">
-    <?php echo $this->element("table"); ?>
-    <thead>
-        <tr class="fw-bolder text-muted bg-light">
-            <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
-            <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php 
-        $total=0;
-        foreach ($suppliersAll as $supplier) {
-            $total+=$supplier[0]['subtotal'];
-            ?>
-            <tr>
-                <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
-                <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
-            </tr>
-        <?php } ?>
-    </tbody>
+
+<div class="card mb-5 mb-xl-8">
+    <div class="card-header border-0 pt-6 pb-6">
+        <div class="card-title">
+            <div class="row">
+                <div class="col d-flex align-items-center">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="card-toolbar" style="text-align: right;">
+            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_gerar_pagamento">
+                    Gerar Pagamento
+                </a>
+            </div>
+        </div>
     </div>
 
-    <tfoot>
-    <tr>
-        <th  class="fw-bold fs-5 ps-4">Total</th>
-        <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
-    </tr>
-</tfoot>
+        
+    <div class="card-body pt-0 py-3">
+        
+        <div class="table-responsive">
+            
+            <?php echo $this->element("table"); ?>
+            <thead>
+            <tr class="fw-bolder text-muted bg-light">
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $total=0;
+                foreach ($suppliersAll as $supplier) {
+                    $total+=$supplier[0]['subtotal'];
+                    ?>
+                    <tr>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th  class="fw-bold fs-5 ps-4">Total</th>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
+                </tr>
+            </tfoot>
+        </div>
+    </div>
+</div>
+    
 
-    <div class="mb-7 col" style="text-align: right;">
-                                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_gerar_pagamento">
-                                    Gerar Pagamento
-                                </a>
+    
 
 <div class="modal fade" tabindex="-1" id="modal_gerar_pagamento" role="dialog">
     <div class="modal-dialog" role="document">
