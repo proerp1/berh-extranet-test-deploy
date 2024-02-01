@@ -7,7 +7,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -1026,11 +1026,75 @@ class OrdersController extends AppController
             'group' => ['Supplier.id']
             
         ]);
+
         //debug( $suppliersAll);die;
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
+
+ 
+    public function gerar_pagamento($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+    
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
+             'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id']
+            
+        ]);
+        //debug($suppliersAll);die;
+
+        foreach ($suppliersAll as $supplier) { 
+            $outcome = [];
+
+            $outcome['Outcome']['order_id'] = $id;
+            $outcome['Outcome']['parcela'] = 1;
+            $outcome['Outcome']['status_id'] = 11;
+            $outcome['Outcome']['bank_account_id'] = 3;
+            $outcome['Outcome']['plano_contas_id'] = 3;
+            $outcome['Outcome']['resale_id'] = 1;
+            $outcome['Outcome']['cost_center_id'] = 5;
+            $outcome['Outcome']['supplier_id'] = $supplier['Supplier']['id'];
+            $outcome['Outcome']['name'] = 'Pagamento Fornecedor';
+            $outcome['Outcome']['valor_multa'] = 0;
+            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'],2,',','.');
+            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'],2,',','.');
+            $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
+            $outcome['Outcome']['data_competencia'] = date('01/m/Y');
+            $outcome['Outcome']['created'] = date('Y-m-d H:i:s');
+            $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
+            // debug($outcome);die;
+            $this->Outcome->create();
+            $this->Outcome->save($outcome);
+        }
+        $this->Flash->set(__('Pagamento gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+
+        // Redireciona para a página de operadoras
+        $this->redirect(['action' => 'operadoras/' . $id]);
+        $this->set(compact('id'));
+    }
+
 
     public function boletos($id)
     {
