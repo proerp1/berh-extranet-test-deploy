@@ -197,6 +197,14 @@
 
                     <div class="row">
                         <div class="mb-7 col" style="text-align: right;">
+                        
+                        <?php if ($order['Order']['status_id'] == 83||$order['Order']['status_id'] == 84) { ?>
+                                <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
+                                    <i class="fas fa-arrow-right"></i>
+                                    Pagamento Confirmado
+                                </a>
+                            <?php } ?>
+
                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                 <a href="#" class="btn btn-sm btn-success me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                                     <i class="fas fa-arrow-right"></i>
@@ -645,6 +653,26 @@
             <form action="<?php echo $this->base . '/orders/changeStatusToSent/' . $id; ?>" class="form-horizontal" method="post">
                 <div class="modal-body">
                     <p>Tem certeza que deseja gerar o boleto?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success js-salvar">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_enviar_confirmado" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/confirma_pagamento/' . $id; ?>" class="form-horizontal" method="post">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja confirmar o pagamento?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>

@@ -1033,10 +1033,31 @@ class OrdersController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
- 
+    public function confirma_pagamento($id){
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+
+        $this->Order->recursive = -1;
+        $order = $this->Order->findById($id);
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 85,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'validation_date' => date('Y-m-d'),
+            ]
+        ]);
+
+        $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+    
+        $this->redirect(['action' => 'edit/' . $id]);
+    }
+
+   
     public function gerar_pagamento($id)
     {
-        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->autoRender = false;
     
         $suppliersAll = $this->OrderItem->find('all', [
