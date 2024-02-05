@@ -144,6 +144,19 @@ class BenefitsController extends AppController
         $this->render("add");
     }
 
+    public function delete($id)
+    {
+        $this->Permission->check(3, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Benefit->id = $id;
+
+        $data = ['Benefit' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
+
+        if ($this->Benefit->save($data)) {
+            $this->Flash->set(__('O Benefício foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+            $this->redirect(['action' => 'index']);
+        }
+    }
+
     public function log_status($id)
     {
         $this->Permission->check(16, 'leitura') ? '' : $this->redirect('/not_allowed');
