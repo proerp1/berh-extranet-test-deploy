@@ -7,7 +7,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -56,7 +56,6 @@ class OrdersController extends AppController
         $is_consolidated = $this->request->data['is_consolidated'];
         $is_partial = $this->request->data['is_partial'];
         $working_days_type = $this->request->data['working_days_type'];
-        $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
         $grupo_especifico = $this->request->data['grupo_especifico'];
         $benefit_type = $this->request->data['benefit_type'];
 
@@ -229,8 +228,8 @@ class OrdersController extends AppController
         $this->Order->validationErrors = $temp_errors;
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 10,
-            'order' => ['OrderItem.id' => 'asc'],
+            'limit' => 100,
+            'order' => ['CustomerUser.name' => 'asc'],
             'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
             'joins' => [
                 [
@@ -997,6 +996,126 @@ class OrdersController extends AppController
             $this->redirect(['action' => 'index']);
         }
     }
+
+    public function Operadoras($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'fields' => ['Supplier.razao_social', 'sum(OrderItem.subtotal) as subtotal'],
+             'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id']
+            
+        ]);
+
+        //debug( $suppliersAll);die;
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
+    }
+
+    public function confirma_pagamento($id){
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+
+        $this->Order->recursive = -1;
+        $order = $this->Order->findById($id);
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 85,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'validation_date' => date('Y-m-d'),
+            ]
+        ]);
+
+        $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+    
+        $this->redirect(['action' => 'edit/' . $id]);
+    }
+
+   
+    public function gerar_pagamento($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+    
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
+             'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id']
+            
+        ]);
+        //debug($suppliersAll);die;
+
+        foreach ($suppliersAll as $supplier) { 
+            $outcome = [];
+
+            $outcome['Outcome']['order_id'] = $id;
+            $outcome['Outcome']['parcela'] = 1;
+            $outcome['Outcome']['status_id'] = 11;
+            $outcome['Outcome']['bank_account_id'] = 3;
+            $outcome['Outcome']['plano_contas_id'] = 3;
+            $outcome['Outcome']['resale_id'] = 1;
+            $outcome['Outcome']['cost_center_id'] = 5;
+            $outcome['Outcome']['supplier_id'] = $supplier['Supplier']['id'];
+            $outcome['Outcome']['name'] = 'Pagamento Fornecedor';
+            $outcome['Outcome']['valor_multa'] = 0;
+            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'],2,',','.');
+            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'],2,',','.');
+            $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
+            $outcome['Outcome']['data_competencia'] = date('01/m/Y');
+            $outcome['Outcome']['created'] = date('Y-m-d H:i:s');
+            $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
+            // debug($outcome);die;
+            $this->Outcome->create();
+            $this->Outcome->save($outcome);
+        }
+        $this->Flash->set(__('Pagamento gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+
+        // Redireciona para a página de operadoras
+        $this->redirect(['action' => 'operadoras/' . $id]);
+        $this->set(compact('id'));
+    }
+
 
     public function boletos($id)
     {
