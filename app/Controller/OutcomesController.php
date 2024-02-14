@@ -5,7 +5,7 @@ class OutcomesController extends AppController {
 	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome'];
 
 	public $paginate = [
-		'limit' => 50, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+		'limit' => 175, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
 	];
 
 	public function beforeFilter() { 
