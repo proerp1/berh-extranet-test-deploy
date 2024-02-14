@@ -9,7 +9,6 @@
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
 </ul>
-</ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "boletos/".$id)); ?>" role="form" id="busca" autocomplete="off">
