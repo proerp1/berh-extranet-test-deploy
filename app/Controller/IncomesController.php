@@ -8,9 +8,21 @@ class IncomesController extends AppController
     public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order'];
 
     public $paginate = [
-        'Income' => ['limit' => 175, 'order' => ['Income.vencimento' => 'desc'], 'group' => 'Income.id'],
-        'ChargesHistory' => ['limit' => 10, 'order' => ['ChargesHistory.created' => 'desc']]
+        'Income' => [
+            'limit' => 175,
+            'order' => [
+                'Income.vencimento' => 'desc',
+            ],
+            'group' => 'Income.id',
+        ],
+        'ChargesHistory' => [
+            'limit' => 10,
+            'order' => [
+                'ChargesHistory.created' => 'desc',
+            ],
+        ],
     ];
+    
 
     public function beforeFilter()
     {
