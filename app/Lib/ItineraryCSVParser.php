@@ -166,7 +166,6 @@ class ItineraryCSVParser extends Controller
 
     private function processUser($row, $customerId, $shouldDeleteItinerary)
     {
-        print_r($row);die;
         $cpf = preg_replace('/\D/', '', $row[3]);
 
         $existingUser = $this->CustomerUser->find('first', [
