@@ -8,7 +8,7 @@ class ComunicadosController extends AppController
     public $paginate = [
         'limit' => 47,
         'order' => [
-            'data' => 'asc',
+
             'Status.id' => 'asc',
             'Comunicado.titulo' => 'asc'
         ]
