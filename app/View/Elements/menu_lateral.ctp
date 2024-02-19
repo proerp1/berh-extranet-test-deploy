@@ -77,7 +77,7 @@
                             <i class="fas fa-briefcase"></i> 
                         </span>
                         <span class="menu-title">
-                            Revendas
+                            Parceiros
                         </span>
                     </a>
                 </div>

@@ -35,7 +35,7 @@ class ResalesController extends AppController
         $data = $this->Paginator->paginate('Resale', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
 
-        $action = 'Revendas';
+        $action = 'Parceiros';
         $breadcrumb = ['Lista' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
     }
@@ -48,13 +48,13 @@ class ResalesController extends AppController
             if ($this->Resale->validates()) {
                 $this->request->data['Resale']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Resale->save($this->request->data)) {
-                    $this->Flash->set(__('A revenda foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->Flash->set(__('O parceiro foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Resale->id]);
                 } else {
-                    $this->Flash->set(__('A revenda não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__('O parceiro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
             } else {
-                $this->Flash->set(__('A revenda não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O parceiro não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -62,7 +62,7 @@ class ResalesController extends AppController
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => ['BankAccount.name' => 'asc']]);
         $vencimentos = $this->Vencimento->find('list');
 
-        $this->set("action", "Nova revenda");
+        $this->set("action", "Novo Parceiro");
         $this->set("form_action", "add");
         $this->set(compact('statuses', 'vencimentos', 'bankAccounts'));
     }
@@ -75,9 +75,9 @@ class ResalesController extends AppController
             $this->Resale->validates();
             $this->request->data['Resale']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Resale->save($this->request->data)) {
-                $this->Flash->set(__('A revenda foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->Flash->set(__('O parceiro foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
-                $this->Flash->set(__('A revenda não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('O parceiro não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -106,7 +106,7 @@ class ResalesController extends AppController
         $this->request->data['Resale']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Resale->save($this->request->data)) {
-            $this->Flash->set(__('A revenda foi excluida com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('A parceiro foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
     }
