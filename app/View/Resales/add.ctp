@@ -60,7 +60,7 @@
 
             <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
-                    <?php echo $this->Form->input('tipo', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Parceiro', '2' => 'Revenda'), "class" => "form-select mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('tipo', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Revenda', '2' => 'Parceiro'), "class" => "form-select mb-3 mb-lg-0"));  ?>
             </div>
 
             <div class="mb-7 col">
