@@ -59,7 +59,7 @@
         <?php echo $this->Form->create('Resale', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 
             <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
+                    <label class="fw-semibold fs-6 mb-2">Tipo</label>
                     <?php echo $this->Form->input('tipo', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Revenda', '2' => 'Parceiro'), "class" => "form-select mb-3 mb-lg-0"));  ?>
             </div>
 
