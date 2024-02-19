@@ -197,8 +197,8 @@
 
                     <div class="row">
                         <div class="mb-7 col" style="text-align: right;">
-                        
-                        <?php if ($order['Order']['status_id'] == 83||$order['Order']['status_id'] == 84) { ?>
+
+                            <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
                                 <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
                                     <i class="fas fa-arrow-right"></i>
                                     Pagamento Confirmado
@@ -609,7 +609,7 @@
                                     <?php } ?>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["CustomerUserItinerary"]["price_per_day"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
@@ -778,6 +778,28 @@
                 <div class="modal-body">
                     <p>Enviar CSV com beneficiários a serem incluídos</p>
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+
+                    <div class="row" style="margin-top:20px;">
+                        <label class="mb-2">Incluir Valor Unitário</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[incluir_valor_unitario]" value="2" id="tipoBeneficioChk1" checked="checked" />
+                                    <label class="form-check-label" for="tipoBeneficioChk1">
+                                        Não
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[incluir_valor_unitario]" value="1" id="tipoBeneficioChk2" />
+                                    <label class="form-check-label" for="tipoBeneficioChk2">
+                                        Sim
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
