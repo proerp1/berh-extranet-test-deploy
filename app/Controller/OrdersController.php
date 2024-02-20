@@ -146,10 +146,28 @@ class OrdersController extends AppController
         foreach ($customerItineraries as $itinerary) {
             $values_from_csv = 0;
             $manualWorkingDays = 0;
+            $manualQuantity = 0;
+            $currentUserId = 0;
             if (!empty($manualPricing)) {
-                $manualUnitPrice = $manualPricing[$itinerary['CustomerUserItinerary']['customer_user_id']]['unitPrice'];
-                $manualWorkingDays = $manualPricing[$itinerary['CustomerUserItinerary']['customer_user_id']]['workingDays'];
-                $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $manualUnitPrice * $itinerary['CustomerUserItinerary']['quantity'];
+                $currentUserId = $itinerary['CustomerUserItinerary']['customer_user_id'];
+
+                if(!isset($manualPricing[$currentUserId])){
+                    continue;
+                }
+
+                $parsedManualRow = $this->parseManualRow($itinerary, $manualPricing[$currentUserId]);
+
+                if($parsedManualRow == false){
+                    // se não encontrou o preço manual, pula para o próximo itinerário
+                    continue;
+                }
+
+                $pricePerDay = $parsedManualRow['pricePerDay'];
+                $manualWorkingDays = $parsedManualRow['manualWorkingDays'];
+                $manualQuantity = $parsedManualRow['manualQuantity'];
+
+                $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $pricePerDay;
+
                 $values_from_csv = 1;
             }
             
@@ -195,11 +213,29 @@ class OrdersController extends AppController
                 'transfer_fee' => $transferFee,
                 'total' => $total,
                 'values_from_csv' => $values_from_csv,
+                'manual_quantity' => $manualQuantity,
             ];
 
             $this->OrderItem->create();
             $this->OrderItem->save($orderItemData);
         }
+    }
+
+    private function parseManualRow($itinerary, $manualPricing)
+    {
+        foreach ($manualPricing as $row) {
+            if($row['benefitId'] == $itinerary['Benefit']['code']){
+                $manualUnitPrice = $row['unitPrice'];
+                $manualWorkingDays = (int)$row['workingDays'];
+                $manualQuantity = $row['quantity'];
+
+                $pricePerDay = $manualUnitPrice * $manualQuantity;
+                
+                return ['pricePerDay' => $pricePerDay, 'manualWorkingDays' => $manualWorkingDays, 'manualQuantity' => $manualQuantity];
+            }
+        }
+
+        return false;
     }
 
     public function edit($id = null)
@@ -640,6 +676,8 @@ class OrdersController extends AppController
         foreach ($csv->getRecords() as $row) {
             $unitPrice = 0;
             $workingDays = 0;
+            $quantity = 0;
+            $benefitId = 0;
             if ($line == 0 || empty($row[0])) {
                 if ($line == 0) {
                     $line++;
@@ -667,7 +705,9 @@ class OrdersController extends AppController
                 $unitPrice = str_replace(".", "", $unitPrice);
                 $unitPrice = (float)str_replace(",", ".", $unitPrice);
                 $workingDays = $row[2];
-                $unitPriceMaping[$existingUser['CustomerUser']['id']] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays];
+                $quantity = $row[3];
+                $benefitId = $row[4];
+                $unitPriceMaping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
             }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];

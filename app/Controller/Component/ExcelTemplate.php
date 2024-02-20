@@ -1449,6 +1449,9 @@ class ExcelTemplate
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
+			$quantity = $dados[$i]["OrderItem"]["manual_quantity"] != 0 ? 
+						$dados[$i]["OrderItem"]["manual_quantity"] : 
+						$dados[$i]["CustomerUserItinerary"]["quantity"];
 
 			$indx++;
 			// $activeWorksheet
@@ -1477,7 +1480,7 @@ class ExcelTemplate
 				->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['working_days'])
 				->setCellValue('R'. $indx, 'Dia')
-				->setCellValue('S'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
+				->setCellValue('S'. $indx, $quantity)
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['var'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['subtotal'])
 				->setCellValue('V'. $indx, '-')

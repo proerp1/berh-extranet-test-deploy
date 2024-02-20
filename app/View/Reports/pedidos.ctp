@@ -120,7 +120,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["nome_fantasia"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["CustomerUserItinerary"]["unit_price"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["manual_quantity"] != 0 ? $data[$i]["OrderItem"]["manual_quantity"] : $data[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["total"]; ?></td>
                         <td>-</td>
