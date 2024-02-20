@@ -780,7 +780,7 @@
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
 
                     <div class="row" style="margin-top:20px;">
-                        <label class="mb-2">Incluir Valor Unitário</label>
+                        <label class="mb-2">Item Variável no Pedido</label>
                         <div class="row">
                             <div class="col">
                                 <div class="form-check form-check-custom form-check-solid">

@@ -144,9 +144,13 @@ class OrdersController extends AppController
         $totalOrder = 0;
 
         foreach ($customerItineraries as $itinerary) {
+            $values_from_csv = 0;
+            $manualWorkingDays = 0;
             if (!empty($manualPricing)) {
-                $manualUnitPrice = $manualPricing[$itinerary['CustomerUserItinerary']['customer_user_id']];
+                $manualUnitPrice = $manualPricing[$itinerary['CustomerUserItinerary']['customer_user_id']]['unitPrice'];
+                $manualWorkingDays = $manualPricing[$itinerary['CustomerUserItinerary']['customer_user_id']]['workingDays'];
                 $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $manualUnitPrice * $itinerary['CustomerUserItinerary']['quantity'];
+                $values_from_csv = 1;
             }
             
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
@@ -160,6 +164,10 @@ class OrdersController extends AppController
 
             if ($workingDaysUser < 0) {
                 $workingDaysUser = 0;
+            }
+
+            if($manualWorkingDays != 0){
+                $workingDaysUser = $manualWorkingDays;
             }
 
             $subtotal = $workingDaysUser * $pricePerDay;
@@ -186,6 +194,7 @@ class OrdersController extends AppController
                 'subtotal' => $subtotal,
                 'transfer_fee' => $transferFee,
                 'total' => $total,
+                'values_from_csv' => $values_from_csv,
             ];
 
             $this->OrderItem->create();
@@ -630,6 +639,7 @@ class OrdersController extends AppController
         $unitPriceMaping = [];
         foreach ($csv->getRecords() as $row) {
             $unitPrice = 0;
+            $workingDays = 0;
             if ($line == 0 || empty($row[0])) {
                 if ($line == 0) {
                     $line++;
@@ -656,7 +666,8 @@ class OrdersController extends AppController
                 // convert brl string to float
                 $unitPrice = str_replace(".", "", $unitPrice);
                 $unitPrice = (float)str_replace(",", ".", $unitPrice);
-                $unitPriceMaping[$existingUser['CustomerUser']['id']] = $unitPrice;
+                $workingDays = $row[2];
+                $unitPriceMaping[$existingUser['CustomerUser']['id']] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays];
             }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
