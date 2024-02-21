@@ -74,6 +74,15 @@ class OrdersController extends AppController
                 }
             }
 
+            $benefit_type_persist = 0;
+            if ($benefit_type != '') {
+                $benefit_type_persist = $benefit_type;
+                $benefit_type = (int)$benefit_type;
+                if($benefit_type == -1){
+                    $benefit_type = [1,2];
+                }
+            }
+
             if ($is_partial == 2) {
                 $condNotPartial = [
                     'CustomerUserItinerary.customer_id' => $customerId,
@@ -82,13 +91,7 @@ class OrdersController extends AppController
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ];
 
-                $benefit_type_persist = 0;
                 if ($benefit_type != '') {
-                    $benefit_type_persist = $benefit_type;
-                    $benefit_type = (int)$benefit_type;
-                    if($benefit_type == -1){
-                        $benefit_type = [1,2];
-                    }
                     $condNotPartial['Benefit.benefit_type_id'] = $benefit_type;
                 }
 
