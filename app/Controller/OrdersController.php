@@ -668,7 +668,7 @@ class OrdersController extends AppController
 
         $numLines = substr_count($file, "\n");
 
-        if ($numLines < 2) {
+        if ($numLines < 1) {
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
