@@ -146,7 +146,7 @@ class BenefitsController extends AppController
 
     public function delete($id)
     {
-        $this->Permission->check(3, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(16, 'excluir') ? '' : $this->redirect('/not_allowed');
         $this->Benefit->id = $id;
 
         $data = ['Benefit' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
