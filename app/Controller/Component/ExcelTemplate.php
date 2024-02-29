@@ -663,7 +663,7 @@ class ExcelTemplate
 		}
 	}
 
-	public function getRelatorioPedidos($objPHPExcel, $dados)
+	public function getPedidosRelatorio($objPHPExcel, $dados)
 	{
 
 		$col = 'A';
