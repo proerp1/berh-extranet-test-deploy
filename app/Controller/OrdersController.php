@@ -71,6 +71,7 @@ class OrdersController extends AppController
         $working_days_type = $this->request->data['working_days_type'];
         $grupo_especifico = $this->request->data['grupo_especifico'];
         $benefit_type = $this->request->data['benefit_type'];
+        $credit_release_date = $this->request->data['credit_release_date'] ? $this->request->data['credit_release_date'] : date('d/m/Y', strtotime(' + 5 day'));
 
 
         if ($this->request->is('post')) {
@@ -86,6 +87,15 @@ class OrdersController extends AppController
                 }
             }
 
+            $benefit_type_persist = 0;
+            if ($benefit_type != '') {
+                $benefit_type_persist = $benefit_type;
+                $benefit_type = (int)$benefit_type;
+                if($benefit_type == -1){
+                    $benefit_type = [1,2];
+                }
+            }
+
             if ($is_partial == 2) {
                 $condNotPartial = [
                     'CustomerUserItinerary.customer_id' => $customerId,
@@ -94,13 +104,7 @@ class OrdersController extends AppController
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 ];
 
-                $benefit_type_persist = 0;
                 if ($benefit_type != '') {
-                    $benefit_type_persist = $benefit_type;
-                    $benefit_type = (int)$benefit_type;
-                    if($benefit_type == -1){
-                        $benefit_type = [1,2];
-                    }
                     $condNotPartial['Benefit.benefit_type_id'] = $benefit_type;
                 }
 
@@ -149,13 +153,40 @@ class OrdersController extends AppController
         }
     }
 
-    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type)
+    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $manualPricing = [])
     {
         $totalTransferFee = 0;
         $totalSubtotal = 0;
         $totalOrder = 0;
 
         foreach ($customerItineraries as $itinerary) {
+            $values_from_csv = 0;
+            $manualWorkingDays = 0;
+            $manualQuantity = 0;
+            $currentUserId = 0;
+            if (!empty($manualPricing)) {
+                $currentUserId = $itinerary['CustomerUserItinerary']['customer_user_id'];
+
+                if(!isset($manualPricing[$currentUserId])){
+                    continue;
+                }
+
+                $parsedManualRow = $this->parseManualRow($itinerary, $manualPricing[$currentUserId]);
+
+                if($parsedManualRow == false){
+                    // se não encontrou o preço manual, pula para o próximo itinerário
+                    continue;
+                }
+
+                $pricePerDay = $parsedManualRow['pricePerDay'];
+                $manualWorkingDays = $parsedManualRow['manualWorkingDays'];
+                $manualQuantity = $parsedManualRow['manualQuantity'];
+
+                $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $pricePerDay;
+
+                $values_from_csv = 1;
+            }
+            
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
             $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
 
@@ -167,6 +198,10 @@ class OrdersController extends AppController
 
             if ($workingDaysUser < 0) {
                 $workingDaysUser = 0;
+            }
+
+            if($manualWorkingDays != 0){
+                $workingDaysUser = $manualWorkingDays;
             }
 
             $subtotal = $workingDaysUser * $pricePerDay;
@@ -193,11 +228,30 @@ class OrdersController extends AppController
                 'subtotal' => $subtotal,
                 'transfer_fee' => $transferFee,
                 'total' => $total,
+                'values_from_csv' => $values_from_csv,
+                'manual_quantity' => $manualQuantity,
             ];
 
             $this->OrderItem->create();
             $this->OrderItem->save($orderItemData);
         }
+    }
+
+    private function parseManualRow($itinerary, $manualPricing)
+    {
+        foreach ($manualPricing as $row) {
+            if($row['benefitId'] == $itinerary['Benefit']['code']){
+                $manualUnitPrice = $row['unitPrice'];
+                $manualWorkingDays = (int)$row['workingDays'];
+                $manualQuantity = $row['quantity'];
+
+                $pricePerDay = $manualUnitPrice * $manualQuantity;
+                
+                return ['pricePerDay' => $pricePerDay, 'manualWorkingDays' => $manualWorkingDays, 'manualQuantity' => $manualQuantity];
+            }
+        }
+
+        return false;
     }
 
     public function edit($id = null)
@@ -591,8 +645,11 @@ class OrdersController extends AppController
         $customerId = $this->request->data['customer_id'];
 
         $file = $this->request->data['CustomerUserItinerary'];
+        $incluir_valor_unitario = (int)$this->request->data['incluir_valor_unitario'] == 1;
 
-        $customerUsersIds = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name']);
+        $ret = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name'], $incluir_valor_unitario);
+        $customerUsersIds = $ret['customerUsersIds'];
+        $manualPricing = $ret['unitPriceMaping'];
 
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
@@ -607,7 +664,7 @@ class OrdersController extends AppController
             'conditions' => $cond,
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type']);
+        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type'], $manualPricing);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -616,7 +673,7 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $orderId]);
     }
 
-    private function parseCSVwithCPFColumn($customerId, $tmpFile)
+    private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
@@ -624,13 +681,19 @@ class OrdersController extends AppController
 
         $numLines = substr_count($file, "\n");
 
-        if ($numLines < 2) {
+        if ($numLines < 1) {
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
         $line = 0;
         $customerUsersIds = [];
+        $unitPrice = 0;
+        $unitPriceMaping = [];
         foreach ($csv->getRecords() as $row) {
+            $unitPrice = 0;
+            $workingDays = 0;
+            $quantity = 0;
+            $benefitId = 0;
             if ($line == 0 || empty($row[0])) {
                 if ($line == 0) {
                     $line++;
@@ -638,7 +701,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);
+            $cpf = preg_replace('/\D/', '', $row[0]);            
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -652,12 +715,23 @@ class OrdersController extends AppController
                 continue;
             }
 
+            if($include_new_price){
+                $unitPrice = $row[1];
+                // convert brl string to float
+                $unitPrice = str_replace(".", "", $unitPrice);
+                $unitPrice = (float)str_replace(",", ".", $unitPrice);
+                $workingDays = $row[2];
+                $quantity = $row[3];
+                $benefitId = $row[4];
+                $unitPriceMaping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
+            }
+
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
 
             $line++;
         }
 
-        return $customerUsersIds;
+        return ['customerUsersIds' => $customerUsersIds, 'unitPriceMaping' => $unitPriceMaping];
     }
 
     public function updateWorkingDays()
@@ -799,8 +873,10 @@ class OrdersController extends AppController
         }
         if ($benefit_type != '') {
             $benefit_type = (int)$benefit_type;
+            $benefit_type_persist = $benefit_type;
             $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
+            $cond2['Benefit.benefit_type_id'] = $benefit_type;
         }
 
         $economic_groups = $this->CustomerUserItinerary->find('all', [
@@ -866,12 +942,8 @@ class OrdersController extends AppController
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
             ];
-
-            $benefit_type_persist = 0;
+            
             if ($benefit_type != '') {
-                $benefit_type = (int)$benefit_type;
-                $benefit_type_persist = (int)$benefit_type;
-                $benefit_type = $this->groupBenefitType[$benefit_type];
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 

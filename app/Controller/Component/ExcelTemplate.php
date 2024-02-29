@@ -718,7 +718,7 @@ class ExcelTemplate
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['code']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['name']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['id']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['id']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['nome_fantasia']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['BenefitType']['name']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['unit_price']); $col++;
@@ -1485,6 +1485,9 @@ class ExcelTemplate
 		for ($i = 0; $i < count($dados); $i++) {
 
 			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
+			$quantity = $dados[$i]["OrderItem"]["manual_quantity"] != 0 ? 
+						$dados[$i]["OrderItem"]["manual_quantity"] : 
+						$dados[$i]["CustomerUserItinerary"]["quantity"];
 
 			$indx++;
 			// $activeWorksheet
@@ -1513,7 +1516,7 @@ class ExcelTemplate
 				->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['working_days'])
 				->setCellValue('R'. $indx, 'Dia')
-				->setCellValue('S'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
+				->setCellValue('S'. $indx, $quantity)
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['var'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['subtotal'])
 				->setCellValue('V'. $indx, '-')

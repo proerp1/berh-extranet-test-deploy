@@ -120,7 +120,6 @@ class SuppliersController extends AppController
     {
         $this->Permission->check(9, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->Supplier->id = $id;
-        $this->request->data = $this->Supplier->read();
 
         $this->request->data['Supplier']['data_cancel'] = date("Y-m-d H:i:s");
         $this->request->data['Supplier']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
@@ -129,6 +128,10 @@ class SuppliersController extends AppController
             $this->Flash->set(__('O fornecedor foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index']);
         }
+
+        
+
+        
     }
      /*********************
                 DOCUMENTOS
