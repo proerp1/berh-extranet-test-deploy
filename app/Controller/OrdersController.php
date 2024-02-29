@@ -7,7 +7,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'ExcelGenerator', 'Outcome'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -34,6 +34,19 @@ class OrdersController extends AppController
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        if (isset($_GET['exportar'])) {
+            $nome = 'pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Order->find('all', [
+                'contain' => ['Resale', 'Status', 'Seller'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelPedidos($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         $data = $this->Paginator->paginate('Order', $condition);

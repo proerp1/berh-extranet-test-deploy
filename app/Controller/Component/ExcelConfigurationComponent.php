@@ -199,6 +199,7 @@ class ExcelConfigurationComponent extends Component {
 
 					'Order.id',
 					'Order.created',
+					'Order.transfer_fee',
 
 					'OrderStatus.name',
 

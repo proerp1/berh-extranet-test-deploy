@@ -663,6 +663,41 @@ class ExcelTemplate
 		}
 	}
 
+	public function getRelatorioPedidos($objPHPExcel, $dados)
+	{
+
+		$col = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cliente"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Período"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Subtotal"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Repasse"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Desconto"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Usuário"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Grupo Econômico	"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de criação	"); $col++;
+		
+		foreach ($dados as $key => $dado) {
+			$col = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["id"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["nome_primario"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["order_period_from"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["subtotal"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["transfer_fee"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["commission_fee"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["desconto"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["total"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerCreator"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['EconomicGroup']['name']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['created']); $col++;
+			
+		}
+	}
+
 	public function getBeneficioRelatorio($objPHPExcel, $dados)
 	{
 
@@ -1442,6 +1477,7 @@ class ExcelTemplate
 		->setCellValue('BF1', "Pedido")
 		->setCellValue('BG1', "Status")
 		->setCellValue('BH1', "Data")
+		
 		;
 
 		$indx = 1;
@@ -1590,7 +1626,9 @@ class ExcelTemplate
 		->setCellValue('BH1', "Pedido")
 		->setCellValue('BI1', "Data Geração Ped")
 		->setCellValue('BJ1', "Status Pedido")
-		->setCellValue('BK1', "RAZAO SOCIAL CLIENTE");
+		->setCellValue('BK1', "RAZAO SOCIAL CLIENTE")
+		->setCellValue('BL1', "Repasse");
+		
 
 		$indx = 1;
 		$total = 0;
@@ -1669,7 +1707,8 @@ class ExcelTemplate
 				->setCellValue('BH'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('BI'. $indx, $dados[$i]['Order']['created'])
 				->setCellValue('BJ'. $indx, $dados[$i]['OrderStatus']['name'])
-				->setCellValue('BK'. $indx, $dados[$i]['Customer']['nome_primario']);
+				->setCellValue('BK'. $indx, $dados[$i]['Customer']['nome_primario'])
+				->setCellValue('BL'. $indx, $dados[$i]['OrderItem']['transfer_fee']);
 		}
 	}
 }

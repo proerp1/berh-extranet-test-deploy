@@ -100,6 +100,7 @@
                     <th>Valor Unitário</th>
                     <th>Quantidade</th>
                     <th>Var</th>
+                    <th>Repasse</th>
                     <th>Total</th>
                     <th> SIC Ctba
                     </th>
@@ -122,6 +123,7 @@
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["CustomerUserItinerary"]["unit_price"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["transfer_fee"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["total"]; ?></td>
                         <td>-</td>
                     </tr>
