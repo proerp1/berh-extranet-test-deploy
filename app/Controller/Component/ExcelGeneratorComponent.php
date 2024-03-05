@@ -34,7 +34,7 @@ class ExcelGeneratorComponent extends Component
 
         $this->templates_list->getPedidosRelatorio($spreadsheet, $dados);
 
-        $local_salva = APP.'webroot/files/excel/'.$nome;
+        $local_salva = APP.'Private/excel/'.$nome.'.xlsx';
 
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);

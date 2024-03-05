@@ -7,7 +7,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome', 'ExcelGenerator', 'ExcelConfiguration'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -124,17 +124,19 @@ class OrdersController extends AppController
                     $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
                 }
 
-                if (isset($_GET['exportar'])) {
-                    $nome = 'Pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
+                if (isset($_GET['excel'])) {
+                    $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
+                    $this->Paginator->settings = ['OrderItem' => $pag];
+                }
         
-                    $data = $this->Order->find('all', [
-                        'contain' => ['Resale', 'Status', 'Seller'],
-                        'conditions' => $condition, 
-                    ]);
+                $data = $this->Paginator->paginate('OrderItem', $condition);
         
-                    $this->ExcelGenerator->gerarExcelPedidos($nome, $data);
+                $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
         
-                    $this->redirect("/files/excel/" . $nome);
+                if (isset($_GET['excel'])) {
+                    $this->ExcelGenerator->gerarExcelPedidos('pedidos', $data);
+        
+                    $this->redirect('/private_files/baixar/excel/pedidos_xlsx');
                 }
     
 
