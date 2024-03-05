@@ -124,15 +124,7 @@ class OrdersController extends AppController
                     $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
                 }
 
-                if (isset($_GET['excel'])) {
-                    $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
-                    $this->Paginator->settings = ['OrderItem' => $pag];
-                }
-        
-                $data = $this->Paginator->paginate('OrderItem', $condition);
-        
-                $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
-        
+               
                 if (isset($_GET['excel'])) {
                     $this->ExcelGenerator->gerarExcelPedidos('pedidos', $data);
         
