@@ -58,6 +58,7 @@ class OrdersController extends AppController
         $working_days_type = $this->request->data['working_days_type'];
         $grupo_especifico = $this->request->data['grupo_especifico'];
         $benefit_type = $this->request->data['benefit_type'];
+        $credit_release_date = $this->request->data['credit_release_date'];
 
 
         if ($this->request->is('post')) {
@@ -123,21 +124,6 @@ class OrdersController extends AppController
                 if ($is_partial == 2) {
                     $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
                 }
-
-                if (isset($_GET['excel'])) {
-                    $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
-                    $this->Paginator->settings = ['OrderItem' => $pag];
-                }
-        
-                $data = $this->Paginator->paginate('OrderItem', $condition);
-        
-                $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
-        
-                if (isset($_GET['excel'])) {
-                    $this->ExcelGenerator->gerarExcelPedidos('pedidos', $data);
-        
-                    $this->redirect('/private_files/baixar/excel/pedidos_xlsx');
-                }
     
 
                 $this->Order->id = $orderId;
@@ -191,6 +177,7 @@ class OrdersController extends AppController
                 'order_id' => $orderId,
                 'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
                 'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
+                'manual_quantity' => $itinerary['CustomerUserItinerary']['quantity'],
                 'working_days' => $workingDaysUser,
                 'price_per_day' => $pricePerDay,
                 'subtotal' => $subtotal,
