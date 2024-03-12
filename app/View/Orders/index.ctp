@@ -37,21 +37,19 @@
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option value=''></option>
-                                    <?php
-                                        for($a = 0; $a < count($status); $a++){
-                                            $selected = "";
-                                            if (isset($_GET["t"])) {
-                                                if($status[$a]['Status']['id'] == $_GET["t"]){
-                                                    $selected = "selected";
-                                                }
-                                            }
-                                            echo '<option value="'.$status[$a]['Status']['id'].'" '.$selected.'>'.$status[$a]['Status']['name'].'</option>';
-                                        }
-                                    ?>
-                                </select>
+                            <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                <option value=''></option>
+                                <?php
+                                $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',];
+
+                                foreach ($statusOptions as $statusId => $statusName) {
+                                    $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
+                                    echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
+                                }
+                                ?>
+                            </select>
+
                             </div>
                            
                             <div class="mb-10">

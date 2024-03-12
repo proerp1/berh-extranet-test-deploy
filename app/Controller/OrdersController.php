@@ -7,7 +7,7 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome', 'ExcelGenerator', 'ExcelConfiguration'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome', 'ExcelGenerator', 'ExcelConfiguration', 'Status'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -36,14 +36,21 @@ class OrdersController extends AppController
             $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
+        if (!empty($_GET['t'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+        }
+
         $data = $this->Paginator->paginate('Order', $condition);
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'order' => ['nome_primario' => 'asc']]);
 
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'customers', 'benefit_types'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types'));
     }
 
     public function createOrder()
