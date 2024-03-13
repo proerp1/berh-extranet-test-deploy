@@ -166,6 +166,7 @@ class OrdersController extends AppController
                 case 1:
                 case 2:
                 case 3:
+                case 9:
                     $commissionPerc = $proposal['Proposal']['transport_adm_fee'];
                     break;
                 case 4:
@@ -177,7 +178,6 @@ class OrdersController extends AppController
                 case 5:
                 case 6:
                 case 7:
-                case 9:
                 case 10:
                     $commissionPerc = $proposal['Proposal']['multi_card_adm_fee'];
                     break;
