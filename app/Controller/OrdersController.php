@@ -6,8 +6,10 @@ use League\Csv\Reader;
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'HtmltoPdf'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup', 'BenefitType', 'Outcome', 'ExcelGenerator', 'ExcelConfiguration', 'Status'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf'];
+    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
+    'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
+     'BenefitType', 'Outcome', 'Status'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -38,6 +40,19 @@ class OrdersController extends AppController
 
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+        }
+
+        if (isset($_GET['exportar'])) {
+            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Order->find('all', [
+                'contain' => ['Status', 'Customer', 'CustomerCreator', 'EconomicGroup'],
+                'conditions' => $condition, 
+            ]);
+
+            $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
