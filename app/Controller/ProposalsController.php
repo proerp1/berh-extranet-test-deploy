@@ -82,14 +82,30 @@ class ProposalsController extends AppController
         $this->Proposal->id = $proposalId;
         if ($this->request->is(['post', 'put'])) {
 
+            $old = $this->Proposal->find('first', ['conditions' => ['Proposal.id' => $proposalId], 'fields' => ['Proposal.status_id']]);
+            $old_status = (int)$old['Proposal']['status_id'];
+
             $this->request->data['Proposal']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Proposal->save($this->request->data)) {
+
+                $newStatus = (int)$this->request->data['Proposal']['status_id'];
+
+                if ($newStatus == 99 && $newStatus != $old_status) {
+                    $this->Proposal->unbindModel(['belongsTo' => ['Customer', 'Status']]);
+                    $this->Proposal->updateAll(
+                        ['Proposal.status_id' => 92, 'Proposal.cancelled_description' => "'Cancelado por ativação de outra proposta'"],
+                        ['Proposal.customer_id' => $id, 'Proposal.id !=' => $proposalId]
+                    );
+                }
+
                 $this->Flash->set(__('A proposta foi alterada com sucesso'), ['params' => ['class' => 'alert alert-success']]);
                 $this->redirect(['action' => 'index', $id]);
             } else {
                 $this->Flash->set(__('A proposta não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
         }
+
+        
 
         $temp_errors = $this->Proposal->validationErrors;
         $this->request->data = $this->Proposal->read();
