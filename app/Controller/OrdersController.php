@@ -962,7 +962,8 @@ class OrdersController extends AppController
                         ]
                     ],
                     'conditions' => $cond2,
-                    'recursive' => -1
+                    'recursive' => -1,
+                    'fields' => ['CustomerUserItinerary.*', 'Benefit.*']
                 ]);
 
                 if (empty($customerItineraries)) {
