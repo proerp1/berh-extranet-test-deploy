@@ -850,8 +850,10 @@ class OrdersController extends AppController
         if ($grupo_especifico != '') {
             $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
         }
+        $benefit_type_persist = 0;
         if ($benefit_type != '') {
             $benefit_type = (int)$benefit_type;
+            $benefit_type_persist = (int)$benefit_type;
             $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
@@ -919,12 +921,8 @@ class OrdersController extends AppController
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
             ];
-
-            $benefit_type_persist = 0;
+            
             if ($benefit_type != '') {
-                $benefit_type = (int)$benefit_type;
-                $benefit_type_persist = (int)$benefit_type;
-                $benefit_type = $this->groupBenefitType[$benefit_type];
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 
