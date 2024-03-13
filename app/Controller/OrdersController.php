@@ -46,7 +46,7 @@ class OrdersController extends AppController
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Order->find('all', [
-                'contain' => ['Status', 'Customer', 'CustomerCreator', ''],
+                'contain' => ['Status', 'Customer', 'CustomerCreator', 'EconomicGroup'],
                 'conditions' => $condition, 
             ]);
 
