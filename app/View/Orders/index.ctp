@@ -20,10 +20,10 @@
                         Filtro
                     </button>
 
-                    <button type="submit" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
+                    <a href="<?php echo $this->base.'/orders/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
                         Exportar
-                    </button>
+                    </a>
 
                     <a href="#" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_gerar_arquivo">
                         <i class="fas fa-file"></i>

@@ -111,6 +111,21 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
+    public function gerarExcelPedidoscustomer($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list-> getPedidosRelatorio($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
+
+
+
     public function gerarExcelFornecedores($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
