@@ -55,6 +55,16 @@ class ProposalsController extends AppController
 
             $this->Proposal->create();
             if ($this->Proposal->save($this->request->data)) {
+                $newId = $this->Proposal->id;
+                $newStatus = (int)$this->request->data['Proposal']['status_id'];
+
+                if ($newStatus == 99) {
+                    $this->Proposal->unbindModel(['belongsTo' => ['Customer', 'Status']]);
+                    $this->Proposal->updateAll(
+                        ['Proposal.status_id' => 92, 'Proposal.cancelled_description' => "'Cancelado por ativação de outra proposta'"],
+                        ['Proposal.customer_id' => $id, 'Proposal.status_id !=' => 92, 'Proposal.id !=' => $newId]
+                    );
+                }
                 $this->Flash->set(__('A proposta foi salva com sucesso'), ['params' => ['class' => 'alert alert-success']]);
                 $this->redirect(['action' => 'index', $id]);
             } else {
@@ -94,7 +104,7 @@ class ProposalsController extends AppController
                     $this->Proposal->unbindModel(['belongsTo' => ['Customer', 'Status']]);
                     $this->Proposal->updateAll(
                         ['Proposal.status_id' => 92, 'Proposal.cancelled_description' => "'Cancelado por ativação de outra proposta'"],
-                        ['Proposal.customer_id' => $id, 'Proposal.id !=' => $proposalId]
+                        ['Proposal.customer_id' => $id, 'Proposal.status_id !=' => 92, 'Proposal.id !=' => $proposalId]
                     );
                 }
 
