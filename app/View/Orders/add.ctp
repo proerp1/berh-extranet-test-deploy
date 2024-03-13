@@ -529,10 +529,12 @@
                 <?php
                 $subtotal_head = 0;
                 $transfer_fee_head = 0;
+                $commission_fee_head = 0;
                 $total_head = 0;
                 if ($items) {
                     for ($i = 0; $i < count($items); $i++) {
                         $subtotal_head += $items[$i]["OrderItem"]["subtotal_not_formated"];
+                        $commission_fee_head += $items[$i]["OrderItem"]["commission_fee_not_formated"];
                         $transfer_fee_head += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
                         $total_head += $items[$i]["OrderItem"]["total_not_formated"];
                     }
@@ -563,6 +565,7 @@
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
+                        <th>Comissão</th>
                         <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <th class="rounded-end"></th>
@@ -574,6 +577,7 @@
                         <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
                         <td id="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
                         <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
+                        <td id="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
                         <td id="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
                     </tr>
                     <?php
@@ -612,6 +616,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
@@ -626,6 +631,7 @@
                             <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
                             <td id="subtotal_sum">R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
                             <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
+                            <td id="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
                             <td id="total_sum">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                         </tr>
                     <?php } else { ?>

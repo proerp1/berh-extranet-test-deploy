@@ -34,6 +34,11 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['transfer_fee'] = number_format($results[$key][$this->alias]['transfer_fee'], 2, ',', '.');
             }
 
+            if (isset($val[$this->alias]['commission_fee'])) {
+                $results[$key][$this->alias]['commission_fee_not_formated'] = $results[$key][$this->alias]['commission_fee'];
+                $results[$key][$this->alias]['commission_fee'] = number_format($results[$key][$this->alias]['commission_fee'], 2, ',', '.');
+            }
+
             // var = desconto
             if (isset($val[$this->alias]['var'])) {
                 $results[$key][$this->alias]['var_not_formated'] = $results[$key][$this->alias]['var'];
@@ -62,6 +67,10 @@ class OrderItem extends AppModel {
     public function beforeSave($options = array()) {
 		if (!empty($this->data[$this->alias]['transfer_fee'])) {
 			$this->data[$this->alias]['transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['transfer_fee']);
+		}
+
+        if (!empty($this->data[$this->alias]['commission_fee'])) {
+			$this->data[$this->alias]['commission_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['commission_fee']);
 		}
 
         if (!empty($this->data[$this->alias]['var'])) {

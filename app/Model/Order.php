@@ -182,30 +182,17 @@ class Order extends AppModel
                 'Order.id' => $this->id
             ],
             'fields' => [
+                'SUM(OrderItem.commission_fee) as commission_fee',
                 'SUM(OrderItem.transfer_fee) as transfer_fee',
                 'SUM(OrderItem.subtotal) as subtotal',
                 'SUM(OrderItem.total) as total'
             ],
         ]);
 
-        $order = $this->findById($this->id);
-
+        $commissionFee = $items[0]['commission_fee'];
         $transferFee = $items[0]['transfer_fee'];
         $subtotal = $items[0]['subtotal'];
         $total = $items[0]['total'];
-
-        $customer = $this->Customer->find('first', [
-            'conditions' => [
-                'Customer.id' => $order['Order']['customer_id']
-            ],
-            'fields' => [
-                'Customer.commission_fee_percentage'
-            ]
-        ]);
-
-        $commissionFeePercentage = $customer['Customer']['commission_fee_percentage'];
-
-        $commissionFee = $subtotal * ($commissionFeePercentage / 100);
 
         $this->save(['Order' => [
             'id' => $this->id,
