@@ -176,27 +176,7 @@ class OrdersController extends AppController
 
         foreach ($customerItineraries as $itinerary) {
             $commissionFee = 0;
-            $commissionPerc = 0;
-            switch ($itinerary['Benefit']['benefit_type_id']) {
-                case 1:
-                case 2:
-                case 3:
-                case 9:
-                    $commissionPerc = $proposal['Proposal']['transport_adm_fee'];
-                    break;
-                case 4:
-                    $commissionPerc = $proposal['Proposal']['meal_adm_fee'];
-                    break;
-                case 8:
-                    $commissionPerc = $proposal['Proposal']['fuel_adm_fee'];
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                case 10:
-                    $commissionPerc = $proposal['Proposal']['multi_card_adm_fee'];
-                    break;
-            }
+            $commissionPerc = $this->getCommissionPerc($itinerary['Benefit']['benefit_type_id'], $proposal);
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
             $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
 
@@ -745,10 +725,20 @@ class OrdersController extends AppController
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
+        
         $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
         $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
-
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
+
+        $proposal = $this->Proposal->find('first', [
+            'conditions' => ['Proposal.customer_id' => $orderItem['Order']['customer_id'], 'Proposal.status_id' => 99]
+        ]);
+        $commissionPerc = 0;
+        if (!empty($proposal)) {
+            $commissionPerc = $this->getCommissionPerc($benefit['Benefit']['benefit_type_id'], $proposal);
+        }
+
+        $orderItem['OrderItem']['commission_fee'] = $commissionPerc > 0 ? $orderItem['OrderItem']['subtotal'] * ($commissionPerc / 100) : 0;
 
         $orderItem['OrderItem']['total'] = $orderItem['OrderItem']['subtotal'] + $transferFee;
 
@@ -764,15 +754,18 @@ class OrdersController extends AppController
 
         $pedido_subtotal = $order['Order']['subtotal'];
         $pedido_transfer_fee = $order['Order']['transfer_fee'];
+        $pedido_commission_fee = $order['Order']['commission_fee'];
         $pedido_total = $order['Order']['total'];
 
         echo json_encode([
             'success' => true,
             'subtotal' => $orderItem['OrderItem']['subtotal'],
             'transfer_fee' => $orderItem['OrderItem']['transfer_fee'],
+            'commission_fee' => $orderItem['OrderItem']['commission_fee'],
             'total' => $orderItem['OrderItem']['total'],
             'pedido_subtotal' => $pedido_subtotal,
             'pedido_transfer_fee' => $pedido_transfer_fee,
+            'pedido_commission_fee' => $pedido_commission_fee,
             'pedido_total' => $pedido_total
         ]);
     }
@@ -1262,6 +1255,32 @@ class OrdersController extends AppController
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
+    }
+
+    private function getCommissionPerc($benefitType, $proposal){
+        $commissionPerc = 0;
+        switch ($benefitType) {
+            case 1:
+            case 2:
+            case 3:
+            case 9:
+                $commissionPerc = $proposal['Proposal']['transport_adm_fee'];
+                break;
+            case 4:
+                $commissionPerc = $proposal['Proposal']['meal_adm_fee'];
+                break;
+            case 8:
+                $commissionPerc = $proposal['Proposal']['fuel_adm_fee'];
+                break;
+            case 5:
+            case 6:
+            case 7:
+            case 10:
+                $commissionPerc = $proposal['Proposal']['multi_card_adm_fee'];
+                break;
+        }
+
+        return $commissionPerc;
     }
 
 
