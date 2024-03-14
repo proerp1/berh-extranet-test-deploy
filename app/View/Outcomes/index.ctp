@@ -83,6 +83,7 @@
                         <th>Status</th>
 						<th>Conta bancária</th>
 						<th>Vencimento</th>
+                        <th>Data de criação</th>
 						<th>Parcela</th>
 						<th>Valor a pagar R$</th>
 						<th>Data pagamento</th>
@@ -116,6 +117,7 @@
 								</td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["vencimento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["created"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["parcela"].'ª'; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>

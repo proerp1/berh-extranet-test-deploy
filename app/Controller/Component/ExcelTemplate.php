@@ -212,11 +212,12 @@ class ExcelTemplate
 			->setCellValue('D1', "Status")
 			->setCellValue('E1', "Conta bancária")
 			->setCellValue('F1', "Vencimento")
-			->setCellValue('G1', "Parcela")
-			->setCellValue('H1', "Valor a pagar R$")
-			->setCellValue('I1', "Data pagamento")
-			->setCellValue('J1', "Valor pago R$")
-			->setCellValue('K1', "Observação");
+			->setCellValue('G1', "Data de criação")
+			->setCellValue('H1', "Parcela")
+			->setCellValue('I1', "Valor a pagar R$")
+			->setCellValue('J1', "Data pagamento")
+			->setCellValue('K1', "Valor pago R$")
+			->setCellValue('L1', "Observação");
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
@@ -229,11 +230,12 @@ class ExcelTemplate
 				->setCellValue('D' . $indx, $dados[$i]['Status']['name'])
 				->setCellValue('E' . $indx, $dados[$i]["BankAccount"]["name"])
 				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"])
-				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
-				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["valor_total"])
-				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
-				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_pago"])
-				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["observation"]);
+				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["created"])
+				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
+				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["valor_total"])
+				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
+				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["valor_pago"])
+				->setCellValue('L' . $indx, $dados[$i]["Outcome"]["observation"]);
 		}
 	}
 
