@@ -565,7 +565,7 @@
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
-                        <th>Comissão</th>
+                        <th>Taxa</th>
                         <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <th class="rounded-end"></th>
@@ -575,10 +575,10 @@
                 <tbody>
                     <tr>
                         <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
-                        <td id="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
-                        <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
-                        <td id="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
-                        <td id="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
+                        <td class="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
+                        <td class="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
+                        <td class="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
+                        <td class="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
                     </tr>
                     <?php
                     $subtotal = 0;
@@ -616,7 +616,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 commission_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
@@ -875,10 +875,12 @@
                         line.find('.total_line').html('R$' + response.total);
                         line.find('.subtotal_line').html('R$' + response.subtotal);
                         line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                        line.find('.commission_fee_line').html('R$' + response.commission_fee);
 
-                        $('#subtotal_sum').html('R$' + response.pedido_subtotal);
-                        $('#transfer_fee_sum').html('R$' + response.pedido_transfer_fee);
-                        $('#total_sum').html('R$' + response.pedido_total);
+                        $('.subtotal_sum').html('R$' + response.pedido_subtotal);
+                        $('.transfer_fee_sum').html('R$' + response.pedido_transfer_fee);
+                        $('.commission_fee_sum').html('R$' + response.pedido_commission_fee);
+                        $('.total_sum').html('R$' + response.pedido_total);
                     }
                 });
             }
@@ -907,10 +909,12 @@
                     line.find('.total_line').html('R$' + response.total);
                     line.find('.subtotal_line').html('R$' + response.subtotal);
                     line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                    line.find('.commission_fee_line').html('R$' + response.commission_fee);
 
-                    $('#subtotal_sum').html('R$' + response.pedido_subtotal);
-                    $('#transfer_fee_sum').html('R$' + response.pedido_transfer_fee);
-                    $('#total_sum').html('R$' + response.pedido_total);
+                    $('.subtotal_sum').html('R$' + response.pedido_subtotal);
+                    $('.transfer_fee_sum').html('R$' + response.pedido_transfer_fee);
+                    $('.commission_fee_sum').html('R$' + response.pedido_commission_fee);
+                    $('.total_sum').html('R$' + response.pedido_total);
                 }
             });
         });

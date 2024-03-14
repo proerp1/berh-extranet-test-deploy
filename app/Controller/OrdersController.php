@@ -9,7 +9,7 @@ class OrdersController extends AppController
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
     'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
-     'BenefitType', 'Outcome', 'Status'];
+     'BenefitType', 'Outcome', 'Status', 'Proposal'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -84,8 +84,17 @@ class OrdersController extends AppController
 
 
         if ($this->request->is('post')) {
+            $proposal = $this->Proposal->find('first', [
+                'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
+            ]);
+            if (empty($proposal)) {
+                $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect(['action' => 'index']);
+            }
+
+
             if ($is_consolidated == 2) {
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -144,9 +153,8 @@ class OrdersController extends AppController
                 $orderId = $this->Order->getLastInsertId();
 
                 if ($is_partial == 2) {
-                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $proposal);
                 }
-    
 
                 $this->Order->id = $orderId;
                 $this->Order->reProcessAmounts($orderId);
@@ -160,13 +168,15 @@ class OrdersController extends AppController
         }
     }
 
-    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type)
+    public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $proposal)
     {
         $totalTransferFee = 0;
         $totalSubtotal = 0;
         $totalOrder = 0;
 
         foreach ($customerItineraries as $itinerary) {
+            $commissionFee = 0;
+            $commissionPerc = $this->getCommissionPerc($itinerary['Benefit']['benefit_type_id'], $proposal);
             $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
             $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
 
@@ -188,6 +198,7 @@ class OrdersController extends AppController
                 ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
                 : 0;
             $transferFee = $subtotal * ($transferFeePercentage / 100);
+            $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
 
             $total = $subtotal + $transferFee;
 
@@ -205,6 +216,7 @@ class OrdersController extends AppController
                 'subtotal' => $subtotal,
                 'transfer_fee' => $transferFee,
                 'total' => $total,
+                'commission_fee' => $commissionFee,
             ];
 
             $this->OrderItem->create();
@@ -569,6 +581,14 @@ class OrdersController extends AppController
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
 
+        $proposal = $this->Proposal->find('first', [
+            'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
+        ]);
+        if (empty($proposal)) {
+            $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
             $benefit_type = $this->groupBenefitType[$benefit_type];
@@ -588,7 +608,7 @@ class OrdersController extends AppController
             'conditions' => $cond,
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
+        $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -601,6 +621,14 @@ class OrdersController extends AppController
     {
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
+
+        $proposal = $this->Proposal->find('first', [
+            'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
+        ]);
+        if (empty($proposal)) {
+            $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
 
         $file = $this->request->data['CustomerUserItinerary'];
 
@@ -619,7 +647,7 @@ class OrdersController extends AppController
             'conditions' => $cond,
         ]);
 
-        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type']);
+        $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type'], $proposal);
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
@@ -697,10 +725,20 @@ class OrdersController extends AppController
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
+        
         $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
         $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
-
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
+
+        $proposal = $this->Proposal->find('first', [
+            'conditions' => ['Proposal.customer_id' => $orderItem['Order']['customer_id'], 'Proposal.status_id' => 99]
+        ]);
+        $commissionPerc = 0;
+        if (!empty($proposal)) {
+            $commissionPerc = $this->getCommissionPerc($benefit['Benefit']['benefit_type_id'], $proposal);
+        }
+
+        $orderItem['OrderItem']['commission_fee'] = $commissionPerc > 0 ? $orderItem['OrderItem']['subtotal'] * ($commissionPerc / 100) : 0;
 
         $orderItem['OrderItem']['total'] = $orderItem['OrderItem']['subtotal'] + $transferFee;
 
@@ -716,15 +754,18 @@ class OrdersController extends AppController
 
         $pedido_subtotal = $order['Order']['subtotal'];
         $pedido_transfer_fee = $order['Order']['transfer_fee'];
+        $pedido_commission_fee = $order['Order']['commission_fee'];
         $pedido_total = $order['Order']['total'];
 
         echo json_encode([
             'success' => true,
             'subtotal' => $orderItem['OrderItem']['subtotal'],
             'transfer_fee' => $orderItem['OrderItem']['transfer_fee'],
+            'commission_fee' => $orderItem['OrderItem']['commission_fee'],
             'total' => $orderItem['OrderItem']['total'],
             'pedido_subtotal' => $pedido_subtotal,
             'pedido_transfer_fee' => $pedido_transfer_fee,
+            'pedido_commission_fee' => $pedido_commission_fee,
             'pedido_total' => $pedido_total
         ]);
     }
@@ -770,6 +811,14 @@ class OrdersController extends AppController
         $id = $this->request->data['customer_id'];
         $orderId = $this->request->data['order_id'];
 
+        $proposal = $this->Proposal->find('first', [
+            'conditions' => ['Proposal.customer_id' => $id, 'Proposal.status_id' => 99]
+        ]);
+        if (empty($proposal)) {
+            $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
         $this->CustomerUserItinerary->create();
         $this->CustomerUserItinerary->validates();
 
@@ -787,7 +836,7 @@ class OrdersController extends AppController
                 'recursive' => 2
             ]);
 
-            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1);
+            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
 
             $this->Order->id = $orderId;
             $this->Order->reProcessAmounts($orderId);
@@ -799,7 +848,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -809,8 +858,10 @@ class OrdersController extends AppController
         if ($grupo_especifico != '') {
             $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
         }
+        $benefit_type_persist = 0;
         if ($benefit_type != '') {
             $benefit_type = (int)$benefit_type;
+            $benefit_type_persist = (int)$benefit_type;
             $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
@@ -878,12 +929,8 @@ class OrdersController extends AppController
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
             ];
-
-            $benefit_type_persist = 0;
+            
             if ($benefit_type != '') {
-                $benefit_type = (int)$benefit_type;
-                $benefit_type_persist = (int)$benefit_type;
-                $benefit_type = $this->groupBenefitType[$benefit_type];
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
 
@@ -908,7 +955,8 @@ class OrdersController extends AppController
                         ]
                     ],
                     'conditions' => $cond2,
-                    'recursive' => -1
+                    'recursive' => -1,
+                    'fields' => ['CustomerUserItinerary.*', 'Benefit.*']
                 ]);
 
                 if (empty($customerItineraries)) {
@@ -940,7 +988,7 @@ class OrdersController extends AppController
                 $orderId = $this->Order->getLastInsertId();
 
                 if ($is_partial == 2) {
-                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type);
+                    $this->processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $proposal);
                 }
 
                 $this->Order->id = $orderId;
@@ -1207,6 +1255,32 @@ class OrdersController extends AppController
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
+    }
+
+    private function getCommissionPerc($benefitType, $proposal){
+        $commissionPerc = 0;
+        switch ($benefitType) {
+            case 1:
+            case 2:
+            case 3:
+            case 9:
+                $commissionPerc = $proposal['Proposal']['transport_adm_fee'];
+                break;
+            case 4:
+                $commissionPerc = $proposal['Proposal']['meal_adm_fee'];
+                break;
+            case 8:
+                $commissionPerc = $proposal['Proposal']['fuel_adm_fee'];
+                break;
+            case 5:
+            case 6:
+            case 7:
+            case 10:
+                $commissionPerc = $proposal['Proposal']['multi_card_adm_fee'];
+                break;
+        }
+
+        return $commissionPerc;
     }
 
 
