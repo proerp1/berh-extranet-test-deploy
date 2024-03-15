@@ -49,6 +49,10 @@ class Income extends AppModel
             $this->data[$this->alias]['vencimento'] = $this->dateFormatBeforeSave($this->data[$this->alias]['vencimento']);
         }
 
+        if (!empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
+
         if (!empty($this->data[$this->alias]['data_competencia'])) {
             $this->data[$this->alias]['data_competencia'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_competencia']);
         }
@@ -115,6 +119,7 @@ class Income extends AppModel
                 $results[$key][$this->alias]['vencimento_nao_formatado'] = $val[$this->alias]['vencimento'];
                 $results[$key][$this->alias]['vencimento'] = date("d/m/Y", strtotime($val[$this->alias]['vencimento']));
             }
+
             if (isset($val[$this->alias]['data_competencia'])) {
                 $results[$key][$this->alias]['data_competencia_nao_formatado'] = $val[$this->alias]['data_competencia'];
                 $results[$key][$this->alias]['data_competencia'] = date("d/m/Y", strtotime($val[$this->alias]['data_competencia']));

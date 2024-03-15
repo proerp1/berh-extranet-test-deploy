@@ -122,6 +122,14 @@
                                 </div>
                             </div>
                             <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Criação:</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input class="form-control" id="created_de" name="created_de" value="<?php echo isset($_GET["created_de"]) ? $_GET["created_de"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="created_ate" name="created_ate" value="<?php echo isset($_GET["created_ate"]) ? $_GET["created_ate"] : ""; ?>">
+                                </div>
+                            </div>
+                            <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Competência:</label>
                                 <div class="input-daterange input-group" id="datepicker">
                                     <input class="form-control" id="comp_de" name="comp_de" value="<?php echo isset($_GET["comp_de"]) ? $_GET["comp_de"] : ""; ?>">
@@ -215,6 +223,8 @@
             $("#ate").val(null);
             $("#comp_de").val(null);
             $("#comp_ate").val(null);
+            $("#created_de").val(null);
+            $("#created_ate").val(null);
 
             $("#busca").submit();
         });
