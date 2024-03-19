@@ -59,6 +59,13 @@ class Proposal extends AppModel
         $this->formatPriceFieldBeforeSave('multi_card_workers_price_total');
         $this->formatPriceFieldBeforeSave('multi_card_deli_fee');
         $this->formatPriceFieldBeforeSave('total_price');
+        $this->formatPriceFieldBeforeSave('saude_card_deli_fee');
+        $this->formatPriceFieldBeforeSave('saude_card_workers_price');
+        $this->formatPriceFieldBeforeSave('saude_card_workers_price_total');
+        $this->formatPriceFieldBeforeSave('prev_card_deli_fee');
+        $this->formatPriceFieldBeforeSave('prev_card_workers_price');
+        $this->formatPriceFieldBeforeSave('prev_card_workers_price_total');
+        $this->formatPriceFieldBeforeSave('tpp');
 
         return true;
     }
@@ -90,6 +97,13 @@ class Proposal extends AppModel
             $this->formatPriceFieldAfterFind($results[$key], $val, 'multi_card_deli_fee');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'total_price');
             $this->formatPriceFieldAfterFind($results[$key], $val, 'workers_price_total');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'saude_card_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'saude_card_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'saude_card_workers_price_total');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'prev_card_deli_fee');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'prev_card_workers_price');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'prev_card_workers_price_total');
+            $this->formatPriceFieldAfterFind($results[$key], $val, 'tpp');
         }
 
         return $results;
