@@ -160,11 +160,14 @@ class OrderItem extends AppModel {
     }
 
     public function apiBenficiaryCurrentOrders($data, $customer_user_id){
+        $dateOneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($data)));
+
         $sql = "
         SELECT b.cpf, b.name AS beneficiario, c.nome_secundario AS cliente,
             o.credit_release_date AS data_credito,
             su.nome_fantasia AS beneficio,
-            SUM(i.subtotal) AS valor_credito
+            SUM(i.subtotal) AS valor_credito,
+            o.credit_release_date as data_liberacao_credito
         FROM customer_users b
             INNER JOIN customers c ON c.id = b.customer_id AND c.data_cancel = '1901-01-01' AND c.status_id = 3
             INNER JOIN orders o ON o.customer_id = c.id AND o.data_cancel = '1901-01-01' AND o.status_id IN (85, 86, 87)
@@ -174,9 +177,13 @@ class OrderItem extends AppModel {
             INNER JOIN suppliers su ON su.id = be.supplier_id
         WHERE b.data_cancel = '1901-01-01'
         AND b.status_id = 1
-        AND '".$data."' BETWEEN o.order_period_from AND o.order_period_to
+        AND (
+            (o.order_period_from BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
+            OR
+            (o.order_period_to BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
+            )
         AND i.customer_user_id = ".$customer_user_id."
-        GROUP BY b.id, su.id
+        GROUP BY b.id, su.id, o.id
         ORDER BY beneficiario, beneficio
         ";
 
