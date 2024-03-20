@@ -122,6 +122,14 @@
                                 </div>
                             </div>
                             <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Criação:</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input class="form-control" id="created_de" name="created_de" value="<?php echo isset($_GET["created_de"]) ? $_GET["created_de"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="created_ate" name="created_ate" value="<?php echo isset($_GET["created_ate"]) ? $_GET["created_ate"] : ""; ?>">
+                                </div>
+                            </div>
+                            <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Competência:</label>
                                 <div class="input-daterange input-group" id="datepicker">
                                     <input class="form-control" id="comp_de" name="comp_de" value="<?php echo isset($_GET["comp_de"]) ? $_GET["comp_de"] : ""; ?>">
@@ -153,6 +161,7 @@
                         <th>Cliente</th>
                         <th>Conta bancária</th>
                         <th>Data competência</th>
+                        <th>Data de criação</th>
                         <th>Vencimento</th>
                         <th>Parcela</th>
                         <th>Valor a receber R$</th>
@@ -174,6 +183,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_competencia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["created"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["parcela"].'ª'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>
@@ -213,6 +223,8 @@
             $("#ate").val(null);
             $("#comp_de").val(null);
             $("#comp_ate").val(null);
+            $("#created_de").val(null);
+            $("#created_ate").val(null);
 
             $("#busca").submit();
         });

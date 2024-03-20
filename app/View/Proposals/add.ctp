@@ -12,7 +12,7 @@
                     <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "disabled" => $disabled]); ?>
                 </div>
 
-                <div class="mb-7 col-3">
+                <div class="mb-7 col-2">
                     <label class="form-label">Data da proposta</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <div class="mb-7 col-3">
+                <div class="mb-7 col-2">
                     <label class="form-label">Data da previsão de fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -28,13 +28,21 @@
                     </div>
                 </div>
 
-                <div class="mb-7 col-3">
+                <div class="mb-7 col-2">
                     <label class="form-label">Data do fechamento</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                         <?php echo $this->Form->input('closing_date', ['type' => 'text', 'placeholder' => 'Data do fechamento', 'class' => 'form-control datepicker mb-3 mb-lg-0', "disabled" => $disabled]); ?>
                     </div>
                 </div>
+
+                <div class="mb-7 col-3">
+                                <label class="form-label">TPP</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('tpp', ['type' => 'text', 'placeholder' => 'TPP', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
 
                 <div class="mb-7 col-6" style="display: none;">
                     <label class="fw-semibold fs-6 mb-2">Motivo cancelamento</label>
@@ -233,6 +241,96 @@
                     </div>
                 </div>
 
+                <div class="col-6 mb-7">
+                    <div style="background-color: #f3f3f3;border-radius: 10px;padding: 10px;">
+                        <h3>Saúde</h3>
+
+                        <div class="row">
+                            <div class="mb-7 col-6">
+                                <label class="form-label">Taxa administrativa</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">%</span>
+                                    <?php echo $this->Form->input('saude_card_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-6">
+                                <label class="form-label">Taxa de entrega</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('saude_card_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('saude_card_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('saude_card_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('saude_card_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 mb-7">
+                    <div style="background-color: #f3f3f3;border-radius: 10px;padding: 10px;">
+                        <h3>Previdenciário</h3>
+
+                        <div class="row">
+                            <div class="mb-7 col-6">
+                                <label class="form-label">Taxa administrativa</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">%</span>
+                                    <?php echo $this->Form->input('prev_card_adm_fee', ['type' => 'text', 'placeholder' => 'Taxa administrativa', 'class' => 'form-control percent_format mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-6">
+                                <label class="form-label">Taxa de entrega</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('prev_card_deli_fee', ['type' => 'text', 'placeholder' => 'Taxa de entrega', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="fw-semibold fs-6 mb-2">Qtde de Colaboradores</label>
+                                <?php echo $this->Form->input('prev_card_workers_qty', ['placeholder' => 'Qtde de Colaboradores', 'class' => 'form-control mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Valor por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('prev_card_workers_price', ['type' => 'text', 'placeholder' => 'Valor por colaborador', 'class' => 'form-control money_exchange mb-3 mb-lg-0', "disabled" => $disabled]); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Total por colaborador</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <?php echo $this->Form->input('prev_card_workers_price_total', ['type' => 'text', 'readonly' => true, 'placeholder' => 'Total por colaborador', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mb-7 col-4">
                     <label class="form-label">Total geral</label>
                     <div class="input-group">
@@ -285,14 +383,22 @@
             calculateTotal("#ProposalMultiCardWorkersQty", "#ProposalMultiCardWorkersPrice", "#ProposalMultiCardWorkersPriceTotal");
         });
 
+        $("#ProposalSaudeCardWorkersQty, #ProposalSaudeCardWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalSaudeCardWorkersQty", "#ProposalSaudeCardWorkersPrice", "#ProposalSaudeCardWorkersPriceTotal");
+        });
+
+        $("#ProposalPrevCardWorkersQty, #ProposalPrevCardWorkersPrice").on("change", function () {
+            calculateTotal("#ProposalPrevCardWorkersQty", "#ProposalPrevCardWorkersPrice", "#ProposalPrevCardWorkersPriceTotal");
+        });
+
         $("#ProposalStatusId").on("change", function () {
             showDescField();
         });
 
         showDescField();
 
-        $("#ProposalTransportWorkersPriceTotal, #ProposalMealWorkersPriceTotal, #ProposalFuelWorkersPriceTotal, #ProposalMultiCardWorkersPriceTotal").on("change", function () {
-            var total = parseFloat(transformPrice($('#ProposalTransportWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMealWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalFuelWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMultiCardWorkersPriceTotal').val()));
+        $("#ProposalTransportWorkersPriceTotal, #ProposalMealWorkersPriceTotal, #ProposalFuelWorkersPriceTotal, #ProposalMultiCardWorkersPriceTotal, #ProposalPrevCardWorkersPriceTotal").on("change", function () {
+            var total = parseFloat(transformPrice($('#ProposalTransportWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMealWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalFuelWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalMultiCardWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalSaudeCardWorkersPriceTotal').val())) + parseFloat(transformPrice($('#ProposalPrevCardWorkersPriceTotal').val()));
 
             $('#ProposalTotalPrice').val(formata_dinheiro(total, 2, ',', '.'));
         });

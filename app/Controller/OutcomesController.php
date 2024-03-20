@@ -40,6 +40,16 @@ class OutcomesController extends AppController {
 			}
 		}
 
+		$get_created_de = isset($_GET["created_de"]) ? $_GET["created_de"] : '';
+        $get_created_ate = isset($_GET["created_ate"]) ? $_GET["created_ate"] : '';
+        
+        if ($get_created_de != "" && $get_created_ate != "") {
+            $created_de = date('Y-m-d 00:00:00', strtotime(str_replace('/', '-', $_GET['created_de'])));
+            $created_ate = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $_GET['created_ate'])));
+        
+            $condition['and'] = array_merge($condition['and'], ['Outcome.created >=' => $created_de, 'Outcome.created <=' => $created_ate]);
+        }
+
 		if (isset($_GET['exportar'])) {
 			$nome = 'contas_pagar.xlsx';
 
