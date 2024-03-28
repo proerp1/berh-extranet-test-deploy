@@ -133,6 +133,24 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
+        if (isset($_GET['num']) && $_GET['num'] != '') {
+            // Dividindo a entrada em uma matriz de números
+            $selectedNumbers = preg_split("/[\s,]+/", $_GET['num']);
+            
+            // Removendo valores em branco da matriz
+            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
+
+            // Adicionando a condição para cada número selecionado
+            $orConditions = [];
+            foreach ($selectedNumbers as $number) {
+                $orConditions[] = ['Order.id' => $number];
+            }
+
+            // Unindo as condições com OR
+            $condition['and'][] = ['or' => $orConditions];
+        }
+
+
         if (isset($_GET['st']) and $_GET['st'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
@@ -150,6 +168,8 @@ class ReportsController extends AppController
                 'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%',
                 'Customer.nome_primario LIKE' => '%' . $_GET['q'] . '%',
                 'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
+                'Order.id LIKE' => '%' . $_GET['q'] . '%',
+
             ]);
         }
 

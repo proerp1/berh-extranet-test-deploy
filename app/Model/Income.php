@@ -48,11 +48,12 @@ class Income extends AppModel
         if (!empty($this->data[$this->alias]['vencimento'])) {
             $this->data[$this->alias]['vencimento'] = $this->dateFormatBeforeSave($this->data[$this->alias]['vencimento']);
         }
-
         if (!empty($this->data[$this->alias]['created'])) {
-            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+            $created_date = date_create_from_format('d/m/Y', $this->data[$this->alias]['created']);
+            
         }
-
+        
+ 
         if (!empty($this->data[$this->alias]['data_competencia'])) {
             $this->data[$this->alias]['data_competencia'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_competencia']);
         }
@@ -119,6 +120,10 @@ class Income extends AppModel
                 $results[$key][$this->alias]['vencimento_nao_formatado'] = $val[$this->alias]['vencimento'];
                 $results[$key][$this->alias]['vencimento'] = date("d/m/Y", strtotime($val[$this->alias]['vencimento']));
             }
+            if (isset($val[$this->alias]['created'])) {
+                $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+            }
 
             if (isset($val[$this->alias]['data_competencia'])) {
                 $results[$key][$this->alias]['data_competencia_nao_formatado'] = $val[$this->alias]['data_competencia'];
@@ -150,9 +155,7 @@ class Income extends AppModel
                 $results[$key][$this->alias]['valor_pago_nao_formatado'] = $results[$key][$this->alias]['valor_pago'];
                 $results[$key][$this->alias]['valor_pago'] = number_format($results[$key][$this->alias]['valor_pago'], 2, ',', '.');
             }
-            if (isset($val[$this->alias]['created'])) {
-                $results[$key][$this->alias]['created'] = date("d/m/Y H:i:s", strtotime($results[$key][$this->alias]['created']));
-            }
+           
         }
 
         return $results;

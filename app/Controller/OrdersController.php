@@ -42,6 +42,16 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
         }
 
+        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
+
+        if ($get_de != '' and $get_ate != '') {
+            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+
+            $condition['and'] = array_merge($condition['and'], ['Order.created >=' => $de . ' 00:00:00', 'Order.created <=' => $ate . ' 23:59:59']);
+        }
+
         if (isset($_GET['exportar'])) {
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
 
