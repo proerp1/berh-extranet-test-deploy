@@ -245,7 +245,7 @@ class OrdersController extends AppController
             $transferFee = $subtotal * ($transferFeePercentage / 100);
             $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
 
-            $total = $subtotal + $transferFee;
+            $total = $subtotal + $transferFee + $commissionFee;
 
             $totalTransferFee += $transferFee;
             $totalSubtotal += $subtotal;
@@ -824,7 +824,7 @@ class OrdersController extends AppController
 
         $orderItem['OrderItem']['commission_fee'] = $commissionPerc > 0 ? $orderItem['OrderItem']['subtotal'] * ($commissionPerc / 100) : 0;
 
-        $orderItem['OrderItem']['total'] = $orderItem['OrderItem']['subtotal'] + $transferFee;
+        $orderItem['OrderItem']['total'] = $orderItem['OrderItem']['subtotal'] + $transferFee + $orderItem['OrderItem']['commission_fee'];
 
         $this->OrderItem->id = $itemId;
         $this->OrderItem->save($orderItem);

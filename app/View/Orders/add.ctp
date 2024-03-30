@@ -574,7 +574,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
+                        <td colspan="7"></td>
                         <td class="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
                         <td class="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
                         <td class="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
@@ -628,7 +628,7 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="<?php echo $order['Order']['status_id'] == 83 ? 7 : 6 ?>"></td>
+                            <td colspan="7"></td>
                             <td id="subtotal_sum">R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
                             <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
                             <td id="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
