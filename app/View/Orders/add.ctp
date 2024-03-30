@@ -526,21 +526,6 @@
                     </div>
                 </form>
 
-                <?php
-                $subtotal_head = 0;
-                $transfer_fee_head = 0;
-                $commission_fee_head = 0;
-                $total_head = 0;
-                if ($items) {
-                    for ($i = 0; $i < count($items); $i++) {
-                        $subtotal_head += $items[$i]["OrderItem"]["subtotal_not_formated"];
-                        $commission_fee_head += $items[$i]["OrderItem"]["commission_fee_not_formated"];
-                        $transfer_fee_head += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
-                        $total_head += $items[$i]["OrderItem"]["total_not_formated"];
-                    }
-                }
-                ?>
-
                 <div class="row">
                     <div class="col-11" style="width: 88%">
                         <?php echo $this->element("pagination"); ?>
@@ -575,10 +560,13 @@
                 <tbody>
                     <tr>
                         <td colspan="7"></td>
-                        <td class="subtotal_sum">R$<?php echo number_format($subtotal_head, 2, ',', '.'); ?></td>
-                        <td class="transfer_fee_sum">R$<?php echo number_format($transfer_fee_head, 2, ',', '.'); ?></td>
-                        <td class="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
-                        <td class="total_sum">R$<?php echo number_format($total_head, 2, ',', '.'); ?></td>
+                        <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
+                        <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
+                        <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
+                        <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
+                        <?php if ($order['Order']['status_id'] == 83) { ?>
+                            <td>&nbsp;</td>
+                        <?php } ?>
                     </tr>
                     <?php
                     $subtotal = 0;
@@ -629,10 +617,13 @@
                         <?php } ?>
                         <tr>
                             <td colspan="7"></td>
-                            <td id="subtotal_sum">R$<?php echo number_format($subtotal, 2, ',', '.'); ?></td>
-                            <td id="transfer_fee_sum">R$<?php echo number_format($transfer_fee, 2, ',', '.'); ?></td>
-                            <td id="commission_fee_sum">R$<?php echo number_format($commission_fee_head, 2, ',', '.'); ?></td>
-                            <td id="total_sum">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
+                            <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
+                            <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
+                            <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
+                            <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
+                            <?php if ($order['Order']['status_id'] == 83) { ?>
+                                <td>&nbsp;</td>
+                            <?php } ?>
                         </tr>
                     <?php } else { ?>
                         <tr>
