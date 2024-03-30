@@ -165,9 +165,10 @@ class OrderItem extends AppModel {
         $sql = "
         SELECT b.cpf, b.name AS beneficiario, c.nome_secundario AS cliente,
             o.credit_release_date AS data_credito,
-            su.nome_fantasia AS beneficio,
+            be.name AS beneficio,
             SUM(i.subtotal) AS valor_credito,
-            o.credit_release_date as data_liberacao_credito
+            o.end_date as data_liberacao_credito,
+            CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('5803-', o.id), '-'), c.id), '-'), su.id) AS pedido_id
         FROM customer_users b
             INNER JOIN customers c ON c.id = b.customer_id AND c.data_cancel = '1901-01-01' AND c.status_id = 3
             INNER JOIN orders o ON o.customer_id = c.id AND o.data_cancel = '1901-01-01' AND o.status_id IN (85, 86, 87)
