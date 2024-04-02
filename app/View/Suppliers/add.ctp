@@ -150,7 +150,7 @@
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">URL</label>
                 <div class="input-group">
-                    <?php echo $this->Form->input('url', ["placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0", "id" => "urlInput"]);  ?>
+                    <?php echo $this->Form->input('url', ["placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0", "id" => "urlInput", "autocomplete" => "off"]);  ?>
                     <button class="btn btn-outline-secondary" type="button" id="copyButton">
                         <i class="fas fa-copy"></i>
                         <i class="fas fa-check" style="display: none;"></i>
