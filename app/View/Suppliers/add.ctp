@@ -145,6 +145,29 @@
                 <?php echo $this->Form->input('site', ["placeholder" => "Site", "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
         </div>
+
+        <div class="row">
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">URL</label>
+                <div class="input-group">
+                    <?php echo $this->Form->input('url', ["placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0", "id" => "urlInput"]);  ?>
+                    <button class="btn btn-outline-secondary" type="button" id="copyButton">
+                        <i class="fas fa-copy"></i>
+                        <i class="fas fa-check" style="display: none;"></i>
+                    </button>
+                </div>
+        </div>
+
+            <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Login</label>
+                    <?php echo $this->Form->input('login', ["placeholder" => "Login", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+
+            <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Senha</label>
+                    <?php echo $this->Form->input('senha', ["placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+            </div>
         
         <div class="row">
     <div class="col-md-6 mb-7">
@@ -323,5 +346,26 @@
                 element.mask("(99) 9999-9999?9");
             }
         }).trigger('focusout');
+    });
+    
+    document.getElementById('copyButton').addEventListener('click', function() {
+        var urlInput = document.getElementById('urlInput');
+        urlInput.select();
+        document.execCommand('copy');
+        
+        // Mostrar o ícone de checkmark
+        var checkIcon = this.querySelector('.fa-check');
+        checkIcon.style.display = 'inline-block';
+        
+        // Tornar o botão verde temporariamente
+        this.classList.remove('btn-outline-secondary');
+        this.classList.add('btn-success');
+        
+        // Reverter para o estado original após 1 segundo
+        setTimeout(function() {
+            checkIcon.style.display = 'none';
+            document.getElementById('copyButton').classList.remove('btn-success');
+            document.getElementById('copyButton').classList.add('btn-outline-secondary');
+        }, 1000);
     });
 </script>
