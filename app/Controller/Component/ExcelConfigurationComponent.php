@@ -170,6 +170,7 @@ class ExcelConfigurationComponent extends Component {
 					'Benefit.code',
 					'Supplier.id',
 					'EconomicGroups.razao_social',
+					'EconomicGroups.document',
 					'Supplier.nome_fantasia',
 					'MAX(CustomerUserAddress.zip_code) as cep',
 					'MAX(CustomerUserAddress.address_line) as endereco',

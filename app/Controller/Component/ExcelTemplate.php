@@ -1644,7 +1644,8 @@ class ExcelTemplate
 		->setCellValue('BK1', "Status Pedido")
 		->setCellValue('BL1', "RAZAO SOCIAL CLIENTE")
 		->setCellValue('BM1', "Repasse")
-		->setCellValue('BN1', "Grupo Economico");
+		->setCellValue('BN1', "GE")
+		->setCellValue('BO1', "GE-CNPJ");
 
 		
 
@@ -1728,7 +1729,8 @@ class ExcelTemplate
 				->setCellValue('BK'. $indx, $dados[$i]['OrderStatus']['name'])
 				->setCellValue('BL'. $indx, $dados[$i]['Customer']['nome_primario'])
 				->setCellValue('BM'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
-				->setCellValue('BN'. $indx, $dados[$i]['EconomicGroups']['razao_social']);
+				->setCellValue('BN'. $indx, $dados[$i]['EconomicGroups']['razao_social'])
+				->setCellValue('BO'. $indx, $dados[$i]['EconomicGroups']['document']);
 		}
 	}
 }
