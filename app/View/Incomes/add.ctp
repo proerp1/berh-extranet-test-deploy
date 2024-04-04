@@ -276,7 +276,7 @@
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/18'; ?>" class="btn btn-danger">Aprovar Cancelamento</a>
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/15'; ?>" class="btn btn-danger">Reprovar Cancelamento</a>
                         <?php } ?>
-                        <a href="<?php echo $this->base.'/incomes/envia_email/'.$id; ?>" class="btn btn-danger">Enviar boleto</a>
+                        
                     <?php } else { ?>
                         <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
                     <?php } ?>
