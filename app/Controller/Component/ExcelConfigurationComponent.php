@@ -19,7 +19,6 @@ class ExcelConfigurationComponent extends Component {
 					'Benefit.code',
 					'Supplier.id',
 					'Supplier.code',
-					'EconomicGroups.razao_social',
 					'MAX(CustomerUserAddress.zip_code) as cep',
 					'MAX(CustomerUserAddress.address_line) as endereco',
 					'MAX(CustomerUserAddress.address_number) as numero',
@@ -66,11 +65,6 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'OrderStatus',
 						'type' => 'INNER',
 						'conditions' => ['Order.status_id = OrderStatus.id']
-					],[
-						'table' => 'economic_groups',
-						'alias' => 'EconomicGroups',
-						'type' => 'LEFT',
-						'conditions' => ['Order.economic_group_id = EconomicGroups.id']
 					],
 					[
 						'table' => 'customers',
@@ -175,6 +169,7 @@ class ExcelConfigurationComponent extends Component {
 					'OrderItem.*',
 					'Benefit.code',
 					'Supplier.id',
+					'EconomicGroups.razao_social',
 					'Supplier.nome_fantasia',
 					'MAX(CustomerUserAddress.zip_code) as cep',
 					'MAX(CustomerUserAddress.address_line) as endereco',
@@ -225,6 +220,12 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'OrderStatus',
 						'type' => 'INNER',
 						'conditions' => ['Order.status_id = OrderStatus.id']
+					],
+					[
+						'table' => 'economic_groups',
+						'alias' => 'EconomicGroups',
+						'type' => 'LEFT',
+						'conditions' => ['Order.economic_group_id = EconomicGroups.id']
 					],
 					[
 						'table' => 'customers',
