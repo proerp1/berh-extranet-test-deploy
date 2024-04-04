@@ -15,6 +15,7 @@ class CustomersController extends AppController
             'fields' => [
                 'Customer.codigo_associado',
                 'Customer.nome_secundario',
+                'Customer.nome_secundario',
                 'Customer.documento',
                 'Customer.cidade',
                 'Customer.estado',
