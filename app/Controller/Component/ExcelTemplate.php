@@ -671,7 +671,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['pix_id']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_boleto'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_1_via'] ? 'S' : 'N'); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_2_via']);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['valor_2_via']); $col++;
 		}
 	}
 
@@ -1643,7 +1643,9 @@ class ExcelTemplate
 		->setCellValue('BJ1', "Data Geração Ped")
 		->setCellValue('BK1', "Status Pedido")
 		->setCellValue('BL1', "RAZAO SOCIAL CLIENTE")
-		->setCellValue('BM1', "Repasse");
+		->setCellValue('BM1', "Repasse")
+		->setCellValue('BN1', "Grupo Economico");
+
 		
 
 		$indx = 1;
@@ -1725,7 +1727,8 @@ class ExcelTemplate
 				->setCellValue('BJ'. $indx, $dados[$i]['Order']['created'])
 				->setCellValue('BK'. $indx, $dados[$i]['OrderStatus']['name'])
 				->setCellValue('BL'. $indx, $dados[$i]['Customer']['nome_primario'])
-				->setCellValue('BM'. $indx, $dados[$i]['OrderItem']['transfer_fee']);
+				->setCellValue('BM'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
+				->setCellValue('BN'. $indx, $dados[$i]['EconomicGroups']['razao_social']);
 		}
 	}
 }
