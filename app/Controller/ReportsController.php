@@ -100,7 +100,10 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-
+	    
+	set_time_limit(90);
+        ini_set('memory_limit', '-1');
+	    
         $paginationConfig = $this->CustomReports->configPagination('pedidos');
         $this->Paginator->settings = $paginationConfig;
 
