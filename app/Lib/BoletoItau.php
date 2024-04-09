@@ -10,7 +10,7 @@ class BoletoItau extends Controller
     {
         return new \Eduardokum\LaravelBoleto\Pessoa([
             'documento' => $dados['documento'],
-            'nome'      => substr($dados['nome_primario'], 0, 80),
+            'nome'      => substr($dados['nome_primario'], 0, 70),
             'cep'       => $dados['cep'],
             'endereco'  => $dados['endereco'],
             'bairro'    => $dados['bairro'],
