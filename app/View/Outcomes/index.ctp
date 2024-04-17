@@ -1,4 +1,49 @@
 <?php $url_novo = $this->base."/outcomes/add/"; ?>
+<?php echo $this->element("abas_contas_pagar"); ?>
+<div class="row gy-5 g-xl-10">
+    <div class="col-lg-4 col-sm-6 mb-xl-10">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                     <i class="fas fa-dollar-sign fa-3x text-danger"></i>
+                </div>
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Valor a ser pago</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-column mt-3 w-100">
+                    <div class="h-8px mx-3 w-100 bg-light-info rounded">
+                        <div class="bg-danger rounded h-8px" role="progressbar" style="width: 55%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 col-sm-6 mb-xl-10">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <i class="fas fa-dollar-sign fa-3x text-success"></i>
+                </div>
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($pago_outcome[0]["pago_outcome"], 2, ",", '.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Valor pago</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-column mt-3 w-100">
+                    <div class="h-8px mx-3 w-100 bg-light-info rounded">
+                        <div class="bg-success rounded h-8px" role="progressbar" style="width: 55%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="card mb-5 mb-xl-8">
 	<form action="<?php echo $this->Html->url(array( "controller" => "outcomes", "action" => "index")); ?>/" role="form" id="busca" autocomplete="off">

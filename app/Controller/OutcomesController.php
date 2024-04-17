@@ -17,6 +17,8 @@ class OutcomesController extends AppController {
 		$this->Paginator->settings = $this->paginate;
 
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
+		$total_outcome = 0;
+		$pago_outcome = 0;
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
 			$condition['or'] = array_merge($condition['or'], ['Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
@@ -60,7 +62,6 @@ class OutcomesController extends AppController {
 			$this->redirect("/files/excel/".$nome);
 		}
 
-		
 				$saldo = 0;
 
 				if (!empty($data) && is_array($data)) {
@@ -75,13 +76,30 @@ class OutcomesController extends AppController {
 				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
 				echo "Saldo: " . $saldo;
 
+				
+				$total_outcome = $this->Outcome->find('first', [
+					'conditions' => $condition,
+					'fields' => [
+						'sum(Outcome.valor_total) as total_outcome',	
+					]
+				]);
+				
+				$pago_outcome = $this->Outcome->find('first', [
+					'conditions' => $condition,
+					'fields' => [
+						'sum(Outcome.valor_pago) as pago_outcome',	
+					]
+				]);
+				
 
+				
 
+		$this->Paginator->settings['order'] = ['Outcome.created' => 'DESC'];
 		$data = $this->Paginator->paginate('Outcome', $condition);
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
 		$action = 'Contas a pagar';
-		$this->set(compact('status', 'data', 'action'));
+		$this->set(compact('status', 'data', 'action', 'total_outcome', 'pago_outcome'));
 	}
 	
 	public function add() {
