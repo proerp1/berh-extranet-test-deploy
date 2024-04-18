@@ -755,7 +755,7 @@ class OrdersController extends AppController
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
-                    "REPLACE(REPLACE(CustomerUser.cpfa, '-', ''), '.', '')" => $cpf,
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
                     'CustomerUser.customer_id' => $customerId,
                 ]
             ]);
