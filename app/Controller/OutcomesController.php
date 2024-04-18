@@ -17,8 +17,7 @@ class OutcomesController extends AppController {
 		$this->Paginator->settings = $this->paginate;
 
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
-		$total_outcome = 0;
-		$pago_outcome = 0;
+		
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
 			$condition['or'] = array_merge($condition['or'], ['Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
@@ -75,7 +74,8 @@ class OutcomesController extends AppController {
 
 				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
 				echo "Saldo: " . $saldo;
-
+				$total_outcome = 0;
+				$pago_outcome = 0;
 				
 				$total_outcome = $this->Outcome->find('first', [
 					'conditions' => $condition,
