@@ -1,5 +1,6 @@
 <?php $url_novo = $this->base."/outcomes/add/"; ?>
 <?php echo $this->element("abas_contas_pagar"); ?>
+
 <div class="row gy-5 g-xl-10">
     <!-- Terceiro card -->
     <div class="col-lg-4 col-sm-6 mb-xl-10">
@@ -59,35 +60,6 @@
             </div>
         </div>
     </div>
-
-<!-- Primeiro card -->
-<div class="col-lg-4 col-sm-6 mb-xl-10">
-    <div class="card h-lg-100">
-        <div class="card-body d-flex justify-content-between align-items-start flex-column">
-            <div class="m-0">
-                <i class="fas fa-dollar-sign fa-3x text-primary"></i> <!-- Alterando para azul -->
-            </div>
-            <div class="d-flex flex-column my-7">
-                <?php if(isset($total_outcome[0]["total_outcome"])): ?>
-                    <span class="fw-bold fs-3x text-primary lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span> <!-- Alterando para azul -->
-                <?php else: ?>
-                    <span class="fw-bold fs-3x text-primary lh-1 ls-n2">R$ 0.00</span> <!-- Alterando para azul -->
-                <?php endif; ?>
-                <div class="m-0">
-                    <span class="fw-bold fs-6 text-primary">Valor Total</span> <!-- Alterando para azul -->
-                </div>
-            </div>
-            <div class="d-flex align-items-center flex-column mt-3 w-100">
-                <div class="h-8px mx-3 w-100 bg-light-info rounded">
-                    <?php if(isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
-                        <?php $valor_a_pagar = $total_outcome[0]["total_outcome"] - $pago_outcome[0]["pago_outcome"]; ?>
-                        <div class="bg-primary rounded h-8px" role="progressbar" style="width: <?php echo ($valor_a_pagar / $total_outcome[0]["total_outcome"]) * 100 ?>%;" aria-valuenow="<?php echo ($valor_a_pagar / $total_outcome[0]["total_outcome"]) * 100 ?>" aria-valuemin="0" aria-valuemax="100"></div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <div class="card mb-5 mb-xl-8">
