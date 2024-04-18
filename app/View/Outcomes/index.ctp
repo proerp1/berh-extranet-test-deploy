@@ -2,38 +2,60 @@
 <?php echo $this->element("abas_contas_pagar"); ?>
 
 <div class="row gy-5 g-xl-10">
-    <?php if($aba_atual_id != $aba_pago_id): ?>
-        <!-- Primeiro card -->
-        <div class="col-lg-4 col-sm-6 mb-xl-10">
-            <div class="card h-lg-100">
-                <div class="card-body d-flex justify-content-between align-items-start flex-column">
+
+
+<?php if ($aba_atual_id != $aba_pago_id): ?>
+    <!-- Primeiro card -->
+    <div class="col-lg-4 col-sm-6 mb-xl-10">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <i class="fas fa-dollar-sign fa-3x <?php 
+                        if ($aba_atual_id == 11) { 
+                            echo 'text-warning'; 
+                        } elseif ($aba_atual_id == 12) { 
+                            echo 'text-primary'; 
+                        } elseif ($aba_atual_id == 14) { 
+                            echo 'text-dark'; 
+                        } else { 
+                            echo 'text-danger'; 
+                        } ?>"></i>
+                </div>
+                <div class="d-flex flex-column my-7">
+                    <?php if (isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
+                        <?php $valor_restante = $total_outcome[0]["total_outcome"] - $pago_outcome[0]["pago_outcome"]; ?>
+                        <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($valor_restante, 2, ",", '.') ?></span>
+                    <?php else: ?>
+                        <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span>
+                    <?php endif; ?>
                     <div class="m-0">
-                        <i class="fas fa-dollar-sign fa-3x text-danger"></i>
-                    </div>
-                    <div class="d-flex flex-column my-7">
-                        <?php if(isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
-                            <?php $valor_restante = $total_outcome[0]["total_outcome"] - $pago_outcome[0]["pago_outcome"]; ?>
-                            <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($valor_restante, 2, ",", '.') ?></span>
-                        <?php else: ?>
-                            <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span>
-                        <?php endif; ?>
-                        <div class="m-0">
-                            <span class="fw-bold fs-6 text-gray-400">Valor restante a pagar</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center flex-column mt-3 w-100">
-                        <div class="h-8px mx-3 w-100 bg-light-info rounded">
-                            <?php if(isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
-                                <div class="bg-danger rounded h-8px" role="progressbar" style="width: <?php echo ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>%;" aria-valuenow="<?php echo ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                        <span class="fw-bold fs-6 text-gray-400">
+                            <?php if ($aba_atual_id == 11): ?>
+                                Valor programado
+                            <?php elseif ($aba_atual_id == 12): ?>
+                                Valor aprovado
+                            <?php elseif ($aba_atual_id == 14): ?>
+                                Valor cancelado
                             <?php else: ?>
-                                <div class="bg-danger rounded h-8px" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                Valor restante a pagar
                             <?php endif; ?>
-                        </div>
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center flex-column mt-3 w-100">
+                    <div class="h-8px mx-3 w-100 bg-light-info rounded">
+                        <?php if (isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
+                            <div class="bg-danger rounded h-8px" role="progressbar" style="width: <?php echo ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>%;" aria-valuenow="<?php echo ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                        <?php else: ?>
+                            <div class="bg-danger rounded h-8px" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
+
     
     <div class="col-lg-4 col-sm-6 mb-xl-10">
         <div class="card h-lg-100">
