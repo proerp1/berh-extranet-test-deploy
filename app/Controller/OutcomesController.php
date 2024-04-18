@@ -91,6 +91,9 @@ class OutcomesController extends AppController {
 					]
 				]);
 				
+				$aba_pago_id = 13;
+				$aba_atual_id = isset($_GET['t']) ? $_GET['t'] : null;
+				$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
 
 				
 
@@ -99,7 +102,7 @@ class OutcomesController extends AppController {
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
 		$action = 'Contas a pagar';
-		$this->set(compact('status', 'data', 'action', 'total_outcome', 'pago_outcome'));
+		$this->set(compact('status', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
 	}
 	
 	public function add() {
