@@ -83,7 +83,7 @@
                     <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
                     <th>Número</th>
                     <th>Cliente</th>
-                    <th>Período</th>
+                    <th>Data Finalização</th>
                     <th>Subtotal</th>
                     <th>Repasse</th>
                     <th>Taxa</th>
