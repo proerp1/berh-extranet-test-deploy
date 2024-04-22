@@ -90,8 +90,11 @@ class OrdersController extends AppController
         $working_days_type = $this->request->data['working_days_type'];
         $grupo_especifico = $this->request->data['grupo_especifico'];
         $benefit_type = $this->request->data['benefit_type'];
+        $is_beneficio = $this->request->data['is_beneficio'];
+        $is_beneficio = (int)$is_beneficio;
+        $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
         $credit_release_date = $this->request->data['credit_release_date'];
-
+        
         $benefit_type_persist = 0;
         if ($benefit_type != '') {
             $benefit_type_persist = $benefit_type;
@@ -113,7 +116,8 @@ class OrdersController extends AppController
 
 
             if ($is_consolidated == 2) {
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal);
+                $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -942,10 +946,11 @@ class OrdersController extends AppController
         if ($grupo_especifico != '') {
             $cond['CustomerUserEconomicGroup.economic_group_id'] = $grupo_especifico;
         }
+
         $benefit_type_persist = 0;
         if ($benefit_type != '') {
+            $benefit_type_persist = $benefit_type;
             $benefit_type = (int)$benefit_type;
-            $benefit_type_persist = (int)$benefit_type;
             $benefit_type = $this->groupBenefitType[$benefit_type];
             $cond['Benefit.benefit_type_id'] = $benefit_type;
         }
