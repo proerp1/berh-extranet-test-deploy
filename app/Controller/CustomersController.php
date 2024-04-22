@@ -105,7 +105,7 @@ class CustomersController extends AppController
         }
 
         if (isset($_GET['exportar'])) {
-            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+            $nome = 'clientes' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Customer->find('all', [
                 'contain' => ['Resale', 'Status', 'Seller'],
