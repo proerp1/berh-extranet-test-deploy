@@ -1,5 +1,6 @@
 <?php
 App::uses('ItineraryCSVParser', 'Lib');
+App::uses('EconomicGroupCSVParser', 'Lib');
 class CustomerUsersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -709,6 +710,21 @@ class CustomerUsersController extends AppController
             
             $csv = new ItineraryCSVParser();
             $csv->parse_working_days_update($uploadedFile['tmp_name'], $this->request->data['customer_id']);
+
+            $this->Flash->set(__('Dias úteis atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect($this->referer());
+        } else {
+            $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function update_grupo_economico()
+    {
+        if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
+            $uploadedFile = $this->request->data['file'];
+            $csv = new EconomicGroupCSVParser();
+            $csv->parse($uploadedFile['tmp_name'], $this->request->data['customer_id']);
 
             $this->Flash->set(__('Dias úteis atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
