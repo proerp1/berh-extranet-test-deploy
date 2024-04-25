@@ -133,7 +133,6 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["transfer_fee"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["total"]; ?></td>
-                        <td>-</td>
                     </tr>
                 <?php } ?>
                 <tr>
