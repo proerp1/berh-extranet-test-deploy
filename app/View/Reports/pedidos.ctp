@@ -98,6 +98,7 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th>CNPJ</th>
+                    <th>Id</th>
                     <th>Cliente</th>
                     <th>N° Pedido</th>
                     <th>Status Pedido</th>
@@ -110,8 +111,6 @@
                     <th>Var</th>
                     <th>Repasse</th>
                     <th>Total</th>
-                    <th> SIC Ctba
-                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -121,6 +120,7 @@
                 ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["id"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
