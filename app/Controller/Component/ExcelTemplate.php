@@ -1736,3 +1736,96 @@ class ExcelTemplate
 		}
 	}
 }
+
+	/*public function getProposal($spreadsheet, $dados)
+	{
+		
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+
+		$activeWorksheet
+		->setCellValue('A1', "Data da Proposta")
+		->setCellValue('B1', "Data da previsão de fechamento ")
+		->setCellValue('C1', "Data do fechamento")
+		->setCellValue('D1', "TPP")
+		->setCellValue('E1', "Taxa administrativa VT")
+		->setCellValue('F1', "Taxa de entrega VT")
+		->setCellValue('G1', "PGE* VT ")
+		->setCellValue('H1', "Qtde de Colaboradores VT")
+		->setCellValue('I1', "Valor por colaborador VT")
+		->setCellValue('J1', "Total por colaborador VT")
+		->setCellValue('K1', "Taxa administrativa VR")
+		->setCellValue('L1', "Taxa de entrega VR")
+		->setCellValue('M1', "Qtde de Colaboradores VR")
+		->setCellValue('N1', "Valor por colaborador VR")
+		->setCellValue('O1', "Total por colaborador VR")
+		->setCellValue('P1', "Taxa administrativa VC")
+		->setCellValue('Q1', "Taxa de entrega VC")
+		->setCellValue('R1', "Qtde de Colaboradores VC ")
+		->setCellValue('S1', "Valor por colaborador VC")
+		->setCellValue('T1', "Total por colaborador VC")
+		->setCellValue('U1', "Taxa administrativa CM")
+		->setCellValue('V1', "Taxa de entrega CM")
+		->setCellValue('W1', "Qtde de Colaboradores CM")
+		->setCellValue('X1', "Valor por colaborador CM")
+		->setCellValue('Y1', "Total por colaboradorCM")
+		->setCellValue('Z1', "Taxa administrativa-Saúde")
+		->setCellValue('AA1', "Taxa de entrega-Saúde")
+		->setCellValue('AB1', "Qtde de Colaboradores-Saúde")
+		->setCellValue('AC1', "Valor por colaborador-Saúde")
+		->setCellValue('AD1', "Total por colaborador-Saúde")
+		->setCellValue('AE1', "Taxa administrativa-Previdenciário")
+		->setCellValue('AF1', "Taxa de entrega-Previdenciário")
+		->setCellValue('AG1', "Qtde de Colaboradores-Previdenciário")
+		->setCellValue('AH1', "Valor por colaborador-Previdenciário")
+		->setCellValue('AI1', "Total por colaborador-Previdenciário")
+		->setCellValue('AJ1', "Total geral");
+
+		
+		$indx = 1;
+		$total = 0;
+		for ($i = 0; $i < count($dados); $i++) {
+
+			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
+
+			$indx++;
+			// $activeWorksheet
+			
+			$activeWorksheet->setCellValue('A'. $indx, $dados[$i]["Proposal"]["date"])
+				->setCellValue('B'. $indx, $dados[$i]["Proposal"]["expected_closing_date"])
+				->setCellValue('C'. $indx, $dados[$i]['Proposal']['closing_date'])
+				->setCellValue('D'. $indx, $dados[$i]['Proposal']['tpp'])
+				->setCellValue('E'. $indx, $dados[$i]['Proposal']['transport_adm_fee'])
+				->setCellValue('F'. $indx, $dados[$i]['Proposal']['transport_deli_fee'])
+				->setCellValue('G'. $indx, $dados[$i]['Proposal']['management_feel'])
+				->setCellValue('H'. $indx, $dados[$i]['Proposal']['transport_workers_qty'])
+				->setCellValue('I'. $indx, $dados[$i]['Proposal']['transport_workers_price'])
+				->setCellValue('J'. $indx, $dados[$i]['Proposal']['transport_workers_price_total'])
+				->setCellValue('K'. $indx, $dados[$i]['Proposal']['meal_adm_fee'])
+				->setCellValue('L'. $indx, $dados[$i]['Proposal']['meal_deli_fee'])
+				->setCellValue('M'. $indx, $dados[$i]['Proposal']['meal_workers_qty'])
+				->setCellValue('N'. $indx, $dados[$i]['Proposal']['meal_workers_price'])
+				->setCellValue('O'. $indx, $dados[$i]['Proposal']['meal_workers_price_total'])
+				->setCellValue('P'. $indx, $dados[$i]['Proposal']['fuel_adm_fee'])
+				->setCellValue('Q'. $indx, $dados[$i]['Proposal']['fuel_deli_fee'])
+				->setCellValue('R'. $indx, $dados[$i]['Proposal']['fuel_workers_qty'])
+				->setCellValue('S'. $indx, $dados[$i]['Proposal']['fuel_workers_price'])
+				->setCellValue('T'. $indx, $dados[$i]['Proposal']['fuel_workers_price_total'])
+				->setCellValue('U'. $indx, $dados[$i]['Proposal']['multi_card_adm_fee'])
+				->setCellValue('V'. $indx, $dados[$i]['Proposal']['multi_card_deli_fee'])
+				->setCellValue('W'. $indx, $dados[$i]['Proposal']['multi_card_workers_qty'])
+				->setCellValue('X'. $indx, $dados[$i]['Proposal']['multi_card_workers_price'])
+				->setCellValue('Y'. $indx, $dados[$i]['Proposal']['multi_card_workers_price_total'])
+				->setCellValue('Z'. $indx, $dados[$i]['Proposal']['saude_card_adm_fee'])
+				->setCellValue('AA'. $indx, $dados[$i]['Proposal']['saude_card_deli_fee'])
+				->setCellValue('AB'. $indx, $dados[$i]['Proposal']['saude_card_workers_qty'])
+				->setCellValue('AC'. $indx, $dados[$i]['Proposal']['saude_card_workers_price'])
+				->setCellValue('AD'. $indx, $dados[$i]['Proposal']['saude_card_workers_price_total'])
+				->setCellValue('AE'. $indx, $dados[$i]['Proposal']['prev_card_adm_fee'])
+				->setCellValue('AF'. $indx, $dados[$i]['Proposal']['prev_card_deli_fee'])
+				->setCellValue('AG'. $indx, $dados[$i]['Proposal']['prev_card_workers_qty'])
+				->setCellValue('AH'. $indx, $dados[$i]['Proposal']['prev_card_workers_price'])
+				->setCellValue('AI'. $indx, $dados[$i]['Proposal']['prev_card_workers_price_total'])
+				->setCellValue('AJ'. $indx, $dados[$i]['Proposal']['total_price']);
+		}
+	}
+}
