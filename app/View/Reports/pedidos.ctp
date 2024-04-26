@@ -98,7 +98,6 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th>CNPJ</th>
-                    <th>Id</th>
                     <th>Cliente</th>
                     <th>N° Pedido</th>
                     <th>Status Pedido</th>
