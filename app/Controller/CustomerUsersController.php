@@ -726,7 +726,7 @@ class CustomerUsersController extends AppController
             $csv = new EconomicGroupCSVParser();
             $csv->parse($uploadedFile['tmp_name'], $this->request->data['customer_id']);
 
-            $this->Flash->set(__('Dias úteis atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+            $this->Flash->set(__('Grupo econômico atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect($this->referer());
         } else {
             $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
