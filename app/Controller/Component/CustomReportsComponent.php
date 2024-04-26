@@ -24,6 +24,7 @@ class CustomReportsComponent extends Component
                         'OrderItem.*',
                         'Benefit.code',
                         'Supplier.code',
+                        'Customer.codigo_associado',
                     ],
                     'joins' => [
                         [
