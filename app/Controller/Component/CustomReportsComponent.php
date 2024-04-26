@@ -242,8 +242,8 @@ class CustomReportsComponent extends Component
                         'Benefit.code',
                         'Supplier.nome_fantasia',
                         'Order.id',
-                        'Order.status_id'
-                        'Customer.codigo_associado',
+                        'Order.status_id',
+                        'Customer.codigo_associado'
                     ],
                     'joins' => [
                         [
