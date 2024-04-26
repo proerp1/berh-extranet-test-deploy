@@ -3,7 +3,7 @@
 class ProposalsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
     public $uses = ['Proposal', 'Status', 'Customer'];
 
     public $paginate = [
@@ -30,7 +30,15 @@ class ProposalsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
 
+        
+
         $data = $this->Paginator->paginate('Proposal', $condition);
+
+       if (isset($_GET['excel'])) {
+            $this->ExcelGenerator->gerarExcelProposal('Proposta', $data);
+
+            $this->redirect('/private_files/baixar/excel/Proposta_xlsx');
+        }
 
         $this->Customer->id = $id;
         $this->Customer->recursive = -1;
