@@ -66,8 +66,8 @@ class OrdersController extends AppController
         }
 
         $data = $this->Paginator->paginate('Order', $condition);
-        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], ['conditions' => ['Customer.status_id' => 3]], 'order' => ['nome_primario' => 'asc']]);
-
+        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], ['conditions' => ['Customers.status_id' => 3]], 'order' => ['nome_primario' => 'asc']]);
+        debug($customers); die;
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
