@@ -81,7 +81,7 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
-                    <th>Id</th>
+                    <th>Código</th>
                     <th>Data de criação</th>
                     <th>Número</th>
                     <th>Cliente</th>
@@ -105,7 +105,7 @@
                                     <?php echo $data[$i]["Status"]["name"] ?>
                                 </span>
                             </td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["id"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
