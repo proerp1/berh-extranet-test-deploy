@@ -35,7 +35,7 @@ class OrdersController extends AppController
         $condition = ["and" => [], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",  'Customer.id LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 'Customer.id LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         if (!empty($_GET['t'])) {

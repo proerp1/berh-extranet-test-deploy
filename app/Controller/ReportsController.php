@@ -173,6 +173,7 @@ class ReportsController extends AppController
                 'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
                 'Order.id LIKE' => '%' . $_GET['q'] . '%',
                 'Customer.id LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
 
             ]);
         }
