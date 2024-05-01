@@ -127,7 +127,7 @@ class ExcelGeneratorComponent extends Component
     {
         $spreadsheet = new Spreadsheet();
 
-        $this->templates_list-> getPedidosRelatorio($spreadsheet, $dados);
+        $this->templates_list->getPedidosRelatorio($spreadsheet, $dados);
 
         $local_salva = APP.'webroot/files/excel/'.$nome;
 
