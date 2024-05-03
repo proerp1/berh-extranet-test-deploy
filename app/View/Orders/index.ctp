@@ -157,6 +157,12 @@
             $("#busca").submit();
         });
 
+        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
+            $('#customer_id').select2({
+                dropdownParent: $('#modal_gerar_arquivo')
+            });
+        });
+
         $(".datepicker2").datepicker({
             startView: 1,
             minViewMode: 1,
@@ -180,7 +186,7 @@
                     <div class="row mb-7 ">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>
