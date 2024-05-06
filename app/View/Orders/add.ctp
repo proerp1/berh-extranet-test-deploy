@@ -11,7 +11,7 @@
             thousands: '.',
             precision: 2
         });
-    })
+    });
 </script>
 
 <style>
@@ -541,7 +541,9 @@
                 <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th></th>
+                        <th style="padding-left: 10px;">
+                            <input type="checkbox" class="check_all">
+                        </th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
@@ -580,7 +582,7 @@
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
                                 <th>
-                                    <input type="checkbox" name="del_linha" id="">
+                                    <input type="checkbox" name="del_linha" class="check_individual" id="">
                                 </th>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserItinerary"]["benefit_name"]; ?></td>
@@ -826,9 +828,9 @@
     </div>
 </div>
 
-
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
+
 <script>
     $(document).ready(function() {
         var should_scroll = <?php echo isset($this->params['named']['page']) ? 'true' : 'false'; ?>;
@@ -855,7 +857,7 @@
             if (newValue != '' && newValue != undefined && newValue != null) {
                 $.ajax({
                     type: 'POST',
-                    url: <?php echo $this->base; ?> '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
+                    url: base_url+'/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
                     data: {
                         newValue,
                         orderItemId,
@@ -889,7 +891,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: <?php echo $this->base; ?> '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
+                url: base_url+'/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
                 data: {
                     newValue,
                     orderItemId,
@@ -917,7 +919,7 @@
             if (orderItemId != '' && orderItemId != undefined && orderItemId != null) {
                 $.ajax({
                     type: 'POST',
-                    url: <?php echo $this->base; ?> '/orders/removeOrderItem', // Adjust the URL to your CakePHP action
+                    url: base_url+'/orders/removeOrderItem', // Adjust the URL to your CakePHP action
                     data: {
                         orderItemId,
                         userId
@@ -934,7 +936,7 @@
 
         $('#customer_user_id').select2({
             ajax: {
-                url: base_url + '/orders/listOfCustomerUsers',
+                url: base_url+'/orders/listOfCustomerUsers',
                 dataType: 'json',
                 data: function(params) {
                     var query = {
@@ -951,7 +953,7 @@
 
         $('#customer_user_id_iti').select2({
             ajax: {
-                url: base_url + '/orders/listOfCustomerUsers',
+                url: base_url+'/orders/listOfCustomerUsers',
                 dataType: 'json',
                 data: function(params) {
                     var query = {
@@ -990,7 +992,7 @@
             if (orderItemIds.length > 0) {
                 $.ajax({
                     type: 'POST',
-                    url: <?php echo $this->base; ?> '/orders/removeOrderItem',
+                    url: base_url+'/orders/removeOrderItem',
                     data: {
                         orderItemIds,
                         orderId
@@ -1003,9 +1005,14 @@
                     }
                 });
             }
+        });
 
-        })
-
-
-    })
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_individual").prop('checked', true);
+            } else {
+                $(".check_individual").prop('checked', false);
+            }
+        });
+    });
 </script>
