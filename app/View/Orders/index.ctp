@@ -41,7 +41,7 @@
                             <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
                                 <option value=''></option>
                                 <?php
-                                $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',];
+                                $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado',5 => 'Cancelado',];
 
                                 foreach ($statusOptions as $statusId => $statusName) {
                                     $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
@@ -157,6 +157,12 @@
             $("#busca").submit();
         });
 
+        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
+            $('#customer_id').select2({
+                dropdownParent: $('#modal_gerar_arquivo')
+            });
+        });
+
         $(".datepicker2").datepicker({
             startView: 1,
             minViewMode: 1,
@@ -180,7 +186,7 @@
                     <div class="row mb-7 ">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>

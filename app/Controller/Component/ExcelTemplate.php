@@ -176,7 +176,10 @@ class ExcelTemplate
 			->setCellValue('M1', "Data de criação")
 			->setCellValue('N1', "Receita")
 			->setCellValue('O1', "Centro de custo")
-			->setCellValue('P1', "Observações");
+			->setCellValue('P1', "Observações")
+			->setCellValue('Q1', "Data Pagamento")
+			->setCellValue('R1', "Data baixa");
+
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
@@ -198,7 +201,11 @@ class ExcelTemplate
 				->setCellValue('M' . $indx, $dados[$i]['Income']['created'])
 				->setCellValue('N' . $indx, $dados[$i]['Revenue']['name'])
 				->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
-				->setCellValue('P' . $indx, $dados[$i]['Income']['observation']);
+				->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
+				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
+				->setCellValue('R' . $indx, $dados[$i]['Income']['data_baixa']);
+
+
 		}
 	}
 
@@ -692,8 +699,8 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Usuário"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Grupo Econômico"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de criação"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Beneficiários"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Operadoras"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Beneficiários"); $col++;
 		
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
@@ -1500,8 +1507,7 @@ class ExcelTemplate
 		->setCellValue('BF1', "Pedido")
 		->setCellValue('BG1', "Status")
 		->setCellValue('BH1', "Data")
-		
-		;
+		->setCellValue('BI1', "Codigo Operadora");
 
 		$indx = 1;
 		$total = 0;
@@ -1580,8 +1586,10 @@ class ExcelTemplate
 				->setCellValue('BE'. $indx, $dados[$i]['CustomerPosition']['name'])
 				->setCellValue('BF'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('BG'. $indx, $dados[$i]['OrderStatus']['name'])
-				->setCellValue('BH'. $indx, $dados[$i]['Order']['order_period_from'].' a '.$dados[$i]['Order']['order_period_to']);
-		}
+				->setCellValue('BH'. $indx, $dados[$i]['Order']['order_period_from'].' a '.$dados[$i]['Order']['order_period_to'])
+				->setCellValue('BI'. $indx, $dados[$i]['Supplier']['code']);
+
+			}
 	}
 
 	public function getOrder($spreadsheet, $dados)
