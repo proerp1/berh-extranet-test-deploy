@@ -1507,8 +1507,7 @@ class ExcelTemplate
 		->setCellValue('BF1', "Pedido")
 		->setCellValue('BG1', "Status")
 		->setCellValue('BH1', "Data")
-		
-		;
+		->setCellValue('BI1', "Codigo Operadora");
 
 		$indx = 1;
 		$total = 0;
@@ -1587,8 +1586,10 @@ class ExcelTemplate
 				->setCellValue('BE'. $indx, $dados[$i]['CustomerPosition']['name'])
 				->setCellValue('BF'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('BG'. $indx, $dados[$i]['OrderStatus']['name'])
-				->setCellValue('BH'. $indx, $dados[$i]['Order']['order_period_from'].' a '.$dados[$i]['Order']['order_period_to']);
-		}
+				->setCellValue('BH'. $indx, $dados[$i]['Order']['order_period_from'].' a '.$dados[$i]['Order']['order_period_to'])
+				->setCellValue('BI'. $indx, $dados[$i]['Supplier']['code']);
+
+			}
 	}
 
 	public function getOrder($spreadsheet, $dados)
