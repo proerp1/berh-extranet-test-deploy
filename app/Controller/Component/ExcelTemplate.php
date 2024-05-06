@@ -176,7 +176,10 @@ class ExcelTemplate
 			->setCellValue('M1', "Data de criação")
 			->setCellValue('N1', "Receita")
 			->setCellValue('O1', "Centro de custo")
-			->setCellValue('P1', "Observações");
+			->setCellValue('P1', "Observações")
+			->setCellValue('Q1', "Data Pagamento")
+			->setCellValue('R1', "Data baixa");
+
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
@@ -198,7 +201,11 @@ class ExcelTemplate
 				->setCellValue('M' . $indx, $dados[$i]['Income']['created'])
 				->setCellValue('N' . $indx, $dados[$i]['Revenue']['name'])
 				->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
-				->setCellValue('P' . $indx, $dados[$i]['Income']['observation']);
+				->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
+				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
+				->setCellValue('R' . $indx, $dados[$i]['Income']['data_baixa']);
+
+
 		}
 	}
 

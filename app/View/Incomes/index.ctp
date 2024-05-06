@@ -160,7 +160,8 @@
                         <th>Código</th>
                         <th>Cliente</th>
                         <th>Conta bancária</th>
-                        <th>Data competência</th>
+                        <th>Data pagamento</th>
+                        <th>Data baixa</th>
                         <th>Data de criação</th>
                         <th>Vencimento</th>
                         <th>Parcela</th>
@@ -182,7 +183,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_competencia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_baixa"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["created"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["parcela"].'ª'; ?></td>
