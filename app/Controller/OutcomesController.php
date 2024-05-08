@@ -73,7 +73,7 @@ class OutcomesController extends AppController {
 				}
 
 				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
-				echo "Saldo: " . $saldo;
+				//echo "Saldo: " . $saldo;
 				$total_outcome = 0;
 				$pago_outcome = 0;
 				
