@@ -176,7 +176,7 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <th>N° Documento</th>
+                        <th>N° Documento -</th>
                         <th>Fornecedor </th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
                         <th>Status</th>
