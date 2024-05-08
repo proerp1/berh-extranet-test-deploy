@@ -1,5 +1,8 @@
 <?php $url_novo = $this->base."/outcomes/add/"; ?>
-<?php echo $this->element("abas_contas_pagar"); ?>
+<?php 
+	echo $this->element("abas_contas_pagar"); 
+	$total_outcome = 0;
+?>
 
 <div class="row gy-5 g-xl-10">
 
