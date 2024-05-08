@@ -192,10 +192,13 @@
 					</tr>
 				</thead>
 				<tbody>
-					<?php if ($data) { ?>
+					<?php 
+                     $valor_a_pagar = 0;
+                     $valor_pago = 0;
+
+                    if ($data) { ?>
 						<?php 
-                            $valor_a_pagar = 0;
-                            $valor_pago = 0;
+                           
                             //debug($data);die();
                             for ($i=0; $i < count($data); $i++) { ?>
                             <?php
