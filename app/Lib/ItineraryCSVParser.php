@@ -402,6 +402,9 @@ class ItineraryCSVParser extends Controller
             'quantity' => $row[18],
         ];
 
+        # remover R$ do unit_price
+        $itineraryData['unit_price'] = trim(str_replace('R$', '', $itineraryData['unit_price']));
+
         $this->CustomerUserItinerary->create();
         $this->CustomerUserItinerary->save($itineraryData);
 

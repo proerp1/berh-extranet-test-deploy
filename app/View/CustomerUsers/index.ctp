@@ -1,7 +1,9 @@
 <?php $url_novo = $is_admin ? $this->base . "/customer_users/add_user/" . $id : $this->base . "/customer_users/add/" . $id;  ?>
+
 <?php
 echo $this->element("abas_customers", array('id' => $id));
 ?>
+
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "index", $id)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
@@ -25,9 +27,20 @@ echo $this->element("abas_customers", array('id' => $id));
                         <i class="fas fa-arrow-up"></i>
                         Atualizar Dias Úteis
                     </a>
+
                     <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                         <i class="fas fa-arrow-up"></i>
                         Importar
+                    </a>
+
+                    <a href="#" id="ativar_sel" class="btn btn-secondary me-3" style="float:right">
+                        <i class="fas fa-thumbs-up"></i>
+                        Ativar em Lote
+                    </a>
+
+                    <a href="#" id="inativar_sel" class="btn btn-secondary me-3" style="float:right">
+                        <i class="fas fa-thumbs-down"></i>
+                        Inativar em Lote
                     </a>
 
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
@@ -111,6 +124,9 @@ echo $this->element("abas_customers", array('id' => $id));
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
+                    <th>
+                        <input type="checkbox" class="check_all">
+                    </th>
                     <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Nome</th>
                     <th>E-mail</th>
@@ -125,7 +141,11 @@ echo $this->element("abas_customers", array('id' => $id));
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
                         <tr>
+                            <th>
+                                <input type="checkbox" name="item_ck" class="check_individual" id="">
+                            </th>
                             <td class="fw-bold fs-7 ps-4">
+                                <input type="hidden" class="item_id" value="<?php echo $data[$i]["CustomerUser"]["id"]; ?>">
                                 <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                     <?php echo $data[$i]["Status"]["name"] ?>
                                 </span>
@@ -242,6 +262,41 @@ echo $this->element("abas_customers", array('id' => $id));
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_ativar_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ativar items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="ativa_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_inativar_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Inativar items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="inativa_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $(document).ready(function() {
@@ -254,6 +309,92 @@ echo $this->element("abas_customers", array('id' => $id));
 
         $('#q').on('change', function() {
             $("#busca").submit();
+        });
+
+        $('#ativar_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_ativar_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ativar');
+            }
+        });
+
+        $('#inativar_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_inativar_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a inativar');
+            }
+        });
+
+        $('#ativa_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const customerId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const custUserIds = [];
+
+            checkboxes.each(function() {
+                custUserIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            if (custUserIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/customer_users/ativa_customer_user',
+                    data: {
+                        custUserIds,
+                        customerId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#inativa_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const customerId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const custUserIds = [];
+
+            checkboxes.each(function() {
+                custUserIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            if (custUserIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/customer_users/inativa_customer_user',
+                    data: {
+                        custUserIds,
+                        customerId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_individual").prop('checked', true);
+            } else {
+                $(".check_individual").prop('checked', false);
+            }
         });
     });
 </script>

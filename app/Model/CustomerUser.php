@@ -134,6 +134,9 @@ class CustomerUser extends AppModel
 
     public function beforeSave($options = [])
     {
+        if (isset($this->data[$this->alias]['cpf'])) {
+            $this->data[$this->alias]['cpf'] = preg_replace('/\D/', '', $this->data[$this->alias]['cpf']);
+        }
         if (isset($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = Security::hash($this->data[$this->alias]['password'], null, true);
         }

@@ -759,4 +759,50 @@ class CustomerUsersController extends AppController
         $this->set(compact('csv_file', 'action', 'breadcrumb', 'customerId', 'fileId', 'status', 'csv_file_lines'));
     }
 
+    public function ativa_customer_user($customerId = false, $custUserIds = false)
+    {
+        $this->autoRender = false;
+
+        $is_multiple = false;
+        if($customerId == false || $custUserIds == false){
+            $is_multiple = true;
+            $customerId = $this->request->data['customerId'];
+            $custUserIds = $this->request->data['custUserIds'];
+        }
+
+        $this->CustomerUser->updateAll(
+            ['CustomerUser.status_id' => 1],
+            ['CustomerUser.id' => $custUserIds]
+        );
+
+        if($is_multiple){
+            echo json_encode(['success' => true]);
+        } else {
+            $this->redirect('/customer_users/index/' . $customerId);
+        }        
+    }
+
+    public function inativa_customer_user($customerId = false, $custUserIds = false)
+    {
+        $this->autoRender = false;
+
+        $is_multiple = false;
+        if($customerId == false || $custUserIds == false){
+            $is_multiple = true;
+            $customerId = $this->request->data['customerId'];
+            $custUserIds = $this->request->data['custUserIds'];
+        }
+
+        $this->CustomerUser->updateAll(
+            ['CustomerUser.status_id' => 2],
+            ['CustomerUser.id' => $custUserIds]
+        );
+
+        if($is_multiple){
+            echo json_encode(['success' => true]);
+        } else {
+            $this->redirect('/customer_users/index/' . $customerId);
+        }        
+    }
+
 }
