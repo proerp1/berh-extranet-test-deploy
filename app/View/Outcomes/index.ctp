@@ -1,7 +1,7 @@
 <?php $url_novo = $this->base."/outcomes/add/"; ?>
 <?php 
 	echo $this->element("abas_contas_pagar"); 
-	$total_outcome[0] = 0;
+	
 ?>
 
 <div class="row gy-5 g-xl-10">
@@ -56,7 +56,7 @@
                                 echo 'bg-dark'; 
                             } else { 
                                 echo 'bg-danger'; 
-                            } ?> rounded h-8px" role="progressbar" style="width: <?php echo ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 14) ? '100%' : ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>%;" aria-valuenow="<?php echo ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 14) ? 100 : ($valor_restante / $total_outcome[0]["total_outcome"]) * 100 ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                            } ?> rounded h-8px" role="progressbar" style="width: <?php echo ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 14) ? '100%' : 100%;" aria-valuenow="<?php echo ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 14) ? 100 : 100" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                 </div>
             </div>
