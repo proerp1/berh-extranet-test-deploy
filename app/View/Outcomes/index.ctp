@@ -81,7 +81,7 @@
                 <div class="d-flex align-items-center flex-column mt-3 w-100">
                     <div class="h-8px mx-3 w-100 bg-light-info rounded">
                         <?php if(isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
-                            <div class="bg-success rounded h-8px" role="progressbar" style="width: <?php echo ($pago_outcome[0]["pago_outcome"] / $total_outcome[0]["total_outcome"]) * 100 ?>%;" aria-valuenow="<?php echo ($pago_outcome[0]["pago_outcome"] / $total_outcome[0]["total_outcome"]) * 100 ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="bg-success rounded h-8px" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         <?php endif; ?>
                     </div>
                 </div>
