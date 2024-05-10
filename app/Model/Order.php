@@ -31,6 +31,14 @@ class Order extends AppModel
         ],
         'EconomicGroup'
     ];
+
+    public $hasOne = [
+        'Income' => [
+            'className' => 'Income',
+            'foreignKey' => 'order_id'
+        ]
+    ];
+
     public $hasMany = [
         'OrderItem' => [
             'className' => 'OrderItem',
