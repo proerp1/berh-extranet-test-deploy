@@ -133,6 +133,10 @@ class Income extends AppModel
                 $results[$key][$this->alias]['data_pagamento_nao_formatado'] = $val[$this->alias]['data_pagamento'];
                 $results[$key][$this->alias]['data_pagamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_pagamento']));
             }
+            if (isset($val[$this->alias]['data_baixa'])) {
+                $results[$key][$this->alias]['data_baixa_nao_formatado'] = $val[$this->alias]['data_baixa'];
+                $results[$key][$this->alias]['data_baixa'] = date("d/m/Y", strtotime($val[$this->alias]['data_baixa']));
+            }
             if (isset($val[$this->alias]['valor_bruto'])) {
                 $results[$key][$this->alias]['valor_bruto_nao_formatado'] = $results[$key][$this->alias]['valor_bruto'];
                 $results[$key][$this->alias]['valor_bruto'] = number_format($results[$key][$this->alias]['valor_bruto'], 2, ',', '.');
