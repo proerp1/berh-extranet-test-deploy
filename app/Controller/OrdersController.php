@@ -18,16 +18,7 @@ class OrdersController extends AppController
 
     public $paginate = [
         'Order' => [
-            'limit' => 20, 'order' => ['Order.id' => 'desc'],
-            'joins' => [
-                [
-                    'table' => 'incomes',
-                    'alias' => 'Income',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Income.order_id = Order.id', 'Income.data_cancel' => '1901-01-01 00:00:00'
-                    ]
-                ]
+            'limit' => 20, 'order' => ['Order.id' => 'desc']
             ]
         ]
     ];
