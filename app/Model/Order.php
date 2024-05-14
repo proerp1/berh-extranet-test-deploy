@@ -35,7 +35,8 @@ class Order extends AppModel
     public $hasOne = [
         'Income' => [
             'className' => 'Income',
-            'foreignKey' => 'order_id'
+            'foreignKey' => 'order_id',
+             'conditions' => ['Income.data_cancel' => '1901-01-01 00:00:00']
         ]
     ];
 
