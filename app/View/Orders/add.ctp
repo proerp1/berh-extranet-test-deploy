@@ -802,6 +802,7 @@
                 </div>
 
                 <div class="modal-footer">
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>
