@@ -50,4 +50,19 @@ class AppModel extends Model
 
         return false;
     }
+
+    public function transaction($action = null)
+    {
+        $this->__dataSource = $this->getDataSource();
+        $return = false;
+        if ($action === null) {
+            $return = $this->__dataSource->begin($this);
+        } elseif ($action === true) {
+            $return = $this->__dataSource->commit($this);
+        } elseif ($action === false) {
+            $return = $this->__dataSource->rollback($this);
+        }
+
+        return $return;
+    }
 }
