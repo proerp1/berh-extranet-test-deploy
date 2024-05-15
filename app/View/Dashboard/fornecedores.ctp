@@ -320,7 +320,6 @@
 
 <!-- Calendar JavaScript -->
     <script src="../plugins/bower_components/calendar/jquery-ui.min.js"></script>
-    <script src="../plugins/bower_components/moment/moment.js"></script>
     <script src='../plugins/bower_components/calendar/dist/fullcalendar.min.js'></script>
     <script src="../plugins/bower_components/calendar/dist/jquery.fullcalendar.js"></script>
     <script src="../plugins/bower_components/calendar/dist/cal-init.js"></script>

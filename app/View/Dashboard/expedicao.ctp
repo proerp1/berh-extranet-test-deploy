@@ -405,7 +405,6 @@
 <!-- END MODAL -->
 <?php 
     echo $this->Html->script('calendar/jquery-ui.min.js');echo "\n\t";
-    echo $this->Html->script('moment/moment.js');echo "\n\t";
     echo $this->Html->script('calendar/dist/fullcalendar.min.js');echo "\n\t";
     echo $this->Html->script('calendar/dist/jquery.fullcalendar.js');echo "\n\t";
     echo $this->Html->script('calendar/dist/cal-init.js');echo "\n\t";
