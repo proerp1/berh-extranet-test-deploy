@@ -104,11 +104,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->N° Pedido
+                                       N° Pedido
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['id']; ?></td>
@@ -117,11 +113,7 @@
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
-                                            <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
-                                            <span class="svg-icon svg-icon-2 me-2">
-
-                                            </span>
-                                            <!--end::Svg Icon-->Grupo Econômico
+                                            Grupo Econômico
                                         </div>
                                     </td>
                                     <td class="fw-bolder text-end"><?php echo $economic_group['EconomicGroup']['name']; ?></td>
@@ -130,11 +122,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Tipo Dias Úteis
+                                        Tipo Dias Úteis
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['working_days_type'] == 1 ? 'Padrão' : 'Cadastro de Beneficiários'; ?></td>
@@ -142,15 +130,21 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Tipo Benefício
+                                        Tipo Benefício
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $benefit_type_desc; ?></td>
                             </tr>
+                            <?php if ($income && $income['Income']['data_pagamento'] != null) { ?>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Data de pagamento
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $income['Income']['data_pagamento']; ?></td>
+                                </tr>
+                            <?php } ?>
                             <!--end::Date-->
                         </tbody>
                         <!--end::Table body-->
@@ -802,6 +796,7 @@
                 </div>
 
                 <div class="modal-footer">
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>

@@ -3,6 +3,7 @@
         $("#cep").mask("99999-999");
         $(".tel").mask("(99) 9999-9999");
         $(".cpf").mask("999.999.999-99");
+        $(".rg").mask("99.999.999-9");
         $(".data").mask("99/99/9999");
         $(".cel").focusout(function() {
             var phone, element;
@@ -73,15 +74,16 @@ if (isset($user_id) && !$is_admin) {
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Nome</label>
-                <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
         </div>
 
         <div class="row">
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Email</label>
-                <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-            </div>
+        <div class="mb-7 col">
+            <label class="fw-semibold fs-6 mb-2">Email</label>
+            <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0', 'required' => false]); ?>
+        </div>
+
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Telefone</label>
@@ -97,37 +99,38 @@ if (isset($user_id) && !$is_admin) {
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">CPF</label>
-                <?php echo $this->Form->input('cpf', ['placeholder' => 'CPF', 'class' => 'form-control cpf mb-3 mb-lg-0']); ?>
+                <?php echo $this->Form->input('cpf', ['placeholder' => 'CPF', 'class' => 'form-control cpf mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">RG</label>
-                <?php echo $this->Form->input('rg', ['placeholder' => 'RG', 'class' => 'form-control mb-3 mb-lg-0']); ?>
-            </div>
+    <label class="fw-semibold fs-6 mb-2">RG</label>
+    <?php echo $this->Form->input('rg', ['placeholder' => 'RG', 'class' => 'form-control mb-3 mb-lg-0 rg', 'required' => true]); ?>
+</div>
+
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Emissor</label>
-                <?php echo $this->Form->input('emissor_rg', ['placeholder' => 'Emissor', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                <?php echo $this->Form->input('emissor_rg', ['placeholder' => 'Emissor', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
 
             <div class="mb-7 col-sm-2">
                 <label class="form-label fs-5 fw-bold mb-3">Estado Emissor:</label>
-                <?php echo $this->Form->input('emissor_estado', array("id" => "estado", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $estados)); ?>
+                <?php echo $this->Form->input('emissor_estado', array("id" => "estado", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $estados, 'required' => true)); ?>
             </div>
         </div>
 
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Nome da Mãe</label>
-                <?php echo $this->Form->input('nome_mae', ['placeholder' => 'Nome da Mãe', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                <?php echo $this->Form->input('nome_mae', ['placeholder' => 'Nome da Mãe', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Sexo</label>
-                <?php echo $this->Form->input('sexo', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'options' => ['M' => 'Masculino', 'F' => 'Feminino', 'O' => 'Outros']]); ?>
+                <?php echo $this->Form->input('sexo', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'options' => ['M' => 'Masculino', 'F' => 'Feminino', 'O' => 'Outros', 'required' => true]]); ?>
             </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Data Nascimento</label>
-                <?php echo $this->Form->input('data_nascimento', ['type' => 'text', 'placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0']); ?>
+                <?php echo $this->Form->input('data_nascimento', ['type' => 'text', 'placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0', 'required' => true]); ?>
             </div>
         </div>
 

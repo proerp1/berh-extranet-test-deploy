@@ -31,6 +31,15 @@ class Order extends AppModel
         ],
         'EconomicGroup'
     ];
+
+    public $hasOne = [
+        'Income' => [
+            'className' => 'Income',
+            'foreignKey' => 'order_id',
+             'conditions' => ['Income.data_cancel' => '1901-01-01 00:00:00']
+        ]
+    ];
+
     public $hasMany = [
         'OrderItem' => [
             'className' => 'OrderItem',
