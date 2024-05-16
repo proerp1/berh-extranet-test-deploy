@@ -470,7 +470,7 @@ class OrdersController extends AppController
                     'conditions' => ['BenefitType.id' => $order['Order']['benefit_type']]
                 ]);
                 
-                $benefit_type_desc = $benefit_types['BenefitType']['name'];
+                $benefit_type_desc = isset($benefit_types['BenefitType']) ? $benefit_types['BenefitType']['name'] : '';
             }
         }
 
@@ -766,6 +766,56 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $orderId]);
     }
 
+    public function upload_saldo_csv()
+    {
+        $orderId = $this->request->data['order_id'];
+        $customerId = $this->request->data['customer_id'];
+
+        $file = $this->request->data['CustomerUserItinerary'];
+
+        $ret = $this->parseCSVSaldo($customerId, $file['file']['tmp_name']);
+
+        $total_saldo = 0;
+        foreach ($ret['data'] as $data) {
+            $customerItineraries = $this->CustomerUserItinerary->find('first', [
+                'conditions' => [
+                    'CustomerUserItinerary.customer_user_id' => $data['customer_user_id'],
+                    'Benefit.id' => $data['benefit_id']
+                ],
+            ]);
+
+            $total_saldo += $data['saldo'];
+
+            $orderItemData = [
+                'order_id' => $orderId,
+                'customer_user_itinerary_id' => $customerItineraries['CustomerUserItinerary']['id'],
+                'customer_user_id' => $data['customer_user_id'],
+                'saldo' => $data['saldo'],
+                'working_days' => 0,
+                'price_per_day' => 0,
+                'subtotal' => 0,
+                'transfer_fee' => 0,
+                'total' => 0,
+                'commission_fee' => 0,
+                'values_from_csv' => 0,
+                'manual_quantity' => 0,
+            ];
+
+            $this->OrderItem->create();
+            $this->OrderItem->save($orderItemData);
+        }
+
+        $orderData = [
+            'id' => $orderId,
+            'saldo' => $total_saldo,
+        ];
+
+        $this->Order->save($orderData);
+
+        $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'edit/' . $orderId]);
+    }
+
     private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
@@ -825,6 +875,56 @@ class OrdersController extends AppController
         }
 
         return ['customerUsersIds' => $customerUsersIds, 'unitPriceMaping' => $unitPriceMaping];
+    }
+
+    private function parseCSVSaldo($customerId, $tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        $data = [];
+        foreach ($csv->getRecords() as $row) {
+            $saldo = 0;
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);            
+
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                ]
+            ]);
+
+            if (empty($existingUser)) {
+                $line++;
+                continue;
+            }
+
+            $data[] = [
+                'customer_user_id' => $existingUser['CustomerUser']['id'],
+                'benefit_id' => $row[1],
+                'saldo' => $row[2],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 
     public function updateWorkingDays()
