@@ -177,8 +177,7 @@ class ExcelTemplate
 			->setCellValue('N1', "Receita")
 			->setCellValue('O1', "Centro de custo")
 			->setCellValue('P1', "Observações")
-			->setCellValue('Q1', "Data Pagamento")
-			->setCellValue('R1', "Data baixa");
+			->setCellValue('Q1', "Data Pagamento");
 
 
 		$indx = 1;
@@ -202,8 +201,7 @@ class ExcelTemplate
 				->setCellValue('N' . $indx, $dados[$i]['Revenue']['name'])
 				->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
-				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
-				->setCellValue('R' . $indx, $dados[$i]['Income']['data_baixa']);
+				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento']);
 
 
 		}
