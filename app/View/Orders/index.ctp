@@ -121,11 +121,9 @@
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-                                <?php if ($data[$i]["Status"]["id"] == '83' || $data[$i]["Status"]["id"] == '94') { ?>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                        Excluir
-                                    </a>
-                                <?php } ?>
+                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    Excluir
+                                </a>
                             </td>
                         </tr>
                     <?php } ?>
