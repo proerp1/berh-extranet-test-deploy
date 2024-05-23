@@ -344,6 +344,7 @@ class OrdersController extends AppController
                 } else {
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) - $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
                 }
+
                 $order = ['Order' => []];
                 $order['Order']['id'] = $id;
                 $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
@@ -1519,6 +1520,9 @@ class OrdersController extends AppController
     {
         if (is_numeric($price)) {
             return $price;
+        }
+        if ($price == '') {
+            return 0;
         }
         $valueFormatado = str_replace('.', '', $price);
         $valueFormatado = str_replace(',', '.', $valueFormatado);
