@@ -50,7 +50,7 @@ class OrdersController extends AppController
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
-            $condition['and'] = array_merge($condition['and'], ['Order.between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']]);
+            $condition['and'] = array_merge($condition['and'], ['Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']]);
         }
 
         if (isset($_GET['exportar'])) {
