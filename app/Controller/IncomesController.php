@@ -172,40 +172,37 @@ class IncomesController extends AppController
     {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
+            $this->request->data['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
+            $this->request->data['Income']['parcela'] = 1;
+            $this->request->data['Income']['status_id'] = 15;
+            
             $this->Income->create();
-            if ($this->Income->validates()) {
-                $this->request->data['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
-                $this->request->data['Income']['parcela'] = 1;
-                $this->request->data['Income']['status_id'] = 15;
-                if ($this->Income->save($this->request->data)) {
-                    $id_origem = $this->Income->id;
-                    if ($this->request->data['Income']['recorrencia'] == 1) {
-                        for ($i=0; $i < $this->request->data['Income']['quantidade']; $i++) {
-                            $year = substr($this->request->data['Income']['vencimento'], 6, 4);
-                            $month = substr($this->request->data['Income']['vencimento'], 3, 2);
-                            $date = substr($this->request->data['Income']['vencimento'], 0, 2);
-                            $data = $year."-".$month."-".$date;
+            if ($this->Income->save($this->request->data)) {
+                $id_origem = $this->Income->id;
+                if ($this->request->data['Income']['recorrencia'] == 1) {
+                    for ($i=0; $i < $this->request->data['Income']['quantidade']; $i++) {
+                        $year = substr($this->request->data['Income']['vencimento'], 6, 4);
+                        $month = substr($this->request->data['Income']['vencimento'], 3, 2);
+                        $date = substr($this->request->data['Income']['vencimento'], 0, 2);
+                        $data = $year."-".$month."-".$date;
 
-                            $cont = $i+1;
-                            $meses = $cont*$this->request->data['Income']["periodicidade"];
+                        $cont = $i+1;
+                        $meses = $cont*$this->request->data['Income']["periodicidade"];
 
-                            $effectiveDate = date('d/m/Y', strtotime("+".$meses." months", strtotime($data)));
+                        $effectiveDate = date('d/m/Y', strtotime("+".$meses." months", strtotime($data)));
 
-                            $data_save = $this->request->data;
-                            $data_save['Income']['vencimento'] = $effectiveDate;
-                            $data_save['Income']['parcela'] = $cont+1;
-                            $data_save['Income']['conta_origem_id'] = $id_origem;
+                        $data_save = $this->request->data;
+                        $data_save['Income']['vencimento'] = $effectiveDate;
+                        $data_save['Income']['parcela'] = $cont+1;
+                        $data_save['Income']['conta_origem_id'] = $id_origem;
 
-                            $this->Income->create();
-                            $this->Income->save($data_save);
-                        }
+                        $this->Income->create();
+                        $this->Income->save($data_save);
                     }
-
-                    $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                    $this->redirect(['action' => 'index/?'.$this->request->data['query_string']]);
-                } else {
-                    $this->Flash->set(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
+
+                $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => 'index/?'.$this->request->data['query_string']]);
             } else {
                 $this->Flash->set(__('A conta a receber não pode ser salva, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -214,7 +211,7 @@ class IncomesController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 5]]);
         $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
-        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1], 'order' => 'CostCenter.name']);
+        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1, 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
         $dataCustomers = $this->Customer->find('all', ['fields' => ['Customer.id', 'concat(Customer.codigo_associado, " - ", Customer.nome_secundario) as name'], 'order' => 'Customer.codigo_associado']);
 
         $customers = [];
