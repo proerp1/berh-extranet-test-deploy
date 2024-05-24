@@ -18,9 +18,9 @@ class OrdersController extends AppController
 
     public $paginate = [
         'Order' => [
+            'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator'],
             'limit' => 20, 'order' => ['Order.id' => 'desc']
-            ]
-        
+        ]
     ];
 
     public function beforeFilter()
@@ -108,13 +108,24 @@ class OrdersController extends AppController
             'order' => ['nome_primario' => 'asc']
         ]);
 
+        $totalOrders = $this->Order->find('first', [
+            'fields' => [
+                'sum(subtotal) as subtotal',
+                'sum(transfer_fee) as transfer_fee',
+                'sum(commission_fee) as commission_fee',
+                'sum(desconto) as desconto',
+                'sum(total) as total',
+            ],
+            'recursive' => -1
+        ]);
+
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders'));
     }
 
     public function createOrder()
