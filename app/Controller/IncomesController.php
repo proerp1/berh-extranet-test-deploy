@@ -263,7 +263,7 @@ class IncomesController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 5]]);
         $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
-        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1], 'order' => 'CostCenter.name']);
+        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1, 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
         $customers = $this->Customer->find('list', ['conditions' => ['Customer.status_id' => [3,4]], 'order' => 'Customer.nome_secundario']);
 
         $this->set("action", "Nova conta a receber");
