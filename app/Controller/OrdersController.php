@@ -50,7 +50,7 @@ class OrdersController extends AppController
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
-            $condition['and'] = array_merge($condition['and'], ['Order.created >=' => $de . ' 00:00:00', 'Order.created <=' => $ate . ' 23:59:59']);
+            $condition['and'] = array_merge($condition['and'], ['Order.between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']]);
         }
 
         if (isset($_GET['exportar'])) {
@@ -109,13 +109,15 @@ class OrdersController extends AppController
         ]);
 
         $totalOrders = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
             'fields' => [
-                'sum(subtotal) as subtotal',
-                'sum(transfer_fee) as transfer_fee',
-                'sum(commission_fee) as commission_fee',
-                'sum(desconto) as desconto',
-                'sum(total) as total',
+                'sum(Order.subtotal) as subtotal',
+                'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.commission_fee) as commission_fee',
+                'sum(Order.desconto) as desconto',
+                'sum(Order.total) as total',
             ],
+            'conditions' => $condition,
             'recursive' => -1
         ]);
 
