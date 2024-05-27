@@ -255,7 +255,7 @@
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="javascript:;" onclick="history.go(-1)" class="btn btn-light-dark">Voltar</a>
                     <?php if (isset($id)){ ?>
-                        <?php if ($this->request->data['Status']['id'] != 17){ ?>
+                        <?php if ($this->request->data['Status']['id'] != 17 || CakeSession::read("Auth.User.Group.id") == 1){ ?>
                             <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
                         <?php } ?>
                         <?php if (($this->request->data['Status']['id'] == 15 || $this->request->data['Status']['id'] == 16) && $this->request->data['Income']['cnab_gerado'] == 1){ ?>

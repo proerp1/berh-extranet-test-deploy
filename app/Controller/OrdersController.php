@@ -18,9 +18,9 @@ class OrdersController extends AppController
 
     public $paginate = [
         'Order' => [
+            'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator'],
             'limit' => 20, 'order' => ['Order.id' => 'desc']
-            ]
-        
+        ]
     ];
 
     public function beforeFilter()
@@ -50,7 +50,7 @@ class OrdersController extends AppController
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
-            $condition['and'] = array_merge($condition['and'], ['Order.created >=' => $de . ' 00:00:00', 'Order.created <=' => $ate . ' 23:59:59']);
+            $condition['and'] = array_merge($condition['and'], ['Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']]);
         }
 
         if (isset($_GET['exportar'])) {
@@ -108,13 +108,26 @@ class OrdersController extends AppController
             'order' => ['nome_primario' => 'asc']
         ]);
 
+        $totalOrders = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'fields' => [
+                'sum(Order.subtotal) as subtotal',
+                'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.commission_fee) as commission_fee',
+                'sum(Order.desconto) as desconto',
+                'sum(Order.total) as total',
+            ],
+            'conditions' => $condition,
+            'recursive' => -1
+        ]);
+
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders'));
     }
 
     public function createOrder()
@@ -344,6 +357,7 @@ class OrdersController extends AppController
                 } else {
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) - $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
                 }
+
                 $order = ['Order' => []];
                 $order['Order']['id'] = $id;
                 $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
@@ -470,7 +484,7 @@ class OrdersController extends AppController
                     'conditions' => ['BenefitType.id' => $order['Order']['benefit_type']]
                 ]);
                 
-                $benefit_type_desc = $benefit_types['BenefitType']['name'];
+                $benefit_type_desc = isset($benefit_types['BenefitType']) ? $benefit_types['BenefitType']['name'] : '';
             }
         }
 
@@ -521,6 +535,9 @@ class OrdersController extends AppController
         $income['Income']['order_id'] = $id;
         $income['Income']['parcela'] = 1;
         $income['Income']['status_id'] = 15;
+        $income['Income']['revenue_id'] = 1;
+        $income['Income']['cost_center_id'] = 5;
+        $income['Income']['payment_method'] = 1;
         $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
@@ -766,6 +783,56 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $orderId]);
     }
 
+    public function upload_saldo_csv()
+    {
+        $orderId = $this->request->data['order_id'];
+        $customerId = $this->request->data['customer_id'];
+
+        $file = $this->request->data['CustomerUserItinerary'];
+
+        $ret = $this->parseCSVSaldo($customerId, $file['file']['tmp_name']);
+
+        $total_saldo = 0;
+        foreach ($ret['data'] as $data) {
+            $customerItineraries = $this->CustomerUserItinerary->find('first', [
+                'conditions' => [
+                    'CustomerUserItinerary.customer_user_id' => $data['customer_user_id'],
+                    'Benefit.id' => $data['benefit_id']
+                ],
+            ]);
+
+            $total_saldo += $data['saldo'];
+
+            $orderItemData = [
+                'order_id' => $orderId,
+                'customer_user_itinerary_id' => $customerItineraries['CustomerUserItinerary']['id'],
+                'customer_user_id' => $data['customer_user_id'],
+                'saldo' => $data['saldo'],
+                'working_days' => 0,
+                'price_per_day' => 0,
+                'subtotal' => 0,
+                'transfer_fee' => 0,
+                'total' => 0,
+                'commission_fee' => 0,
+                'values_from_csv' => 0,
+                'manual_quantity' => 0,
+            ];
+
+            $this->OrderItem->create();
+            $this->OrderItem->save($orderItemData);
+        }
+
+        $orderData = [
+            'id' => $orderId,
+            'saldo' => $total_saldo,
+        ];
+
+        $this->Order->save($orderData);
+
+        $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'edit/' . $orderId]);
+    }
+
     private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
@@ -825,6 +892,56 @@ class OrdersController extends AppController
         }
 
         return ['customerUsersIds' => $customerUsersIds, 'unitPriceMaping' => $unitPriceMaping];
+    }
+
+    private function parseCSVSaldo($customerId, $tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        $data = [];
+        foreach ($csv->getRecords() as $row) {
+            $saldo = 0;
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);            
+
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                ]
+            ]);
+
+            if (empty($existingUser)) {
+                $line++;
+                continue;
+            }
+
+            $data[] = [
+                'customer_user_id' => $existingUser['CustomerUser']['id'],
+                'benefit_id' => $row[1],
+                'saldo' => $row[2],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 
     public function updateWorkingDays()
@@ -1416,6 +1533,9 @@ class OrdersController extends AppController
     {
         if (is_numeric($price)) {
             return $price;
+        }
+        if ($price == '') {
+            return 0;
         }
         $valueFormatado = str_replace('.', '', $price);
         $valueFormatado = str_replace(',', '.', $valueFormatado);

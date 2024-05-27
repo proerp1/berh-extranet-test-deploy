@@ -57,26 +57,40 @@ class Order extends AppModel
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
+            $results[$key][$this->alias]['transfer_fee_not_formated'] = 0;
             if (isset($val[$this->alias]['transfer_fee'])) {
                 $results[$key][$this->alias]['transfer_fee_not_formated'] = $results[$key][$this->alias]['transfer_fee'];
                 $results[$key][$this->alias]['transfer_fee'] = number_format($results[$key][$this->alias]['transfer_fee'], 2, ',', '.');
             }
 
+            $results[$key][$this->alias]['commission_fee_not_formated'] = 0;
             if (isset($val[$this->alias]['commission_fee'])) {
                 $results[$key][$this->alias]['commission_fee_not_formated'] = $results[$key][$this->alias]['commission_fee'];
                 $results[$key][$this->alias]['commission_fee'] = number_format($results[$key][$this->alias]['commission_fee'], 2, ',', '.');
             }
 
+            $results[$key][$this->alias]['subtotal_not_formated'] = 0;
             if (isset($val[$this->alias]['subtotal'])) {
                 $results[$key][$this->alias]['subtotal_not_formated'] = $results[$key][$this->alias]['subtotal'];
                 $results[$key][$this->alias]['subtotal'] = number_format($results[$key][$this->alias]['subtotal'], 2, ',', '.');
             }
 
+            $results[$key][$this->alias]['total_not_formated'] = 0;
             if (isset($val[$this->alias]['total'])) {
                 $results[$key][$this->alias]['total_not_formated'] = $results[$key][$this->alias]['total'];
                 $results[$key][$this->alias]['total'] = number_format($results[$key][$this->alias]['total'], 2, ',', '.');
             }
 
+            $results[$key][$this->alias]['saldo_not_formated'] = 0;
+            if (isset($val[$this->alias]['saldo'])) {
+                $results[$key][$this->alias]['saldo_not_formated'] = $results[$key][$this->alias]['saldo'];
+                $results[$key][$this->alias]['saldo'] = number_format($results[$key][$this->alias]['saldo'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['saldo_not_formated'] = 0;
+                $results[$key][$this->alias]['saldo'] = '0,00';
+            }
+
+            $results[$key][$this->alias]['desconto_not_formated'] = 0;
             if (isset($val[$this->alias]['desconto'])) {
                 $results[$key][$this->alias]['desconto_not_formated'] = $results[$key][$this->alias]['desconto'];
                 $results[$key][$this->alias]['desconto'] = number_format($results[$key][$this->alias]['desconto'], 2, ',', '.');
@@ -143,6 +157,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['total'])) {
             $this->data[$this->alias]['total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total']);
+        }
+
+        if (!empty($this->data[$this->alias]['saldo'])) {
+            $this->data[$this->alias]['saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['saldo']);
         }
 
         if (!empty($this->data[$this->alias]['desconto'])) {

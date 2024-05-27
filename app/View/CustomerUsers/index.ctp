@@ -124,10 +124,10 @@ echo $this->element("abas_customers", array('id' => $id));
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th>
+                    <th class="ps-4 w-80px min-w-80px rounded-start">
                         <input type="checkbox" class="check_all">
                     </th>
-                    <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                    <th>Status</th>
                     <th>Nome</th>
                     <th>E-mail</th>
                     <th>CPF</th>
@@ -141,10 +141,10 @@ echo $this->element("abas_customers", array('id' => $id));
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
                         <tr>
-                            <th>
-                                <input type="checkbox" name="item_ck" class="check_individual" id="">
-                            </th>
                             <td class="fw-bold fs-7 ps-4">
+                                <input type="checkbox" name="item_ck" class="check_individual" id="">
+                            </td>
+                            <td>
                                 <input type="hidden" class="item_id" value="<?php echo $data[$i]["CustomerUser"]["id"]; ?>">
                                 <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                     <?php echo $data[$i]["Status"]["name"] ?>

@@ -79,7 +79,7 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
 
-	<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment-with-locales.min.js"></script>
+	
 </head>
 
 <body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled toolbar-fixed aside-enabled aside-fixed" style="--kt-toolbar-height:55px;--kt-toolbar-height-tablet-and-mobile:55px" <?php echo CakeSession::read('Auth.User.aside') == 0 ? 'data-kt-aside-minimize="on"' : ''; ?>>
@@ -132,7 +132,6 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 	?>
 
 	<script>
-		moment.locale('pt-br');
 		var base_url = "<?php echo $this->base ?>";
 
 		function replaceAll(string, token, newtoken) {

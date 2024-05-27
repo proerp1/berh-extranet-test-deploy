@@ -820,23 +820,12 @@ class CustomersController extends AppController
                 'limit' => 10,
                 'order' => ['Order.created' => 'desc'],
                 'group' => 'Order.id',
-                'fields' => [
-                    'Order.*',
+                'contain' => [
+                    'Status', 
+                    'Customer', 
                     'Income.id',
                     'Income.vencimento',
-                    'Customer.*',
-                    'Status.*'
                 ],
-                'joins' => [
-                    [
-                        'table' => 'incomes',
-                        'alias' => 'Income',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Income.order_id = Order.id'
-                        ]
-                    ]
-                ]
             ]
         ];
 
