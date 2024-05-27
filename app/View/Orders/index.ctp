@@ -80,7 +80,7 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
+                    <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Código</th>
                     <th>Data de criação</th>
                     <th>Número</th>
