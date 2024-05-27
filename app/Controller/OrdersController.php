@@ -32,35 +32,49 @@ class OrdersController extends AppController
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-
+    
         $condition = ["and" => [], "or" => []];
-
+    
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Order.id' => $_GET['q'], 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 'Customer.id LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], [
+                'Order.id' => $_GET['q'], 
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
         }
-
+    
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
         }
-
+    
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-
+    
         if ($get_de != '' and $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
-
-            $condition['and'] = array_merge($condition['and'], ['Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']]);
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
+            ]);
         }
-
+    
         if (isset($_GET['exportar'])) {
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
-
+    
             $data = $this->Order->find('all', [
-                'contain' => ['Status', 'Customer', 'CustomerCreator', 'EconomicGroup', 'Income.data_pagamento'],
-                'conditions' => $condition, 
+                'contain' => [
+                    'Status', 
+                    'Customer', 
+                    'CustomerCreator', 
+                    'EconomicGroup', 
+                    'Income.data_pagamento'
+                ],
+                'conditions' => $condition,
             ]);
-
+    
             foreach ($data as $k => $pedido) {
                 $suppliersCount = $this->OrderItem->find('count', [
                     'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
@@ -85,29 +99,29 @@ class OrdersController extends AppController
                     'group' => ['Supplier.id'],
                     'fields' => ['Supplier.id']
                 ]);
-        
+    
                 $usersCount = $this->OrderItem->find('count', [
                     'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
                     'group' => ['OrderItem.customer_user_id'],
                     'fields' => ['OrderItem.customer_user_id']
                 ]);
-
+    
                 $data[$k]['Order']['suppliersCount'] = $suppliersCount;
                 $data[$k]['Order']['usersCount'] = $usersCount;
             }
-
+    
             $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
-
+    
             $this->redirect("/files/excel/" . $nome);
         }
-
+    
         $data = $this->Paginator->paginate('Order', $condition);
         $customers = $this->Customer->find('list', [
             'conditions' => ['Customer.status_id' => 3],
             'fields' => ['id', 'nome_primario'],
             'order' => ['nome_primario' => 'asc']
         ]);
-
+    
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup'],
             'fields' => [
@@ -120,15 +134,16 @@ class OrdersController extends AppController
             'conditions' => $condition,
             'recursive' => -1
         ]);
-
+    
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
-
+    
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
-
+    
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
         $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders'));
     }
+    
 
     public function createOrder()
     {
