@@ -51,6 +51,14 @@
                             </select>
 
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Datas:</label>
+                                <div class="input-group input-daterange" id="datepicker">
+                                    <input class="form-control" id="de" name="de" value="<?php echo isset($_GET["de"]) ? $_GET["de"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>">
+                                </div>
+                            </div>
                            
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>
