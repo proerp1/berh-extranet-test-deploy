@@ -85,7 +85,7 @@
                     <th>Data de criação</th>
                     <th>Número</th>
                     <th>Cliente</th>
-                    <th>Data Pagamento</th>
+                    <th>Data do Pagamento</th>
                     <th>Data Finalização</th>
                     <th>Subtotal</th>
                     <th>Repasse</th>
