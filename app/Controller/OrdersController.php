@@ -64,7 +64,6 @@ class OrdersController extends AppController
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
         
-        $joins = '';
         if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
@@ -72,20 +71,7 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
-
-            $joins = [
-                'joins' => [
-                    [
-                        'table' => 'incomes',
-                        'alias' => 'Income',
-                        'type' => 'LEFT',
-                        'conditions' => ['Income.order_id = Order.id']
-                    ]
-                ]
-            ];
-
-            $this->paginate['Order'] = array_merge($this->paginate['Order'], $joins);
-            
+           
         }
     
         if (isset($_GET['exportar'])) {
