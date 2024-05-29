@@ -76,6 +76,11 @@ if (isset($user_id) && !$is_admin) {
                 <label class="fw-semibold fs-6 mb-2">Nome</label>
                 <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Matrícula</label>
+                <?php echo $this->Form->input('matricula', ['placeholder' => 'Matrícula', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+            </div>
         </div>
 
         <div class="row">
