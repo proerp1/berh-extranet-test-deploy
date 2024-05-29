@@ -151,38 +151,6 @@
     </div>
 </div>
 
-<script>
-    
-    $(document).ready(function() {
-        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
-            $("#t").val(null).trigger('change');
-            $("#f").val(null).trigger('change');
-            $("#de").val(null);
-            $("#ate").val(null);
-
-            $("#busca").submit();
-        });
-
-        $('#q').on('change', function() {
-            $("#busca").submit();
-        });
-
-        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
-            $('#customer_id').select2({
-                dropdownParent: $('#modal_gerar_arquivo')
-            });
-        });
-
-        $(".datepicker2").datepicker({
-            startView: 1,
-            minViewMode: 1,
-            language: "pt-BR",
-            format: 'mm/yyyy',
-            autoclose: true
-        });
-    });
-</script>
-
 <div class="modal fade" id="modal_gerar_arquivo" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -356,6 +324,35 @@
     }
 
     $(function() {
+        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
+            $("#t").val(null).trigger('change');
+            $("#f").val(null).trigger('change');
+            $("#de").val(null);
+            $("#ate").val(null);
+            $("#de_pagamento").val(null);
+            $("#ate_pagamento").val(null);
+
+            $("#busca").submit();
+        });
+
+        $('#q').on('change', function() {
+            $("#busca").submit();
+        });
+
+        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
+            $('#customer_id').select2({
+                dropdownParent: $('#modal_gerar_arquivo')
+            });
+        });
+
+        $(".datepicker2").datepicker({
+            startView: 1,
+            minViewMode: 1,
+            language: "pt-BR",
+            format: 'mm/yyyy',
+            autoclose: true
+        });
+
         $('#order_creation_form').on('submit', function(event) {
             const creditReleaseDateValue = $('#credit_release_date').val();
             const periodFromValue = $('#period_from').val();

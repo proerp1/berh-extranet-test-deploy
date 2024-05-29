@@ -136,7 +136,7 @@ class OrdersController extends AppController
         ]);
     
         $totalOrders = $this->Order->find('first', [
-            'contain' => ['Customer', 'EconomicGroup'],
+            'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
                 'sum(Order.subtotal) as subtotal',
                 'sum(Order.transfer_fee) as transfer_fee',
