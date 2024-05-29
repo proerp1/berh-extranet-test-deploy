@@ -60,6 +60,18 @@ class OrdersController extends AppController
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
         }
+
+        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
+        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
+    
+        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
+            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
+            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
+            ]);
+        }
     
         if (isset($_GET['exportar'])) {
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';

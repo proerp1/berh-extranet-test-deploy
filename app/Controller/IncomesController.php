@@ -212,6 +212,17 @@ class IncomesController extends AppController
         $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
         $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1, 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
+        $orderArr = $this->Order->find('all', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'contain' => ['Customer'],
+            'order' => 'Order.id'
+        ]);
+
+        $orders = [];
+        foreach ($orderArr as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
+
         $dataCustomers = $this->Customer->find('all', ['fields' => ['Customer.id', 'concat(Customer.codigo_associado, " - ", Customer.nome_secundario) as name'], 'order' => 'Customer.codigo_associado']);
 
         $customers = [];
@@ -225,7 +236,7 @@ class IncomesController extends AppController
         $action = 'Contas a receber';
         $breadcrumb = ['Nova conta' => ''];
         $this->set("form_action", "add");
-        $this->set(compact('statuses', 'revenues', 'bankAccounts', 'costCenters', 'customers', 'socios', 'cancelarConta', 'action', 'breadcrumb'));
+        $this->set(compact('statuses', 'revenues', 'bankAccounts', 'costCenters', 'customers', 'socios', 'cancelarConta', 'action', 'breadcrumb', 'orders'));
     }
     
     public function add_retorno($retorno_id, $tmp_id)
@@ -341,6 +352,16 @@ class IncomesController extends AppController
         $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
         $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1], 'order' => 'CostCenter.name']);
+        $orderArr = $this->Order->find('all', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'contain' => ['Customer'],
+            'order' => 'Order.id'
+        ]);
+        $orders = [];
+        foreach ($orderArr as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
+
         $dataCustomers = $this->Customer->find('all', ['conditions' => ['or' => ['Customer.id' => $this->request->data["Customer"]["id"]]], 'fields' => ['Customer.id', 'concat(Customer.codigo_associado, " - ", Customer.nome_secundario) as name'], 'order' => 'Customer.codigo_associado']);
 
         $customers = [];
@@ -353,7 +374,7 @@ class IncomesController extends AppController
         $action = 'Contas a receber';
         $breadcrumb = ['Alterar conta' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'revenues', 'bankAccounts', 'costCenters', 'customers', 'socios', 'cancelarConta', 'action', 'breadcrumb'));
+        $this->set(compact('statuses', 'id', 'revenues', 'bankAccounts', 'costCenters', 'customers', 'socios', 'cancelarConta', 'action', 'breadcrumb', 'orders'));
         
         $this->render("add");
     }

@@ -60,6 +60,14 @@
                                     <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data Pagamento:</label>
+                                <div class="input-group input-daterange" id="datepicker">
+                                    <input class="form-control" id="de_pagamento" name="de_pagamento" value="<?php echo isset($_GET["de_pagamento"]) ? $_GET["de_pagamento"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="ate_pagamento" name="ate_pagamento" value="<?php echo isset($_GET["ate_pagamento"]) ? $_GET["ate_pagamento"] : ""; ?>">
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 
@@ -123,8 +131,7 @@
                                 <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-                                <?php if ($data[$i]["Status"]["id"] == '83') { ?>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                <?php if ($data[$i]["Status"]["id"] == '83' || $data[$i]["Status"]["id"] == '85') { ?>                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
                                 <?php } ?>
