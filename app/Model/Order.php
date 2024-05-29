@@ -12,10 +12,6 @@ class Order extends AppModel
             'className' => 'Customer',
             'foreignKey' => 'customer_id'
         ],
-        'Income' => [
-            'className' => 'Income',
-            'foreignKey' => 'order_id'
-        ],
         'Creator' => [
             'className' => 'User',
             'foreignKey' => 'user_creator_id'
