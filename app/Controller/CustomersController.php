@@ -1698,9 +1698,6 @@ class CustomersController extends AppController
         $this->CustomerFile->id = $file_id;
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerFile->validates();
-            if ($this->request->data['CustomerFile']['file']['name'] == '') {
-                unset($this->request->data['CustomerFile']['file']);
-            }
             $this->request->data['CustomerFile']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->CustomerFile->save($this->request->data)) {
                 $this->Flash->set(__('O arquivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
