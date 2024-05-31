@@ -1,4 +1,88 @@
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
+
+<div class="row mb-xl-5">
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['subtotal'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Subtotal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['transfer_fee'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Repasse</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['commission_fee'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Taxa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['desconto'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Desconto</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Total</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
@@ -149,38 +233,6 @@
         <?php echo $this->element("pagination"); ?>
     </div>
 </div>
-
-<script>
-    
-    $(document).ready(function() {
-        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
-            $("#t").val(null).trigger('change');
-            $("#f").val(null).trigger('change');
-            $("#de").val(null);
-            $("#ate").val(null);
-
-            $("#busca").submit();
-        });
-
-        $('#q').on('change', function() {
-            $("#busca").submit();
-        });
-
-        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
-            $('#customer_id').select2({
-                dropdownParent: $('#modal_gerar_arquivo')
-            });
-        });
-
-        $(".datepicker2").datepicker({
-            startView: 1,
-            minViewMode: 1,
-            language: "pt-BR",
-            format: 'mm/yyyy',
-            autoclose: true
-        });
-    });
-</script>
 
 <div class="modal fade" id="modal_gerar_arquivo" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
@@ -355,6 +407,35 @@
     }
 
     $(function() {
+        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
+            $("#t").val(null).trigger('change');
+            $("#f").val(null).trigger('change');
+            $("#de").val(null);
+            $("#ate").val(null);
+            $("#de_pagamento").val(null);
+            $("#ate_pagamento").val(null);
+
+            $("#busca").submit();
+        });
+
+        $('#q').on('change', function() {
+            $("#busca").submit();
+        });
+
+        $('#modal_gerar_arquivo').on('show.bs.modal', function () {
+            $('#customer_id').select2({
+                dropdownParent: $('#modal_gerar_arquivo')
+            });
+        });
+
+        $(".datepicker2").datepicker({
+            startView: 1,
+            minViewMode: 1,
+            language: "pt-BR",
+            format: 'mm/yyyy',
+            autoclose: true
+        });
+
         $('#order_creation_form').on('submit', function(event) {
             const creditReleaseDateValue = $('#credit_release_date').val();
             const periodFromValue = $('#period_from').val();

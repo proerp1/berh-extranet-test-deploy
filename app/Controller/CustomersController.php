@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor', 'EconomicGroup'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile'];
 
     public $paginate = [
         'Customer' => [
@@ -1622,4 +1622,123 @@ class CustomersController extends AppController
         $this->Flash->set($msg, ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'login_consulta/' . $cliente_id]);
     }
+
+    /*********************
+            ARQUIVOS
+     **********************/
+    public function files($id)
+    {
+        $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Paginator->settings = ['CustomerFile' => [
+            'limit' => 100,
+            'order' => ['CustomerFile.created' => 'desc'],
+            
+            ]
+        ];
+
+        $condition = ['and' => ['Customer.id' => $id], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerFile.file LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
+        $action = 'Arquivos';
+
+        $data = $this->Paginator->paginate('CustomerFile', $condition);
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 21]]);
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Arquivos' => '',
+        ];
+        $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
+    }
+
+    public function add_file($id)
+    {
+        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        if ($this->request->is(['post', 'put'])) {
+            $this->CustomerFile->create();
+            if ($this->CustomerFile->validates()) {
+                $this->request->data['CustomerFile']['user_creator_id'] = CakeSession::read('Auth.User.id');
+                if ($this->CustomerFile->save($this->request->data)) {
+                    $this->Flash->set(__('O arquivo foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect(['action' => 'files/' . $id]);
+                } else {
+                    $this->Flash->set(__('O arquivo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                }
+            } else {
+                $this->Flash->set(__('O arquivo não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
+        $action = 'Arquivos';
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 21]]);
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Novo Arquivo' => '',
+        ];
+        $this->set("form_action", "../customers/add_file/" . $id);
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+    }
+
+    public function edit_file($id, $file_id = null)
+    {
+        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->CustomerFile->id = $file_id;
+        if ($this->request->is(['post', 'put'])) {
+            $this->CustomerFile->validates();
+            $this->request->data['CustomerFile']['user_updated_id'] = CakeSession::read('Auth.User.id');
+            if ($this->CustomerFile->save($this->request->data)) {
+                $this->Flash->set(__('O arquivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect(['action' => 'files/' . $id]);
+            } else {
+                $this->Flash->set(__('O arquivo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $temp_errors = $this->CustomerFile->validationErrors;
+        $this->request->data = $this->CustomerFile->read();
+        $this->CustomerFile->validationErrors = $temp_errors;
+
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 21]]);
+
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Alterar Arquivo' => '',
+        ];
+        $this->set("action", 'Arquivos');
+        $this->set("form_action", "../customers/edit_file/" . $id);
+        $this->set(compact('statuses', 'id', 'file_id', 'breadcrumb'));
+
+        $this->render("add_file");
+    }
+
+    public function delete_file($customer_id, $id)
+    {
+        $this->Permission->check(11, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->CustomerFile->id = $id;
+        $this->request->data = $this->CustomerFile->read();
+
+        $this->request->data['CustomerFile']['data_cancel'] = date('Y-m-d H:i:s');
+        $this->request->data['CustomerFile']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
+
+        if ($this->CustomerFile->save($this->request->data)) {
+            $this->Flash->set(__('O arquivo foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'files/' . $customer_id]);
+        }
+    }    
 }

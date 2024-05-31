@@ -23,4 +23,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['economic_groups']) ? 'active' : '' ?>" href="<?php echo $this->base.'/economic_groups/index/'.$id; ?>">Grupos econômicos</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['files', 'add_file', 'edit_file']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/files/'.$id; ?>">Arquivos</a>
+	</li>
 </ul>

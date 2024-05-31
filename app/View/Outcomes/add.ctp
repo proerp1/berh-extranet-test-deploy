@@ -230,20 +230,23 @@
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base.'/outcomes/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
-                    
-                    <?php if ($this->request->data['Status']['id'] != 13){ ?>
-                            <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
-                        <?php } ?>
-                    <?php if (isset($this->request->data['Status']) && $this->request->data['Status']['id'] == 11): ?>
-                        <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
-                        <?php if ($cancelarConta) { ?>
-                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/15/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
-                        <?php } ?>
-                    <?php endif ?>
-                    <?php if (isset($this->request->data['Status']) && $this->request->data['Status']['id'] == 12): ?>
-                        <!-- <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/13/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Conta paga</a> -->
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-success">Conta paga</a>
-                    <?php endif ?>
+                    <?php if (isset($id)){ ?>
+                        <?php if ($this->request->data['Status']['id'] != 13){ ?>
+                                <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
+                            <?php } ?>
+                        <?php if (isset($this->request->data['Status']) && $this->request->data['Status']['id'] == 11): ?>
+                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
+                            <?php if ($cancelarConta) { ?>
+                                <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/15/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
+                            <?php } ?>
+                        <?php endif ?>
+                        <?php if (isset($this->request->data['Status']) && $this->request->data['Status']['id'] == 12): ?>
+                            <!-- <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/13/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Conta paga</a> -->
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-success">Conta paga</a>
+                        <?php endif ?>
+                    <?php } else { ?>
+                        <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
+                    <?php } ?>
                 </div>
             </div>
 
