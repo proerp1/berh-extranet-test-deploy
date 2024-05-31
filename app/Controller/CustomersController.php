@@ -1711,7 +1711,11 @@ class CustomersController extends AppController
         $this->request->data = $this->CustomerFile->read();
         $this->CustomerFile->validationErrors = $temp_errors;
 
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 21]]);
+
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Arquivo' => '',
