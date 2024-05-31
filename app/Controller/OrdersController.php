@@ -6,10 +6,10 @@ use League\Csv\Reader;
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
     'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
-     'BenefitType', 'Outcome', 'Status', 'Proposal'];
+     'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -816,49 +816,30 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
-        $file = $this->request->data['CustomerUserItinerary'];
+        $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
-        $ret = $this->parseCSVSaldo($customerId, $file['file']['tmp_name']);
-
-        $total_saldo = 0;
         foreach ($ret['data'] as $data) {
-            $customerItineraries = $this->CustomerUserItinerary->find('first', [
-                'conditions' => [
-                    'CustomerUserItinerary.customer_user_id' => $data['customer_user_id'],
-                    'Benefit.id' => $data['benefit_id']
-                ],
-            ]);
-
-            $total_saldo += $data['saldo'];
-
-            $orderItemData = [
+            $orderBalanceData = [
                 'order_id' => $orderId,
-                'customer_user_itinerary_id' => $customerItineraries['CustomerUserItinerary']['id'],
                 'customer_user_id' => $data['customer_user_id'],
-                'saldo' => $data['saldo'],
-                'working_days' => 0,
-                'price_per_day' => 0,
-                'subtotal' => 0,
-                'transfer_fee' => 0,
-                'total' => 0,
-                'commission_fee' => 0,
-                'values_from_csv' => 0,
-                'manual_quantity' => 0,
+                'benefit_id' => $data['benefit_id'],
+                'document' => $data['document'],
+                'total' => $data['total'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_created_id' => CakeSession::read("Auth.User.id")
             ];
 
-            $this->OrderItem->create();
-            $this->OrderItem->save($orderItemData);
+            $this->OrderBalance->create();
+            $this->OrderBalance->save($orderBalanceData);
         }
 
-        $orderData = [
-            'id' => $orderId,
-            'saldo' => $total_saldo,
-        ];
+        $file = new File($this->request->data['file']['name']);
+        $dir = new Folder(APP."webroot/files/order_balances/".$orderId."/", true);
 
-        $this->Order->save($orderData);
+        $this->Uploader->up($this->request->data['file'], $dir->path);
 
         $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-        $this->redirect(['action' => 'edit/' . $orderId]);
+        $this->redirect(['action' => 'saldos/' . $orderId]);
     }
 
     private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
@@ -955,15 +936,16 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if (empty($existingUser)) {
-                $line++;
-                continue;
+            $customer_user_id = null;
+            if (isset($existingUser['CustomerUser'])) {
+                $customer_user_id = $existingUser['CustomerUser']['id'];
             }
 
             $data[] = [
-                'customer_user_id' => $existingUser['CustomerUser']['id'],
+                'customer_user_id' => $customer_user_id,
+                'document' => $row[0],
                 'benefit_id' => $row[1],
-                'saldo' => $row[2],
+                'total' => $row[2],
             ];
 
             $line++;
@@ -1462,7 +1444,6 @@ class OrdersController extends AppController
         $this->set(compact('id'));
     }
 
-
     public function boletos($id)
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
@@ -1487,6 +1468,26 @@ class OrdersController extends AppController
 
         $log = $this->PaymentImportLog->findById($id);
         $this->redirect('/private_files/baixar_boleto/boletos_operadoras/' . $log['PaymentImportLog']['customer_user_id'] . '/boleto-' . $log['PaymentImportLog']['order_id'] . '-' . $log['PaymentImportLog']['supplier_id'] . '_pdf');
+    }
+
+    public function saldos($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $data = $this->Paginator->paginate('OrderBalance', $condition);
+
+        $order = $this->Order->findById($id);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Saldo' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order'));
     }
 
     public function zerosEsq($campo, $tamanho)
