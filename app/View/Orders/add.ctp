@@ -241,7 +241,7 @@
 <!--begin::Row-->
 <div class="row gy-5 g-xl-10 mt-1">
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-3 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -278,7 +278,7 @@
 
 
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-3 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -318,7 +318,7 @@
     <!--end::Col-->
 
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-3 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -358,7 +358,7 @@
     <!--end::Col-->
 
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-3 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -397,12 +397,8 @@
     </div>
     <!--end::Col-->
 
-</div>
-<!--begin::Row-->
-<div class="row gy-5 g-xl-10 mt-1">
-
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-6 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -442,7 +438,7 @@
     <!--end::Col-->
 
     <!--begin::Col-->
-    <div class="col-sm-6 col-xl-6 mb-xl-10">
+    <div class="col-sm-6 col-xl-2 mb-xl-10">
         <!--begin::Card widget 2-->
         <div class="card h-lg-100">
 
@@ -483,7 +479,7 @@
     <!--end::Col-->
 
 </div>
-<!--end::Row-->
+
 
 <div class="row">
     <div class="card mb-5 mb-xl-8">
