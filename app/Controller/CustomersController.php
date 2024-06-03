@@ -1626,6 +1626,33 @@ class CustomersController extends AppController
     /*********************
             ARQUIVOS
      **********************/
+    public function customers_files()
+    {
+        $this->Paginator->settings = ['CustomerFile' => [
+            'limit' => 100,
+            'order' => ['CustomerFile.created' => 'desc'],
+            
+            ]
+        ];
+
+        $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerFile.file LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $action = 'Arquivos';
+
+        $data = $this->Paginator->paginate('CustomerFile', $condition);
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 21]]);
+
+        $this->set(compact('status', 'data', 'action'));
+    }
+
     public function files($id)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
