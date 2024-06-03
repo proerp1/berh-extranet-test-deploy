@@ -1325,14 +1325,23 @@ class OrdersController extends AppController
         }
     }
 
-    public function Operadoras($id)
+    public function operadoras($id)
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
-            'fields' => ['Supplier.razao_social', 'sum(OrderItem.subtotal) as subtotal'],
+            'fields' => [
+                            'Supplier.razao_social', 
+                            'sum(OrderItem.subtotal) as subtotal', 
+                            "(SELECT sum(b.total) as total_saldo 
+                                FROM order_balances b 
+                                WHERE b.benefit_id = Benefit.id 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS total_saldo"
+                        ],
              'joins' => [
                 [
                     'table' => 'benefits',
@@ -1349,16 +1358,15 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
                     ]
-                ]
+                ],
             ],
             'group' => ['Supplier.id']
             
         ]);
 
-        //debug( $suppliersAll);die;
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
     public function confirma_pagamento($id){

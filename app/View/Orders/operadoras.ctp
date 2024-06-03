@@ -40,17 +40,21 @@
             <thead>
             <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Saldo</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
                 <?php 
+                $total_saldo=0;
                 $total=0;
                 foreach ($suppliersAll as $supplier) {
+                    $total_saldo+=$supplier[0]['total_saldo'];
                     $total+=$supplier[0]['subtotal'];
                     ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
                     </tr>
                 <?php } ?>
@@ -58,6 +62,7 @@
             <tfoot>
                 <tr>
                     <th  class="fw-bold fs-5 ps-4">Total</th>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_saldo, 2, ',', '.'); ?></td>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
                 </tr>
             </tfoot>
