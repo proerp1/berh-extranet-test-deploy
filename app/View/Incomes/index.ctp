@@ -157,6 +157,7 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
                         <th>Status</th>
+                        <th>Pedido</th>
                         <th>Código</th>
                         <th>Cliente</th>
                         <th>Conta bancária</th>
@@ -179,6 +180,7 @@
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
