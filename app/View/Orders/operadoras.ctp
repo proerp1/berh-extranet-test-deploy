@@ -9,7 +9,7 @@
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Saldo</a>
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
     </li>
 </ul>
 
@@ -40,7 +40,7 @@
             <thead>
             <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Saldo</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
                 </tr>
             </thead>

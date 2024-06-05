@@ -833,6 +833,8 @@ class OrdersController extends AppController
             $this->OrderBalance->save($orderBalanceData);
         }
 
+        $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
+
         $file = new File($this->request->data['file']['name']);
         $dir = new Folder(APP."webroot/files/order_balances/".$orderId."/", true);
 

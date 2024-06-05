@@ -9,7 +9,7 @@
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Saldo</a>
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
     </li>
 </ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>

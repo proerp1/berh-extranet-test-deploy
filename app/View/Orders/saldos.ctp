@@ -9,7 +9,7 @@
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Saldo</a>
+        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
     </li>
 </ul>
 
@@ -59,7 +59,7 @@
                     <th>Beneficiário</th>
                     <th>Código Benefício</th>
                     <th>Benefício</th>
-                    <th>Saldo</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody>
