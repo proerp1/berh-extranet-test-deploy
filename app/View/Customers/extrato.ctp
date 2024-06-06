@@ -76,14 +76,17 @@
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
-                </div>
-
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total'],2,',','.') ?></span>
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">Total</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total_saldo'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Total com Economia</span>
                     </div>
                 </div>
             </div>
@@ -181,6 +184,8 @@
                     <th>Taxa</th>
                     <th>Desconto</th>
                     <th>Total</th>
+                    <th>Economia</th>
+                    <th>Total com Economia</th>
                     <th>Usuário</th>
                     <th>Grupo Econômico</th>
                 </tr>
@@ -204,6 +209,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["saldo"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total_saldo"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                         </tr>

@@ -819,10 +819,12 @@ class OrdersController extends AppController
         $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
         foreach ($ret['data'] as $data) {
+            $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+
             $orderBalanceData = [
                 'order_id' => $orderId,
                 'customer_user_id' => $data['customer_user_id'],
-                'benefit_id' => $data['benefit_id'],
+                'benefit_id' => $benefit['Benefit']['id'],
                 'document' => $data['document'],
                 'total' => $data['total'],
                 'created' => date('Y-m-d H:i:s'),
@@ -946,7 +948,7 @@ class OrdersController extends AppController
             $data[] = [
                 'customer_user_id' => $customer_user_id,
                 'document' => $row[0],
-                'benefit_id' => $row[1],
+                'benefit_code' => $row[1],
                 'total' => $row[2],
             ];
 

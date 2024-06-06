@@ -1833,7 +1833,9 @@ class CustomersController extends AppController
                 'sum(Order.transfer_fee) as transfer_fee',
                 'sum(Order.commission_fee) as commission_fee',
                 'sum(Order.desconto) as desconto',
+                'sum(Order.saldo) as saldo',
                 'sum(Order.total) as total',
+                'sum(Order.total_saldo) as total_saldo'
             ],
             'conditions' => $condition,
             'recursive' => -1
@@ -1874,7 +1876,9 @@ class CustomersController extends AppController
                 'sum(Order.transfer_fee) as transfer_fee',
                 'sum(Order.commission_fee) as commission_fee',
                 'sum(Order.desconto) as desconto',
+                'sum(Order.saldo) as saldo',
                 'sum(Order.total) as total',
+                'sum(Order.total_saldo) as total_saldo',
             ],
             'limit' => 25,
             'group' => 'EconomicGroup.id',            
@@ -1932,7 +1936,9 @@ class CustomersController extends AppController
                 'sum(Order.transfer_fee) as transfer_fee',
                 'sum(Order.commission_fee) as commission_fee',
                 'sum(Order.desconto) as desconto',
+                'sum(Order.saldo) as saldo',
                 'sum(Order.total) as total',
+                'sum(Order.total_saldo) as total_saldo'
             ],
             'conditions' => $condition,
             'recursive' => -1

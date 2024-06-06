@@ -60,7 +60,7 @@ class OrderBalance extends AppModel {
 	}
 
     public function update_order_item_saldo($orderID, $userID) {
-        $sql = "SELECT i.id, i.saldo, b.total 
+        $sql = "SELECT i.id, i.saldo, coalesce(b.total, 0) AS total 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
                         INNER JOIN order_balances b ON b.order_id = o.id
@@ -79,13 +79,13 @@ class OrderBalance extends AppModel {
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
                 $itemID = $result[$i]['i']['id'];
-                $total = $result[$i]['b']['total'];
+                $total = $result[$i][0]['total'];
 
                 $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
             }
         }
 
-        $sql = "SELECT o.id, sum(i.saldo) AS saldo, sum(i.total_saldo) AS total_saldo 
+        $sql = "SELECT o.id, coalesce(sum(i.saldo), 0) AS saldo, coalesce(sum(i.total_saldo), 0) AS total_saldo 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
                     WHERE o.id = ".$orderID."
