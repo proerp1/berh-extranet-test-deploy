@@ -52,12 +52,22 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'customers' && !isset($_GET['logon'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'customers', 'action' => 'index']) ?>">
+                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'customers' && $this->request->params['action'] != 'customers_files') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'customers', 'action' => 'index']) ?>">
                         <span class="menu-icon">
                             <i class="fas fa-users"></i> 
                         </span>
                         <span class="menu-title">
                             Clientes
+                        </span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'customers' && $this->request->params['action'] == 'customers_files') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'customers', 'action' => 'customers_files']) ?>">
+                        <span class="menu-icon">
+                            <i class="fas fa-file"></i> 
+                        </span>
+                        <span class="menu-title">
+                            Arquivos
                         </span>
                     </a>
                 </div>

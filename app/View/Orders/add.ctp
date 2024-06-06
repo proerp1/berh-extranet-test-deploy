@@ -31,7 +31,7 @@
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Saldo</a>
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
     </li>
 </ul>
 
@@ -459,32 +459,27 @@
 
             <!--begin::Body-->
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <!--begin::Icon-->
-                <div class="m-0">
 
-                    <!--begin::Svg Icon | path: icons/duotune/maps/map004.svg-->
-                    <span class="svg-icon svg-icon-2hx svg-icon-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path opacity="0.3" d="M18.4 5.59998C21.9 9.09998 21.9 14.8 18.4 18.3C14.9 21.8 9.2 21.8 5.7 18.3L18.4 5.59998Z" fill="currentColor" />
-                            <path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM19.9 11H13V8.8999C14.9 8.6999 16.7 8.00005 18.1 6.80005C19.1 8.00005 19.7 9.4 19.9 11ZM11 19.8999C9.7 19.6999 8.39999 19.2 7.39999 18.5C8.49999 17.7 9.7 17.2001 11 17.1001V19.8999ZM5.89999 6.90002C7.39999 8.10002 9.2 8.8 11 9V11.1001H4.10001C4.30001 9.4001 4.89999 8.00002 5.89999 6.90002ZM7.39999 5.5C8.49999 4.7 9.7 4.19998 11 4.09998V7C9.7 6.8 8.39999 6.3 7.39999 5.5ZM13 17.1001C14.3 17.3001 15.6 17.8 16.6 18.5C15.5 19.3 14.3 19.7999 13 19.8999V17.1001ZM13 4.09998C14.3 4.29998 15.6 4.8 16.6 5.5C15.5 6.3 14.3 6.80002 13 6.90002V4.09998ZM4.10001 13H11V15.1001C9.1 15.3001 7.29999 16 5.89999 17.2C4.89999 16 4.30001 14.6 4.10001 13ZM18.1 17.1001C16.6 15.9001 14.8 15.2 13 15V12.8999H19.9C19.7 14.5999 19.1 16.0001 18.1 17.1001Z" fill="currentColor" />
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                </div>
-                <!--end::Icon-->
 
                 <!--begin::Section-->
                 <div class="d-flex flex-column my-7">
+                    <div class="m-0">
+                        <span class="fw-bold fs-1 text-gray-800">Total</span>
+                    </div>
                     <!--begin::Number-->
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['total']; ?></span>
                     <!--end::Number-->
                     <!--begin::Follower-->
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total</span>
-                    </div>
+
                     <!--end::Follower-->
                 </div>
                 <!--end::Section-->
+                <div class="m-0">
+                    <span class="fw-bold fs-1 text-gray-800">Total com Economia</span>
+                </div>
+                <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['total_saldo']; ?></span>
+                <!--end::Number-->
+                <!--begin::Follower-->
 
             </div>
             <!--end::Body-->
@@ -557,13 +552,15 @@
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
-                        <th width="120px">Desconto</th>
+                        <!--<th width="120px">Desconto</th>-->
                         <th width="120px">Quantidade por dia</th>
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
                         <th>Taxa</th>
                         <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
+                        <th>Economia</th>
+                        <th>Total com Economia</th>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <th class="rounded-end"></th>
                         <?php } ?>
@@ -571,11 +568,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="7"></td>
+                        <td colspan="6"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
                         <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
+                            <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
+                            <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <td>&nbsp;</td>
                         <?php } ?>
@@ -605,19 +604,21 @@
                                         <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
                                     <?php } ?>
                                 </td>
-                                <td class="fw-bold fs-7 ps-4">
+                                <!--<td class="fw-bold fs-7 ps-4">
                                     <?php if ($order['Order']['status_id'] == 83) { ?>
                                         <input type="text" class="form-control money_field var_days_input" value="<?php echo $items[$i]["OrderItem"]["var"]; ?>">
                                     <?php } else { ?>
                                         <?php echo $items[$i]["OrderItem"]["var"]; ?>
                                     <?php } ?>
-                                </td>
+                                </td> !-->
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 commission_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 total_saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total_saldo"]; ?></td>
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este benefício?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["id"]; ?>')">
@@ -628,11 +629,13 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="7"></td>
+                            <td colspan="6"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                             <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
                             <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
+                            <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
+                            <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                 <td>&nbsp;</td>
                             <?php } ?>

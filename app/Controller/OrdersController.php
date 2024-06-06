@@ -819,10 +819,12 @@ class OrdersController extends AppController
         $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
         foreach ($ret['data'] as $data) {
+            $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+
             $orderBalanceData = [
                 'order_id' => $orderId,
                 'customer_user_id' => $data['customer_user_id'],
-                'benefit_id' => $data['benefit_id'],
+                'benefit_id' => $benefit['Benefit']['id'],
                 'document' => $data['document'],
                 'total' => $data['total'],
                 'created' => date('Y-m-d H:i:s'),
@@ -832,6 +834,8 @@ class OrdersController extends AppController
             $this->OrderBalance->create();
             $this->OrderBalance->save($orderBalanceData);
         }
+
+        $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
 
         $file = new File($this->request->data['file']['name']);
         $dir = new Folder(APP."webroot/files/order_balances/".$orderId."/", true);
@@ -944,7 +948,7 @@ class OrdersController extends AppController
             $data[] = [
                 'customer_user_id' => $customer_user_id,
                 'document' => $row[0],
-                'benefit_id' => $row[1],
+                'benefit_code' => $row[1],
                 'total' => $row[2],
             ];
 
@@ -1325,14 +1329,23 @@ class OrdersController extends AppController
         }
     }
 
-    public function Operadoras($id)
+    public function operadoras($id)
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
-            'fields' => ['Supplier.razao_social', 'sum(OrderItem.subtotal) as subtotal'],
+            'fields' => [
+                            'Supplier.razao_social', 
+                            'sum(OrderItem.subtotal) as subtotal', 
+                            "(SELECT sum(b.total) as total_saldo 
+                                FROM order_balances b 
+                                WHERE b.benefit_id = Benefit.id 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS total_saldo"
+                        ],
              'joins' => [
                 [
                     'table' => 'benefits',
@@ -1349,16 +1362,15 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
                     ]
-                ]
+                ],
             ],
             'group' => ['Supplier.id']
             
         ]);
 
-        //debug( $suppliersAll);die;
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
     public function confirma_pagamento($id){

@@ -26,4 +26,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['files', 'add_file', 'edit_file']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/files/'.$id; ?>">Arquivos</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['extrato', 'extrato_grupo_economico']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customers/extrato/'.$id; ?>">Extrato</a>
+	</li>
 </ul>

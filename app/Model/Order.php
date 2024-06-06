@@ -90,6 +90,15 @@ class Order extends AppModel
                 $results[$key][$this->alias]['saldo'] = '0,00';
             }
 
+            $results[$key][$this->alias]['total_saldo_not_formated'] = 0;
+            if (isset($val[$this->alias]['total_saldo'])) {
+                $results[$key][$this->alias]['total_saldo_not_formated'] = $results[$key][$this->alias]['total_saldo'];
+                $results[$key][$this->alias]['total_saldo'] = number_format($results[$key][$this->alias]['total_saldo'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['total_saldo_not_formated'] = 0;
+                $results[$key][$this->alias]['total_saldo'] = '0,00';
+            }
+
             $results[$key][$this->alias]['desconto_not_formated'] = 0;
             if (isset($val[$this->alias]['desconto'])) {
                 $results[$key][$this->alias]['desconto_not_formated'] = $results[$key][$this->alias]['desconto'];
@@ -161,6 +170,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['saldo'])) {
             $this->data[$this->alias]['saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['saldo']);
+        }
+
+        if (!empty($this->data[$this->alias]['total_saldo'])) {
+            $this->data[$this->alias]['total_saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total_saldo']);
         }
 
         if (!empty($this->data[$this->alias]['desconto'])) {

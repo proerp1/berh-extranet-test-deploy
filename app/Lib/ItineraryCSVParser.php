@@ -190,6 +190,7 @@ class ItineraryCSVParser extends Controller
 
         $userData = [
             'cpf' => $cpf,
+            'matricula' => $row[1],
             'email' => $row[53],
             'tel' => '(' . $row[54] . ') ' . $row[55],
             'name' => $row[2],
