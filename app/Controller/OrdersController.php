@@ -8,7 +8,7 @@ class OrdersController extends AppController
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
-    'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
+    'CustomerUser','Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
      'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance'];
     public $groupBenefitType = [
         -1 => [1,2],
@@ -1529,6 +1529,95 @@ class OrdersController extends AppController
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
+    }
+
+    public function relatorio_beneficio($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $view = new View($this, false);
+        $view->layout = false;
+
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                
+
+                
+                'CustomerUserItinerary.unit_price',
+                'CustomerUserItinerary.benefit_id',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['CustomerUser.id']
+        ]);
+        //debug($itens); die;
+        $link = APP . 'webroot';
+        // $link = '';
+
+        $view->set(compact("link","order", "itens"));
+
+        $html = $view->render('../Elements/relatorio_beneficio');
+        $this->HtmltoPdf->convert($html, 'relatorio_beneficio.pdf', 'download');
+
+    }
+
+    public function listagem_entrega($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                'Order.credit_release_date',
+
+                
+                
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['CustomerUser.id']
+        ]);
+        //debug($itens); die;
+
+        $link = APP . 'webroot';
+        // $link = '';
+        $view->set(compact("link","order", "itens"));
+
+
+        $html = $view->render('../Elements/listagem_entrega');
+        $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
+
     }
 
     private function getCommissionPerc($benefitType, $proposal){

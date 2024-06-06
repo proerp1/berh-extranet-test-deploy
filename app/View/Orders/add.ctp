@@ -209,6 +209,21 @@
                                 </a>
                             <?php } ?>
 
+                            <?php { ?>
+                                <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i>
+                                    Gerar Relatorio Benefícios
+                                </a>
+                            <?php } ?>
+
+                            <?php { ?>
+                                <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i>
+                                    Listagem de Entrega
+                                </a>
+                            <?php } ?>
+                            
+
                             <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
                                 <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-3">
                                     <i class="fas fa-download"></i>
@@ -701,6 +716,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="modal_add_itinerario" role="dialog">
     <div class="modal-dialog modal-xl" role="document">
