@@ -477,7 +477,7 @@
                 <div class="m-0">
                     <span class="fw-bold fs-1 text-gray-800">Total Economia</span>
                 </div>
-                <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo number_format($order_balances_total[0][0]['total'], 2, ',', '.'); ?></span>
+                <span class="fw-bold fs-2 text-gray-800 lh-1 ls-n2">R$<?php echo number_format($order_balances_total[0][0]['total'], 2, ',', '.'); ?></span>
                 <!--end::Number-->
                 <!--begin::Follower-->
 
