@@ -1835,7 +1835,14 @@ class CustomersController extends AppController
                 'sum(Order.desconto) as desconto',
                 'sum(Order.saldo) as saldo',
                 'sum(Order.total) as total',
-                'sum(Order.total_saldo) as total_saldo'
+                'sum(Order.total_saldo) as total_saldo',
+                "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                    FROM order_balances b 
+                        INNER JOIN orders o ON o.id = b.order_id 
+                    WHERE o.customer_id = Customer.id 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as total_balances"
             ],
             'conditions' => $condition,
             'recursive' => -1
@@ -1938,7 +1945,14 @@ class CustomersController extends AppController
                 'sum(Order.desconto) as desconto',
                 'sum(Order.saldo) as saldo',
                 'sum(Order.total) as total',
-                'sum(Order.total_saldo) as total_saldo'
+                'sum(Order.total_saldo) as total_saldo',
+                "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                    FROM order_balances b 
+                        INNER JOIN orders o ON o.id = b.order_id 
+                    WHERE o.customer_id = Customer.id 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as total_balances"
             ],
             'conditions' => $condition,
             'recursive' => -1
