@@ -84,9 +84,9 @@
                 </div>
 
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total_saldo'],2,',','.') ?></span>
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['saldo'],2,',','.') ?></span>
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total com Economia</span>
+                        <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
                     </div>
                 </div>
             </div>
