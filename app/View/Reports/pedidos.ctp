@@ -85,11 +85,6 @@
                         <i class="fas fa-table"></i>
                         Exportar
                     </button>
-
-                    <button type="submit" class="btn btn-light-primary me-3" name="processamento">
-                        <i class="fas fa-table"></i>
-                        Processamento Pedido
-                    </button>
                 </div>
             </div>
         </div>
