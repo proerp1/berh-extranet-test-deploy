@@ -1761,6 +1761,74 @@ class ExcelTemplate
 		}
 	}
 
+	public function getProcessamento($spreadsheet, $dados)
+	{
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+	
+		// Definindo os títulos das colunas
+		$activeWorksheet
+			->setCellValue('A1', "Data Geração Ped")
+			->setCellValue('B1', "Pedido")
+			->setCellValue('C1', "CNPJ CLIENTE")
+			->setCellValue('D1', "Razão Social")
+			->setCellValue('E1', "Nome")
+			->setCellValue('F1', "Matrícula")
+			->setCellValue('G1', "CPF")
+			->setCellValue('H1', "Cartão")
+			->setCellValue('I1', "Dias Úteis")
+			->setCellValue('J1', "Id(Código Operadora)")
+			->setCellValue('K1', "Operadora")
+			->setCellValue('L1', "Id(Código do Benefício / ítem)")
+			->setCellValue('M1', "VlUnit")
+			->setCellValue('N1', "Qtde do Benefício por Dia")
+			->setCellValue('O1', "Total")
+			->setCellValue('P1', "Repasse")
+			->setCellValue('Q1', "Taxa ADM")
+			->setCellValue('R1', "VlTotal C/Tx")
+			->setCellValue('S1', "Status Pedido")
+			->setCellValue('T1', "Saldo Operadora")
+			->setCellValue('U1', "Economia")
+			->setCellValue('V1', "Compra Operadora");
+	
+		$indx = 1;
+		$total = 0;
+		for ($i = 0; $i < count($dados); $i++) {
+			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
+			$indx++;
+	
+			// Calculando o valor da coluna R (VlTotal C/Tx)
+			$totalColO = $dados[$i]['OrderItem']['total']; // Adapte aqui se necessário
+			$totalColP = $dados[$i]['OrderItem']['transfer_fee'];
+			$totalColQ = $dados[$i]['Order']['commission_fee']; // Adapte aqui se necessário
+			$totalColR = $totalColO + $totalColP + $totalColQ;
+	
+			$activeWorksheet->setCellValue('A'. $indx, $dados[$i]['Order']['created'])
+				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
+				->setCellValue('C'. $indx, $dados[$i]["Customer"]["documento"])
+				->setCellValue('D'. $indx, $dados[$i]['Customer']['nome_primario'])
+				->setCellValue('E'. $indx, $dados[$i]['CustomerUser']['name'])
+				->setCellValue('F'. $indx, '-')
+				->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['cpf'])
+				->setCellValue('H'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
+				->setCellValue('I'. $indx, $dados[$i]['OrderItem']['working_days'])
+				->setCellValue('J'. $indx, $dados[$i]['Supplier']['id'])
+				->setCellValue('K'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
+				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'])
+				->setCellValue('M'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
+				->setCellValue('N'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
+				->setCellValue('O'. $indx, $totalColO) // Ajuste aqui se necessário
+				->setCellValue('P'. $indx, $totalColP)
+				->setCellValue('Q'. $indx, $totalColQ)
+				->setCellValue('R'. $indx, $totalColR)
+				->setCellValue('S'. $indx, $dados[$i]['OrderStatus']['name'])
+				->setCellValue('T'. $indx, $dados[$i]['Customer']['nome_primario'])
+				->setCellValue('U'. $indx, $dados[$i]['Customer']['nome_primario'])
+				->setCellValue('V'. $indx, $dados[$i]['Customer']['nome_primario']);
+		}
+	}
+	
+
+
 
 	public function getProposal($spreadsheet, $dados)
 {
