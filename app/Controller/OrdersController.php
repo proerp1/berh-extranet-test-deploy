@@ -1341,6 +1341,7 @@ class OrdersController extends AppController
             'conditions' => ['OrderItem.order_id' => $id],
             'fields' => [
                             'Supplier.razao_social', 
+                            'Order.id',
                             'sum(OrderItem.subtotal) as subtotal', 
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 

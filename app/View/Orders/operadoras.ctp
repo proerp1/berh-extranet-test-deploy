@@ -40,8 +40,11 @@
             <thead>
             <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Ped Operadora</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -54,8 +57,10 @@
                     ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Order']['id']; ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
