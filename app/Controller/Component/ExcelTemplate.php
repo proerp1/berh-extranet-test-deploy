@@ -1784,11 +1784,10 @@ class ExcelTemplate
 		->setCellValue('O1', "Total")
 		->setCellValue('P1', "Repasse")
 		->setCellValue('Q1', "Taxa ADM")
-		->setCellValue('R1', "VlTotal C/Tx")
-		->setCellValue('S1', "Status Pedido")
-		->setCellValue('T1', "Saldo Operadora")
-		->setCellValue('U1', "Economia")
-		->setCellValue('V1', "Compra Operadora");
+		->setCellValue('R1', "Status Pedido")
+		->setCellValue('S1', "Saldo Operadora")
+		->setCellValue('T1', "Economia")
+		->setCellValue('U1', "Compra Operadora");
 
 
 		$indx = 1;
@@ -1806,28 +1805,28 @@ class ExcelTemplate
 			// 	->setCellValue('E' . $indx, $dados[$i][0]['qtde'])
 			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
 			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
-			$activeWorksheet->setCellValue('A'. $indx, $dados[$i][''][''])
-			->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
+			$activeWorksheet
+				->setCellValue('A'. $indx, $dados[$i]['OrderItem']['created'])
+				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('C'. $indx, $dados[$i]["Customer"]["documento"])
 				->setCellValue('D'. $indx, $dados[$i]['Customer']['nome_primario'])
 				->setCellValue('E'. $indx, $dados[$i]['CustomerUser']['name'])
 				->setCellValue('F'. $indx, '-')
 				->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['cpf'])
-				->setCellValue('H'. $indx, $dados[$i][''][''])
+				//->setCellValue('H'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
 				->setCellValue('I'. $indx, $dados[$i]['OrderItem']['working_days'])
-				->setCellValue('J'. $indx, $dados[$i][''][''])
+				//->setCellValue('J'. $indx, $dados[$i]['Supplier']['id'])
 				->setCellValue('K'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
 				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'])
 				->setCellValue('M'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
 				->setCellValue('N'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
 				->setCellValue('O'. $indx, $dados[$i]['OrderItem']['total'])
 				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
-				->setCellValue('Q'. $indx, $dados[$i]['Order']['commission_fee'])
-				->setCellValue('R'. $indx, '=SUM(O'. $indx . ',P' . $indx . ',Q' . $indx . ')')
-				->setCellValue('S'. $indx, $dados[$i][''][''])
+				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['commission_fee'])
+				//->setCellValue('R'. $indx, $dados[$i]['OrderStatus']['name'])
+				->setCellValue('S'. $indx, $dados[$i]['Customer']['nome_primario'])
 				->setCellValue('T'. $indx, $dados[$i]['Customer']['nome_primario'])
-				->setCellValue('U'. $indx, $dados[$i]['Customer']['nome_primario'])
-				->setCellValue('V'. $indx, $dados[$i]['Customer']['nome_primario']);
+				->setCellValue('U'. $indx, $dados[$i]['Customer']['nome_primario']);
 
 				
 		}
