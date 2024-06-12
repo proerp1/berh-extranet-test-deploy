@@ -1806,27 +1806,27 @@ class ExcelTemplate
 			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
 			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
 			$activeWorksheet
-				->setCellValue('A'. $indx, $dados[$i]['OrderItem']['created'])
+				->setCellValue('A'. $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['Order']['created'])))
 				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('C'. $indx, $dados[$i]["Customer"]["documento"])
 				->setCellValue('D'. $indx, $dados[$i]['Customer']['nome_primario'])
 				->setCellValue('E'. $indx, $dados[$i]['CustomerUser']['name'])
-				->setCellValue('F'. $indx, '-')
+				->setCellValue('F'. $indx, $dados[$i]['CustomerUser']['matricula'])
 				->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['cpf'])
 				//->setCellValue('H'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
 				->setCellValue('I'. $indx, $dados[$i]['OrderItem']['working_days'])
-				//->setCellValue('J'. $indx, $dados[$i]['Supplier']['id'])
+				->setCellValue('J'. $indx, $dados[$i]['Supplier']['id'])
 				->setCellValue('K'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
-				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'])
+				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'].'/',$dados[$i]['Benefit']['name'])
 				->setCellValue('M'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
 				->setCellValue('N'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
 				->setCellValue('O'. $indx, $dados[$i]['OrderItem']['total'])
 				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['commission_fee'])
-				//->setCellValue('R'. $indx, $dados[$i]['OrderStatus']['name'])
-				->setCellValue('S'. $indx, $dados[$i]['Customer']['nome_primario'])
-				->setCellValue('T'. $indx, $dados[$i]['Customer']['nome_primario'])
-				->setCellValue('U'. $indx, $dados[$i]['Customer']['nome_primario']);
+				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				//->setCellValue('S'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				//->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
 
 				
 		}
