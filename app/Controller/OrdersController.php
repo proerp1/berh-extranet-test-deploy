@@ -1626,7 +1626,7 @@ class OrdersController extends AppController
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['CustomerUser.id']
+            'group' => ['OrderItem.id']
         ]);
         //debug($itens); die;
 
