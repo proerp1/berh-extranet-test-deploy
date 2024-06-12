@@ -1817,7 +1817,7 @@ class ExcelTemplate
 				->setCellValue('I'. $indx, $dados[$i]['OrderItem']['working_days'])
 				->setCellValue('J'. $indx, $dados[$i]['Supplier']['id'])
 				->setCellValue('K'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
-				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'].'/',$dados[$i]['Benefit']['name'])
+				->setCellValue('L'. $indx, $dados[$i]['Benefit']['code'].'/'.$dados[$i]['Benefit']['name'])
 				->setCellValue('M'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
 				->setCellValue('N'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
 				->setCellValue('O'. $indx, $dados[$i]['OrderItem']['total'])
