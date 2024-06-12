@@ -26,7 +26,7 @@
                                 <th>Nome</th>
                                 <th>Matrícula</th>
                                 <th>CPF</th>
-                                <th>Operadora</th>
+                                <th>Código</th>
                                 <th>Item</th>
                                 <th>Dias</th>
                                 <th>Quantidade</th>
@@ -41,7 +41,7 @@
                                 <td><?php echo $item['CustomerUser']['nome']; ?></td>
                                 <td><?php echo $item['CustomerUser']['matricula']; ?></td>
                                 <td><?php echo $item['CustomerUser']['cpf']; ?></td>
-                                <td></td>
+                                <td><?php echo $item['CustomerUserItinerary']['benefit_code']; ?></td>
                                 <td><?php echo $item['CustomerUserItinerary']['benefit_name']; ?></td>
                                 <td><?php echo $item[0]['working_days']; ?></td>
                                 <td><?php echo $item[0]['qtd']; ?></td>
