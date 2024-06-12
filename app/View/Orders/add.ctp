@@ -573,7 +573,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="6"></td>
+                    <td>Total</td>
+                        <td colspan="5"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
@@ -641,7 +642,8 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                            <td colspan="6"></td>
+                        <td>Total</td>
+                            <td colspan="5"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                             <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
