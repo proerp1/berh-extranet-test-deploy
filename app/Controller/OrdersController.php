@@ -1551,7 +1551,9 @@ class OrdersController extends AppController
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-
+        
+        ini_set('memory_limit', '-1');
+        
         $view = new View($this, false);
         $view->layout = false;
 
@@ -1596,6 +1598,8 @@ class OrdersController extends AppController
         $this->layout = 'ajax';
         $this->autoRender = false;
 
+        ini_set('memory_limit', '-1');
+        
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
