@@ -1824,8 +1824,8 @@ class ExcelTemplate
 				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['commission_fee'])
 				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-				//->setCellValue('S'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-				//->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['saldo'])
+				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['total_saldo'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
 
 				
