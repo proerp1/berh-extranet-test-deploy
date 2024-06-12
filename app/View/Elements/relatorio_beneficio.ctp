@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content" style="background-color: #ffffff;">
         <div class="cell p-10">
-            <img src="<?php echo $link."/img/logo-berh-colorido.png" ?>" alt="" width="150">
+            <img src="<?php echo $link."/img/logo-berh-colorido.png"; ?>" alt="" width="150">
         </div>
             <div class="modal-header" style="text-align: center;">
                 <h1 class="modal-title mx-auto" id="relatorioModalLabel">Relatório de Entrega de Benefícios</h1>
@@ -13,63 +13,44 @@
             <div class="modal-body">
                 <div class="content text-center mb-4">
                     <h2>Detalhes do Pedido</h2>
+                    <h4>Data da Impressão: <?php echo date('d/m/Y'); ?></h4>
+                    <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
+                    <h4>Razão Social: <?php echo $order['Customer']['nome_secundario']; ?></h4>
+                    <h4>CNPJ: <?php echo $order['Customer']['documento']; ?></h4>
                 </div>
                 <div class="table-container mb-4">
-                    <div class="table">
-                        <div class="row">
-                            <div class="cell fw-bold">Pedido: <?php echo $order['Order']['id'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Razão Social: <?php echo $order['Customer']['nome_secundario'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">CNPJ: <?php echo $order['Customer']['documento'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Matrícula: <?php echo $item['CustomerUser']['matricula'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Dpto:</div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Nome: <?php echo $item['CustomerUser']['nome'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">CPF: <?php echo $item['CustomerUser']['cpf'] ?></div>
-                        </div>
-                        <!--
-                        <div class="row">
-                            <div class="cell fw-bold">Cargo: <?php echo $item[0]['cargo'] ?></div>
-                        </div>
-                        -->
-                        <div class="row">
-                            <div class="cell fw-bold">Código: <?php echo $item['CustomerUserItinerary']['benefit_id']; ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Descrição: <?php echo $item['CustomerUserItinerary']['benefit_name']; ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Quantidade: <?php echo $item[0]['qtd'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Dia: <?php echo $item[0]['working_days'] ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Total:</div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Valor Unitário: <?php echo $item['CustomerUserItinerary']['unit_price']; ?></div>
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Valor Total: <?php echo $item[0]['valor'] ?></div>      
-                        </div>
-                        <div class="row">
-                            <div class="cell fw-bold">Valor Total Recebido: <?php echo $item[0]['total'] ?></div>               
-                        </div>
-                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Nome</th>
+                                <th>Matrícula</th>
+                                <th>CPF</th>
+                                <th>Operadora</th>
+                                <th>Item</th>
+                                <th>Dias</th>
+                                <th>Quantidade</th>
+                                <th>Valor Unitário</th>
+                                <th>Valor Total</th>
+                                <th>Valor Total Recebido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><?php echo $order['Order']['id']; ?></td>
+                                <td><?php echo $item['CustomerUser']['nome']; ?></td>
+                                <td><?php echo $item['CustomerUser']['matricula']; ?></td>
+                                <td><?php echo $item['CustomerUser']['cpf']; ?></td>
+                                <td></td>
+                                <td><?php echo $item['CustomerUserItinerary']['benefit_name']; ?></td>
+                                <td><?php echo $item[0]['working_days']; ?></td>
+                                <td><?php echo $item[0]['qtd']; ?></td>
+                                <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
+                                <td><?php echo $item[0]['valor']; ?></td>
+                                <td><?php echo $item[0]['total']; ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="signature text-center mt-4">
                     <p>Data: ___ / ___ / ____</p>
@@ -82,29 +63,24 @@
         </div>
     </div>
 </div>
-<?php   }
-    }
-?>
+<?php } ?>
+<?php } ?>
 
 <style>
     .table {
-        display: flex;
-        flex-direction: column;
         width: 100%;
+        border-collapse: collapse;
     }
-    .row {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 0;
-        border-bottom: 1px solid #ddd;
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
     }
-    .cell {
-        flex: 1;
-    }
-    .cell.fw-bold {
+    .table th {
+        background-color: #f2f2f2;
         font-weight: bold;
     }
-    .table .row:nth-child(odd) {
+    .table tbody tr:nth-child(even) {
         background-color: #f9f9f9;
     }
 </style>
