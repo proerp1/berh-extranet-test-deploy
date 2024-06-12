@@ -29,7 +29,7 @@
                                 <th>Código</th>
                                 <th>Item</th>
                                 <th>Dias</th>
-                                <th>Quantidade</th>
+                                <th>Quant. por dia</th>
                                 <th>Valor Unitário</th>
                                 <th>Valor Total</th>
                                 <th>Valor Total Recebido</th>
