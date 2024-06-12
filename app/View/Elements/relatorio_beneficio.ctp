@@ -32,7 +32,6 @@
                                 <th>Quant. por dia</th>
                                 <th>Valor Unitário</th>
                                 <th>Valor Total</th>
-                                <th>Valor Total Recebido</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,7 +46,6 @@
                                 <td><?php echo $item[0]['qtd']; ?></td>
                                 <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
                                 <td><?php echo $item[0]['valor']; ?></td>
-                                <td><?php echo $item[0]['total']; ?></td>
                             </tr>
                         </tbody>
                     </table>
