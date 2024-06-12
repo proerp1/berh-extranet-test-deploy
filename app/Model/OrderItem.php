@@ -75,6 +75,16 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['total_saldo_not_formated'] = 0;
                 $results[$key][$this->alias]['total_saldo'] = '0,00';
             }
+
+            if (isset($val[$this->alias]['data_inicio_processamento'])) {
+                $results[$key][$this->alias]['data_inicio_processamento_nao_formatado'] = $val[$this->alias]['data_inicio_processamento'];
+                $results[$key][$this->alias]['data_inicio_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_inicio_processamento']));
+            }
+
+            if (isset($val[$this->alias]['data_fim_processamento'])) {
+                $results[$key][$this->alias]['data_fim_processamento_nao_formatado'] = $val[$this->alias]['data_fim_processamento'];
+                $results[$key][$this->alias]['data_fim_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_fim_processamento']));
+            }
         }
 
         return $results;
