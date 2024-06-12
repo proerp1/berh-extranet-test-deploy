@@ -1628,7 +1628,7 @@ class OrdersController extends AppController
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['OrderItem.id']
         ]);
-        //debug($itens); die;
+        debug($itens); die;
 
         $link = APP . 'webroot';
         // $link = '';
