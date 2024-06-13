@@ -247,6 +247,7 @@ class CustomReportsComponent extends Component
                         'Order.id',
                         'Order.created',
                         'Order.status_id',
+                        'Status.name',
                         'Customer.codigo_associado'
                     ],
                     'joins' => [
@@ -255,6 +256,12 @@ class CustomReportsComponent extends Component
                             'alias' => 'Order',
                             'type' => 'INNER',
                             'conditions' => ['Order.id = OrderItem.order_id'],
+                        ],
+                        [
+                            'table' => 'statuses',
+                            'alias' => 'Status',
+                            'type' => 'INNER',
+                            'conditions' => ['Order.status_id = Status.id'],
                         ],
                         [
                             'table' => 'customers',
