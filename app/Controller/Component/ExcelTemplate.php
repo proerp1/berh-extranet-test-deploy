@@ -1784,7 +1784,7 @@ class ExcelTemplate
 		->setCellValue('O1', "Total")
 		->setCellValue('P1', "Repasse")
 		->setCellValue('Q1', "Taxa ADM")
-		->setCellValue('R1', "Status Pedido")
+		->setCellValue('R1', "Status Operadora")
 		->setCellValue('S1', "Saldo Operadora")
 		->setCellValue('T1', "Economia")
 		->setCellValue('U1', "Compra Operadora");
