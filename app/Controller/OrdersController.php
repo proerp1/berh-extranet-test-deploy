@@ -1581,7 +1581,7 @@ class OrdersController extends AppController
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['CustomerUser.id']
+            'group' => ['CustomerUserItinerary.benefit_id']
         ]);
         //debug($itens); die;
         $link = APP . 'webroot';
