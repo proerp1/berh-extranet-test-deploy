@@ -35,7 +35,7 @@
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
-                    <a href="<?php echo $this->base.'/customers/files/'.$id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ?>" class="btn btn-light-dark">Voltar</a>
+                    <a href="<?php echo 'https://cliente.berh.com.br/customers/files/'.$id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ?>" class="btn btn-light-dark">Voltar</a>
                     <button type="submit" class="btn btn-success js-salvar">Salvar</button>
                 </div>
             </div>
