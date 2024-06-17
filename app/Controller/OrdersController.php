@@ -1576,14 +1576,14 @@ class OrdersController extends AppController
                 'CustomerUserItinerary.benefit_id',
                 'sum(CustomerUserItinerary.quantity) as qtd',
                 'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
+                'sum(OrderItem.totala) as total',
                 'sum(OrderItem.working_days) as working_days',
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['CustomerUserItinerary.benefit_id']
         ]);
-        //debug($itens); die;
+        debug($itens); die;
         $link = APP . 'webroot';
         // $link = '';
 
