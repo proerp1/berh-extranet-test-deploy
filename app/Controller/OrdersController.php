@@ -432,7 +432,7 @@ class OrdersController extends AppController
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
@@ -1640,6 +1640,269 @@ class OrdersController extends AppController
         $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
 
     }
+
+    /*public function resumo($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                'Order.credit_release_date',
+
+                
+                
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.id']
+        ]);
+        //debug($itens); die;
+
+        $link = APP . 'webroot';
+        // $link = '';
+        $view->set(compact("link","order", "itens"));
+
+
+        $html = $view->render('../Elements/resumo');
+        $this->HtmltoPdf->convert($html, 'resumo.pdf', 'download');
+
+    }
+
+
+    public function cobranca($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                'Order.credit_release_date',
+
+                
+                
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.id']
+        ]);
+        //debug($itens); die;
+
+        $link = APP . 'webroot';
+        // $link = '';
+        $view->set(compact("link","order", "itens"));
+
+
+        $html = $view->render('../Elements/cobranca');
+        $this->HtmltoPdf->convert($html, 'Cobranca.pdf', 'download');
+
+    }
+
+    public function relatorio_pedidos()
+    {
+        ini_set('pcre.backtrack_limit', '5000000');
+        ini_set('memory_limit', '-1');
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        
+
+        $condition = ["and" => [], "or" => []];
+    
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'Order.id' => $_GET['q'], 
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+        }
+    
+        if (!empty($_GET['t'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+        }
+    
+        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
+    
+        if ($get_de != '' and $get_ate != '') {
+            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
+            ]);
+        }
+
+        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
+        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
+        
+        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
+            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
+            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
+            ]);
+           
+        }
+    
+        
+        //$nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+    
+        $data = $this->Order->find('all', [
+            'contain' => [
+                'Status', 
+                'Customer', 
+                'CustomerCreator', 
+                'EconomicGroup', 
+                'Income.data_pagamento'
+            ],
+            'conditions' => $condition,
+        ]);
+
+        foreach ($data as $k => $pedido) {
+            $suppliersCount = $this->OrderItem->find('count', [
+                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ],
+                'group' => ['Supplier.id'],
+                'fields' => ['Supplier.id']
+            ]);
+
+            $usersCount = $this->OrderItem->find('count', [
+                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                'group' => ['OrderItem.customer_user_id'],
+                'fields' => ['OrderItem.customer_user_id']
+            ]);
+
+            $data[$k]['Order']['suppliersCount'] = $suppliersCount;
+            $data[$k]['Order']['usersCount'] = $usersCount;
+            
+    
+            //$this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
+    
+            //$this->redirect("/files/excel/" . $nome);
+        }
+
+        /*$condition = array();
+
+        $data = $this->Order->find('all', [
+            'contain' => [
+                'Status', 
+                'Customer', 
+                'CustomerCreator', 
+                'EconomicGroup', 
+                'Income.data_pagamento'
+            ],
+            'conditions' => $condition,
+        ]);
+
+        foreach ($data as $k => $pedido) {
+            $suppliersCount = $this->OrderItem->find('count', [
+                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ],
+                'group' => ['Supplier.id'],
+                'fields' => ['Supplier.id']
+            ]);
+
+            $usersCount = $this->OrderItem->find('count', [
+                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                'group' => ['OrderItem.customer_user_id'],
+                'fields' => ['OrderItem.customer_user_id']
+            ]);
+
+            $data[$k]['Order']['suppliersCount'] = $suppliersCount;
+            $data[$k]['Order']['usersCount'] = $usersCount;
+        }
+       //
+        $link = APP . 'webroot';
+        // $link = '';
+        //debug($data);die;
+        $view->set(compact("link","data"));
+
+
+        //$html = $view->render('../Elements/relatorio_pedidos');
+        $this->render("../Elements/relatorio_pedidos");
+        //$this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
+    }
+ */
 
     private function getCommissionPerc($benefitType, $proposal){
         $commissionPerc = 0;
