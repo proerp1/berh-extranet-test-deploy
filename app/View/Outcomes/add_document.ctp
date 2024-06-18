@@ -24,7 +24,7 @@
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
                     <?php if (isset($this->request->data["Docoutcome"])): ?>
                         <br>
-                        <a download href="<?php echo $this->base.'/files/document/file/'.$this->request->data["Docoutcome"]["id"].'/'.$this->request->data["Docoutcome"]["file"] ?>"><?php echo $this->request->data["Docoutcome"]["file"] ?></a>
+                        <a download href="<?php echo $this->base.'/files/docoutcome/file/'.$this->request->data["Docoutcome"]["id"].'/'.$this->request->data["Docoutcome"]["file"] ?>"><?php echo $this->request->data["Docoutcome"]["file"] ?></a>
                     <?php endif ?>
                 </div>
             </div>
