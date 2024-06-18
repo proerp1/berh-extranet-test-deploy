@@ -35,6 +35,11 @@ if($user_id){
 
         <div class="row">
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">N° Cartão</label>
+                <?php echo $this->Form->input('card_number', array("id" => "card_number", "placeholder" => "N° Cartão", "class" => "form-control mb-3 mb-lg-0"));  ?>
+            </div>
+
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Quantidade</label>
                 <?php echo $this->Form->input('quantity', array("id" => "quantity", "placeholder" => "Quantidade", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>

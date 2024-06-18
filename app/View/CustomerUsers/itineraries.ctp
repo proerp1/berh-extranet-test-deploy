@@ -71,6 +71,7 @@
                         <th>Valor Unitário</th>
                         <th>Quantidade</th>
                         <th>Valor por dia</th>
+                        <th>N° Cartão</th>
                         <th>Total</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -86,6 +87,7 @@
                                 <td>R$<?php echo $value['CustomerUserItinerary']['unit_price']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['quantity']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['price_per_day']; ?></td>
+                                <td><?php echo $value['CustomerUserItinerary']['card_number']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['total']; ?></td>
                                 <td>
                                     <a href="<?php echo $this->base.'/customer_users/edit_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">

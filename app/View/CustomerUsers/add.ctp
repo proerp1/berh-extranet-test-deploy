@@ -3,7 +3,6 @@
         $("#cep").mask("99999-999");
         $(".tel").mask("(99) 9999-9999");
         $(".cpf").mask("999.999.999-99");
-        $(".rg").mask("99.999.999-9");
         $(".data").mask("99/99/9999");
         $(".cel").focusout(function() {
             var phone, element;
@@ -45,6 +44,7 @@
     })
 </script>
 
+
 <?php
 $url = $this->base . '/customers_users/index';
 echo $this->element('abas_customers', ['id' => $id, 'url' => $url]);
@@ -68,14 +68,16 @@ if (isset($user_id) && !$is_admin) {
                 </div>
             </div>
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Status</label>
+                <label class="fw-semibold fs-6 mb-2 required">Status*</label>
                 <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
             </div>
 
+
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome</label>
+                <label class="fw-semibold fs-6 mb-2 required">Nome*</label>
                 <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
+
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Matrícula</label>
@@ -103,16 +105,15 @@ if (isset($user_id) && !$is_admin) {
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">CPF</label>
+                <label class="fw-semibold fs-6 mb-2 required">CPF*</label>
                 <?php echo $this->Form->input('cpf', ['placeholder' => 'CPF', 'class' => 'form-control cpf mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
             <div class="mb-7 col">
-    <label class="fw-semibold fs-6 mb-2">RG</label>
-    <?php echo $this->Form->input('rg', ['placeholder' => 'RG', 'class' => 'form-control mb-3 mb-lg-0 rg', 'required' => true]); ?>
-</div>
-
+                <label class="fw-semibold fs-6 mb-2 required">RG*</label>
+                <?php echo $this->Form->input('rg', ['placeholder' => 'RG', 'class' => 'form-control mb-3 mb-lg-0 rg', 'required' => true]); ?>
+            </div>
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Emissor</label>
+                <label class="fw-semibold fs-6 mb-2 required">Emissor*</label>
                 <?php echo $this->Form->input('emissor_rg', ['placeholder' => 'Emissor', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
 
@@ -124,9 +125,10 @@ if (isset($user_id) && !$is_admin) {
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome da Mãe</label>
+                <label class="fw-semibold fs-6 mb-2 required">Nome da Mãe*</label>
                 <?php echo $this->Form->input('nome_mae', ['placeholder' => 'Nome da Mãe', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
+
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Sexo</label>
@@ -134,10 +136,10 @@ if (isset($user_id) && !$is_admin) {
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Data Nascimento</label>
+                <label class="fw-semibold fs-6 mb-2 required">Data Nascimento*</label>
                 <?php echo $this->Form->input('data_nascimento', ['type' => 'text', 'placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0', 'required' => true]); ?>
             </div>
-        </div>
+
 
         <div class="row">
             <div class="mb-7 col-sm-4">
