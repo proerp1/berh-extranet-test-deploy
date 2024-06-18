@@ -177,7 +177,9 @@ class ExcelTemplate
 			->setCellValue('N1', "Receita")
 			->setCellValue('O1', "Centro de custo")
 			->setCellValue('P1', "Observações")
-			->setCellValue('Q1', "Data Pagamento");
+			->setCellValue('Q1', "Data Pagamento")
+			->setCellValue('R1', "Pedido");
+
 
 
 		$indx = 1;
@@ -201,7 +203,9 @@ class ExcelTemplate
 				->setCellValue('N' . $indx, $dados[$i]['Revenue']['name'])
 				->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
-				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento']);
+				->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
+				->setCellValue('R' . $indx, $dados[$i]['Order']['id']);
+
 
 
 		}
@@ -1756,6 +1760,80 @@ class ExcelTemplate
 				
 		}
 	}
+
+	public function getProcessamento($spreadsheet, $dados)
+	{
+		
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+
+		$activeWorksheet
+		->setCellValue('A1', "Data Geração Ped")
+		->setCellValue('B1', "Pedido")
+		->setCellValue('C1', "CNPJ CLIENTE")
+		->setCellValue('D1', "Razão Social")
+		->setCellValue('E1', "Status Pedido")
+		->setCellValue('F1', "Nome")
+		->setCellValue('G1', "Matrícula")
+		->setCellValue('H1', "CPF")
+		->setCellValue('I1', "Cartão")
+		->setCellValue('J1', "Dias Úteis")
+		->setCellValue('K1', "Id(Código Operadora)")
+		->setCellValue('L1', "Operadora")
+		->setCellValue('M1', "Id(Código do Benefício / ítem)")
+		->setCellValue('N1', "VlUnit")
+		->setCellValue('O1', "Qtde do Benefício por Dia")
+		->setCellValue('P1', "Total")
+		->setCellValue('Q1', "Repasse")
+		->setCellValue('R1', "Taxa ADM")
+		->setCellValue('S1', "Status Operadora")
+		->setCellValue('T1', "Saldo Operadora")
+		->setCellValue('U1', "Economia")
+		->setCellValue('V1', "Compra Operadora");
+
+
+		$indx = 1;
+		$total = 0;
+		for ($i = 0; $i < count($dados); $i++) {
+
+			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
+
+			$indx++;
+			// $activeWorksheet
+			// 	->setCellValue('A' . $indx, $dados[$i]["Status"]["name"])
+			// 	->setCellValue('B' . $indx, str_pad($dados[$i]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT))
+			// 	->setCellValue('C' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['CnabLote']['created'])))
+			// 	->setCellValue('D' . $indx, $dados[$i]['Bank']['name'])
+			// 	->setCellValue('E' . $indx, $dados[$i][0]['qtde'])
+			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
+			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
+			$activeWorksheet
+				->setCellValue('A'. $indx, date('d/m/Y', strtotime($dados[$i]['Order']['created'])))
+				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
+				->setCellValue('C'. $indx, $dados[$i]["Customer"]["documento"])
+				->setCellValue('D'. $indx, $dados[$i]['Customer']['nome_primario'])
+				->setCellValue('E'. $indx, $dados[$i]['Status']['name'])
+				->setCellValue('F'. $indx, $dados[$i]['CustomerUser']['name'])
+				->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['matricula'])
+				->setCellValue('H'. $indx, $dados[$i]['CustomerUser']['cpf'])
+				//->setCellValue('I'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
+				->setCellValue('J'. $indx, $dados[$i]['OrderItem']['working_days'])
+				->setCellValue('K'. $indx, $dados[$i]['Supplier']['id'])
+				->setCellValue('L'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
+				->setCellValue('M'. $indx, $dados[$i]['Benefit']['code'].'/'.$dados[$i]['Benefit']['name'])
+				->setCellValue('N'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
+				->setCellValue('O'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
+				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['total'])
+				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
+				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['commission_fee'])
+				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['saldo'])
+				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['total_saldo'])
+				->setCellValue('V'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
+
+				
+		}
+	}
+
 
 
 	public function getProposal($spreadsheet, $dados)

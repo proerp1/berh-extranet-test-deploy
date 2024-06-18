@@ -8,6 +8,9 @@
     <li class="nav-item">
         <a class="nav-link active" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
+    </li>
 </ul>
 
 <div class="card mb-5 mb-xl-8">
@@ -38,23 +41,33 @@
             <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Ped Operadora</th>
+                    <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
+                    
                 </tr>
             </thead>
             <tbody>
                 <?php 
+                $total_saldo=0;
                 $total=0;
                 foreach ($suppliersAll as $supplier) {
+                    $total_saldo+=$supplier[0]['total_saldo'];
                     $total+=$supplier[0]['subtotal'];
                     ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Order']['id']; ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
             <tfoot>
                 <tr>
                     <th  class="fw-bold fs-5 ps-4">Total</th>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_saldo, 2, ',', '.'); ?></td>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
                 </tr>
             </tfoot>

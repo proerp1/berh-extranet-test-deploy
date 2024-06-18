@@ -111,7 +111,7 @@ class IncomesController extends AppController
                 $this->Income->unbindModel(['belongsTo' => ['Customer', 'BankAccount', 'Status']], false);
                 
                 $joins = [
-                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*'],
+                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*'],
                     'joins' => [['table' => 'customers',
                         'alias' => 'Customer',
                         'type' => 'INNER',
@@ -126,7 +126,12 @@ class IncomesController extends AppController
                         'alias' => 'Status',
                         'type' => 'INNER',
                         'conditions' => ['Income.status_id = Status.id']
-                    ]
+                ],
+                    ['table' => 'orders',
+                        'alias' => 'Order',
+                        'type' => 'LEFT',
+                        'conditions' => ['Income.order_id = Order.id']
+                ]
                     ]
                 ];
 

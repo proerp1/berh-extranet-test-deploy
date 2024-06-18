@@ -1,0 +1,31 @@
+<?php
+declare(strict_types=1);
+
+use Phinx\Migration\AbstractMigration;
+
+final class AddNewStatusToCustomerFiles extends AbstractMigration
+{
+    /**
+     * Change Method.
+     *
+     * Write your reversible migrations using this method.
+     *
+     * More information on writing migrations is available here:
+     * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
+     *
+     * Remember to call "create()" or "update()" and NOT "save()" when working
+     * with the Table class.
+     */
+    public function change(): void
+    {
+        $table = $this->table('statuses');
+
+        $rows = [
+            ['name' => 'Em Processamento', 'label' => 'badge-primary' , 'categoria' => 21],
+            ['name' => 'Concluído', 'label' => 'badge-success' , 'categoria' => 21],
+            ['name' => 'Cancelado', 'label' => 'badge-danger' , 'categoria' => 21],
+        ];
+
+        $table->insert($rows)->saveData();
+    }
+}

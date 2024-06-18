@@ -6,10 +6,10 @@ use League\Csv\Reader;
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
-    'CustomerUser', 'Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
-     'BenefitType', 'Outcome', 'Status', 'Proposal'];
+    'CustomerUser','Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
+     'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -515,12 +515,15 @@ class OrdersController extends AppController
                 $benefit_type_desc = isset($benefit_types['BenefitType']) ? $benefit_types['BenefitType']['name'] : '';
             }
         }
+        
+        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
+
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group', 'benefit_type_desc'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group', 'benefit_type_desc', 'order_balances_total'));
 
         $this->render("add");
     }
@@ -816,49 +819,34 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
-        $file = $this->request->data['CustomerUserItinerary'];
+        $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
-        $ret = $this->parseCSVSaldo($customerId, $file['file']['tmp_name']);
-
-        $total_saldo = 0;
         foreach ($ret['data'] as $data) {
-            $customerItineraries = $this->CustomerUserItinerary->find('first', [
-                'conditions' => [
-                    'CustomerUserItinerary.customer_user_id' => $data['customer_user_id'],
-                    'Benefit.id' => $data['benefit_id']
-                ],
-            ]);
+            $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
 
-            $total_saldo += $data['saldo'];
-
-            $orderItemData = [
+            $orderBalanceData = [
                 'order_id' => $orderId,
-                'customer_user_itinerary_id' => $customerItineraries['CustomerUserItinerary']['id'],
                 'customer_user_id' => $data['customer_user_id'],
-                'saldo' => $data['saldo'],
-                'working_days' => 0,
-                'price_per_day' => 0,
-                'subtotal' => 0,
-                'transfer_fee' => 0,
-                'total' => 0,
-                'commission_fee' => 0,
-                'values_from_csv' => 0,
-                'manual_quantity' => 0,
+                'benefit_id' => $benefit['Benefit']['id'],
+                'document' => $data['document'],
+                'total' => $data['total'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_created_id' => CakeSession::read("Auth.User.id")
             ];
 
-            $this->OrderItem->create();
-            $this->OrderItem->save($orderItemData);
+            $this->OrderBalance->create();
+            $this->OrderBalance->save($orderBalanceData);
         }
 
-        $orderData = [
-            'id' => $orderId,
-            'saldo' => $total_saldo,
-        ];
+        $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
 
-        $this->Order->save($orderData);
+        $file = new File($this->request->data['file']['name']);
+        $dir = new Folder(APP."webroot/files/order_balances/".$orderId."/", true);
+
+        $this->Uploader->up($this->request->data['file'], $dir->path);
 
         $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-        $this->redirect(['action' => 'edit/' . $orderId]);
+        $this->redirect(['action' => 'saldos/' . $orderId]);
     }
 
     private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
@@ -955,15 +943,16 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if (empty($existingUser)) {
-                $line++;
-                continue;
+            $customer_user_id = null;
+            if (isset($existingUser['CustomerUser'])) {
+                $customer_user_id = $existingUser['CustomerUser']['id'];
             }
 
             $data[] = [
-                'customer_user_id' => $existingUser['CustomerUser']['id'],
-                'benefit_id' => $row[1],
-                'saldo' => $row[2],
+                'customer_user_id' => $customer_user_id,
+                'document' => $row[0],
+                'benefit_code' => $row[1],
+                'total' => $row[2],
             ];
 
             $line++;
@@ -1343,14 +1332,24 @@ class OrdersController extends AppController
         }
     }
 
-    public function Operadoras($id)
+    public function operadoras($id)
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
-            'fields' => ['Supplier.razao_social', 'sum(OrderItem.subtotal) as subtotal'],
+            'fields' => [
+                            'Supplier.razao_social', 
+                            'Order.id',
+                            'sum(OrderItem.subtotal) as subtotal', 
+                            "(SELECT sum(b.total) as total_saldo 
+                                FROM order_balances b 
+                                WHERE b.benefit_id = Benefit.id 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS total_saldo"
+                        ],
              'joins' => [
                 [
                     'table' => 'benefits',
@@ -1367,16 +1366,15 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
                     ]
-                ]
+                ],
             ],
             'group' => ['Supplier.id']
             
         ]);
 
-        //debug( $suppliersAll);die;
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id' ,'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
     public function confirma_pagamento($id){
@@ -1462,7 +1460,6 @@ class OrdersController extends AppController
         $this->set(compact('id'));
     }
 
-
     public function boletos($id)
     {
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
@@ -1487,6 +1484,26 @@ class OrdersController extends AppController
 
         $log = $this->PaymentImportLog->findById($id);
         $this->redirect('/private_files/baixar_boleto/boletos_operadoras/' . $log['PaymentImportLog']['customer_user_id'] . '/boleto-' . $log['PaymentImportLog']['order_id'] . '-' . $log['PaymentImportLog']['supplier_id'] . '_pdf');
+    }
+
+    public function saldos($id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $data = $this->Paginator->paginate('OrderBalance', $condition);
+
+        $order = $this->Order->findById($id);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Saldo' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order'));
     }
 
     public function zerosEsq($campo, $tamanho)
@@ -1528,6 +1545,100 @@ class OrdersController extends AppController
         // echo $html;die();
 
         $this->HtmltoPdf->convert($html, 'nota.pdf', 'download');
+    }
+
+    public function relatorio_beneficio($id)
+    {
+        ini_set('pcre.backtrack_limit', '5000000');
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+        
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                
+
+                
+                'CustomerUserItinerary.unit_price',
+                'CustomerUserItinerary.benefit_id',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['CustomerUser.id, OrderItem.id']
+        ]);
+        //debug($itens); die;
+        $link = APP . 'webroot';
+        // $link = '';
+
+        $view->set(compact("link","order", "itens"));
+
+        $html = $view->render('../Elements/relatorio_beneficio');
+        $this->HtmltoPdf->convert($html, 'relatorio_beneficio.pdf', 'download');
+
+    }
+
+    public function listagem_entrega($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        $itens = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                'Order.credit_release_date',
+
+                
+                
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.id']
+        ]);
+        //debug($itens); die;
+
+        $link = APP . 'webroot';
+        // $link = '';
+        $view->set(compact("link","order", "itens"));
+
+
+        $html = $view->render('../Elements/listagem_entrega');
+        $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
+
     }
 
     private function getCommissionPerc($benefitType, $proposal){

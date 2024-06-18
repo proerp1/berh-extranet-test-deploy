@@ -233,6 +233,7 @@ class CustomReportsComponent extends Component
                         'Customer.documento',
                         'CustomerUser.name',
                         'CustomerUser.cpf',
+                        'CustomerUser.matricula',
                         'CustomerUser.tel',
                         'CustomerUser.cel',
                         'CustomerDepartment.name',
@@ -240,9 +241,13 @@ class CustomReportsComponent extends Component
                         'CustomerUserItinerary.quantity',
                         'OrderItem.*',
                         'Benefit.code',
+                        'Benefit.name',
                         'Supplier.nome_fantasia',
+                        'Supplier.id',
                         'Order.id',
+                        'Order.created',
                         'Order.status_id',
+                        'Status.name',
                         'Customer.codigo_associado'
                     ],
                     'joins' => [
@@ -251,6 +256,12 @@ class CustomReportsComponent extends Component
                             'alias' => 'Order',
                             'type' => 'INNER',
                             'conditions' => ['Order.id = OrderItem.order_id'],
+                        ],
+                        [
+                            'table' => 'statuses',
+                            'alias' => 'Status',
+                            'type' => 'INNER',
+                            'conditions' => ['Order.status_id = Status.id'],
                         ],
                         [
                             'table' => 'customers',

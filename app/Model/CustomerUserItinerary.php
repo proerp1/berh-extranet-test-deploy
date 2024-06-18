@@ -40,8 +40,9 @@ class CustomerUserItinerary extends AppModel
             }
 
             if (!isset($val['Benefit']) && isset($val['CustomerUserItinerary']['benefit_id'])) {
-                $benefit = $this->query('select name from benefits where id = ' . $val['CustomerUserItinerary']['benefit_id']);
+                $benefit = $this->query('select name, code from benefits where id = ' . $val['CustomerUserItinerary']['benefit_id']);
                 $results[$key][$this->alias]['benefit_name'] = $benefit[0]['benefits']['name'];
+                $results[$key][$this->alias]['benefit_code'] = $benefit[0]['benefits']['code'];
             }
         }
 

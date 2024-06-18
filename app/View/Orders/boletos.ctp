@@ -8,6 +8,9 @@
     <li class="nav-item">
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
+    </li>
 </ul>
 <?php $url_novo = $this->base . "/benefits/add/"; ?>
 <div class="card mb-5 mb-xl-8">

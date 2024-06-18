@@ -67,6 +67,24 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['saldo_not_formated'] = 0;
                 $results[$key][$this->alias]['saldo'] = '0,00';
             }
+
+            if (isset($val[$this->alias]['total_saldo'])) {
+                $results[$key][$this->alias]['total_saldo_not_formated'] = $results[$key][$this->alias]['total_saldo'];
+                $results[$key][$this->alias]['total_saldo'] = number_format($results[$key][$this->alias]['total_saldo'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['total_saldo_not_formated'] = 0;
+                $results[$key][$this->alias]['total_saldo'] = '0,00';
+            }
+
+            if (isset($val[$this->alias]['data_inicio_processamento'])) {
+                $results[$key][$this->alias]['data_inicio_processamento_nao_formatado'] = $val[$this->alias]['data_inicio_processamento'];
+                $results[$key][$this->alias]['data_inicio_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_inicio_processamento']));
+            }
+
+            if (isset($val[$this->alias]['data_fim_processamento'])) {
+                $results[$key][$this->alias]['data_fim_processamento_nao_formatado'] = $val[$this->alias]['data_fim_processamento'];
+                $results[$key][$this->alias]['data_fim_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_fim_processamento']));
+            }
         }
 
         return $results;
@@ -99,6 +117,10 @@ class OrderItem extends AppModel {
 
         if (!empty($this->data[$this->alias]['saldo'])) {
             $this->data[$this->alias]['saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['saldo']);
+        }
+
+        if (!empty($this->data[$this->alias]['total_saldo'])) {
+            $this->data[$this->alias]['total_saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total_saldo']);
         }
 		
 		return true;

@@ -214,6 +214,13 @@ class ReportsController extends AppController
             $this->redirect('/private_files/baixar/excel/PedidoCompras_xlsx');
         }
 
+        if (isset($_GET['processamento'])) {
+            $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+
+            $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+        }
+
+
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
 
         $de = date('d/m/Y', strtotime($de));

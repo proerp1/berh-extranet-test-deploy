@@ -5,8 +5,8 @@
             <tr>
                 <td align="center" valign="center" style="text-align:center;">
                     <div style="margin: 0 20px; background-color: #472F92;border-top-left-radius: 6px;border-top-right-radius: 6px; padding: 10px 0 10px 0;">
-                        <a href="https://grupoberh.com.br/" rel="noopener" target="_blank">
-                            <img alt="Logo" src="https://admin.berh.com.br/img/BE_Logo_Horizontal_Branco.png" width="100" />
+                        <a href="https://berh.com.br/" rel="noopener" target="_blank">
+                            <img alt="Logo" src="https://sig.berh.com.br/img/BE_Logo_Horizontal_Branco.png" width="100" />
                         </a>
                     </div>
                 </td>
@@ -22,7 +22,7 @@
                             <tr>
                                 <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #fff;">
                                     <p>Atendimento 0800 084 0996 | <a href="mailto:berh@berh.com.br" style="border:none; color:#fff;">berh@berh.com.br </a></p>
-                                    <p>Copyright © <a href="https://grupoberh.com.br/" rel="noopener" target="_blank" style="border:none; color:#fff;">BeRH</a>.</p>
+                                    <p>Copyright © <a href="https://berh.com.br/" rel="noopener" target="_blank" style="border:none; color:#fff;">BeRH</a>.</p>
                                 </td>
                             </tr>
                             </br>
