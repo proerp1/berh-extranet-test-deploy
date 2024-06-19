@@ -16,12 +16,14 @@
                             <thead>
                                 <tr>
                                     <th>Data</th>
+                                    <th>N° Pedido</th>
                                     <th>CNPJ</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td><?php echo date('d/m/Y'); ?></td>
+                                    <td><?php echo $order['Order']['id']; ?></td>
                                     <td><?php echo $order['Customer']['documento']; ?></td>
                                 </tr>
                             </tbody>
@@ -38,12 +40,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($order['OrderItem'] as $item): ?>
+                                <?php foreach($itens as $item){ ?>
                                     <tr>
-                                        <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?? 'N/A'; ?></td>
-                                        <td><?php echo $item['total'] ?? 'N/A'; ?></td>
+                                        <td><?php echo $item['Supplier']['razao_social']; ?></td>
+                                        <td><?php echo number_format($item[0]['total'],2,',','.'); ?></td>
                                     </tr>
-                                <?php endforeach; ?>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
@@ -58,12 +60,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($order['OrderItem'] as $item): ?>
-                                    <tr>
-                                        <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?? 'N/A'; ?></td>
-                                        <td><?php echo $item['transfer_fee'] ?? 'N/A'; ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
+                            <?php foreach($itens as $item){ ?>
+                                <tr>
+                                    <td><?php echo $item['Supplier']['razao_social']; ?></td>
+                                    <td><?php echo number_format($item[0]['transfer_fee'],2,',','.'); ?></td>
+                                </tr>
+                            <?php } ?>
                             </tbody>
                         </table>
                     </div>
@@ -78,12 +80,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($order['OrderItem'] as $item): ?>
+                            <?php foreach($itens as $item){ ?>
+                                <tr>
+                                    <td><?php echo $item['Supplier']['razao_social']; ?></td>
+                                    <td><?php echo number_format($item[0]['commission_fee'],2,',','.'); ?></td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-container mb-4">
+                        <h3>Custo BERH-TX ADM</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                     <tr>
-                                        <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?? 'N/A'; ?></td>
-                                        <td><?php echo $item['commission_fee'] ?? 'N/A'; ?></td>
+                                    <td><?php echo $order['Order']['total'] ; ?></td>
                                     </tr>
-                                <?php endforeach; ?>
+                                
                             </tbody>
                         </table>
                     </div>

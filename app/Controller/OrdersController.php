@@ -1696,7 +1696,7 @@ class OrdersController extends AppController
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-    
+        ini_set('pcre.backtrack_limit', '5000000');
         ini_set('memory_limit', '-1');
     
         $view = new View($this, false);
@@ -1707,28 +1707,48 @@ class OrdersController extends AppController
         ]);
     
         $itens = $this->OrderItem->find('all', [
-            'fields' => [
-                'CustomerUser.name as nome',
-                'OrderItem.total as total',
-            ],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['OrderItem.id']
+            'fields' => [
+                'Supplier.razao_social', 
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.transfer_fee) as transfer_fee',
+                'sum(OrderItem.commission_fee) as commission_fee',
+            ],
+            
+             'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ],
+            ],
+            'group' => ['Benefit.supplier_id']
         ]);
     
-        // Depure o pedido e os itens para confirmar os dados
-        /* debug($order);
+         /*
         debug($itens);
-        */ //die;
+        
+        die;*/
     
         $link = APP . 'webroot';
         $view->set(compact("link", "order", "itens"));
     
         $html = $view->render('../Elements/cobranca');
     
-        // Em vez de converter para PDF, exiba o HTML
+        // Em vez de converter para PDF, exibe o HTML
        // echo $html;
     
-        // Descomente esta linha quando quiser converter para PDF
          $this->HtmltoPdf->convert($html, 'Cobranca.pdf', 'download');
     }
     
