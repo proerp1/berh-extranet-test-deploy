@@ -117,29 +117,29 @@ class OutcomesController extends AppController {
 					$id_origem = $this->Outcome->id;
 					if ($this->request->data['Outcome']['recorrencia'] == 1) {
 						for ($i=0; $i < $this->request->data['Outcome']['quantidade']; $i++) {
-
+	
 							$year = substr($this->request->data['Outcome']['vencimento'],6,4);
 							$month = substr($this->request->data['Outcome']['vencimento'],3,2);
 							$date = substr($this->request->data['Outcome']['vencimento'],0,2);
 							$data = $year."-".$month."-".$date;
-
+	
 							$cont = $i+1;
 							$meses = $cont*$this->request->data['Outcome']["periodicidade"];
-
+	
 							$effectiveDate = date('d/m/Y', strtotime("+".$meses." months", strtotime($data)));
-
+	
 							$data_save = $this->request->data;
 							$data_save['Outcome']['vencimento'] = $effectiveDate;
 							$data_save['Outcome']['parcela'] = $cont+1;
 							$data_save['Outcome']['conta_origem_id'] = $id_origem;
-
+	
 							$this->Outcome->create();
 							$this->Outcome->save($data_save);
 						}
 					}
-
+	
 					$this->Session->setFlash(__('A conta a pagar foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
-					$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
+					$this->redirect(array('action' => 'edit', $id_origem)); // Redireciona para a ação de edição com o ID criado
 				} else {
 					$this->Session->setFlash(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 				}
@@ -147,7 +147,7 @@ class OutcomesController extends AppController {
 				$this->Session->setFlash(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
-
+	
 		$statuses = $this->Status->find('list', array('conditions' => array('Status.categoria' => 4)));
 		$expenses = $this->Expense->find('list', ['conditions' => ['Expense.status_id' => 1], 'order' => 'Expense.name']);
 		$bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
@@ -155,14 +155,15 @@ class OutcomesController extends AppController {
 		$suppliers = $this->Supplier->find('list', ['conditions' => ['Supplier.status_id' => 1], 'order' => 'Supplier.nome_fantasia']);
 		$planoContas = $this->PlanoConta->find('list', ['conditions' => ['PlanoConta.status_id' => 1], 'order' => ['PlanoConta.name' => 'asc']]);
 		$resales = $this->Resale->find("list", ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], 'order' => ['Resale.nome_fantasia' => 'asc']]);
-
+	
 		$cancelarConta = $this->Permission->check(57, "escrita");
-
+	
 		$action = 'Contas a pagar';
 		$breadcrumb = ['Nova conta' => ''];
 		$this->set("form_action", "add");
 		$this->set(compact('statuses', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb'));
 	}
+	
 
 	public function edit($id = null) {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
