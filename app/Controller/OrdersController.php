@@ -1943,6 +1943,81 @@ class OrdersController extends AppController
         $this->render("../Elements/relatorio_pedidos");
         //$this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
     }
+
+    public function relatorio_processamento($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        
+
+        $data = $this->OrderItem->find('all', [
+            'fields' => [
+                'Order.*',
+                'OrderItem.*',
+                'Customer.*',
+                'Status.*',
+                'CustomerUser.*',
+                'Supplier.*',
+                'Benefit.*',
+                'CustomerUserItinerary.*',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.customer_id = Customer.id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.status_id = Status.id'
+                    ]
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['OrderItem.id']
+        ]);
+        //debug($itens); die;
+
+        
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+        
+
+    }
  
 
     private function getCommissionPerc($benefitType, $proposal){
