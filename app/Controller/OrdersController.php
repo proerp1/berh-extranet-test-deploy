@@ -1921,6 +1921,53 @@ class OrdersController extends AppController
         $this->render("../Elements/relatorio_pedidos");
         //$this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
     }
+
+    public function relatorio_processamento($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $id],
+        ]);
+
+        
+
+        $data = $this->OrderItem->find('all', [
+            'fields' => [
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as matricula',
+                'Order.credit_release_date',
+
+                
+                
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.id']
+        ]);
+        //debug($itens); die;
+
+        
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+        
+
+    }
  
 
     private function getCommissionPerc($benefitType, $proposal){
