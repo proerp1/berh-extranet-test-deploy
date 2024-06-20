@@ -1940,20 +1940,13 @@ class OrdersController extends AppController
 
         $data = $this->OrderItem->find('all', [
             'fields' => [
-                'CustomerUser.name as nome',
-                'CustomerUser.cpf as cpf',
-                'CustomerUser.matricula as matricula',
-                'CustomerUserItinerary.benefit_id as matricula',
-                'Order.credit_release_date',
-
-                
-                
-                'CustomerUserItinerary.benefit_id',
-                'CustomerUserItinerary.unit_price',
-                'sum(CustomerUserItinerary.quantity) as qtd',
-                'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
-                'sum(OrderItem.working_days) as working_days',
+                'Order.*',
+                'Customer.*',
+                'Status.*',
+                'CustomerUser.*',
+                'Supplier.*',
+                'Benefit.*',
+                'CustomerUserItinerary.*',
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
