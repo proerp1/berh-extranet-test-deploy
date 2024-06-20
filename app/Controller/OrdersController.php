@@ -1952,7 +1952,14 @@ class OrdersController extends AppController
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
-                
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.customer_id = Customer.id'
+                    ]
+                ],
                 [
                     'table' => 'statuses',
                     'alias' => 'Status',
