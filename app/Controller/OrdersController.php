@@ -408,6 +408,8 @@ class OrdersController extends AppController
             }
         }
 
+        
+
         $temp_errors = $this->Order->validationErrors;
         $this->request->data = $this->Order->read();
         $order = $this->Order->findById($id);
@@ -1645,7 +1647,7 @@ class OrdersController extends AppController
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-
+    
         ini_set('memory_limit', '-1');
         
         $view = new View($this, false);
@@ -1654,9 +1656,7 @@ class OrdersController extends AppController
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
         ]);
-
-        
-
+    
         $itens = $this->OrderItem->find('all', [
             'fields' => [
                 'CustomerUser.name as nome',
@@ -1664,32 +1664,54 @@ class OrdersController extends AppController
                 'CustomerUser.matricula as matricula',
                 'CustomerUserItinerary.benefit_id as matricula',
                 'Order.credit_release_date',
-
-                
-                
                 'CustomerUserItinerary.benefit_id',
                 'CustomerUserItinerary.unit_price',
                 'sum(CustomerUserItinerary.quantity) as qtd',
                 'sum(OrderItem.subtotal) as valor',
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.working_days) as working_days',
-
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['OrderItem.id']
         ]);
-        //debug($itens); die;
-
-        $link = APP . 'webroot';
-        // $link = '';
-        $view->set(compact("link","order", "itens"));
-
-
+    
+        $suppliersCount = $this->OrderItem->find('count', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'group' => ['Supplier.id'],
+            'fields' => ['Supplier.id']
+        ]);
+    
+        $usersCount = $this->OrderItem->find('count', [
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.customer_user_id'],
+            'fields' => ['OrderItem.customer_user_id']
+        ]);
+    
+        $view->set(compact("order", "itens", "suppliersCount", "usersCount"));
+    
         $html = $view->render('../Elements/resumo');
-         echo $html;
-       // $this->HtmltoPdf->convert($html, 'resumo.pdf', 'download');
-
+       // echo $html;
+         $this->HtmltoPdf->convert($html, 'resumo.pdf', 'download');
     }
+    
 
 
     public function cobranca($id)

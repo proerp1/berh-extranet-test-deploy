@@ -43,7 +43,7 @@
                                 <?php foreach($itens as $item){ ?>
                                     <tr>
                                         <td><?php echo $item['Supplier']['razao_social']; ?></td>
-                                        <td><?php echo number_format($item[0]['total'],2,',','.'); ?></td>
+                                        <td><?php echo$order['Order']['subtotal']; ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>

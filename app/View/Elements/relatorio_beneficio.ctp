@@ -31,6 +31,7 @@
                                         <th>Dias</th>
                                         <th>Quant. por dia</th>
                                         <th>Valor Unitário</th>
+                                        <th>Desconto</th>
                                         <th>Valor Total</th>
                                     </tr>
                                 </thead>
@@ -45,6 +46,7 @@
                                         <td><?php echo $item[0]['working_days']; ?></td>
                                         <td><?php echo $item[0]['qtd']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
+                                        <td><?php echo $item['OrderItem']['saldo']; ?></td>
                                         <td><?php echo $item[0]['valor']; ?></td>
                                     </tr>
                                 </tbody>
