@@ -1786,7 +1786,6 @@ class ExcelTemplate
 		->setCellValue('Q1', "Repasse")
 		->setCellValue('R1', "Taxa ADM")
 		->setCellValue('S1', "Status Operadora")
-		->setCellValue('T1', "Economia")
 		->setCellValue('U1', "Compra Operadora");
 
 
@@ -1825,8 +1824,7 @@ class ExcelTemplate
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
 				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['commission_fee'])
 				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['total_saldo'])
-				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
+				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
 
 				
 		}
