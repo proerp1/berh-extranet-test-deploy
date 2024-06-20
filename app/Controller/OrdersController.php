@@ -1952,26 +1952,11 @@ class OrdersController extends AppController
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
-                [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'OrderItem.customer_user_id = CustomerUser.id'
-                    ]
-                ],
-                [
-                    'table' => 'customer_user_itineraries',
-                    'alias' => 'CustomerUserItinerary',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id'
-                    ]
-                ],
+                
                 [
                     'table' => 'statuses',
                     'alias' => 'Status',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'Order.status_id = Status.id'
                     ]
@@ -1979,7 +1964,7 @@ class OrdersController extends AppController
                 [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'Benefit.id = CustomerUserItinerary.benefit_id'
                     ]
@@ -1987,7 +1972,7 @@ class OrdersController extends AppController
                 [
                     'table' => 'suppliers',
                     'alias' => 'Supplier',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
                     ]
