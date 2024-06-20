@@ -1806,7 +1806,7 @@ class ExcelTemplate
 			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
 			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
 			$activeWorksheet
-				->setCellValue('A'. $indx, date('d/m/Y', strtotime($dados[$i]['Order']['created'])))
+				->setCellValue('A'. $indx, $dados[$i]['Order']['created'])
 				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
 				->setCellValue('C'. $indx, $dados[$i]["Customer"]["documento"])
 				->setCellValue('D'. $indx, $dados[$i]['Customer']['nome_primario'])
