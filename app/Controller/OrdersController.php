@@ -1672,7 +1672,7 @@ class OrdersController extends AppController
                 'sum(OrderItem.working_days) as working_days',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['OrderItem.id']
+            'group' => ['Order.id']
         ]);
     
         $suppliersCount = $this->OrderItem->find('count', [
@@ -1704,8 +1704,9 @@ class OrdersController extends AppController
             'group' => ['OrderItem.customer_user_id'],
             'fields' => ['OrderItem.customer_user_id']
         ]);
-    
-        $view->set(compact("order", "itens", "suppliersCount", "usersCount"));
+        $link = APP . 'webroot';
+
+        $view->set(compact("order", "itens", "suppliersCount", "usersCount", "link"));
     
         $html = $view->render('../Elements/resumo');
        // echo $html;

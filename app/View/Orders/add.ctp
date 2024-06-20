@@ -220,20 +220,20 @@
                                     Relatorio de Processamento
                                 </a>
                             
-
-                            
                                 <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
                                     <i class="fas fa-download"></i>
                                     Listagem de Entrega
                                 </a>
-                            
                   
-                            
                                 <a href="<?php echo $this->base . '/orders/cobranca/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
                                     <i class="fas fa-download"></i>
                                     Relatório de Cobrança
                                 </a>
-                            
+
+                                <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i>
+                                    Resumo
+                                </a>
                             
 
                             <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
@@ -250,7 +250,6 @@
                                 </a>
                             <?php } ?>
 
-                            
                             <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
 
                         </div>
