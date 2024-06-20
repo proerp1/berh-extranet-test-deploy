@@ -1941,6 +1941,7 @@ class OrdersController extends AppController
         $data = $this->OrderItem->find('all', [
             'fields' => [
                 'Order.*',
+                'OrderItem.*',
                 'Customer.*',
                 'Status.*',
                 'CustomerUser.*',
@@ -1950,6 +1951,48 @@ class OrdersController extends AppController
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'OrderItem.customer_user_id = CustomerUser.id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_user_itineraries',
+                    'alias' => 'CustomerUserItinerary',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Order.status_id = Status.id'
+                    ]
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
             'group' => ['OrderItem.id']
         ]);
         //debug($itens); die;
