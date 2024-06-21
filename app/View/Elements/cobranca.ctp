@@ -94,11 +94,13 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>Desconto</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                     <tr>
+                                    <td><?php echo $order['Order']['desconto'] ; ?></td>
                                     <td><?php echo $order['Order']['total'] ; ?></td>
                                     </tr>
                                 
