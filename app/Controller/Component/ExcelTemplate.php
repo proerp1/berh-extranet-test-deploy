@@ -1826,7 +1826,7 @@ class ExcelTemplate
 				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['commission_fee'])
 				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['status_processamento'])
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
+				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['pedido_operadora']);
 
 				
 		}

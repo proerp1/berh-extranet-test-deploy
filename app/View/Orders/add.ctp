@@ -210,6 +210,12 @@
                                     <i class="fas fa-download"></i>
                                     Relatorio de Processamento PDF
                                 </a>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-12 col" style="text-align: right;">
+
                             
                                 <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
                                     <i class="fas fa-download"></i>
@@ -221,16 +227,16 @@
                                     Relatório de Cobrança
                                 </a>
 
-                                
+                                <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i>
+                                    Resumo
+                                </a>
                             
                         </div>
                     </div>
                     <div class="row">
                         <div class="mb-12 col" style="text-align: right;">
-                            <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                    <i class="fas fa-download"></i>
-                                    Resumo
-                            </a>
+                            
 
                             <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
                                 <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
