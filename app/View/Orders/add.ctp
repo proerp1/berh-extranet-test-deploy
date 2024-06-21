@@ -212,8 +212,7 @@
                                 </a>
 
                         </div>
-                    </div>
-                    <div class="row">
+                    
                         <div class="mb-12 col" style="text-align: right;">
 
                             
@@ -233,8 +232,7 @@
                                 </a>
                             
                         </div>
-                    </div>
-                    <div class="row">
+                    
                         <div class="mb-12 col" style="text-align: right;">
                             
 
