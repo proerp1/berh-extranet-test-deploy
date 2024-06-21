@@ -193,7 +193,7 @@
 
 
                     <div class="row">
-                        <div class="mb-12 col" style="text-align: right;">
+                        <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
 
                             
                                 <a href="<?php echo $this->base . '/orders/e_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
@@ -212,8 +212,9 @@
                                 </a>
 
                         </div>
-                    
-                        <div class="mb-12 col" style="text-align: right;">
+                    </div>
+                    <div class="row">
+                        <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
 
                             
                                 <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
@@ -232,8 +233,9 @@
                                 </a>
                             
                         </div>
-                    
-                        <div class="mb-12 col" style="text-align: right;">
+                    </div>
+                    <div class="row">
+                        <div class="mb-12 col" style="text-align: right; ">
                             
 
                             <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
