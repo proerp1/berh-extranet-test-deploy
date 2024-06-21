@@ -1649,7 +1649,8 @@ class OrdersController extends AppController
 
             ],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['OrderItem.id']
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']                           
         ]);
         //debug($itens); die;
 
