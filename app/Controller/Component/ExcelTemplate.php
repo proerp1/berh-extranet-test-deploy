@@ -1767,7 +1767,7 @@ class ExcelTemplate
 		$activeWorksheet = $spreadsheet->getActiveSheet();
 
 		$activeWorksheet
-		->setCellValue('A1', "Data Geração Ped")
+		->setCellValue('A1', "Data Criação Ped")
 		->setCellValue('B1', "Pedido")
 		->setCellValue('C1', "CNPJ CLIENTE")
 		->setCellValue('D1', "Razão Social")
@@ -1782,7 +1782,7 @@ class ExcelTemplate
 		->setCellValue('M1', "Id(Código do Benefício / ítem)")
 		->setCellValue('N1', "VlUnit")
 		->setCellValue('O1', "Qtde do Benefício por Dia")
-		->setCellValue('P1', "Total")
+		->setCellValue('P1', "Subtotal")
 		->setCellValue('Q1', "Repasse")
 		->setCellValue('R1', "Taxa ADM")
 		->setCellValue('S1', "Status Operadora")
