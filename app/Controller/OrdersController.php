@@ -326,7 +326,13 @@ class OrdersController extends AppController
             $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
                 ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
                 : 0;
-            $transferFee = $subtotal * ($transferFeePercentage / 100);
+            
+            // 1 = 'Valor', 2 = 'Percentual'
+            if($benefit['Supplier']['transfer_fee_type'] == 2){
+                $transferFee = $subtotal * ($transferFeePercentage / 100);
+            } else {
+                $transferFee = $transferFeePercentage;
+            }
             $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
 
             $total = $subtotal + $transferFee + $commissionFee;
@@ -990,7 +996,13 @@ class OrdersController extends AppController
         $benefit = $this->Benefit->findById($benefitId);
         
         $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
-        $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
+        // 1 = 'Valor', 2 = 'Percentual'
+        if($benefit['Supplier']['transfer_fee_type'] == 2){
+            $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
+        } else {
+            $transferFee = $transferFeePercentage;
+        }
+
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
 
         $proposal = $this->Proposal->find('first', [

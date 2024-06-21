@@ -591,8 +591,9 @@
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
                         <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
-                            <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
-                            <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
+                        <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
+                        <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
+                        <td colspan="5"></td>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <td>&nbsp;</td>
                         <?php } ?>
@@ -662,6 +663,7 @@
                             <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
                             <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
                             <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
+                            <td colspan="5"></td>
                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                 <td>&nbsp;</td>
                             <?php } ?>
