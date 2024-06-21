@@ -1674,9 +1674,10 @@ class OrdersController extends AppController
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
-            'contain' => ['Customer', 'EconomicGroup'],
-            'conditions' => ['Order.id' => $id],
+            'contain' => ['Customer', 'EconomicGroup', 'Income'],
+            'conditions' => ['Ordera.id' => $id],
         ]);
+        debug($order); die;
     
         $itens = $this->OrderItem->find('all', [
             'fields' => [
