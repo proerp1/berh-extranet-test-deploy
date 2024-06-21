@@ -290,9 +290,9 @@ class OrdersController extends AppController
                     continue;
                 }
 
-                $pricePerDay = $parsedManualRow['pricePerDay'];
-                $manualWorkingDays = $parsedManualRow['manualWorkingDays'];
-                $manualQuantity = $parsedManualRow['manualQuantity'];
+                $pricePerDay = $parsedManualRow['pricePerDay'] < 0 ? $parsedManualRow['pricePerDay'] * -1 : $parsedManualRow['pricePerDay'];
+                $manualWorkingDays = $parsedManualRow['manualWorkingDays'] < 0 ? $parsedManualRow['manualWorkingDays'] * -1 : $parsedManualRow['manualWorkingDays'];
+                $manualQuantity = $parsedManualRow['manualQuantity'] < 0 ? $parsedManualRow['manualQuantity'] * -1 : $parsedManualRow['manualQuantity'];
 
                 $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $pricePerDay;
 
@@ -979,10 +979,16 @@ class OrdersController extends AppController
 
         if ($this->request->data['campo'] == 'working_days') {
             $workingDays = $this->request->data['newValue'];
+            if ($workingDays < 0) {
+                $workingDays = $workingDays * -1;
+            }
             $orderItem['OrderItem']['working_days'] = $workingDays;
             $var = $orderItem['OrderItem']['var_not_formated'];
         } else {
             $workingDays = $orderItem['OrderItem']['working_days'];
+            if ($workingDays < 0) {
+                $workingDays = $workingDays * -1;
+            }
             $var_raw = $this->request->data['newValue'];
             $var = str_replace(".", "", $var_raw);
             $var = (float)str_replace(",", ".", $var);

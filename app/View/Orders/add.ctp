@@ -896,6 +896,12 @@
             const orderItemId = $(this).parent().find('.item_id').val();
             const line = $(this).parent().parent();
 
+            if (newValue.includes('-')) {
+                $(this).val(0);
+                alert('número negativo não permitido');
+                return;
+            }
+
             if (newValue != '' && newValue != undefined && newValue != null) {
                 $.ajax({
                     type: 'POST',
@@ -925,6 +931,12 @@
             let newValue = $(this).val();
             const orderItemId = $(this).parent().parent().find('.item_id').val();
             const line = $(this).parent().parent();
+
+            if (newValue.includes('-')) {
+                $(this).val('0,00');
+                alert('número negativo não permitido');
+                return;
+            }
 
             if (newValue == '') {
                 newValue = 0;
