@@ -196,7 +196,7 @@
                         <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
 
                             
-                                <a href="<?php echo $this->base . '/orders/e_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
+                                <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
                                     <i class="fas fa-download"></i>
                                     Relatorio de Benefícios
                                 </a>
