@@ -1,5 +1,5 @@
-<?php if (!empty($itens)) { ?>
-    <?php foreach ($itens as $index => $item) { ?>
+<?php if (!empty($paginas)) { ?>
+    <?php foreach ($paginas as $index => $pagina) { ?>
         <div class="modal fade <?php echo $index > 0 ? 'page-break' : ''; ?>" id="relatorioModal" tabindex="-1" aria-labelledby="relatorioModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content" style="background-color: #ffffff;">
@@ -36,19 +36,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><?php echo $order['Order']['id']; ?></td>
-                                        <td><?php echo $item['CustomerUser']['nome']; ?></td>
-                                        <td><?php echo $item['CustomerUser']['matricula']; ?></td>
-                                        <td><?php echo $item['CustomerUser']['cpf']; ?></td>
-                                        <td><?php echo $item['CustomerUserItinerary']['benefit_code']; ?></td>
-                                        <td><?php echo $item['CustomerUserItinerary']['benefit_name']; ?></td>
-                                        <td><?php echo $item[0]['working_days']; ?></td>
-                                        <td><?php echo $item[0]['qtd']; ?></td>
-                                        <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
-                                        <td><?php echo $item['OrderItem']['saldo']; ?></td>
-                                        <td><?php echo $item[0]['valor']; ?></td>
-                                    </tr>
+                                    <?php foreach ($itens[$pagina['CustomerUser']['id']] as $index => $item) { ?>
+                                        <tr>
+                                            <td><?php echo $order['Order']['id']; ?></td>
+                                            <td><?php echo $item['CustomerUser']['nome']; ?></td>
+                                            <td><?php echo $item['CustomerUser']['matricula']; ?></td>
+                                            <td><?php echo $item['CustomerUser']['cpf']; ?></td>
+                                            <td><?php echo $item['CustomerUserItinerary']['benefit_code']; ?></td>
+                                            <td><?php echo $item['CustomerUserItinerary']['benefit_name']; ?></td>
+                                            <td><?php echo $item[0]['working_days']; ?></td>
+                                            <td><?php echo $item[0]['qtd']; ?></td>
+                                            <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
+                                            <td><?php echo $item['OrderItem']['saldo']; ?></td>
+                                            <td><?php echo $item[0]['valor']; ?></td>
+                                        </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
