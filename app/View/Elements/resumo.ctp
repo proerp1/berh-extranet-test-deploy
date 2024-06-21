@@ -33,7 +33,7 @@
                                         <td><?php echo $order['Order']['id']; ?></td>
                                         <td><?php echo $usersCount; ?></td>
                                         <td><?php echo $order['Order']['created']; ?></td>
-                                        <td><?php echo $order['Order']['credit_release_date']; ?></td>
+                                        <td><?php echo $order['Income']['data_pagamento']; ?></td>
                                     </tr>
                                 </tbody>
                             </table>
