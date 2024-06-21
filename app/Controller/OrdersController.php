@@ -1754,6 +1754,7 @@ class OrdersController extends AppController
             'conditions' => ['OrderItem.order_id' => $id],
             'fields' => [
                 'Supplier.razao_social', 
+                'sum(OrderItem.subtotal) as subtotal',
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.transfer_fee) as transfer_fee',
                 'sum(OrderItem.commission_fee) as commission_fee',
