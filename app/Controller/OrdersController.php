@@ -2030,7 +2030,8 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['OrderItem.id']
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
         ]);
         //debug($itens); die;
 
@@ -2106,7 +2107,8 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['OrderItem.id']
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
         ]);
     
         $link = APP . 'webroot';
