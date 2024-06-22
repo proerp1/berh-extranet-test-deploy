@@ -1611,7 +1611,8 @@ class OrdersController extends AppController
                     'OrderItem.order_id' => $id,
                     'CustomerUser.id' => $pagina['CustomerUser']['id'],
                 ],
-                'group' => ['CustomerUser.id', 'OrderItem.id']
+                'group' => ['CustomerUser.id', 'OrderItem.id'],
+                'order' => ['CustomerUser.name']                                                           
             ]);
         }
 
