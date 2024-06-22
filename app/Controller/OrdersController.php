@@ -1588,7 +1588,7 @@ class OrdersController extends AppController
             'fields' => ['CustomerUser.name'],
             'contain' => ['CustomerUser'],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['CustomerUser.id']
+            'group' => ['CustomerUser.id'],
             'order' => ['trim(CustomerUser.name)'] 
         ]);
 
