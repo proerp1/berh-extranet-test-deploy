@@ -1612,7 +1612,7 @@ class OrdersController extends AppController
                     'CustomerUser.id' => $pagina['CustomerUser']['id'],
                 ],
                 'group' => ['CustomerUser.id', 'OrderItem.id'],
-                'order' => ['CustomerUser.name']                                                           
+                'order' => ['trim(CustomerUser.name)']                                                           
             ]);
         }
 
