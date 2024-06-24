@@ -1584,31 +1584,43 @@ class OrdersController extends AppController
             'conditions' => ['Order.id' => $id],
         ]);
 
-        $itens = $this->OrderItem->find('all', [
-            'fields' => [
-                'CustomerUser.name as nome',
-                'CustomerUser.cpf as cpf',
-                'CustomerUser.matricula as matricula',
-                'CustomerUserItinerary.benefit_id as matricula',
-                
-
-                
-                'CustomerUserItinerary.unit_price',
-                'CustomerUserItinerary.benefit_id',
-                'sum(CustomerUserItinerary.quantity) as qtd',
-                'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
-                'sum(OrderItem.working_days) as working_days',
-
-            ],
+        $paginas = $this->OrderItem->find('all', [
+            'fields' => ['CustomerUser.name'],
+            'contain' => ['CustomerUser'],
             'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['CustomerUser.id, OrderItem.id']
+            'group' => ['CustomerUser.id'],
+            'order' => ['trim(CustomerUser.name)'] 
         ]);
-        //debug($itens); die;
+
+        $itens = [];
+        foreach ($paginas as $pagina) {
+            $itens[$pagina['CustomerUser']['id']] = $this->OrderItem->find('all', [
+                'contain' => ['CustomerUser', 'CustomerUserItinerary'],
+                'fields' => [
+                    'CustomerUser.name as nome',
+                    'CustomerUser.cpf as cpf',
+                    'CustomerUser.matricula as matricula',
+                    'CustomerUserItinerary.benefit_id as matricula',
+                    'CustomerUserItinerary.unit_price',
+                    'CustomerUserItinerary.benefit_id',
+                    'sum(CustomerUserItinerary.quantity) as qtd',
+                    'sum(OrderItem.subtotal) as valor',
+                    'sum(OrderItem.total) as total',
+                    'sum(OrderItem.working_days) as working_days',
+                ],
+                'conditions' => [
+                    'OrderItem.order_id' => $id,
+                    'CustomerUser.id' => $pagina['CustomerUser']['id'],
+                ],
+                'group' => ['CustomerUser.id', 'OrderItem.id'],
+                'order' => ['trim(CustomerUser.name)']                                                           
+            ]);
+        }
+
         $link = APP . 'webroot';
         // $link = '';
 
-        $view->set(compact("link","order", "itens"));
+        $view->set(compact("link","order", "itens", "paginas"));
 
         $html = $view->render('../Elements/relatorio_beneficio');
         $this->HtmltoPdf->convert($html, 'relatorio_beneficio.pdf', 'download');
@@ -2030,7 +2042,8 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['OrderItem.id']
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
         ]);
         //debug($itens); die;
 
@@ -2106,7 +2119,8 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['OrderItem.id']
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
         ]);
     
         $link = APP . 'webroot';

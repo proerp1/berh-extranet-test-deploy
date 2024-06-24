@@ -4,6 +4,10 @@ class OrderItem extends AppModel {
     public $useTable = 'order_items';
     public $primaryKey = 'id';
 
+    public $actsAs = [
+        'Containable',
+    ];
+
     public $belongsTo = array(
         'Order' => array(
             'className' => 'Order',
