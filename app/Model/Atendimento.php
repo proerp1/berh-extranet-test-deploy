@@ -21,6 +21,13 @@ class Atendimento extends AppModel {
 		return $queryData;
 	}
 
+	public $actsAs = array(
+		'Upload.Upload' => array(
+			'file'
+		)
+	);
+
+
 	public function afterFind($results, $primary = false){
 		foreach ($results as $key => $val) {
 			if (isset($val['Atendimento']['data_atendimento'])) {
