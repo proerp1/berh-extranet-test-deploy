@@ -217,6 +217,24 @@ class Order extends AppModel
 
     public function reProcessAmounts()
     {
+        $order = $this->find('first', [
+            'conditions' => [
+                'Order.id' => $this->id
+            ],
+            'fields' => [
+                'Order.customer_id'
+            ]
+        ]);
+
+        $tpp_fee = 0;
+        $prop = ClassRegistry::init('Proposal');
+        $proposal = $prop->find('first', [
+            'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
+        ]);
+        if (!empty($proposal)) {
+            $tpp_fee = $proposal['Proposal']['tpp_not_formatted'];
+        }
+        
         $items = $this->OrderItem->find('first', [
             'conditions' => [
                 'Order.id' => $this->id
@@ -229,6 +247,8 @@ class Order extends AppModel
             ],
         ]);
 
+        $items[0]['total'] = $items[0]['total'] + $tpp_fee;
+
         $commissionFee = $items[0]['commission_fee'];
         $transferFee = $items[0]['transfer_fee'];
         $subtotal = $items[0]['subtotal'];
@@ -238,6 +258,7 @@ class Order extends AppModel
             'id' => $this->id,
             'transfer_fee' => $transferFee,
             'commission_fee' => $commissionFee,
+            'tpp_fee' => $tpp_fee,
             'subtotal' => $subtotal,
             'total' => $total
         ]]);

@@ -426,14 +426,15 @@
 
                 <!--begin::Section-->
                 <div class="d-flex flex-column my-7">
-                    <!--begin::Number-->
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo $order['Order']['commission_fee']; ?></span>
-                    <!--end::Number-->
-                    <!--begin::Follower-->
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">Taxa</span>
                     </div>
-                    <!--end::Follower-->
+
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2 mt-5">R$<?php echo $order['Order']['tpp_fee']; ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">TPP</span>
+                    </div>
                 </div>
                 <!--end::Section-->
 
