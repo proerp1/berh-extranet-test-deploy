@@ -44,6 +44,9 @@ class AtendimentosController extends AppController
         $this->Atendimento->id = $id;
         if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();
+            if ($this->request->data['Atendimento']['file_atendimento']['name'] == '') {
+                unset($this->request->data['Atendimento']['file_atendimento']);
+            }
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->request->data['Atendimento']['answer'] != "") {
