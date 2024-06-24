@@ -82,7 +82,9 @@ class AtendimentosController extends AppController
         $this->Permission->check(21, "escrita") ? "" : $this->redirect("/not_allowed");
         
         if ($this->request->is(['post', 'put'])) {
+            
             $this->Atendimento->validates();
+            $this->Atendimento->create();
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['Atendimento']['mostrar_cliente'] = 0;
             $this->request->data['Atendimento']['name_atendente'] = CakeSession::read('Auth.User.name');
@@ -97,7 +99,7 @@ class AtendimentosController extends AppController
                 // $this->envia_email($atendimento);
             }
             
-            $this->Atendimento->create();
+            
             if ($this->Atendimento->save($this->request->data)) {
                 $this->Flash->set(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
