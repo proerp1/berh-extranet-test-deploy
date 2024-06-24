@@ -18,11 +18,11 @@
                                     <tr>
                                         <th>Data da Impressão</th>
                                         <th>CNPJ</th>
-                                        <th>QTDE OPERADORAS</th>
-                                        <th>N° PEDIDO</th>
-                                        <th>QTDE COLABORADORES</th>
-                                        <th>DATA PEDIDO</th>
-                                        <th>DATA PAGAMENTO</th>
+                                        <th>Qtde Operadoras</th>
+                                        <th>N° Pedido</th>
+                                        <th>Qtde Colaboradores</th>
+                                        <th>Data Pedido</th>
+                                        <th>Data Pagamento</th>
                                     </tr>
                                 </thead>
                                 <tbody>

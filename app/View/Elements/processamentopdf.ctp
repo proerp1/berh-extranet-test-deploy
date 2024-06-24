@@ -39,7 +39,7 @@
                         <img src="<?php echo $link."/img/logo-berh-colorido.png"; ?>" alt="" width="150">
                     </div>
                     <div class="modal-header" style="text-align: center;">
-                        <h1 class="modal-title mx-auto" id="relatorioModalLabel">Relatorio Processamento</h1>
+                        <h1 class="modal-title mx-auto" id="relatorioModalLabel">Relatorio de Processamento</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">

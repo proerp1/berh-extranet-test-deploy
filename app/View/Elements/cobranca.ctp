@@ -90,7 +90,6 @@
                         </table>
                     </div>
                     <div class="table-container mb-4">
-                        <h3>Custo BERH-TX ADM</h3>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
