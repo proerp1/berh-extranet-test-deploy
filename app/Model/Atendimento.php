@@ -23,7 +23,7 @@ class Atendimento extends AppModel {
 
 	public $actsAs = array(
 		'Upload.Upload' => array(
-			'file'
+			'file_atendimento'
 		)
 	);
 
