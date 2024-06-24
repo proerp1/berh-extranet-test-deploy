@@ -57,11 +57,11 @@
                                         <th>CPF</th>
                                         <th>Cartão</th>
                                         <th>Dias Úteis</th>
+                                        <th>Qtde</th>
                                         <th>Id(Código Operadora)</th>
                                         <th>Operadora</th>
                                         <th>Cod. do Benefício</th>
                                         <th>Vl. Unit</th>
-                                        <th>Qtde</th>
                                         <th>Total</th>
                                         <th>Repasse</th>
                                         <th>Taxa ADM</th>
@@ -83,11 +83,11 @@
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>
                                         <td></td>
                                         <td><?php echo $item['OrderItem']['working_days']; ?></td>
+                                        <td><?php echo $item['CustomerUserItinerary']['quantity']; ?></td>
                                         <td><?php echo $item['Supplier']['id']; ?></td>
                                         <td><?php echo $item['Supplier']['nome_fantasia']; ?></td>
                                         <td><?php echo $item['Benefit']['code']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
-                                        <td><?php echo $item['CustomerUserItinerary']['quantity']; ?></td>
                                         <td><?php echo $item['OrderItem']['total']; ?></td>
                                         <td><?php echo $item['OrderItem']['transfer_fee']; ?></td>
                                         <td><?php echo $item['OrderItem']['commission_fee']; ?></td>
