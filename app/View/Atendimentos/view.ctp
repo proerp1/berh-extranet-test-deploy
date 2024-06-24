@@ -12,7 +12,7 @@
 ?>
 <div class="card mb-5 mb-xl-8">
 	<div class="card-body pt-7 py-3">
-		<?php echo $this->Form->create('Atendimento', array("id" => "js-form-submit", "action" => "/".$form_action."/", "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+		<?php echo $this->Form->create('Atendimento', array("id" => "js-form-submit", "action" => "/".$form_action."/", "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false], 'enctype' => 'multipart/form-data')); ?>
 
 			<div class="mb-7">
 				<label class="fw-semibold fs-6 mb-2">Status</label>
@@ -49,7 +49,7 @@
 			<div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Arquivo</label>
                 <div class="col-sm-5">
-                    <?php echo $this->Form->input('file_atendimento', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o arquivo"));  ?>
+		    <?php echo $this->Form->input('file_atendimento', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o arquivo"));  ?>
                     <?php if (isset($this->request->data["Atendimento"])): ?>
                         <br>
                         <a download href="<?php echo $this->base.'/files/atendimento/file/'.$this->request->data["Atendimento"]["id"].'/'.$this->request->data["Atendimento"]["file_atendimento"] ?>"><?php echo $this->request->data["Atendimento"]["file_atendimento"] ?></a>
