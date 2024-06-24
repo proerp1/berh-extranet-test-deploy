@@ -271,6 +271,23 @@ class OutcomesController extends AppController {
 		}
 	}
 
+	public function change_status_lote()
+	{
+        $this->autoRender = false;
+        $this->layout = false;
+		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+
+		$outcomeIds = $this->request->data['outcomeIds'];
+		$status = $this->request->data['status'];
+
+		$this->Outcome->updateAll(
+            ['Outcome.status_id' => $status],
+            ['Outcome.id' => $outcomeIds]
+        );
+
+        echo json_encode(['success' => true]);
+	}
+
 	public function pagar_titulo($id){
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 		$this->Outcome->id = $id;
@@ -310,10 +327,10 @@ class OutcomesController extends AppController {
 
         $action = 'Documentos';
 
-       $data = $this->Paginator->paginate('Docoutcome', $condition);
+       	$data = $this->Paginator->paginate('Docoutcome', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
        
-        $this->set(compact('status', 'data', 'id', 'action', ));
+        $this->set(compact('status', 'data', 'id', 'action'));
     }
 	public function add_document($id)
     {

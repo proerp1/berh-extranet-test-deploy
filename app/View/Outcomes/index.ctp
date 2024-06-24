@@ -2,65 +2,62 @@
 <?php echo $this->element("abas_contas_pagar"); ?>
 
 <div class="row gy-5 g-xl-10">
-
-
-<?php if ($aba_atual_id != $aba_pago_id): ?>
-    <!-- Primeiro card -->
-    <div class="col-lg-4 col-sm-6 mb-xl-10">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <i class="fas fa-dollar-sign fa-3x <?php 
-                        if ($aba_atual_id == 11) { 
-                            echo 'text-warning'; 
-                        } elseif ($aba_atual_id == 12) { 
-                            echo 'text-primary'; 
-                        } elseif ($aba_atual_id == 14) { 
-                            echo 'text-dark'; 
-                        } else { 
-                            echo 'text-danger'; 
-                        } ?>"></i>
-                </div>
-                <div class="d-flex flex-column my-7">
-                    <?php if (isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
-                        <?php $valor_restante = $total_outcome[0]["total_outcome"] - $pago_outcome[0]["pago_outcome"]; ?>
-                        <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($valor_restante, 2, ",", '.') ?></span>
-                    <?php else: ?>
-                        <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span>
-                    <?php endif; ?>
+    <?php if ($aba_atual_id != $aba_pago_id): ?>
+        <!-- Primeiro card -->
+        <div class="col-lg-4 col-sm-6 mb-xl-10">
+            <div class="card h-lg-100">
+                <div class="card-body d-flex justify-content-between align-items-start flex-column">
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">
-                            <?php if ($aba_atual_id == 11): ?>
-                                Valor programado
-                            <?php elseif ($aba_atual_id == 12): ?>
-                                Valor aprovado
-                            <?php elseif ($aba_atual_id == 14): ?>
-                                Valor cancelado
-                            <?php else: ?>
-                                Valor restante a pagar
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center flex-column mt-3 w-100">
-                    <div class="h-8px mx-3 w-100 bg-light-info rounded">
-                        <div class="<?php 
+                        <i class="fas fa-dollar-sign fa-3x <?php 
                             if ($aba_atual_id == 11) { 
-                                echo 'bg-warning'; 
+                                echo 'text-warning'; 
                             } elseif ($aba_atual_id == 12) { 
-                                echo 'bg-primary'; 
+                                echo 'text-primary'; 
                             } elseif ($aba_atual_id == 14) { 
-                                echo 'bg-dark'; 
+                                echo 'text-dark'; 
                             } else { 
-                                echo 'bg-danger'; 
-                            } ?> rounded h-8px" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                echo 'text-danger'; 
+                            } ?>"></i>
+                    </div>
+                    <div class="d-flex flex-column my-7">
+                        <?php if (isset($total_outcome[0]["total_outcome"]) && isset($pago_outcome[0]["pago_outcome"])): ?>
+                            <?php $valor_restante = $total_outcome[0]["total_outcome"] - $pago_outcome[0]["pago_outcome"]; ?>
+                            <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($valor_restante, 2, ",", '.') ?></span>
+                        <?php else: ?>
+                            <span class="fw-bold fs-3x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_outcome[0]["total_outcome"], 2, ",", '.') ?></span>
+                        <?php endif; ?>
+                        <div class="m-0">
+                            <span class="fw-bold fs-6 text-gray-400">
+                                <?php if ($aba_atual_id == 11): ?>
+                                    Valor programado
+                                <?php elseif ($aba_atual_id == 12): ?>
+                                    Valor aprovado
+                                <?php elseif ($aba_atual_id == 14): ?>
+                                    Valor cancelado
+                                <?php else: ?>
+                                    Valor restante a pagar
+                                <?php endif; ?>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center flex-column mt-3 w-100">
+                        <div class="h-8px mx-3 w-100 bg-light-info rounded">
+                            <div class="<?php 
+                                if ($aba_atual_id == 11) { 
+                                    echo 'bg-warning'; 
+                                } elseif ($aba_atual_id == 12) { 
+                                    echo 'bg-primary'; 
+                                } elseif ($aba_atual_id == 14) { 
+                                    echo 'bg-dark'; 
+                                } else { 
+                                    echo 'bg-danger'; 
+                                } ?> rounded h-8px" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-<?php endif; ?>
-
+    <?php endif; ?>
     
     <div class="col-lg-4 col-sm-6 mb-xl-10">
         <div class="card h-lg-100">
@@ -106,6 +103,11 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+                    <a href="#" id="aprovar_sel" class="btn btn-secondary me-3">
+                        Aprovar em Lote
+                    </a>
+
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -170,15 +172,18 @@
     </form>
 
     <div class="card-body pt-0 py-3">
-    <?php echo $this->element("pagination"); ?>
-    <br>
+        <?php echo $this->element("pagination"); ?>
+        <br>
         <div class="table-responsive">
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
+                        <th class="ps-4 w-80px min-w-80px rounded-start">
+                            <input type="checkbox" class="check_all">
+                        </th>
                         <th>N° Documento</th>
                         <th>Fornecedor </th>
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Descrição</th>
+                        <th>Descrição</th>
                         <th>Status</th>
 						<th>Conta bancária</th>
 						<th>Vencimento</th>
@@ -193,13 +198,12 @@
 				</thead>
 				<tbody>
 					<?php 
-                     $valor_a_pagar = 0;
-                     $valor_pago = 0;
+                        $valor_a_pagar = 0;
+                        $valor_pago = 0;
+                    ?>
 
-                    if ($data) { ?>
+                    <?php if ($data) { ?>
 						<?php 
-                           
-                            //debug($data);die();
                             for ($i=0; $i < count($data); $i++) { ?>
                             <?php
                                 $valor_a_pagar += $data[$i]["Outcome"]["valor_total_not_formated"];
@@ -208,9 +212,13 @@
                                
                             ?>
 							<tr>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
-
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php if ($data[$i]["Status"]["id"] == 11) { ?>
+                                        <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
+                                    <?php } ?>
+                                </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4">
 									<span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
@@ -245,18 +253,35 @@
 					<?php } ?>
 				</tbody>
                 <tfoot>
-                <tr>
-                    <th colspan="7" class="fw-bold fs-5 ps-4">Total</th>
-                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_a_pagar, 2, ',', '.'); ?></th>
+                    <tr>
+                        <th colspan="7" class="fw-bold fs-5 ps-4">Total</th>
+                        <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_a_pagar, 2, ',', '.'); ?></th>
 
-                    <th class="fw-bold fs-5 ps-4"></th>
-                    <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_pago, 2, ',', '.'); ?></th>
-                </tr>
-            </tfoot>
-
+                        <th class="fw-bold fs-5 ps-4"></th>
+                        <th class="fw-bold fs-6 ps-4"><?php echo number_format($valor_pago, 2, ',', '.'); ?></th>
+                    </tr>
+                </tfoot>
 			</table>
         </div>
         <?php echo $this->element("pagination"); ?>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_aprovar_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Aprovar items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="aprova_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -272,6 +297,52 @@
 
         $('#q').on('change', function () {
             $("#busca").submit();
+        });
+
+        $('#aprovar_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_aprovar_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ativar');
+            }
+        });
+
+        $('#aprova_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const outcomeIds = [];
+
+            checkboxes.each(function() {
+                outcomeIds.push($(this).data('id'));
+            });
+
+            if (outcomeIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/outcomes/change_status_lote',
+                    data: {
+                        outcomeIds,
+                        status: 12
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_individual").prop('checked', true);
+            } else {
+                $(".check_individual").prop('checked', false);
+            }
         });
     })
 </script>
