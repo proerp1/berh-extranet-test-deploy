@@ -12,9 +12,12 @@ class CustomerUsersController extends AppController
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
-        'order' => [
-            'CustomerUser.name' => 'asc' 
+        'CustomerUser' => [
+            'limit' => 20,
+            'order' => ['CustomerUser.name' => 'asc'],
+            'conditions' => []
         ],
+
         'OrderItem' => [
             'limit' => 100, 
             'order' => ['OrderItem.id' => 'asc'],

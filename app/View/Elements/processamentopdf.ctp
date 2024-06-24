@@ -39,7 +39,7 @@
                         <img src="<?php echo $link."/img/logo-berh-colorido.png"; ?>" alt="" width="150">
                     </div>
                     <div class="modal-header" style="text-align: center;">
-                        <h1 class="modal-title mx-auto" id="relatorioModalLabel">Relatorio de Processamento</h1>
+                        <h1 class="modal-title mx-auto" id="relatorioModalLabel">Relatório de Processamento</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
                     <div class="modal-body">
@@ -49,7 +49,7 @@
                                     <tr>
                                         <th>Data Geração Pedido</th>
                                         <th>Pedido</th>
-                                        <th>CNPJ CLIENTE</th>
+                                        <th>CNPJ Cliente</th>
                                         <th>Razão Social</th>
                                         <th>Status Pedido</th>
                                         <th>Nome</th>
@@ -59,9 +59,9 @@
                                         <th>Dias Úteis</th>
                                         <th>Id(Código Operadora)</th>
                                         <th>Operadora</th>
-                                        <th>Id(Código do Benefício / ítem)</th>
-                                        <th>VlUnit</th>
-                                        <th>Qtde do Benefício por Dia</th>
+                                        <th>Cod. do Benefício</th>
+                                        <th>Vl. Unit</th>
+                                        <th>Qtde</th>
                                         <th>Total</th>
                                         <th>Repasse</th>
                                         <th>Taxa ADM</th>

@@ -29,8 +29,8 @@
                                         <th>Código</th>
                                         <th>Item</th>
                                         <th>Dias</th>
-                                        <th>Quant. por dia</th>
-                                        <th>Valor Unitário</th>
+                                        <th>Qtde</th>
+                                        <th>Vl.Unit</th>
                                         <th>Desconto</th>
                                         <th>Valor Total</th>
                                     </tr>

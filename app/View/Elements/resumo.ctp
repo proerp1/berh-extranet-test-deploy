@@ -40,12 +40,12 @@
                         </div>
 
                         <div class="table-container mb-4">
-                            <h3>Valor itens</h3>
+                            <h3>Itens</h3>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Valor dos Beneficios</th>
-                                        <th>Custo da Recarga</th>
+                                        <th>Valor(es) do(s) Beneficio(s)</th>
+                                        <th>Custo(s) da(s) Recarga(s)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -78,7 +78,7 @@
                         
 
                         <div class="table-container mb-4">
-                            <h3>Valor Total</h3>
+                            <h3>Valor(es) Total(is)</h3>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
