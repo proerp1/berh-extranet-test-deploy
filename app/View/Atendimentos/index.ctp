@@ -90,7 +90,7 @@
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["nome_primario"] ?></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["documento"] ?></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Department"]["name"] ?></td>
-								<td class="fw-bold fs-7"><a href="<?php echo $this->webroot.'files/atendimento/file/'.$data[$i]["Atendimento"]["file_atendimento"]; ?>"><?php echo $data[$i]["Atendimento"]["file_atendimento"]; ?></a></td>
+								<td class="fw-bold fs-7"><a href="<?php echo $this->webroot.'files/atendimento/file_atendimento/'.$data[$i]["Atendimento"]["file_atendimento"]; ?>"><?php echo $data[$i]["Atendimento"]["file_atendimento"]; ?></a></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["subject"]; ?></td>
 								<td class="fw-bold fs-7"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["Atendimento"]["created"])); ?></td>
 								<td class="fw-bold fs-7">
