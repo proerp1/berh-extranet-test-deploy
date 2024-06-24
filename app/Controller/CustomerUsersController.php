@@ -12,6 +12,9 @@ class CustomerUsersController extends AppController
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
+        'order' => [
+            'CustomerUser.name' => 'asc' 
+        ],
         'OrderItem' => [
             'limit' => 100, 
             'order' => ['OrderItem.id' => 'asc'],
@@ -40,6 +43,7 @@ class CustomerUsersController extends AppController
         $this->index($id, true);
         $this->render('index');
     }
+    
 
     public function index($id, $is_admin = false)
     {
