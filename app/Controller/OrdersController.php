@@ -1570,7 +1570,7 @@ class OrdersController extends AppController
     public function relatorio_beneficio($id)
     {
         
-        ini_set('pcre.backtrack_limit', '5000000');
+        ini_set('pcre.backtrack_limit', '15000000');
         $this->layout = 'ajax';
         $this->autoRender = false;
         
@@ -1629,7 +1629,7 @@ class OrdersController extends AppController
 
     public function listagem_entrega($id)
     {
-        ini_set('pcre.backtrack_limit', '5000000');
+        ini_set('pcre.backtrack_limit', '15000000');
         $this->layout = 'ajax';
         $this->autoRender = false;
 
@@ -1752,7 +1752,7 @@ class OrdersController extends AppController
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-        ini_set('pcre.backtrack_limit', '5000000');
+        ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
     
         $view = new View($this, false);
@@ -1814,7 +1814,7 @@ class OrdersController extends AppController
 
     public function relatorio_pedidos()
     {
-        ini_set('pcre.backtrack_limit', '5000000');
+        ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
         $this->layout = 'ajax';
         $this->autoRender = false;
