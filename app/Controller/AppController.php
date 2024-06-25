@@ -42,11 +42,12 @@ class AppController extends Controller {
 		'Flash'
 	);
 
-	public $uses = ['Atendimento'];
+	public $uses = ['Atendimento', 'CustomerFile'];
 
 	public function beforeFilter() {
 		$pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
+		$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100]]);
 
-		$this->set(compact('pendentes'));
+		$this->set(compact('pendentes', 'pendente_arquivo'));
 	}
 }

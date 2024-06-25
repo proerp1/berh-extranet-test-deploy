@@ -66,8 +66,9 @@
                         <span class="menu-icon">
                             <i class="fas fa-file"></i> 
                         </span>
-                        <span class="menu-title">
-                            Arquivos
+                        
+                        <span class="d-flex justify-content-between menu-title">
+                            Arquivos <?php echo $pendente_arquivo > 0 ? '<span class="badge badge-warning js-count-alert">'.$pendente_arquivo.'</span>' : '' ?>
                         </span>
                     </a>
                 </div>
