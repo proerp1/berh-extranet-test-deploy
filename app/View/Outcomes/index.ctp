@@ -104,9 +104,17 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
-                    <a href="#" id="aprovar_sel" class="btn btn-secondary me-3">
-                        Aprovar em Lote
-                    </a>
+                    <?php if (isset($_GET["t"]) && $_GET["t"] == 11) { ?>
+                        <a href="#" id="aprovar_sel" class="btn btn-secondary me-3">
+                            Aprovar em Lote
+                        </a>
+                    <?php } ?>
+
+                    <?php if (isset($_GET["t"]) && $_GET["t"] == 12) { ?>
+                        <a href="#" id="conta_paga_sel" class="btn btn-secondary me-3">
+                            Pagar em Lote
+                        </a>
+                    <?php } ?>
 
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
@@ -178,10 +186,12 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-80px min-w-80px rounded-start">
-                            <input type="checkbox" class="check_all">
-                        </th>
-                        <th>N° Documento</th>
+                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                            <th class="ps-4 w-80px min-w-80px rounded-start">
+                                <input type="checkbox" class="check_all">
+                            </th>
+                        <?php } ?>
+                        <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
                         <th>Fornecedor </th>
                         <th>Descrição</th>
                         <th>Status</th>
@@ -212,11 +222,11 @@
                                
                             ?>
 							<tr>
-                                <td class="fw-bold fs-7 ps-4">
-                                    <?php if ($data[$i]["Status"]["id"] == 11) { ?>
+                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                                    <td class="fw-bold fs-7 ps-4">
                                         <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
-                                    <?php } ?>
-                                </td>
+                                    </td>
+                                <?php } ?>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
@@ -285,8 +295,54 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalContaPaga" tabindex="-1" role="dialog" aria-labelledby="labelModalContaPaga">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="labelModalContaPaga">Pagar conta</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <?php echo $this->Form->create('Outcome', array("id" => "js-form-submit", "class" => "form-horizontal", "action" => '../outcomes/pagar_titulo_lote/', "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+                <input type="hidden" name="data[Outcome][ids]" id="ids_outcome">
+                <input type="hidden" name="data[Outcome][status_id]" value="13">
+                <div class="modal-body">
+                    <div class="mb-7">
+                        <label class="form-label">Valor pago</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <?php echo $this->Form->input('valor_pago', ["type" => "text", "required" => true, "placeholder" => "Valor pago", "class" => "form-control money_exchange mb-3 mb-lg-0"]);  ?>
+                        </div>
+                    </div>
+                    <div class="mb-7">
+                        <label class="form-label">Data de Pagamento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <?php echo $this->Form->input('data_pagamento', ["type" => "text", "required" => true, "placeholder" => "Data de Pagamento", "class" => "form-control datepicker mb-3 mb-lg-0"]);  ?>
+                        </div>
+                    </div>
+
+                    <div class="mb-7">
+                        <label class="fw-semibold fs-6 mb-2">Forma de pagamento</label>
+                        <?php echo $this->Form->input('payment_method_baixa', array("required" => true, "data-control" => "select2", "class" => "form-select mb-3 mb-lg-0", "empty" => "Selecione", 'options' => ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito',  '7' => 'Débito em conta',  '8' => 'Dinheiro', '2' => 'Transfêrencia']));  ?>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     $( document ).ready(function() {
+        $('.money_exchange').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
+
         $('[data-kt-customer-table-filter="reset"]').on('click', function () {
             $("#t").val(null).trigger('change');
             $("#de").val(null);
@@ -304,6 +360,25 @@
 
             if ($('input[name="item_ck"]:checked').length > 0) {
                 $('#modal_aprovar_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ativar');
+            }
+        });
+
+        $('#conta_paga_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modalContaPaga').modal('show');
+
+                const checkboxes = $('input[name="item_ck"]:checked');
+                const outcomeIds = [];
+
+                checkboxes.each(function() {
+                    outcomeIds.push($(this).data('id'));
+                });
+
+                $("#ids_outcome").val(outcomeIds);
             } else {
                 alert('Selecione ao menos um item a ativar');
             }
