@@ -64,7 +64,7 @@
                     <th>Cliente</th>
                     <th>Layout</th>
                     <th>Arquivo</th>
-                    <th>Data de envio</th>
+                    <th>Enviado em</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
             </thead>
