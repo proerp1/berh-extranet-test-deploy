@@ -304,6 +304,30 @@ class OutcomesController extends AppController {
 		}
 	}
 
+	public function pagar_titulo_lote(){
+		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+
+		$ids = explode(',', $this->request->data['Outcome']['ids']);
+
+		foreach ($ids as $id) {
+			$this->Outcome->id = $id;
+
+			$valueFormatado = str_replace('.', '', $this->request->data['Outcome']['valor_pago']);
+			$valueFormatado = str_replace(',', '.', $valueFormatado);
+			$this->request->data['Outcome']['valor_pago'] = $valueFormatado;
+			$this->request->data['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
+			$this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
+
+			if (!$this->Outcome->save($this->request->data)) {
+				$this->Flash->set(__('Houve algum erro!'), ['params' => ['class' => "alert alert-danger"]]);
+				$this->redirect($this->referer());
+			}
+		}
+
+		$this->Flash->set(__('A conta a pagar foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+		$this->redirect($this->referer());
+	}
+
 	 /*********************
                 DOCUMENTOS
      **********************/
