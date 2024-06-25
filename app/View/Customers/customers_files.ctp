@@ -64,6 +64,7 @@
                     <th>Cliente</th>
                     <th>Layout</th>
                     <th>Arquivo</th>
+                    <th>Enviado em</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
             </thead>
@@ -80,6 +81,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Layout"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["file"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["created"]; ?></td>
+
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customers/edit_file/' . $data[$i]["Customer"]["id"] . '/' . $data[$i]["CustomerFile"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                     Editar
