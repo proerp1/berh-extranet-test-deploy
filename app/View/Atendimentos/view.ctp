@@ -52,7 +52,7 @@
 		    <?php echo $this->Form->input('file_atendimento', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o arquivo"));  ?>
                     <?php if (isset($this->request->data["Atendimento"])): ?>
                         <br>
-                        <a download href="<?php echo $this->base.'/files/atendimento/file/'.$this->request->data["Atendimento"]["id"].'/'.$this->request->data["Atendimento"]["file_atendimento"] ?>"><?php echo $this->request->data["Atendimento"]["file_atendimento"] ?></a>
+                        <a download href="<?php echo $this->webroot.'files/atendimento/file_atendimento/'.$this->request->data["Atendimento"]["id"].'/'.$this->request->data["Atendimento"]["file_atendimento"]; ?>"><?php echo $this->request->data["Atendimento"]["file_atendimento"] ?></a>
                     <?php endif ?>
                 </div>
             </div>
