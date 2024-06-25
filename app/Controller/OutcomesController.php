@@ -310,11 +310,11 @@ class OutcomesController extends AppController {
 		$ids = explode(',', $this->request->data['Outcome']['ids']);
 
 		foreach ($ids as $id) {
+			$this->Outcome->recursive = -1;
 			$this->Outcome->id = $id;
+			$outcome = $this->Outcome->read();
 
-			$valueFormatado = str_replace('.', '', $this->request->data['Outcome']['valor_pago']);
-			$valueFormatado = str_replace(',', '.', $valueFormatado);
-			$this->request->data['Outcome']['valor_pago'] = $valueFormatado;
+			$this->request->data['Outcome']['valor_pago'] = $outcome['Outcome']['valor_total_not_formated'];
 			$this->request->data['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
 			$this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
 

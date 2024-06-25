@@ -258,7 +258,7 @@
 						<?php } ?>
 					<?php } else { ?>
 						<tr>
-							<td colspan="9" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+							<td colspan="13" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
 						</tr>
 					<?php } ?>
 				</tbody>
@@ -307,13 +307,6 @@
                 <input type="hidden" name="data[Outcome][status_id]" value="13">
                 <div class="modal-body">
                     <div class="mb-7">
-                        <label class="form-label">Valor pago</label>
-                        <div class="input-group">
-                            <span class="input-group-text">R$</span>
-                            <?php echo $this->Form->input('valor_pago', ["type" => "text", "required" => true, "placeholder" => "Valor pago", "class" => "form-control money_exchange mb-3 mb-lg-0"]);  ?>
-                        </div>
-                    </div>
-                    <div class="mb-7">
                         <label class="form-label">Data de Pagamento</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -337,6 +330,17 @@
 
 <script>
     $( document ).ready(function() {
+        $(".datepicker").datepicker({
+            format: 'dd/mm/yyyy',
+            weekStart: 1,
+            orientation: "bottom auto",
+            autoclose: true,
+            language: "pt-BR",
+            todayHighlight: true,
+            toggleActive: true,
+            endDate: new Date()
+        });
+
         $('.money_exchange').maskMoney({
             decimal: ',',
             thousands: '.',
@@ -361,7 +365,7 @@
             if ($('input[name="item_ck"]:checked').length > 0) {
                 $('#modal_aprovar_sel').modal('show');
             } else {
-                alert('Selecione ao menos um item a ativar');
+                alert('Selecione ao menos um item a aprovar');
             }
         });
 
@@ -380,7 +384,7 @@
 
                 $("#ids_outcome").val(outcomeIds);
             } else {
-                alert('Selecione ao menos um item a ativar');
+                alert('Selecione ao menos um item a pagar');
             }
         });
 
