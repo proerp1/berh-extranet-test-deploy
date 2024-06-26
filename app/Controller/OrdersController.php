@@ -1818,16 +1818,14 @@ class OrdersController extends AppController
         ini_set('memory_limit', '-1');
         $this->layout = 'ajax';
         $this->autoRender = false;
-
-        ini_set('memory_limit', '-1');
-        
+            
         $view = new View($this, false);
         $view->layout = false;
-        
-
+    
+        // Inicializando as condições de filtragem
         $condition = ["and" => [], "or" => []];
     
-        if (isset($_GET['q']) and $_GET['q'] != "") {
+        if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
                 'Order.id' => $_GET['q'], 
                 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
@@ -1844,7 +1842,7 @@ class OrdersController extends AppController
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
     
-        if ($get_de != '' and $get_ate != '') {
+        if ($get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
     
@@ -1852,34 +1850,31 @@ class OrdersController extends AppController
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
         }
-
+    
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
         
-        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
+        if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
     
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
-           
         }
     
+        $data = $this->Order->find('all', [
+            'contain' => [
+                'Status', 
+                'Customer', 
+                'CustomerCreator', 
+                'EconomicGroup', 
+                'Income.data_pagamento'
+            ],
+            'conditions' => $condition,
+        ]);
         
-        //$nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
     
-        $data = $this->Order->find('all', [
-            'contain' => [
-                'Status', 
-                'Customer', 
-                'CustomerCreator', 
-                'EconomicGroup', 
-                'Income.data_pagamento'
-            ],
-            'conditions' => $condition,
-        ]);
-
         foreach ($data as $k => $pedido) {
             $suppliersCount = $this->OrderItem->find('count', [
                 'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
@@ -1904,81 +1899,25 @@ class OrdersController extends AppController
                 'group' => ['Supplier.id'],
                 'fields' => ['Supplier.id']
             ]);
-
+    
             $usersCount = $this->OrderItem->find('count', [
                 'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
                 'group' => ['OrderItem.customer_user_id'],
                 'fields' => ['OrderItem.customer_user_id']
             ]);
-
-            $data[$k]['Order']['suppliersCount'] = $suppliersCount;
-            $data[$k]['Order']['usersCount'] = $usersCount;
-            
     
-            //$this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
-    
-            //$this->redirect("/files/excel/" . $nome);
-        }
-
-        /*$condition = array();
-
-        $data = $this->Order->find('all', [
-            'contain' => [
-                'Status', 
-                'Customer', 
-                'CustomerCreator', 
-                'EconomicGroup', 
-                'Income.data_pagamento'
-            ],
-            'conditions' => $condition,
-        ]);
-
-        foreach ($data as $k => $pedido) {
-            $suppliersCount = $this->OrderItem->find('count', [
-                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
-                'joins' => [
-                    [
-                        'table' => 'benefits',
-                        'alias' => 'Benefit',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Benefit.id = CustomerUserItinerary.benefit_id'
-                        ]
-                    ],
-                    [
-                        'table' => 'suppliers',
-                        'alias' => 'Supplier',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Supplier.id = Benefit.supplier_id'
-                        ]
-                    ]
-                ],
-                'group' => ['Supplier.id'],
-                'fields' => ['Supplier.id']
-            ]);
-
-            $usersCount = $this->OrderItem->find('count', [
-                'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
-                'group' => ['OrderItem.customer_user_id'],
-                'fields' => ['OrderItem.customer_user_id']
-            ]);
-
             $data[$k]['Order']['suppliersCount'] = $suppliersCount;
             $data[$k]['Order']['usersCount'] = $usersCount;
         }
-       */
+    
         $link = APP . 'webroot';
-        // $link = '';
-        //debug($data);die;
-        $view->set(compact("link","data"));
-
-
-        //$html = $view->render('../Elements/relatorio_pedidos');
-        $this->render("../Elements/relatorio_pedidos");
-        //$this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
+        $view->set(compact("link", "data", "get_de", "get_ate"));
+    
+        $html = $view->render('../Elements/relatorio_pedidos');
+    
+        $this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
     }
-
+    
     public function relatorio_processamento($id)
     {
         $this->layout = 'ajax';
@@ -2129,7 +2068,7 @@ class OrdersController extends AppController
         $html = $view->render('../Elements/processamentopdf');
     
         //echo $html;
-        $this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
+        $this->HtmltoPdf->convert($html, 'processamento.pdf', 'download');
 
     }
     
