@@ -4,7 +4,7 @@ App::import('Controller', 'Incomes');
 class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
     public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
 
     public function beforeFilter()
@@ -97,20 +97,13 @@ class ReportsController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
 
-    public function pedidos()
+    public function pedidosConditions()
     {
-        $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-	    
-	set_time_limit(90);
-        ini_set('memory_limit', '-1');
-	    
-        $paginationConfig = $this->CustomReports->configPagination('pedidos');
-        $this->Paginator->settings = $paginationConfig;
-
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
 
         if (!isset($_GET['de']) && !isset($_GET['para'])) {
             $dates = $this->getCurrentDates();
+
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $dates['from']]);
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $dates['to'] . ' 23:59:59']);
 
@@ -178,6 +171,21 @@ class ReportsController extends AppController
             ]);
         }
 
+        return compact('condition', 'de', 'para');
+    }
+
+    public function pedidos()
+    {
+        $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
+	    
+	    set_time_limit(90);
+        ini_set('memory_limit', '-1');
+	    
+        $paginationConfig = $this->CustomReports->configPagination('pedidos');
+        $this->Paginator->settings = $paginationConfig;
+
+        $condition = $this->pedidosConditions();
+
         if (isset($_GET['excel'])) {
             $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
             $this->Paginator->settings = ['OrderItem' => $pag];
@@ -204,7 +212,7 @@ class ReportsController extends AppController
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
 
-        $data = $this->Paginator->paginate('OrderItem', $condition);
+        $data = $this->Paginator->paginate('OrderItem', $condition['condition']);
 
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
@@ -223,12 +231,68 @@ class ReportsController extends AppController
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
 
-        $de = date('d/m/Y', strtotime($de));
-        $para = date('d/m/Y', strtotime($para));
+        $de = date('d/m/Y', strtotime($condition['de']));
+        $para = date('d/m/Y', strtotime($condition['para']));
 
         $action = 'Pedidos';
         $breadcrumb = ['Relatórios' => '', 'Pedidos' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
+    }
+
+    public function demanda_judicial()
+    {
+        $condition = $this->pedidosConditions()['condition'];
+
+        $orders = $this->OrderItem->find('all', [
+            'fields' => ['Order.order_period_from', 'Order.order_period_to', 'Order.id', 'Customer.documento', 'Customer.nome_secundario'],
+            'contain' => ['Order', 'CustomerUser'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => ['Customer.id = Order.customer_id'],
+                ],
+            ],
+            'conditions' => $condition,
+            'group' => ['Order.id']
+        ]);
+
+        $html = '';
+        
+        foreach ($orders as $index => $order) {
+            $view = new View($this, false);
+            $view->layout = false;
+
+            $itens = $this->OrderItem->find('all', [
+                'fields' => [
+                    'CustomerUser.name as nome',
+                    'CustomerUser.cpf as cpf',
+                    'CustomerUser.matricula as matricula',
+                    'CustomerUserItinerary.benefit_id as matricula',
+                    'Order.credit_release_date',
+                    'CustomerUserItinerary.benefit_id',
+                    'CustomerUserItinerary.unit_price',
+                    'sum(CustomerUserItinerary.quantity) as qtd',
+                    'sum(OrderItem.subtotal) as valor',
+                    'sum(OrderItem.total) as total',
+                    'sum(OrderItem.working_days) as working_days',
+                ],
+                'conditions' => ['OrderItem.order_id' => $order['Order']['id']],
+                'group' => ['OrderItem.id'],
+                'order' => ['trim(CustomerUser.name)']                           
+            ]);
+
+            $link = APP . 'webroot';
+            $view->set(compact("link","order", "itens"));
+            $html .= $view->render('../Elements/listagem_entrega');
+
+            if (count($orders) != ($index + 1)) {
+                $html .= '<div class="break"></div>';
+            }
+        }
+
+        $this->HtmltoPdf->convert($html, 'demanda_judicial.pdf', 'download');
     }
 
     public function getDepAndCCByCustomer()

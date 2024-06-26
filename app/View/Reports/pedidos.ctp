@@ -15,6 +15,13 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                    <?php if (!empty($_GET['q'])) { ?>
+                        <a href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'demanda_judicial', '?' => $_SERVER['QUERY_STRING']]); ?>" class="btn btn-primary me-3">
+                            <i class="fas fa-download"></i>
+                            Demanda Judicial
+                        </a>
+                    <?php } ?>
+
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -51,7 +58,7 @@
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Número(s) de Pedido:</label>
-                                <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula">
+                                <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula" value="<?php echo isset($_GET['num']) ? $_GET['num'] : ''; ?>">
                             </div>
                             <div id="selectedNumbers"></div>
 
@@ -99,7 +106,7 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th>CNPJ</th>
+                    <th class="ps-4 w-180px min-w-180px rounded-start">CNPJ</th>
                     <th>Código</th>
                     <th>Cliente</th>
                     <th>N° Pedido</th>
@@ -112,7 +119,7 @@
                     <th>Quantidade</th>
                     <th>Var</th>
                     <th>Repasse</th>
-                    <th>Total</th>
+                    <th class="w-100px min-w-100px rounded-end">Total</th>
                 </tr>
             </thead>
             <tbody>
@@ -142,6 +149,7 @@
                     <td colspan="9"></td>
                     <td>Total</td>
                     <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
+                    <td colspan="3"></td>
                 </tr>
             </tbody>
             </table>

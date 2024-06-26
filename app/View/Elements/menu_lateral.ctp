@@ -103,7 +103,7 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg">
                         <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && !isset($_GET['logon'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'index']) ?>">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'index') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'index']) ?>">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -111,7 +111,7 @@
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['controller'] == 'reports') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos']) ?>">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'pedidos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos']) ?>">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>

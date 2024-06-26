@@ -52,7 +52,6 @@
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
                                         <td><?php echo $item['OrderItem']['saldo']; ?></td>
                                         <td><?php echo $item[0]['total']; ?></td>
-                                        
                                         <td></td>
                                     </tr>
                                 <?php } ?>
@@ -86,4 +85,6 @@
     .table tbody tr:nth-child(even) {
         background-color: #f9f9f9;
     }
+
+    .break { page-break-after: always !important; }
 </style>
