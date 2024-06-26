@@ -241,7 +241,7 @@ class ReportsController extends AppController
 
     public function demanda_judicial()
     {
-        $condition = $this->pedidosConditions()['condition'];
+        $condition = $this->pedidosConditions();
 
         $paginas = $this->OrderItem->find('all', [
             'fields' => ['Order.order_period_from', 'Order.order_period_to', 'Order.id', 'Customer.documento', 'Customer.nome_secundario'],
@@ -254,7 +254,7 @@ class ReportsController extends AppController
                     'conditions' => ['Customer.id = Order.customer_id'],
                 ],
             ],
-            'conditions' => $condition,
+            'conditions' => $condition['condition'],
             'group' => ['CustomerUser.id']
         ]);
 
@@ -291,13 +291,16 @@ class ReportsController extends AppController
                         'sum(OrderItem.total) as total',
                         'sum(OrderItem.working_days) as working_days',
                     ],
-                    'conditions' => Hash::merge($condition, ['CustomerUser.id' => $pagina['CustomerUser']['id']]),
+                    'conditions' => Hash::merge($condition['condition'], ['CustomerUser.id' => $pagina['CustomerUser']['id']]),
                     'group' => ['OrderItem.id'],
                     'order' => ['trim(CustomerUser.name)']                           
                 ]);
 
+                $de = $condition['de'];
+                $para = $condition['para'];
+
                 $link = APP . 'webroot';
-                $view->set(compact("link","order", "itens", "hide_periodo"));
+                $view->set(compact("link","order", "itens", "de", "para"));
                 $html .= $view->render('../Elements/listagem_entrega');
 
                 if (count($paginas) != ($index + 1)) {

@@ -12,9 +12,7 @@
                 <div class="modal-body">
                     <div class="content text-center mb-4">
                         <h2>Detalhes do Pedido</h2>
-                        <?php if (!isset($hide_periodo)) { ?>
-                            <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
-                        <?php } ?>
+                        <h4>Período de Utilização: <?php echo date('d/m/Y', strtotime($de)); ?> a <?php echo date('d/m/Y', strtotime($para)); ?></h4>
                         <h4>Data: <?php echo date('d/m/Y'); ?></h4>
                     </div>
                     <div class="table-container mb-4">
@@ -35,7 +33,6 @@
                                     <th>Desconto</th>
                                     <th>Valor Total</th>
                                     <th>Assinatura</th>
-                                    
                                 </tr>
                             </thead>
                             <tbody>

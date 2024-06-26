@@ -1673,8 +1673,11 @@ class OrdersController extends AppController
             'order' => ['trim(CustomerUser.name)']                           
         ]);
 
+        $de = $order['Order']['order_period_from_nao_formatado'];
+        $para = $order['Order']['order_period_to_nao_formatado'];
+
         $link = APP . 'webroot';
-        $view->set(compact("link","order", "itens"));
+        $view->set(compact("link","order", "itens", "de", "para"));
 
         $html = $view->render('../Elements/listagem_entrega');
         $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
