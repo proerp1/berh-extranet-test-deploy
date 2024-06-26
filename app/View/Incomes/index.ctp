@@ -77,7 +77,6 @@
                                     ?>
                                 </select>
                             </div>
-                            <?php if (isset($_GET['atraso']) == 1 or (!isset($_GET["t"]) || $_GET["t"] == "") ){ ?>
                                 <div class="mb-10">
                                     <label class="form-label fs-5 fw-bold mb-3">Status Financeiro:</label>
                                     <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
@@ -95,7 +94,7 @@
                                         ?>
                                     </select>
                                 </div>
-                            <?php } ?>
+                            
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Franquias:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="f" id="f">
