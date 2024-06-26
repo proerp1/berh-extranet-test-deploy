@@ -243,7 +243,7 @@ class ReportsController extends AppController
     {
         $condition = $this->pedidosConditions()['condition'];
 
-        $orders = $this->OrderItem->find('all', [
+        $paginas = $this->OrderItem->find('all', [
             'fields' => ['Order.order_period_from', 'Order.order_period_to', 'Order.id', 'Customer.documento', 'Customer.nome_secundario'],
             'contain' => ['Order', 'CustomerUser'],
             'joins' => [
@@ -255,44 +255,60 @@ class ReportsController extends AppController
                 ],
             ],
             'conditions' => $condition,
-            'group' => ['Order.id']
+            'group' => ['CustomerUser.id']
         ]);
 
         $html = '';
-        
-        foreach ($orders as $index => $order) {
-            $view = new View($this, false);
-            $view->layout = false;
 
-            $itens = $this->OrderItem->find('all', [
-                'fields' => [
-                    'CustomerUser.name as nome',
-                    'CustomerUser.cpf as cpf',
-                    'CustomerUser.matricula as matricula',
-                    'CustomerUserItinerary.benefit_id as matricula',
-                    'Order.credit_release_date',
-                    'CustomerUserItinerary.benefit_id',
-                    'CustomerUserItinerary.unit_price',
-                    'sum(CustomerUserItinerary.quantity) as qtd',
-                    'sum(OrderItem.subtotal) as valor',
-                    'sum(OrderItem.total) as total',
-                    'sum(OrderItem.working_days) as working_days',
-                ],
-                'conditions' => ['OrderItem.order_id' => $order['Order']['id']],
-                'group' => ['OrderItem.id'],
-                'order' => ['trim(CustomerUser.name)']                           
-            ]);
+        if (!empty($paginas)) {
+            foreach ($paginas as $index => $pagina) {
+                $view = new View($this, false);
+                $view->layout = false;
 
-            $link = APP . 'webroot';
-            $view->set(compact("link","order", "itens"));
-            $html .= $view->render('../Elements/listagem_entrega');
+                $itens = $this->OrderItem->find('all', [
+                    'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+                    'joins' => [
+                        [
+                            'table' => 'customers',
+                            'alias' => 'Customer',
+                            'type' => 'INNER',
+                            'conditions' => ['Customer.id = Order.customer_id'],
+                        ],
+                    ],
+                    'fields' => [
+                        'Customer.documento',
+                        'Customer.nome_secundario',
+                        'CustomerUser.name as nome',
+                        'CustomerUser.cpf as cpf',
+                        'CustomerUser.matricula as matricula',
+                        'CustomerUserItinerary.benefit_id as matricula',
+                        'Order.credit_release_date',
+                        'Order.id',
+                        'CustomerUserItinerary.benefit_id',
+                        'CustomerUserItinerary.unit_price',
+                        'sum(CustomerUserItinerary.quantity) as qtd',
+                        'sum(OrderItem.subtotal) as valor',
+                        'sum(OrderItem.total) as total',
+                        'sum(OrderItem.working_days) as working_days',
+                    ],
+                    'conditions' => Hash::merge($condition, ['CustomerUser.id' => $pagina['CustomerUser']['id']]),
+                    'group' => ['OrderItem.id'],
+                    'order' => ['trim(CustomerUser.name)']                           
+                ]);
 
-            if (count($orders) != ($index + 1)) {
-                $html .= '<div class="break"></div>';
+                $link = APP . 'webroot';
+                $view->set(compact("link","order", "itens", "hide_periodo"));
+                $html .= $view->render('../Elements/listagem_entrega');
+
+                if (count($paginas) != ($index + 1)) {
+                    $html .= '<div class="break"></div>';
+                }
             }
-        }
 
-        $this->HtmltoPdf->convert($html, 'demanda_judicial.pdf', 'download');
+            $this->HtmltoPdf->convert($html, 'demanda_judicial.pdf', 'download');
+        } else {
+            $this->redirect($this->referer());
+        }
     }
 
     public function getDepAndCCByCustomer()

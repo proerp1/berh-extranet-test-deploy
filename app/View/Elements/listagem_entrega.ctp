@@ -12,7 +12,9 @@
                 <div class="modal-body">
                     <div class="content text-center mb-4">
                         <h2>Detalhes do Pedido</h2>
-                        <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
+                        <?php if (!isset($hide_periodo)) { ?>
+                            <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
+                        <?php } ?>
                         <h4>Data: <?php echo date('d/m/Y'); ?></h4>
                     </div>
                     <div class="table-container mb-4">
@@ -39,9 +41,9 @@
                             <tbody>
                                 <?php foreach ($itens as $item) { ?>
                                     <tr>
-                                        <td><?php echo $order['Customer']['nome_secundario']; ?></td>
-                                        <td><?php echo $order['Customer']['documento']; ?></td>
-                                        <td><?php echo $order['Order']['id']; ?></td>
+                                        <td><?php echo $item['Customer']['nome_secundario']; ?></td>
+                                        <td><?php echo $item['Customer']['documento']; ?></td>
+                                        <td><?php echo $item['Order']['id']; ?></td>
                                         <td><?php echo $item['CustomerUser']['nome']; ?></td>
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>
                                         <td><?php echo $item['CustomerUser']['matricula']; ?></td>

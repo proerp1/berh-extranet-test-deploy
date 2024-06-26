@@ -1643,37 +1643,41 @@ class OrdersController extends AppController
         ]);
 
         $itens = $this->OrderItem->find('all', [
+            'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => ['Customer.id = Order.customer_id'],
+                ],
+            ],
             'fields' => [
+                'Customer.documento',
+                'Customer.nome_secundario',
                 'CustomerUser.name as nome',
                 'CustomerUser.cpf as cpf',
                 'CustomerUser.matricula as matricula',
                 'CustomerUserItinerary.benefit_id as matricula',
                 'Order.credit_release_date',
-
-                
-                
+                'Order.id',
                 'CustomerUserItinerary.benefit_id',
                 'CustomerUserItinerary.unit_price',
                 'sum(CustomerUserItinerary.quantity) as qtd',
                 'sum(OrderItem.subtotal) as valor',
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.working_days) as working_days',
-
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']                           
         ]);
-        //debug($itens); die;
 
         $link = APP . 'webroot';
-        // $link = '';
         $view->set(compact("link","order", "itens"));
-
 
         $html = $view->render('../Elements/listagem_entrega');
         $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
-
     }
 
     public function resumo($id)
