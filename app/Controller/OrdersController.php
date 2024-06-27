@@ -956,11 +956,14 @@ class OrdersController extends AppController
                 $customer_user_id = $existingUser['CustomerUser']['id'];
             }
 
+            $total = str_replace("R$", "", $row[2]);
+            $total = str_replace(" ", "", $total);
+
             $data[] = [
                 'customer_user_id' => $customer_user_id,
                 'document' => $row[0],
                 'benefit_code' => $row[1],
-                'total' => $row[2],
+                'total' => $total,
             ];
 
             $line++;
