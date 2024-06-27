@@ -1,12 +1,9 @@
 <?php echo $this->Html->script("html_editor/summernote", array('block' => 'script')); ?>
 <?php echo $this->Html->script("html_editor/summernote-pt-BR", array('block' => 'script')); ?>
-
 <?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
-<script type="text/javascript">
 
-    
+<script type="text/javascript">    
     $(document).ready(function(){
-
         $('#summernote').summernote({
             lang: 'pt-BR',
             height: 200,
@@ -24,10 +21,9 @@
         });
 
         $('.money_exchange').maskMoney({
-            decimal: '.',
-            thousands: '',
-            precision: 2,
-            allowZero: true
+            decimal: ',',
+            thousands: '.',
+            precision: 2
         });
 
         $("#cep").change(function() {
@@ -245,7 +241,8 @@
                     <label class="fw-semibold fs-6 mb-2">Taxa (%)</label>
                     <?php echo $this->Form->input('commission_fee_percentage', ["type" => "text", "id" => "commission_fee_percentage", "class" => "form-control money_exchange mb-3 mb-lg-0", "placeholder" => "Comissão"]); ?>
                 </div>
-            </d
+            </div>
+
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
@@ -348,7 +345,6 @@
                 </div>
             </div>
 
-
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Juros e multa?</label>
@@ -363,6 +359,24 @@
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Cobrar taxa do boleto?</label>
                     <?php echo $this->Form->input('cobrar_taxa_boleto', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-7 col-2">
+                    <label class="form-label">Economia inicial</label>
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <?php echo $this->Form->input('economia_inicial', ['type' => 'text', 'placeholder' => 'Economia inicial', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                    </div>
+                </div>
+
+                <div class="mb-7 col-2">
+                    <label class="form-label">Data economia inicial</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                        <?php echo $this->Form->input('dt_economia_inicial', ['type' => 'text', 'placeholder' => 'Data economia inicial', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                    </div>
                 </div>
             </div>
 
