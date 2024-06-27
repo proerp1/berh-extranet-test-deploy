@@ -827,6 +827,8 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
+        $this->OrderBalance->update_cancel_balances($orderId, CakeSession::read("Auth.User.id"));
+
         $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
         foreach ($ret['data'] as $data) {
