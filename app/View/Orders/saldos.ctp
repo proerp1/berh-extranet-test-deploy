@@ -68,8 +68,8 @@
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
                         <?php $total += $data[$i]["OrderBalance"]["total_not_formated"]; ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["benefit_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
