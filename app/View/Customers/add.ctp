@@ -362,23 +362,25 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="mb-7 col-2">
-                    <label class="form-label">Economia inicial</label>
-                    <div class="input-group">
-                        <span class="input-group-text">R$</span>
-                        <?php echo $this->Form->input('economia_inicial', ['type' => 'text', 'placeholder' => 'Economia inicial', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+            <?php if ($is_admin) { ?>
+                <div class="row">
+                    <div class="mb-7 col-2">
+                        <label class="form-label">Economia inicial</label>
+                        <div class="input-group">
+                            <span class="input-group-text">R$</span>
+                            <?php echo $this->Form->input('economia_inicial', ['type' => 'text', 'placeholder' => 'Economia inicial', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mb-7 col-2">
-                    <label class="form-label">Data economia inicial</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                        <?php echo $this->Form->input('dt_economia_inicial', ['type' => 'text', 'placeholder' => 'Data economia inicial', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                    <div class="mb-7 col-2">
+                        <label class="form-label">Data economia inicial</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <?php echo $this->Form->input('dt_economia_inicial', ['type' => 'text', 'placeholder' => 'Data economia inicial', 'class' => 'form-control datepicker mb-3 mb-lg-0']); ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
 
             <div class="row">
                 <div class="mb-7 col-12">

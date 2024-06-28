@@ -128,7 +128,6 @@ class CustomersController extends AppController
     public function add()
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-
         
         if ($this->request->is(['post', 'put'])) {
             $this->Customer->create();
@@ -181,9 +180,11 @@ class CustomersController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2, 'not' => ['Status.id' => 6]], 'order' => 'Status.name']);
         $senha = substr(sha1(time()), 0, 6);
 
+        $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
+
         $this->set('action', 'Novo Cliente');
         $this->set('form_action', 'add');
-        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers'));
+        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
     }
 
     public function edit($id = null)
@@ -246,13 +247,15 @@ class CustomersController extends AppController
             $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         }
 
+        $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
+
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
         $hash = base64_encode($this->request->data['Customer']['codigo_associado']);
         $this->set('hash', rawurlencode($hash));
 
         $this->set('action', $this->request->data['Customer']['nome_secundario']);
         $this->set('form_action', 'edit');
-        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers'));
+        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
 
         $this->render("add");
     }
@@ -1823,8 +1826,10 @@ class CustomersController extends AppController
             $orderDesconto = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.desconto) as valor_desconto']);
             $orderSaldo = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.saldo) as valor_saldo']);
 
-            if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
-                $saldo = $cliente['Customer']['economia_inicial_not_formated'];
+            if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
+                if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
+                    $saldo = $cliente['Customer']['economia_inicial_not_formated'];
+                }
             }
 
             $saldo = $saldo + ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
