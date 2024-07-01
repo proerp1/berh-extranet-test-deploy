@@ -232,15 +232,19 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>Endereço:</b></td>
-                    <td><b>Rua Werner Von Siemens, 111 - Lapa de Baixo - São Paulo/SP</b></td>
+                    <td><b> Av. Marquês de São Vicente, 446 - Várzea da Barra Funda, - São Paulo/SP</b></td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>CEP:</b></td>
+                    <td><b>01139-000</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Telefone:</b></td>
-                    <td><b>(11) 2827-4247</b></td>
+                    <td><b>(11) 5043-0544</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>Email:</b></td>
-                    <td><b>faturamento@berh.com.br</b></td>
+                    <td><b>nfe@berh.com.br ; faturamento@berh.com.br</b></td>
                 </tr>
             </table>
         </div>
@@ -298,7 +302,7 @@
             <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
         </div>
         <div class="cell">
-            <p class="m-0 p-10">REEMBOLSO DE PAGAMENTO REFERENTE A AQUISIÇÃO DE BENEFÍCIOS DE VALES-TRANSPORTES, VALES-REFEIÇÃO, VALES-ALIMENTAÇÃO E SIMILARES PARA TERCEIROS.</p>
+            <p class="m-0 p-10">REEMBOLSO DE PAGAMENTO REFERENTE A AQUISIÇÃO DE BENEFÍCIOS DE VALES- TRANSPORTES, VALES-REFEIÇÃO, VALES-ALIMENTAÇÃO E SIMILARES PARA TERCEIROS. VALORES RELACIONADOS COM TAXA PELA PRESTAÇÃO DE SERVIÇO SERÃO RECONHECIDOS ATRAVÉZ DE NOTA FISCAL SERVIÇOS. </p>
         </div>
         <div class="cell text-center">
             <b>PEDIDO(S):</b>
@@ -334,9 +338,17 @@
                     <td style="text-align: center;">R$ <?php echo $order['Order']['transfer_fee']; ?></td>
                 </tr>
                 <tr>
-                    <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B)</th>
-                    <td style="text-align: center;">R$ <?php echo number_format($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'],2,',','.') ?></td>
+                    <th colspan="2" style="text-align: right;" class="pr-10">DESCONTO (C)</th>
+                    <td style="text-align: center;">R$ <?php echo $order['Order']['desconto']; ?></td>
                 </tr>
+                <tr>
+                    <th colspan="2" style="text-align: right;" class="pr-10">ACRÉSCIMO (D)</th>
+                    <td style="text-align: center;">R$ 0,00</td>
+                </tr>
+                <tr>
+                    <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B - C + D)</th>
+                    <td style="text-align: center;">R$ <?php echo number_format(($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'] - $order['Order']['desconto_not_formated']), 2, ',', '.') ?></td>
+                    </tr>
             </table>
         </div>
         <?php if ($order['Order']['observation'] != '') { ?>
