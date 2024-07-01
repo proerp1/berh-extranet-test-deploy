@@ -191,6 +191,19 @@ class Customer extends AppModel
                 $results[$key][$this->alias]['created_nao_formatado'] = $results[$key][$this->alias]['created'];
                 $results[$key][$this->alias]['created'] = date('d/m/Y', strtotime($results[$key][$this->alias]['created']));
             }
+
+            if (isset($val[$this->alias]['dt_economia_inicial'])) {
+                $results[$key][$this->alias]['dt_economia_inicial_nao_formatado'] = $results[$key][$this->alias]['dt_economia_inicial'];
+                $results[$key][$this->alias]['dt_economia_inicial'] = date('d/m/Y', strtotime($results[$key][$this->alias]['dt_economia_inicial']));
+            }
+
+            if (isset($val[$this->alias]['economia_inicial'])) {
+                $results[$key][$this->alias]['economia_inicial_not_formated'] = $results[$key][$this->alias]['economia_inicial'];
+                $results[$key][$this->alias]['economia_inicial'] = number_format($results[$key][$this->alias]['economia_inicial'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['economia_inicial_not_formated'] = 0;
+                $results[$key][$this->alias]['economia_inicial'] = '0,00';
+            }
         }
 
         return $results;
@@ -200,6 +213,14 @@ class Customer extends AppModel
     {
         if (!empty($this->data[$this->alias]['cnpj'])) {
             $this->data[$this->alias]['cnpj'] = preg_replace('/\D/', '', $this->data[$this->alias]['cnpj']);
+        }
+
+        if (!empty($this->data[$this->alias]['dt_economia_inicial'])) {
+            $this->data[$this->alias]['dt_economia_inicial'] = $this->dateFormatBeforeSave($this->data[$this->alias]['dt_economia_inicial']);
+        }
+
+        if (!empty($this->data[$this->alias]['economia_inicial'])) {
+            $this->data[$this->alias]['economia_inicial'] = $this->priceFormatBeforeSave($this->data[$this->alias]['economia_inicial']);
         }
 
         return true;

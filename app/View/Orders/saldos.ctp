@@ -38,18 +38,16 @@
         <?php echo $this->element("pagination"); ?>
         <br>
 
-        <?php if (count($data) == 0) { ?>
-            <div class="row">
-                <div class="col-12">
-                    <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
-                        <i class="fas fa-arrow-up"></i>
-                        Importar saldo (CSV)
-                    </a>
-                </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
+                    <i class="fas fa-arrow-up"></i>
+                    Importar saldo (CSV)
+                </a>
             </div>
-            <br>
-            <br>
-        <?php } ?>
+        </div>
+        <br>
+        <br>
 
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
@@ -68,8 +66,8 @@
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
                         <?php $total += $data[$i]["OrderBalance"]["total_not_formated"]; ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["benefit_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["total"]; ?></td>

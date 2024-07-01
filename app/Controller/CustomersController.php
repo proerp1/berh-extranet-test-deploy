@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile'];
 
     public $paginate = [
         'Customer' => [
@@ -128,7 +128,6 @@ class CustomersController extends AppController
     public function add()
     {
         $this->Permission->check(3, "escrita") ? "" : $this->redirect("/not_allowed");
-
         
         if ($this->request->is(['post', 'put'])) {
             $this->Customer->create();
@@ -181,9 +180,11 @@ class CustomersController extends AppController
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2, 'not' => ['Status.id' => 6]], 'order' => 'Status.name']);
         $senha = substr(sha1(time()), 0, 6);
 
+        $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
+
         $this->set('action', 'Novo Cliente');
         $this->set('form_action', 'add');
-        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers'));
+        $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
     }
 
     public function edit($id = null)
@@ -246,13 +247,15 @@ class CustomersController extends AppController
             $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         }
 
+        $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
+
         // usado para fazer login no site com o bypass, NAO ALTERAR!!!
         $hash = base64_encode($this->request->data['Customer']['codigo_associado']);
         $this->set('hash', rawurlencode($hash));
 
         $this->set('action', $this->request->data['Customer']['nome_secundario']);
         $this->set('form_action', 'edit');
-        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers'));
+        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
 
         $this->render("add");
     }
@@ -1778,11 +1781,17 @@ class CustomersController extends AppController
 
         $this->Paginator->settings = ['Order' => [
             'limit' => 25,
-            'order' => ['Order.created' => 'desc'],
+            'order' => ['Order.created' => 'asc'],
             
             ]
         ];
-    
+
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+        
+        $data = [];
+        $saldo = 0;
+
         $condition = ['and' => ['Customer.id' => $id], 'or' => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
@@ -1809,22 +1818,22 @@ class CustomersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
-        }
+            
+            $data = $this->Paginator->paginate('Order', $condition);
 
-        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
-        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-        
-        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
-            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
-            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
-    
-            $condition['and'] = array_merge($condition['and'], [
-                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
-            ]);
-           
-        }
-    
-        $data = $this->Paginator->paginate('Order', $condition);
+            $de_anterior = date('Y-m-d', strtotime('-1 day '.$de));
+
+            $orderDesconto = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.desconto) as valor_desconto']);
+            $orderSaldo = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.saldo) as valor_saldo']);
+
+            if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
+                if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
+                    $saldo = $cliente['Customer']['economia_inicial_not_formated'];
+                }
+            }
+
+            $saldo = $saldo + ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
+        }    
     
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
@@ -1850,9 +1859,6 @@ class CustomersController extends AppController
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
         $action = 'Extrato';
 
         $breadcrumb = [
@@ -1860,7 +1866,7 @@ class CustomersController extends AppController
             'Extrato' => '',
         ];
 
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders'));
+        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo'));
     }
 
     public function extrato_grupo_economico($id)

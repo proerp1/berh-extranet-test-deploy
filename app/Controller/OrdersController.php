@@ -827,6 +827,8 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
+        $this->OrderBalance->update_cancel_balances($orderId, CakeSession::read("Auth.User.id"));
+
         $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
 
         foreach ($ret['data'] as $data) {
@@ -956,11 +958,14 @@ class OrdersController extends AppController
                 $customer_user_id = $existingUser['CustomerUser']['id'];
             }
 
+            $total = str_replace("R$", "", $row[2]);
+            $total = str_replace(" ", "", $total);
+
             $data[] = [
                 'customer_user_id' => $customer_user_id,
                 'document' => $row[0],
                 'benefit_code' => $row[1],
-                'total' => $row[2],
+                'total' => $total,
             ];
 
             $line++;

@@ -103,6 +103,9 @@ class Order extends AppModel
             if (isset($val[$this->alias]['desconto'])) {
                 $results[$key][$this->alias]['desconto_not_formated'] = $results[$key][$this->alias]['desconto'];
                 $results[$key][$this->alias]['desconto'] = number_format($results[$key][$this->alias]['desconto'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['desconto_not_formated'] = 0;
+                $results[$key][$this->alias]['desconto'] = '0,00';
             }
 
             if (isset($val[$this->alias]['order_period_from'])) {
