@@ -49,6 +49,7 @@
                                     <tr>
                                         <th>Data Geração Pedido</th>
                                         <th>Pedido</th>
+                                        <th>Código Cliente</th>
                                         <th>CNPJ Cliente</th>
                                         <th>Razão Social</th>
                                         <th>Status Pedido</th>
@@ -75,6 +76,7 @@
                                     <tr>
                                         <td><?php echo $item['Order']['created']; ?></td>
                                         <td><?php echo $item['Order']['id']; ?></td>
+                                        <td><?php echo $item['Customer']['codigo_associado']; ?></td>
                                         <td><?php echo $item['Customer']['documento']; ?></td>
                                         <td><?php echo $item['Customer']['nome_primario']; ?></td>
                                         <td><?php echo $item['Status']['name']; ?></td>
