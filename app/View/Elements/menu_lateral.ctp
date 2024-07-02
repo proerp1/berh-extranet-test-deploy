@@ -118,6 +118,14 @@
                                 <span class="menu-title">Pedidos</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'lgpd') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'lgpd']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Consentimento LGPD</span>
+                            </a>
+                        </div>                        
                     </div>
                 </div>
                 

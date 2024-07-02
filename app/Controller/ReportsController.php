@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
+    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
 
     public function beforeFilter()
     {
@@ -471,5 +471,29 @@ class ReportsController extends AppController
         $to = $to->format('Y-m-d');
 
         return compact('from', 'to');
+    }
+
+    public function lgpd()
+    {
+        $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $paginationConfig = $this->CustomReports->configPagination('lgpd');
+        $this->Paginator->settings = $paginationConfig;
+
+        $condition = ['and' => ['CustomerUser.data_cancel' => '1901-01-01 00:00:00', 'CustomerUser.flag_lgpd != ' => 0], 'or' => []];
+
+        if (!empty($_GET['q'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%'
+            ]);
+        }
+
+        $data = $this->Paginator->paginate('CustomerUser', $condition);
+
+        $action = 'LGPD';
+        $breadcrumb = ['Relatórios' => '', 'LGPD' => ''];
+
+        $this->set(compact('data', 'action', 'breadcrumb'));
     }
 }

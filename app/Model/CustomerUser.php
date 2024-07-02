@@ -110,6 +110,11 @@ class CustomerUser extends AppModel
                 $results[$key][$this->alias]['data_nascimento'] = date('d/m/Y', strtotime($results[$key][$this->alias]['data_nascimento']));
             }
 
+            if (isset($val[$this->alias]['data_flag_lgpd'])) {
+                $results[$key][$this->alias]['data_flag_lgpd_nao_formatado'] = $results[$key][$this->alias]['data_flag_lgpd'];
+                $results[$key][$this->alias]['data_flag_lgpd'] = date('d/m/Y H:i:s', strtotime($results[$key][$this->alias]['data_flag_lgpd']));
+            }
+
             if (isset($val[$this->alias]['cel'])) {
                 $cel = str_replace(['(', ')', ' ', '-'], '', $results[$key][$this->alias]['cel']);
                 $results[$key][$this->alias]['cel_sem_ddd'] = substr($cel, 2);

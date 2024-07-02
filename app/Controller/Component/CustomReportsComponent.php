@@ -308,6 +308,20 @@ class CustomReportsComponent extends Component
                     'recursive' => -1,
                 ]
             ],
+            'lgpd' => [
+                'CustomerUser' => [
+                    'limit' => 100,
+                    'order' => ['CustomerUser.id' => 'desc'],
+                    'fields' => [
+                        'CustomerUser.id',
+                        'CustomerUser.name',
+                        'CustomerUser.cpf',
+                        'CustomerUser.flag_lgpd',
+                        'CustomerUser.data_flag_lgpd'
+                    ],
+                    'recursive' => -1,
+                ]
+            ],
         ];
 
         return $paginate[$type];
