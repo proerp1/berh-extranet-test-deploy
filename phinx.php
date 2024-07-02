@@ -23,7 +23,7 @@ return
             'host' => 'localhost',
             'name' => 'berh',
             'user' => 'root',
-            'pass' => '',
+            'pass' => 'inter123',
             'port' => '3306',
             'charset' => 'utf8',
         ],
