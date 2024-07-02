@@ -57,6 +57,7 @@
                     <th>Beneficiário</th>
                     <th>Código Benefício</th>
                     <th>Benefício</th>
+                    <th>Pedido Operadora</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -70,11 +71,12 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["benefit_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
                         </tr>
                     <?php } ?>
                     <tr>
-                        <td colspan="4"></td>
+                        <td colspan="5"></td>
                         <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                     </tr>
                 <?php } else { ?>

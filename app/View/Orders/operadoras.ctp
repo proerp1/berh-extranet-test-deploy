@@ -59,7 +59,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
-                        <td class="fw-bold fs-7 ps-4"></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $supplier[0]['pedido_operadora']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Order']['id']; ?></td>
                     </tr>
                 <?php } ?>

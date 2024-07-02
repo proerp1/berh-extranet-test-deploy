@@ -840,6 +840,7 @@ class OrdersController extends AppController
                 'benefit_id' => $benefit['Benefit']['id'],
                 'document' => $data['document'],
                 'total' => $data['total'],
+                'pedido_operadora' => $data['pedido_operadora'],
                 'created' => date('Y-m-d H:i:s'),
                 'user_created_id' => CakeSession::read("Auth.User.id")
             ];
@@ -966,6 +967,7 @@ class OrdersController extends AppController
                 'document' => $row[0],
                 'benefit_code' => $row[1],
                 'total' => $total,
+                'pedido_operadora' => $row[3],
             ];
 
             $line++;
@@ -1373,7 +1375,13 @@ class OrdersController extends AppController
                                 WHERE b.benefit_id = Benefit.id 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS total_saldo"
+                            ) AS total_saldo", 
+                            "(SELECT max(b.pedido_operadora) as pedido_operadora 
+                                FROM order_balances b 
+                                WHERE b.benefit_id = Benefit.id 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS pedido_operadora"
                         ],
              'joins' => [
                 [
