@@ -69,7 +69,7 @@
                         <tr>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["benefit_id"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
