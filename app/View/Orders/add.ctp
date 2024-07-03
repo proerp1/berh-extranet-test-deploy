@@ -593,7 +593,7 @@
                         <th>Taxa</th>
                         <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
                         <th>Economia</th>
-                        <th>Total com Economia</th>
+                        <th>Relatório beneficio</th>
                         <th>Data inicio Processamento</th>
                         <th>Data fim Processamento</th>
                         <th>Status Processamento</th>
