@@ -42,7 +42,7 @@
             <div class="col-12">
                 <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
                     <i class="fas fa-arrow-up"></i>
-                    Importar saldo (CSV)
+                    Importar Economia (CSV)
                 </a>
             </div>
         </div>
@@ -108,7 +108,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoSaldo.csv" targe="_blank" download>Baixar Modelo</a>
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoEconomia.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>
