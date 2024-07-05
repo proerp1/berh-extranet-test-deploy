@@ -69,7 +69,7 @@
                                 <tbody>
                                     <tr>
                                         <td> <?php echo $order['Order']['commission_fee']; ?></td>
-                                        <td>0,00</td>
+                                        <td><?php echo $order['Order']['tpp_fee']; ?></td>
                                     </tr>
                             </tbody>
                             </table>
