@@ -241,6 +241,8 @@ class ReportsController extends AppController
 
     public function demanda_judicial()
     {
+        ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('memory_limit', '-1');
         $condition = $this->pedidosConditions();
 
         $paginas = $this->OrderItem->find('all', [
