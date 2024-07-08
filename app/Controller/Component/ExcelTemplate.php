@@ -216,17 +216,18 @@ class ExcelTemplate
 
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('A1', "N° Documento")
-			->setCellValue('B1', "Fornecedor")		
-			->setCellValue('C1', "Descrição")
-			->setCellValue('D1', "Status")
-			->setCellValue('E1', "Conta bancária")
-			->setCellValue('F1', "Vencimento")
-			->setCellValue('G1', "Data de criação")
-			->setCellValue('H1', "Parcela")
-			->setCellValue('I1', "Valor a pagar R$")
-			->setCellValue('J1', "Data pagamento")
-			->setCellValue('K1', "Valor pago R$")
-			->setCellValue('L1', "Observação");
+			->setCellValue('B1', "Fornecedor")
+			->setCellValue('C1', "Nome")		
+			->setCellValue('D1', "Descrição")
+			->setCellValue('E1', "Status")
+			->setCellValue('F1', "Conta bancária")
+			->setCellValue('G1', "Vencimento")
+			->setCellValue('H1', "Data de criação")
+			->setCellValue('I1', "Parcela")
+			->setCellValue('J1', "Valor a pagar R$")
+			->setCellValue('K1', "Data pagamento")
+			->setCellValue('L1', "Valor pago R$")
+			->setCellValue('M1', "Observação");
 
 		$indx = 1;
 		for ($i = 0; $i < count($dados); $i++) {
@@ -235,16 +236,17 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $indx, $dados[$i]["Outcome"]["doc_num"])
 				->setCellValue('B' . $indx, $dados[$i]["Outcome"]["supplier_id"])
-				->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"])
-				->setCellValue('D' . $indx, $dados[$i]['Status']['name'])
-				->setCellValue('E' . $indx, $dados[$i]["BankAccount"]["name"])
-				->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"])
-				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["created"])
-				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
-				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["valor_total"])
-				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
-				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["valor_pago"])
-				->setCellValue('L' . $indx, $dados[$i]["Outcome"]["observation"]);
+				->setCellValue('C' . $indx, $dados[$i]["Supplier"]["nome_fantasia"])
+				->setCellValue('D' . $indx, $dados[$i]["Outcome"]["name"])
+				->setCellValue('E' . $indx, $dados[$i]['Status']['name'])
+				->setCellValue('F' . $indx, $dados[$i]["BankAccount"]["name"])
+				->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"])
+				->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"])
+				->setCellValue('I' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
+				->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_total"])
+				->setCellValue('K' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
+				->setCellValue('L' . $indx, $dados[$i]["Outcome"]["valor_pago"])
+				->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"]);
 		}
 	}
 

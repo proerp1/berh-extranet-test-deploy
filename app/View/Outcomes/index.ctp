@@ -193,6 +193,7 @@
                         <?php } ?>
                         <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
                         <th>Fornecedor </th>
+                        <th>Nome </th>
                         <th>Descrição</th>
                         <th>Status</th>
 						<th>Conta bancária</th>
@@ -229,6 +230,7 @@
                                 <?php } ?>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4">
 									<span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
