@@ -86,8 +86,10 @@ class AtendimentosController extends AppController
             $this->Atendimento->create();
             $this->Atendimento->validates();
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
-            $this->request->data['Atendimento']['mostrar_cliente'] = 0;
-            $this->request->data['Atendimento']['name_atendente'] = CakeSession::read('Auth.User.name');
+            $this->request->data['Atendimento']['mostrar_cliente'] = isset($this->request->data['Atendimento']['mostrar_cliente']) ? $this->request->data['Atendimento']['mostrar_cliente'] : 0;
+
+            // Salvar os dados...
+                        $this->request->data['Atendimento']['name_atendente'] = CakeSession::read('Auth.User.name');
             $this->request->data['Atendimento']['data_atendimento'] = date('Y-m-d H:i:s');
 
             if ($this->request->data['Atendimento']['answer'] != "") {
