@@ -14,6 +14,13 @@
                    
                         <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="<?php echo isset($_GET['logon']) ? 'Digite o logon' : 'Buscar' ?>" />
                     </div>
+                    <div class="col d-flex align-items-center">
+                        <span class="position-absolute ms-6">
+                            <i class="fas fa-search"></i>
+                        </span>
+                   
+                        <input type="text" class="form-control form-control-solid ps-15" id="c" name="c" value="<?php echo isset($_GET["c"]) ? $_GET["c"] : ""; ?>" placeholder="Busca Beneficiário" />
+                    </div>
                 </div>
             </div>
             <div class="card-toolbar">
@@ -158,6 +165,10 @@
         });
 
         $('#q').on('change', function () {
+            $("#busca").submit();
+        });
+
+        $('#c').on('change', function () {
             $("#busca").submit();
         });
 

@@ -51,6 +51,10 @@ class CustomersController extends AppController
 
         $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
 
+        if (!empty($_GET['c'])) {
+            $condition['and'] = array_merge($condition['and'], ["EXISTS (SELECT 1 FROM customer_users u WHERE u.customer_id = Customer.id AND u.data_cancel = '1901-01-01 00:00:00' AND (u.name LIKE '%".$_GET['c']."%' OR u.cpf LIKE '%".$_GET['c']."%' ))"]);
+        }
+
         if (isset($_GET['logon'])) {
             $joins = [
                 'fields' => ['Status.*', 'Customer.*', 'LoginConsulta.*'],
