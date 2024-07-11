@@ -1727,6 +1727,7 @@ $itens = $this->OrderItem->find('all', [
                 'sum(OrderItem.subtotal) as valor',
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.working_days) as working_days',
+                'OrderItem.saldo'
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['Order.id']
@@ -1794,6 +1795,7 @@ $itens = $this->OrderItem->find('all', [
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.transfer_fee) as transfer_fee',
                 'sum(OrderItem.commission_fee) as commission_fee',
+                'OrderItem.saldo'
             ],
             
              'joins' => [
