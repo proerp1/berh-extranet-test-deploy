@@ -19,8 +19,8 @@
                             <i class="fas fa-search"></i>
                         </span>
                    
-                        <input type="text" class="form-control form-control-solid ps-15" id="c" name="c" value="<?php echo isset($_GET["c"]) ? $_GET["c"] : ""; ?>" placeholder="Busca Beneficiário: CPF ou Nome" />
-                    </div>
+                        <input type="text" class="form-control form-control-solid ps-15" id="c" name="c" value="<?php echo isset($_GET['c']) ? $_GET['c'] : ''; ?>" placeholder="Busca Beneficiário: CPF ou Nome" style="width: 300px;" />
+                        </div>
                 </div>
             </div>
             <div class="card-toolbar">
