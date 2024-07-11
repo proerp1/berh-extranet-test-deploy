@@ -99,7 +99,7 @@
                             </thead>
                             <tbody>
                                     <tr>
-                                    <td><?php echo $order['Order']['desconto'] ; ?></td>
+                                    <td><?php echo $item['OrderItem']['saldo']; ?></td>
                                     <td><?php echo $order['Order']['total'] ; ?></td>
                                     </tr>
                                 
