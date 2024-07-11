@@ -1655,36 +1655,37 @@ class OrdersController extends AppController
             'conditions' => ['Order.id' => $id],
         ]);
 
-        $itens = $this->OrderItem->find('all', [
-            'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
-            'joins' => [
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'INNER',
-                    'conditions' => ['Customer.id = Order.customer_id'],
-                ],
-            ],
-            'fields' => [
-                'Customer.documento',
-                'Customer.nome_secundario',
-                'CustomerUser.name as nome',
-                'CustomerUser.cpf as cpf',
-                'CustomerUser.matricula as matricula',
-                'CustomerUserItinerary.benefit_id as matricula',
-                'Order.credit_release_date',
-                'Order.id',
-                'CustomerUserItinerary.benefit_id',
-                'CustomerUserItinerary.unit_price',
-                'sum(CustomerUserItinerary.quantity) as qtd',
-                'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
-                'sum(OrderItem.working_days) as working_days',
-            ],
-            'conditions' => ['OrderItem.order_id' => $id],
-            'group' => ['OrderItem.id'],
-            'order' => ['trim(CustomerUser.name)']                           
-        ]);
+$itens = $this->OrderItem->find('all', [
+    'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+    'joins' => [
+        [
+            'table' => 'customers',
+            'alias' => 'Customer',
+            'type' => 'INNER',
+            'conditions' => ['Customer.id = Order.customer_id'],
+        ],
+    ],
+    'fields' => [
+        'Customer.documento',
+        'Customer.nome_secundario',
+        'CustomerUser.name as nome',
+        'CustomerUser.cpf as cpf',
+        'CustomerUser.matricula as matricula',
+        'CustomerUserItinerary.benefit_id as benefit_id',
+        'Order.credit_release_date',
+        'Order.id',
+        'CustomerUserItinerary.benefit_id',
+        'CustomerUserItinerary.unit_price',
+        'sum(CustomerUserItinerary.quantity) as qtd',
+        'sum(OrderItem.subtotal) as valor',
+        'sum(OrderItem.total) as total',
+        'sum(OrderItem.working_days) as working_days',
+        'Order.desconto' // Ensure 'desconto' is included
+    ],
+    'conditions' => ['OrderItem.order_id' => $id],
+    'group' => ['OrderItem.id'],
+    'order' => ['trim(CustomerUser.name)']                           
+]);
 
         $de = $order['Order']['order_period_from_nao_formatado'];
         $para = $order['Order']['order_period_to_nao_formatado'];

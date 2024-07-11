@@ -49,7 +49,7 @@
                                         <td><?php echo $item[0]['working_days']; ?></td>
                                         <td><?php echo $item[0]['qtd']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
-                                        <td><?php echo $item['OrderItem']['saldo']; ?></td>
+                                        <td><?php echo $item['Order']['desconto']; ?></td>
                                         <td><?php echo $item[0]['total']; ?></td>
                                         <td></td>
                                     </tr>
