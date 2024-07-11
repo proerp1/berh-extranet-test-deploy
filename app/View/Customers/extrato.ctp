@@ -103,7 +103,7 @@
                         <span class="position-absolute ms-6">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar" />
+                        <input type="text" class="form-control form-control-solid ps-15  mb-3 mb-lg-0" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar por Grupo Econômico" />
                     </div>
                 </div>
             </div>
