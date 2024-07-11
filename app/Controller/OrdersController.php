@@ -1795,7 +1795,7 @@ $itens = $this->OrderItem->find('all', [
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.transfer_fee) as transfer_fee',
                 'sum(OrderItem.commission_fee) as commission_fee',
-                'OrderItem.saldo'
+                'OrderItem.saldo',
             ],
             
              'joins' => [
