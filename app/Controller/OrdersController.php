@@ -1620,6 +1620,8 @@ class OrdersController extends AppController
                     'sum(OrderItem.subtotal) as valor',
                     'sum(OrderItem.total) as total',
                     'sum(OrderItem.working_days) as working_days',
+                    'OrderItem.saldo' 
+
                 ],
                 'conditions' => [
                     'OrderItem.order_id' => $id,
