@@ -1680,12 +1680,13 @@ $itens = $this->OrderItem->find('all', [
         'sum(OrderItem.subtotal) as valor',
         'sum(OrderItem.total) as total',
         'sum(OrderItem.working_days) as working_days',
-        'Order.desconto' // Ensure 'desconto' is included
+        'OrderItem.saldo' // Ensure 'desconto' is included
     ],
     'conditions' => ['OrderItem.order_id' => $id],
     'group' => ['OrderItem.id'],
     'order' => ['trim(CustomerUser.name)']                           
 ]);
+//debug($itens);die;
 
         $de = $order['Order']['order_period_from_nao_formatado'];
         $para = $order['Order']['order_period_to_nao_formatado'];
