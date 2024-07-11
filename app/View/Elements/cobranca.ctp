@@ -98,11 +98,14 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <?php foreach($itens as $item){ ?>
+
                                     <tr>
+                                        
                                     <td><?php echo $item['OrderItem']['saldo']; ?></td>
                                     <td><?php echo $order['Order']['total'] ; ?></td>
                                     </tr>
-                                
+                                    <?php } ?>
                             </tbody>
                         </table>
                     </div>
