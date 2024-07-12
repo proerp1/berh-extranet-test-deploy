@@ -50,7 +50,7 @@
                                         <td><?php echo $item[0]['qtd']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
                                         <td><?php echo $item['OrderItem']['saldo']; ?></td>
-                                        <td><?php echo $item[0]['total']; ?></td>
+                                        <td><?php echo number_format(($item['OrderItem']['subtotal_not_formated'] - $item['OrderItem']['saldo_not_formated']), 2, ',', '.'); ?></td>
                                         <td></td>
                                     </tr>
                                 <?php } ?>

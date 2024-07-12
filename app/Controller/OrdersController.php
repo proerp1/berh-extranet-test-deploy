@@ -1671,6 +1671,7 @@ $itens = $this->OrderItem->find('all', [
         ],
     ],
     'fields' => [
+        'OrderItem.*',
         'Customer.documento',
         'Customer.nome_secundario',
         'CustomerUser.name as nome',
