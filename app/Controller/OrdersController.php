@@ -1610,6 +1610,7 @@ class OrdersController extends AppController
             $itens[$pagina['CustomerUser']['id']] = $this->OrderItem->find('all', [
                 'contain' => ['CustomerUser', 'CustomerUserItinerary'],
                 'fields' => [
+                    'OrderItem.*',
                     'CustomerUser.name as nome',
                     'CustomerUser.cpf as cpf',
                     'CustomerUser.matricula as matricula',
