@@ -1620,7 +1620,8 @@ class OrdersController extends AppController
                     'sum(OrderItem.subtotal) as valor',
                     'sum(OrderItem.total) as total',
                     'sum(OrderItem.working_days) as working_days',
-                    'OrderItem.saldo' 
+                    'OrderItem.saldo', 
+                    'OrderItem.pedido_operadora'
 
                 ],
                 'conditions' => [
@@ -1631,6 +1632,7 @@ class OrdersController extends AppController
                 'order' => ['trim(CustomerUser.name)']                                                           
             ]);
         }
+//debug($itens);die;
 
         $link = APP . 'webroot';
         // $link = '';

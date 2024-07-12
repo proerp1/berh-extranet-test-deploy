@@ -48,7 +48,7 @@
                                             <td><?php echo $item[0]['qtd']; ?></td>
                                             <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
                                             <td><?php echo $item['OrderItem']['saldo']; ?></td>
-                                            <td><?php echo $item[0]['valor']; ?></td>
+                                            <td><?php echo $item['OrderItem']['pedido_operadora']; ?></td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
