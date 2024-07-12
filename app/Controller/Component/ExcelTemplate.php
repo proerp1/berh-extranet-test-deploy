@@ -1830,7 +1830,7 @@ class ExcelTemplate
 				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['commission_fee'])
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('V'. $indx, ($dados[$i]['OrderItem']['subtotal'] - $dados[$i]['OrderItem']['saldo']));
+				->setCellValue('V'. $indx, ($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']));
 
 				
 		}
