@@ -27,7 +27,7 @@
                     <div class="col-sm-5">
                         <?php if (isset($this->request->data["CustomerFile"])): ?>
                             <br>
-                            <a download href="<?php echo 'https://cliente.berh.com.br/files/customer_file/file/'.$this->request->data["CustomerFile"]["id"].'/'.$this->request->data["CustomerFile"]["file"] ?>"><?php echo $this->request->data["CustomerFile"]["file"] ?></a>
+                            <a download href="<?php echo $this->webroot.'files/customer_file/file/'.$this->request->data["CustomerFile"]["id"].'/'.$this->request->data["CustomerFile"]["file"] ?>"><?php echo $this->request->data["CustomerFile"]["file"] ?></a>
                         <?php endif ?>
                     </div>
                 </div>
