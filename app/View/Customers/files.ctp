@@ -69,6 +69,7 @@
                 <tr class="fw-bolder text-muted bg-light">
                     <th>Status</th>
                     <th>Layout</th>
+                    <th>Data de envio</th>
                     <th>Arquivo</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
@@ -84,6 +85,7 @@
                                 </span>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Layout"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["CustomerFile"]["created"])); ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["file"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customers/edit_file/' .$id. '/' . $data[$i]["CustomerFile"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
