@@ -20,9 +20,12 @@ class CustomerFile extends AppModel {
 		return $queryData;
 	}
 
-	public $actsAs = array(
-		'Upload.Upload' => array(
-			'file'
-		)
-	);
+	public $actsAs = [
+        'Upload.Upload' => [
+            'file' => [
+                'rootDir' => ROOT_SITE,
+                'path' => '{ROOT}{DS}app{DS}webroot{DS}files{DS}{model}{DS}{field}{DS}',
+            ],
+        ],
+    ];
 }
