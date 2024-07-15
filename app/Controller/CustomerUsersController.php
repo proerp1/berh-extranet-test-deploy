@@ -115,7 +115,7 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['password'] = $senha;
             if ($this->CustomerUser->save($this->request->data)) {
                 if(isset($data['CustomerUser']['email'])){
-                    $this->envia_email($this->request->data);
+                    //$this->envia_email($this->request->data);
                 }
 
                 $urlAction = $is_admin ? 'edit_user/'.$id.'/' : 'edit/'.$id.'/';
