@@ -81,7 +81,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Layout"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["file"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["created"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["CustomerFile"]["created"])); ?></td>
+
 
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customers/edit_file/' . $data[$i]["Customer"]["id"] . '/' . $data[$i]["CustomerFile"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
