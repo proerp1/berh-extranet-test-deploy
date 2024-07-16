@@ -251,49 +251,56 @@ class ExcelTemplate
 	}
 
 	public function getFluxo($objPHPExcel, $dados, $conta)
-	{
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', "Status")
-			->setCellValue('B1', "Conta bancária")
-			->setCellValue('C1', "Data")
-			->setCellValue('D1', "Valor")
-			->setCellValue('E1', "Saldo");
-	
-		$indx = 2;
-		$saldo = 0;
-		if (!empty($conta)) {
-			$saldo = $conta['BankAccount']['initial_balance_not_formated'];
-	
-			$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':D' . $indx);
-			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $conta['BankAccount']['name'])
-				->setCellValue('E' . $indx, $conta['BankAccount']['initial_balance']);
-		}
-	
-		for ($i = 0; $i < count($dados); $i++) {
-			$saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i][0]['valor_total'] : $saldo - $dados[$i][0]['valor_total'];
-		
-			// Use the absolute value to remove '-' sign from saldo
-			$valor_total = abs($dados[$i][0]['valor_total']);
-			$saldo_abs = abs($saldo); // Absolute value of saldo
-		
-			$indx++;
-			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $indx, $dados[$i][0]['status'])
-				->setCellValue('B' . $indx, $dados[$i][0]['name'])
-				->setCellValue('C' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
-				->setCellValue('D' . $indx, number_format($valor_total, 2, ',', '.')) // Formatting without the '+' or '-'
-				->setCellValue('E' . $indx, number_format($saldo_abs, 2, ',', '.')); // Display absolute value of saldo
-		}
-		
-	
-		$indx++;
-		$objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':D' . $indx);
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A' . $indx, 'Total:')
-			->setCellValue('E' . $indx, number_format($saldo, 2, ',', '.'));
-	}
-	
+{
+    $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A1', "Status")
+        ->setCellValue('B1', "Conta bancária")
+        ->setCellValue('C1', "Código/Id")
+        ->setCellValue('D1', "Cliente")
+        ->setCellValue('E1', "Fornecedor")
+        ->setCellValue('F1', "N° Pedido")
+        ->setCellValue('G1', "Data")
+        ->setCellValue('H1', "Valor")
+        ->setCellValue('I1', "Saldo");
+
+    $indx = 2;
+    $saldo = 0;
+    if (!empty($conta)) {
+        $saldo = $conta['BankAccount']['initial_balance_not_formated'];
+
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':F' . $indx);
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A' . $indx, $conta['BankAccount']['name'])
+            ->setCellValue('I' . $indx, $conta['BankAccount']['initial_balance']);
+    }
+
+    for ($i = 0; $i < count($dados); $i++) {
+        $saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i][0]['valor_total'] : $saldo - $dados[$i][0]['valor_total'];
+
+        // Use the absolute value to remove '-' sign from saldo
+        $valor_total = abs($dados[$i][0]['valor_total']);
+        $saldo_abs = abs($saldo); // Absolute value of saldo
+
+        $indx++;
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A' . $indx, $dados[$i][0]['status'])
+            ->setCellValue('B' . $indx, $dados[$i][0]['name'])
+            ->setCellValue('C' . $indx, $dados[$i][0]['codigo'])
+            ->setCellValue('D' . $indx, $dados[$i][0]['customer_nome_secundario'])
+            ->setCellValue('E' . $indx, $dados[$i][0]['supplier_nome_fantasia'])
+            ->setCellValue('F' . $indx, $dados[$i][0]['order_id'])
+            ->setCellValue('G' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
+            ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
+            ->setCellValue('I' . $indx, number_format($saldo_abs, 2, ',', '.'));
+    }
+
+    $indx++;
+    $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':F' . $indx);
+    $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A' . $indx, 'Total:')
+        ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'));
+}
+
 
 	public function getDespesas($objPHPExcel, $dados, $conta)
 	{
