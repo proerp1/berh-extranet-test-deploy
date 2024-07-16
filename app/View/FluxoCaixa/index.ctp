@@ -68,64 +68,67 @@
         </div>
     </form>
 
-    <div class="card-body pt-0 py-3">
-        <div class="table-responsive">
-            <?php echo $this->element("table"); ?>
-				<thead>
-					<tr class="fw-bolder text-muted bg-light">
-						<th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
-						<th>Conta bancária</th>
-                        <th>Código/Id</th>
-                        <th>Cliente</th>
-                        <th>Fornecedor</th>
-                        <th>N° Pedido</th>
-						<th>Data</th>
-						<th>Nome da conta</th>
-						<th>Cadastro</th>
-						<th>Valor</th>
-						<th class="w-150px min-w-150px rounded-end">Saldo</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php if (!empty($conta)): ?>
-						<tr>
-							<td colspan="6" class="fw-bold fs-7 ps-4"><?php echo $conta['BankAccount']['name'] ?></td>
-							<td class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.') ?></td>
-						</tr>
-					<?php endif ?>
-					<?php if ($data) { ?>
-						<?php for ($i=0; $i < count($data); $i++) { ?>
-							<?php
-								$color =  ($data[$i][0]['operador'] == '+' ? '#000' : '#f00'); 
-								$saldo = ($data[$i][0]['operador'] == '+' ? $saldo + $data[$i][0]['valor_total'] : $saldo - $data[$i][0]['valor_total']);
-							?>
-							<tr>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['status'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['name'] ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['codigo'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['customer_nome_secundario'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['supplier_nome_fantasia'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['order_id'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i][0]['data_pagamento'])) ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome_conta'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome'] ?></td>
-								<td class="fw-bold fs-7 ps-4"><span style="color: <?php echo $color; ?>"><?php echo $data[$i][0]['operador'].' '.number_format($data[$i][0]['valor_total'],2,',','.') ?></span></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.') ?></td>
-							</tr>
-						<?php } ?>
-					<?php } else { ?>
-						<tr>
-							<td colspan="8" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
-						</tr>
-					<?php } ?>
-				</tbody>
-				<tfoot>
-					<th colspan="6" class="fw-bold fs-7 ps-4">Total:</th>
-					<th class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.') ?></th>
-				</tfoot>
-			</table>
-        </div>
+<div class="card-body pt-0 py-3">
+    <div class="table-responsive">
+        <?php echo $this->element("table"); ?>
+            <thead>
+                <tr class="fw-bolder text-muted bg-light">
+                    <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                    <th>Conta bancária</th>
+                    <th>Código/Id</th>
+                    <th>Cliente</th>
+                    <th>Fornecedor</th>
+                    <th>N° Pedido</th>
+                    <th>Data</th>
+                    <th>Nome da conta</th>
+                    <th>Cadastro</th>
+                    <th>Valor</th>
+                    <th class="ps-4 w-150px min-w-150px rounded-end">Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($conta)): ?>
+                    <tr>
+                        <td colspan="10" class="fw-bold fs-7 ps-4"><?php echo $conta['BankAccount']['name'] ?></td>
+                        <td class="fw-bold fs-7 ps-4 w-150px min-w-150px"><?php echo number_format($saldo,2,',','.') ?></td>
+                    </tr>
+                <?php endif ?>
+                <?php if ($data) { ?>
+                    <?php for ($i=0; $i < count($data); $i++) { ?>
+                        <?php
+                            $color =  ($data[$i][0]['operador'] == '+' ? '#000' : '#f00'); 
+                            $saldo = ($data[$i][0]['operador'] == '+' ? $saldo + $data[$i][0]['valor_total'] : $saldo - $data[$i][0]['valor_total']);
+                        ?>
+                        <tr>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['status'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['name'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['codigo'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['customer_nome_secundario'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['supplier_nome_fantasia'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['order_id'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i][0]['data_pagamento'])) ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome_conta'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><span style="color: <?php echo $color; ?>"><?php echo $data[$i][0]['operador'].' '.number_format($data[$i][0]['valor_total'],2,',','.') ?></span></td>
+                            <td class="fw-bold fs-7 ps-4 w-150px min-w-150px"><?php echo number_format($saldo,2,',','.') ?></td>
+                        </tr>
+                    <?php } ?>
+                <?php } else { ?>
+                    <tr>
+                        <td colspan="11" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="10" class="fw-bold fs-7 ps-4">Total:</th>
+                    <th class="fw-bold fs-7 ps-4 w-150px min-w-150px"><?php echo number_format($saldo,2,',','.') ?></th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
+</div>
+
 </div>
 
 <script>
