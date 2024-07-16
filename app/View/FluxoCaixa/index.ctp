@@ -75,6 +75,10 @@
 					<tr class="fw-bolder text-muted bg-light">
 						<th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
 						<th>Conta bancária</th>
+                        <th>Código/Id</th>
+                        <th>Cliente</th>
+                        <th>Fornecedor</th>
+                        <th>N° Pedido</th>
 						<th>Data</th>
 						<th>Nome da conta</th>
 						<th>Cadastro</th>
@@ -98,6 +102,10 @@
 							<tr>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['status'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['name'] ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['codigo'] ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['customer_nome_secundario'] ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['supplier_nome_fantasia'] ?></td>
+								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['order_id'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y', strtotime($data[$i][0]['data_pagamento'])) ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome_conta'] ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['nome'] ?></td>
