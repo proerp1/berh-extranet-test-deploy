@@ -1,6 +1,5 @@
 /config.local.php
 /app/tmp/*
-/app/webroot/files/*
 !/app/webroot/files/ModeloAtualizacaoGrupos.csv
 /vendor/
 /composer.phar
