@@ -1999,7 +1999,7 @@ $itens = $this->OrderItem->find('all', [
                     'alias' => 'CustomerUser',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'OrderItem.customer_id = CustomerUser.id'
+                        'OrderItem.customer_user_id = CustomerUser.id'
                     ]
                 ],
                 [
@@ -2007,7 +2007,7 @@ $itens = $this->OrderItem->find('all', [
                     'alias' => 'CostCenter',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'CustomerUser.customer_cost_center_ids = CostCenter.id'
+                        'CustomerUser.customer_cost_center_id = CostCenter.id'
                     ]
                 ],
                 [
