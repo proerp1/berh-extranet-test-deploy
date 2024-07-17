@@ -1797,7 +1797,8 @@ class ExcelTemplate
 		->setCellValue('S1', "Taxa ADM")
 		->setCellValue('T1', "Status Operadora")
 		->setCellValue('U1', "Economia")
-		->setCellValue('V1', "Compra Operadora");
+		->setCellValue('V1', "Compra Operadora")
+		->setCellValue('X1', "Compra Operadora");
 
 
 		$indx = 1;
@@ -1837,7 +1838,8 @@ class ExcelTemplate
 				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['commission_fee'])
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('V'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
+				->setCellValue('V'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
+				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name']);
 
 				
 		}
