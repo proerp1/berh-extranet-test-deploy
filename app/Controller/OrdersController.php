@@ -2007,7 +2007,7 @@ $itens = $this->OrderItem->find('all', [
                     'alias' => 'CostCenter',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'CustomerUser.customer_cost_center_id = CostCenter.id'
+                        'CustomerUser.customer_cost_center_ids = CostCenter.id'
                     ]
                 ],
                 [
@@ -2030,7 +2030,7 @@ $itens = $this->OrderItem->find('all', [
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']
         ]);
-        //debug($itens); die;
+        debug($itens); die;
 
         
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
