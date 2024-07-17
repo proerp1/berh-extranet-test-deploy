@@ -1975,6 +1975,8 @@ $itens = $this->OrderItem->find('all', [
                 'Benefit.*',
                 'CustomerUserItinerary.*',
                 'CostCenter.*',
+                'EconomicGroups.*',
+                'CustomerDepartments.*',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
@@ -2003,6 +2005,22 @@ $itens = $this->OrderItem->find('all', [
                     ]
                 ],
                 [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroups',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.economic_group_id = EconomicGroups.id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_departments',
+                    'alias' => 'CustomerDepartments',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.customer_departments_id = CustomerDepartments.id'
+                    ]
+                ],
+                [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
                     'type' => 'LEFT',
@@ -2022,7 +2040,7 @@ $itens = $this->OrderItem->find('all', [
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']
         ]);
-        //debug($itens); die;
+        //debug($data); die;
 
         
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);

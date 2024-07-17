@@ -1798,7 +1798,10 @@ class ExcelTemplate
 		->setCellValue('T1', "Status Operadora")
 		->setCellValue('U1', "Economia")
 		->setCellValue('V1', "Compra Operadora")
-		->setCellValue('X1', "Centro de Custo");
+		->setCellValue('W1', "Departamento")
+		->setCellValue('X1', "Centro de Custo")
+		->setCellValue('Y1', " CNPJ Grupo Economico")
+		->setCellValue('Z1', "Nome Grupo Economico");
 
 
 		$indx = 1;
@@ -1839,7 +1842,10 @@ class ExcelTemplate
 				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
 				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['saldo'])
 				->setCellValue('V'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
-				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name']);
+				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
+				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
+				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
+				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
 
 				
 		}
