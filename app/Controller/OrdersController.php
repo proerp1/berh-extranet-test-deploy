@@ -1974,7 +1974,7 @@ $itens = $this->OrderItem->find('all', [
                 'Supplier.*',
                 'Benefit.*',
                 'CustomerUserItinerary.*',
-
+                'CostCenter.*',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
@@ -1992,6 +1992,22 @@ $itens = $this->OrderItem->find('all', [
                     'type' => 'LEFT',
                     'conditions' => [
                         'Order.status_id = Status.id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderItem.customer_id = CustomerUser.id'
+                    ]
+                ],
+                [
+                    'table' => 'cost_center',
+                    'alias' => 'CostCenter',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.customer_cost_center_id = CostCenter.id'
                     ]
                 ],
                 [
