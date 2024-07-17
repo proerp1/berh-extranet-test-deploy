@@ -1995,14 +1995,6 @@ $itens = $this->OrderItem->find('all', [
                     ]
                 ],
                 [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'OrderItem.customer_user_id = CustomerUser.id'
-                    ]
-                ],
-                [
                     'table' => 'cost_center',
                     'alias' => 'CostCenter',
                     'type' => 'LEFT',
