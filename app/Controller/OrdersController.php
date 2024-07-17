@@ -2022,7 +2022,7 @@ $itens = $this->OrderItem->find('all', [
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']
         ]);
-        debug($itens); die;
+        //debug($itens); die;
 
         
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
