@@ -53,9 +53,9 @@
                             <tr>  
                                 <td><?php echo h($pedido["Customer"]["nome_primario"]); ?></td>
                                 <td><?php echo h($pedido["Status"]["name"]); ?></td>
-                                <td><?php echo 'R$' . h($pedido["Order"]["transfer_fee"]); ?></td>
-                                <td><?php echo 'R$' . h($pedido["Order"]["subtotal"]); ?></td>
-                                <td><?php echo 'R$' . h($pedido["Order"]["commission_fee"]); ?></td>
+                                <td><?php echo h($pedido["Order"]["transfer_fee"]); ?></td>
+                                <td><?php echo h($pedido["Order"]["subtotal"]); ?></td>
+                                <td><?php echo h($pedido["Order"]["commission_fee"]); ?></td>
                             </tr>
                             <?php } ?>
                         <?php } ?>

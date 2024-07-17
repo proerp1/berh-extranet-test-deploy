@@ -224,9 +224,9 @@ class ExcelTemplate
 			->setCellValue('G1', "Vencimento")
 			->setCellValue('H1', "Data de criação")
 			->setCellValue('I1', "Parcela")
-			->setCellValue('J1', "Valor a pagar R$")
+			->setCellValue('J1', "Valor a pagar")
 			->setCellValue('K1', "Data pagamento")
-			->setCellValue('L1', "Valor pago R$")
+			->setCellValue('L1', "Valor pago")
 			->setCellValue('M1', "Observação");
 
 		$indx = 1;
@@ -394,7 +394,7 @@ class ExcelTemplate
 			->setCellValue('C4', "Valor Unitário")
 			->setCellValue('D4', "Total")
 			->setCellValue('A5', "Mensalidade")
-			->setCellValue('D5', "R$ " . $dados['mensalidade']);
+			->setCellValue('D5',  $dados['mensalidade']);
 
 		$indx = 5;
 		$total = 0;
@@ -405,8 +405,8 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $indx, $dados['negativacao'][$i]['p']['name'])
 				->setCellValue('B' . $indx, $dados['negativacao'][$i]['n']['qtde_consumo'])
-				->setCellValue('C' . $indx, "R$ " . number_format($dados['negativacao'][$i]['n']['valor_unitario'], 2, ',', '.'))
-				->setCellValue('D' . $indx, "R$ " . number_format($dados['negativacao'][$i]['n']['valor_total'], 2, ',', '.'));
+				->setCellValue('C' . $indx,  number_format($dados['negativacao'][$i]['n']['valor_unitario'], 2, ',', '.'))
+				->setCellValue('D' . $indx,  number_format($dados['negativacao'][$i]['n']['valor_total'], 2, ',', '.'));
 		}
 
 		for ($i = 0; $i < count($dados['pefin']); $i++) {
@@ -416,22 +416,22 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $indx, $dados['pefin'][$i]['p']['name'])
 				->setCellValue('B' . $indx, $dados['pefin'][$i]['n']['qtde_realizado'])
-				->setCellValue('C' . $indx, "R$ " . number_format($dados['pefin'][$i]['n']['valor_unitario'], 2, ',', '.'))
-				->setCellValue('D' . $indx, "R$ " . number_format($dados['pefin'][$i]['n']['valor_total'], 2, ',', '.'));
+				->setCellValue('C' . $indx,  number_format($dados['pefin'][$i]['n']['valor_unitario'], 2, ',', '.'))
+				->setCellValue('D' . $indx,  number_format($dados['pefin'][$i]['n']['valor_total'], 2, ',', '.'));
 		}
 
 		$indx++;
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('A' . $indx, "Manutenção PEFIN:")
-			->setCellValue('D' . $indx, "R$ " . $dados['manutencao']);
+			->setCellValue('D' . $indx,  $dados['manutencao']);
 		$indx++;
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('C' . $indx, "Total Excedente:")
-			->setCellValue('D' . $indx, "R$ " . number_format($total, 2, ',', '.'));
+			->setCellValue('D' . $indx,  number_format($total, 2, ',', '.'));
 		$indx++;
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('C' . $indx, "Total Fatura:")
-			->setCellValue('D' . $indx, "R$ " . number_format($dados['mensalidade'] + $total + $dados['manutencao'], 2, ',', '.'));
+			->setCellValue('D' . $indx,  number_format($dados['mensalidade'] + $total + $dados['manutencao'], 2, ',', '.'));
 	}
 
 	public function getRetornoCnab($objPHPExcel, $dados)

@@ -213,7 +213,7 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>Valor dos serviços:</b></td>
-                    <td width="55%"><b>R$ <?php echo $order['Order']['total'] ?></b></td>
+                    <td width="55%"><b> <?php echo $order['Order']['total'] ?></b></td>
                 </tr>
             </table>
         </div>
@@ -325,29 +325,29 @@
                         <tr>
                             <td><?php echo $item['CustomerUserItinerary']['benefit_name'] ?></td>
                             <td style="text-align: center;"><?php echo $item[0]['qtd'] ?></td>
-                            <td style="text-align: center;">R$ <?php echo number_format($item[0]['valor'],2,',','.') ?></td>
+                            <td style="text-align: center;"> <?php echo number_format($item[0]['valor'],2,',','.') ?></td>
                         </tr>
                     <?php } ?>
                 <?php } ?>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">VALOR TOTAL ITENS (A)</th>
-                    <td style="text-align: center;">R$ <?php echo $order['Order']['subtotal']; ?></td>
+                    <td style="text-align: center;"> <?php echo $order['Order']['subtotal']; ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">VALOR TOTAL REPASSE OPERADORA (B)</th>
-                    <td style="text-align: center;">R$ <?php echo $order['Order']['transfer_fee']; ?></td>
+                    <td style="text-align: center;"> <?php echo $order['Order']['transfer_fee']; ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">DESCONTO (C)</th>
-                    <td style="text-align: center;">R$ <?php echo $order['Order']['desconto']; ?></td>
+                    <td style="text-align: center;"> <?php echo $order['Order']['desconto']; ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">ACRÉSCIMO (D)</th>
-                    <td style="text-align: center;">R$ 0,00</td>
+                    <td style="text-align: center;"> 0,00</td>
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B - C + D)</th>
-                    <td style="text-align: center;">R$ <?php echo number_format(($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'] - $order['Order']['desconto_not_formated']), 2, ',', '.') ?></td>
+                    <td style="text-align: center;"> <?php echo number_format(($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'] - $order['Order']['desconto_not_formated']), 2, ',', '.') ?></td>
                     </tr>
             </table>
         </div>
