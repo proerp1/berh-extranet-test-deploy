@@ -1798,7 +1798,7 @@ class ExcelTemplate
 		->setCellValue('T1', "Status Operadora")
 		->setCellValue('U1', "Economia")
 		->setCellValue('V1', "Compra Operadora")
-		->setCellValue('X1', "Compra Operadora");
+		->setCellValue('X1', "Centro de Custo");
 
 
 		$indx = 1;
