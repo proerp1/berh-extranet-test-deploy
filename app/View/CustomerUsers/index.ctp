@@ -33,6 +33,12 @@ echo $this->element("abas_customers", array('id' => $id));
                         Importar
                     </a>
 
+                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
+                        <i class="fas fa-arrow-up"></i>
+                        Ativar/Inativar (csv)
+                    </a>
+
+                    <!--
                     <a href="#" id="ativar_sel" class="btn btn-secondary me-3" style="float:right">
                         <i class="fas fa-thumbs-up"></i>
                         Ativar em Lote
@@ -42,6 +48,7 @@ echo $this->element("abas_customers", array('id' => $id));
                         <i class="fas fa-thumbs-down"></i>
                         Inativar em Lote
                     </a>
+                    -->
 
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
@@ -254,6 +261,30 @@ echo $this->element("abas_customers", array('id' => $id));
 
                 <div class="modal-footer">
                     <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloAtualizacaoDiasUteis.csv" targe="_blank" download>Baixar Modelo</a>
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_ativar_inativar" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/customer_users/update_ativar_inativar/'; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="customer_id" value="<?php echo $id; ?>">
+                <div class="modal-body">
+                    <p>Atualizar Status dos Beneficiários</p>
+                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+                </div>
+
+                <div class="modal-footer">
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloAtivarInativarBeneficiariosLote.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>

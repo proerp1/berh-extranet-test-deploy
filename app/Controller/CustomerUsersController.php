@@ -1,6 +1,9 @@
 <?php
 App::uses('ItineraryCSVParser', 'Lib');
 App::uses('EconomicGroupCSVParser', 'Lib');
+
+use League\Csv\Reader;
+
 class CustomerUsersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -810,6 +813,88 @@ class CustomerUsersController extends AppController
         } else {
             $this->redirect('/customer_users/index/' . $customerId);
         }        
+    }
+
+    public function update_ativar_inativar()
+    {
+        if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
+            $customerId = $this->request->data['customer_id'];
+
+            $ret = $this->parseCSVAtivarInativar($customerId, $this->request->data['file']['tmp_name']);
+
+            foreach ($ret['data'] as $data) {
+                if ($data['status_id'] != 0) {
+                    $this->CustomerUser->id = $data['customer_user_id'];
+                    $this->CustomerUser->save([
+                        'CustomerUser' => [
+                            'status_id' => $data['status_id']
+                        ]
+                    ]);
+                }
+            }
+
+            $this->Flash->set(__('Status atualizados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect($this->referer());
+        } else {
+            $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+    }
+
+    private function parseCSVAtivarInativar($customerId, $tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        $data = [];
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);            
+
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                ]
+            ]);
+
+            $customer_user_id = null;
+            if (isset($existingUser['CustomerUser'])) {
+                $customer_user_id = $existingUser['CustomerUser']['id'];
+            }
+
+            $status_id = 0;
+            if (trim(strtolower($row[1])) == 'ativar') {
+                $status_id = 1;
+            } elseif (trim(strtolower($row[1])) == 'inativar') {
+                $status_id = 2;
+            }
+
+            $data[] = [
+                'customer_user_id' => $customer_user_id,
+                'status_id' => $status_id,
+                'document' => $row[0],
+                'status' => $row[1],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 
 }
