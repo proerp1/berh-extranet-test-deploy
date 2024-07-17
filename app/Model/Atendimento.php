@@ -70,17 +70,20 @@ class Atendimento extends AppModel
 
         return $queryData;
     }
-
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
             if (isset($val['Atendimento']['data_atendimento'])) {
                 $results[$key]['Atendimento']['data_atendimento'] = date('d/m/Y H:i', strtotime($val['Atendimento']['data_atendimento']));
             }
+            if (isset($val['Atendimento']['data_finalizacao'])) {
+                $results[$key]['Atendimento']['data_finalizacao'] = date('d/m/Y H:i', strtotime($val['Atendimento']['data_finalizacao']));
+            }
         }
-
+    
         return $results;
     }
+    
 
     public function beforeSave($options = [])
     {

@@ -22,7 +22,7 @@ class AtendimentosController extends AppController
         $condition = ["and" => ['Customer.cod_franquia' => CakeSession::read("Auth.User.resales")], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Atendimento.subject LIKE' => "%".$_GET['q']."%", 'Atendimento.message LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Atendimento.subject LIKE' => "%".$_GET['q']."%", 'Atendimento.message LIKE' => "%".$_GET['q']."%", 'Atendimento.id LIKE' => "%".$_GET['q']."%"]);
         }
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
@@ -42,12 +42,18 @@ class AtendimentosController extends AppController
     {
         $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Atendimento->id = $id;
+
         if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();
             if ($this->request->data['Atendimento']['file_atendimento']['name'] == '') {
                 unset($this->request->data['Atendimento']['file_atendimento']);
             }
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
+            // Check if status is being changed to 'atendido' (35)
+            if ($this->request->data['Atendimento']['status_id'] == 35) {
+                $this->request->data['Atendimento']['data_finalizacao'] = date('Y-m-d H:i:s');
+            }
 
             if ($this->request->data['Atendimento']['answer'] != "") {
                 $this->request->data['Atendimento']['date_answer'] = date("Y-m-d H:i:s");

@@ -69,12 +69,14 @@
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
 						<th class="ps-4 min-w-125px rounded-start">Status</th>
+						<th>Atendimento N°</th>
 						<th>Cliente</th>
 						<th>Documento</th>
 						<th>Departamento</th>
 						<th>Arquivo</th>
 						<th>Assunto</th>
 						<th>Enviado em</th>
+						<th>Finalizado em</th>
 						<th class="min-w-100px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -87,6 +89,7 @@
 										<?php echo $data[$i]["Status"]["name"] ?>
 									</span>
 								</td>
+								<td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["id"] ?></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["nome_primario"] ?></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["documento"] ?></td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Department"]["name"] ?></td>
@@ -95,6 +98,7 @@
 								</td>
 								<td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["subject"]; ?></td>
 								<td class="fw-bold fs-7"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["Atendimento"]["created"])); ?></td>
+								<td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["data_finalizacao"] ?></td>
 								<td class="fw-bold fs-7">
 									<a href="<?php echo $this->base.'/atendimentos/view/'.$data[$i]["Atendimento"]["id"]; ?>" class="btn btn-info btn-sm">
 										Visualizar
