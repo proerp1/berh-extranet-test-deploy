@@ -32,6 +32,16 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Pedido</label><?php echo $this->Form->input('order_id', ["type" => "number","class" => "form-control mb-3 mb-lg-0","placeholder" => "Digite o pedido","pattern" => "[0-9]*","inputmode" => "numeric"]);?>
+            </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Motivo</label><?php echo $this->Form->input('motivo', ["type" => "text","class" => "form-control mb-3 mb-lg-0","placeholder" => "Digite o motivo"]);?>
+            </div>
+
+        </div>
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
