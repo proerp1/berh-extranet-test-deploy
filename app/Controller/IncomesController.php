@@ -9,7 +9,7 @@ class IncomesController extends AppController
 
     public $paginate = [
         'Income' => [
-            'limit' => 175,
+            'limit' => 200,
             'order' => [
                 'Income.vencimento' => 'desc',
             ],
