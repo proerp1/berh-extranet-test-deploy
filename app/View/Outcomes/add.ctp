@@ -120,6 +120,11 @@
             </div>
 
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Pedido</label>
+                <?php echo $this->Form->input('order_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
+            </div>
+
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Descrição da conta</label>
                 <?php echo $this->Form->input('name', ["placeholder" => "Descrição da conta", "class" => "form-control mb-3 mb-lg-0"]);?>
             </div>
