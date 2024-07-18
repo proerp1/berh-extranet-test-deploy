@@ -2,10 +2,10 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome'];
+	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
 
 	public $paginate = [
-		'limit' => 200, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+		'limit' => 175, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
 	];
 
 	public function beforeFilter() { 
@@ -158,10 +158,21 @@ class OutcomesController extends AppController {
 	
 		$cancelarConta = $this->Permission->check(57, "escrita");
 	
+		$orderArr = $this->Order->find('all', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'contain' => ['Customer'],
+            'order' => 'Order.id'
+        ]);
+		$orders = [];
+        foreach ($orderArr as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
+	
+
 		$action = 'Contas a pagar';
 		$breadcrumb = ['Nova conta' => ''];
 		$this->set("form_action", "add");
-		$this->set(compact('statuses', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb'));
+		$this->set(compact('statuses', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'orders'));
 	}
 	
 
