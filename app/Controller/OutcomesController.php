@@ -260,7 +260,7 @@ class OutcomesController extends AppController {
 		$action = 'Contas a pagar';
 		$breadcrumb = ['Alterar conta' => ''];
 		$this->set("form_action", "edit");
-		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'order'));
+		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'orders'));
 		
 		$this->render("add");
 
