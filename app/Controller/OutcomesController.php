@@ -246,13 +246,21 @@ class OutcomesController extends AppController {
 		$suppliers = $this->Supplier->find('list', ['conditions' => ['Supplier.status_id' => 1], 'order' => 'Supplier.nome_fantasia']);
 		$planoContas = $this->PlanoConta->find('list', ['conditions' => ['PlanoConta.status_id' => 1], 'order' => ['PlanoConta.name' => 'asc']]);
 		$resales = $this->Resale->find("list", ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], 'order' => ['Resale.nome_fantasia' => 'asc']]);
-
+        $orderArr = $this->Order->find('all', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'contain' => ['Customer'],
+            'order' => 'Order.id'
+        ]);
+        $orders = [];
+        foreach ($orderArr as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
 		$cancelarConta = $this->Permission->check(57, "escrita");
 
 		$action = 'Contas a pagar';
 		$breadcrumb = ['Alterar conta' => ''];
 		$this->set("form_action", "edit");
-		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb'));
+		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'order'));
 		
 		$this->render("add");
 
