@@ -878,9 +878,9 @@ class CustomerUsersController extends AppController
             }
 
             $status_id = 0;
-            if (trim(strtolower($row[1])) == 'ativar') {
+            if (trim(strtolower($row[1])) == 'ativar' || trim(strtolower($row[1])) == 'ativo') {
                 $status_id = 1;
-            } elseif (trim(strtolower($row[1])) == 'inativar') {
+            } elseif (trim(strtolower($row[1])) == 'inativar' || trim(strtolower($row[1])) == 'inativo') {
                 $status_id = 2;
             }
 
