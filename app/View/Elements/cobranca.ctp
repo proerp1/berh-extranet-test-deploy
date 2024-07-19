@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="table-container mb-4">
-                        <h3>Custo BeRe-Tx Adm</h3>
+                        <h3>Custo BeRh-Tx Adm</h3>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
