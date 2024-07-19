@@ -108,13 +108,19 @@
                         <i class="fas fa-file-excel"></i>
                         Exportar
                     </a>
+                    <?php if ($filtersFilled): ?>
+                        <a href="<?php echo $this->base . '/orders/relatorio_processamento_index?' . $queryString; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
+                            <i class="fas fa-download"></i>
+                            Relatorio de Processamento
+                        </a>
+                    <?php endif; ?>
+
 
                  
-                    <a href="<?php echo $this->base . '/orders/relatorio_pedidos/' ; ?>" class="btn btn-sm btn-primary me-3">
-                    <i class="fas fa-download"></i>
-                     Relatório de Pedidos
-                </a>
-                    
+                    <a href="<?php echo $this->base . '/orders/relatorio_pedidos/'; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
+                        <i class="fas fa-download"></i>
+                        Relatório de Pedidos
+                    </a>
 
                     <a href="#" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_gerar_arquivo">
                         <i class="fas fa-file"></i>

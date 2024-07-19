@@ -34,8 +34,9 @@ class OrdersController extends AppController
         $this->Paginator->settings = $this->paginate;
     
         $condition = ["and" => [], "or" => []];
+        $filtersFilled = false;
     
-        if (isset($_GET['q']) and $_GET['q'] != "") {
+        if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
                 'Order.id' => $_GET['q'], 
                 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
@@ -43,36 +44,41 @@ class OrdersController extends AppController
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
+            $filtersFilled = true;
         }
     
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+            $filtersFilled = true;
         }
     
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
     
-        if ($get_de != '' and $get_ate != '') {
+        if ($get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
     
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
+            $filtersFilled = true;
         }
-
+    
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-        
-        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
+    
+        if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
     
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
-           
+            $filtersFilled = true;
         }
+    
+        $queryString = http_build_query($_GET);
     
         if (isset($_GET['exportar'])) {
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
@@ -154,7 +160,7 @@ class OrdersController extends AppController
     
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
     
 
@@ -2050,6 +2056,148 @@ $itens = $this->OrderItem->find('all', [
 
     }
 
+    public function relatorio_processamento_index()
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+    
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+    
+        $condition = ["and" => [], "or" => []];
+    
+        if (isset($_GET['q']) && $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'Order.id' => $_GET['q'], 
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+        }
+    
+        if (!empty($_GET['t'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+        }
+    
+        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
+    
+        if ($get_de != '' && $get_ate != '') {
+            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
+            ]);
+        }
+    
+        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
+        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
+    
+        if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
+            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
+            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
+            ]);
+        }
+    
+        $orders = $this->Order->find('all', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => $condition,
+        ]);
+    
+        $data = [];
+        foreach ($orders as $order) {
+            $orderItems = $this->OrderItem->find('all', [
+                'fields' => [
+                    'Order.*',
+                    'OrderItem.*',
+                    'Customer.*',
+                    'Status.*',
+                    'CustomerUser.*',
+                    'Supplier.*',
+                    'Benefit.*',
+                    'CustomerUserItinerary.*',
+                    'CostCenter.*',
+                    'EconomicGroups.*',
+                    'CustomerDepartments.*',
+                ],
+                'conditions' => ['OrderItem.order_id' => $order['Order']['id']],
+                'joins' => [
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Order.customer_id = Customer.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Order.status_id = Status.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'cost_center',
+                        'alias' => 'CostCenter',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'CustomerUser.customer_cost_center_id = CostCenter.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'economic_groups',
+                        'alias' => 'EconomicGroups',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'CustomerUser.economic_group_id = EconomicGroups.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'customer_departments',
+                        'alias' => 'CustomerDepartments',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'CustomerUser.customer_departments_id = CustomerDepartments.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ],
+                'group' => ['OrderItem.id'],
+                'order' => ['trim(CustomerUser.name)']
+            ]);
+    
+            $data = array_merge($data, $orderItems);
+        }
+        
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+    
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+    }
+    
     public function processamentopdf($id)
     {
         $this->layout = 'ajax';
