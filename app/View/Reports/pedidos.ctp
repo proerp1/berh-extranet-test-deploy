@@ -16,7 +16,7 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                 <?php if (!empty($_GET['q']) || !empty($_GET['c'])) { ?>
-                    <a href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos', '?' => $_SERVER['QUERY_STRING'] . '&processamento=1']); ?>" class="btn btn-primary me-3">
+                    <a href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'relatorio_processamento', '?' => $_SERVER['QUERY_STRING'] ]); ?>" class="btn btn-primary me-3">
                         <i class="fas fa-download"></i>
                         Processamento
                     </a>
