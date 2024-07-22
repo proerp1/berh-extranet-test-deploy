@@ -177,26 +177,25 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-    
-        set_time_limit(90);
+	    
+	    set_time_limit(90);
         ini_set('memory_limit', '-1');
-    
+	    
         $paginationConfig = $this->CustomReports->configPagination('pedidos');
         $this->Paginator->settings = $paginationConfig;
-    
-        // Condições de busca
+
         $condition = $this->pedidosConditions();
-    
+
         if (isset($_GET['excel'])) {
             $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
             $this->Paginator->settings = ['OrderItem' => $pag];
         }
-    
+
         if (isset($_GET['o'])) {
             $order_field = [
                 'nome' => 'CustomerUser.name',
                 'cpf' => 'CustomerUser.cpf',
-                'dep' => 'CustomerDepartments.name',
+                'dep' => 'CustomerDepartment.name',
                 'cod_o' => 'Supplier.code',
                 'cod_b' => 'Benefit.code',
                 'val_u' => 'CustomerUserItinerary.unit_price',
@@ -205,65 +204,131 @@ class ReportsController extends AppController
                 'var' => 'OrderItem.var',
                 'total' => 'OrderItem.subtotal',
             ];
-    
+
             $order = $order_field[$_GET['o']];
             $dir = isset($_GET['dir']) ? $_GET['dir'] : 'u';
             $direction = $dir == 'u' ? 'asc' : 'desc';
-    
+
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
-    
-        $data = $this->Paginator->paginate('OrderItem', $condition['condition'], [
-            'Order.id',
-            'OrderItem.*',
-            'CustomerUser.name',
-            'CustomerUser.document',
-            'CustomerDepartments.name',
-            'CostCenter.name',
-            'EconomicGroups.document',
-            'EconomicGroups.name'
-        ]);
-    
-        if (empty($data)) {
-            $this->Flash->error(__('Nenhum dado encontrado para os critérios fornecidos.'));
-            return;
-        }
-    
-        foreach ($data as &$item) {
-            $item['CustomerUser']['name'] = isset($item['CustomerUser']['name']) ? $item['CustomerUser']['name'] : '';
-            $item['CustomerUser']['document'] = isset($item['CustomerUser']['document']) ? $item['CustomerUser']['document'] : '';
-            $item['CustomerDepartments']['name'] = isset($item['CustomerDepartments']['name']) ? $item['CustomerDepartments']['name'] : '';
-            $item['CostCenter']['name'] = isset($item['CostCenter']['name']) ? $item['CostCenter']['name'] : '';
-            $item['EconomicGroups']['document'] = isset($item['EconomicGroups']['document']) ? $item['EconomicGroups']['document'] : '';
-            $item['EconomicGroups']['name'] = isset($item['EconomicGroups']['name']) ? $item['EconomicGroups']['name'] : '';
-        }
-    
+
+        $data = $this->Paginator->paginate('OrderItem', $condition['condition']);
+
+        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
+
         if (isset($_GET['excel'])) {
             $this->ExcelGenerator->gerarExcelOrders('PedidoCompras', $data);
+
             $this->redirect('/private_files/baixar/excel/PedidoCompras_xlsx');
         }
-    
-        if (isset($_GET['processamento'])) {
-            $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
-            $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
-        }
-    
-        $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
-    
+
+
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
-    
-        // Configurações de data
+
         $de = date('d/m/Y', strtotime($condition['de']));
         $para = date('d/m/Y', strtotime($condition['para']));
-    
+
         $action = 'Pedidos';
         $breadcrumb = ['Relatórios' => '', 'Pedidos' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
-    
-    
-    
 
+    public function relatorio_processamento()
+{
+    $this->layout = 'ajax';
+    $this->autoRender = false;
+
+    ini_set('memory_limit', '-1');
+
+    // Define conditions similarly to demanda_judicial
+    $condition = $this->pedidosConditions();
+
+    // Fetch the data based on the conditions
+    $data = $this->OrderItem->find('all', [
+        'fields' => [
+            'Order.*',
+            'OrderItem.*',
+            'Customer.*',
+            'Status.*',
+            'CustomerUser.*',
+            'Supplier.*',
+            'Benefit.*',
+            'CustomerUserItinerary.*',
+            'CostCenter.*',
+            'EconomicGroups.*',
+            'CustomerDepartments.*',
+        ],
+        'conditions' => $condition['condition'],
+        'joins' => [
+            [
+                'table' => 'customers',
+                'alias' => 'Customer',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'Order.customer_id = Customer.id'
+                ]
+            ],
+            [
+                'table' => 'statuses',
+                'alias' => 'Status',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'Order.status_id = Status.id'
+                ]
+            ],
+            [
+                'table' => 'cost_center',
+                'alias' => 'CostCenter',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'CustomerUser.customer_cost_center_id = CostCenter.id'
+                ]
+            ],
+            [
+                'table' => 'economic_groups',
+                'alias' => 'EconomicGroups',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'CustomerUser.economic_group_id = EconomicGroups.id'
+                ]
+            ],
+            [
+                'table' => 'customer_departments',
+                'alias' => 'CustomerDepartments',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'CustomerUser.customer_departments_id = CustomerDepartments.id'
+                ]
+            ],
+            [
+                'table' => 'benefits',
+                'alias' => 'Benefit',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'Benefit.id = CustomerUserItinerary.benefit_id'
+                ]
+            ],
+            [
+                'table' => 'suppliers',
+                'alias' => 'Supplier',
+                'type' => 'LEFT',
+                'conditions' => [
+                    'Supplier.id = Benefit.supplier_id'
+                ]
+            ]
+        ],
+        'group' => ['OrderItem.id'],
+        'order' => ['trim(CustomerUser.name)']
+    ]);
+
+    // Generate the Excel report with the fetched data
+    $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+
+    // Redirect to download the generated Excel file
+    $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+}
+
+    
     public function demanda_judicial()
     {
         ini_set('pcre.backtrack_limit', '15000000');
