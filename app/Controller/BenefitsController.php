@@ -31,6 +31,10 @@ class BenefitsController extends AppController
             ]);
         }
 
+        if (isset($_GET["t"]) and $_GET["t"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
         if (isset($_GET['exportar'])) {
             // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
 
