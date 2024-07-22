@@ -14,14 +14,50 @@
             </div>
             <div class="card-toolbar">
 
-            <a href="<?php echo $this->base.'/benefits/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
-                        <i class="fas fa-file-excel"></i>
-                        Exportar
-                    </a>
+                <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                    <i class="fas fa-filter"></i>
+                    Filtro
+                </button>
+
+                <a href="<?php echo $this->base.'/benefits/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                    <i class="fas fa-file-excel"></i>
+                    Exportar
+                </a>
                 
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                 </div>
+
+                <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
+                        <div class="px-7 py-5">
+                            <div class="fs-4 text-dark fw-bolder">Opções</div>
+                        </div>
+                        
+                        <div class="separator border-gray-200"></div>
+                        
+                        <div class="px-7 py-5">
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                    <option></option>
+                                    <?php
+                                        for($a = 0; $a < count($status); $a++){
+                                            $selected = "";
+                                            if (isset($_GET["t"])) {
+                                                if($status[$a]['Status']['id'] == $_GET["t"]){
+                                                    $selected = "selected";
+                                                }
+                                            }
+                                            echo '<option value="'.$status[$a]['Status']['id'].'" '.$selected.'>'.$status[$a]['Status']['name'].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
+                                <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                            </div>
+                        </div>
                 
             </div>
         </div>
@@ -35,8 +71,9 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         
-                         <th>ID</th>
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
+                        <th>ID</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th class="ps-4">Código</th>
                         <th>Tipo</th>
                         <th>Nome</th>
                         <th>Fornecedor</th>
@@ -48,7 +85,12 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
+                                        <?php echo $data[$i]["Status"]["name"] ?>
+                                    </span>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BenefitType"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
