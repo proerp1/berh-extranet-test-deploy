@@ -12,7 +12,12 @@ class Benefit extends AppModel {
         'BenefitType' => array(
             'className' => 'BenefitType',
             'foreignKey' => 'benefit_type_id'
-        )
+        ),
+	'Status' => [
+            'className' => 'Status',
+            'foreignKey' => 'status_id',
+            'conditions' => ['Status.categoria' => 1]
+        ],
     );
 
     var $virtualFields = array(
