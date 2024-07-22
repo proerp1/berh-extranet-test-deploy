@@ -73,7 +73,7 @@ class BenefitsController extends AppController
             }
         }
 
-        // $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']);
         $benefit_types = $this->BenefitType->find('list');
         $states = $this->CepbrEstado->find('list');
@@ -81,7 +81,7 @@ class BenefitsController extends AppController
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Novo Benefício' => ''];
         $this->set("form_action", "add");
-        $this->set(compact('action', 'breadcrumb', 'suppliers', 'benefit_types', 'states'));
+        $this->set(compact('action', 'breadcrumb', 'suppliers', 'benefit_types', 'statuses', 'states'));
     }
 
     public function edit($id = null)
@@ -131,7 +131,8 @@ class BenefitsController extends AppController
         $temp_errors = $this->Benefit->validationErrors;
         $this->request->data = $this->Benefit->read();
         $this->Benefit->validationErrors = $temp_errors;
-        
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']);
         $benefit_types = $this->BenefitType->find('list');
         $states = $this->CepbrEstado->find('list');
@@ -139,7 +140,7 @@ class BenefitsController extends AppController
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Alterar Benefício' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'suppliers', 'benefit_types', 'states'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'suppliers', 'benefit_types', 'statuses', 'states'));
         
         $this->render("add");
     }
