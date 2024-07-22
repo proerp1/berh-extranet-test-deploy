@@ -1845,12 +1845,95 @@ class ExcelTemplate
 				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
 				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
-				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
+				->setCellValue('Z'. $indx, $dados[$i]['Order']['economic_group_id']);
 
 				
 		}
 	}
 
+	public function getBeneficiario($spreadsheet, $dados)
+	{
+		ini_set('memory_limit', '300M'); // Aumentar o limite de memória
+	
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+	
+		$headers = [
+			'A1' => "Benefício(Benefício)",
+			'B1' => "Dias Úteis(Benefício)",
+			'C1' => "N° Cartão(Benefício)",
+			'D1' => "Quantidade(Benefício)",
+			'E1' => "Valor Unitario(Benefício)",
+			'F1' => "Valor por dia(Benefício)",
+			'G1' => "Status(beneficiário)",
+			'H1' => "Nome(beneficiário)",
+			'I1' => "Matricula(beneficiário)",
+			'J1' => "Email(beneficiário)",
+			'K1' => "Telefone(beneficiário)",
+			'L1' => "Celular(beneficiário)",
+			'M1' => "CPF(beneficiário)",
+			'N1' => "RG(beneficiário)",
+			'O1' => "Emissor(beneficiário)",
+			'P1' => "Estado Emissor(beneficiário)",
+			'Q1' => "Nome da Mãe(beneficiário)",
+			'R1' => "Sexo(beneficiário)",
+			'S1' => "Data Nascimento(beneficiário)",
+			'T1' => "Departamento(beneficiário)",
+			'U1' => "Cargo(beneficiário)",
+			'V1' => "Centro de Custo(beneficiário)",
+			'W1' => "Salário(beneficiário)",
+			'X1' => "Estado Civil(beneficiário)",
+			'Y1' => "Empresas do Grupo econômico(beneficiário)",
+			'Z1' => "Observações(beneficiário)",
+			'AA1' => "Nome (Grupo Econômico)",
+			'AB1' => "CNPJ (Grupo Econômico)"
+		];
+	
+		foreach ($headers as $cell => $text) {
+			$activeWorksheet->setCellValue($cell, $text);
+		}
+	
+		$indx = 1;
+		$chunkSize = 100; // Tamanho do lote
+		$totalRows = count($dados);
+	
+		for ($i = 0; $i < $totalRows; $i += $chunkSize) {
+			$chunk = array_slice($dados, $i, $chunkSize);
+	
+			foreach ($chunk as $data) {
+				$indx++;
+				$activeWorksheet
+					->setCellValue('A' . $indx, $data['CustomerUserItinerary']['benefit_id'] ?? '')
+					->setCellValue('B' . $indx, $data['CustomerUserItinerary']['working_days'] ?? '')
+					->setCellValue('C' . $indx, $data['CustomerUserItinerary']['card_number'] ?? '')
+					->setCellValue('D' . $indx, $data['CustomerUserItinerary']['quantity'] ?? '')
+					->setCellValue('E' . $indx, $data['CustomerUserItinerary']['unit_price'] ?? '')
+					->setCellValue('F' . $indx, $data['CustomerUserItinerary']['price_per_day'] ?? '')
+					->setCellValue('G' . $indx, $data['CustomerUser']['status_id'] ?? '')
+					->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
+					->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
+					->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
+					->setCellValue('K' . $indx, $data['CustomerUser']['tel'] ?? '')
+					->setCellValue('L' . $indx, $data['CustomerUser']['cel'] ?? '')
+					->setCellValue('M' . $indx, $data['CustomerUser']['cpf'] ?? '')
+					->setCellValue('N' . $indx, $data['CustomerUser']['rg'] ?? '')
+					->setCellValue('O' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
+					->setCellValue('P' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
+					->setCellValue('Q' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
+					->setCellValue('R' . $indx, $data['CustomerUser']['sexo'] ?? '')
+					->setCellValue('S' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
+					->setCellValue('T' . $indx, $data['CustomerUser']['customer_departments_id'] ?? '')
+					->setCellValue('U' . $indx, $data['CustomerUser']['customer_positions_id'] ?? '')
+					->setCellValue('V' . $indx, $data['CustomerUser']['customer_cost_center_id'] ?? '')
+					->setCellValue('W' . $indx, $data['CustomerUser']['customer_salary_id'] ?? '')
+					->setCellValue('X' . $indx, $data['CustomerUser']['marital_status_id'] ?? '')
+					->setCellValue('Y' . $indx, $data['CustomerUser']['EconomicGroup'] ?? '')
+					->setCellValue('Z' . $indx, $data['CustomerUser']['observation'] ?? '')
+					->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
+					->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
+			}
+		}
+	}
+	
 
 
 	public function getProposal($spreadsheet, $dados)
