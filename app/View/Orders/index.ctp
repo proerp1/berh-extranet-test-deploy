@@ -196,6 +196,8 @@
                     <th>Repasse</th>
                     <th>Taxa</th>
                     <th>Desconto</th>
+                    <th>TPP</th>
+                    <th>Economia</th>
                     <th>Total</th>
                     <th>Usuário</th>
                     <th>Grupo Econômico</th>
@@ -221,6 +223,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["saldo"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
