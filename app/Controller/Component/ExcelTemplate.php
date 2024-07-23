@@ -1845,7 +1845,7 @@ class ExcelTemplate
 				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
 				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
-				->setCellValue('Z'. $indx, $dados[$i]['Order']['economic_group_id']);
+				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
 
 				
 		}
