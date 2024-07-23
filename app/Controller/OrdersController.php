@@ -19,7 +19,10 @@ class OrdersController extends AppController
     public $paginate = [
         'Order' => [
             'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
-            'limit' => 20, 'order' => ['Order.id' => 'desc']
+            'limit' => 50, 'order' => ['Order.id' => 'desc']
+        ],
+        'OrderBalance' => [
+            'limit' => 100
         ]
     ];
 
