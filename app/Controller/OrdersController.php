@@ -20,6 +20,9 @@ class OrdersController extends AppController
         'Order' => [
             'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
             'limit' => 50, 'order' => ['Order.id' => 'desc']
+        ],
+        'OrderBalance' => [
+            'limit' => 100
         ]
     ];
 
