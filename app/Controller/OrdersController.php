@@ -33,9 +33,12 @@ class OrdersController extends AppController
 
     public function index()
     {
+        ini_set('pcre.backtrack_limit', '15000000');
+
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-    
+        ini_set('memory_limit', '-1');
+
         $condition = ["and" => [], "or" => []];
         $filtersFilled = false;
     
