@@ -1389,7 +1389,7 @@ class OrdersController extends AppController
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo", 
                             "(SELECT max(b.pedido_operadora) as pedido_operadora 
-                                FROM order_balancesa b 
+                                FROM order_balances b 
                                 WHERE b.benefit_id = Benefit.id 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
