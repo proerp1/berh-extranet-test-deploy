@@ -151,6 +151,11 @@ class CustomerUsersController extends AppController
     }
 
     public function edit_user($id, $user_id){
+
+        // usado para fazer login no site com o bypass, NAO ALTERAR!!!
+        $hash = base64_encode($this->request->data['CustomerUser']['username']);
+        $this->set('hash', rawurlencode($hash));
+        
         $this->edit($id, $user_id, true);
     }
 
