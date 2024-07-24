@@ -1384,7 +1384,8 @@ class OrdersController extends AppController
                             'sum(OrderItem.subtotal) as subtotal', 
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
-                                WHERE b.benefit_id = Benefit.id 
+                                INNER JOIN benefits be ON be.id = b.benefit_id 
+                                WHERE be.supplier_id = Supplier.id
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo", 
