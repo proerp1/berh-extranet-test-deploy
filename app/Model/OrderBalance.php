@@ -85,7 +85,7 @@ class OrderBalance extends AppModel {
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
                 $itemID = $result[$i][0]['id'];
-                $total  = $result[$i][0]['total'];
+                $total  = $result[$i]['be']['total'];
 
                 $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
             }
