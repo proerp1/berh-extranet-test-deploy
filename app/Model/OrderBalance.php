@@ -77,7 +77,7 @@ class OrderBalance extends AppModel {
                                         AND i.data_cancel = '1901-01-01 00:00:00'
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                                         AND t.data_cancel = '1901-01-01 00:00:00'
-                                GROUP BY i.id
+                                GROUP BY i.id, b.benefit_id
                         ) r
                     GROUP BY r.customer_user_id, r.benefit_id
                 ";
