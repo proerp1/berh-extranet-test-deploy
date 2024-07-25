@@ -60,6 +60,8 @@ class OrderBalance extends AppModel {
 	}
 
     public function update_order_item_saldo($orderID, $userID) {
+        $this->query("UPDATE order_items SET saldo = 0, total_saldo = 0, updated = now(), updated_user_id = ".$userID." WHERE order_id = ".$orderID);
+
         $sql = "SELECT MIN(i.id) AS id, SUM(COALESCE(b.total, 0)) AS total 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
