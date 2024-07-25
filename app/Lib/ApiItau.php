@@ -170,12 +170,12 @@ class ApiItau extends Controller
                         ],
                     ],
                     'multa' => [
-                        'codigo_tipo_multa' => '01',
+                        'codigo_tipo_multa' => '03',
                         'quantidade_dias_multa' => 1,
                         'valor_multa' => $multa,
                     ],
                     'juros' => [
-                        'codigo_tipo_juros' => '91',
+                        'codigo_tipo_juros' => '05',
                         'quantidade_dias_juros' => 1,
                         'percentual_juros' => $juros,
                     ],
@@ -246,7 +246,7 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/multa", [
             'json' => [
                 'multa' => [
-                    'codigo_tipo_multa' => '01',
+                    'codigo_tipo_multa' => '03',
                     'quantidade_dias_multa' => 1,
                     'valor_multa' => $multa,
                 ],
@@ -259,7 +259,7 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/juros", [
             'json' => [
                 'juros' => [
-                    'codigo_tipo_juros' => '90',
+                    'codigo_tipo_juros' => '05',
                     'quantidade_dias_juros' => 1,
                     'percentual_juros' => $juros,
                 ],
