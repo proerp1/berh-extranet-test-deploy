@@ -83,6 +83,8 @@ class OrderBalance extends AppModel {
                 ";
         $result = $this->query($sql);
 
+        debug($result);
+
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
                 $itemID = $result[$i][0]['id'];
@@ -110,6 +112,8 @@ class OrderBalance extends AppModel {
                 $this->query("UPDATE orders SET saldo = ".$saldo.", total_saldo = ".$total_saldo.", updated = now() WHERE id = ".$orderID);
             }
         }
+
+        die;
 
         return true;
     }
