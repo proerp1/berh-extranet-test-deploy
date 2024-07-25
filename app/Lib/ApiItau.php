@@ -174,16 +174,16 @@ class ApiItau extends Controller
                         'quantidade_dias_multa' => 1,
                         'valor_multa' => $multa,*/
                         'codigo_tipo_multa' => '03',
-                        'quantidade_dias_multa' => false,
-                        'valor_multa' => false,
+                        'quantidade_dias_multa' => 0,
+                        'valor_multa' => 0,
                     ],
                     'juros' => [
                         /*'codigo_tipo_juros' => '05',
                         'quantidade_dias_juros' => 1,
                         'percentual_juros' => $juros,*/
                         'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => false,
-                        'percentual_juros' => false,
+                        'quantidade_dias_juros' => 0,
+                        'percentual_juros' => 0,
                     ],
                     'recebimento_divergente' => [
                         'codigo_tipo_autorizacao' => '03',
@@ -256,8 +256,8 @@ class ApiItau extends Controller
                     'quantidade_dias_multa' => 1,
                     'valor_multa' => $multa,*/
                     'codigo_tipo_multa' => '03',
-                    'quantidade_dias_multa' => false,
-                    'valor_multa' => false,
+                    'quantidade_dias_multa' => 0,
+                    'valor_multa' => 0,
                 ],
             ],
         ]);
@@ -272,8 +272,8 @@ class ApiItau extends Controller
                     'quantidade_dias_juros' => 1,
                     'percentual_juros' => $juros,*/
                     'codigo_tipo_juros' => '05',
-                    'quantidade_dias_juros' => false,
-                    'percentual_juros' => false,
+                    'quantidade_dias_juros' => 0,
+                    'percentual_juros' => 0,
                 ],
             ],
         ]);
