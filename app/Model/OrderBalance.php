@@ -60,7 +60,7 @@ class OrderBalance extends AppModel {
 	}
 
     public function update_order_item_saldo($orderID, $userID) {
-        $sql = "SELECT i.id, i.saldo, coalesce(b.total, 0) AS total 
+        $sql = "SELECT MIN(i.id) AS id, SUM(COALESCE(b.total, 0)) AS total 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
                         INNER JOIN order_balances b ON b.order_id = o.id
@@ -73,13 +73,14 @@ class OrderBalance extends AppModel {
                             AND i.data_cancel = '1901-01-01 00:00:00'
                             AND b.data_cancel = '1901-01-01 00:00:00'
                             AND t.data_cancel = '1901-01-01 00:00:00'
+                    GROUP BY b.customer_user_id
                 ";
         $result = $this->query($sql);
 
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
-                $itemID = $result[$i]['i']['id'];
-                $total = $result[$i][0]['total'];
+                $itemID = $result[$i][0]['id'];
+                $total  = $result[$i][0]['total'];
 
                 $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
             }
