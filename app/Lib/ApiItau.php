@@ -170,14 +170,20 @@ class ApiItau extends Controller
                         ],
                     ],
                     'multa' => [
-                        'codigo_tipo_multa' => '03',
+                        /*'codigo_tipo_multa' => '03',
                         'quantidade_dias_multa' => 1,
-                        'valor_multa' => $multa,
+                        'valor_multa' => $multa,*/
+                        'codigo_tipo_multa' => '03',
+                        'quantidade_dias_multa' => false,
+                        'valor_multa' => false,
                     ],
                     'juros' => [
-                        'codigo_tipo_juros' => '05',
+                        /*'codigo_tipo_juros' => '05',
                         'quantidade_dias_juros' => 1,
-                        'percentual_juros' => $juros,
+                        'percentual_juros' => $juros,*/
+                        'codigo_tipo_juros' => '05',
+                        'quantidade_dias_juros' => false,
+                        'percentual_juros' => false,
                     ],
                     'recebimento_divergente' => [
                         'codigo_tipo_autorizacao' => '03',
@@ -246,9 +252,12 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/multa", [
             'json' => [
                 'multa' => [
-                    'codigo_tipo_multa' => '03',
+                    /*'codigo_tipo_multa' => '03',
                     'quantidade_dias_multa' => 1,
-                    'valor_multa' => $multa,
+                    'valor_multa' => $multa,*/
+                    'codigo_tipo_multa' => '03',
+                    'quantidade_dias_multa' => false,
+                    'valor_multa' => false,
                 ],
             ],
         ]);
@@ -259,9 +268,12 @@ class ApiItau extends Controller
         return $this->makeRequest('PATCH', "/boletos/{$id_boleto}/juros", [
             'json' => [
                 'juros' => [
-                    'codigo_tipo_juros' => '05',
+                    /*'codigo_tipo_juros' => '05',
                     'quantidade_dias_juros' => 1,
-                    'percentual_juros' => $juros,
+                    'percentual_juros' => $juros,*/
+                    'codigo_tipo_juros' => '05',
+                    'quantidade_dias_juros' => false,
+                    'percentual_juros' => false,
                 ],
             ],
         ]);
