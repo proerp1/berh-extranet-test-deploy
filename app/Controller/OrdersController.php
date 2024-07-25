@@ -22,7 +22,9 @@ class OrdersController extends AppController
             'limit' => 50, 'order' => ['Order.id' => 'desc']
         ],
         'OrderBalance' => [
-            'limit' => 100
+            'limit' => 100,
+            'order' => ['CustomerUser.name' => 'asc', 'OrderBalance.document' => 'asc']
+
         ]
     ];
 

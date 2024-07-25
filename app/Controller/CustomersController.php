@@ -1783,10 +1783,25 @@ class CustomersController extends AppController
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-        $this->Paginator->settings = ['Order' => [
-            'limit' => 25,
-            'order' => ['Order.created' => 'asc'],
-            
+        $this->Paginator->settings = [
+            'Order' => [
+                'fields' => [
+                    'Order.*',
+                    'Income.*',
+                    'Status.*',
+                    'Creator.*',
+                    'CustomerCreator.*',
+                    'EconomicGroup.*',
+                    "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                        FROM order_balances b 
+                            INNER JOIN orders o ON o.id = b.order_id 
+                        WHERE o.id = Order.id 
+                                AND b.data_cancel = '1901-01-01 00:00:00' 
+                                AND o.data_cancel = '1901-01-01 00:00:00' 
+                    ) as total_balances"
+                ],
+                'limit' => 25,
+                'order' => ['Order.created' => 'asc'],            
             ]
         ];
 
