@@ -62,27 +62,31 @@ class OrderBalance extends AppModel {
     public function update_order_item_saldo($orderID, $userID) {
         $this->query("UPDATE order_items SET saldo = 0, total_saldo = 0, updated = now(), updated_user_id = ".$userID." WHERE order_id = ".$orderID);
 
-        $sql = "SELECT MIN(i.id) AS id, SUM(COALESCE(b.total, 0)) AS total 
-                    FROM orders o
-                        INNER JOIN order_items i ON i.order_id = o.id
-                        INNER JOIN order_balances b ON b.order_id = o.id
-                        INNER JOIN customer_user_itineraries t ON t.id = i.customer_user_itinerary_id
-                    WHERE o.id = ".$orderID."
-                            AND o.customer_id = t.customer_id
-                            AND b.customer_user_id = i.customer_user_id
-                            AND b.benefit_id = t.benefit_id
-                            AND o.data_cancel = '1901-01-01 00:00:00'
-                            AND i.data_cancel = '1901-01-01 00:00:00'
-                            AND b.data_cancel = '1901-01-01 00:00:00'
-                            AND t.data_cancel = '1901-01-01 00:00:00'
-                    GROUP BY b.customer_user_id, b.benefit_id
+        $sql = "SELECT MIN(r.id) AS id, r.total AS total
+                    FROM (
+                            SELECT i.id, b.customer_user_id, b.benefit_id, SUM(COALESCE(b.total, 0)) AS total
+                                FROM orders o
+                                    INNER JOIN order_items i ON i.order_id = o.id
+                                    INNER JOIN order_balances b ON b.order_id = o.id
+                                    INNER JOIN customer_user_itineraries t ON t.id = i.customer_user_itinerary_id
+                                WHERE o.id = ".$orderID."
+                                        AND o.customer_id = t.customer_id
+                                        AND b.customer_user_id = i.customer_user_id
+                                        AND b.benefit_id = t.benefit_id
+                                        AND o.data_cancel = '1901-01-01 00:00:00'
+                                        AND i.data_cancel = '1901-01-01 00:00:00'
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                                        AND t.data_cancel = '1901-01-01 00:00:00'
+                                GROUP BY i.id
+                        ) r
+                    GROUP BY r.customer_user_id, r.benefit_id
                 ";
         $result = $this->query($sql);
 
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
                 $itemID = $result[$i][0]['id'];
-                $total  = $result[$i][0]['total'];
+                $total  = $result[$i]['r']['total'];
 
                 $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
             }
