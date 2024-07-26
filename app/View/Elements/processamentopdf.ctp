@@ -83,7 +83,7 @@
                                         <td><?php echo $item['CustomerUser']['name']; ?></td>
                                         <td><?php echo $item['CustomerUser']['matricula']; ?></td>
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>
-                                        <td></td>
+                                        <td><?php echo $item['CustomerUserItinerary']['card_number']; ?></td>
                                         <td><?php echo $item['OrderItem']['working_days']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['quantity']; ?></td>
                                         <td><?php echo $item['Supplier']['id']; ?></td>

@@ -1835,7 +1835,7 @@ class ExcelTemplate
 				->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['name'])
 				->setCellValue('H'. $indx, $dados[$i]['CustomerUser']['matricula'])
 				->setCellValue('I'. $indx, $dados[$i]['CustomerUser']['cpf'])
-				//->setCellValue('J'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
+				->setCellValue('J'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
 				->setCellValue('K'. $indx, $dados[$i]['OrderItem']['working_days'])
 				->setCellValue('L'. $indx, $dados[$i]['Supplier']['id'])
 				->setCellValue('M'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
