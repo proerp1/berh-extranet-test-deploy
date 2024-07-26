@@ -382,6 +382,7 @@ class OutcomesController extends AppController {
             $this->Docoutcome->create();
             if ($this->Docoutcome->validates()) {
                 $this->request->data['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+		$this->request->data['Docoutcome']['status_id'] = 1;
                 if ($this->Docoutcome->save($this->request->data)) {
                     $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => "../outcomes/documents/" . $id]);
