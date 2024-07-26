@@ -1805,8 +1805,7 @@ class ExcelTemplate
 		->setCellValue('W1', "Departamento")
 		->setCellValue('X1', "Centro de Custo")
 		->setCellValue('Y1', " CNPJ Grupo Economico")
-		->setCellValue('Z1', "Nome Grupo Economico")
-		->setCellValue('AA1', "Economia");
+		->setCellValue('Z1', "Nome Grupo Economico");
 
 
 
@@ -1851,8 +1850,7 @@ class ExcelTemplate
 				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
 				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
-				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name'])
-				->setCellValue('AA'. $indx, $dados[$i]['Order']['saldo']);
+				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
 
 
 				
