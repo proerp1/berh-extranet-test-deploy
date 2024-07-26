@@ -1543,7 +1543,7 @@ class OrdersController extends AppController
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $data = $this->Paginator->paginate('OrderBalance', $condition);

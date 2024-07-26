@@ -65,7 +65,8 @@ class OrderBalance extends AppModel {
         $sql = "SELECT MIN(i.id) AS id, be.total AS total 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
-                        INNER JOIN customer_user_itineraries t ON t.id = i.customer_user_itinerary_id
+                        INNER JOIN customer_user_itineraries t ON t.id = i.customer_user_itinerary_id 
+                                                                    AND o.customer_id = t.customer_id
                         INNER JOIN (SELECT b.customer_user_id, b.benefit_id, b.order_id, SUM(b.total) AS total
                                         FROM order_balances b
                                         WHERE b.data_cancel = '1901-01-01'
@@ -73,11 +74,9 @@ class OrderBalance extends AppModel {
                                     ) be ON be.customer_user_id = i.customer_user_id
                                             AND be.benefit_id = t.benefit_id
                                             AND be.order_id = o.id
-                    WHERE o.id = ".$orderID."
-                            AND o.customer_id = t.customer_id
+                    WHERE o.id = ".$orderID." 
                             AND o.data_cancel = '1901-01-01 00:00:00'
                             AND i.data_cancel = '1901-01-01 00:00:00'
-                            AND t.data_cancel = '1901-01-01 00:00:00'
                     GROUP BY be.customer_user_id, be.benefit_id
                 ";
         $result = $this->query($sql);
