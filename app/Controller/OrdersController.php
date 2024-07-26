@@ -421,6 +421,7 @@ class OrdersController extends AppController
             }
 
             if ($this->Order->save($order)) {
+                $this->Order->reProcessAmounts($id);
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'edit/' . $id]);
             } else {
