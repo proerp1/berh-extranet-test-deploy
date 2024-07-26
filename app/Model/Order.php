@@ -251,6 +251,9 @@ class Order extends AppModel
         ]);
 
         $items[0]['total'] = $items[0]['total'] + $tpp_fee;
+        if(!empty($order['Order']['desconto']) && $order['Order']['desconto'] > 0){
+            $items[0]['total'] = $items[0]['total'] - $order['Order']['desconto'];
+        }
 
         $commissionFee = $items[0]['commission_fee'];
         $transferFee = $items[0]['transfer_fee'];
