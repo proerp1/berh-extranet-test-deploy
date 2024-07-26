@@ -453,6 +453,55 @@ class OutcomesController extends AppController {
             $this->redirect(['action' => 'documents/' . $outcome_id]);
         }
     }
-    
 
+	public function download_zip_document()
+    {
+        $this->autoRender = false;
+        $this->layout = false;
+
+		$outcomeIds = $this->request->data['outcomeIds'];
+		$status = $this->request->data['status'];
+		$arq_file = false;
+
+		if ($status == 11) {
+			$zip_name = "arquivos_programado.zip";
+		} else {
+			$zip_name = "arquivos_aprovado.zip";
+		}
+	    
+	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
+
+	    if (file_exists($zip_file)) {
+	    	unlink($zip_file);
+	    }
+	    
+	    $zip = new ZipArchive();
+	    $zip->open($zip_file, ZIPARCHIVE::CREATE);
+
+		$docs = $this->Docoutcome->find('all', ['conditions' => ['Docoutcome.outcome_id' => $outcomeIds], 'fields' => ['Docoutcome.id', 'Docoutcome.outcome_id', 'Docoutcome.file'] ]);
+
+		foreach ($docs as $doc) {
+	        $caminho  = APP."webroot/files/docoutcome/file/".$doc["Docoutcome"]["id"]."/";
+
+	        if (file_exists($caminho)) {
+		        $files = scandir($caminho);
+		        $f = $doc["Docoutcome"]["file"];
+
+		        foreach ($files as $key => $arq) {
+		            if($arq != '.' && $arq != '..'){
+		                if (strpos($arq, $f) !== false) {
+		                	$arq_file = true;
+		                    $zip->addFile($caminho.$arq, $doc["Docoutcome"]["id"]."_".$arq);
+		                }
+		            }
+		        }
+	        }
+		}
+
+		if ($arq_file) {
+        	return json_encode(['success' => true, 'url_zip' => '../files/docoutcome/file/'.$zip_name]);
+		} else {
+			return json_encode(['success' => false]);
+		}
+    }
 }
