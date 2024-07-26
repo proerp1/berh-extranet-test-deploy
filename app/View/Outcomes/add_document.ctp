@@ -9,11 +9,6 @@
             <input type="hidden" name="data[Docoutcome][outcome_id]" value="<?php echo $id ?>">
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Status</label>
-                <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
-            </div>
-
-            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Nome</label>
                 <?php echo $this->Form->input('name', array("placeholder" => "Nome", "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
