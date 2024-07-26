@@ -225,7 +225,8 @@ class Order extends AppModel
                 'Order.id' => $this->id
             ],
             'fields' => [
-                'Order.customer_id'
+                'Order.customer_id',
+                'Order.desconto'
             ]
         ]);
 
@@ -251,8 +252,8 @@ class Order extends AppModel
         ]);
 
         $items[0]['total'] = $items[0]['total'] + $tpp_fee;
-        if(!empty($order['Order']['desconto']) && $order['Order']['desconto'] > 0){
-            $items[0]['total'] = $items[0]['total'] - $order['Order']['desconto'];
+        if(!empty($order['Order']['desconto_not_formated']) && $order['Order']['desconto_not_formated'] > 0){
+            $items[0]['total'] = $items[0]['total'] - $order['Order']['desconto_not_formated'];
         }
 
         $commissionFee = $items[0]['commission_fee'];
