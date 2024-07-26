@@ -182,8 +182,7 @@ class CustomerUsersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        // usado para fazer login no site com o bypass, NAO ALTERAR!!!
-        $hash = base64_encode($this->request->data['CustomerUser']['email']);
+        
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar '.$action => ''
@@ -196,7 +195,10 @@ class CustomerUsersController extends AppController
         $marital_statuses = $this->MaritalStatus->find('list', ['fields' => ['id', 'status']]);
         $economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $id]]);
 
+        // usado para fazer login no site com o bypass, NAO ALTERAR!!!
+        $hash = base64_encode($this->request->data['CustomerUser']['email']);
         $this->set('hash', rawurlencode($hash));
+        
         $form_action = $is_admin ? "/customer_users/edit/".$id.'/'.$user_id.'/true' : "/customer_users/edit/".$id.'/'.$user_id;
         $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'estados', 'is_admin', 'form_action'));
         $this->set(compact('customer_departments', 'customer_positions', 'customer_cost_centers', 'customer_salaries', 'marital_statuses', 'economicGroups'));

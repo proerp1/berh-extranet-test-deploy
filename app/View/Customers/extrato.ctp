@@ -188,7 +188,9 @@
                     <?php if ($data) { ?>
                         <?php for ($i = 0; $i < count($data); $i++) { ?>
                             <?php
-                                $saldo = $saldo + ($data[$i]["Order"]["saldo_not_formated"] - $data[$i]["Order"]['desconto_not_formated']);
+                                $economia = $data[$i][0]["total_balances"];
+                                $total_economia = ($data[$i]["Order"]['subtotal_not_formated'] - $data[$i][0]["total_balances"]);
+                                $saldo = $saldo + ($data[$i][0]["total_balances"] - $data[$i]["Order"]['desconto_not_formated']);
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
@@ -204,9 +206,9 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["saldo"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total_saldo"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.') ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($economia,2,',','.') ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.') ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.') ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
@@ -217,7 +219,7 @@
                 </tbody>
                 <tfoot>
                     <th colspan="11" class="fw-bold fs-7 ps-4">Total:</th>
-                    <th class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.'); ?></th>
+                    <th class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></th>
                 </tfoot>
                 </table>
             </div>

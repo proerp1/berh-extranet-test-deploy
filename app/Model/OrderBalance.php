@@ -60,26 +60,32 @@ class OrderBalance extends AppModel {
 	}
 
     public function update_order_item_saldo($orderID, $userID) {
-        $sql = "SELECT i.id, i.saldo, coalesce(b.total, 0) AS total 
+        $this->query("UPDATE order_items SET saldo = 0, total_saldo = 0, updated = now(), updated_user_id = ".$userID." WHERE order_id = ".$orderID);
+
+        $sql = "SELECT MIN(i.id) AS id, be.total AS total 
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
-                        INNER JOIN order_balances b ON b.order_id = o.id
                         INNER JOIN customer_user_itineraries t ON t.id = i.customer_user_itinerary_id
+                        INNER JOIN (SELECT b.customer_user_id, b.benefit_id, b.order_id, SUM(b.total) AS total
+                                        FROM order_balances b
+                                        WHERE b.data_cancel = '1901-01-01'
+                                        GROUP BY b.customer_user_id, b.benefit_id
+                                    ) be ON be.customer_user_id = i.customer_user_id
+                                            AND be.benefit_id = t.benefit_id
+                                            AND be.order_id = o.id
                     WHERE o.id = ".$orderID."
                             AND o.customer_id = t.customer_id
-                            AND b.customer_user_id = i.customer_user_id
-                            AND b.benefit_id = t.benefit_id
                             AND o.data_cancel = '1901-01-01 00:00:00'
                             AND i.data_cancel = '1901-01-01 00:00:00'
-                            AND b.data_cancel = '1901-01-01 00:00:00'
                             AND t.data_cancel = '1901-01-01 00:00:00'
+                    GROUP BY be.customer_user_id, be.benefit_id
                 ";
         $result = $this->query($sql);
 
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
-                $itemID = $result[$i]['i']['id'];
-                $total = $result[$i][0]['total'];
+                $itemID = $result[$i][0]['id'];
+                $total  = $result[$i]['be']['total'];
 
                 $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
             }

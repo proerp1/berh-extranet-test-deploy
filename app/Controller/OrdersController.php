@@ -22,7 +22,9 @@ class OrdersController extends AppController
             'limit' => 50, 'order' => ['Order.id' => 'desc']
         ],
         'OrderBalance' => [
-            'limit' => 100
+            'limit' => 100,
+            'order' => ['CustomerUser.name' => 'asc', 'OrderBalance.document' => 'asc']
+
         ]
     ];
 
@@ -419,6 +421,7 @@ class OrdersController extends AppController
             }
 
             if ($this->Order->save($order)) {
+                $this->Order->reProcessAmounts($id);
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'edit/' . $id]);
             } else {
@@ -1384,7 +1387,8 @@ class OrdersController extends AppController
                             'sum(OrderItem.subtotal) as subtotal', 
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
-                                WHERE b.benefit_id = Benefit.id 
+                                INNER JOIN benefits be ON be.id = b.benefit_id 
+                                WHERE be.supplier_id = Supplier.id
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo", 
