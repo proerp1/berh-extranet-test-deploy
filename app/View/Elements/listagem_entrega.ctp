@@ -30,13 +30,43 @@
                                     <th>Dias</th>
                                     <th>Qtde</th>
                                     <th>Unit</th>
-                                    <th>Desconto</th>
                                     <th>Valor Total</th>
                                     <th>Assinatura</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($itens as $item) { ?>
+                                <?php
+                                $currentUserId = null;
+                                $totalInicial = 0;
+                                $totalDesconto = 0;
+                                $totalDisponibilizado = 0;
+
+                                foreach ($itens as $index => $item) {
+                                    // Se mudar de usuário ou for o último item, exibe os totais
+                                    if ($currentUserId !== $item['CustomerUser']['id'] && $currentUserId !== null) {
+                                        ?>
+                                        <tr>
+                                            <td colspan="14">
+                                                <div class="totals">
+                                                    <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
+                                                    <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
+                                                    <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        // Reseta os totais para o próximo usuário
+                                        $totalInicial = 0;
+                                        $totalDesconto = 0;
+                                        $totalDisponibilizado = 0;
+                                    }
+                                    
+                                    $currentUserId = $item['CustomerUser']['id'];
+
+                                    $totalInicial += (float)$item['OrderItem']['subtotal_not_formated'];
+                                    $totalDesconto += (float)$item['OrderItem']['saldo'];
+                                    $totalDisponibilizado += (float)$item['OrderItem']['subtotal_not_formated'] - (float)$item['OrderItem']['saldo_not_formated'];
+                                    ?>
                                     <tr>
                                         <td><?php echo $item['Customer']['nome_secundario']; ?></td>
                                         <td><?php echo $item['Customer']['documento']; ?></td>
@@ -49,11 +79,30 @@
                                         <td><?php echo $item[0]['working_days']; ?></td>
                                         <td><?php echo $item[0]['qtd']; ?></td>
                                         <td><?php echo $item['CustomerUserItinerary']['unit_price']; ?></td>
-                                        <td><?php echo $item['OrderItem']['saldo']; ?></td>
                                         <td><?php echo number_format(($item['OrderItem']['subtotal_not_formated'] - $item['OrderItem']['saldo_not_formated']), 2, ',', '.'); ?></td>
                                         <td></td>
                                     </tr>
-                                <?php } ?>
+                                    <?php
+                                    // Se mudar de usuário, exibe os totais
+                                    if ($currentUserId !== $item['CustomerUser']['id'] && $currentUserId !== null) {
+                                        ?>
+                                        <tr>
+                                            <td colspan="14">
+                                                <div class="totals">
+                                                    <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
+                                                    <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
+                                                    <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                        // Reseta os totais para o próximo usuário
+                                        $totalInicial = 0;
+                                        $totalDesconto = 0;
+                                        $totalDisponibilizado = 0;
+                                    }
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -85,5 +134,12 @@
         background-color: #f9f9f9;
     }
 
-    .break { page-break-after: always !important; }
+    .totals {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        font-weight: bold;
+        padding: 10px 0;
+    }
 </style>
