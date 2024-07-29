@@ -849,10 +849,16 @@ class OrdersController extends AppController
         foreach ($ret['data'] as $data) {
             $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
 
+            if (isset($benefit['Benefit'])) {
+                $benefit_id = $benefit['Benefit']['id'];
+            } else {
+                $benefit_id = null;
+            }
+
             $orderBalanceData = [
                 'order_id' => $orderId,
                 'customer_user_id' => $data['customer_user_id'],
-                'benefit_id' => $benefit['Benefit']['id'],
+                'benefit_id' => $benefit_id,
                 'document' => $data['document'],
                 'total' => $data['total'],
                 'pedido_operadora' => $data['pedido_operadora'],
