@@ -1103,9 +1103,7 @@ class OrdersController extends AppController
             echo json_encode(['success' => true]);
         } else {
             $this->redirect('/orders/edit/' . $orderId);
-        }
-
-        
+        }        
     }
 
     public function addItinerary()
@@ -1397,7 +1395,13 @@ class OrdersController extends AppController
                                 WHERE b.benefit_id = Benefit.id 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS pedido_operadora"
+                            ) AS pedido_operadora", 
+                            "(SELECT COUNT(1) 
+                                FROM outcomes o
+                                WHERE o.order_id = OrderItem.order_id 
+                                        AND o.supplier_id = Supplier.id 
+                                        AND o.data_cancel = '1901-01-01 00:00:00'
+                            ) AS count_outcomes"
                         ],
              'joins' => [
                 [
@@ -1490,13 +1494,16 @@ class OrdersController extends AppController
     }
 
    
-    public function gerar_pagamento($id)
+    public function gerar_pagamento()
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->autoRender = false;
+
+        $id = $this->request->data['orderId'];
+        $supplier_id = $this->request->data['suppliersIds'];
     
         $suppliersAll = $this->OrderItem->find('all', [
-            'conditions' => ['OrderItem.order_id' => $id],
+            'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
             'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
              'joins' => [
                 [
@@ -1516,8 +1523,7 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['Supplier.id']
-            
+            'group' => ['Supplier.id']            
         ]);
 
         foreach ($suppliersAll as $supplier) { 
@@ -1546,8 +1552,7 @@ class OrdersController extends AppController
 
         $this->Flash->set(__('Pagamento gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
 
-        $this->redirect(['action' => 'operadoras/' . $id]);
-        $this->set(compact('id'));
+        echo json_encode(['success' => true]);
     }
 
     public function boletos($id)
