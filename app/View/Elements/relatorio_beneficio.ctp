@@ -66,7 +66,7 @@
                                             <td colspan="2">
                                                 R$<?php
                                                 $totalDesconto = array_sum(array_map(function($item) {
-                                                    return (float)$item['OrderItem']['saldo'];
+                                                    return (float)$item['OrderItem']['saldo_not_formated'];
                                                 }, $itens[$pagina['CustomerUser']['id']]));
                                                 echo number_format($totalDesconto, 2, ',', '.');
                                                 ?>

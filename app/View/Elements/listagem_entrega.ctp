@@ -64,7 +64,7 @@
                                     $currentUserId = $item['CustomerUser']['id'];
 
                                     $totalInicial += (float)$item['OrderItem']['subtotal_not_formated'];
-                                    $totalDesconto += (float)$item['OrderItem']['saldo'];
+                                    $totalDesconto += (float)$item['OrderItem']['saldo_not_formated'];
                                     $totalDisponibilizado += (float)$item['OrderItem']['subtotal_not_formated'] - (float)$item['OrderItem']['saldo_not_formated'];
                                     ?>
                                     <tr>
