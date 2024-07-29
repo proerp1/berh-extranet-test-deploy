@@ -844,7 +844,7 @@ class OrdersController extends AppController
 
         $this->OrderBalance->update_cancel_balances($orderId, CakeSession::read("Auth.User.id"));
 
-        $ret = $this->parseCSVSaldo($customerId, $this->request->data['file']['tmp_name']);
+        $ret = $this->parseCSVSaldo($customerId, $orderId, $this->request->data['file']['tmp_name']);
 
         foreach ($ret['data'] as $data) {
             $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
@@ -942,7 +942,7 @@ class OrdersController extends AppController
         return ['customerUsersIds' => $customerUsersIds, 'unitPriceMaping' => $unitPriceMaping];
     }
 
-    private function parseCSVSaldo($customerId, $tmpFile)
+    private function parseCSVSaldo($customerId, $orderId, $tmpFile)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
@@ -968,17 +968,11 @@ class OrdersController extends AppController
 
             $cpf = preg_replace('/\D/', '', $row[0]);            
 
-            $existingUser = $this->CustomerUser->find('first', [
-                'conditions' => [
-                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
-                    'CustomerUser.customer_id' => $customerId,
-                    'CustomerUser.status_id' => 1,
-                ]
-            ]);
+            $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
 
             $customer_user_id = null;
-            if (isset($existingUser['CustomerUser'])) {
-                $customer_user_id = $existingUser['CustomerUser']['id'];
+            if (isset($existingUser[0]['u'])) {
+                $customer_user_id = $existingUser[0]['u']['id'];
             }
 
             $total = str_replace("R$", "", $row[2]);
