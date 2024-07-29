@@ -44,7 +44,7 @@
                     <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">Ped Operadora</th>
                     <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
-                    
+                    <th class="ps-4 w-250px min-w-250px rounded-start">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +61,11 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier[0]['pedido_operadora']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Order']['id']; ?></td>
+                        <td class="fw-bold fs-7 ps-4">
+                            <a href="<?php echo $this->base.'/orders/operadoras_detalhes/'.$supplier['Order']['id'].'/'.$supplier['Supplier']['id']; ?>" class="btn btn-info btn-sm">
+                                Detalhes
+                            </a>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -74,9 +79,6 @@
         </div>
     </div>
 </div>
-    
-
-    
 
 <div class="modal fade" tabindex="-1" id="modal_gerar_pagamento" role="dialog">
     <div class="modal-dialog" role="document">
