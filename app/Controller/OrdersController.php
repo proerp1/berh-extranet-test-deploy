@@ -966,6 +966,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
                     'CustomerUser.customer_id' => $customerId,
+                    'CustomerUser.status_id' => 1,
                 ]
             ]);
 
