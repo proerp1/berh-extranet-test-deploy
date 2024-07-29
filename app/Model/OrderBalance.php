@@ -70,7 +70,7 @@ class OrderBalance extends AppModel {
                         INNER JOIN (SELECT b.customer_user_id, b.benefit_id, b.order_id, SUM(b.total) AS total
                                         FROM order_balances b
                                         WHERE b.data_cancel = '1901-01-01'
-                                        GROUP BY b.customer_user_id, b.benefit_id
+                                        GROUP BY b.customer_user_id, b.benefit_id, b.order_id
                                     ) be ON be.customer_user_id = i.customer_user_id
                                             AND be.benefit_id = t.benefit_id
                                             AND be.order_id = o.id

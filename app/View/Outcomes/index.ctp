@@ -104,6 +104,12 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                        <a href="#" id="download_sel" class="btn btn-secondary me-3">
+                            Download em Lote
+                        </a>
+                    <?php } ?>
+
                     <?php if (isset($_GET["t"]) && $_GET["t"] == 11) { ?>
                         <a href="#" id="aprovar_sel" class="btn btn-secondary me-3">
                             Aprovar em Lote
@@ -368,6 +374,41 @@
                 $('#modal_aprovar_sel').modal('show');
             } else {
                 alert('Selecione ao menos um item a aprovar');
+            }
+        });
+
+        $('#download_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                const status_id = $('#t').val();
+                const checkboxes = $('input[name="item_ck"]:checked');
+                const outcomeIds = [];
+
+                checkboxes.each(function() {
+                    outcomeIds.push($(this).data('id'));
+                });
+
+                if (outcomeIds.length > 0) {
+                    $.ajax({
+                        type: 'POST',
+                        url: base_url+'/outcomes/download_zip_document',
+                        data: {
+                            outcomeIds,
+                            status: status_id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                window.location.href = response.url_zip;
+                            } else {
+                                alert('Nenhum arquivo encontrado');
+                            }
+                        }
+                    });
+                }
+            } else {
+                alert('Selecione ao menos um item para fazer download');
             }
         });
 
