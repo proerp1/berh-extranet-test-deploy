@@ -93,7 +93,7 @@
                                             <td colspan="21">
                                                 <div class="totals">
                                                     <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
-                                                    <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
+                                                    <span>Total Desconto: R$<?php echo number_format((float)$totalDesconto, 2, ',', '.'); ?></span>
                                                     <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
                                                 </div>
                                             </td>
@@ -143,7 +143,7 @@
                     <?php if ($currentUserId !== null) { ?>
                     <div class="totals">
                         <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
-                        <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
+                        <span>Total Desconto: R$<?php echo number_format((float)$totalDesconto, 2, ',', '.'); ?></span>
                         <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
                     </div>
                     <?php } ?>
