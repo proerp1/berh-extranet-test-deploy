@@ -51,7 +51,45 @@
                                             <td><?php echo number_format(($item['OrderItem']['subtotal_not_formated'] - $item['OrderItem']['saldo_not_formated']), 2, ',', '.'); ?></td>
                                             </tr>
                                     <?php } ?>
-                                </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="9" class="text-right"><strong>Total Inicial:</strong></td>
+                                            <td class="subtotal_sum">
+                                                R$<?php
+                                                $totalInicial = array_sum(array_map(function($item) {
+                                                    return (float)$item['OrderItem']['subtotal_not_formated'];
+                                                }, $itens[$pagina['CustomerUser']['id']]));
+                                                echo number_format($totalInicial, 2, ',', '.');
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="9" class="text-right"><strong>Total Desconto:</strong></td>
+                                            <td colspan="2">
+                                                R$<?php
+                                                $totalDesconto = array_sum(array_map(function($item) {
+                                                    return (float)$item['OrderItem']['saldo'];
+                                                }, $itens[$pagina['CustomerUser']['id']]));
+                                                echo number_format($totalDesconto, 2, ',', '.');
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="9" class="text-right"><strong>Total Disponibilizado:</strong></td>
+                                            <td colspan="2">
+                                                R$<?php
+                                                $totalDisponibilizado = array_sum(array_map(function($item) {
+                                                    return (float)$item['OrderItem']['subtotal_not_formated'] - (float)$item['OrderItem']['saldo_not_formated'];
+                                                }, $itens[$pagina['CustomerUser']['id']]));
+                                                echo number_format($totalDisponibilizado, 2, ',', '.');
+                                                ?>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+
+
+
+
                             </table>
                         </div>
                         <div class="signature text-center mt-4">
