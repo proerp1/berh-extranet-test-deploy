@@ -77,7 +77,7 @@ class OrderBalance extends AppModel {
                     WHERE o.id = ".$orderID." 
                             AND o.data_cancel = '1901-01-01 00:00:00'
                             AND i.data_cancel = '1901-01-01 00:00:00'
-                    GROUP BY be.customer_user_id, be.benefit_id
+                    GROUP BY be.customer_user_id, be.benefit_id, be.order_id 
                 ";
         $result = $this->query($sql);
 
