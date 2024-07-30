@@ -104,7 +104,7 @@
 </div>
 
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array("controller" => "customers", "action" => "extrato", $id)); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array("controller" => "customers", "action" => "extrato", $id, $tipo)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -131,19 +131,18 @@
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
-                            <label class="form-label fs-5 fw-bold mb-3">Status:</label>
-                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                <option value=''></option>
-                                <?php
-                                $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado'];
+                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                    <option value=''></option>
+                                    <?php
+                                    $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado'];
 
-                                foreach ($statusOptions as $statusId => $statusName) {
-                                    $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
-                                    echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
-                                }
-                                ?>
-                            </select>
-
+                                    foreach ($statusOptions as $statusId => $statusName) {
+                                        $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
+                                        echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
+                                    }
+                                    ?>
+                                </select>
                             </div>
                            
                             <div class="mb-10">

@@ -1779,39 +1779,66 @@ class CustomersController extends AppController
     /*********************
             Extrato
      **********************/
-    public function extrato($id)
+    public function extrato($id, $tipo = null)
     {
         $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-        $this->Paginator->settings = [
-            'Order' => [
-                'fields' => [
-                    'Order.*',
-                    'Income.*',
-                    'Status.*',
-                    'Creator.*',
-                    'CustomerCreator.*',
-                    'EconomicGroup.*',
-                    "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                        FROM order_balances b 
-                            INNER JOIN orders o ON o.id = b.order_id 
-                        WHERE o.id = Order.id 
-                                AND b.data_cancel = '1901-01-01 00:00:00' 
-                                AND o.data_cancel = '1901-01-01 00:00:00' 
-                    ) as total_balances"
-                ],
-                'limit' => 25,
-                'order' => ['Order.created' => 'asc'],            
-            ]
-        ];
-
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
+
+        if ($tipo == 'grupo_economico') {
+            $this->Paginator->settings = [
+                'Order' => [
+                    'fields' => [
+                        'Order.*',
+                        'Income.*',
+                        'Status.*',
+                        'Creator.*',
+                        'CustomerCreator.*',
+                        'EconomicGroup.*',
+                        "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                            FROM order_balances b 
+                                INNER JOIN orders o ON o.id = b.order_id 
+                            WHERE o.id = Order.id 
+                                    AND b.data_cancel = '1901-01-01 00:00:00' 
+                                    AND o.data_cancel = '1901-01-01 00:00:00' 
+                        ) as total_balances"
+                    ],
+                    'limit' => 25,
+                    'group' => 'EconomicGroup.id',
+                    'order' => ['Order.created' => 'asc'],
+                ]
+            ];
+            
+            $condition = ['and' => ['Customer.id' => $id, 'EconomicGroup.id != ' => null], 'or' => []];
+        } else {
+            $this->Paginator->settings = [
+                'Order' => [
+                    'fields' => [
+                        'Order.*',
+                        'Income.*',
+                        'Status.*',
+                        'Creator.*',
+                        'CustomerCreator.*',
+                        'EconomicGroup.*',
+                        "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                            FROM order_balances b 
+                                INNER JOIN orders o ON o.id = b.order_id 
+                            WHERE o.id = Order.id 
+                                    AND b.data_cancel = '1901-01-01 00:00:00' 
+                                    AND o.data_cancel = '1901-01-01 00:00:00' 
+                        ) as total_balances"
+                    ],
+                    'limit' => 25,
+                    'order' => ['Order.created' => 'asc'],
+                ]
+            ];
+
+            $condition = ['and' => ['Customer.id' => $id], 'or' => []];
+        }
         
         $data = [];
         $saldo = 0;
-
-        $condition = ['and' => ['Customer.id' => $id], 'or' => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
@@ -1820,7 +1847,9 @@ class CustomersController extends AppController
         }
     
         if (!empty($_GET['t'])) {
-            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.status_id' => $_GET['t']
+            ]);
         }
     
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
@@ -1883,116 +1912,6 @@ class CustomersController extends AppController
             'Extrato' => '',
         ];
 
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order'));
-    }
-
-    public function extrato_grupo_economico($id)
-    {
-        $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-
-        $this->Paginator->settings = ['Order' => [
-            'fields' => [
-                'Status.label',
-                'Status.name',
-                'Customer.codigo_associado',
-                'Order.created',
-                'Order.id',
-                'Income.data_pagamento',
-                'Order.end_date',
-                'CustomerCreator.name',
-                'Creator.name',
-                'EconomicGroup.name',
-                'sum(Order.subtotal) as subtotal',
-                'sum(Order.transfer_fee) as transfer_fee',
-                'sum(Order.commission_fee) as commission_fee',
-                'sum(Order.desconto) as desconto',
-                'sum(Order.saldo) as saldo',
-                'sum(Order.total) as total',
-                'sum(Order.total_saldo) as total_saldo',
-            ],
-            'limit' => 25,
-            'group' => 'EconomicGroup.id',            
-            'order' => ['Order.created' => 'desc'],
-            ]
-        ];
-    
-        $condition = ['and' => ['Customer.id' => $id, 'EconomicGroup.id != ' => null], 'or' => []];
-    
-        if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => $_GET['q'], 
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
-                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
-            ]);
-        }
-    
-        if (!empty($_GET['t'])) {
-            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
-        }
-    
-        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
-        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-    
-        if ($get_de != '' and $get_ate != '') {
-            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
-            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
-    
-            $condition['and'] = array_merge($condition['and'], [
-                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
-            ]);
-        }
-
-        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
-        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-        
-        if ($get_de_pagamento != '' and $get_ate_pagamento != '') {
-            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
-            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
-    
-            $condition['and'] = array_merge($condition['and'], [
-                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
-            ]);
-           
-        }
-    
-        $data = $this->Paginator->paginate('Order', $condition);
-    
-        $totalOrders = $this->Order->find('first', [
-            'contain' => ['Customer', 'EconomicGroup', 'Income'],
-            'fields' => [
-                'sum(Order.subtotal) as subtotal',
-                'sum(Order.transfer_fee) as transfer_fee',
-                'sum(Order.commission_fee) as commission_fee',
-                'sum(Order.desconto) as desconto',
-                'sum(Order.saldo) as saldo',
-                'sum(Order.total) as total',
-                'sum(Order.total_saldo) as total_saldo',
-                "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                    FROM order_balances b 
-                        INNER JOIN orders o ON o.id = b.order_id 
-                    WHERE o.customer_id = Customer.id 
-                            AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as total_balances"
-            ],
-            'conditions' => $condition,
-            'recursive' => -1
-        ]);
-    
-        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
-
-        $this->Customer->id = $id;
-        $cliente = $this->Customer->read();
-
-        $action = 'Extrato';
-
-        $breadcrumb = [
-            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-            'Extrato' => '',
-        ];
-
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders'));
+        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo'));
     }
 }
