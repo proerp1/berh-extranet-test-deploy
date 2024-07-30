@@ -12,9 +12,18 @@
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
-                </div>
+                <?php if (isset($first_order[0]['data_criacao'])) { ?>
+                    <div class="d-flex flex-column my-7">
+                        <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo date("d/m/Y", strtotime($first_order[0]['data_criacao'])) ?></span>
+                        <div class="m-0">
+                            <span class="fw-bold fs-6 text-gray-400">Data do Primeiro Pedido</span>
+                        </div>
+                    </div>
+                <?php } else { ?>
+                    <div class="m-0">
+                        <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                    </div>
+                <?php } ?>
 
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['subtotal'],2,',','.') ?></span>

@@ -1841,15 +1841,17 @@ class CustomersController extends AppController
             $orderDesconto = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.desconto) as valor_desconto']);
             $orderSaldo = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.saldo) as valor_saldo']);
 
+            $saldo = ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
+
             if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
                 if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
                     $saldo = $cliente['Customer']['economia_inicial_not_formated'];
                 }
             }
+        }
 
-            $saldo = $saldo + ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
-        }    
-    
+        $first_order = $this->Order->find('first', ['conditions' => ['Order.customer_id' => $id], 'fields' => 'MIN(Order.created) as data_criacao']);
+
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
@@ -1881,7 +1883,7 @@ class CustomersController extends AppController
             'Extrato' => '',
         ];
 
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo'));
+        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order'));
     }
 
     public function extrato_grupo_economico($id)
