@@ -24,7 +24,7 @@
         </div>
         <div class="card-toolbar" style="text-align: right;">
             <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_gerar_pagamento">
+                <a href="#" class="btn btn-primary" id="pag_sel">
                     Gerar Pagamento
                 </a>
             </div>
@@ -39,12 +39,15 @@
             <?php echo $this->element("table"); ?>
             <thead>
             <tr class="fw-bolder text-muted bg-light">
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">Ped Operadora</th>
-                    <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
-                    
+                <th class="ps-4 w-80px min-w-80px rounded-start">
+                    <input type="checkbox" class="check_all">
+                </th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">Ped Operadora</th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
+                <th class="ps-4 w-250px min-w-250px rounded-start">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,11 +59,22 @@
                     $total+=$supplier[0]['subtotal'];
                     ?>
                     <tr>
+                        <td class="fw-bold fs-7 ps-4">
+                            <?php if ($supplier[0]['count_outcomes'] == 0) { ?>
+                                <input type="checkbox" name="js_id_line" class="check_line" id="">
+                            <?php } ?>
+                        </td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier[0]['pedido_operadora']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Order']['id']; ?></td>
+                        <td class="fw-bold fs-7 ps-4">
+                            <input type="hidden" class="supplier_id" value="<?php echo $supplier['Supplier']['id']; ?>">
+                            <a href="<?php echo $this->base.'/orders/operadoras_detalhes/'.$supplier['Order']['id'].'/'.$supplier['Supplier']['id']; ?>" class="btn btn-info btn-sm">
+                                Detalhes
+                            </a>
+                        </td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -74,9 +88,6 @@
         </div>
     </div>
 </div>
-    
-
-    
 
 <div class="modal fade" tabindex="-1" id="modal_gerar_pagamento" role="dialog">
     <div class="modal-dialog" role="document">
@@ -85,20 +96,64 @@
                 <h4 class="modal-title">Tem certeza?</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form action="<?php echo $this->base . '/orders/gerar_pagamento/' . $id; ?>" class="form-horizontal" method="post">
-                <div class="modal-body">
-                    <p>Tem certeza que deseja gerar o pagamento?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary js-salvar">Sim</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <p>Tem certeza que deseja gerar o pagamento?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="pag_confirm" class="btn btn-success">Sim</a>
+            </div>
         </div>
     </div>
 </div>
 
-    
+<script>
+    $(document).ready(function() {
+        $('#pag_sel').on('click', function(e) {
+            e.preventDefault();
 
+            if ($('input[name="js_id_line"]:checked').length > 0) {
+                $('#modal_gerar_pagamento').modal('show');
+            } else {
+                alert('Selecione ao menos um registro');
+            }
+        });
 
+        $('#pag_confirm').on('click', function(e) {
+            e.preventDefault();
 
+            const orderId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="js_id_line"]:checked');
+            const suppliersIds = [];
+
+            checkboxes.each(function() {
+                suppliersIds.push($(this).parent().parent().find('.supplier_id').val());
+            });
+
+            if (suppliersIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: base_url+'/orders/gerar_pagamento',
+                    data: {
+                        suppliersIds,
+                        orderId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_line").prop('checked', true);
+            } else {
+                $(".check_line").prop('checked', false);
+            }
+        });
+    });
+</script>

@@ -429,8 +429,6 @@ class OrdersController extends AppController
             }
         }
 
-        
-
         $temp_errors = $this->Order->validationErrors;
         $this->request->data = $this->Order->read();
         $order = $this->Order->findById($id);
@@ -455,7 +453,7 @@ class OrdersController extends AppController
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
@@ -1105,9 +1103,7 @@ class OrdersController extends AppController
             echo json_encode(['success' => true]);
         } else {
             $this->redirect('/orders/edit/' . $orderId);
-        }
-
-        
+        }        
     }
 
     public function addItinerary()
@@ -1383,8 +1379,9 @@ class OrdersController extends AppController
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
             'fields' => [
-                            'Supplier.razao_social', 
                             'Order.id',
+                            'Supplier.id', 
+                            'Supplier.razao_social', 
                             'sum(OrderItem.subtotal) as subtotal', 
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
@@ -1398,7 +1395,13 @@ class OrdersController extends AppController
                                 WHERE b.benefit_id = Benefit.id 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS pedido_operadora"
+                            ) AS pedido_operadora", 
+                            "(SELECT COUNT(1) 
+                                FROM outcomes o
+                                WHERE o.order_id = OrderItem.order_id 
+                                        AND o.supplier_id = Supplier.id 
+                                        AND o.data_cancel = '1901-01-01 00:00:00'
+                            ) AS count_outcomes"
                         ],
              'joins' => [
                 [
@@ -1427,6 +1430,48 @@ class OrdersController extends AppController
         $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
     }
 
+    public function operadoras_detalhes($id, $supplier_id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
+            'fields' => [
+                            'Order.id',
+                            'Supplier.id', 
+                            'Supplier.razao_social', 
+                            'Benefit.name',
+                            'CustomerUser.name',
+                            'OrderItem.*',
+                        ],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ],
+            ],
+            'group' => ['OrderItem.id']
+            
+        ]);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Operadores' => '', 'Detalhes' => ''];
+        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
+    }
+
     public function confirma_pagamento($id){
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->autoRender = false;
@@ -1449,13 +1494,16 @@ class OrdersController extends AppController
     }
 
    
-    public function gerar_pagamento($id)
+    public function gerar_pagamento()
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->autoRender = false;
+
+        $id = $this->request->data['orderId'];
+        $supplier_id = $this->request->data['suppliersIds'];
     
         $suppliersAll = $this->OrderItem->find('all', [
-            'conditions' => ['OrderItem.order_id' => $id],
+            'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
             'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
              'joins' => [
                 [
@@ -1475,10 +1523,8 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['Supplier.id']
-            
+            'group' => ['Supplier.id']            
         ]);
-        //debug($suppliersAll);die;
 
         foreach ($suppliersAll as $supplier) { 
             $outcome = [];
@@ -1499,15 +1545,14 @@ class OrdersController extends AppController
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
             $outcome['Outcome']['created'] = date('Y-m-d H:i:s');
             $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
-            // debug($outcome);die;
+
             $this->Outcome->create();
             $this->Outcome->save($outcome);
         }
+
         $this->Flash->set(__('Pagamento gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
 
-        // Redireciona para a página de operadoras
-        $this->redirect(['action' => 'operadoras/' . $id]);
-        $this->set(compact('id'));
+        echo json_encode(['success' => true]);
     }
 
     public function boletos($id)
