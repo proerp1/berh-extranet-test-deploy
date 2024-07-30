@@ -375,6 +375,7 @@ class OutcomesController extends AppController {
        
         $this->set(compact('status', 'data', 'id', 'action'));
     }
+
 	public function add_document($id)
     {
         $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
@@ -503,5 +504,35 @@ class OutcomesController extends AppController {
 		} else {
 			return json_encode(['success' => false]);
 		}
+    }
+
+    public function all_documents()
+    {
+		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Paginator->settings = [
+        	'Docoutcome' => [
+	            'limit' => 50,
+	            'order' => [
+	            	'Outcome.id' => 'asc', 'Docoutcome.created' => 'asc'
+	            ],            
+            ]
+        ];
+
+        $condition = ['and' => [], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $action = 'Documentos';
+
+       	$data = $this->Paginator->paginate('Docoutcome', $condition);
+        $status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
+
+        $this->set(compact('status', 'data', 'action'));
     }
 }
