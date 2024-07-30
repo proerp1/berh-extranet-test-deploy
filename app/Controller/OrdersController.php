@@ -1650,7 +1650,7 @@ class OrdersController extends AppController
                 'order' => ['trim(CustomerUser.name)']                                                           
             ]);
         }
-//debug($itens);die;
+//debug($order);die;
 
         $link = APP . 'webroot';
         // $link = '';
@@ -2212,6 +2212,8 @@ $itens = $this->OrderItem->find('all', [
     
     public function processamentopdf($id)
     {
+        ini_set('pcre.backtrack_limit', '35000000');
+
         $this->layout = 'ajax';
         $this->autoRender = false;
     
