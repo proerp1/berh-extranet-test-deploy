@@ -392,7 +392,7 @@ class ReportsController extends AppController
                 $para = $condition['para'];
 
                 $link = APP . 'webroot';
-                $view->set(compact("link","order", "itens", "de", "para"));
+                $view->set(compact("link","pagina", "itens", "de", "para"));
                 $html .= $view->render('../Elements/listagem_entrega');
 
                 if (count($paginas) != ($index + 1)) {
