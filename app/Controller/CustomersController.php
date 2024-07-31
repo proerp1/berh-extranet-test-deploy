@@ -225,7 +225,7 @@ class CustomersController extends AppController
                 $this->Log->save($dados_log);
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
 
-                $this->redirect($this->referer());
+                $this->redirect("/customers/edit/" . $id);
             } else {
                 $mensagem = '';
                 foreach ($this->Customer->validationErrors as $key => $value) {
