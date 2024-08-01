@@ -198,8 +198,9 @@
                             </th>
                         <?php } ?>
                         <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
-                        <th>Fornecedor</th>
+                        
                         <th>Pedido</th>
+                        <th>Fornecedor</th>
                         <th>Nome </th>
                         <th>Descrição</th>
                         <th>Status</th>
