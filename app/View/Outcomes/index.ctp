@@ -255,7 +255,7 @@
 
 								<td class="fw-bold fs-7 ps-4">
 
-                                    <span class='badge badge-success'><i class="fas fa-info" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
+                                    <span class='badge badge-success'><i class="fas fa-info" style="color:#fff" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
 
                                         
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
