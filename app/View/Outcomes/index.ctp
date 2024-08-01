@@ -254,6 +254,9 @@
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
 
 								<td class="fw-bold fs-7 ps-4">
+
+                                    <?php echo $data[$i]["Outcome"]["observation"]; ?>
+                                    <span class="input-group-text"><i class="fas fa-info" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
 										Editar
 									</a>
