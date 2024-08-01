@@ -198,7 +198,8 @@
                             </th>
                         <?php } ?>
                         <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
-                        <th>Fornecedor </th>
+                        <th>Fornecedor</th>
+                        <th>Pedido</th>
                         <th>Nome </th>
                         <th>Descrição</th>
                         <th>Status</th>
@@ -209,7 +210,6 @@
 						<th>Valor a pagar R$</th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
-                        <th>Observação </th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -235,6 +235,7 @@
                                     </td>
                                 <?php } ?>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["order_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
@@ -250,7 +251,6 @@
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
 
 								<td class="fw-bold fs-7 ps-4">
 									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
