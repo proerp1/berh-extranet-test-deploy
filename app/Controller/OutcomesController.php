@@ -20,7 +20,7 @@ class OutcomesController extends AppController {
 		
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
-			$condition['or'] = array_merge($condition['or'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
+			$condition['or'] = array_merge($condition['or'], ['Outcome.observation LIKE' => "%".$_GET['q']."%",'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
 		}
 		
 		if(isset($_GET["t"]) and $_GET["t"] != ""){
