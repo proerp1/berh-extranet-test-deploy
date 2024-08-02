@@ -1781,7 +1781,7 @@ class CustomersController extends AppController
      **********************/
     public function extrato($id, $tipo = null)
     {
-        $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(67, 'leitura') ? '' : $this->redirect('/not_allowed');
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
