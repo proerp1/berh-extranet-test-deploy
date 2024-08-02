@@ -23,21 +23,23 @@ class ComunicadosController extends AppController
     {
         $this->Permission->check(2, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-
+    
         $condition = ["and" => [], "or" => []];
-
+    
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['Comunicado.titulo LIKE' => "%".$_GET['q']."%"]);
         }
-
+    
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
-
+    
+        $this->Paginator->settings['order'] = ['Comunicado.created' => 'ASK'];
+    
         $data = $this->Paginator->paginate('Comunicado', $condition);
-
+    
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-
+    
         $action = 'Comunicados';
         $breadcrumb = ['Configurações' => '', 'Comunicados' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));

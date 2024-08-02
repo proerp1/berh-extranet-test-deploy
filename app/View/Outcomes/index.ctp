@@ -204,7 +204,6 @@
                         <th>Nome </th>
                         <th>Descrição</th>
                         <th>Status</th>
-						<th>Conta bancária</th>
 						<th>Vencimento</th>
                         <th>Data de criação</th>
 						<th>Parcela</th>
@@ -245,7 +244,6 @@
 										<?php echo $data[$i]["Status"]["name"] ?>
 									</span>
 								</td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["created"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["parcela"].'ª'; ?></td>
