@@ -34,7 +34,7 @@ class ComunicadosController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
     
-        $this->Paginator->settings['order'] = ['Comunicado.created' => 'ASK'];
+        $this->Paginator->settings['order'] = ['Comunicado.data' => 'desc'];
     
         $data = $this->Paginator->paginate('Comunicado', $condition);
     
