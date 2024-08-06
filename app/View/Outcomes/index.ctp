@@ -210,6 +210,7 @@
 						<th>Valor a pagar R$</th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
+                        <th>Observação</th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -250,6 +251,7 @@
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
 
 								<td class="fw-bold fs-7 ps-4">
 
