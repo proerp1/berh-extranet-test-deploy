@@ -24,10 +24,11 @@
                         <i class="fas fa-filter"></i>
                         Filtro
                     </button>
-                    <button type="button" class="btn btn-light-primary me-3" id="export_excel">
+                    <a href="<?php echo $this->Html->url(['controller' => 'atendimentos', 'action' => 'index', '?' => array_merge($_GET, ['exportar' => 'true'])]); ?>" class="btn btn-light-primary me-3">
                         <i class="fas fa-file-excel"></i>
-                        Exportar Excel
-                    </button>
+                        Exportar
+                    </a>
+
                     
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
@@ -141,10 +142,6 @@
 
         $('#q').on('change', function () {
             $("#busca").submit();
-        });
-
-        $('#export_excel').on('click', function () {
-            $('#exportForm').submit();
         });
     })  
 </script>

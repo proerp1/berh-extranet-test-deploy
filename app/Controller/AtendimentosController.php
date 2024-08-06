@@ -15,68 +15,66 @@ class AtendimentosController extends AppController
     }
 
     public function index()
-{
-    $this->Permission->check(21, "escrita") ? "" : $this->redirect("/not_allowed");
-    $this->Paginator->settings = $this->paginate;
-
-    $condition = [
-        "and" => ['Customer.cod_franquia' => CakeSession::read("Auth.User.resales")],
-        "or" => []
-    ];
-
-    if (isset($_GET['q']) && $_GET['q'] != "") {
-        $condition['or'] = array_merge($condition['or'], [
-            'Atendimento.subject LIKE' => "%{$_GET['q']}%",
-            'Atendimento.message LIKE' => "%{$_GET['q']}%",
-            'Atendimento.id LIKE' => "%{$_GET['q']}%"
-        ]);
+    {
+        $this->Permission->check(21, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+    
+        $condition = [
+            "and" => ['Customer.cod_franquia' => CakeSession::read("Auth.User.resales")],
+            "or" => []
+        ];
+    
+        if (isset($this->request->query['q']) && $this->request->query['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'Atendimento.subject LIKE' => "%{$this->request->query['q']}%",
+                'Atendimento.message LIKE' => "%{$this->request->query['q']}%",
+                'Atendimento.id LIKE' => "%{$this->request->query['q']}%"
+            ]);
+        }
+    
+        if (isset($this->request->query["t"]) && $this->request->query["t"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Department.id' => $this->request->query["t"]]);
+        }
+    
+        if (isset($this->request->query['cliente']) && $this->request->query['cliente'] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Customer.nome_primario LIKE' => "%{$this->request->query['cliente']}%"]);
+        }
+    
+        if (isset($this->request->query['exportar']) && $this->request->query['exportar'] === 'true') {
+            $atendimentoData = $this->Atendimento->find('all', [
+                'fields' => [
+                    'Atendimento.id',
+                    'Customer.nome_primario',
+                    'Customer.documento',
+                    'Department.name',
+                    'Atendimento.subject',
+                    'Atendimento.created',
+                    'Atendimento.data_finalizacao',
+                    'Atendimento.file_atendimento', // Add this line
+                    'Status.name',
+                    'Status.label'
+                ],
+                'conditions' => $condition,
+                'contain' => ['Customer', 'Department', 'Status']
+            ]);
+    
+            $this->ExcelGenerator->gerarExcelAtendimentos('Atendimentos', $atendimentoData);
+    
+            $this->redirect('/private_files/baixar/excel/Atendimentos_xlsx');
+            return;
+        }
+    
+        $data = $this->Paginator->paginate('Atendimento', $condition);
+    
+        // Data for the view
+        $departments = $this->Department->find('all', ['order' => 'Department.name']);
+        $atendidos = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 35]]);
+        $pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
+    
+        $action = "Atendimentos";
+        $this->set(compact('departments', 'data', 'atendidos', 'pendentes', 'action'));
     }
-
-    if (isset($_GET["t"]) && $_GET["t"] != "") {
-        $condition['and'] = array_merge($condition['and'], ['Department.id' => $_GET["t"]]);
-    }
-
-    if (isset($_GET['cliente']) && $_GET['cliente'] != "") {
-        $condition['and'] = array_merge($condition['and'], ['Customer.nome_primario LIKE' => "%{$_GET['cliente']}%"]);
-    }
-
-    if ($this->request->is('post') && isset($this->request->data['export_excel']) && $this->request->data['export_excel'] == '1') {
-
-       $atendimentoData = $this->Atendimento->find('all', [
-    'fields' => [
-        'Atendimento.id',
-        'Customer.nome_primario',
-        'Customer.documento',
-        'Department.name',
-        'Atendimento.subject',
-        'Atendimento.created',
-        'Atendimento.data_finalizacao',
-        'Atendimento.file_atendimento', // Add this line
-        'Status.name',
-        'Status.label'
-    ],
-    'conditions' => $condition,
-    'contain' => ['Customer', 'Department', 'Status']
-]);
-
-
-        $this->ExcelGenerator->gerarExcelAtendimentos('Atendimentos', $atendimentoData);
-
-        $this->redirect('/private_files/baixar/excel/Atendimentos_xlsx');
-        return;
-    }
-
-    $data = $this->Paginator->paginate('Atendimento', $condition);
-
-    // Data for the view
-    $departments = $this->Department->find('all', ['order' => 'Department.name']);
-    $atendidos = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 35]]);
-    $pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
-
-    $action = "Atendimentos";
-    $this->set(compact('departments', 'data', 'atendidos', 'pendentes', 'action'));
-}
-
+    
     
     
     public function view($id)
