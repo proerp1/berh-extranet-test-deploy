@@ -1459,6 +1459,36 @@ class ExcelTemplate
 		}
 	}
 
+	public function getAtendimento($objPHPExcel, $data)
+{
+    $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A1', "Status")
+        ->setCellValue('B1', "Atendimento N°")
+        ->setCellValue('C1', "Cliente")
+        ->setCellValue('D1', "Documento")
+        ->setCellValue('E1', "Departamento")
+        ->setCellValue('F1', "Arquivo") 
+        ->setCellValue('G1', "Assunto")
+        ->setCellValue('H1', "Enviado em")
+        ->setCellValue('I1', "Finalizado em");
+
+    $indx = 1;
+    for ($i = 0; $i < count($data); $i++) {
+        $indx++;
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A' . $indx, $data[$i]['Status']['name'])
+            ->setCellValue('B' . $indx, $data[$i]['Atendimento']['id'])
+            ->setCellValue('C' . $indx, $data[$i]['Customer']['nome_primario'])
+            ->setCellValue('D' . $indx, $data[$i]['Customer']['documento'])
+            ->setCellValue('E' . $indx, $data[$i]['Department']['name'])
+            ->setCellValue('F' . $indx, $data[$i]['Atendimento']['file_atendimento']) 
+            ->setCellValue('G' . $indx, $data[$i]['Atendimento']['subject'])
+            ->setCellValue('H' . $indx, $data[$i]['Atendimento']['created'])
+            ->setCellValue('I' . $indx, $data[$i]['Atendimento']['data_finalizacao']);
+    }
+}
+
+
 	public function getItinerary($spreadsheet, $dados)
 	{
 		
