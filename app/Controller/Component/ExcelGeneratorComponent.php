@@ -50,6 +50,19 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+
+    public function gerarExcelAtendimentos($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getAtendimento($spreadsheet, $dados);
+
+        $local_salva = APP.'Private/excel/'.$nome.'.xlsx';
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+    
     
     public function gerarExcelOrders($nome, $dados)
     {
@@ -73,7 +86,18 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+   /* public function gerarExcelBeneficiario($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
 
+        $this->templates_list->getBeneficiario($spreadsheet, $dados);
+
+        $local_salva = APP.'Private/excel/'.$nome.'.xlsx';
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+*/
     public function gerarExcelProposal($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
