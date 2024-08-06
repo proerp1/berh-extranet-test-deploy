@@ -2039,6 +2039,7 @@ $itens = $this->OrderItem->find('all', [
                 'CostCenter.*',
                 'EconomicGroups.name',
                 'EconomicGroups.document',
+                'EconomicGroups.razao_social',
                 'CustomerDepartments.*',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
