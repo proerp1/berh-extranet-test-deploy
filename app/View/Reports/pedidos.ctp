@@ -116,6 +116,7 @@
                     <th class="ps-4 w-180px min-w-180px rounded-start">CNPJ</th>
                     <th>Código</th>
                     <th>Cliente</th>
+                    <th>Data de criação</th>
                     <th>N° Pedido</th>
                     <th>Status Pedido</th>
                     <th>Nome</th>
@@ -138,6 +139,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["created"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
