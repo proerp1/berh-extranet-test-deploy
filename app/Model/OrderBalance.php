@@ -90,12 +90,15 @@ class OrderBalance extends AppModel {
             }
         }
 
-        $sql = "SELECT o.id, coalesce(sum(i.saldo), 0) AS saldo, coalesce(sum(i.total_saldo), 0) AS total_saldo 
+        $sql = "SELECT o.id, COALESCE(SUM(i.saldo), 0) AS saldo, COALESCE(SUM(i.total_saldo), 0) AS total_saldo, COALESCE(p.management_feel, 0) AS fee_saldo
                     FROM orders o
                         INNER JOIN order_items i ON i.order_id = o.id
-                    WHERE o.id = ".$orderID."
-                            AND o.data_cancel = '1901-01-01 00:00:00'
-                            AND i.data_cancel = '1901-01-01 00:00:00'
+                        INNER JOIN customers c ON c.id = o.customer_id
+                        LEFT JOIN proposals p ON p.customer_id = c.id AND p.status_id = 99 AND p.data_cancel = '1901-01-01 00:00:00'
+                    WHERE o.id = ".$orderID." 
+                    AND o.data_cancel = '1901-01-01 00:00:00' 
+                    AND i.data_cancel = '1901-01-01 00:00:00'
+                    AND c.data_cancel = '1901-01-01 00:00:00'
                 ";
         $result = $this->query($sql);
 
@@ -104,8 +107,9 @@ class OrderBalance extends AppModel {
                 $orderID = $result[$i]['o']['id'];
                 $saldo = $result[$i][0]['saldo'];
                 $total_saldo = $result[$i][0]['total_saldo'];
+                $fee_saldo = $result[$i][0]['fee_saldo'];
 
-                $this->query("UPDATE orders SET saldo = ".$saldo.", total_saldo = ".$total_saldo.", updated = now() WHERE id = ".$orderID);
+                $this->query("UPDATE orders SET saldo = ".$saldo.", total_saldo = ".$total_saldo.", fee_saldo = ".$fee_saldo.", updated = now() WHERE id = ".$orderID);
             }
         }
 

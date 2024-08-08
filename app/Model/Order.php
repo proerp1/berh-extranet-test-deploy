@@ -90,6 +90,15 @@ class Order extends AppModel
                 $results[$key][$this->alias]['saldo'] = '0,00';
             }
 
+            $results[$key][$this->alias]['fee_saldo_not_formated'] = 0;
+            if (isset($val[$this->alias]['fee_saldo'])) {
+                $results[$key][$this->alias]['fee_saldo_not_formated'] = $results[$key][$this->alias]['fee_saldo'];
+                $results[$key][$this->alias]['fee_saldo'] = number_format($results[$key][$this->alias]['fee_saldo'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['fee_saldo_not_formated'] = 0;
+                $results[$key][$this->alias]['fee_saldo'] = '0,00';
+            }
+
             $results[$key][$this->alias]['total_saldo_not_formated'] = 0;
             if (isset($val[$this->alias]['total_saldo'])) {
                 $results[$key][$this->alias]['total_saldo_not_formated'] = $results[$key][$this->alias]['total_saldo'];
