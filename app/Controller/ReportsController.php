@@ -177,7 +177,8 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-	    
+	    ini_set('memory_limit', '2G');
+
 	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
 
