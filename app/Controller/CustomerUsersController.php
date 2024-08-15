@@ -578,6 +578,8 @@ class CustomerUsersController extends AppController
     {
         $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserItinerary->id = $id_itinerary;
+        
+        // Verifica se o formulário é POST ou PUT
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserItinerary->validates();
             $this->request->data['CustomerUserItinerary']['user_updated_id'] = CakeSession::read("Auth.User.id");
@@ -588,18 +590,16 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O itinerário não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
-
+    
         $temp_errors = $this->CustomerUserItinerary->validationErrors;
         $this->request->data = $this->CustomerUserItinerary->read();
         $this->CustomerUserItinerary->validationErrors = $temp_errors;
-            
+        
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-
         $action = 'Beneficiários';
-
+    
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Itinerário' => ''
@@ -608,10 +608,14 @@ class CustomerUsersController extends AppController
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
         $this->set("form_action", "../customers/edit_user/".$id);
         $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb', 'benefits'));
-            
+    
+        // Define se o campo deve ser readonly
+        $isEdit = true;
+        $this->set('isEdit', $isEdit);
+    
         $this->render("add_itinerary");
     }
-
+    
     public function delete_itinerary($customer_id, $user_id, $id){
         $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->CustomerUserItinerary->id = $id;

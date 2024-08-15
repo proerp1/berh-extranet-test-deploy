@@ -19,7 +19,13 @@ if($user_id){
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Benefício</label>
-                <?php echo $this->Form->input('benefit_id', array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione')); ?>
+                <?php 
+                $benefitOptions = array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione');
+                if (isset($isEdit) && $isEdit) {
+                    $benefitOptions['readonly'] = 'readonly'; $benefitOptions['disabled'] = 'disabled'; 
+                }
+                echo $this->Form->input('benefit_id', $benefitOptions); 
+                ?>
             </div>
             
             <div class="mb-7 col">
