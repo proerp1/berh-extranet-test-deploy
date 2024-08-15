@@ -139,4 +139,94 @@ class OrderBalance extends AppModel {
 
         return $rsSql;
     }
+
+    public function update_cancel_balances_all($userID) {
+        $sql = "SELECT t.order_id 
+                    FROM tmp_order_balances t
+                    GROUP BY t.order_id
+                    ORDER BY 1
+                ";
+        $result = $this->query($sql);
+
+        if ($result) { 
+            for ($i=0; $i < count($result); $i++) { 
+                $order_id = $result[$i]['t']['order_id'];
+
+                $this->query("UPDATE order_balances 
+                                SET usuario_id_cancel = ".$userID.", 
+                                    data_cancel = '".date("Y-m-d H:i:s")."' 
+                                WHERE order_id = ".$order_id." 
+                                        AND data_cancel = '1901-01-01 00:00:00' 
+                            ");
+            }
+        }
+
+        return true;
+    }
+
+    public function find_order_balances_all($userID) {
+        $sql = "SELECT t.order_id, t.benefit, t.document, t.total, b.id 
+                    FROM tmp_order_balances t 
+                        LEFT JOIN benefits b ON b.code = t.benefit AND b.data_cancel = '1901-01-01 00:00:00' 
+                    ORDER BY t.order_id
+                ";
+        $result = $this->query($sql);
+
+        if ($result) { 
+            for ($i=0; $i < count($result); $i++) { 
+                $order_id = $result[$i]['t']['order_id'];
+                $benefit_code = $result[$i]['t']['benefit'];
+                $document = $result[$i]['t']['document'];
+                $total = $result[$i]['t']['total'];
+                $benefit_id = $result[$i]['b']['id'];
+                $customer_user_id = 0;
+
+                $this->query("INSERT INTO order_balances (order_id, customer_user_id, benefit_id, document, total, created, user_created_id, pedido_operadora) 
+                                VALUES ('".$order_id."', '".$customer_user_id."', '".$benefit_id."', '".$document."', '".$total."', now(), '".$userID."', '".$order_id."')");
+            }
+        }
+
+        return true;
+    }
+
+    public function update_order_item_saldo_all($userID) {
+        $sql = "SELECT t.order_id 
+                    FROM tmp_order_balances t
+                    GROUP BY t.order_id
+                    ORDER BY 1
+                ";
+        $result = $this->query($sql);
+
+        if ($result) { 
+            for ($i=0; $i < count($result); $i++) { 
+                $order_id = $result[$i]['t']['order_id'];
+
+                $this->update_order_item_saldo($order_id, $userID);
+            }
+        }
+
+        return true;
+    }
+
+    public function update_user_order_item_saldo_all() {
+        $sql = "UPDATE order_balances AS b1, 
+                        (SELECT b.id, u.id AS customer_user_id
+                            FROM order_balances b
+                            INNER JOIN order_items i ON i.order_id = b.order_id 
+                            INNER JOIN customer_users u ON u.id = i.customer_user_id
+                            WHERE b.order_id = b.pedido_operadora 
+                            AND b.customer_user_id = 0 
+                            AND i.data_cancel = '1901-01-01 00:00:00' 
+                            AND u.data_cancel = '1901-01-01 00:00:00' 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND REPLACE(REPLACE(u.cpf, '-', ''), '.', '') LIKE CONCAT('%', b.document,'%')
+                            GROUP BY b.id, u.id
+                        ) AS b2
+                    SET b1.customer_user_id = b2.customer_user_id, b1.pedido_operadora = null 
+                    WHERE b1.id = b2.id
+                ";
+        $result = $this->query($sql);
+
+        return true;
+    }
 }

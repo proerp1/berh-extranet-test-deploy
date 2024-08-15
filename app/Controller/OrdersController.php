@@ -2363,7 +2363,6 @@ $itens = $this->OrderItem->find('all', [
         return $commissionPerc;
     }
 
-
     public function priceFormatBeforeSave($price)
     {
         if (is_numeric($price)) {
@@ -2376,5 +2375,34 @@ $itens = $this->OrderItem->find('all', [
         $valueFormatado = str_replace(',', '.', $valueFormatado);
 
         return $valueFormatado;
+    }
+
+    public function upload_saldo_csv_all()
+    {
+        if (CakeSession::read("Auth.User.id") == 37) {
+            $this->OrderBalance->update_cancel_balances_all(CakeSession::read("Auth.User.id"));
+
+            $this->OrderBalance->find_order_balances_all(CakeSession::read("Auth.User.id"));
+        }
+
+        die;
+    }
+
+    public function update_user_saldo_csv_all()
+    {
+        if (CakeSession::read("Auth.User.id") == 37) {
+            $this->OrderBalance->update_user_order_item_saldo_all();
+        }
+
+        die;
+    }
+
+    public function update_saldo_csv_all()
+    {
+        if (CakeSession::read("Auth.User.id") == 37) {
+            $this->OrderBalance->update_order_item_saldo_all(CakeSession::read("Auth.User.id"));
+        }
+
+        die;
     }
 }
