@@ -75,6 +75,7 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+    
     public function gerarExcelOrdersprocessamento($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
@@ -86,7 +87,7 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
-   /* public function gerarExcelBeneficiario($nome, $dados)
+    public function gerarExcelBeneficiario($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
 
@@ -97,7 +98,7 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
-*/
+
     public function gerarExcelProposal($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();

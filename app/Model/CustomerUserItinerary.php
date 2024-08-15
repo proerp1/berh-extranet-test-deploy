@@ -6,14 +6,14 @@ class CustomerUserItinerary extends AppModel
     public $primaryKey = 'id';
 
     public $belongsTo = array(
-        'Benefit' => array(
-            'className' => 'Benefit',
-            'foreignKey' => 'benefit_id'
-        ),
-        'CustomerUser' => array(
+        'CustomerUser' => [
             'className' => 'CustomerUser',
             'foreignKey' => 'customer_user_id'
-        )
+        ],
+        'Benefit' => [
+            'className' => 'Benefit',
+            'foreignKey' => 'benefit_id'
+        ]
     );
 
     public function beforeFind($queryData)

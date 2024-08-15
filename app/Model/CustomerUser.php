@@ -6,9 +6,19 @@ class CustomerUser extends AppModel
     public $name = 'CustomerUser';
     public $actsAs = ['Containable'];
 
+    public $hasMany = [
+        'CustomerUserItinerary' => [
+            'className' => 'CustomerUserItinerary',
+            'foreignKey' => 'customer_user_id',
+            'dependent' => true
+        ]
+        
+    ];
+
     public $belongsTo = [
         'Customer' => [
-            // 'conditions' => array('CustomerUser.resale' => 0, 'CustomerUser.seller' => 0)
+            'className' => 'Customer',
+            'foreignKey' => 'customer_id'
         ],
         'Resale' => [
             'className' => 'Resale',
@@ -32,6 +42,10 @@ class CustomerUser extends AppModel
         'CostCenter' => [
             'className' => 'CostCenter',
             'foreignKey' => 'customer_cost_center_id',
+        ],
+        'EconomicGroup' => [
+            'className' => 'EconomicGroup',
+            'foreignKey' => 'economic_group_id'
         ],
     ];
 

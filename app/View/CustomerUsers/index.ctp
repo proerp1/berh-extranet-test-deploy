@@ -48,7 +48,13 @@ echo $this->element("abas_customers", array('id' => $id));
                         <i class="fas fa-thumbs-down"></i>
                         Inativar em Lote
                     </a>
+<<<<<<< Updated upstream
                     -->
+
+                    <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "generate_excel_report", $id)); ?>" class="btn btn-sm btn-primary me-3">
+                        <i class="fas fa-download"></i>
+                        Relatorio de Beneficios
+                    </a>
 
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>

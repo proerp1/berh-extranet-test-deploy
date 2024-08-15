@@ -1941,14 +1941,22 @@ class ExcelTemplate
 	
 			foreach ($chunk as $data) {
 				$indx++;
+				
+				// Iterar sobre itineraries se existirem
+				if (!empty($data['CustomerUserItinerary'])) {
+					foreach ($data['CustomerUserItinerary'] as $itinerary) {
+						$activeWorksheet
+							->setCellValue('A' . $indx, $itinerary['benefit_id'] ?? '')
+							->setCellValue('B' . $indx, $itinerary['working_days'] ?? '')
+							->setCellValue('C' . $indx, $itinerary['card_number'] ?? '')
+							->setCellValue('D' . $indx, $itinerary['quantity'] ?? '')
+							->setCellValue('E' . $indx, $itinerary['unit_price'] ?? '')
+							->setCellValue('F' . $indx, $itinerary['price_per_day'] ?? '');
+						
+					}
+				}
 				$activeWorksheet
-					->setCellValue('A' . $indx, $data['CustomerUserItinerary']['benefit_id'] ?? '')
-					->setCellValue('B' . $indx, $data['CustomerUserItinerary']['working_days'] ?? '')
-					->setCellValue('C' . $indx, $data['CustomerUserItinerary']['card_number'] ?? '')
-					->setCellValue('D' . $indx, $data['CustomerUserItinerary']['quantity'] ?? '')
-					->setCellValue('E' . $indx, $data['CustomerUserItinerary']['unit_price'] ?? '')
-					->setCellValue('F' . $indx, $data['CustomerUserItinerary']['price_per_day'] ?? '')
-					->setCellValue('G' . $indx, $data['CustomerUser']['status_id'] ?? '')
+					->setCellValue('G' . $indx, $data['CustomerUser']['customer_id'] ?? '')
 					->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
 					->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
 					->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
