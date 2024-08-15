@@ -197,6 +197,7 @@
                     <th>Taxa</th>
                     <th>Desconto</th>
                     <th>TPP</th>
+                    <th>Fee Economia</th>
                     <th>Economia</th>
                     <th>Total</th>
                     <th>Usuário</th>
@@ -206,7 +207,17 @@
             </thead>
             <tbody>
                 <?php if ($data) { ?>
-                    <?php for ($i = 0; $i < count($data); $i++) { ?>
+                    <?php for ($i = 0; $i < count($data); $i++) { 
+                        $fee_economia = 0;
+                        $total_economia = $data[$i]["Order"]["saldo_not_formated"];
+
+                        if ($data[$i]['Order']['fee_saldo_not_formated'] != 0 and $total_economia != 0) {
+                            $fee_economia = (($data[$i]['Order']['fee_saldo_not_formated'] / 100) * ($total_economia));
+                        }
+
+                        $total_economia = $total_economia - $fee_economia;
+
+                        ?>
                         <tr>
                             <td class="fw-bold fs-7 ps-4">
                                 <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
@@ -224,7 +235,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["saldo"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>

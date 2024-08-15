@@ -185,7 +185,7 @@
                         <th>Desconto</th>
                         <th>Total</th>
                         <th>Economia</th>
-                        <!--<th>Total com Economia</th>-->
+                        <th>Fee Economia</th>
                         <th class="w-150px min-w-150px rounded-end">Saldo</th>
                     </tr>
                 </thead>
@@ -197,8 +197,15 @@
                     <?php if ($data) { ?>
                         <?php for ($i = 0; $i < count($data); $i++) { ?>
                             <?php
-                                $economia = $data[$i][0]["total_balances"];
-                                $total_economia = ($data[$i]["Order"]['subtotal_not_formated'] - $data[$i][0]["total_balances"]);
+                                $fee_economia = 0;
+                                $total_economia = $data[$i][0]["total_balances"];
+
+                                if ($data[$i]["Order"]['fee_saldo_not_formated'] != 0 and $total_economia != 0) {
+                                    $fee_economia = (($data[$i]["Order"]['fee_saldo_not_formated'] / 100) * ($total_economia));
+                                }
+
+                                $total_economia = $total_economia - $fee_economia;
+                                
                                 $saldo = $saldo + ($data[$i][0]["total_balances"] - $data[$i]["Order"]['desconto_not_formated']);
                             ?>
                             <tr>
@@ -216,8 +223,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4" style="color: #f00;"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($economia,2,',','.') ?></td>
-                                <!--<td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.') ?></td>-->
+                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($total_economia,2,',','.') ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["fee_saldo"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.') ?></td>
                             </tr>
                         <?php } ?>

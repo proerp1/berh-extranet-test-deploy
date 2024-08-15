@@ -42,7 +42,6 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
-                    <th>Beneficiário</th>
                     <th>Período</th>
                     <th>Fornecedor</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -55,7 +54,6 @@
                             <td class="fw-bold fs-7 ps-4">
                                 <?php echo $data[$i]["PaymentImportLog"]["processed"] ? 'Processado' : 'Pendente'; ?>
                             </td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"] . ' - ' . $data[$i]["Order"]["order_period_to"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">

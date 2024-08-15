@@ -1382,6 +1382,7 @@ class OrdersController extends AppController
                             'Order.id',
                             'Supplier.id', 
                             'Supplier.razao_social', 
+                            'OrderItem.status_processamento',
                             'sum(OrderItem.subtotal) as subtotal', 
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
@@ -1421,7 +1422,7 @@ class OrdersController extends AppController
                     ]
                 ],
             ],
-            'group' => ['Supplier.id']
+            'group' => ['Supplier.id', 'OrderItem.status_processamento']
             
         ]);
 
