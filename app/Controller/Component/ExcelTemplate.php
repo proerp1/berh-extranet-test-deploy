@@ -1713,7 +1713,8 @@ class ExcelTemplate
 		->setCellValue('BN1', "GE")
 		->setCellValue('BO1', "GE-CNPJ")
 		->setCellValue('BP1', "Código")
-		->setCellValue('BQ1', "Economia");
+		->setCellValue('BQ1', "Economia")
+		->setCellValue('BR1', "id");
 		
 
 		
@@ -1801,7 +1802,8 @@ class ExcelTemplate
 				->setCellValue('BN'. $indx, $dados[$i]['EconomicGroups']['razao_social'])
 				->setCellValue('BO'. $indx, $dados[$i]['EconomicGroups']['document'])
 				->setCellValue('BP'. $indx, $dados[$i]['Customer']['codigo_associado'])
-				->setCellValue('BQ'. $indx, $dados[$i]['OrderItem']['saldo']);
+				->setCellValue('BQ'. $indx, $dados[$i]['OrderItem']['saldo'])
+				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id']);
 				
 		}
 	}
