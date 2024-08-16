@@ -117,13 +117,33 @@ class CustomerUsersController extends AppController
                 ]
             ],
             'fields' => [
-                'CustomerUser.*', 
-                'EconomicGroup.*' 
+                'CustomerUser.customer_id',
+                'CustomerUser.name', 
+                'CustomerUser.matricula', 
+                'CustomerUser.email', 
+                'CustomerUser.tel', 
+                'CustomerUser.cel', 
+                'CustomerUser.cpf', 
+                'CustomerUser.rg', 
+                'CustomerUser.emissor_rg', 
+                'CustomerUser.emissor_estado', 
+                'CustomerUser.nome_mae', 
+                'CustomerUser.sexo', 
+                'CustomerUser.data_nascimento', 
+                'CustomerUser.customer_departments_id', 
+                'CustomerUser.customer_positions_id', 
+                'CustomerUser.customer_cost_center_id', 
+                'CustomerUser.customer_salary_id', 
+                'CustomerUser.marital_status_id', 
+                'CustomerUser.economic_group_id', 
+                'CustomerUser.observation', 
+                'EconomicGroup.name' ,
+                'EconomicGroup.document',
             ],
             'group' => ['CustomerUser.id', 'EconomicGroup.id'] 
         ]);
     
-        debug($data); die;
+        //debug($data); die;
     
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
