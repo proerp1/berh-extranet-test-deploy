@@ -1893,7 +1893,7 @@ class ExcelTemplate
 
 	public function getBeneficiario($spreadsheet, $dados)
 	{
-		ini_set('memory_limit', '300M'); // Aumentar o limite de memória
+		ini_set('memory_limit', '-1'); // Aumentar o limite de memória
 	
 		$activeWorksheet = $spreadsheet->getActiveSheet();
 	
