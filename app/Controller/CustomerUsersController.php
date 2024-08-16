@@ -98,26 +98,37 @@ class CustomerUsersController extends AppController
         // $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario_xlsx');
         $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments'));
     }
-
     public function generate_excel_report($id)
     {
         ini_set('memory_limit', '-1');
-
-	    set_time_limit(90);
-        ini_set('max_execution_time', -1); 
+        set_time_limit(90);
+        ini_set('max_execution_time', '-1'); 
     
         $data = $this->CustomerUser->find('all', [
             'conditions' => ['CustomerUser.customer_id' => $id],
-            'contain' => ['CustomerUserItinerary', 'EconomicGroup']
+            'joins' => [
+                [
+                    'table' => 'economic_groups',  
+                    'alias' => 'EconomicGroup',    
+                    'type' => 'LEFT',             
+                        'EconomicGroup.customer_id = CustomerUser.customer_id' 
+                    ]
+                ]
+            ],
+            'fields' => [
+                'CustomerUser.*', 
+                'EconomicGroup.*' 
+            ],
+            'group' => ['CustomerUser.id', 'EconomicGroup.id'] /
         ]);
-        
-        
-        //debug($data);die;
+    
+       // debug($data); die;
     
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
         $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario.xlsx');
     }
+    
 
 
     
