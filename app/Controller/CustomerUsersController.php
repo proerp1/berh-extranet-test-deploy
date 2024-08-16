@@ -110,7 +110,8 @@ class CustomerUsersController extends AppController
                 [
                     'table' => 'economic_groups',  
                     'alias' => 'EconomicGroup',    
-                    'type' => 'LEFT',             
+                    'type' => 'LEFT',              
+                    'conditions' => [
                         'EconomicGroup.customer_id = CustomerUser.customer_id' 
                     ]
                 ]
@@ -119,10 +120,10 @@ class CustomerUsersController extends AppController
                 'CustomerUser.*', 
                 'EconomicGroup.*' 
             ],
-            'group' => ['CustomerUser.id', 'EconomicGroup.id'] /
+            'group' => ['CustomerUser.id', 'EconomicGroup.id'] 
         ]);
     
-       // debug($data); die;
+        debug($data); die;
     
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
