@@ -1978,8 +1978,8 @@ class ExcelTemplate
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
-                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
-                    ->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
+                    ->setCellValue('Z' . $indx, $data['EconomicGroup']['name'] ?? '')
+                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['document'] ?? '');
             }
         }
     }
