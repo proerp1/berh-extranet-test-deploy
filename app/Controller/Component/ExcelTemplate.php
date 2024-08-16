@@ -1973,7 +1973,7 @@ class ExcelTemplate
                 ->setCellValue('V' . $indx, $data['CustomerUser']['customer_cost_center_id'] ?? '')
                 ->setCellValue('W' . $indx, $data['CustomerUser']['customer_salary_id'] ?? '')
                 ->setCellValue('X' . $indx, $data['CustomerUser']['marital_status_id'] ?? '')
-                ->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
+                ->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
                // ->setCellValue('Z' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
