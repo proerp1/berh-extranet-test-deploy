@@ -104,7 +104,7 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
-                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
                         <a href="#" id="download_sel" class="btn btn-secondary me-3">
                             Download em Lote
                         </a>
@@ -192,7 +192,7 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
                             <th class="ps-4 w-80px min-w-80px rounded-start">
                                 <input type="checkbox" class="check_all">
                             </th>
@@ -230,7 +230,7 @@
                                
                             ?>
 							<tr>
-                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
                                     </td>
