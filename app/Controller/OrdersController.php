@@ -855,6 +855,7 @@ class OrdersController extends AppController
 
             $orderBalanceData = [
                 'order_id' => $orderId,
+                'order_item_id' => $data['order_item_id'],
                 'customer_user_id' => $data['customer_user_id'],
                 'benefit_id' => $benefit_id,
                 'document' => $data['document'],
@@ -982,6 +983,7 @@ class OrdersController extends AppController
                 'benefit_code' => $row[1],
                 'total' => $total,
                 'pedido_operadora' => $row[3],
+                'order_item_id' => $row[4],
             ];
 
             $line++;

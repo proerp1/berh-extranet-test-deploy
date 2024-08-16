@@ -652,13 +652,13 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
-                                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                                    <?php //if ($order['Order']['status_id'] == 83) { ?>
                                         <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
                                         <input type="hidden" class="user_id" value="<?php echo $items[$i]["OrderItem"]["customer_user_id"]; ?>">
                                         <input type="number" class="form-control working_days_input" value="<?php echo $items[$i]["OrderItem"]["working_days"]; ?>">
-                                    <?php } else { ?>
+                                    <?php //} else { ?>
                                         <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
-                                    <?php } ?>
+                                    <?php //} ?>
                                 </td>
                                 <!--<td class="fw-bold fs-7 ps-4">
                                     <?php if ($order['Order']['status_id'] == 83) { ?>

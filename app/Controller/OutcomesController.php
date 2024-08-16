@@ -466,8 +466,10 @@ class OutcomesController extends AppController {
 
 		if ($status == 11) {
 			$zip_name = "arquivos_programado.zip";
-		} else {
+		} elseif ($status == 12) {
 			$zip_name = "arquivos_aprovado.zip";
+		} else {
+			$zip_name = "arquivos_pago.zip";			
 		}
 	    
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
