@@ -136,7 +136,7 @@ class CustomerUsersController extends AppController
                 'CustomerUser.customer_salary_id', 
                 'CustomerUser.marital_status_id', 
                 'CustomerUser.economic_group_id', 
-                'CustomerUser.observation', 
+                //'CustomerUser.observation', 
                 'EconomicGroup.name' ,
                 'EconomicGroup.document',
             ],
