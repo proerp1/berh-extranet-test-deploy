@@ -1839,7 +1839,7 @@ class ExcelTemplate
 		->setCellValue('W1', "Departamento")
 		->setCellValue('X1', "Centro de Custo")
 		->setCellValue('Y1', " CNPJ Grupo Economico")
-		->setCellValue('Z1', "Nome Grupo Economico");
+		->setCellValue('Z1', "Nome Grupo Economicoo");
 
 
 
