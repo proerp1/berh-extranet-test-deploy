@@ -209,13 +209,14 @@
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { 
                         $fee_economia = 0;
-                        $total_economia = $data[$i]["Order"]["saldo_not_formated"];
+                        $vl_economia = $data[$i][0]["total_balances"];
+                        $fee_saldo = $data[$i]["Order"]["fee_saldo_not_formated"];
 
-                        if ($data[$i]['Order']['fee_saldo_not_formated'] != 0 and $total_economia != 0) {
-                            $fee_economia = (($data[$i]['Order']['fee_saldo_not_formated'] / 100) * ($total_economia));
+                        if ($fee_saldo != 0 and $vl_economia != 0) {
+                            $fee_economia = (($fee_saldo / 100) * ($vl_economia));
                         }
 
-                        $total_economia = $total_economia - $fee_economia;
+                        $vl_economia = ($vl_economia - $fee_economia);
 
                         ?>
                         <tr>
@@ -236,7 +237,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($vl_economia,2,',','.'); ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>

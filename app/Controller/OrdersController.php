@@ -19,7 +19,27 @@ class OrdersController extends AppController
     public $paginate = [
         'Order' => [
             'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
-            'limit' => 50, 'order' => ['Order.id' => 'desc']
+            'fields' => [
+                            'Order.*',
+                            'Status.id',
+                            'Status.label',
+                            'Status.name',
+                            'Customer.codigo_associado',
+                            'CustomerCreator.name',
+                            'Creator.name',
+                            'EconomicGroup.name',
+                            'Customer.nome_primario',
+                            'Income.data_pagamento',
+                            "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                                FROM order_balances b 
+                                    INNER JOIN orders o ON o.id = b.order_id 
+                                WHERE o.id = Order.id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00' 
+                                        AND o.data_cancel = '1901-01-01 00:00:00' 
+                            ) as total_balances"
+                        ],
+            'limit' => 50, 
+            'order' => ['Order.id' => 'desc']
         ],
         'OrderBalance' => [
             'limit' => 100,
@@ -1599,9 +1619,11 @@ class OrdersController extends AppController
 
         $order = $this->Order->findById($id);
 
+        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id], 'fields' => 'SUM(OrderBalance.total) as total']);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Saldo' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order', 'order_balances_total'));
     }
 
     public function zerosEsq($campo, $tamanho)
