@@ -2239,7 +2239,7 @@ $itens = $this->OrderItem->find('all', [
                     [
                         'table' => 'economic_groups',
                         'alias' => 'EconomicGroups',
-                        'type' => 'LEFT',
+                        'type' => 'INNER',
                         'conditions' => [
                             'CustomerUser.economic_group_id = EconomicGroups.id'
                         ]
