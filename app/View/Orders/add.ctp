@@ -513,7 +513,7 @@
                     <!--end::Number-->
                     <!--begin::Follower-->
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Economia</span>
+                        <span class="fw-bold fs-6 text-gray-400">Cliente</span>
                     </div>
                     <!--end::Follower-->
                     <br>
@@ -531,7 +531,7 @@
                     <!--end::Number-->
                     <!--begin::Follower-->
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
+                        <span class="fw-bold fs-6 text-gray-400">Economia</span>
                     </div>
                     <!--end::Follower-->
                 </div>
