@@ -1884,7 +1884,7 @@ class ExcelTemplate
 				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
 				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
-				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['razao_social']);
+				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
 
 
 				
@@ -1893,7 +1893,7 @@ class ExcelTemplate
 
 	public function getBeneficiario($spreadsheet, $dados)
 {
-    ini_set('memory_limit', '-1'); // Aumentar o limite de memória
+   
 
     $activeWorksheet = $spreadsheet->getActiveSheet();
 
