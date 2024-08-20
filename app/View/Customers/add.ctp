@@ -353,7 +353,9 @@
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Enviar email?</label>
-                    <?php echo $this->Form->input('enviar_email', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", "empty" => "Selecione", "class" => "form-select mb-3 mb-lg-0"));  ?>
+                    <?php 
+                    echo $this->Form->input('enviar_email', array('options' => array('0' => 'Não', '1' => 'Sim'),'data-control' => 'select2','empty' => 'Selecione','class' => 'form-select mb-3 mb-lg-0','default' => '1'  // Define "Sim" como valor padrão));  
+                    ?>
                 </div>
 
                 <div class="mb-7 col">
