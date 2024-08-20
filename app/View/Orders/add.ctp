@@ -16,6 +16,7 @@
             todayHighlight: true,
             toggleActive: true
         });
+        $('#OrderDueDate').mask('99/99/9999');
 
         $('#OrderUnitPrice').maskMoney({
             decimal: ',',
@@ -202,7 +203,7 @@
                             <label class="form-label">Vencimento</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <input type="text" name="data[Order][due_date]" id="OrderDueDate" class="form-control" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
+                                <input type="text" name="data[Order][due_date]" id="OrderDueDate" class="form-control" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] != 83 ? 'disabled="disabled"' : ''; ?>>
                             </div>
                             <?php if (strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83) { ?>
                                 <p id="message_classification" style="color: red; margin: 0;">A data de vencimento não pode ser menor que a data de hoje</p>

@@ -488,6 +488,7 @@
             todayHighlight: true,
             toggleActive: true
         });
+        $('.duedate_datepicker').mask('99/99/9999');
 
         $('#order_creation_form').on('submit', function(event) {
             const creditReleaseDateValue = $('#credit_release_date').val();
