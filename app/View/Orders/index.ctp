@@ -198,6 +198,7 @@
                     <th>Desconto</th>
                     <th>TPP</th>
                     <th>Fee Economia</th>
+                    <th>Cliente</th>
                     <th>Economia</th>
                     <th>Total</th>
                     <th>Usuário</th>
@@ -209,6 +210,7 @@
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { 
                         $fee_economia = 0;
+                        $total_economia = 0;
                         $vl_economia = $data[$i][0]["total_balances"];
                         $fee_saldo = $data[$i]["Order"]["fee_saldo_not_formated"];
 
@@ -217,6 +219,7 @@
                         }
 
                         $vl_economia = ($vl_economia - $fee_economia);
+                        $total_economia = ($vl_economia + $fee_economia);
 
                         ?>
                         <tr>
@@ -238,6 +241,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($vl_economia,2,',','.'); ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
