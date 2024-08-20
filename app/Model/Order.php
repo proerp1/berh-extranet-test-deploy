@@ -156,7 +156,12 @@ class Order extends AppModel
                 $results[$key][$this->alias]['end_date_nao_formatado'] = $val[$this->alias]['end_date'];
                 $results[$key][$this->alias]['end_date'] = date("d/m/Y", strtotime($val[$this->alias]['end_date']));
             }
-            
+
+            $results[$key][$this->alias]['due_date_nao_formatado'] = null;
+            if (isset($val[$this->alias]['due_date'])) {
+                $results[$key][$this->alias]['due_date_nao_formatado'] = $val[$this->alias]['due_date'];
+                $results[$key][$this->alias]['due_date'] = date("d/m/Y", strtotime($val[$this->alias]['due_date']));
+            }
         }
 
         return $results;
@@ -206,6 +211,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['end_date'])) {
             $this->data[$this->alias]['end_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['end_date']);
+        }
+
+        if (!empty($this->data[$this->alias]['due_date'])) {
+            $this->data[$this->alias]['due_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['due_date']);
         }
         
         if (!empty($this->data[$this->alias]['validation_date'])) {

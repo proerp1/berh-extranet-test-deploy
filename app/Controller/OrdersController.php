@@ -277,6 +277,7 @@ class OrdersController extends AppController
                 'created_at' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
+                'due_date' => $this->request->data['due_date'],
             ];
 
             $this->Order->create();
@@ -431,6 +432,7 @@ class OrdersController extends AppController
                 $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
                 $order['Order']['total'] = $total;
                 $order['Order']['observation'] = $this->request->data['Order']['observation'];
+                $order['Order']['due_date'] = $this->request->data['Order']['due_date'];
                 $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
 
@@ -616,7 +618,7 @@ class OrdersController extends AppController
         $income['Income']['valor_multa'] = 0;
         $income['Income']['valor_bruto'] = $order['Order']['total'];
         $income['Income']['valor_total'] = $order['Order']['total'];
-        $income['Income']['vencimento'] = date('d/m/Y', strtotime(' + 30 day'));;
+        $income['Income']['vencimento'] = $order['Order']['due_date'];
         $income['Income']['data_competencia'] = date('01/m/Y');
         $income['Income']['created'] = date('Y-m-d H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");

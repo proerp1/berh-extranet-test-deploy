@@ -304,6 +304,15 @@
                             <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
                         <div class="col">
+                            <label class="fw-semibold fs-6 mb-2">Data de vencimento</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, 'default' => date('d/m/Y', strtotime(' + 30 day'))]);  ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-7">
+                        <div class="col">
                             <label class="mb-2">Utilizar Dias Úteis</label>
                             <div class="row">
                                 <div class="col">
@@ -326,13 +335,14 @@
 
                             </div>
                         </div>
-                    </div>
-                    <div class="row mb-7">
+
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
                             <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
                             <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                         </div>
+                    </div>
+                    <div class="row mb-7">
                         <div class="col">
                             <label class="mb-2">Criação de Pedidos</label>
                             <div class="row" style=" margin-top: 10px; margin-bottom: 10px; ">
@@ -353,12 +363,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row opcao_grupo_economico" style="display:none">
-                                <div class="col mt-5">
-                                    <select name="grupo_especifico" id="grupo_selecionado" class="form-control">
-                                    </select>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="col mt-5 opcao_grupo_economico" style="display:none">
+                            <select name="grupo_especifico" id="grupo_selecionado" class="form-control">
+                            </select>
                         </div>
                     </div>
                     <div class="row mb-7">
@@ -468,6 +476,17 @@
             language: "pt-BR",
             format: 'mm/yyyy',
             autoclose: true
+        });
+
+        $(".duedate_datepicker").datepicker({
+            format: 'dd/mm/yyyy',
+            weekStart: 1,
+            startDate: "today",
+            orientation: "bottom auto",
+            autoclose: true,
+            language: "pt-BR",
+            todayHighlight: true,
+            toggleActive: true
         });
 
         $('#order_creation_form').on('submit', function(event) {
