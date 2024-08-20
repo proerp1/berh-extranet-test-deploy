@@ -2098,7 +2098,7 @@ $itens = $this->OrderItem->find('all', [
                     'alias' => 'EconomicGroups',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'CustomerUser.economic_group_id = EconomicGroups.id'
+                        'Order.economic_group_id = EconomicGroups.id'
                     ]
                 ],
                 [
@@ -2241,7 +2241,7 @@ $itens = $this->OrderItem->find('all', [
                         'alias' => 'EconomicGroups',
                         'type' => 'LEFT',
                         'conditions' => [
-                            'CustomerUser.economic_group_id = EconomicGroups.id'
+                            'Order.economic_group_id = EconomicGroups.id'
                         ]
                     ],
                     [
@@ -2307,6 +2307,7 @@ $itens = $this->OrderItem->find('all', [
                 'Customer.*',
                 'Status.*',
                 'CustomerUser.*',
+                'EconomicGroups.*',
                 'Supplier.*',
                 'Benefit.*',
                 'CustomerUserItinerary.*',
@@ -2320,6 +2321,14 @@ $itens = $this->OrderItem->find('all', [
                     'type' => 'LEFT',
                     'conditions' => [
                         'Order.customer_id = Customer.id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroups',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.economic_group_id = EconomicGroups.id'
                     ]
                 ],
                 [
