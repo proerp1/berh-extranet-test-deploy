@@ -304,10 +304,10 @@
                             <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
                         <div class="col">
-                            <label class="fw-semibold fs-6 mb-2">Data de vencimento</label>
+                            <label class="fw-semibold fs-6 mb-2 required">Data de vencimento</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, 'default' => date('d/m/Y', strtotime(' + 30 day'))]);  ?>
+                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => date('d/m/Y', strtotime(' + 30 day'))]);  ?>
                             </div>
                         </div>
                     </div>
@@ -343,6 +343,36 @@
                         </div>
                     </div>
                     <div class="row mb-7">
+                        <div class="col-6">
+                            <label class="mb-2">Clona pedido anterior?</label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="1" id="cloneOrder1" />
+                                        <label class="form-check-label" for="cloneOrder1">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="2" id="cloneOrder2" checked />
+                                        <label class="form-check-label" for="cloneOrder2">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col d-none">
+                            <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
+                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $orders]); ?>
+                        </div>
+                    </div>
+                    <div class="row mb-7 div-new-order">
                         <div class="col">
                             <label class="mb-2">Criação de Pedidos</label>
                             <div class="row" style=" margin-top: 10px; margin-bottom: 10px; ">
@@ -369,7 +399,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-7">
+                    <div class="row mb-7 div-new-order">
                         <div class="col">
                             <label class="mb-2">Pedido Parcial</label>
                             <div class="row">
@@ -417,9 +447,9 @@
                                 <div class="col mt-5">
                                     <select name="benefit_type" id="tipo_beneficio" class="form-control">
                                         <?php 
-                                        foreach ($benefit_types as $benefit_type_id => $benefit_type) {
-                                            echo '<option value="' . $benefit_type_id . '">' . $benefit_type . '</option>';
-                                        }
+                                            foreach ($benefit_types as $benefit_type_id => $benefit_type) {
+                                                echo '<option value="' . $benefit_type_id . '">' . $benefit_type . '</option>';
+                                            }
                                         ?>
                                     </select>
                                 </div>
@@ -466,6 +496,10 @@
 
         $('#modal_gerar_arquivo').on('show.bs.modal', function () {
             $('#customer_id').select2({
+                dropdownParent: $('#modal_gerar_arquivo')
+            });
+
+            $('#clone_order_select').select2({
                 dropdownParent: $('#modal_gerar_arquivo')
             });
         });
@@ -537,6 +571,20 @@
 
             // Se todas as validações passarem, esconde a mensagem
             $('#message_classification').hide();
+        });
+
+        $('.clone_order').on('change', function() {
+            var val = $('.clone_order:checked').val();
+
+            if (val == 1) {
+                $("#clone_order_select").attr('required', true);
+                $("#clone_order_select").parent().parent().removeClass('d-none');
+                $(".div-new-order").addClass('d-none');
+            } else {
+                $("#clone_order_select").attr('required', false);
+                $("#clone_order_select").parent().parent().addClass('d-none');
+                $(".div-new-order").removeClass('d-none');
+            }
         });
 
         $('input[name="data[working_days_type]"]').on('change', function() {
