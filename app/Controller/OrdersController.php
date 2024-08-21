@@ -20,24 +20,24 @@ class OrdersController extends AppController
         'Order' => [
             'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
             'fields' => [
-                            'Order.*',
-                            'Status.id',
-                            'Status.label',
-                            'Status.name',
-                            'Customer.codigo_associado',
-                            'CustomerCreator.name',
-                            'Creator.name',
-                            'EconomicGroup.name',
-                            'Customer.nome_primario',
-                            'Income.data_pagamento',
-                            "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                                FROM order_balances b 
-                                    INNER JOIN orders o ON o.id = b.order_id 
-                                WHERE o.id = Order.id 
-                                        AND b.data_cancel = '1901-01-01 00:00:00' 
-                                        AND o.data_cancel = '1901-01-01 00:00:00' 
-                            ) as total_balances"
-                        ],
+                'Order.*',
+                'Status.id',
+                'Status.label',
+                'Status.name',
+                'Customer.codigo_associado',
+                'CustomerCreator.name',
+                'Creator.name',
+                'EconomicGroup.name',
+                'Customer.nome_primario',
+                'Income.data_pagamento',
+                "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                    FROM order_balances b 
+                        INNER JOIN orders o ON o.id = b.order_id 
+                    WHERE o.id = Order.id 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as total_balances"
+            ],
             'limit' => 50, 
             'order' => ['Order.id' => 'desc']
         ],
@@ -163,6 +163,7 @@ class OrdersController extends AppController
         }
     
         $data = $this->Paginator->paginate('Order', $condition);
+
         $customers = $this->Customer->find('list', [
             'conditions' => ['Customer.status_id' => 3],
             'fields' => ['id', 'nome_primario'],
@@ -182,13 +183,20 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
     
+        $orders = $this->Order->find('all', [
+            'contain' => ['Customer'],
+            'fields' => ['Order.id', 'concat(Order.id, " - ", Customer.codigo_associado, " - ", Customer.nome_primario) as name'],
+            'order' => ['Order.id' => 'asc']
+        ]);
+        $orders = Hash::combine($orders, '{n}.Order.id', '{n}.0.name');
+    
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
     
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString', 'orders'));
     }
     
 
@@ -202,7 +210,7 @@ class OrdersController extends AppController
         $is_consolidated = $this->request->data['is_consolidated'];
         $is_partial = $this->request->data['is_partial'];
         $working_days_type = $this->request->data['working_days_type'];
-        $grupo_especifico = $this->request->data['grupo_especifico'];
+        $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
         $benefit_type = $this->request->data['benefit_type'];
         $is_beneficio = $this->request->data['is_beneficio'];
         $is_beneficio = (int)$is_beneficio;
@@ -218,7 +226,6 @@ class OrdersController extends AppController
             }
         }
 
-
         if ($this->request->is('post')) {
             $proposal = $this->Proposal->find('first', [
                 'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
@@ -226,6 +233,29 @@ class OrdersController extends AppController
             if (empty($proposal)) {
                 $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action' => 'index']);
+            }
+
+            if ($this->request->data['clone_order'] == 1) {
+                $lastOrder = $this->Order->find('first', [
+                    'conditions' => ['Order.id' => $this->request->data['clone_order_id']],
+                    'recursive' => -1,
+                ]);
+
+                $benefit_type = $lastOrder['Order']['benefit_type'];
+                $is_partial = $lastOrder['Order']['is_partial'];
+
+                $is_consolidated = $lastOrder['Order']['is_consolidated'];
+                $is_partial = $lastOrder['Order']['is_partial'];
+                $benefit_type = $lastOrder['Order']['benefit_type'];
+
+                $benefit_type_persist = 0;
+                if ($benefit_type != '') {
+                    $benefit_type_persist = $benefit_type;
+                    $benefit_type = (int)$benefit_type;
+                    if($benefit_type == -1){
+                        $benefit_type = [1,2];
+                    }
+                }
             }
 
 
@@ -264,7 +294,6 @@ class OrdersController extends AppController
                     $this->redirect(['action' => 'index']);
                 }
             }
-
 
             $orderData = [
                 'customer_id' => $customerId,
