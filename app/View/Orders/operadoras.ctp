@@ -82,7 +82,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th  class="fw-bold fs-5 ps-4" colspan=˜3˜>Total</th>
+                    <th  class="fw-bold fs-5 ps-4" colspan="3">Total</th>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
                     <!--<td class="fw-bold fs-7 ps-4"><?php echo number_format($total_saldo, 2, ',', '.'); ?></td>-->
                 </tr>
