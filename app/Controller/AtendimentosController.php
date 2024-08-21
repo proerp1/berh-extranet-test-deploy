@@ -24,6 +24,7 @@ class AtendimentosController extends AppController
             "or" => []
         ];
     
+        // Filter by search query
         if (isset($this->request->query['q']) && $this->request->query['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
                 'Atendimento.subject LIKE' => "%{$this->request->query['q']}%",
@@ -32,14 +33,22 @@ class AtendimentosController extends AppController
             ]);
         }
     
+        // Filter by department
         if (isset($this->request->query["t"]) && $this->request->query["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Department.id' => $this->request->query["t"]]);
         }
     
+        // Filter by customer
         if (isset($this->request->query['cliente']) && $this->request->query['cliente'] != "") {
             $condition['and'] = array_merge($condition['and'], ['Customer.nome_primario LIKE' => "%{$this->request->query['cliente']}%"]);
         }
     
+        // Apply status filter only if a status is selected
+        if (isset($this->request->query['status']) && $this->request->query['status'] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Atendimento.status_id' => $this->request->query['status']]);
+        }
+    
+        // Export logic
         if (isset($this->request->query['exportar']) && $this->request->query['exportar'] === 'true') {
             $atendimentoData = $this->Atendimento->find('all', [
                 'fields' => [
@@ -50,7 +59,7 @@ class AtendimentosController extends AppController
                     'Atendimento.subject',
                     'Atendimento.created',
                     'Atendimento.data_finalizacao',
-                    'Atendimento.file_atendimento', // Add this line
+                    'Atendimento.file_atendimento', // File field
                     'Status.name',
                     'Status.label'
                 ],
