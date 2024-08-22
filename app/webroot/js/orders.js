@@ -202,8 +202,8 @@ $(document).ready(function() {
 
                 $.each(data, function(index, value) {
                     var context = {
-                        name: value,
-                        id: index
+                        name: value[0].name,
+                        id: value.Order.id,
                     };
                     html_opt += template(context);
                 });

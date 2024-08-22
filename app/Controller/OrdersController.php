@@ -2474,7 +2474,6 @@ $itens = $this->OrderItem->find('all', [
             'order' => ['Order.id' => 'asc'],
             'conditions' => ['Order.customer_id' => $customerId]
         ]);
-        $orders = Hash::combine($orders, '{n}.Order.id', '{n}.0.name');
 
         echo json_encode($orders);
     }
