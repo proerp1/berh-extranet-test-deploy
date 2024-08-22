@@ -183,20 +183,13 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
     
-        $orders = $this->Order->find('all', [
-            'contain' => ['Customer'],
-            'fields' => ['Order.id', 'concat(Order.id, " - ", Customer.codigo_associado, " - ", Customer.nome_primario) as name'],
-            'order' => ['Order.id' => 'asc']
-        ]);
-        $orders = Hash::combine($orders, '{n}.Order.id', '{n}.0.name');
-    
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
     
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString', 'orders'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
     
 
@@ -2468,5 +2461,21 @@ $itens = $this->OrderItem->find('all', [
         }
 
         die;
+    }
+
+    public function getOrderByCustomer($customerId)
+    {
+        $this->layout = false;
+        $this->autoRender = false;
+
+        $orders = $this->Order->find('all', [
+            'contain' => ['Customer'],
+            'fields' => ['Order.id', 'concat(Order.id, " - ", Customer.codigo_associado, " - ", Customer.nome_primario) as name'],
+            'order' => ['Order.id' => 'asc'],
+            'conditions' => ['Order.customer_id' => $customerId]
+        ]);
+        $orders = Hash::combine($orders, '{n}.Order.id', '{n}.0.name');
+
+        echo json_encode($orders);
     }
 }
