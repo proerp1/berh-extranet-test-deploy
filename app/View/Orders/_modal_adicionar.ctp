@@ -9,7 +9,7 @@
                 <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
                     <div class="row mb-7 ">
-                        <div class="col">
+                        <div class="col-6">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
                             <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
                         </div>
