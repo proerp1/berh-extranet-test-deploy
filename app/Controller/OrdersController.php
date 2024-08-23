@@ -910,6 +910,7 @@ class OrdersController extends AppController
                 'total' => $data['total'],
                 'pedido_operadora' => $data['pedido_operadora'],
                 'tipo' => $data['tipo'],
+                'observacao' => $data['observacao'],
                 'created' => date('Y-m-d H:i:s'),
                 'user_created_id' => CakeSession::read("Auth.User.id")
             ];
@@ -1034,6 +1035,7 @@ class OrdersController extends AppController
                 'pedido_operadora' => $row[3],
                 'order_item_id' => $row[4],
                 'tipo' => $row[5],
+                'observacao' => $row[6],
             ];
 
             $line++;

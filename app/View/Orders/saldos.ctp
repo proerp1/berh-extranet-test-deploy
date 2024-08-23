@@ -112,6 +112,7 @@
                     <th>Benefício</th>
                     <th>Pedido Operadora</th>
                     <th>Tipo</th>
+                    <th>Observação</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -122,23 +123,28 @@
                         <?php 
                             $total += $data[$i]["OrderBalance"]["total_not_formated"]; 
 
-                            $tipo = "";
-                            if ($data[$i]["OrderBalance"]["tipo"] == '1') {
-                                $tipo = 'Economia';
-                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '2') {
-                                $tipo = 'Ajuste';
-                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '3') {
-                                $tipo = 'Inconsistencia';
+                            $tr_class = "";
+                            if ($data[$i]["OrderBalance"]["total_not_formated"] < 0) {
+                                $tr_class = 'table-danger';
                             }
 
+                            $tipo = "";
+                            if ($data[$i]["OrderBalance"]["tipo"] == '1') {
+                                $tipo = 'Credita conta';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '2') {
+                                $tipo = 'Credita e Debita';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '3') {
+                                $tipo = 'Somente Credita';
+                            }
                         ?>
-                        <tr>
+                        <tr class="<?php echo $tr_class; ?>">
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["observacao"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
                         </tr>
                     <?php } ?>
