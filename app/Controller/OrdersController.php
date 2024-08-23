@@ -118,16 +118,7 @@ class OrdersController extends AppController
                     'Customer', 
                     'CustomerCreator', 
                     'EconomicGroup', 
-                    'Income.data_pagamento',
-                    '(SELECT coalesce(sum(b.total), 0) as total_balances 
-                        FROM order_balances b 
-                            INNER JOIN orders o ON o.id = b.order_id 
-                        WHERE o.id = Order.id 
-                                AND b.tipo = 1 
-                                AND b.data_cancel = '1901-01-01 00:00:00' 
-                                AND o.data_cancel = '1901-01-01 00:00:00' 
-                    ) as total_balances',
-                    'Order.fee_saldo'
+                    'Income.data_pagamento'
                 ],
                 'conditions' => $condition,
             ]);
