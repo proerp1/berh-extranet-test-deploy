@@ -153,9 +153,12 @@ class OrdersController extends AppController
                     'group' => ['OrderItem.customer_user_id'],
                     'fields' => ['OrderItem.customer_user_id']
                 ]);
+
+                $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
     
                 $data[$k]['Order']['suppliersCount'] = $suppliersCount;
                 $data[$k]['Order']['usersCount'] = $usersCount;
+                $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
             }
     
             $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
