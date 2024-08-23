@@ -748,9 +748,9 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["commission_fee"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["desconto"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["tpp_fee"]); $col++;
+			/*$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 0; $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 0; $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 0; $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 0; $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 0; $col++;*/
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["total"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerCreator"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['EconomicGroup']['name']); $col++;
