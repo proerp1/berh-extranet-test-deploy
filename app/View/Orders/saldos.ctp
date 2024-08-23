@@ -176,12 +176,12 @@
                 <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
                 <input type="hidden" name="order_id" value="<?php echo $id; ?>">
                 <div class="modal-body">
-                    <p>Enviar CSV com os valores a serem incluídos</p>
+                    <p>Enviar CSV com as movimentações a serem incluídos</p>
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
                 </div>
 
                 <div class="modal-footer">
-                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoSaldo.csv" targe="_blank" download>Baixar Modelo</a>
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoMovimentacao.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>

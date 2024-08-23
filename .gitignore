@@ -2,7 +2,7 @@
 /app/tmp/*
 /app/webroot/files/*
 !/app/webroot/files/ModeloAtualizacaoGrupos.csv
-!/app/webroot/files/ModeloImportacaoSaldo.csv
+!/app/webroot/files/ModeloImportacaoMovimentacao.csv
 /vendor/
 /composer.phar
 .idea

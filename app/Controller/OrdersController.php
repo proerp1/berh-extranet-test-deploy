@@ -1658,7 +1658,7 @@ class OrdersController extends AppController
         $order_balances_total3 = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 3], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $action = 'Pedido';
-        $breadcrumb = ['Cadastros' => '', 'Saldo' => ''];
+        $breadcrumb = ['Cadastros' => '', 'Movimentação' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order', 'order_balances_total', 'order_balances_total2', 'order_balances_total3'));
     }
 
