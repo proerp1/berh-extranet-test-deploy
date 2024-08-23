@@ -10,7 +10,7 @@
         <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Economia</a>
+        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentação</a>
     </li>
 </ul>
 
@@ -27,6 +27,38 @@
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($order_balances_total[0][0]['total'],2,',','.') ?></span>
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-6 mb-xl-10">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($order_balances_total2[0][0]['total'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Total Ajuste</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-6 mb-xl-10">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="m-0">
+                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($order_balances_total3[0][0]['total'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Total Inconsistencia</span>
                     </div>
                 </div>
             </div>
@@ -63,7 +95,7 @@
             <div class="col-12">
                 <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
                     <i class="fas fa-arrow-up"></i>
-                    Importar Economia (CSV)
+                    Importar (CSV)
                 </a>
             </div>
         </div>
@@ -79,6 +111,7 @@
                     <th>Código Benefício</th>
                     <th>Benefício</th>
                     <th>Pedido Operadora</th>
+                    <th>Tipo</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -86,13 +119,26 @@
                 <?php $total = 0; ?>
                 <?php if ($data) { ?>
                     <?php for ($i = 0; $i < count($data); $i++) { ?>
-                        <?php $total += $data[$i]["OrderBalance"]["total_not_formated"]; ?>
+                        <?php 
+                            $total += $data[$i]["OrderBalance"]["total_not_formated"]; 
+
+                            $tipo = "";
+                            if ($data[$i]["OrderBalance"]["tipo"] == '1') {
+                                $tipo = 'Economia';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '2') {
+                                $tipo = 'Ajuste';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '3') {
+                                $tipo = 'Inconsistencia';
+                            }
+
+                        ?>
                         <tr>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
                             <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
                         </tr>
                     <?php } ?>
@@ -124,7 +170,7 @@
                 <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
                 <input type="hidden" name="order_id" value="<?php echo $id; ?>">
                 <div class="modal-body">
-                    <p>Enviar CSV com os saldos a serem incluídos</p>
+                    <p>Enviar CSV com os valores a serem incluídos</p>
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
                 </div>
 

@@ -34,6 +34,7 @@ class OrdersController extends AppController
                     FROM order_balances b 
                         INNER JOIN orders o ON o.id = b.order_id 
                     WHERE o.id = Order.id 
+                            AND b.tipo = 1 
                             AND b.data_cancel = '1901-01-01 00:00:00' 
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                 ) as total_balances"
@@ -581,7 +582,7 @@ class OrdersController extends AppController
             }
         }
         
-        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id], 'fields' => 'SUM(OrderBalance.total) as total']);
+        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
@@ -905,6 +906,7 @@ class OrdersController extends AppController
                 'document' => $data['document'],
                 'total' => $data['total'],
                 'pedido_operadora' => $data['pedido_operadora'],
+                'tipo' => $data['tipo'],
                 'created' => date('Y-m-d H:i:s'),
                 'user_created_id' => CakeSession::read("Auth.User.id")
             ];
@@ -1028,6 +1030,7 @@ class OrdersController extends AppController
                 'total' => $total,
                 'pedido_operadora' => $row[3],
                 'order_item_id' => $row[4],
+                'tipo' => $row[5],
             ];
 
             $line++;
@@ -1433,13 +1436,15 @@ class OrdersController extends AppController
                             "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
                                 INNER JOIN benefits be ON be.id = b.benefit_id 
-                                WHERE be.supplier_id = Supplier.id
+                                WHERE be.supplier_id = Supplier.id  
+                                        AND b.tipo = 1 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo", 
                             "(SELECT max(b.pedido_operadora) as pedido_operadora 
                                 FROM order_balances b 
                                 WHERE b.benefit_id = Benefit.id 
+                                        AND b.tipo = 1 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS pedido_operadora", 
@@ -1643,11 +1648,13 @@ class OrdersController extends AppController
 
         $order = $this->Order->findById($id);
 
-        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id], 'fields' => 'SUM(OrderBalance.total) as total']);
+        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
+        $order_balances_total2 = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 2], 'fields' => 'SUM(OrderBalance.total) as total']);
+        $order_balances_total3 = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 3], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Saldo' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order', 'order_balances_total'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'order', 'order_balances_total', 'order_balances_total2', 'order_balances_total3'));
     }
 
     public function zerosEsq($campo, $tamanho)
