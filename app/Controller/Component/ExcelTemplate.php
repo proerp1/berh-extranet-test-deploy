@@ -713,6 +713,8 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Desconto"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "TPP"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fee Economia"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cliente"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Economia"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Usuário"); $col++;
@@ -723,6 +725,18 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data pagamento"); $col++;
 		
 		foreach ($dados as $key => $dado) {
+			$fee_economia = 0;
+			$total_economia = 0;
+			$vl_economia = $dado["Order"]["total_balances"];
+			$fee_saldo = $dado["Order"]["fee_saldo_not_formated"];
+	
+			if ($fee_saldo != 0 and $vl_economia != 0) {
+			    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
+			}
+	
+			$vl_economia = ($vl_economia - $fee_economia);
+			$total_economia = ($vl_economia + $fee_economia);
+		
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["codigo_associado"]); $col++;
@@ -734,7 +748,9 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["commission_fee"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["desconto"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["tpp_fee"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["saldo"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), number_format($fee_economia,2,',','.'); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), number_format($vl_economia,2,',','.'); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), number_format($total_economia,2,',','.'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["total"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerCreator"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['EconomicGroup']['name']); $col++;
