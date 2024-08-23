@@ -725,7 +725,7 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data pagamento"); $col++;
 		
 		foreach ($dados as $key => $dado) {
-			$fee_economia = 0;
+			/*$fee_economia = 0;
 			$total_economia = 0;
 			$vl_economia = $dado["Order"]["total_balances"];
 			$fee_saldo = $dado["Order"]["fee_saldo_not_formated"];
@@ -735,7 +735,7 @@ class ExcelTemplate
 			}
 	
 			$vl_economia = ($vl_economia - $fee_economia);
-			$total_economia = ($vl_economia + $fee_economia);
+			$total_economia = ($vl_economia + $fee_economia);*/
 		
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
