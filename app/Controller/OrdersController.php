@@ -200,30 +200,31 @@ class OrdersController extends AppController
     public function createOrder()
     {
         $this->autoRender = false;
-        $customerId = $this->request->data['customer_id'];
-        $workingDays = $this->request->data['working_days'];
-        $period_from = $this->request->data['period_from'];
-        $period_to = $this->request->data['period_to'];
-        $is_consolidated = $this->request->data['is_consolidated'];
-        $is_partial = $this->request->data['is_partial'];
-        $working_days_type = $this->request->data['working_days_type'];
-        $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
-        $benefit_type = $this->request->data['benefit_type'];
-        $is_beneficio = $this->request->data['is_beneficio'];
-        $is_beneficio = (int)$is_beneficio;
-        $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
-        $credit_release_date = $this->request->data['credit_release_date'];
-        
-        $benefit_type_persist = 0;
-        if ($benefit_type != '') {
-            $benefit_type_persist = $benefit_type;
-            $benefit_type = (int)$benefit_type;
-            if($benefit_type == -1){
-                $benefit_type = [1,2];
-            }
-        }
 
         if ($this->request->is('post')) {
+            $customerId = $this->request->data['customer_id'];
+            $workingDays = $this->request->data['working_days'];
+            $period_from = $this->request->data['period_from'];
+            $period_to = $this->request->data['period_to'];
+            $is_consolidated = $this->request->data['is_consolidated'];
+            $is_partial = $this->request->data['is_partial'];
+            $working_days_type = $this->request->data['working_days_type'];
+            $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
+            $benefit_type = $this->request->data['benefit_type'];
+            $is_beneficio = $this->request->data['is_beneficio'];
+            $is_beneficio = (int)$is_beneficio;
+            $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
+            $credit_release_date = $this->request->data['credit_release_date'];
+
+            $benefit_type_persist = 0;
+            if ($benefit_type != '') {
+                $benefit_type_persist = $benefit_type;
+                $benefit_type = (int)$benefit_type;
+                if($benefit_type == -1){
+                    $benefit_type = [1,2];
+                }
+            }
+
             $proposal = $this->Proposal->find('first', [
                 'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
             ]);
@@ -283,7 +284,6 @@ class OrdersController extends AppController
 
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
                     'conditions' => $condNotPartial,
-                    'recursive' => 2
                 ]);
 
                 if (empty($customerItineraries)) {
@@ -1187,7 +1187,6 @@ class OrdersController extends AppController
 
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
                 'conditions' => ['CustomerUserItinerary.id' => $idLastInserted],
-                'recursive' => 2
             ]);
 
             $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
@@ -1291,27 +1290,7 @@ class OrdersController extends AppController
 
             if ($is_partial == 2) {
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
-                    'joins' => [
-                        [
-                            'table' => 'customer_users',
-                            'alias' => 'CustomerUser',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'CustomerUser.id = CustomerUserItinerary.customer_user_id'
-                            ]
-                        ],
-                        [
-                            'table' => 'benefits',
-                            'alias' => 'Benefit',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'Benefit.id = CustomerUserItinerary.benefit_id'
-                            ]
-                        ]
-                    ],
                     'conditions' => $cond2,
-                    'recursive' => -1,
-                    'fields' => ['CustomerUserItinerary.*', 'Benefit.*']
                 ]);
 
                 if (empty($customerItineraries)) {
