@@ -42,7 +42,6 @@
                                 $totalDisponibilizado = 0;
 
                                 foreach ($itens as $index => $item) {
-                                    // Se mudar de usuário ou for o último item, exibe os totais
                                     if ($currentUserId !== $item['CustomerUser']['id'] && $currentUserId !== null) {
                                         ?>
                                         <tr>
@@ -55,7 +54,6 @@
                                             </td>
                                         </tr>
                                         <?php
-                                        // Reseta os totais para o próximo usuário
                                         $totalInicial = 0;
                                         $totalDesconto = 0;
                                         $totalDisponibilizado = 0;
@@ -69,7 +67,7 @@
                                     ?>
                                     <tr>
                                         <td><?php echo $item['Customer']['nome_secundario']; ?></td>
-                                        <td><?php echo $item['Customer']['documento']; ?></td>
+                                        <td><?php echo $order['EconomicGroup']['document']; ?></td> <!-- Mudança aqui -->
                                         <td><?php echo $item['Order']['id']; ?></td>
                                         <td><?php echo $item['CustomerUser']['nome']; ?></td>
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>
@@ -83,7 +81,6 @@
                                         <td></td>
                                     </tr>
                                     <?php
-                                    // Se mudar de usuário, exibe os totais
                                     if ($currentUserId !== $item['CustomerUser']['id'] && $currentUserId !== null) {
                                         ?>
                                         <tr>
@@ -96,7 +93,6 @@
                                             </td>
                                         </tr>
                                         <?php
-                                        // Reseta os totais para o próximo usuário
                                         $totalInicial = 0;
                                         $totalDesconto = 0;
                                         $totalDisponibilizado = 0;
@@ -104,6 +100,7 @@
                                 }
                                 ?>
                             </tbody>
+
                         </table>
                     </div>
 

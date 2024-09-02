@@ -84,31 +84,26 @@
                             $totalDisponibilizado = 0;
 
                             foreach ($data as $index => $item) {
-                                // Verifica se mudou de usuário
                                 if ($currentUserId !== $item['CustomerUser']['id']) {
-                                    // Exibe os totais do usuário anterior, se houver
                                     if ($currentUserId !== null) {
                                         ?>
                                         <tr>
                                             <td colspan="21">
                                                 <div class="totals">
                                                     <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
-                                                    <span>Total Desconto: R$<?php echo number_format((float)$totalDesconto, 2, ',', '.'); ?></span>
+                                                    <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
                                                     <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
                                                 </div>
                                             </td>
                                         </tr>
                                         <?php
-                                        // Reseta os totais para o próximo usuário
                                         $totalInicial = 0;
                                         $totalDesconto = 0;
                                         $totalDisponibilizado = 0;
                                     }
-                                    // Atualiza o ID do usuário atual
                                     $currentUserId = $item['CustomerUser']['id'];
                                 }
 
-                                // Calcula os totais
                                 $totalInicial += (float)$item['OrderItem']['subtotal_not_formated'];
                                 $totalDesconto += (float)$item['OrderItem']['saldo_not_formated'];
                                 $totalDisponibilizado += (float)$item['OrderItem']['subtotal_not_formated'] - (float)$item['OrderItem']['saldo_not_formated'];
@@ -117,7 +112,7 @@
                                     <td><?php echo $item['Order']['created']; ?></td>
                                     <td><?php echo $item['Order']['id']; ?></td>
                                     <td><?php echo $item['Customer']['codigo_associado']; ?></td>
-                                    <td><?php echo $item['Customer']['documento']; ?></td>
+                                    <td><?php echo $item['EconomicGroups']['document']; ?></td>
                                     <td><?php echo $item['Customer']['nome_primario']; ?></td>
                                     <td><?php echo $item['Status']['name']; ?></td>
                                     <td><?php echo $item['CustomerUser']['name']; ?></td>
@@ -143,7 +138,7 @@
                     <?php if ($currentUserId !== null) { ?>
                     <div class="totals">
                         <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
-                        <span>Total Desconto: R$<?php echo number_format((float)$totalDesconto, 2, ',', '.'); ?></span>
+                        <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
                         <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
                     </div>
                     <?php } ?>

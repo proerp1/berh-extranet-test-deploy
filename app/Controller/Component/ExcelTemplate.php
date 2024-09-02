@@ -1939,7 +1939,7 @@ class ExcelTemplate
         'W1' => "Salário(beneficiário)",
         'X1' => "Estado Civil(beneficiário)",
         'Y1' => "Empresas do Grupo econômico(beneficiário)",
-        'Z1' => "Observações(beneficiário)",
+        //'Z1' => "Observações(beneficiário)",
         'AA1' => "Nome (Grupo Econômico)",
         'AB1' => "CNPJ (Grupo Econômico)"
     ];
@@ -1984,18 +1984,18 @@ class ExcelTemplate
                 ->setCellValue('Q' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
                 ->setCellValue('R' . $indx, $data['CustomerUser']['sexo'] ?? '')
                 ->setCellValue('S' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
-                ->setCellValue('T' . $indx, $data['CustomerUser']['customer_departments_id'] ?? '')
-                ->setCellValue('U' . $indx, $data['CustomerUser']['customer_positions_id'] ?? '')
-                ->setCellValue('V' . $indx, $data['CustomerUser']['customer_cost_center_id'] ?? '')
-                ->setCellValue('W' . $indx, $data['CustomerUser']['customer_salary_id'] ?? '')
-                ->setCellValue('X' . $indx, $data['CustomerUser']['marital_status_id'] ?? '')
+                ->setCellValue('T' . $indx, $data['CustomerDepartment']['name'] ?? '')
+                ->setCellValue('U' . $indx, $data['CustomerPosition']['name'] ?? '')
+                ->setCellValue('V' . $indx, $data['CostCenter']['name'] ?? '')
+                ->setCellValue('W' . $indx, $data['SalaryRange']['range'] ?? '')
+                ->setCellValue('X' . $indx, $data['MaritalStatus']['status'] ?? '')
                 ->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
                // ->setCellValue('Z' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
-                    ->setCellValue('Z' . $indx, $data['EconomicGroup']['name'] ?? '')
-                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['document'] ?? '');
+                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
+                    ->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
             }
         }
     }

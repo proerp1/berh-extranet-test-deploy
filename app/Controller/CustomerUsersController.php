@@ -114,9 +114,36 @@ class CustomerUsersController extends AppController
                     'conditions' => [
                         'EconomicGroup.customer_id = CustomerUser.customer_id' 
                     ]
-                ]
+                ],
+                [
+                    'table' => 'customer_positions',  
+                    'alias' => 'CustomerPosition',    
+                    'type' => 'LEFT',                 
+                    'conditions' => [
+                        'CustomerPosition.id = CustomerUser.customer_positions_id' 
+                    ]
+                ],
+                [
+                    'table' => 'salary_ranges', 
+                    'alias' => 'SalaryRange', 
+                    'type' => 'LEFT', 
+                    'conditions' => [
+                        'SalaryRange.id = CustomerUser.customer_salary_id'
+                    ]
+                ],
+                [
+                    'table' => 'marital_statuses', 
+                    'alias' => 'MaritalStatus',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'MaritalStatus.id = CustomerUser.marital_status_id'
+                    ]
+                ],
+                // Add other joins as necessary
             ],
             'fields' => [
+                'CustomerDepartment.name',
+                'CustomerPosition.name',
                 'CustomerUser.customer_id',
                 'CustomerUser.name', 
                 'CustomerUser.matricula', 
@@ -136,24 +163,20 @@ class CustomerUsersController extends AppController
                 'CustomerUser.customer_salary_id', 
                 'CustomerUser.marital_status_id', 
                 'CustomerUser.economic_group_id', 
-                //'CustomerUser.observation', 
-                'EconomicGroup.name' ,
+                'EconomicGroup.name',
                 'EconomicGroup.document',
+                'CostCenter.name', 
+                'SalaryRange.range', 
+                'MaritalStatus.status',
             ],
             'group' => ['CustomerUser.id', 'EconomicGroup.id'] 
         ]);
-    
-        //debug($data); die;
     
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
         $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario.xlsx');
     }
     
-
-
-    
-
 
     
 

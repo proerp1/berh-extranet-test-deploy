@@ -28,7 +28,7 @@
                                 <tbody>
                                     <tr>
                                         <td><?php echo date('d/m/Y'); ?></td>
-                                        <td><?php echo $order['Customer']['documento']; ?></td>
+                                        <td><?php echo $order['EconomicGroup']['document']; ?></td>
                                         <td><?php echo $suppliersCount; ?></td>
                                         <td><?php echo $order['Order']['id']; ?></td>
                                         <td><?php echo $usersCount; ?></td>
