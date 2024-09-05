@@ -888,9 +888,17 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
-        $this->OrderBalance->update_cancel_balances($orderId, CakeSession::read("Auth.User.id"));
-
         $ret = $this->parseCSVSaldo($customerId, $orderId, $this->request->data['file']['tmp_name']);
+
+        $groupTipo = [];
+
+        foreach ($ret['data'] as $data) {
+            $groupTipo[$data['tipo']] = $data['tipo'];
+        }
+
+        foreach ($groupTipo as $tipo) {
+            $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"));
+        }
 
         foreach ($ret['data'] as $data) {
             $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
