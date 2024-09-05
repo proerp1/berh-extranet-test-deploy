@@ -1499,7 +1499,7 @@ class ExcelTemplate
             ->setCellValue('E' . $indx, $data[$i]['Department']['name'])
             ->setCellValue('F' . $indx, $data[$i]['Atendimento']['file_atendimento']) 
             ->setCellValue('G' . $indx, $data[$i]['Atendimento']['subject'])
-            ->setCellValue('H' . $indx, $data[$i]['Atendimento']['created'])
+			->setCellValue('H' . $indx, date('d/m/Y H:i:s', strtotime($data[$i]['Atendimento']['created'])))
             ->setCellValue('I' . $indx, $data[$i]['Atendimento']['data_finalizacao']);
     }
 }
