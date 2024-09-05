@@ -420,7 +420,7 @@ class ItineraryCSVParser extends Controller
 
         $numLines = substr_count($file, "\n");
 
-        if ($numLines < 2) {
+        if ($numLines < 1) {
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
@@ -436,6 +436,19 @@ class ItineraryCSVParser extends Controller
 
             $cpf = preg_replace('/\D/', '', $row[0]);
             $working_days = $row[1];
+            $benefitCode = null;
+            $benefitID = null;
+            if(isset($row[2])){
+                $benefitCode = $row[2];
+
+                $benefit = $this->Benefit->find('first', [
+                    'conditions' => [
+                        'Benefit.code' => $benefitCode
+                    ]
+                ]);
+
+                $benefitID = $benefit ? $benefit['Benefit']['id'] : null;
+            }
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -449,10 +462,20 @@ class ItineraryCSVParser extends Controller
                 continue;
             }
 
-            $this->CustomerUserItinerary->updateAll(
-                ['CustomerUserItinerary.working_days' => $working_days],
-                ['CustomerUserItinerary.customer_user_id' => $existingUser['CustomerUser']['id']]
-            );
+            
+
+            if($benefitID){
+                $this->CustomerUserItinerary->updateAll(
+                    ['CustomerUserItinerary.working_days' => $working_days],
+                    ['CustomerUserItinerary.customer_user_id' => $existingUser['CustomerUser']['id'], 'CustomerUserItinerary.benefit_id' => $benefitID]
+                );
+            } else {
+                $this->CustomerUserItinerary->updateAll(
+                    ['CustomerUserItinerary.working_days' => $working_days],
+                    ['CustomerUserItinerary.customer_user_id' => $existingUser['CustomerUser']['id']]
+                );
+            }
+            
 
             $line++;
         }
