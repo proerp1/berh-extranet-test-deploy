@@ -53,6 +53,9 @@ class CustomerUsersController extends AppController
 
     public function index($id, $is_admin = false)
     {
+        ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('memory_limit', '-1');
+
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
     
