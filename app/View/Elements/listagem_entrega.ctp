@@ -19,6 +19,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>Data Criação</th>
                                     <th>Razão Social</th>
                                     <th>CNPJ</th>
                                     <th>Pedido</th>
@@ -66,8 +67,9 @@
                                     $totalDisponibilizado += (float)$item['OrderItem']['subtotal_not_formated'] - (float)$item['OrderItem']['saldo_not_formated'];
                                     ?>
                                     <tr>
-                                        <td><?php echo $item['Customer']['nome_secundario']; ?></td>
-                                        <td><?php echo $order['EconomicGroup']['document']; ?></td> <!-- Mudança aqui -->
+                                        <td><?php echo $item['Order']['created']; ?></td>
+                                        <td><?php echo $item['EconomicGroup']['name']; ?></td>
+                                        <td><?php echo $order['EconomicGroup']['document']; ?></td> 
                                         <td><?php echo $item['Order']['id']; ?></td>
                                         <td><?php echo $item['CustomerUser']['nome']; ?></td>
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>

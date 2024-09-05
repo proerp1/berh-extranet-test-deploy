@@ -1790,6 +1790,7 @@ $itens = $this->OrderItem->find('all', [
         'CustomerUserItinerary.benefit_id as benefit_id',
         'Order.credit_release_date',
         'Order.id',
+        'Order.created',
         'CustomerUserItinerary.benefit_id',
         'CustomerUserItinerary.unit_price',
         'sum(CustomerUserItinerary.quantity) as qtd',
