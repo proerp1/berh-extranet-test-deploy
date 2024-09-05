@@ -91,7 +91,7 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             $action => ''
         ];
-    
+    //debug($data);die;
         // Remova ou comente a linha abaixo
         // $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
