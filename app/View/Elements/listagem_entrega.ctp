@@ -68,8 +68,8 @@
                                     ?>
                                     <tr>
                                         <td><?php echo $item['Order']['created']; ?></td>
-                                        <td><?php echo $item['EconomicGroup']['name']; ?></td>
-                                        <td><?php echo $order['EconomicGroup']['document']; ?></td> 
+                                        <td><?php if (!empty($order['EconomicGroup']['name'])): ?><?php echo $order['EconomicGroup']['name']; ?><?php else: ?><?php echo $item['Customer']['nome_secundario']; ?><?php endif; ?></td>
+                                        <td><?php if (!empty($order['EconomicGroup']['document'])): ?><?php echo $order['EconomicGroup']['document']; ?><?php else: ?><?php echo $item['Customer']['documento']; ?><?php endif; ?></td>
                                         <td><?php echo $item['Order']['id']; ?></td>
                                         <td><?php echo $item['CustomerUser']['nome']; ?></td>
                                         <td><?php echo $item['CustomerUser']['cpf']; ?></td>
