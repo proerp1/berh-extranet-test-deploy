@@ -1719,6 +1719,14 @@ class OrdersController extends AppController
         foreach ($paginas as $pagina) {
             $itens[$pagina['CustomerUser']['id']] = $this->OrderItem->find('all', [
                 'contain' => ['CustomerUser', 'CustomerUserItinerary'],
+                'joins' => [
+        [
+            'table' => 'customers',
+            'alias' => 'Customer',
+            'type' => 'INNER',
+            'conditions' => ['Customer.id = Order.customer_id'],
+        ],
+    ],
                 'fields' => [
                     'OrderItem.*',
                     'CustomerUser.name as nome',
