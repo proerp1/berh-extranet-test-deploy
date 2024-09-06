@@ -1714,47 +1714,34 @@ class OrdersController extends AppController
             'group' => ['CustomerUser.id'],
             'order' => ['trim(CustomerUser.name)'] 
         ]);
-        $itens[$pagina['CustomerUser']['id']] = $this->OrderItem->find('all', [
-            'contain' => ['CustomerUser', 'CustomerUserItinerary'],
-            'joins' => [
-                [
-                    'table' => 'orders',  // Aqui, adicione a tabela 'orders'
-                    'alias' => 'Order',   // Alias apropriado para a tabela 'orders'
-                    'type' => 'INNER',
-                    'conditions' => ['Order.id = OrderItem.order_id'],  // Condição de junção correta
+
+        $itens = [];
+        foreach ($paginas as $pagina) {
+            $itens[$pagina['CustomerUser']['id']] = $this->OrderItem->find('all', [
+                'contain' => ['CustomerUser', 'CustomerUserItinerary'],
+                'fields' => [
+                    'OrderItem.*',
+                    'CustomerUser.name as nome',
+                    'CustomerUser.cpf as cpf',
+                    'CustomerUser.matricula as matricula',
+                    'CustomerUserItinerary.benefit_id as matricula',
+                    'CustomerUserItinerary.unit_price',
+                    'CustomerUserItinerary.benefit_id',
+                    'sum(CustomerUserItinerary.quantity) as qtd',
+                    'sum(OrderItem.subtotal) as valor',
+                    'sum(OrderItem.total) as total',
+                    'sum(OrderItem.working_days) as working_days',
+                    'OrderItem.saldo', 
+                    'OrderItem.pedido_operadora'
+
                 ],
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'INNER',
-                    'conditions' => ['Customer.id = Order.customer_id'],  // Correto acesso ao campo 'Order.customer_id'
+                'conditions' => [
+                    'OrderItem.order_id' => $id,
+                    'CustomerUser.id' => $pagina['CustomerUser']['id'],
                 ],
-            ],
-            'fields' => [
-                'OrderItem.*',
-                'CustomerUser.name as nome',
-                'CustomerUser.cpf as cpf',
-                'CustomerUser.matricula as matricula',
-                'CustomerUserItinerary.benefit_id as matricula',
-                'CustomerUserItinerary.unit_price',
-                'CustomerUserItinerary.benefit_id',
-                'sum(CustomerUserItinerary.quantity) as qtd',
-                'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
-                'sum(OrderItem.working_days) as working_days',
-                'OrderItem.saldo', 
-                'Customer.nome_secundario', 
-                'Customer.documento', 
-                'OrderItem.pedido_operadora'
-            ],
-            'conditions' => [
-                'OrderItem.order_id' => $id,
-                'CustomerUser.id' => $pagina['CustomerUser']['id'],
-            ],
-            'group' => ['CustomerUser.id', 'OrderItem.id'],
-            'order' => ['trim(CustomerUser.name)']                                                           
-        ]);
-        
+                'group' => ['CustomerUser.id', 'OrderItem.id'],
+                'order' => ['trim(CustomerUser.name)']                                                           
+            ]);
         }
 //debug($order);die;
 
