@@ -16,24 +16,24 @@
                             <h4>Data da Impressão: <?php echo date('d/m/Y'); ?></h4>
                             <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
                             <h4>Razão Social: 
-<?php 
-if (!empty($order['EconomicGroup']['name'])) {
-    echo $order['EconomicGroup']['name']; 
-} else {
-    echo $order['Customer']['nome_secundario'];
-}
-?>
-</h4>
+                            <?php 
+                            if (!empty($order['EconomicGroup']['name'])) {
+                                echo $order['EconomicGroup']['name']; 
+                            } else {
+                                echo $order['Customer']['nome_secundario'];
+                            }
+                            ?>
+                            </h4>
 
-<h4>CNPJ: 
-<?php 
-if (!empty($order['EconomicGroup']['document'])) {
-    echo $order['EconomicGroup']['document']; 
-} else {
-    echo $order['Customer']['documento'];
-}
-?>
-</h4>
+                            <h4>CNPJ: 
+                            <?php 
+                            if (!empty($order['EconomicGroup']['document'])) {
+                                echo $order['EconomicGroup']['document']; 
+                            } else {
+                                echo $order['Customer']['documento'];
+                            }
+                            ?>
+                            </h4>
 
                             <h4>Data Disponibilização: <?php echo $order['Order']['end_date']; ?></h4>
                         </div>

@@ -112,8 +112,8 @@
                                     <td><?php echo $item['Order']['created']; ?></td>
                                     <td><?php echo $item['Order']['id']; ?></td>
                                     <td><?php echo $item['Customer']['codigo_associado']; ?></td>
-                                    <td><?php echo $item['EconomicGroups']['document']; ?></td>
-                                    <td><?php echo $item['Customer']['nome_primario']; ?></td>
+                                    <td><?php if (!empty($order['EconomicGroup']['name'])): ?><?php echo $order['EconomicGroup']['name']; ?><?php else: ?><?php echo $item['Customer']['nome_secundario']; ?><?php endif; ?></td>
+                                        <td><?php if (!empty($order['EconomicGroup']['document'])): ?><?php echo $order['EconomicGroup']['document']; ?><?php else: ?><?php echo $item['Customer']['documento']; ?><?php endif; ?></td>
                                     <td><?php echo $item['Status']['name']; ?></td>
                                     <td><?php echo $item['CustomerUser']['name']; ?></td>
                                     <td><?php echo $item['CustomerUser']['matricula']; ?></td>
