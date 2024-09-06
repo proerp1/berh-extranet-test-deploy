@@ -15,8 +15,8 @@
                             <h2>Detalhes do Pedido</h2>
                             <h4>Data da Impressão: <?php echo date('d/m/Y'); ?></h4>
                             <h4>Período de Utilização: <?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></h4>
-                            <h4>Razão Social: <?php echo $order['EconomicGroup']['name']; ?></h4>
-                            <h4>CNPJ: <?php echo $order['EconomicGroup']['document']; ?></h4>
+                            <td><?php if (!empty($order['EconomicGroup']['name'])): ?><?php echo $order['EconomicGroup']['name']; ?><?php else: ?><?php echo $item['Customer']['nome_secundario']; ?><?php endif; ?></td>
+                                <td><?php if (!empty($order['EconomicGroup']['document'])): ?><?php echo $order['EconomicGroup']['document']; ?><?php else: ?><?php echo $item['Customer']['documento']; ?><?php endif; ?></td>
                             <h4>Data Disponibilização: <?php echo $order['Order']['end_date']; ?></h4>
                         </div>
                         <div class="table-container mb-4">
