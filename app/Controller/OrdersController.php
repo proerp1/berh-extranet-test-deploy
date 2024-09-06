@@ -1732,6 +1732,8 @@ class OrdersController extends AppController
                     'sum(OrderItem.total) as total',
                     'sum(OrderItem.working_days) as working_days',
                     'OrderItem.saldo', 
+                    'Customer.nome_secundario', 
+                    'Customer.documento', 
                     'OrderItem.pedido_operadora'
 
                 ],
