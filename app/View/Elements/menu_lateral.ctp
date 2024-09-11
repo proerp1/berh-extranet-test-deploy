@@ -93,65 +93,67 @@
                     </a>
                 </div>
 
-                <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                    <span class="menu-link">
-                        <span class="menu-icon">
-                            <i class="fas fa-robot"></i> 
+                <?php if (CakeSession::read("Auth.User.Group.name") == 'Administrador') { ?>
+                    <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <i class="fas fa-robot"></i> 
+                            </span>
+                            <span class="menu-title">Robôs</span>
+                            <span class="menu-arrow"></span>
                         </span>
-                        <span class="menu-title">Robôs</span>
-                        <span class="menu-arrow"></span>
-                    </span>
-                    <div class="menu-sub menu-sub-accordion menu-active-bg">
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_roteirizacao') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_roteirizacao']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Roteirização</span>
-                            </a>
+                        <div class="menu-sub menu-sub-accordion menu-active-bg">
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_roteirizacao') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_roteirizacao']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Roteirização</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_extratos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_extratos']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Extratos</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_transurc') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_transurc']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Consulta TRANSURC</span>
+                                </a>
+                            </div> 
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_sptrans') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_sptrans']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Consulta SPTRANS</span>
+                                </a>
+                            </div>  
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_captura_boletos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_captura_boletos']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Extração Boletos</span>
+                                </a>
+                            </div>  
+                            <div class="menu-item">
+                                <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_conversor_layouts') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_conversor_layouts']) ?>">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Conversor de Layouts</span>
+                                </a>
+                            </div>                        
                         </div>
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_extratos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_extratos']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Extratos</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_transurc') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_transurc']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Consulta TRANSURC</span>
-                            </a>
-                        </div> 
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_sptrans') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_sptrans']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Consulta SPTRANS</span>
-                            </a>
-                        </div>  
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_captura_boletos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_captura_boletos']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Extração Boletos</span>
-                            </a>
-                        </div>  
-                        <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_conversor_layouts') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_conversor_layouts']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Conversor de Layouts</span>
-                            </a>
-                        </div>                        
                     </div>
-                </div>
+                <?php } ?>
 
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                     <span class="menu-link">
