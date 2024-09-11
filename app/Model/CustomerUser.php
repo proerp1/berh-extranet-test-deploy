@@ -52,6 +52,12 @@ class CustomerUser extends AppModel
             'foreignKey' => 'customer_user_id',
             'associationForeignKey' => 'economic_group_id',
         ],
+        'EconomicGroupLogin' => [
+            'className' => 'EconomicGroup',
+            'joinTable' => 'customer_users_login_economic_groups',
+            'foreignKey' => 'customer_user_id',
+            'associationForeignKey' => 'economic_group_id',
+        ],
     ];
 
     public $validate = [
