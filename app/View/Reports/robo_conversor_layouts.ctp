@@ -1,5 +1,3 @@
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-
 <script type="text/javascript">
 	function resize_iframe() {
 		var height = window.innerWidth; //Firefox
