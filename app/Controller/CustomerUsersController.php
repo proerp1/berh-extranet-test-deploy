@@ -50,34 +50,6 @@ class CustomerUsersController extends AppController
         $this->render('index');
     }
 
-    public function insertGroup()
-    {
-        $users = $this->CustomerUser->find('all', [
-            'contain' => ['Customer'],
-            'conditions' => ['CustomerUser.status_id' => 1, 'CustomerUser.is_admin' => 1, 'Customer.status_id' => 3]
-        ]);
-
-        foreach ($users as $user) {
-            $economicGroups = $this->EconomicGroup->find("list", [
-                'fields' => ['EconomicGroup.id'],
-                "conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $user['CustomerUser']['customer_id']]
-            ]);
-
-            if (!empty($economicGroups)) {
-                $arr = [
-                    'EconomicGroupLogin' => [
-                        'EconomicGroupLogin' => $economicGroups
-                    ]
-                ];
-
-                $this->CustomerUser->id = $user['CustomerUser']['id'];
-                $this->CustomerUser->save($arr);
-            }
-        }
-
-        die('foi');
-    }
-
     public function index($id, $is_admin = false)
     {
         ini_set('pcre.backtrack_limit', '15000000');
