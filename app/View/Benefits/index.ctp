@@ -75,6 +75,9 @@
                         <th class="ps-4">Código</th>
                         <th>Tipo</th>
                         <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Prazo Recarga</th>
+                        <th>Prazo Cartão Novo</th>
                         <th>Fornecedor</th>
                         <th>CNPJ</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -93,6 +96,9 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BenefitType"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["unit_price"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["time_to_recharge"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["time_card"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
