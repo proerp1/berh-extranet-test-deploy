@@ -52,7 +52,10 @@ class CustomerUsersController extends AppController
 
     public function insertGroup()
     {
-        $users = $this->CustomerUser->find('all', ['recursive' => -1]);
+        $users = $this->CustomerUser->find('all', [
+            'contain' => ['Customer'],
+            'conditions' => ['CustomerUser.status_id' => 1, 'CustomerUser.is_admin' => 1, 'Customer.status_id' => 3]
+        ]);
 
         foreach ($users as $user) {
             $economicGroups = $this->EconomicGroup->find("list", [
