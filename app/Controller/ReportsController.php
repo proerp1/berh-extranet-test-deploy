@@ -731,4 +731,35 @@ class ReportsController extends AppController
 
         $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo', 'customers'));
     }
+
+    public function robo_roteirizacao()
+    {
+        $this->set("action", "Robô - Roteirização");
+    }
+
+    public function robo_extratos()
+    {
+        $this->set("action", "Robô - Extratos");
+    }
+
+    public function robo_consulta_transurc()
+    {
+        $this->set("action", "Robô - Consulta TRANSURC");
+    }
+
+    public function robo_consulta_sptrans()
+    {
+        $this->set("action", "Robô - Consulta SPTRANS");
+    }
+
+    public function robo_captura_boletos()
+    {
+        $this->set("action", "Robô - Extração Boletos");
+    }
+
+    public function robo_conversor_layouts()
+    {
+        $this->set("action", "Robô - Conversor de Layouts");
+    }
+
 }
