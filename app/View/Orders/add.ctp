@@ -218,75 +218,72 @@
                     </div>
 
                     <div class="row">
-                        <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
-                            <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Relatorio de Benefícios
-                            </a>
+    <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
+        <!-- Botão principal do submenu -->
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Relatórios e Ações
+            </button>
+            
+            <!-- Dropdown menu com botões ajustados verticalmente -->
+            <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
+                <div class="d-flex flex-column justify-content-start">
+                    <!-- Botões dispostos verticalmente -->
+                    <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> Benefícios
+                    </a>
+                    <a href="<?php echo $this->base . '/orders/relatorio_processamento/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> Processamento
+                    </a>
+                    <a href="<?php echo $this->base . '/orders/processamentopdf/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> PDF
+                    </a>
+                    <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> Entrega
+                    </a>
+                    <a href="<?php echo $this->base . '/orders/cobranca/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> Cobrança
+                    </a>
+                    <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                        <i class="fas fa-download"></i> Resumo
+                    </a>
+                    
+                    <!-- Verificação de status para mostrar os botões adicionais -->
+                    <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
+                        <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
+                            <i class="fas fa-arrow-right"></i> Confirmado
+                        </a>
+                    <?php } ?>
 
-                            <a href="<?php echo $this->base . '/orders/relatorio_processamento/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Relatorio de Processamento
-                            </a>
+                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                        <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
+                            <i class="fas fa-arrow-right"></i> Gerar Boleto
+                        </button>
+                    <?php } ?>
 
-                            <a href="<?php echo $this->base . '/orders/processamentopdf/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Relatorio de Processamento PDF
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
-                            <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Listagem de Entrega
-                            </a>
-              
-                            <a href="<?php echo $this->base . '/orders/cobranca/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Relatório de Cobrança
-                            </a>
+                    <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
+                        <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-2 mb-2">
+                            <i class="fas fa-download"></i> Boleto
+                        </a>
+                    <?php } ?>
 
-                            <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                <i class="fas fa-download"></i>
-                                Resumo
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-12 col" style="text-align: right; ">
-                            <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
-                                <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
-                                    <i class="fas fa-arrow-right"></i>
-                                    Pagamento Confirmado
-                                </a>
-                            <?php } ?>
+                    <?php if ($gerarNota) { ?>
+                        <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                            <i class="fas fa-download"></i> Nota de Débito
+                        </a>
+                    <?php } ?>
+                </div>
+            </div>                           
+             
+            <!-- Botão Salvar com o mesmo tamanho e alinhamento -->
+            <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
+                Salvar dados
+            </button>
+        </div>
+    </div>
+</div>
 
-                            <?php if ($order['Order']['status_id'] == 83) { ?>
-                                <button type="button" class="btn btn-sm btn-success me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
-                                    <i class="fas fa-arrow-right"></i>
-                                    Gerar Boleto
-                                </button>
-                            <?php } ?>
 
-                            <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
-                                <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-3">
-                                    <i class="fas fa-download"></i>
-                                    Baixar Boleto
-                                </a>
-                            <?php } ?>
-
-                            <?php if ($gerarNota) { ?>
-                                <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-3">
-                                    <i class="fas fa-download"></i>
-                                    Gerar nota de débito
-                                </a>
-                            <?php } ?>
-
-                            <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>Salvar dados</button>
-
-                        </div>
-                    </div>
 
                 </div>
             </div>
