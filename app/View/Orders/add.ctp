@@ -263,7 +263,7 @@
 
                                         <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
                                             <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-2 mb-2">
-                                                <i class="fas fa-download"></i> Boleto
+                                                <i class="fas fa-download"></i> Baixar Boleto
                                             </a>
                                         <?php } ?>
 
