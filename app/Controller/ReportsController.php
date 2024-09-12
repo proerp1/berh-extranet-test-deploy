@@ -236,99 +236,24 @@ class ReportsController extends AppController
     }
 
     public function relatorio_processamento()
-{
-    $this->layout = 'ajax';
-    $this->autoRender = false;
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
 
-    ini_set('memory_limit', '-1');
+        ini_set('memory_limit', '-1');
 
-    // Define conditions similarly to demanda_judicial
-    $condition = $this->pedidosConditions();
+        // Define conditions similarly to demanda_judicial
+        $condition = $this->pedidosConditions();
 
-    // Fetch the data based on the conditions
-    $data = $this->OrderItem->find('all', [
-        'fields' => [
-            'Order.*',
-            'OrderItem.*',
-            'Customer.*',
-            'Status.*',
-            'CustomerUser.*',
-            'Supplier.*',
-            'Benefit.*',
-            'CustomerUserItinerary.*',
-            'CostCenter.*',
-            'EconomicGroups.*',
-            'CustomerDepartments.*',
-        ],
-        'conditions' => $condition['condition'],
-        'joins' => [
-            [
-                'table' => 'customers',
-                'alias' => 'Customer',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'Order.customer_id = Customer.id'
-                ]
-            ],
-            [
-                'table' => 'statuses',
-                'alias' => 'Status',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'Order.status_id = Status.id'
-                ]
-            ],
-            [
-                'table' => 'cost_center',
-                'alias' => 'CostCenter',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'CustomerUser.customer_cost_center_id = CostCenter.id'
-                ]
-            ],
-            [
-                'table' => 'economic_groups',
-                'alias' => 'EconomicGroups',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'CustomerUser.economic_group_id = EconomicGroups.id'
-                ]
-            ],
-            [
-                'table' => 'customer_departments',
-                'alias' => 'CustomerDepartments',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'CustomerUser.customer_departments_id = CustomerDepartments.id'
-                ]
-            ],
-            [
-                'table' => 'benefits',
-                'alias' => 'Benefit',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'Benefit.id = CustomerUserItinerary.benefit_id'
-                ]
-            ],
-            [
-                'table' => 'suppliers',
-                'alias' => 'Supplier',
-                'type' => 'LEFT',
-                'conditions' => [
-                    'Supplier.id = Benefit.supplier_id'
-                ]
-            ]
-        ],
-        'group' => ['OrderItem.id'],
-        'order' => ['trim(CustomerUser.name)']
-    ]);
+        // Fetch the data based on the conditions
+        $data = $this->OrderItem->getProcessamentoPedido('all', ['OrderItem.order_id' => $condition['condition']]);
 
-    // Generate the Excel report with the fetched data
-    $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
+        // Generate the Excel report with the fetched data
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
 
-    // Redirect to download the generated Excel file
-    $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
-}
+        // Redirect to download the generated Excel file
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
+    }
 
     
     public function demanda_judicial()

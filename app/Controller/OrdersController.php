@@ -2075,94 +2075,11 @@ $itens = $this->OrderItem->find('all', [
             'conditions' => ['Order.id' => $id],
         ]);
 
-        
+        $data = $this->OrderItem->getProcessamentoPedido('all', ['OrderItem.order_id' => $id]);
 
-        $data = $this->OrderItem->find('all', [
-            'fields' => [
-                'Order.*',
-                'OrderItem.*',
-                'Customer.*',
-                'Status.*',
-                'CustomerUser.*',
-                'Supplier.*',
-                'Benefit.*',
-                'CustomerUserItinerary.*',
-                'CostCenter.*',
-                'EconomicGroups.name',
-                'EconomicGroups.document',
-                'EconomicGroups.razao_social',
-                'CustomerDepartments.*',
-            ],
-            'conditions' => ['OrderItem.order_id' => $id],
-            'joins' => [
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Order.customer_id = Customer.id'
-                    ]
-                ],
-                [
-                    'table' => 'statuses',
-                    'alias' => 'Status',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Order.status_id = Status.id'
-                    ]
-                ],
-                [
-                    'table' => 'cost_center',
-                    'alias' => 'CostCenter',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'CustomerUser.customer_cost_center_id = CostCenter.id'
-                    ]
-                ],
-                [
-                    'table' => 'economic_groups',
-                    'alias' => 'EconomicGroups',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Order.economic_group_id = EconomicGroups.id'
-                    ]
-                ],
-                [
-                    'table' => 'customer_departments',
-                    'alias' => 'CustomerDepartments',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'CustomerUser.customer_departments_id = CustomerDepartments.id'
-                    ]
-                ],
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Benefit.id = CustomerUserItinerary.benefit_id'
-                    ]
-                ],
-                [
-                    'table' => 'suppliers',
-                    'alias' => 'Supplier',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Supplier.id = Benefit.supplier_id'
-                    ]
-                ]
-            ],
-            'group' => ['OrderItem.id'],
-            'order' => ['trim(CustomerUser.name)']
-        ]);
-        //debug($data); die;
-
-        
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
 
         $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
-        
-
     }
 
     public function relatorio_processamento_index()
@@ -2219,85 +2136,10 @@ $itens = $this->OrderItem->find('all', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => $condition,
         ]);
-    
+
         $data = [];
         foreach ($orders as $order) {
-            $orderItems = $this->OrderItem->find('all', [
-                'fields' => [
-                    'Order.*',
-                    'OrderItem.*',
-                    'Customer.*',
-                    'Status.*',
-                    'CustomerUser.*',
-                    'Supplier.*',
-                    'Benefit.*',
-                    'CustomerUserItinerary.*',
-                    'CostCenter.*',
-                    'EconomicGroups.*',
-                    'CustomerDepartments.*',
-                ],
-                'conditions' => ['OrderItem.order_id' => $order['Order']['id']],
-                'joins' => [
-                    [
-                        'table' => 'customers',
-                        'alias' => 'Customer',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'Order.customer_id = Customer.id'
-                        ]
-                    ],
-                    [
-                        'table' => 'statuses',
-                        'alias' => 'Status',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'Order.status_id = Status.id'
-                        ]
-                    ],
-                    [
-                        'table' => 'cost_center',
-                        'alias' => 'CostCenter',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'CustomerUser.customer_cost_center_id = CostCenter.id'
-                        ]
-                    ],
-                    [
-                        'table' => 'economic_groups',
-                        'alias' => 'EconomicGroups',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'Order.economic_group_id = EconomicGroups.id'
-                        ]
-                    ],
-                    [
-                        'table' => 'customer_departments',
-                        'alias' => 'CustomerDepartments',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'CustomerUser.customer_departments_id = CustomerDepartments.id'
-                        ]
-                    ],
-                    [
-                        'table' => 'benefits',
-                        'alias' => 'Benefit',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'Benefit.id = CustomerUserItinerary.benefit_id'
-                        ]
-                    ],
-                    [
-                        'table' => 'suppliers',
-                        'alias' => 'Supplier',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'Supplier.id = Benefit.supplier_id'
-                        ]
-                    ]
-                ],
-                'group' => ['OrderItem.id'],
-                'order' => ['trim(CustomerUser.name)']
-            ]);
+            $orderItems = $this->OrderItem->getProcessamentoPedido('all', ['OrderItem.order_id' => $order['Order']['id']]);
     
             $data = array_merge($data, $orderItems);
         }

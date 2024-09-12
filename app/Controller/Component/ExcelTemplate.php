@@ -1826,7 +1826,6 @@ class ExcelTemplate
 
 	public function getProcessamento($spreadsheet, $dados)
 	{
-		
 		$activeWorksheet = $spreadsheet->getActiveSheet();
 
 		$activeWorksheet
@@ -1857,23 +1856,13 @@ class ExcelTemplate
 		->setCellValue('Y1', " CNPJ Grupo Economico")
 		->setCellValue('Z1', "Nome Grupo Economicoo");
 
-
-
 		$indx = 1;
 		$total = 0;
 		for ($i = 0; $i < count($dados); $i++) {
-
 			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
 
 			$indx++;
-			// $activeWorksheet
-			// 	->setCellValue('A' . $indx, $dados[$i]["Status"]["name"])
-			// 	->setCellValue('B' . $indx, str_pad($dados[$i]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT))
-			// 	->setCellValue('C' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['CnabLote']['created'])))
-			// 	->setCellValue('D' . $indx, $dados[$i]['Bank']['name'])
-			// 	->setCellValue('E' . $indx, $dados[$i][0]['qtde'])
-			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
-			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
+
 			$activeWorksheet
 				->setCellValue('A'. $indx, $dados[$i]['Order']['created'])
 				->setCellValue('B'. $indx, $dados[$i]['Order']['id'])
@@ -1901,9 +1890,6 @@ class ExcelTemplate
 				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
 				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
 				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name']);
-
-
-				
 		}
 	}
 
