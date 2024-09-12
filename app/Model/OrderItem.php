@@ -229,4 +229,95 @@ class OrderItem extends AppModel {
 
         return $this->query($sql);
     }
+
+    public function getProcessamentoPedido($type, $conditions)
+    {
+        return $this->find($type, [
+            'fields' => [
+                'Order.*',
+                'OrderItem.*',
+                'Customer.*',
+                'Status.*',
+                'CustomerUser.*',
+                'Supplier.*',
+                'Benefit.*',
+                'CustomerUserItinerary.*',
+                'CostCenter.*',
+                'EconomicGroups.name',
+                'EconomicGroups.document',
+                'EconomicGroups.razao_social',
+                'CustomerDepartments.*',
+                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs'
+            ],
+            'conditions' => $conditions,
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.customer_id = Customer.id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.status_id = Status.id'
+                    ]
+                ],
+                [
+                    'table' => 'cost_center',
+                    'alias' => 'CostCenter',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.customer_cost_center_id = CostCenter.id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroups',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.economic_group_id = EconomicGroups.id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_departments',
+                    'alias' => 'CustomerDepartments',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.customer_departments_id = CustomerDepartments.id'
+                    ]
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ],
+                [
+                    'table' => 'order_balances',
+                    'alias' => 'OrderBalance',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderBalance.order_item_id = OrderItem.id', 'OrderBalance.tipo' => 3, 'OrderBalance.data_cancel' => '1901-01-01'
+                    ]
+                ]
+            ],
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
+        ]);
+    }
 }
