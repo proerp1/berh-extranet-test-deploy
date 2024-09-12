@@ -2158,9 +2158,9 @@ $itens = $this->OrderItem->find('all', [
         //debug($data); die;
 
         
-        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
 
-        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
         
 
     }
@@ -2302,9 +2302,9 @@ $itens = $this->OrderItem->find('all', [
             $data = array_merge($data, $orderItems);
         }
         
-        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+        $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
     
-        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+        $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
     }
     
     public function processamentopdf($id)

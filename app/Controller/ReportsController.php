@@ -324,10 +324,10 @@ class ReportsController extends AppController
     ]);
 
     // Generate the Excel report with the fetched data
-    $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidos', $data);
+    $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
 
     // Redirect to download the generated Excel file
-    $this->redirect('/private_files/baixar/excel/ProcessamentoPedidos_xlsx');
+    $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
 }
 
     
