@@ -236,7 +236,7 @@
                                             <i class="fas fa-download"></i> Processamento
                                         </a>
                                         <a href="<?php echo $this->base . '/orders/processamentopdf/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> PDF
+                                            <i class="fas fa-download"></i> Processamento PDF
                                         </a>
                                         <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
                                             <i class="fas fa-download"></i> Entrega
@@ -275,7 +275,7 @@
                                     </div>
                                 </div>                           
                                 
-                                <!-- Botão Salvar com o mesmo tamanho e alinhamento -->
+                               
                                 <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
                                     Salvar dados
                                 </button>
