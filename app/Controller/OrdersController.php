@@ -897,34 +897,38 @@ class OrdersController extends AppController
         }
 
         foreach ($groupTipo as $tipo) {
-            $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"));
+            if ($tipo) {
+                $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"));
+            }
         }
 
         foreach ($ret['data'] as $data) {
-            $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+            if ($data['tipo']) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
 
-            if (isset($benefit['Benefit'])) {
-                $benefit_id = $benefit['Benefit']['id'];
-            } else {
-                $benefit_id = null;
+                if (isset($benefit['Benefit'])) {
+                    $benefit_id = $benefit['Benefit']['id'];
+                } else {
+                    $benefit_id = null;
+                }
+
+                $orderBalanceData = [
+                    'order_id' => $orderId,
+                    'order_item_id' => $data['order_item_id'],
+                    'customer_user_id' => $data['customer_user_id'],
+                    'benefit_id' => $benefit_id,
+                    'document' => $data['document'],
+                    'total' => $data['total'],
+                    'pedido_operadora' => $data['pedido_operadora'],
+                    'tipo' => $data['tipo'],
+                    'observacao' => $data['observacao'],
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
             }
-
-            $orderBalanceData = [
-                'order_id' => $orderId,
-                'order_item_id' => $data['order_item_id'],
-                'customer_user_id' => $data['customer_user_id'],
-                'benefit_id' => $benefit_id,
-                'document' => $data['document'],
-                'total' => $data['total'],
-                'pedido_operadora' => $data['pedido_operadora'],
-                'tipo' => $data['tipo'],
-                'observacao' => $data['observacao'],
-                'created' => date('Y-m-d H:i:s'),
-                'user_created_id' => CakeSession::read("Auth.User.id")
-            ];
-
-            $this->OrderBalance->create();
-            $this->OrderBalance->save($orderBalanceData);
         }
 
         $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));

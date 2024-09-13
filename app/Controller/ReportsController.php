@@ -246,7 +246,7 @@ class ReportsController extends AppController
         $condition = $this->pedidosConditions();
 
         // Fetch the data based on the conditions
-        $data = $this->OrderItem->getProcessamentoPedido('all', ['OrderItem.order_id' => $condition['condition']]);
+        $data = $this->OrderItem->getProcessamentoPedido('all', $condition['condition']);
 
         // Generate the Excel report with the fetched data
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
