@@ -1693,10 +1693,11 @@ class OrdersController extends AppController
     public function relatorio_beneficio($id)
     {
         
-        ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('pcre.backtrack_limit', '20000000');
         $this->layout = 'ajax';
         $this->autoRender = false;
-        
+        ini_set('max_execution_time', '-1');
+
         ini_set('memory_limit', '-1');
         
         $view = new View($this, false);
