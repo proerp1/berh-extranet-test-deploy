@@ -75,11 +75,18 @@ class AtendimentosController extends AppController
     
         $data = $this->Paginator->paginate('Atendimento', $condition);
     
+        // Contagem de atendidos com filtros
+        $conditionAtendidos = $condition;
+        $conditionAtendidos['and']['Atendimento.status_id'] = 35; // Status de "Atendido"
+        $atendidos = $this->Atendimento->find('count', ['conditions' => $conditionAtendidos]);
+    
+        // Contagem de pendentes com filtros
+        $conditionPendentes = $condition;
+        $conditionPendentes['and']['Atendimento.status_id'] = 34; // Status de "Pendente"
+        $pendentes = $this->Atendimento->find('count', ['conditions' => $conditionPendentes]);
+    
         // Data for the view
         $departments = $this->Department->find('all', ['order' => 'Department.name']);
-        $atendidos = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 35]]);
-        $pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
-    
         $action = "Atendimentos";
         $this->set(compact('departments', 'data', 'atendidos', 'pendentes', 'action'));
     }
