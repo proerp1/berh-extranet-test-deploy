@@ -1893,100 +1893,102 @@ class ExcelTemplate
 		}
 	}
 
-	public function getBeneficiario($spreadsheet, $dados)
-{
-   
-
-    $activeWorksheet = $spreadsheet->getActiveSheet();
-
-    $headers = [
-        'A1' => "Benefício(Benefício)",
-        'B1' => "Dias Úteis(Benefício)",
-        'C1' => "N° Cartão(Benefício)",
-        'D1' => "Quantidade(Benefício)",
-        'E1' => "Valor Unitario(Benefício)",
-        'F1' => "Valor por dia(Benefício)",
-        'G1' => "Status(beneficiário)",
-        'H1' => "Nome(beneficiário)",
-        'I1' => "Matricula(beneficiário)",
-        'J1' => "Email(beneficiário)",
-        'K1' => "Telefone(beneficiário)",
-        'L1' => "Celular(beneficiário)",
-        'M1' => "CPF(beneficiário)",
-        'N1' => "RG(beneficiário)",
-        'O1' => "Emissor(beneficiário)",
-        'P1' => "Estado Emissor(beneficiário)",
-        'Q1' => "Nome da Mãe(beneficiário)",
-        'R1' => "Sexo(beneficiário)",
-        'S1' => "Data Nascimento(beneficiário)",
-        'T1' => "Departamento(beneficiário)",
-        'U1' => "Cargo(beneficiário)",
-        'V1' => "Centro de Custo(beneficiário)",
-        'W1' => "Salário(beneficiário)",
-        'X1' => "Estado Civil(beneficiário)",
-        'Y1' => "Empresas do Grupo econômico(beneficiário)",
-        //'Z1' => "Observações(beneficiário)",
-        'AA1' => "Nome (Grupo Econômico)",
-        'AB1' => "CNPJ (Grupo Econômico)"
-    ];
-
-    foreach ($headers as $cell => $text) {
-        $activeWorksheet->setCellValue($cell, $text);
-    }
-
-    $indx = 1;
-    $chunkSize = 100; // Tamanho do lote
-    $totalRows = count($dados);
-
-    for ($i = 0; $i < $totalRows; $i += $chunkSize) {
-        $chunk = array_slice($dados, $i, $chunkSize);
-
-        foreach ($chunk as $data) {
-            $indx++;
-
-            if (!empty($data['CustomerUserItinerary'])) {
-                foreach ($data['CustomerUserItinerary'] as $itinerary) {
-                    $activeWorksheet
-                        ->setCellValue('A' . $indx, $itinerary['benefit_id'] ?? '')
-                        ->setCellValue('B' . $indx, $itinerary['working_days'] ?? '')
-                        ->setCellValue('C' . $indx, $itinerary['card_number'] ?? '')
-                        ->setCellValue('D' . $indx, $itinerary['quantity'] ?? '')
-                        ->setCellValue('E' . $indx, $itinerary['unit_price'] ?? '')
-                        ->setCellValue('F' . $indx, $itinerary['price_per_day'] ?? '');
-                }
-            }
-
-            $activeWorksheet
-                ->setCellValue('G' . $indx, $data['Status']['name'] ?? '')
-                ->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
-                ->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
-                ->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
-                ->setCellValue('K' . $indx, $data['CustomerUser']['tel'] ?? '')
-                ->setCellValue('L' . $indx, $data['CustomerUser']['cel'] ?? '')
-                ->setCellValue('M' . $indx, $data['CustomerUser']['cpf'] ?? '')
-                ->setCellValue('N' . $indx, $data['CustomerUser']['rg'] ?? '')
-                ->setCellValue('O' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
-                ->setCellValue('P' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
-                ->setCellValue('Q' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
-                ->setCellValue('R' . $indx, $data['CustomerUser']['sexo'] ?? '')
-                ->setCellValue('S' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
-                ->setCellValue('T' . $indx, $data['CustomerDepartment']['name'] ?? '')
-                ->setCellValue('U' . $indx, $data['CustomerPosition']['name'] ?? '')
-                ->setCellValue('V' . $indx, $data['CostCenter']['name'] ?? '')
-                ->setCellValue('W' . $indx, $data['SalaryRange']['range'] ?? '')
-                ->setCellValue('X' . $indx, $data['MaritalStatus']['status'] ?? '')
-                ->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
-               // ->setCellValue('Z' . $indx, $data['CustomerUser']['observation'] ?? '');
-
-            if (!empty($data['EconomicGroup'])) {
-                $activeWorksheet
-                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
-                    ->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
-            }
-        }
-    }
-}
-
+	public function getBeneficiario($spreadsheet, $dados, $statusSelecionado = null)
+	{
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+	
+		$headers = [
+			'A1' => "Benefício(Benefício)",
+			'B1' => "Dias Úteis(Benefício)",
+			'C1' => "N° Cartão(Benefício)",
+			'D1' => "Quantidade(Benefício)",
+			'E1' => "Valor Unitario(Benefício)",
+			'F1' => "Valor por dia(Benefício)",
+			'G1' => "Status(beneficiário)",
+			'H1' => "Nome(beneficiário)",
+			'I1' => "Matricula(beneficiário)",
+			'J1' => "Email(beneficiário)",
+			'K1' => "Telefone(beneficiário)",
+			'L1' => "Celular(beneficiário)",
+			'M1' => "CPF(beneficiário)",
+			'N1' => "RG(beneficiário)",
+			'O1' => "Emissor(beneficiário)",
+			'P1' => "Estado Emissor(beneficiário)",
+			'Q1' => "Nome da Mãe(beneficiário)",
+			'R1' => "Sexo(beneficiário)",
+			'S1' => "Data Nascimento(beneficiário)",
+			'T1' => "Departamento(beneficiário)",
+			'U1' => "Cargo(beneficiário)",
+			'V1' => "Centro de Custo(beneficiário)",
+			'W1' => "Salário(beneficiário)",
+			'X1' => "Estado Civil(beneficiário)",
+			'Y1' => "Empresas do Grupo econômico(beneficiário)",
+			'AA1' => "Nome (Grupo Econômico)",
+			'AB1' => "CNPJ (Grupo Econômico)"
+		];
+	
+		foreach ($headers as $cell => $text) {
+			$activeWorksheet->setCellValue($cell, $text);
+		}
+	
+		$indx = 1;
+		$chunkSize = 100; // Tamanho do lote
+		$totalRows = count($dados);
+	
+		for ($i = 0; $i < $totalRows; $i += $chunkSize) {
+			$chunk = array_slice($dados, $i, $chunkSize);
+	
+			foreach ($chunk as $data) {
+				$indx++;
+	
+				if (!empty($data['CustomerUserItinerary'])) {
+					foreach ($data['CustomerUserItinerary'] as $itinerary) {
+						$activeWorksheet
+							->setCellValue('A' . $indx, $itinerary['benefit_id'] ?? '')
+							->setCellValue('B' . $indx, $itinerary['working_days'] ?? '')
+							->setCellValue('C' . $indx, $itinerary['card_number'] ?? '')
+							->setCellValue('D' . $indx, $itinerary['quantity'] ?? '')
+							->setCellValue('E' . $indx, $itinerary['unit_price'] ?? '')
+							->setCellValue('F' . $indx, $itinerary['price_per_day'] ?? '');
+					}
+				}
+	
+				// Filtrar pelo status selecionado
+				$status = $data['Status']['name'] ?? '';
+				if ($statusSelecionado && $data['Status']['id'] != $statusSelecionado) {
+					continue; // pula para o próximo registro se o status não corresponder
+				}
+	
+				$activeWorksheet
+					->setCellValue('G' . $indx, $status)
+					->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
+					->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
+					->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
+					->setCellValue('K' . $indx, $data['CustomerUser']['tel'] ?? '')
+					->setCellValue('L' . $indx, $data['CustomerUser']['cel'] ?? '')
+					->setCellValue('M' . $indx, $data['CustomerUser']['cpf'] ?? '')
+					->setCellValue('N' . $indx, $data['CustomerUser']['rg'] ?? '')
+					->setCellValue('O' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
+					->setCellValue('P' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
+					->setCellValue('Q' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
+					->setCellValue('R' . $indx, $data['CustomerUser']['sexo'] ?? '')
+					->setCellValue('S' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
+					->setCellValue('T' . $indx, $data['CustomerDepartment']['name'] ?? '')
+					->setCellValue('U' . $indx, $data['CustomerPosition']['name'] ?? '')
+					->setCellValue('V' . $indx, $data['CostCenter']['name'] ?? '')
+					->setCellValue('W' . $indx, $data['SalaryRange']['range'] ?? '')
+					->setCellValue('X' . $indx, $data['MaritalStatus']['status'] ?? '')
+					->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
+	
+				if (!empty($data['EconomicGroup'])) {
+					$activeWorksheet
+						->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
+						->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
+				}
+			}
+		}
+	}
+	
 	
 
 
