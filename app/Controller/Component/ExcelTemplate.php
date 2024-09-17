@@ -1957,7 +1957,7 @@ class ExcelTemplate
             }
 
             $activeWorksheet
-                ->setCellValue('G' . $indx, $data['CustomerUser']['customer_id'] ?? '')
+                ->setCellValue('G' . $indx, $data['Status']['name'] ?? '')
                 ->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
                 ->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
                 ->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
