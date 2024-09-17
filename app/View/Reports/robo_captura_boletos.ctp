@@ -4,7 +4,6 @@
 		if (document.body.clientHeight) {
 			height = document.body.clientHeight; //IE
 		}
-		height += 1170;
 		document.getElementById("frame").style.height = parseInt(height -
 			document.getElementById("frame").offsetTop) + "px";
 		frame
