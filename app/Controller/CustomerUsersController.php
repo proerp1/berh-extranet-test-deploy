@@ -157,6 +157,7 @@ class CustomerUsersController extends AppController
                 'CustomerUser.emissor_rg', 
                 'CustomerUser.emissor_estado', 
                 'CustomerUser.nome_mae', 
+                'CustomerUser.status_id', 
                 'CustomerUser.sexo', 
                 'CustomerUser.data_nascimento', 
                 'CustomerUser.customer_departments_id', 
@@ -173,7 +174,7 @@ class CustomerUsersController extends AppController
             ],
             'group' => ['CustomerUser.id', 'EconomicGroup.id'] 
         ]);
-    
+    //debug($data);die;
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
         $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario.xlsx');
