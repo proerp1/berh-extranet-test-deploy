@@ -258,10 +258,13 @@ class ReportsController extends AppController
     
     public function demanda_judicial()
     {
+        // Desativar a renderização automática da view
+        $this->autoRender = false;
+    
         ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
         $condition = $this->pedidosConditions();
-
+    
         $paginas = $this->OrderItem->find('all', [
             'fields' => ['Order.order_period_from', 'Order.order_period_to', 'Order.id', 'Customer.documento', 'Customer.nome_secundario'],
             'contain' => ['Order', 'CustomerUser'],
@@ -276,14 +279,14 @@ class ReportsController extends AppController
             'conditions' => $condition['condition'],
             'group' => ['CustomerUser.id']
         ]);
-
+    
         $html = '';
-
+    
         if (!empty($paginas)) {
             foreach ($paginas as $index => $pagina) {
                 $view = new View($this, false);
                 $view->layout = false;
-
+    
                 $itens = $this->OrderItem->find('all', [
                     'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
                     'joins' => [
@@ -295,6 +298,8 @@ class ReportsController extends AppController
                         ],
                     ],
                     'fields' => [
+                        'Order.created',
+                        'OrderItem.subtotal',
                         'Customer.documento',
                         'Customer.nome_secundario',
                         'CustomerUser.name as nome',
@@ -314,24 +319,29 @@ class ReportsController extends AppController
                     'group' => ['OrderItem.id'],
                     'order' => ['trim(CustomerUser.name)']                           
                 ]);
-
+    
                 $de = $condition['de'];
                 $para = $condition['para'];
-
+    
                 $link = APP . 'webroot';
                 $view->set(compact("link","pagina", "itens", "de", "para"));
                 $html .= $view->render('../Elements/listagem_entrega');
-
+    
                 if (count($paginas) != ($index + 1)) {
                     $html .= '<div class="break"></div>';
                 }
             }
-
-            $this->HtmltoPdf->convert($html, 'demanda_judicial.pdf', 'download');
+    
+            // Exibir o HTML antes de gerar o PDF
+            //echo $html;
+    
+            // Para gerar o PDF após visualização, use o seguinte código:
+             $this->HtmltoPdf->convert($html, 'demanda_judicial.pdf', 'download');
         } else {
             $this->redirect($this->referer());
         }
     }
+    
 
     public function getDepAndCCByCustomer()
     {
