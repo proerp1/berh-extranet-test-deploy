@@ -1730,7 +1730,10 @@ class ExcelTemplate
 		->setCellValue('BO1', "GE-CNPJ")
 		->setCellValue('BP1', "Código")
 		->setCellValue('BQ1', "Economia")
-		->setCellValue('BR1', "id");
+		->setCellValue('BR1', "id")
+		->setCellValue('BS1', "Liberação do crédito")
+		->setCellValue('BT1', "Período Inicio")
+		->setCellValue('BU1', "Período Fim");
 		
 
 		
@@ -1819,7 +1822,11 @@ class ExcelTemplate
 				->setCellValue('BO'. $indx, $dados[$i]['EconomicGroups']['document'])
 				->setCellValue('BP'. $indx, $dados[$i]['Customer']['codigo_associado'])
 				->setCellValue('BQ'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id']);
+				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id'])
+				->setCellValue('BS'. $indx, $dados[$i]['Order']['credit_release_date'])
+				->setCellValue('BT'. $indx, $dados[$i]['Order']['order_period_from'])
+				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to']);
+
 				
 		}
 	}
