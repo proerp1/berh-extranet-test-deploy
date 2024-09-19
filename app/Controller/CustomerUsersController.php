@@ -112,7 +112,7 @@ class CustomerUsersController extends AppController
                 [
                     'table' => 'customer_users_economic_groups',
                     'alias' => 'CustomerUserEconomicGroup',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
                     ]
@@ -120,7 +120,7 @@ class CustomerUsersController extends AppController
                 [
                     'table' => 'economic_groups',
                     'alias' => 'EconomicGroup',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'EconomicGroup.id = CustomerUserEconomicGroup.economic_group_id'
                     ]
