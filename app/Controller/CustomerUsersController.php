@@ -11,7 +11,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','CustomerUserEconomicGroup'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -110,11 +110,19 @@ class CustomerUsersController extends AppController
             'conditions' => ['CustomerUser.customer_id' => $id],
             'joins' => [
                 [
-                    'table' => 'economic_groups',  
-                    'alias' => 'EconomicGroup',    
-                    'type' => 'LEFT',              
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'INNER',
                     'conditions' => [
-                        'EconomicGroup.customer_id = CustomerUser.customer_id' 
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroup',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'EconomicGroup.id = CustomerUserEconomicGroup.economic_group_id'
                     ]
                 ],
                 [
