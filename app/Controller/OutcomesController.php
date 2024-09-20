@@ -508,33 +508,71 @@ class OutcomesController extends AppController {
 		}
     }
 
-    public function all_documents()
-    {
-		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = [
-        	'Docoutcome' => [
-	            'limit' => 50,
-	            'order' => [
-	            	'Outcome.id' => 'asc', 'Docoutcome.created' => 'asc'
-	            ],            
-            ]
-        ];
+	public function all_documents()
+{
+    $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-        $condition = ['and' => [], 'or' => []];
+	$this->Paginator->settings = [
+		'Docoutcome' => [
+			'limit' => 50,
+			'order' => [
+				'Outcome.id' => 'asc',
+				'Docoutcome.created' => 'asc'
+			],
+			'joins' => [
+				[
+					'table' => 'outcomes',
+					'alias' => 'Outcome',
+					'type' => 'LEFT',
+					'conditions' => ['Docoutcome.outcome_id = Outcome.id']
+				],
+				[
+					'table' => 'suppliers',
+					'alias' => 'Supplier',
+					'type' => 'LEFT',
+					'conditions' => ['Outcome.supplier_id = Supplier.id']
+				],
+				[
+					'table' => 'statuses', // Join para Status do Docoutcome
+					'alias' => 'Status',
+					'type' => 'LEFT',
+					'conditions' => ['Docoutcome.status_id = Status.id']
+				],
+				[
+					'table' => 'statuses', // Join para Status do Outcome
+					'alias' => 'OutcomeStatus',
+					'type' => 'LEFT',
+					'conditions' => ['Outcome.status_id = OutcomeStatus.id']
+				]
+			],
+			'fields' => [
+				'Docoutcome.*', 
+				'Outcome.*', 
+				'Supplier.nome_fantasia', 
+				'Status.*', 
+				'OutcomeStatus.*' // Inclua o OutcomeStatus aqui
+			]
+		]
+	];
+	
 
-        if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
-        }
+    $condition = ['and' => [], 'or' => []];
 
-        if (isset($_GET['t']) and $_GET['t'] != '') {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-        }
-
-        $action = 'Documentos';
-
-       	$data = $this->Paginator->paginate('Docoutcome', $condition);
-        $status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
-
-        $this->set(compact('status', 'data', 'action'));
+    if (isset($_GET['q']) && $_GET['q'] != "") {
+        $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
     }
+
+    if (isset($_GET['t']) && $_GET['t'] != '') {
+        $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+    }
+
+    $action = 'Documentos';
+
+    $data = $this->Paginator->paginate('Docoutcome', $condition);
+    $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
+//debug($data);die;
+    $this->set(compact('status', 'data', 'action'));
+}
+
+	
 }

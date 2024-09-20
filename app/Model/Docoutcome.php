@@ -3,14 +3,7 @@ App::uses('AuthComponent', 'Controller/Component');
 class Docoutcome extends AppModel {
 	public $name = 'Docoutcome';
 
-	public $belongsTo = array(
-		'Status' => array(
-			'className' => 'Status',
-			'foreignKey' => 'status_id',
-			'conditions' => array('Status.categoria' => 1)
-		),
-		'Outcome'
-	);
+
 
 	public function beforeFind($queryData) {
 
