@@ -201,6 +201,7 @@
                         <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
                         
                         <th>Pedido</th>
+                        <th>Cliente</th>
                         <th>Fornecedor</th>
                         <th>Nome </th>
                         <th>Descrição</th>
@@ -239,6 +240,7 @@
 				                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["order_id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
@@ -273,7 +275,7 @@
 						<?php } ?>
 					<?php } else { ?>
 						<tr>
-							<td colspan="13" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+							<td colspan="20" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
 						</tr>
 					<?php } ?>
 				</tbody>

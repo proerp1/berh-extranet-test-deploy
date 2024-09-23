@@ -63,6 +63,7 @@
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status do documento</th>
                         <th>Id da conta</th>
                         <th>Pedido</th>
+                        <th>Cliente</th>
                         <th>N° Documento</th>
                         <th>Fornecedor</th>
                         <th>Nome Fornecedor</th>
@@ -89,6 +90,7 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["order_id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>

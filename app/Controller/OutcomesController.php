@@ -5,7 +5,22 @@ class OutcomesController extends AppController {
 	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
 
 	public $paginate = [
-		'limit' => 175, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+        'Outcome' => [
+            'fields' => [
+                'Outcome.*',
+                'Status.*',
+                'Supplier.nome_fantasia',
+                "(SELECT c.nome_primario
+                    FROM orders o 
+                        INNER JOIN customers c ON o.customer_id = c.id  
+                    WHERE o.id = Outcome.order_id  
+                            AND c.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as nome_primario"
+            ],
+            'limit' => 175, 
+            'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+        ]
 	];
 
 	public function beforeFilter() { 
@@ -540,7 +555,14 @@ class OutcomesController extends AppController {
 				'Outcome.*', 
 				'Supplier.nome_fantasia', 
 				'Status.*', 
-				'OutcomeStatus.*' // Inclua o OutcomeStatus aqui
+				'OutcomeStatus.*',
+                "(SELECT c.nome_primario
+                    FROM orders o 
+                        INNER JOIN customers c ON o.customer_id = c.id  
+                    WHERE o.id = Outcome.order_id  
+                            AND c.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as nome_primario"
 			]
 		]
 	];
