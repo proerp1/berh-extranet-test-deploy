@@ -352,7 +352,7 @@ class OutcomesController extends AppController {
      **********************/
     public function documents($id)
     {
-		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+		$this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Outcome.id' => $id], 'or' => []];
@@ -378,7 +378,7 @@ class OutcomesController extends AppController {
 
 	public function add_document($id)
     {
-        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
         if ($this->request->is(['post', 'put'])) {
             $this->Docoutcome->create();
             if ($this->Docoutcome->validates()) {
@@ -409,7 +409,7 @@ class OutcomesController extends AppController {
 	
 	public function edit_document($id, $document_id = null)
     {
-        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Docoutcome->id = $document_id;
         if ($this->request->is(['post', 'put'])) {
             $this->Docoutcome->validates();
@@ -440,7 +440,7 @@ class OutcomesController extends AppController {
 
 	public function delete_document($outcome_id, $id)
     {
-        $this->Permission->check(11, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'excluir') ? '' : $this->redirect('/not_allowed');
         $this->Docoutcome->id = $id;
         $this->request->data = $this->Docoutcome->read();
 
@@ -510,7 +510,7 @@ class OutcomesController extends AppController {
 
 	public function all_documents()
 {
-    $this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
 
 	$this->Paginator->settings = [
 		'Docoutcome' => [
