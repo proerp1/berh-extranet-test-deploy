@@ -66,6 +66,19 @@ class OutcomesController extends AppController {
             $condition['and'] = array_merge($condition['and'], ['Outcome.created >=' => $created_de, 'Outcome.created <=' => $created_ate]);
         }
 
+		        $get_pagamento_de = isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : '';
+        $get_pagamento_ate = isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : '';
+        
+        if ($get_pagamento_de != "" && $get_pagamento_ate != "") {
+            $pagamento_de = date('Y-m-d 00:00:00', strtotime(str_replace('/', '-', $_GET['pagamento_de'])));
+            $pagamento_ate = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $_GET['pagamento_ate'])));
+        
+            // Alterar a condição para filtrar pela coluna 'data_pagamento'
+            $condition['and'] = array_merge($condition['and'], [
+                'Outcome.data_pagamento >=' => $pagamento_de,
+                'Outcome.data_pagamento <=' => $pagamento_ate
+            ]);
+		}
 		if (isset($_GET['exportar'])) {
 			$nome = 'contas_pagar.xlsx';
 
