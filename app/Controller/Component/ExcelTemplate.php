@@ -1730,7 +1730,10 @@ class ExcelTemplate
 		->setCellValue('BO1', "GE-CNPJ")
 		->setCellValue('BP1', "Código")
 		->setCellValue('BQ1', "Economia")
-		->setCellValue('BR1', "id");
+		->setCellValue('BR1', "id")
+		->setCellValue('BS1', "Liberação do crédito")
+		->setCellValue('BT1', "Período Inicio")
+		->setCellValue('BU1', "Período Fim");
 		
 
 		
@@ -1819,7 +1822,11 @@ class ExcelTemplate
 				->setCellValue('BO'. $indx, $dados[$i]['EconomicGroups']['document'])
 				->setCellValue('BP'. $indx, $dados[$i]['Customer']['codigo_associado'])
 				->setCellValue('BQ'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id']);
+				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id'])
+				->setCellValue('BS'. $indx, $dados[$i]['Order']['credit_release_date'])
+				->setCellValue('BT'. $indx, $dados[$i]['Order']['order_period_from'])
+				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to']);
+
 				
 		}
 	}
@@ -1947,7 +1954,7 @@ class ExcelTemplate
             if (!empty($data['CustomerUserItinerary'])) {
                 foreach ($data['CustomerUserItinerary'] as $itinerary) {
                     $activeWorksheet
-                        ->setCellValue('A' . $indx, $itinerary['benefit_id'] ?? '')
+                        ->setCellValue('A' . $indx, $itinerary['benefit_code'] ?? '')
                         ->setCellValue('B' . $indx, $itinerary['working_days'] ?? '')
                         ->setCellValue('C' . $indx, $itinerary['card_number'] ?? '')
                         ->setCellValue('D' . $indx, $itinerary['quantity'] ?? '')
@@ -1957,8 +1964,8 @@ class ExcelTemplate
             }
 
             $activeWorksheet
-                ->setCellValue('G' . $indx, $data['CustomerUser']['customer_id'] ?? '')
-                ->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
+			->setCellValue('G' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
+			->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
                 ->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
                 ->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
                 ->setCellValue('K' . $indx, $data['CustomerUser']['tel'] ?? '')

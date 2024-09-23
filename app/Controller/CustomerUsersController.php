@@ -11,7 +11,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup', 'CustomerUsersEconomicGroup'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','CustomerUserEconomicGroup'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -110,11 +110,19 @@ class CustomerUsersController extends AppController
             'conditions' => ['CustomerUser.customer_id' => $id],
             'joins' => [
                 [
-                    'table' => 'economic_groups',  
-                    'alias' => 'EconomicGroup',    
-                    'type' => 'LEFT',              
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'LEFT',
                     'conditions' => [
-                        'EconomicGroup.customer_id = CustomerUser.customer_id' 
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroup',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'EconomicGroup.id = CustomerUserEconomicGroup.economic_group_id'
                     ]
                 ],
                 [
@@ -157,6 +165,7 @@ class CustomerUsersController extends AppController
                 'CustomerUser.emissor_rg', 
                 'CustomerUser.emissor_estado', 
                 'CustomerUser.nome_mae', 
+                'CustomerUser.status_id', 
                 'CustomerUser.sexo', 
                 'CustomerUser.data_nascimento', 
                 'CustomerUser.customer_departments_id', 
@@ -173,7 +182,7 @@ class CustomerUsersController extends AppController
             ],
             'group' => ['CustomerUser.id', 'EconomicGroup.id'] 
         ]);
-    
+    //debug($data);die;
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
         $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario.xlsx');

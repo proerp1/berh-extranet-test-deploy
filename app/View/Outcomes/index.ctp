@@ -174,6 +174,14 @@
                                     <input class="form-control" id="created_ate" name="created_ate" value="<?php echo isset($_GET["created_ate"]) ? $_GET["created_ate"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data pagamento:</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input class="form-control" id="pagamento_de" name="pagamento_de" value="<?php echo isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="pagamento_ate" name="pagamento_ate" value="<?php echo isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : ""; ?>">
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -197,15 +205,16 @@
                                 <input type="checkbox" class="check_all">
                             </th>
                         <?php } ?>
-			<th>ID</th>
+			            <th>ID</th>
                         <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
                         
                         <th>Pedido</th>
+                        <th>Cliente</th>
                         <th>Fornecedor</th>
                         <th>Nome </th>
                         <th>Descrição</th>
                         <th>Status</th>
-			<th>Vencimento</th>
+			            <th>Vencimento</th>
                         <th>Data de criação</th>
 						<th>Parcela</th>
 						<th>Valor a pagar R$</th>
@@ -236,9 +245,10 @@
                                         <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
                                     </td>
                                 <?php } ?>
-				<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["id"]; ?></td>
+				                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["doc_num"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["order_id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["supplier_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["name"]; ?></td>
@@ -273,7 +283,7 @@
 						<?php } ?>
 					<?php } else { ?>
 						<tr>
-							<td colspan="13" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+							<td colspan="20" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
 						</tr>
 					<?php } ?>
 				</tbody>

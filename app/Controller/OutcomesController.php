@@ -5,7 +5,22 @@ class OutcomesController extends AppController {
 	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
 
 	public $paginate = [
-		'limit' => 175, 'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+        'Outcome' => [
+            'fields' => [
+                'Outcome.*',
+                'Status.*',
+                'Supplier.nome_fantasia',
+                "(SELECT c.nome_primario
+                    FROM orders o 
+                        INNER JOIN customers c ON o.customer_id = c.id  
+                    WHERE o.id = Outcome.order_id  
+                            AND c.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as nome_primario"
+            ],
+            'limit' => 175, 
+            'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+        ]
 	];
 
 	public function beforeFilter() { 
@@ -51,6 +66,19 @@ class OutcomesController extends AppController {
             $condition['and'] = array_merge($condition['and'], ['Outcome.created >=' => $created_de, 'Outcome.created <=' => $created_ate]);
         }
 
+		        $get_pagamento_de = isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : '';
+        $get_pagamento_ate = isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : '';
+        
+        if ($get_pagamento_de != "" && $get_pagamento_ate != "") {
+            $pagamento_de = date('Y-m-d 00:00:00', strtotime(str_replace('/', '-', $_GET['pagamento_de'])));
+            $pagamento_ate = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $_GET['pagamento_ate'])));
+        
+            // Alterar a condição para filtrar pela coluna 'data_pagamento'
+            $condition['and'] = array_merge($condition['and'], [
+                'Outcome.data_pagamento >=' => $pagamento_de,
+                'Outcome.data_pagamento <=' => $pagamento_ate
+            ]);
+		}
 		if (isset($_GET['exportar'])) {
 			$nome = 'contas_pagar.xlsx';
 
@@ -352,7 +380,7 @@ class OutcomesController extends AppController {
      **********************/
     public function documents($id)
     {
-		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
+		$this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Outcome.id' => $id], 'or' => []];
@@ -378,7 +406,7 @@ class OutcomesController extends AppController {
 
 	public function add_document($id)
     {
-        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
         if ($this->request->is(['post', 'put'])) {
             $this->Docoutcome->create();
             if ($this->Docoutcome->validates()) {
@@ -409,7 +437,7 @@ class OutcomesController extends AppController {
 	
 	public function edit_document($id, $document_id = null)
     {
-        $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Docoutcome->id = $document_id;
         if ($this->request->is(['post', 'put'])) {
             $this->Docoutcome->validates();
@@ -440,7 +468,7 @@ class OutcomesController extends AppController {
 
 	public function delete_document($outcome_id, $id)
     {
-        $this->Permission->check(11, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(15, 'excluir') ? '' : $this->redirect('/not_allowed');
         $this->Docoutcome->id = $id;
         $this->request->data = $this->Docoutcome->read();
 
@@ -508,33 +536,68 @@ class OutcomesController extends AppController {
 		}
     }
 
-    public function all_documents()
-    {
-		$this->Permission->check(11, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = [
-        	'Docoutcome' => [
-	            'limit' => 50,
-	            'order' => [
-	            	'Outcome.id' => 'asc', 'Docoutcome.created' => 'asc'
-	            ],            
-            ]
-        ];
+	public function all_documents()
+{
+    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-        $condition = ['and' => [], 'or' => []];
+	$this->Paginator->settings = [
+		'Docoutcome' => [
+			'limit' => 50,
+			'order' => [
+				'Outcome.id' => 'asc',
+				'Docoutcome.created' => 'asc'
+			],
+			'joins' => [
 
-        if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
-        }
+				[
+					'table' => 'suppliers',
+					'alias' => 'Supplier',
+					'type' => 'LEFT',
+					'conditions' => ['Outcome.supplier_id = Supplier.id']
+				],
 
-        if (isset($_GET['t']) and $_GET['t'] != '') {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-        }
+				[
+					'table' => 'statuses', // Join para Status do Outcome
+					'alias' => 'OutcomeStatus',
+					'type' => 'LEFT',
+					'conditions' => ['Outcome.status_id = OutcomeStatus.id']
+				]
+			],
+			'fields' => [
+				'Docoutcome.*', 
+				'Outcome.*', 
+				'Supplier.nome_fantasia', 
+				'Status.*', 
+				'OutcomeStatus.*',
+                "(SELECT c.nome_primario
+                    FROM orders o 
+                        INNER JOIN customers c ON o.customer_id = c.id  
+                    WHERE o.id = Outcome.order_id  
+                            AND c.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as nome_primario"
+			]
+		]
+	];
+	
 
-        $action = 'Documentos';
+    $condition = ['and' => [], 'or' => []];
 
-       	$data = $this->Paginator->paginate('Docoutcome', $condition);
-        $status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
-
-        $this->set(compact('status', 'data', 'action'));
+    if (isset($_GET['q']) && $_GET['q'] != "") {
+        $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
     }
+
+    if (isset($_GET['t']) && $_GET['t'] != '') {
+        $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+    }
+
+    $action = 'Documentos';
+
+    $data = $this->Paginator->paginate('Docoutcome', $condition);
+    $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
+//debug($data);die;
+    $this->set(compact('status', 'data', 'action'));
+}
+
+	
 }

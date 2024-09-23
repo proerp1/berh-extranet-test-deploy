@@ -203,6 +203,9 @@ class ExcelConfigurationComponent extends Component {
 					'MaritalStatus.status',
 
 					'Order.id',
+					'Order.credit_release_date',
+					'Order.order_period_from',
+					'Order.order_period_to',
 					'Order.created',
 					'Order.transfer_fee',
 
