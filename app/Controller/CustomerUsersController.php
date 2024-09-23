@@ -11,7 +11,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup', 'CustomerUsersEconomicGroup'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -201,6 +201,13 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['CustomerUser']['password'] = $senha;
             if ($this->CustomerUser->save($this->request->data)) {
+                $this->CustomerUsersEconomicGroup->save([
+                    'CustomerUsersEconomicGroup' => [
+                        'customer_user_id' => $this->CustomerUser->id,
+                        'economic_group_id' => $this->request->data['CustomerUser']['economic_group_id'],
+                    ]
+                ]);
+
                 if($is_admin && isset($data['CustomerUser']['email'])){
                     $this->envia_email($this->request->data);
                 }
@@ -248,6 +255,15 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->CustomerUser->save($this->request->data)) {
+
+                $this->CustomerUsersEconomicGroup->deleteAll(['customer_user_id' => $user_id]);
+                $this->CustomerUsersEconomicGroup->save([
+                    'CustomerUsersEconomicGroup' => [
+                        'customer_user_id' => $user_id,
+                        'economic_group_id' => $this->request->data['CustomerUser']['economic_group_id'],
+                    ]
+                ]);
+
                 $action = $is_admin ? 'index_users/'.$id.'/' : 'index/'.$id.'/';
                 
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -265,7 +281,6 @@ class CustomerUsersController extends AppController
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-
         
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
