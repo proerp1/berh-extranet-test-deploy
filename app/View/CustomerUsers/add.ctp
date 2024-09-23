@@ -165,15 +165,9 @@ if (isset($user_id) && !$is_admin) {
                 <label class="form-label fs-5 fw-bold mb-3">Estado Civil:</label>
                 <?php echo $this->Form->input('marital_status_id', array("id" => "marital_status_id", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $marital_statuses, 'empty' => 'Selecione')); ?>
             </div>
-            <?php
-                $val = '';
-                if (isset($id) && !empty($this->request->data['EconomicGroup'])) {
-                    $val = $this->request->data['EconomicGroup'][0]['id'];
-                }
-            ?>
             <div class="mb-7 col-sm-4">
                 <label class="form-label fs-5 fw-bold mb-3">Pedidos do Grupo econômico:</label>
-                <?php echo $this->Form->input('economic_group_id', array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, "value" => $val)); ?>
+                <?php echo $this->Form->input('EconomicGroup.EconomicGroup', array("class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione', "options" => $economicGroups, 'multiple' => false)); ?>
             </div>
             <div class="mb-7 col-sm-4">
                 <label class="form-label fs-5 fw-bold mb-3">Empresas do Grupo econômico:</label>
