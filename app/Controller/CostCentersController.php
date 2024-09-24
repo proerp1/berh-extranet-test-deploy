@@ -26,7 +26,7 @@ class CostCentersController extends AppController
         }
     
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => null]);
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => 0]);
         }
 
 
