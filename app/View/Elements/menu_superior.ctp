@@ -26,7 +26,16 @@
         <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
             <!--begin::Navbar-->
             <div class="d-flex align-items-stretch" id="kt_header_nav">
-                
+                <!--begin::Menu-->
+                <div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
+                    <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'biblioteca']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">Biblioteca</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
+                </div>
+                <!--end::Menu-->
             </div>
             <!--end::Navbar-->
             <!--begin::Toolbar wrapper-->
@@ -49,12 +58,12 @@
                                 <!--end::Avatar-->
                                 <!--begin::Username-->
                                 <div class="d-flex flex-column">
-                                    <div class="fw-bolder d-flex align-items-center fs-5">
+                                    <div class="fw-bolder d-flex align-items-center fs-6">
                                         <?php echo CakeSession::read("Auth.User.name");?>
                                     </div>
                                     <div class="d-flex flex-column fs-8" style="color: #666">
-                                        <?php echo CakeSession::read("Auth.User.username");?>
-                                        <span id="doc_text"><?php echo CakeSession::read("Auth.User.Group.name");  ?></span>
+                                        <?php echo CakeSession::read("Auth.User.Customer.nome_primario");?>
+                                        <span id="doc_text"><?php echo CakeSession::read("Auth.User.Customer.documento");  ?></span>
                                     </div>
                                 </div>
                                 <!--end::Username-->
@@ -72,20 +81,6 @@
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
                             <a href="<?php echo $this->base.'/users/logout/'; ?>" class="menu-link px-5">Sair</a>
-                        </div>
-                        <!--end::Menu item-->
-                        <!--begin::Menu separator-->
-                        <div class="separator my-2"></div>
-                        <!--end::Menu separator-->
-                        <!--begin::Menu item-->
-                        <div class="menu-item px-5">
-                            <div class="menu-content px-5">
-                                <label class="form-check form-switch form-check-custom form-check-solid pulse pulse-success" for="kt_user_menu_dark_mode_toggle">
-                                    <input class="form-check-input w-30px h-20px toogle_dark_mode" type="checkbox" value="1" name="mode" id="kt_user_menu_dark_mode_toggle" />
-                                    <span class="pulse-ring ms-n1"></span>
-                                    <span class="form-check-label text-gray-600 fs-7">Dark Mode</span>
-                                </label>
-                            </div>
                         </div>
                         <!--end::Menu item-->
                     </div>
