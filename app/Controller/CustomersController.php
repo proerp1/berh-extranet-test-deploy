@@ -1737,6 +1737,7 @@ class CustomersController extends AppController
             
             if( $this->request->data['CustomerFile']['status_id'] == 101 || $this->request->data['CustomerFile']['status_id'] == 102 ){
                 $this->request->data['CustomerFile']['user_finalizado_id'] = CakeSession::read('Auth.User.id');
+                $this->request->data['CustomerFile']['data_finalizacao'] =  date('Y-m-d H:i:s');
             }
 
             if ($this->CustomerFile->save($this->request->data)) {
