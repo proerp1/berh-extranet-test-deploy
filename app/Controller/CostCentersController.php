@@ -30,8 +30,7 @@ class CostCentersController extends AppController
         }
 
 
-        $data = $this->Paginator->paginate('CostCenter
-        ', $condition);
+        $data = $this->Paginator->paginate('CostCenter', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
     
         $action = 'Centro de Custo';
