@@ -1734,8 +1734,8 @@ class CustomersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerFile->validates();
             $this->request->data['CustomerFile']['user_updated_id'] = CakeSession::read('Auth.User.id');
-            debug($this->request->data);die;
-            if( $this->request->data['status_id'] == 101 || $this->request->data['status_id'] == 102 ){
+            
+            if( $this->request->data['CustomerFile']['status_id'] == 101 || $this->request->data['CustomerFile']['status_id'] == 102 ){
                 $this->request->data['CustomerFile']['user_finalizado_id'] = CakeSession::read('Auth.User.id');
             }
 
