@@ -26,10 +26,13 @@ class CostCentersController extends AppController
         }
     
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => null]);
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => 0]);
         }
 
-        $data = $this->Paginator->paginate('CostCenter', $condition);
+        $condition['and'] = array_merge($condition['and'], ['customer_id' => 0]);
+
+        $data = $this->Paginator->paginate('CostCenter
+        ', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
     
         $action = 'Centro de Custo';
