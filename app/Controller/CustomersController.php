@@ -1634,7 +1634,8 @@ class CustomersController extends AppController
             ARQUIVOS
      **********************/
     public function customers_files()
-    {
+    { ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('memory_limit', '-1');
         $this->Paginator->settings = ['CustomerFile' => [
             'limit' => 100,
             'order' => ['CustomerFile.created' => 'desc'],
@@ -1733,6 +1734,11 @@ class CustomersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerFile->validates();
             $this->request->data['CustomerFile']['user_updated_id'] = CakeSession::read('Auth.User.id');
+
+            if($this->request->data['status_id'] == 101 || $this->request->data['status_id'] == 102 ){
+                $this->request->data['CustomerFile']['user_finalizado_id'] = CakeSession::read('Auth.User.id');
+            }
+
             if ($this->CustomerFile->save($this->request->data)) {
                 $this->Flash->set(__('O arquivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'files/' . $id]);

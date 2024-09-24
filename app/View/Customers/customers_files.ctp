@@ -65,6 +65,9 @@
                     <th>Layout</th>
                     <th>Arquivo</th>
                     <th>Enviado em</th>
+                    <th>Criada por</th>
+                    <th>Finalizado em</th>
+                    <th>Finalizado por</th>
                     <th>Pedido</th>
                     <th>Motivo</th>
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -84,8 +87,12 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Layout"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["file"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["CustomerFile"]["created"])); ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Criado"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo (isset(($data[$i]["CustomerFile"]["data_finalizacao"])) ? date('d/m/Y H:i:s', strtotime($data[$i]["CustomerFile"]["data_finalizacao"])) : ''); ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Finalizado"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["order_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerFile"]["motivo"]; ?></td>
+
                             
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customers/edit_file/' . $data[$i]["Customer"]["id"] . '/' . $data[$i]["CustomerFile"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">

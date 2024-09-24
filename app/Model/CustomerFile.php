@@ -6,6 +6,14 @@ class CustomerFile extends AppModel {
 	public $belongsTo = array(
 		'Customer',
 		'Layout',
+		'Criado' => [
+            'className' => 'CustomerUser',
+            'foreignKey' => 'user_creator_id',
+        ],
+		'Finalizado' => [
+            'className' => 'User',
+            'foreignKey' => 'user_finalizado_id',
+        ],
 		'Status' => array(
 			'className' => 'Status',
 			'foreignKey' => 'status_id',
