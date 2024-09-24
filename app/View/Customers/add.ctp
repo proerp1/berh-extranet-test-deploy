@@ -357,6 +357,12 @@
                     echo $this->Form->input('enviar_email', array('options' => array('0' => 'Não', '1' => 'Sim'),'data-control' => 'select2','empty' => 'Selecione','class' => 'form-select mb-3 mb-lg-0','default' => '1' ));  
                     ?>
                 </div>
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Exibir Demanda Judicial?</label>
+                    <?php 
+                    echo $this->Form->input('exibir_demanda', array('options' => array('0' => 'Não', '1' => 'Sim'),'data-control' => 'select2','empty' => 'Selecione','class' => 'form-select mb-3 mb-lg-0','default' => '1' ));  
+                    ?>
+                </div>
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Cobrar taxa do boleto?</label>
