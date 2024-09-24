@@ -371,7 +371,7 @@ class IncomesController extends AppController
         $socios = $this->Socios->find('list');
         $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
-        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1], 'order' => 'CostCenter.name']);
+        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1], 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
         $orderArr = $this->Order->find('all', [
             'fields' => ['Order.id', 'Customer.nome_primario'],
             'contain' => ['Customer'],
