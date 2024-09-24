@@ -29,7 +29,6 @@ class CostCentersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => 0]);
         }
 
-        $condition['and'] = array_merge($condition['and'], ['customer_id' => 0]);
 
         $data = $this->Paginator->paginate('CostCenter
         ', $condition);
