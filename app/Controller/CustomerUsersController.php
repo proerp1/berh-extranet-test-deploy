@@ -829,7 +829,7 @@ class CustomerUsersController extends AppController
             return true;
         }
 
-        return false
+        return false;
     }
 
     public function update_working_days()
