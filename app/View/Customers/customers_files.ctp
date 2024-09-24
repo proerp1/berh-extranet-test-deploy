@@ -64,7 +64,7 @@
                     <th>Cliente</th>
                     <th>Layout</th>
                     <th>Arquivo</th>
-                    <th>Enviado em</th>
+                    <th>Criado em</th>
                     <th>Criada por</th>
                     <th>Finalizado em</th>
                     <th>Finalizado por</th>
