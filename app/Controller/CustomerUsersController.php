@@ -796,14 +796,17 @@ class CustomerUsersController extends AppController
         }
     }
 
-    public function upload_csv(){
+    public function upload_csv()
+    {
         if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
         
             $uploadedFile = $this->request->data['file'];
             $deleteItinerary = $this->request->data['option_itinerary'];
-            
+
             $csv = new ItineraryCSVParser();
             $ret = $csv->parse($uploadedFile['tmp_name'], $uploadedFile['name'], $this->request->data['customer_id'], CakeSession::read("Auth.User.id"), false, $deleteItinerary);
+
+            $this->saveFile($uploadedFile);
 
             $this->redirect("/customer_users/csv_import_result/".$this->request->data['customer_id'].'/'.$ret['file_id']);
         } else {
@@ -811,7 +814,26 @@ class CustomerUsersController extends AppController
             $this->redirect($this->referer());
         }
     }
-    public function update_working_days(){
+
+    public function saveFile($uploadedFile)
+    {
+        $targetDir = APP."Private/customer_users/";
+
+        $targetFile = $targetDir . basename($uploadedFile['name']);
+
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update_working_days()
+    {
         if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
         
             $uploadedFile = $this->request->data['file'];
