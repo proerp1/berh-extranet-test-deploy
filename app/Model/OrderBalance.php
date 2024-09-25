@@ -17,6 +17,8 @@ class OrderBalance extends AppModel {
         ),
     );
 
+    public $actsAs = ['Containable'];
+
     public function beforeFind($queryData)
     {
         $queryData['conditions'][] = ['OrderBalance.data_cancel' => '1901-01-01 00:00:00'];
