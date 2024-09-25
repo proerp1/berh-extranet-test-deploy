@@ -74,6 +74,13 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const currentStatus = <?php echo json_encode($currentStatus); ?>;
+    if (currentStatus) {
+        handleStatusChange(currentStatus); // Chama a função com o status atual ao carregar a página
+    }
+});
+
 function handleStatusChange(statusId) {
     const orderIdField = document.getElementById('order_id');
     const motivoField = document.getElementById('motivo');
@@ -83,20 +90,20 @@ function handleStatusChange(statusId) {
     orderIdError.style.display = 'none';
     motivoError.style.display = 'none';
 
-    // Sempre desbloqueia o campo "Pedido" ao mudar de status
-    orderIdField.disabled = false;
+    // Desabilita o campo "Pedido" por padrão
+    orderIdField.disabled = true;
+    orderIdField.required = false;
+    motivoField.required = false;
 
     if (statusId == 101) { // Concluído
+        orderIdField.disabled = false;
         orderIdField.required = true;
         motivoField.required = true;
-    } else if (statusId == 102) { // Cancelado
-        orderIdField.disabled = true;
+    } else if (statusId == 102 || statusId == 100) { // Cancelado ou novo status 100
         motivoField.required = true;
-    } else {
-        orderIdField.required = false;
-        motivoField.required = false;
     }
 }
+
 
 function validateForm() {
     const statusId = document.querySelector('select[name="data[CustomerFile][status_id]"]').value;

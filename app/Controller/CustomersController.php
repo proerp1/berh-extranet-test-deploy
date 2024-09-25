@@ -1731,15 +1731,19 @@ class CustomersController extends AppController
     {
         $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->CustomerFile->id = $file_id;
+    
+        // Carregar os dados do arquivo antes do request para checar o status
+        $fileData = $this->CustomerFile->read();
+    
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerFile->validates();
             $this->request->data['CustomerFile']['user_updated_id'] = CakeSession::read('Auth.User.id');
             
-            if( $this->request->data['CustomerFile']['status_id'] == 101 || $this->request->data['CustomerFile']['status_id'] == 102 ){
+            if ($this->request->data['CustomerFile']['status_id'] == 101 || $this->request->data['CustomerFile']['status_id'] == 102) {
                 $this->request->data['CustomerFile']['user_finalizado_id'] = CakeSession::read('Auth.User.id');
                 $this->request->data['CustomerFile']['data_finalizacao'] =  date('Y-m-d H:i:s');
             }
-
+    
             if ($this->CustomerFile->save($this->request->data)) {
                 $this->Flash->set(__('O arquivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'files/' . $id]);
@@ -1747,26 +1751,31 @@ class CustomersController extends AppController
                 $this->Flash->set(__('O arquivo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
         }
-
+    
         $temp_errors = $this->CustomerFile->validationErrors;
         $this->request->data = $this->CustomerFile->read();
         $this->CustomerFile->validationErrors = $temp_errors;
-
+    
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-
+    
+        // Adicionar o status do arquivo atual para ser manipulado na view
+        $currentStatus = isset($fileData['CustomerFile']['status_id']) ? $fileData['CustomerFile']['status_id'] : null;
+    
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 21]]);
-
+    
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Alterar Arquivo' => '',
         ];
+        
         $this->set("action", 'Arquivos');
         $this->set("form_action", "../customers/edit_file/" . $id);
-        $this->set(compact('statuses', 'id', 'file_id', 'breadcrumb'));
-
+        $this->set(compact('statuses', 'id', 'file_id', 'breadcrumb', 'currentStatus'));
+    
         $this->render("add_file");
     }
+    
 
     public function delete_file($customer_id, $id)
     {
