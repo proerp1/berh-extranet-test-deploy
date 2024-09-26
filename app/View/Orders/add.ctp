@@ -32,20 +32,7 @@
     }
 </style>
 
-<ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-    <li class="nav-item">
-        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentação</a>
-    </li>
-</ul>
+<?php echo $this->element("../Orders/_abas"); ?>
 
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 

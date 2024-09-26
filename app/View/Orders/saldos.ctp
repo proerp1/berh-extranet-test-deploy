@@ -1,19 +1,4 @@
-<ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-
-<li class="nav-item">
-        <a class="nav-link " href="<?php echo $this->base; ?>/orders/edit/<?php echo $id; ?>">Pedido</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentação</a>
-    </li>
-</ul>
-
+<?php echo $this->element("../Orders/_abas"); ?>
 
 <div class="row gy-5 g-xl-10">
     <div class="col-lg-4 col-sm-6 mb-xl-10">
@@ -106,14 +91,14 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
-                    <th>CPF</th>
+                    <th class="ps-4 w-150px min-w-150px rounded-start">CPF</th>
                     <th>Beneficiário</th>
                     <th>Código Benefício</th>
                     <th>Benefício</th>
                     <th>Pedido Operadora</th>
                     <th>Tipo</th>
                     <th>Observação</th>
-                    <th>Total</th>
+                    <th class="w-150px min-w-150px rounded-end">Total</th>
                 </tr>
             </thead>
             <tbody>
