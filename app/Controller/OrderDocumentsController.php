@@ -32,10 +32,6 @@ class OrderDocumentsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
 
-        $this->Order->id = $id;
-        $this->Order->recursive = -1;
-        $order = $this->Order->read();
-
         $action = 'Pedido';
 
         $data = $this->Paginator->paginate('OrderDocument', $condition);
