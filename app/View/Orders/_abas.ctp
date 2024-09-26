@@ -11,4 +11,7 @@
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['action'] == 'saldos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentação</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo $this->request->params['controller'] == 'order_documents' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/order_documents/index/<?php echo $id; ?>">Notas fiscais</a>
+    </li>
 </ul>
