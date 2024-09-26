@@ -6,7 +6,7 @@ use League\Csv\Reader;
 class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader', 'Email'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
     'CustomerUser','Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
      'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance'];
@@ -623,8 +623,10 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
-        $this->Order->recursive = -1;
-        $order = $this->Order->findById($id);
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer'],
+            'conditions' => ['Order.id' => $id]
+        ]);
 
         $bankTicket = $this->BankTicket->find('first', [
             'conditions' => ['BankTicket.status_id' => 1]
@@ -662,12 +664,34 @@ class OrdersController extends AppController
                 ]
             ]);
 
+            if ($order['Customer']['emitir_nota_fiscal'] == 'A') {
+                $this->notificaNotaAntecipada($order);
+            }
+
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } else {
             $this->Income->deleteAll(['Income.id' => $this->Income->id], false);
         }
 
         $this->redirect(['action' => 'edit/' . $id]);
+    }
+
+    public function notificaNotaAntecipada($order)
+    {
+        $dados = [
+            'viewVars' => [
+                'nome' => 'Financeiro',
+                'email' => 'financeiro@berh.com.br',
+                'pedido' => $order['Order']['id'],
+            ],
+            'template' => 'nota_fiscal_antecipada',
+            'subject' => 'BeRH - Nota Fiscal',
+            'config' => 'default',
+        ];
+
+        if (!$this->Email->send($dados)) {
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => 'alert alert-danger']]);
+        }
     }
 
     public function emitirBoleto($id)

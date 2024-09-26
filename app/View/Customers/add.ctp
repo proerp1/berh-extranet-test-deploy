@@ -368,6 +368,11 @@
                     <label class="fw-semibold fs-6 mb-2">Cobrar taxa do boleto?</label>
                     <?php echo $this->Form->input('cobrar_taxa_boleto', array('options' => array('0' => 'Não', '1' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
                 </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Emitir nota fiscal?</label>
+                    <?php echo $this->Form->input('emitir_nota_fiscal', array('options' => array('N' => 'Não', 'S' => 'Sim', 'A' => 'Antecipada'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0"));  ?>
+                </div>
             </div>
 
             <?php if ($is_admin) { ?>
