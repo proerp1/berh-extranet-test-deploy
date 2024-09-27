@@ -10,4 +10,4 @@
 	}
 </script>
 
-<iframe src="https://robo.berh.com.br/roteirizacao" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
+<iframe src="https://robo.berh.com.br/roteirizacao" allow="clipboard-read self https://robo.berh.com.br/roteirizacao" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
