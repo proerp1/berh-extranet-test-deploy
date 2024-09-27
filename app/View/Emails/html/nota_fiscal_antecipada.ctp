@@ -1,2 +1,1 @@
-<p>É necessário gerar uma nota fiscal antecipada para o pedido: <?php echo $pedido; ?> </p>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut beatae cum accusantium mollitia repellat nisi aspernatur, harum dolorem temporibus corporis ratione doloremque dolor commodi, perferendis laboriosam maiores eveniet, nam vel.</p>
+<p>Olá, você tem uma tarefa referente ao pedido <?php echo $pedido; ?> que já está disponível para emissão nota fiscal.</p>
