@@ -10,4 +10,4 @@
 	}
 </script>
 
-<iframe src="https://robo.berh.com.br/sptrans" allow="clipboard-read; clipboard-write" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
+<iframe src="https://robo.berh.com.br/sptrans/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841" allow="clipboard-read; clipboard-write" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
