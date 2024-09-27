@@ -70,6 +70,7 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
+                        <th>Tipo</th>
                         <th>Documento</th>
                         <th>Data</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -85,6 +86,18 @@
                                     </span>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Docoutcome"]["name"]; ?></td>
+                                <?php foreach ($data as $docoutcome): ?>
+ 
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php 
+                                    // Aqui verificamos se o 'nome' do TipoDocumento está definido e exibimos
+                                    echo isset($docoutcome["TipoDocumento"]["nome"]) ? h($docoutcome["TipoDocumento"]["nome"]) : 'N/A'; 
+                                    ?>
+                                </td>
+                                <!-- Outros dados que você deseja exibir -->
+                            
+                        <?php endforeach; ?>
+
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/docoutcome/file/'.$data[$i]["Docoutcome"]["id"].'/'.$data[$i]["Docoutcome"]["file"] ?>"><?php echo $data[$i]["Docoutcome"]["file"] ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Docoutcome']['created'])) ?></td>
 

@@ -8,15 +8,31 @@
         <?php echo $this->Form->create('Docoutcome', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false], 'enctype' => 'multipart/form-data')); ?>
             <input type="hidden" name="data[Docoutcome][outcome_id]" value="<?php echo $id ?>">
 
-            <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome</label>
-                <?php echo $this->Form->input('name', array("placeholder" => "Nome", "class" => "form-control mb-3 mb-lg-0"));  ?>
+            <div class="row">
+                <!-- Campo Nome -->
+                <div class="mb-7 col-md-6">
+                    <label class="fw-semibold fs-6 mb-2">Nome</label>
+                    <?php echo $this->Form->input('name', array("placeholder" => "Nome", "class" => "form-control mb-3 mb-lg-0", 'required' => true)); ?>
+                </div>
+
+                <!-- Campo Tipo do Documento -->
+                <div class="mb-7 col">
+    <label class="fw-semibold fs-6 mb-2">Tipo do Documento</label>
+    <?php echo $this->Form->input('Docoutcome.tipo_documento_id', [
+        'type' => 'select',
+        'options' => $tiposDocumentos,
+        'empty' => 'Selecione um tipo de documento',
+        'class' => 'form-control mb-3 mb-lg-0',
+        'required' => true
+    ]); ?>
+</div>
+
             </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Documento</label>
                 <div class="col-sm-5">
-                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento")); ?>
                     <?php if (isset($this->request->data["Docoutcome"])): ?>
                         <br>
                         <a download href="<?php echo $this->base.'/files/docoutcome/file/'.$this->request->data["Docoutcome"]["id"].'/'.$this->request->data["Docoutcome"]["file"] ?>"><?php echo $this->request->data["Docoutcome"]["file"] ?></a>
