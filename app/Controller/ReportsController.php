@@ -670,36 +670,54 @@ class ReportsController extends AppController
     public function robo_roteirizacao()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Roteirização");
     }
 
     public function robo_extratos()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Extratos");
     }
 
     public function robo_consulta_transurc()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Consulta TRANSURC");
     }
 
     public function robo_consulta_sptrans()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Consulta SPTRANS");
     }
 
     public function robo_captura_boletos()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Extração Boletos");
     }
 
     public function robo_conversor_layouts()
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
         $this->set("action", "Robô - Conversor de Layouts");
     }
 
