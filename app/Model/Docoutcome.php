@@ -9,7 +9,11 @@ class Docoutcome extends AppModel {
 			'foreignKey' => 'status_id',
 			'conditions' => array('Status.categoria' => 1)
 		),
-		'Outcome'
+		'Outcome',
+		'TipoDocumento' => array(
+        'className' => 'TipoDocumento',
+        'foreignKey' => 'tipo_documento_id'
+    ),
 	);
 
 	public function beforeFind($queryData) {

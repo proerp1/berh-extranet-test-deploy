@@ -400,71 +400,112 @@ class OutcomesController extends AppController {
 
        	$data = $this->Paginator->paginate('Docoutcome', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-       
+       //debug($data);die;
         $this->set(compact('status', 'data', 'id', 'action'));
     }
 
 	public function add_document($id)
-    {
-        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
-        if ($this->request->is(['post', 'put'])) {
-            $this->Docoutcome->create();
-            if ($this->Docoutcome->validates()) {
-                $this->request->data['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
-		$this->request->data['Docoutcome']['status_id'] = 1;
+{
+    $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
+
+    if ($this->request->is(['post', 'put'])) {
+        $this->Docoutcome->create();
+
+        if ($this->Docoutcome->validates()) {
+            $this->request->data['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+            $this->request->data['Docoutcome']['status_id'] = 1;
+
+            if (!empty($this->request->data['Docoutcome']['tipo_documento_id'])) {
                 if ($this->Docoutcome->save($this->request->data)) {
                     $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                    $this->redirect(['action' => "../outcomes/documents/" . $id]);
+                    return $this->redirect(['action' => "../outcomes/documents/" . $id]);
                 } else {
                     $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
                 }
             } else {
-                $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                $this->Flash->set(__('Por favor, selecione o tipo do documento.'), ['params' => ['class' => 'alert alert-danger']]);
             }
-            
+        } else {
+            $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
         }
-
-        $this->Outcome->id = $id;
-        $cliente = $this->Outcome->read();
-
-        $action = 'Documentos';
-
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-       
-        $this->set("form_action", "../outcomes/add_document/" . $id);
-        $this->set(compact('statuses', 'action', 'id'));
     }
+
+    // Carrega os dados do Outcome
+    $this->Outcome->id = $id;
+    $cliente = $this->Outcome->read();
+
+    $action = 'Documentos';
+
+    // Busca os status
+    $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+
+    // Carrega os tipos de documentos usando a coluna 'nome'
+    $this->loadModel('TipoDocumento');
+    $tiposDocumentos = $this->TipoDocumento->find('list', [
+        'fields' => ['TipoDocumento.id', 'TipoDocumento.nome']
+    ]);
+
+    // Define as variáveis para a view
+    $this->set("form_action", "../outcomes/add_document/" . $id);
+    $this->set(compact('statuses', 'tiposDocumentos', 'action', 'id'));
+}
+
 	
-	public function edit_document($id, $document_id = null)
-    {
-        $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
-        $this->Docoutcome->id = $document_id;
-        if ($this->request->is(['post', 'put'])) {
-            $this->Docoutcome->validates();
-            if ($this->request->data['Docoutcome']['file']['name'] == '') {
-                unset($this->request->data['Docoutcome']['file']);
-            }
-            $this->request->data['Docoutcome']['user_updated_id'] = CakeSession::read('Auth.User.id');
-            if ($this->Docoutcome->save($this->request->data)) {
-                $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'documents/' . $id]);
-            } else {
-                $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
-            }
+public function edit_document($id, $document_id = null)
+{
+    $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
+    
+    // Define o ID do documento
+    $this->Docoutcome->id = $document_id;
+    
+    // Verifica se a requisição é do tipo post ou put
+    if ($this->request->is(['post', 'put'])) {
+        $this->Docoutcome->validates();
+        
+        // Se o campo de arquivo estiver vazio, remove-o dos dados
+        if (empty($this->request->data['Docoutcome']['file']['name'])) {
+            unset($this->request->data['Docoutcome']['file']);
         }
 
-        $temp_errors = $this->Docoutcome->validationErrors;
-        $this->request->data = $this->Docoutcome->read();
-        $this->Docoutcome->validationErrors = $temp_errors;
+        // Define o usuário que está atualizando o documento
+        $this->request->data['Docoutcome']['user_updated_id'] = CakeSession::read('Auth.User.id');
 
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-       
-        $this->set("action", 'Documentos');
-        $this->set("form_action", "../outcomes/edit_document/" . $id);
-        $this->set(compact('statuses', 'id', 'document_id'));
-
-        $this->render("add_document");
+        // Salva as alterações no documento
+        if ($this->Docoutcome->save($this->request->data)) {
+            $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            return $this->redirect(['action' => 'documents/' . $id]);
+        } else {
+            $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+        }
     }
+
+    // Carrega os erros de validação temporários
+    $temp_errors = $this->Docoutcome->validationErrors;
+
+    // Carrega os dados do documento para o formulário de edição
+    $this->request->data = $this->Docoutcome->read();
+
+    // Define os erros de validação de volta
+    $this->Docoutcome->validationErrors = $temp_errors;
+
+    // Carrega os status
+    $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+
+    // Carrega os tipos de documentos
+    $this->loadModel('TipoDocumento');
+    $tiposDocumentos = $this->TipoDocumento->find('list', [
+        'fields' => ['TipoDocumento.id', 'TipoDocumento.nome']
+    ]);
+
+    // Define as variáveis para a view
+    $this->set("action", 'Documentos');
+    $this->set("form_action", "../outcomes/edit_document/" . $id . '/' . $document_id);
+    $this->set(compact('statuses', 'tiposDocumentos', 'id', 'document_id'));
+
+    // Renderiza a mesma view utilizada para adicionar
+    $this->render("add_document");
+}
+
 
 	public function delete_document($outcome_id, $id)
     {
@@ -537,67 +578,84 @@ class OutcomesController extends AppController {
     }
 
 	public function all_documents()
-{
-    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
-
-	$this->Paginator->settings = [
-		'Docoutcome' => [
-			'limit' => 50,
-			'order' => [
-				'Outcome.id' => 'asc',
-				'Docoutcome.created' => 'asc'
-			],
-			'joins' => [
-
-				[
-					'table' => 'suppliers',
-					'alias' => 'Supplier',
-					'type' => 'LEFT',
-					'conditions' => ['Outcome.supplier_id = Supplier.id']
-				],
-
-				[
-					'table' => 'statuses', // Join para Status do Outcome
-					'alias' => 'OutcomeStatus',
-					'type' => 'LEFT',
-					'conditions' => ['Outcome.status_id = OutcomeStatus.id']
-				]
-			],
-			'fields' => [
-				'Docoutcome.*', 
-				'Outcome.*', 
-				'Supplier.nome_fantasia', 
-				'Status.*', 
-				'OutcomeStatus.*',
-                "(SELECT c.nome_primario
-                    FROM orders o 
-                        INNER JOIN customers c ON o.customer_id = c.id  
-                    WHERE o.id = Outcome.order_id  
-                            AND c.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as nome_primario"
-			]
-		]
-	];
+	{
+		$this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
 	
-
-    $condition = ['and' => [], 'or' => []];
-
-    if (isset($_GET['q']) && $_GET['q'] != "") {
-        $condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
-    }
-
-    if (isset($_GET['t']) && $_GET['t'] != '') {
-        $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-    }
-
-    $action = 'Documentos';
-
-    $data = $this->Paginator->paginate('Docoutcome', $condition);
-    $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
-//debug($data);die;
-    $this->set(compact('status', 'data', 'action'));
-}
+		$this->Paginator->settings = [
+			'Docoutcome' => [
+				'limit' => 50,
+				'order' => [
+					'Outcome.id' => 'asc',
+					'Docoutcome.created' => 'asc'
+				],
+				'joins' => [
+					[
+						'table' => 'suppliers',
+						'alias' => 'Supplier',
+						'type' => 'LEFT',
+						'conditions' => ['Outcome.supplier_id = Supplier.id']
+					],
+					[
+						'table' => 'statuses',
+						'alias' => 'OutcomeStatus',
+						'type' => 'LEFT',
+						'conditions' => ['Outcome.status_id = OutcomeStatus.id']
+					]
+				],
+				'fields' => [
+					'Docoutcome.*', 
+					'Outcome.*', 
+					'TipoDocumento.*',
+					'Supplier.nome_fantasia', 
+					'Status.*', 
+					'OutcomeStatus.*',
+					"(SELECT c.nome_primario
+						FROM orders o 
+							INNER JOIN customers c ON o.customer_id = c.id  
+						WHERE o.id = Outcome.order_id  
+								AND c.data_cancel = '1901-01-01 00:00:00' 
+								AND o.data_cancel = '1901-01-01 00:00:00' 
+					) as nome_primario"
+				]
+			]
+		];
+	
+		$condition = ['and' => [], 'or' => []];
+	
+		if (isset($_GET['q']) && $_GET['q'] != "") {
+			$condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
+		}
+	
+		if (isset($_GET['t']) && $_GET['t'] != '') {
+			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+		}
+	
+		// Filtro de vencimento
+		if (isset($_GET['vencimento_de']) && $_GET['vencimento_de'] != '') {
+			$condition['and'][] = ['Outcome.vencimento >=' => $_GET['vencimento_de']];
+		}
+		
+		if (isset($_GET['vencimento_ate']) && $_GET['vencimento_ate'] != '') {
+			$condition['and'][] = ['Outcome.vencimento <=' => $_GET['vencimento_ate']];
+		}
+	
+		// Filtro de data de pagamento
+		if (isset($_GET['data_pagamento_de']) && $_GET['data_pagamento_de'] != '') {
+			$condition['and'][] = ['Outcome.data_pagamento >=' => $_GET['data_pagamento_de']];
+		}
+		
+		if (isset($_GET['data_pagamento_ate']) && $_GET['data_pagamento_ate'] != '') {
+			$condition['and'][] = ['Outcome.data_pagamento <=' => $_GET['data_pagamento_ate']];
+		}
+		
+		$action = 'Documentos';
+	
+		$data = $this->Paginator->paginate('Docoutcome', $condition);
+		$status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
+	
+		$this->set(compact('status', 'data', 'action'));
+	}
+	
 
 	
 }

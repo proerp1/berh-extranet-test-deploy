@@ -70,40 +70,55 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
+                        <th>Tipo</th>
                         <th>Documento</th>
                         <th>Data</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if ($data) { ?>
-                        <?php for ($i=0; $i < count($data); $i++) { ?>
-                            <tr>
-                                <td class="fw-bold fs-7 ps-4">
-                                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
-                                        <?php echo $data[$i]["Status"]["name"] ?>
-                                    </span>
-                                </td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Docoutcome"]["name"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/docoutcome/file/'.$data[$i]["Docoutcome"]["id"].'/'.$data[$i]["Docoutcome"]["file"] ?>"><?php echo $data[$i]["Docoutcome"]["file"] ?></a></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Docoutcome']['created'])) ?></td>
+    <?php if ($data) { ?>
+        <?php for ($i = 0; $i < count($data); $i++) { ?>
+            <tr>
+                <td class="fw-bold fs-7 ps-4">
+                    <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
+                        <?php echo $data[$i]["Status"]["name"] ?>
+                    </span>
+                </td>
+                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Docoutcome"]["name"]; ?></td>
 
-                                <td class="fw-bold fs-7 ps-4">
-                                    <a href="<?php echo $this->base.'/outcomes/edit_document/'.$id.'/'.$data[$i]["Docoutcome"]["id"]; ?>" class="btn btn-info btn-sm">
-                                        Editar
-                                    </a>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/outcomes/delete_document/'.$id.'/'.$data[$i]["Docoutcome"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                        Excluir
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    <?php } else { ?>
-                        <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
+                <!-- Coluna de Tipo -->
+                <td class="fw-bold fs-7 ps-4">
+                    <?php
+                    // Verifica se o campo 'nome' do TipoDocumento está definido e exibe, senão exibe 'N/A'
+                    echo isset($data[$i]["TipoDocumento"]["nome"]) ? h($data[$i]["TipoDocumento"]["nome"]) : 'N/A';
+                    ?>
+                </td>
+
+                <td class="fw-bold fs-7 ps-4">
+                    <a href="<?php echo $this->base.'/files/docoutcome/file/'.$data[$i]["Docoutcome"]["id"].'/'.$data[$i]["Docoutcome"]["file"]; ?>">
+                        <?php echo $data[$i]["Docoutcome"]["file"]; ?>
+                    </a>
+                </td>
+                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Docoutcome']['created'])); ?></td>
+
+                <td class="fw-bold fs-7 ps-4">
+                    <a href="<?php echo $this->base.'/outcomes/edit_document/'.$id.'/'.$data[$i]["Docoutcome"]["id"]; ?>" class="btn btn-info btn-sm">
+                        Editar
+                    </a>
+                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/outcomes/delete_document/'.$id.'/'.$data[$i]["Docoutcome"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
+        <?php } ?>
+    <?php } else { ?>
+        <tr>
+            <td class="fw-bold fs-7 ps-4" colspan="6">Nenhum registro encontrado</td>
+        </tr>
+    <?php } ?>
+</tbody>
+
             </table>
         </div>
         <?php echo $this->element("pagination"); ?>
