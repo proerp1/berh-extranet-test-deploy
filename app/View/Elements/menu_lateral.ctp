@@ -119,14 +119,6 @@
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_transurc') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_transurc']) ?>">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title">Consulta TRANSURC</span>
-                            </a>
-                        </div> 
-                        <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robo_consulta_sptrans') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robo_consulta_sptrans']) ?>">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>

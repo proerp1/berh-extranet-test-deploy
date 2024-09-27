@@ -10,4 +10,4 @@
 	}
 </script>
 
-<iframe src="https://robo.berh.com.br/conversor_layouts" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
+<iframe src="https://robo.berh.com.br/conversor_layouts" allow="clipboard-read; clipboard-write" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>

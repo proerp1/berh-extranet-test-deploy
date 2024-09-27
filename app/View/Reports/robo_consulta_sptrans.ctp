@@ -10,4 +10,4 @@
 	}
 </script>
 
-<iframe src="https://robo.berh.com.br/sptrans" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
+<iframe src="https://robo.berh.com.br/sptrans" allow="clipboard-read; clipboard-write" scrolling="auto" id="frame" onload="resize_iframe()" style="width: 100%;" frameborder="0"></iframe>
