@@ -98,6 +98,7 @@
                         <th>Cliente</th>
                         <th>Documento</th>
                         <th>Departamento</th>
+                        <th>Atendente</th>
                         <th>Arquivo</th>
                         <th>Assunto</th>
                         <th>Enviado em</th>
@@ -118,6 +119,7 @@
                                 <td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["nome_primario"] ?></td>
                                 <td class="fw-bold fs-7"><?php echo $data[$i]["Customer"]["documento"] ?></td>
                                 <td class="fw-bold fs-7"><?php echo $data[$i]["Department"]["name"] ?></td>
+                                <td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["name_atendente"] ?></td>
                                 <td class="fw-bold fs-7">
                                     <a href="<?php echo $this->webroot.'files/atendimento/file_atendimento/'.$data[$i]["Atendimento"]["id"].'/'.$data[$i]["Atendimento"]["file_atendimento"]; ?>"><?php echo $data[$i]["Atendimento"]["file_atendimento"]; ?></a>
                                 </td>
