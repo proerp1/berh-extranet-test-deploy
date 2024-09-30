@@ -676,7 +676,7 @@ class ReportsController extends AppController
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url_cookie);        
         $resultado = curl_exec($ch);
-        
+
         if (curl_errno($ch)) {
             echo 'Erro no cURL: ' . curl_error($ch);
         }
@@ -688,6 +688,8 @@ class ReportsController extends AppController
         } else {
             echo "Cookie setado!";
         }
+
+        die;
 
 
         $url = "";
