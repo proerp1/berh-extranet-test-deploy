@@ -195,8 +195,8 @@ class IncomesController extends AppController
             $this->request->data['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
             $this->request->data['Income']['parcela'] = 1;
             $this->request->data['Income']['status_id'] = 15;
-            $this->request->data['Income']['created'] = date('d/m/Y H:i:s');
-            debug($this->request->data); die;
+            $this->request->data['Income']['created'] = date('d/m/Y');
+            //debug($this->request->data); die;
             $this->Income->create();
             if ($this->Income->save($this->request->data)) {
                 $id_origem = $this->Income->id;
