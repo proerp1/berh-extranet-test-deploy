@@ -674,11 +674,21 @@ class ReportsController extends AppController
         $url_cookie = "https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841";
         
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url_cookie);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+        curl_setopt($ch, CURLOPT_URL, $url_cookie);        
         $resultado = curl_exec($ch);
+        
+        if (curl_errno($ch)) {
+            echo 'Erro no cURL: ' . curl_error($ch);
+        }
+
         curl_close($ch);
+
+        if ($resultado === FALSE) {
+            echo "Erro ao acessar a URL.";
+        } else {
+            echo "Cookie setado!";
+        }
+
 
         $url = "";
         if ($menu == 'roteirizacao') {
