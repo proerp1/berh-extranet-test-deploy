@@ -689,8 +689,6 @@ class ReportsController extends AppController
             echo "Cookie setado!";
         }
 
-        die;
-
 
         $url = "";
         if ($menu == 'roteirizacao') {
