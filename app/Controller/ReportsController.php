@@ -667,40 +667,28 @@ class ReportsController extends AppController
         $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo', 'customers'));
     }
 
-    public function robo_roteirizacao()
+    public function robos($menu)
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
+
+        $url = "";
+        if ($menu == 'roteirizacao') {
+            $url = "https://robo.berh.com.br/roteirizacao";
+        } elseif ($menu == 'extratos') {
+            $url = "https://robo.berh.com.br/extratos";
+        } elseif ($menu == 'consulta_transurc') {
+            $url = "https://robo.berh.com.br/transurc";
+        } elseif ($menu == 'consulta_sptrans') {
+            $url = "https://robo.berh.com.br/sptrans";
+        } elseif ($menu == 'captura_boletos') {
+            $url = "https://robo.berh.com.br/captura_boletos";
+        } elseif ($menu == 'conversor_layouts') {
+            $url = "https://robo.berh.com.br/conversor_layouts";
+        }
+
         $this->set("action", "Robô - Roteirização");
+        $this->set(compact("url"));
     }
-
-    public function robo_extratos()
-    {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->set("action", "Robô - Extratos");
-    }
-
-    public function robo_consulta_transurc()
-    {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->set("action", "Robô - Consulta TRANSURC");
-    }
-
-    public function robo_consulta_sptrans()
-    {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->set("action", "Robô - Consulta SPTRANS");
-    }
-
-    public function robo_captura_boletos()
-    {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->set("action", "Robô - Extração Boletos");
-    }
-
-    public function robo_conversor_layouts()
-    {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        $this->set("action", "Robô - Conversor de Layouts");
-    }
-
 }

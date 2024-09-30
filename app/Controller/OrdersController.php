@@ -1615,7 +1615,7 @@ class OrdersController extends AppController
             $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'],2,',','.');
             $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
-            $outcome['Outcome']['created'] = date('Y-m-d H:i:s');
+            $outcome['Outcome']['created'] = date('d/m/Y H:i:s');
             $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
             $this->Outcome->create();
