@@ -1,4 +1,5 @@
 <?php
+
 App::import('Controller', 'Incomes');
 class ReportsController extends AppController
 {
@@ -670,16 +671,14 @@ class ReportsController extends AppController
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
 
-        $arr_cookie_options = array (
-                        'expires' => time() + 60*60*24*30, 
-                        'path' => '/', 
-                        'domain' => 'https://robo.berh.com.br/set-cookie',
-                        'secure' => false,
-                        'httponly' => false,
-                        'samesite' => 'None'
-                        );
-
-        setcookie('hash', '6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841', $arr_cookie_options);  
+        $url_cookie = "https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841";
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url_cookie);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $resultado = curl_exec($ch);
+        curl_close($ch);
 
         $url = "";
         if ($menu == 'roteirizacao') {
