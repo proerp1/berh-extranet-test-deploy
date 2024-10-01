@@ -126,20 +126,15 @@ class OrderDocumentsController extends AppController
         $this->layout = false;
 
         $order = $this->Order->find('first', [
-            'fields' => ['Order.customer_id'],
+            'contain' => ['Customer'],
             'conditions' => ['Order.id' => $order_id],
-            'recursive' => -1,
         ]);
 
-        $users = $this->CustomerUser->find('list', [
-            'fields' => ['CustomerUser.email', 'CustomerUser.name'],
-            'conditions' => [
-                'CustomerUser.customer_id' => $order['Order']['customer_id'],
-                'CustomerUser.status_id' => 1,
-                'CustomerUser.is_admin' => true,
-            ],
-            'recursive' => -1,
-        ]);
+        $users[$order['Customer']['email']] = $order['Customer']['nome_primario'];
+
+        if ($order['Customer']['email1'] != '') {
+            $users[$order['Customer']['email1']] = $order['Customer']['nome_primario'];
+        }
 
         $dados = [
             'viewVars' => [
