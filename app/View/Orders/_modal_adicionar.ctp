@@ -146,7 +146,16 @@
                                     <div class="form-check form-check-custom form-check-solid">
                                         <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
                                         <label class="form-check-label" for="partialOrderChk1">
-                                            Sim
+                                            Parcial
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
+                                        <label class="form-check-label" for="partialOrderChk3">
+                                            PIX
                                         </label>
                                     </div>
                                 </div>
