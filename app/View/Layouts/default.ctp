@@ -246,9 +246,6 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 		}
 	</script>
 
-    <link rel="stylesheet" href="<?php echo $this->base."/js/widget/widget.css" ?>">
-	<script src="<?php echo $this->base."/js/widget/widget.js" ?>"></script>
-
 </body>
 
 </html>
