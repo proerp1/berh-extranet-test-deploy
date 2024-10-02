@@ -2362,18 +2362,9 @@ $itens = $this->OrderItem->find('all', [
         $view = new View($this, false);
         $view->layout = false;
 
-        $nome = 'beneficiarios_pedido_'.$id.'_'.date('d_m_Y_H_i_s').'.xlsx';
+        $nome = 'beneficiarios_pedido_'.$id.'.xlsx';
 
-        $data = $this->Order->find('all', [
-            'contain' => [
-                'Status', 
-                'Customer', 
-                'CustomerCreator', 
-                'EconomicGroup', 
-                'Income.data_pagamento'
-            ],
-            'conditions' => ['Order.id' => $id]
-        ]);
+        $data = $this->CustomerUser->find_pedido_beneficiarios_info($id);
 
         $this->ExcelGenerator->gerarExcelPedidosBeneficiariosPIX($nome, $data);
 
