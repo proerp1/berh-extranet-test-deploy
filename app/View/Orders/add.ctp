@@ -548,20 +548,19 @@
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
             <div class="row">
-                <div class="col-8">
+                <div class="col-6">
                     <h3>Itens</h3>
                 </div>
                 <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="col-4">
-                        <?php if ($order['Order']['is_partial'] != 3) { ?>
-                            <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
-                                <i class="fas fa-arrow-up"></i>
-                                Beneficiários em lote (CSV)
-                            </a>
-                        <?php } elseif ($order['Order']['is_partial'] == 3) { ?>
-                            <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios_pix">
-                                <i class="fas fa-arrow-up"></i>
-                                Beneficiários em lote - PIX (CSV)
+                    <div class="col-6">
+                        <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
+                            <i class="fas fa-arrow-up"></i>
+                            Beneficiários em lote (CSV)
+                        </a>
+                        <?php if ($order['Order']['is_partial'] == 3) { ?>
+                            <a href="<?php echo $this->base.'/orders/baixar_beneficiarios/'.$id ;?>" class="btn btn-sm btn-primary me-3" style="float:right">
+                                <i class="fas fa-file-excel"></i>
+                                Baixar lista de Beneficiários - PIX
                             </a>
                         <?php } ?>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
@@ -892,53 +891,6 @@
 
                 <div class="modal-footer">
                     <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" targe="_blank" download>Baixar Modelo</a>
-                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Sim</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" id="modal_lote_usuarios_pix" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <form action="<?php echo $this->base . '/orders/upload_user_csv_pix/' . $id; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
-                <input type="hidden" name="order_id" value="<?php echo $id; ?>">
-                <div class="modal-body">
-                    <p>Enviar CSV com beneficiários a serem incluídos</p>
-                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
-
-                    <div class="row" style="margin-top:20px;">
-                        <label class="mb-2">Item Variável no Pedido</label>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio" name="data[incluir_valor_unitario]" value="2" id="tipoBeneficioChk1" checked="checked" />
-                                    <label class="form-check-label" for="tipoBeneficioChk1">
-                                        Não
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio" name="data[incluir_valor_unitario]" value="1" id="tipoBeneficioChk2" />
-                                    <label class="form-check-label" for="tipoBeneficioChk2">
-                                        Sim
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosPIX.csv" targe="_blank" download>Baixar Modelo</a>
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Sim</button>
                 </div>

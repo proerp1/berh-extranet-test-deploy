@@ -2351,4 +2351,32 @@ $itens = $this->OrderItem->find('all', [
 
         echo json_encode($orders);
     }
+    
+    public function baixar_beneficiarios($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+        
+        $view = new View($this, false);
+        $view->layout = false;
+
+        $nome = 'beneficiarios_pedido_'.$id.'_'.date('d_m_Y_H_i_s').'.xlsx';
+
+        $data = $this->Order->find('all', [
+            'contain' => [
+                'Status', 
+                'Customer', 
+                'CustomerCreator', 
+                'EconomicGroup', 
+                'Income.data_pagamento'
+            ],
+            'conditions' => ['Order.id' => $id]
+        ]);
+
+        $this->ExcelGenerator->gerarExcelPedidosBeneficiariosPIX($nome, $data);
+
+        $this->redirect("/files/excel/" . $nome);
+    }
 }
