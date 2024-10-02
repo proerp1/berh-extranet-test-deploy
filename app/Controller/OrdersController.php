@@ -447,6 +447,11 @@ class OrdersController extends AppController
         $old_order = $this->Order->read();
 
         if ($this->request->is(['post', 'put'])) {
+            $order = ['Order' => []];
+            $order['Order']['id'] = $id;
+            $order['Order']['observation'] = $this->request->data['Order']['observation'];
+            $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
             if ($old_order['Order']['status_id'] < 85) {
                 if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) + isset($old_order['Order']['desconto_not_formated']);
@@ -454,17 +459,12 @@ class OrdersController extends AppController
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) - $this->priceFormatBeforeSave($this->request->data['Order']['desconto']);
                 }
 
-                $order = ['Order' => []];
-                $order['Order']['id'] = $id;
                 $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
                 $order['Order']['total'] = $total;
-                $order['Order']['observation'] = $this->request->data['Order']['observation'];
                 $order['Order']['due_date'] = $this->request->data['Order']['due_date'];
-                $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
             }
 
             if (($old_order['Order']['status_id'] == 86 || $old_order['Order']['status_id'] == 85) && !empty($this->request->data['Order']['end_date'])) {
-                $order['Order']['id'] = $id;
                 $order['Order']['status_id'] = 87;
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
             }
