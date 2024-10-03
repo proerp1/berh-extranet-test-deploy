@@ -191,7 +191,7 @@ class AtendimentosController extends AppController
             'link'  => 'https://cliente.berh.com.br/'
         ],
             'template' => 'resposta',
-            'subject'  => 'Resposta',
+            'subject'  => 'BeRH - Resposta',
             'config'   => 'default'
         ];
 
