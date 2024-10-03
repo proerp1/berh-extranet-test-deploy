@@ -1,0 +1,1 @@
+<p>Olá, sua nota fiscal referente ao pedido <?php echo $pedido; ?> já está disponível através do link <a href="<?php echo $link ?>"><?php echo $link ?></a> ou área do cliente na plataforma Be.rh.</p>

@@ -3,8 +3,8 @@
 class OrderDocumentsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['OrderDocument', 'Order', 'Status'];
+    public $components = ['Paginator', 'Permission', 'Email'];
+    public $uses = ['OrderDocument', 'Order', 'Status', 'CustomerUser'];
 
     public $paginate = [
         'OrderDocument' => [
@@ -22,7 +22,7 @@ class OrderDocumentsController extends AppController
     {
         $this->Paginator->settings = $this->paginate;
 
-        $condition = ['and' => ['Order.id' => $id], 'or' => []];
+        $condition = ['and' => ['OrderDocument.order_id' => $id], 'or' => []];
 
         if (isset($_GET['q']) and $_GET['q'] != '') {
             $condition['or'] = array_merge($condition['or'], ['OrderDocument.name LIKE' => '%'.$_GET['q'].'%']);
@@ -50,6 +50,8 @@ class OrderDocumentsController extends AppController
 
             $this->OrderDocument->create();
             if ($this->OrderDocument->save($this->request->data)) {
+                $this->send_mail($id);
+
                 $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
                 $this->redirect(['action' => 'index', $id]);
             } else {
@@ -116,5 +118,35 @@ class OrderDocumentsController extends AppController
             $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
             $this->redirect(['action' => 'index', $order_id]);
         }
+    }
+
+    public function send_mail($order_id)
+    {
+        $this->autoRender = false;
+        $this->layout = false;
+
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer'],
+            'conditions' => ['Order.id' => $order_id],
+        ]);
+
+        $users[$order['Customer']['email']] = $order['Customer']['nome_primario'];
+
+        if ($order['Customer']['email1'] != '') {
+            $users[$order['Customer']['email1']] = $order['Customer']['nome_primario'];
+        }
+
+        $dados = [
+            'viewVars' => [
+                'tos' => $users,
+                'pedido' => $order_id,
+                'link' => Configure::read('Areadoassociado.link').'orders/edit/'.$order_id,
+            ],
+            'template' => 'nota_fiscal_criada',
+            'subject' => 'BeRH - Nota Fiscal',
+            'config' => 'default',
+        ];
+
+        $this->Email->send($dados, true);
     }
 }

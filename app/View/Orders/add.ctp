@@ -548,15 +548,21 @@
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
             <div class="row">
-                <div class="col-8">
+                <div class="col-6">
                     <h3>Itens</h3>
                 </div>
                 <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="col-4">
+                    <div class="col-6">
                         <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
                             <i class="fas fa-arrow-up"></i>
                             Beneficiários em lote (CSV)
                         </a>
+                        <?php if ($order['Order']['is_partial'] == 3) { ?>
+                            <a href="<?php echo $this->base.'/orders/baixar_beneficiarios/'.$id ;?>" class="btn btn-sm btn-primary me-3" style="float:right">
+                                <i class="fas fa-file-excel"></i>
+                                Baixar lista de Beneficiários - PIX
+                            </a>
+                        <?php } ?>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
                             <i class="fas fa-user"></i>
                             Novo Beneficiário

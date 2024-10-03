@@ -670,25 +670,25 @@ class ReportsController extends AppController
     public function robos($menu)
     {
         $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-        
-        $site = file_get_contents('https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841');
 
-        $url = "";
+        $url_cookie = 'https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841';
+
+        $url_iframe = "";
         if ($menu == 'roteirizacao') {
-            $url = "https://robo.berh.com.br/roteirizacao";
+            $url_iframe = "https://robo.berh.com.br/roteirizacao";
         } elseif ($menu == 'extratos') {
-            $url = "https://robo.berh.com.br/extratos";
+            $url_iframe = "https://robo.berh.com.br/extratos";
         } elseif ($menu == 'consulta_transurc') {
-            $url = "https://robo.berh.com.br/transurc";
+            $url_iframe = "https://robo.berh.com.br/transurc";
         } elseif ($menu == 'consulta_sptrans') {
-            $url = "https://robo.berh.com.br/sptrans";
+            $url_iframe = "https://robo.berh.com.br/sptrans";
         } elseif ($menu == 'captura_boletos') {
-            $url = "https://robo.berh.com.br/captura_boletos";
+            $url_iframe = "https://robo.berh.com.br/captura_boletos";
         } elseif ($menu == 'conversor_layouts') {
-            $url = "https://robo.berh.com.br/conversor_layouts";
+            $url_iframe = "https://robo.berh.com.br/conversor_layouts";
         }
 
         $this->set("action", "Robô - Roteirização");
-        $this->set(compact("url"));
+        $this->set(compact("url_cookie", "url_iframe"));
     }
 }

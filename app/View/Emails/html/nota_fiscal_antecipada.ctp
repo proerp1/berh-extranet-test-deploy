@@ -1,1 +1,1 @@
-<p>Olá, você tem uma tarefa referente ao pedido <?php echo $pedido; ?> que já está disponível para emissão nota fiscal.</p>
+<p>Olá, você tem uma tarefa referente ao pedido <?php echo $pedido; ?> que já está disponível para emissão nota fiscal antecipada.</p>

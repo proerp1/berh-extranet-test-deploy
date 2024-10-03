@@ -21,7 +21,7 @@
                             <br>BeRH
                             <tr>
                                 <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #fff;">
-                                    <p>Atendimento 0800 084 0996 | <a href="mailto:berh@berh.com.br" style="border:none; color:#fff;">berh@berh.com.br </a></p>
+                                    <p>Atendimento (11) 5043-0544 | <a href="mailto:atendimento@berh.com.br" style="border:none; color:#fff;">atendimento@berh.com.br </a></p>
                                     <p>Copyright © <a href="https://berh.com.br/" rel="noopener" target="_blank" style="border:none; color:#fff;">BeRH</a>.</p>
                                 </td>
                             </tr>
