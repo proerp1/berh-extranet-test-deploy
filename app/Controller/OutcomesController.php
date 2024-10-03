@@ -19,7 +19,7 @@ class OutcomesController extends AppController {
                 ) as nome_primario"
             ],
             'limit' => 175, 
-            'order' => ['Outcome.vencimento' => 'asc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+            'order' => ['Outcome.vencimento' => 'desc', 'Status.id' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
         ]
 	];
 
