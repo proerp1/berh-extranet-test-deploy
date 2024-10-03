@@ -1718,13 +1718,18 @@ class CustomersController extends AppController
 
         $action = 'Arquivos';
 
+        $orders = $this->Order->find('list', [
+            'fields' => ['Order.id'], // Ajus' conforme o campo que você deseja exibir
+            
+        ]);
+
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 21]]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             'Novo Arquivo' => '',
         ];
         $this->set("form_action", "../customers/add_file/" . $id);
-        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb','orders'));
     }
 
     public function edit_file($id, $file_id = null)
@@ -1751,6 +1756,11 @@ class CustomersController extends AppController
                 $this->Flash->set(__('O arquivo não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
         }
+
+        $orders = $this->Order->find('list', [
+            'fields' => ['Order.id'], // Ajus' conforme o campo que você deseja exibir
+            
+        ]);
     
         $temp_errors = $this->CustomerFile->validationErrors;
         $this->request->data = $this->CustomerFile->read();
@@ -1771,7 +1781,7 @@ class CustomersController extends AppController
         
         $this->set("action", 'Arquivos');
         $this->set("form_action", "../customers/edit_file/" . $id);
-        $this->set(compact('statuses', 'id', 'file_id', 'breadcrumb', 'currentStatus'));
+        $this->set(compact('statuses', 'id', 'file_id', 'breadcrumb', 'currentStatus','orders'));
     
         $this->render("add_file");
     }

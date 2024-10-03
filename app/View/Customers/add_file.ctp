@@ -38,18 +38,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Pedido</label>
-                    <?php echo $this->Form->input('order_id', [
-                        "type" => "number",
-                        "class" => "form-control mb-3 mb-lg-0",
-                        "placeholder" => "Digite o pedido",
-                        "pattern" => "[0-9]*",
-                        "inputmode" => "numeric",
-                        "id" => "order_id"
-                    ]); ?>
-                    <div id="order_id_error" class="text-danger" style="display:none;">O campo Pedido é obrigatório.</div>
-                </div>
+            <div id="order_field_container" class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Pedido</label>
+                <?php echo $this->Form->input('order_id', [
+                    'type' => 'select',
+                    'options' => $orders,
+                    'empty' => 'Selecione um pedido',
+                    'class' => 'form-select mb-3 mb-lg-0',
+                    'id' => 'order_id'
+                ]); ?>
+                <div id="order_id_error" class="text-danger" style="display:none;">O campo Pedido é obrigatório.</div>
+            </div>
+
+
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Motivo</label>
@@ -86,23 +87,34 @@ function handleStatusChange(statusId) {
     const motivoField = document.getElementById('motivo');
     const orderIdError = document.getElementById('order_id_error');
     const motivoError = document.getElementById('motivo_error');
+    const orderFieldContainer = document.getElementById('order_field_container');
 
     orderIdError.style.display = 'none';
     motivoError.style.display = 'none';
 
-    // Desabilita o campo "Pedido" por padrão
+    // Oculta o campo "Pedido" por padrão
+    orderFieldContainer.style.display = 'none';
     orderIdField.disabled = true;
     orderIdField.required = false;
     motivoField.required = false;
 
     if (statusId == 101) { // Concluído
+        orderFieldContainer.style.display = 'block';
         orderIdField.disabled = false;
         orderIdField.required = true;
         motivoField.required = true;
-    } else if (statusId == 102 || statusId == 100) { // Cancelado ou novo status 100
+        motivoField.value = "Pedido concluído"; // Preenche automaticamente o campo "Motivo"
+    } else if (statusId == 102) { // Cancelado
         motivoField.required = true;
+        motivoField.value = ""; // Limpa o valor do campo "Motivo" para garantir que o usuário insira um novo motivo
+    } else if (statusId == 100) { // Novo status 100
+        motivoField.required = true;
+        motivoField.value = ""; // Limpa o valor do campo "Motivo" para garantir que o usuário insira um novo motivo
+    } else {
+        motivoField.value = ""; // Limpa o valor do campo "Motivo" se não for um dos estados acima
     }
 }
+
 
 
 function validateForm() {
