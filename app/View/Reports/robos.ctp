@@ -6,7 +6,7 @@
 
 		setTimeout(function() {
 			$("#frame_robos").attr("src", "<?php echo $url_iframe; ?>");
-		}, 2000);
+		}, 4000);
 	});
 
 	function resize_iframe() {
@@ -16,7 +16,6 @@
 		}
 		document.getElementById("frame_robos").style.height = parseInt(height -
 			document.getElementById("frame_robos").offsetTop) + "px";
-		frame
 	}
 </script>
 
