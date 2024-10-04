@@ -397,10 +397,18 @@
 
             <div class="row">
                 <div class="mb-7 col-12">
+                    <label class="fw-semibold fs-6 mb-2">Observação Notal fiscal</label>
+                    <?php echo $this->Form->input('observacao_notafiscal', array("placeholder" => "Observação Notal fiscal", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-7 col-12">
                     <label class="fw-semibold fs-6 mb-2">Observações</label>
                     <?php echo $this->Form->input('observacao', array("placeholder" => "Observações", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
+
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
