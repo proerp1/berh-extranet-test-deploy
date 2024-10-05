@@ -740,14 +740,15 @@ class ReportsController extends AppController
 
         $condition = ["and" => [], "or" => []];
         $filtersFilled = false;
-    
+        
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
                 'Order.id' => $_GET['q'], 
                 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
-                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%", 
+                'OrderDocument.name LIKE' => "%" . $_GET['q'] . "%", 
+                'OrderDocument.file_name LIKE' => "%" . $_GET['q'] . "%"
             ]);
             $filtersFilled = true;
         }
