@@ -691,4 +691,172 @@ class ReportsController extends AppController
         $this->set("action", "Robô - Roteirização");
         $this->set(compact("url_cookie", "url_iframe"));
     }
+
+    public function nfs()
+    {
+        ini_set('pcre.backtrack_limit', '15000000');
+
+        $this->Permission->check(69, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = [
+                'Order' => [
+                    'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
+                    'fields' => [
+                        'Order.*',
+                        'OrderDocument.*',
+                        'Status.id',
+                        'Status.label',
+                        'Status.name',
+                        'Customer.codigo_associado',
+                        'CustomerCreator.name',
+                        'Creator.name',
+                        'EconomicGroup.name',
+                        'Customer.nome_primario',
+                        'Income.data_pagamento',
+                        "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                            FROM order_balances b 
+                                INNER JOIN orders o ON o.id = b.order_id 
+                            WHERE o.id = Order.id 
+                                    AND b.tipo = 1 
+                                    AND b.data_cancel = '1901-01-01 00:00:00' 
+                                    AND o.data_cancel = '1901-01-01 00:00:00' 
+                        ) as total_balances"
+                    ],
+                    'joins' => [
+                        [
+                            'table' => 'order_documents',
+                            'alias' => 'OrderDocument',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Order.id = OrderDocument.order_id', "OrderDocument.data_cancel = '1901-01-01 00:00:00'"
+                            ]
+                        ],
+                    ],
+                    'limit' => 50, 
+                    'order' => ['Order.id' => 'desc']
+                ],
+            ];
+
+        ini_set('memory_limit', '-1');
+
+        $condition = ["and" => [], "or" => []];
+        $filtersFilled = false;
+    
+        if (isset($_GET['q']) && $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'Order.id' => $_GET['q'], 
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+            $filtersFilled = true;
+        }
+    
+        if (!empty($_GET['t'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+            $filtersFilled = true;
+        }
+    
+        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
+    
+        if ($get_de != '' && $get_ate != '') {
+            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
+            ]);
+            $filtersFilled = true;
+        }
+    
+        $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
+        $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
+    
+        if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
+            $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
+            $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
+    
+            $condition['and'] = array_merge($condition['and'], [
+                'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
+            ]);
+            $filtersFilled = true;
+        }
+    
+        $queryString = http_build_query($_GET);
+    
+        if (isset($_GET['exportar'])) {
+            $nome = 'pedidos_nfs_' . date('d_m_Y_H_i_s') . '.xlsx';
+    
+            $data = $this->Order->find('all', [
+                'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
+                'fields' => [
+                    'Order.*',
+                    'OrderDocument.*',
+                    'Status.id',
+                    'Status.label',
+                    'Status.name',
+                    'Customer.codigo_associado',
+                    'CustomerCreator.name',
+                    'Creator.name',
+                    'EconomicGroup.name',
+                    'Customer.nome_primario',
+                    'Income.data_pagamento',
+                    "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                        FROM order_balances b 
+                            INNER JOIN orders o ON o.id = b.order_id 
+                        WHERE o.id = Order.id 
+                                AND b.tipo = 1 
+                                AND b.data_cancel = '1901-01-01 00:00:00' 
+                                AND o.data_cancel = '1901-01-01 00:00:00' 
+                    ) as total_balances"
+                ],
+                'joins' => [
+                    [
+                        'table' => 'order_documents',
+                        'alias' => 'OrderDocument',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Order.id = OrderDocument.order_id', "OrderDocument.data_cancel = '1901-01-01 00:00:00'"
+                        ]
+                    ],
+                ],
+                'conditions' => $condition,
+                'order' => ['Order.id' => 'desc']
+            ]);
+    
+            $this->ExcelGenerator->gerarExcelPedidosNfs($nome, $data);
+    
+            $this->redirect("/files/excel/" . $nome);
+        }
+    
+        $data = $this->Paginator->paginate('Order', $condition);
+
+        $customers = $this->Customer->find('list', [
+            'conditions' => ['Customer.status_id' => 3],
+            'fields' => ['id', 'nome_primario'],
+            'order' => ['nome_primario' => 'asc']
+        ]);
+    
+        $totalOrders = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup', 'Income'],
+            'fields' => [
+                'sum(Order.subtotal) as subtotal',
+                'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.commission_fee) as commission_fee',
+                'sum(Order.desconto) as desconto',
+                'sum(Order.total) as total',
+            ],
+            'conditions' => $condition,
+            'recursive' => -1
+        ]);
+    
+        $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
+    
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+    
+        $action = 'Notas Fiscais Emitidas';
+        $breadcrumb = ['Cadastros' => '', 'Notas Fiscais Emitidas' => ''];
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+    }
 }

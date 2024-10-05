@@ -629,7 +629,7 @@ public function edit_document($id, $document_id = null)
 				'limit' => 50,
 				'order' => [
 					'Outcome.id' => 'asc',
-					'Docoutcome.created' => 'asc'
+					'Docoutcome.created' => 'desc'
 				],
 				'joins' => [
 					[
