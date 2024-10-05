@@ -79,19 +79,27 @@ $(document).ready(function() {
 
         let currDate = new Date();
         currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
-        const futureDate = addWorkingDays(currDate, 4);
 
         // Converte os valores de string para objetos Date
         const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
         const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
         const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
 
-        // Verifica se period_to é posterior a period_from
-        if (periodToDate <= periodFromDate) {
-            $('#message_classification').text('A data "Até" deve ser posterior à data "De".').show();
+        // Verifica se period_to é posterior a data atual
+        if (periodFromDate < currDate) {
+            $('#message_classification_period').text('A data "De" não deve ser posterior à data atual.').show();
             event.preventDefault();
             return; // Evita a execução adicional
         }
+
+        // Verifica se period_to é posterior a period_from
+        if (periodToDate <= periodFromDate) {
+            $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
+            event.preventDefault();
+            return; // Evita a execução adicional
+        }
+        
+        const futureDate = addWorkingDays(currDate, 4);
 
         // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
         if (creditReleaseDate < futureDate) {

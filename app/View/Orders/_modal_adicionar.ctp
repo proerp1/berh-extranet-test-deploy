@@ -22,6 +22,7 @@
                                     <input class="form-control" id="period_to" role="presentation" autocomplete="off" name="period_to">
                                 </div>
                             </div>
+                            <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
                     <div class="row mb-7 ">
