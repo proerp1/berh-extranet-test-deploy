@@ -66,7 +66,7 @@ class OutcomesController extends AppController {
             $condition['and'] = array_merge($condition['and'], ['Outcome.created >=' => $created_de, 'Outcome.created <=' => $created_ate]);
         }
 
-		        $get_pagamento_de = isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : '';
+		$get_pagamento_de = isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : '';
         $get_pagamento_ate = isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : '';
         
         if ($get_pagamento_de != "" && $get_pagamento_ate != "") {
@@ -89,41 +89,39 @@ class OutcomesController extends AppController {
 			$this->redirect("/files/excel/".$nome);
 		}
 
-				$saldo = 0;
+		$saldo = 0;
 
-				if (!empty($data) && is_array($data)) {
-					foreach ($data as $item) {
-						// Verificar se o índice 0 está definido no item atual
-						if (isset($item[0]) && is_array($item[0]) && isset($item[0]['valor_total'])) {
-							$saldo += $item[0]['valor_total'];
-						}
-					}
+		if (!empty($data) && is_array($data)) {
+			foreach ($data as $item) {
+				// Verificar se o índice 0 está definido no item atual
+				if (isset($item[0]) && is_array($item[0]) && isset($item[0]['valor_total'])) {
+					$saldo += $item[0]['valor_total'];
 				}
+			}
+		}
 
-				// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
-				//echo "Saldo: " . $saldo;
-				$total_outcome = 0;
-				$pago_outcome = 0;
-				
-				$total_outcome = $this->Outcome->find('first', [
-					'conditions' => $condition,
-					'fields' => [
-						'sum(Outcome.valor_total) as total_outcome',	
-					]
-				]);
-				
-				$pago_outcome = $this->Outcome->find('first', [
-					'conditions' => $condition,
-					'fields' => [
-						'sum(Outcome.valor_pago) as pago_outcome',	
-					]
-				]);
-				
-				$aba_pago_id = 13;
-				$aba_atual_id = isset($_GET['t']) ? $_GET['t'] : null;
-				$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
-
-				
+		// Agora $saldo contém a soma dos 'valor_total' para os itens válidos em $data
+		//echo "Saldo: " . $saldo;
+		$total_outcome = 0;
+		$pago_outcome = 0;
+		
+		$total_outcome = $this->Outcome->find('first', [
+			'conditions' => $condition,
+			'fields' => [
+				'sum(Outcome.valor_total) as total_outcome',	
+			]
+		]);
+		
+		$pago_outcome = $this->Outcome->find('first', [
+			'conditions' => $condition,
+			'fields' => [
+				'sum(Outcome.valor_pago) as pago_outcome',	
+			]
+		]);
+		
+		$aba_pago_id = 13;
+		$aba_atual_id = isset($_GET['t']) ? $_GET['t'] : null;
+		$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
 
 		$this->Paginator->settings['order'] = ['Outcome.created' => 'DESC'];
 		$data = $this->Paginator->paginate('Outcome', $condition);
@@ -551,6 +549,51 @@ public function edit_document($id, $document_id = null)
 	    $zip->open($zip_file, ZIPARCHIVE::CREATE);
 
 		$docs = $this->Docoutcome->find('all', ['conditions' => ['Docoutcome.outcome_id' => $outcomeIds], 'fields' => ['Docoutcome.id', 'Docoutcome.outcome_id', 'Docoutcome.file'] ]);
+
+		foreach ($docs as $doc) {
+	        $caminho  = APP."webroot/files/docoutcome/file/".$doc["Docoutcome"]["id"]."/";
+
+	        if (file_exists($caminho)) {
+		        $files = scandir($caminho);
+		        $f = $doc["Docoutcome"]["file"];
+
+		        foreach ($files as $key => $arq) {
+		            if($arq != '.' && $arq != '..'){
+		                if (strpos($arq, $f) !== false) {
+		                	$arq_file = true;
+		                    $zip->addFile($caminho.$arq, $doc["Docoutcome"]["id"]."_".$arq);
+		                }
+		            }
+		        }
+	        }
+		}
+
+		if ($arq_file) {
+        	return json_encode(['success' => true, 'url_zip' => '../files/docoutcome/file/'.$zip_name]);
+		} else {
+			return json_encode(['success' => false]);
+		}
+    }
+
+	public function download_zip_document_id()
+    {
+        $this->autoRender = false;
+        $this->layout = false;
+
+		$docOutcomeIds = $this->request->data['docOutcomeIds'];
+		$arq_file = false;
+
+		$zip_name = "documentos.zip";
+	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
+
+	    if (file_exists($zip_file)) {
+	    	unlink($zip_file);
+	    }
+	    
+	    $zip = new ZipArchive();
+	    $zip->open($zip_file, ZIPARCHIVE::CREATE);
+
+		$docs = $this->Docoutcome->find('all', ['conditions' => ['Docoutcome.id' => $docOutcomeIds], 'fields' => ['Docoutcome.id', 'Docoutcome.outcome_id', 'Docoutcome.file'] ]);
 
 		foreach ($docs as $doc) {
 	        $caminho  = APP."webroot/files/docoutcome/file/".$doc["Docoutcome"]["id"]."/";

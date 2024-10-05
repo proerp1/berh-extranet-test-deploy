@@ -15,6 +15,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                    <a href="#" id="download_sel" class="btn btn-secondary me-3">
+                        Download em Lote
+                    </a>
+                        
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -45,24 +49,23 @@
                                 </select>
                             </div>
                             
-                         <!-- Campo para Vencimento -->
-                         <div class="mb-10">
-    <label class="form-label fs-5 fw-bold mb-3">Vencimento:</label>
-    <div class="d-flex">
-        <input type="date" class="form-control form-control-solid fw-bolder me-2" name="vencimento_de" id="vencimento_de" placeholder="De" value="<?php echo isset($_GET['vencimento_de']) ? $_GET['vencimento_de'] : ''; ?>">
-        <input type="date" class="form-control form-control-solid fw-bolder" name="vencimento_ate" id="vencimento_ate" placeholder="Até" value="<?php echo isset($_GET['vencimento_ate']) ? $_GET['vencimento_ate'] : ''; ?>">
-    </div>
-</div>
+                            <!-- Campo para Vencimento -->
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Vencimento:</label>
+                                <div class="d-flex">
+                                    <input type="date" class="form-control form-control-solid fw-bolder me-2" name="vencimento_de" id="vencimento_de" placeholder="De" value="<?php echo isset($_GET['vencimento_de']) ? $_GET['vencimento_de'] : ''; ?>">
+                                    <input type="date" class="form-control form-control-solid fw-bolder" name="vencimento_ate" id="vencimento_ate" placeholder="Até" value="<?php echo isset($_GET['vencimento_ate']) ? $_GET['vencimento_ate'] : ''; ?>">
+                                </div>
+                            </div>
 
-
-<!-- Campo para Data de Pagamento -->
-<div class="mb-10">
-    <label class="form-label fs-5 fw-bold mb-3">Data de Pagamento:</label>
-    <div class="d-flex">
-        <input type="date" class="form-control form-control-solid fw-bolder me-2" name="data_pagamento_de" id="data_pagamento_de" placeholder="De" value="<?php echo isset($_GET['data_pagamento_de']) ? $_GET['data_pagamento_de'] : ''; ?>">
-        <input type="date" class="form-control form-control-solid fw-bolder" name="data_pagamento_ate" id="data_pagamento_ate" placeholder="Até" value="<?php echo isset($_GET['data_pagamento_ate']) ? $_GET['data_pagamento_ate'] : ''; ?>">
-    </div>
-</div>
+                            <!-- Campo para Data de Pagamento -->
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data de Pagamento:</label>
+                                <div class="d-flex">
+                                    <input type="date" class="form-control form-control-solid fw-bolder me-2" name="data_pagamento_de" id="data_pagamento_de" placeholder="De" value="<?php echo isset($_GET['data_pagamento_de']) ? $_GET['data_pagamento_de'] : ''; ?>">
+                                    <input type="date" class="form-control form-control-solid fw-bolder" name="data_pagamento_ate" id="data_pagamento_ate" placeholder="Até" value="<?php echo isset($_GET['data_pagamento_ate']) ? $_GET['data_pagamento_ate'] : ''; ?>">
+                                </div>
+                            </div>
 
 
 
@@ -82,6 +85,9 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <th class="ps-4 w-80px min-w-80px rounded-start">
+                            <input type="checkbox" class="check_all">
+                        </th>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status do documento</th>
                         <th>Id da conta</th>
                         <th>Pedido</th>
@@ -106,6 +112,9 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Docoutcome"]["id"]; ?>">
+                                </td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>
@@ -164,5 +173,47 @@
         $('#q').on('change', function () {
             $("#busca").submit();
         });
+
+
+        $('#download_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                const checkboxes = $('input[name="item_ck"]:checked');
+                const docOutcomeIds = [];
+
+                checkboxes.each(function() {
+                    docOutcomeIds.push($(this).data('id'));
+                });
+
+                if (docOutcomeIds.length > 0) {
+                    $.ajax({
+                        type: 'POST',
+                        url: base_url+'/outcomes/download_zip_document_id',
+                        data: {
+                            docOutcomeIds
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                window.location.href = response.url_zip;
+                            } else {
+                                alert('Nenhum arquivo encontrado');
+                            }
+                        }
+                    });
+                }
+            } else {
+                alert('Selecione ao menos um item para fazer download');
+            }
+        });
+
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_individual").prop('checked', true);
+            } else {
+                $(".check_individual").prop('checked', false);
+            }
+        });      
     });
 </script>
