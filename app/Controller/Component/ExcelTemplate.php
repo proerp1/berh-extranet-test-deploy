@@ -1737,27 +1737,30 @@ class ExcelTemplate
 		->setCellValue('BR1', "id")
 		->setCellValue('BS1', "Liberação do crédito")
 		->setCellValue('BT1', "Período Inicio")
-		->setCellValue('BU1', "Período Fim");
-		
-
-		
+		->setCellValue('BU1', "Período Fim")
+		->setCellValue('BV1', "Elegível para gestão econômico")
+		->setCellValue('BW1', "Margem de segurança")
+		->setCellValue('BX1', "Qtde mínina de diária por cliente")
+		->setCellValue('BY1', "Tipos de GE");
 
 		$indx = 1;
 		$total = 0;
 		for ($i = 0; $i < count($dados); $i++) {
-
 			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
 
+			$tipo_ge = "";
+			if ($dados[$i]['Customer']['tipo_ge'] == '1') {
+				$tipo_ge = 'GE pré pago';
+			} elseif ($dados[$i]['Customer']['tipo_ge'] == '2') {
+				$tipo_ge = 'GE Pós pago';
+			} elseif ($dados[$i]['Customer']['tipo_ge'] == '3') {
+				$tipo_ge = 'GE garantido';
+			}
+
 			$indx++;
-			// $activeWorksheet
-			// 	->setCellValue('A' . $indx, $dados[$i]["Status"]["name"])
-			// 	->setCellValue('B' . $indx, str_pad($dados[$i]['CnabLote']['remessa'], 6, 0, STR_PAD_LEFT))
-			// 	->setCellValue('C' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['CnabLote']['created'])))
-			// 	->setCellValue('D' . $indx, $dados[$i]['Bank']['name'])
-			// 	->setCellValue('E' . $indx, $dados[$i][0]['qtde'])
-			// 	->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
-			// 	->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
-			$activeWorksheet->setCellValue('A'. $indx, $dados[$i]["Customer"]["documento"])
+
+			$activeWorksheet
+				->setCellValue('A'. $indx, $dados[$i]["Customer"]["documento"])
 				->setCellValue('B'. $indx, '-')
 				->setCellValue('C'. $indx, $dados[$i]['CustomerUser']['name'])
 				->setCellValue('D'. $indx, $dados[$i]['CustomerUser']['cpf'])
@@ -1829,9 +1832,11 @@ class ExcelTemplate
 				->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id'])
 				->setCellValue('BS'. $indx, $dados[$i]['Order']['credit_release_date'])
 				->setCellValue('BT'. $indx, $dados[$i]['Order']['order_period_from'])
-				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to']);
-
-				
+				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to'])
+				->setCellValue('BV'. $indx, $dados[$i]['Customer']['flag_gestao_economico'] == 'S' ? 'Sim' : 'Não')
+				->setCellValue('BW'. $indx, $dados[$i]['Customer']['porcentagem_margem_seguranca'])
+				->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'])
+				->setCellValue('BY'. $indx, $tipo_ge);
 		}
 	}
 

@@ -50,8 +50,11 @@ class ExcelConfigurationComponent extends Component {
 					'Order.order_period_from',
 					'Order.order_period_to',
 
-					'OrderStatus.name'
-					
+					'OrderStatus.name',
+                    'Customer.flag_gestao_economico',
+                    'Customer.porcentagem_margem_seguranca',
+                    'Customer.qtde_minina_diaria',
+                    'Customer.tipo_ge',					
 				],
 				'joins' => [
 					[
@@ -210,8 +213,10 @@ class ExcelConfigurationComponent extends Component {
 					'Order.transfer_fee',
 
 					'OrderStatus.name',
-
-					
+                    'Customer.flag_gestao_economico',
+                    'Customer.porcentagem_margem_seguranca',
+                    'Customer.qtde_minina_diaria',
+                    'Customer.tipo_ge',
 				],
 				'joins' => [
 					[

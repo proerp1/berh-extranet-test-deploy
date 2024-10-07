@@ -219,11 +219,11 @@ class ReportsController extends AppController
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
         if (isset($_GET['excel'])) {
-            $this->ExcelGenerator->gerarExcelOrders('PedidoCompras', $data);
+            $nome = 'PedidoCompras.xlsx';
 
-            $this->redirect('/private_files/baixar/excel/PedidoCompras_xlsx');
+            $this->ExcelGenerator->gerarExcelOrders($nome, $data);
+            $this->redirect('/files/excel/' . $nome);
         }
-
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
 

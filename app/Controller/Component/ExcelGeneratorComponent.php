@@ -70,7 +70,7 @@ class ExcelGeneratorComponent extends Component
 
         $this->templates_list->getOrder($spreadsheet, $dados);
 
-        $local_salva = APP.'Private/excel/'.$nome.'.xlsx';
+        $local_salva = APP.'webroot/files/excel/'.$nome;
 
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);

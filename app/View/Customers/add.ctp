@@ -412,6 +412,31 @@
             <?php } ?>
 
             <div class="row">
+                <div class="mb-7 col-2">
+                    <label class="fw-semibold fs-6 mb-2">Elegível para gestão econômico</label>
+                    <?php echo $this->Form->input('flag_gestao_economico', array('options' => array('N' => 'Não', 'S' => 'Sim'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0",'default' => 'S'));  ?>
+                </div>
+
+                <div class="mb-7 col-2">
+                    <label class="form-label">Margem de segurança</label>
+                    <div class="input-group">
+                        <span class="input-group-text">%</span>
+                        <?php echo $this->Form->input('porcentagem_margem_seguranca', ['type' => 'text', 'placeholder' => 'Margem de segurança', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                    </div>
+                </div>
+
+                <div class="mb-7 col-2">
+                    <label class="form-label">Qtde mínina de diária por cliente</label>
+                    <?php echo $this->Form->input('qtde_minina_diaria', ['type' => 'text', 'placeholder' => 'Qtde mínina de diária por cliente', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                </div>
+
+                <div class="mb-7 col-2">
+                    <label class="form-label">Tipos de GE</label>
+                    <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'GE pré pago', '2' => 'GE Pós pago', '3' => 'GE garantido'), "class" => "form-select mb-3 mb-lg-0"));  ?>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="mb-7 col-12">
                     <label class="fw-semibold fs-6 mb-2">Observação Notal fiscal</label>
                     <?php echo $this->Form->input('observacao_notafiscal', array("placeholder" => "Observação Notal fiscal", "id" => "summernote_notafiscal" , "class" => "form-control mb-3 mb-lg-0"));  ?>

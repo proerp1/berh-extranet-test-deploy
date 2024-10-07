@@ -204,6 +204,14 @@ class Customer extends AppModel
                 $results[$key][$this->alias]['economia_inicial_not_formated'] = 0;
                 $results[$key][$this->alias]['economia_inicial'] = '0,00';
             }
+
+            if (isset($val[$this->alias]['porcentagem_margem_seguranca'])) {
+                $results[$key][$this->alias]['porcentagem_margem_seguranca_not_formated'] = $results[$key][$this->alias]['porcentagem_margem_seguranca'];
+                $results[$key][$this->alias]['porcentagem_margem_seguranca'] = number_format($results[$key][$this->alias]['porcentagem_margem_seguranca'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['porcentagem_margem_seguranca_not_formated'] = 0;
+                $results[$key][$this->alias]['porcentagem_margem_seguranca'] = '0,00';
+            }
         }
 
         return $results;
@@ -221,6 +229,10 @@ class Customer extends AppModel
 
         if (!empty($this->data[$this->alias]['economia_inicial'])) {
             $this->data[$this->alias]['economia_inicial'] = $this->priceFormatBeforeSave($this->data[$this->alias]['economia_inicial']);
+        }
+
+        if (!empty($this->data[$this->alias]['porcentagem_margem_seguranca'])) {
+            $this->data[$this->alias]['porcentagem_margem_seguranca'] = $this->priceFormatBeforeSave($this->data[$this->alias]['porcentagem_margem_seguranca']);
         }
 
         return true;
