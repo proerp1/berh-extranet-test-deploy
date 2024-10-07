@@ -19,14 +19,12 @@
     closeButton.onclick = closeWidget;
     iframeContainer.appendChild(closeButton);
 
-    // Criar o iframe
+    // Criar o iframe    
     var iframe = document.createElement('iframe');
-    iframe.src = `https://contactmail.directtalk.com.br/clientes/BeRH/index.html`;
+    iframe.src = 'https://contactmail.directtalk.com.br/clientes/BeRH/index.html?nome='+v_user_name+'&email='+v_user_email;
     iframe.id = 'iframeContainerBerh';
     iframe.title = 'Página de Suporte';
     iframeContainer.appendChild(iframe);
-
-
 
     // Função para expandir o widget
     function expandWidget() {
