@@ -50,21 +50,21 @@
                             </div>
 
                             <!-- Campo para Tipo de Documento -->
-<div class="mb-10">
-    <label class="form-label fs-5 fw-bold mb-3">Tipo de Documento:</label>
-    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo_documento" id="tipo_documento">
-        <option></option>
-        <?php
-            for($a = 0; $a < count($tiposDocumentos); $a++){
-                $selected = "";
-                if (isset($_GET["tipo_documento"]) && $_GET["tipo_documento"] == $tiposDocumentos[$a]['TipoDocumento']['id']){
-                    $selected = "selected";
-                }
-                echo '<option value="'.$tiposDocumentos[$a]['TipoDocumento']['id'].'" '.$selected.'>'.$tiposDocumentos[$a]['TipoDocumento']['nome'].'</option>';
-            }
-        ?>
-    </select>
-</div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo de Documento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo_documento" id="tipo_documento">
+                                    <option></option>
+                                    <?php
+                                        for($a = 0; $a < count($tiposDocumentos); $a++){
+                                            $selected = "";
+                                            if (isset($_GET["tipo_documento"]) && $_GET["tipo_documento"] == $tiposDocumentos[$a]['TipoDocumento']['id']){
+                                                $selected = "selected";
+                                            }
+                                            echo '<option value="'.$tiposDocumentos[$a]['TipoDocumento']['id'].'" '.$selected.'>'.$tiposDocumentos[$a]['TipoDocumento']['nome'].'</option>';
+                                        }
+                                    ?>
+                                </select>
+                            </div>
 
                             
                             <!-- Campo para Vencimento -->
