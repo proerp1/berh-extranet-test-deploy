@@ -103,6 +103,7 @@
                         <th>Assunto</th>
                         <th>Enviado em</th>
                         <th>Finalizado em</th>
+                        <th>Finalizado por</th>
                         <th class="min-w-100px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -126,6 +127,7 @@
                                 <td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["subject"]; ?></td>
                                 <td class="fw-bold fs-7"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]["Atendimento"]["created"])); ?></td>
                                 <td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["data_finalizacao"] ?></td>
+                                <td class="fw-bold fs-7"><?php echo $data[$i]["Atendimento"]["finalizado_por"] ?></td>
                                 <td class="fw-bold fs-7">
                                     <a href="<?php echo $this->base.'/atendimentos/view/'.$data[$i]["Atendimento"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Visualizar

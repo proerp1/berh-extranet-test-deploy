@@ -97,28 +97,36 @@ class AtendimentosController extends AppController
     {
         $this->Permission->check(21, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Atendimento->id = $id;
-
+    
         if ($this->request->is(['post', 'put'])) {
             $this->Atendimento->validates();
+            
+            // Verifica se o arquivo de atendimento não foi enviado
             if ($this->request->data['Atendimento']['file_atendimento']['name'] == '') {
                 unset($this->request->data['Atendimento']['file_atendimento']);
             }
+            
+            // Atribui o ID do usuário que fez a atualização
             $this->request->data['Atendimento']['user_updated_id'] = CakeSession::read("Auth.User.id");
-
-            // Check if status is being changed to 'atendido' (35)
+    
+            // Se o status for alterado para "atendido" (35), preenche os campos de finalização
             if ($this->request->data['Atendimento']['status_id'] == 35) {
                 $this->request->data['Atendimento']['data_finalizacao'] = date('Y-m-d H:i:s');
+                
+                // Captura o nome do usuário logado e armazena no campo finalizado_por
+                $this->request->data['Atendimento']['finalizado_por'] = CakeSession::read("Auth.User.name");
             }
-
+    
+            // Se há uma resposta, preenche as informações de resposta
             if ($this->request->data['Atendimento']['answer'] != "") {
                 $this->request->data['Atendimento']['date_answer'] = date("Y-m-d H:i:s");
                 $this->request->data['Atendimento']['user_answer_id'] = CakeSession::read("Auth.User.id");
-                    
-                $atendimento = $this->Atendimento->find("first", ["conditions" => ["Atendimento.id" => $this->Atendimento->id] ]);
-
+                
+                $atendimento = $this->Atendimento->find("first", ["conditions" => ["Atendimento.id" => $this->Atendimento->id]]);
                 $this->envia_email($atendimento);
             }
-
+    
+            // Salva os dados do atendimento
             if ($this->Atendimento->save($this->request->data)) {
                 $this->Flash->set(__('O atendimento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index']);
@@ -126,17 +134,20 @@ class AtendimentosController extends AppController
                 $this->Flash->set(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
-
+    
+        // Carrega os dados do atendimento
         $this->request->data = $this->Atendimento->read();
         
         $departments = $this->Department->find('list', ['order' => 'Department.name']);
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 9], 'order' => 'Status.name']);
         $customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
-
+    
+        // Define variáveis para a view
         $this->set("action", $this->request->data['Atendimento']['subject']);
         $this->set("form_action", "view/".$id);
         $this->set(compact('departments', 'id', 'statuses', 'customers'));
     }
+    
 
     public function add()
     {
@@ -170,14 +181,14 @@ class AtendimentosController extends AppController
                 $this->Flash->set(__('O atendimento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
-
+        $userName = $this->Auth->user('name'); 
         $departments = $this->Department->find('list', ['order' => 'Department.name']);
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 9], 'order' => 'Status.name']);
         $customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
 
         $this->set("action", 'Novo Atendimento');
         $this->set("form_action", "add");
-        $this->set(compact('departments', 'id', 'statuses', 'customers'));
+        $this->set(compact('departments', 'id', 'statuses', 'customers','userName'));
 
         $this->render('view');
     }
