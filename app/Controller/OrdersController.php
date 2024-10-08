@@ -2409,7 +2409,7 @@ $itens = $this->OrderItem->find('all', [
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%"]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%", 'OrderItem.status_processamento LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
