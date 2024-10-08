@@ -357,10 +357,13 @@ class IncomesController extends AppController
                     }
                 }
 
+                // Define a mensagem de sucesso com Flash
                 $this->Flash->set(__('A conta a receber foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'index/?'.$this->request->data['query_string']]);
+
+                // Renderiza a mesma tela para continuar na página de edição
+                $this->render("add"); 
             } else {
-                $this->Flash->set(__('A conta a receber não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A conta a receber não pode ser alterada, por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
