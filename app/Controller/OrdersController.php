@@ -9,7 +9,7 @@ class OrdersController extends AppController
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader', 'Email'];
     public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
     'CustomerUser','Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
-     'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance'];
+     'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance', 'Log'];
     public $groupBenefitType = [
         -1 => [1,2],
         4 => [4,5],
@@ -449,7 +449,7 @@ class OrdersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
-            $order['Order']['observation'] = isset($this->request->data['Order']['observation']) ? $this->request->data['Order']['observation'] : '';
+            $order['Order']['observation'] = $this->request->data['Order']['observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($old_order['Order']['status_id'] < 85) {
@@ -2369,5 +2369,103 @@ $itens = $this->OrderItem->find('all', [
         $this->ExcelGenerator->gerarExcelPedidosBeneficiariosPIX($nome, $data);
 
         $this->redirect("/files/excel/" . $nome);
+    }
+
+    public function compras($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Order->id = $id;
+        $old_order = $this->Order->read();
+
+        $this->request->data = $this->Order->read();
+        $order = $this->Order->findById($id);
+
+        $this->Paginator->settings = ['OrderItem' => [
+            'limit' => 100,
+            'order' => ['CustomerUser.name' => 'asc'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'Supplier.*'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+
+            ]
+        ]];
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%", 'OrderItem.status_processamento LIKE' => "%" . $_GET['q'] . "%"]);
+        }
+
+        $items = $this->Paginator->paginate('OrderItem', $condition);
+
+        $action = 'Compras';
+        $breadcrumb = ['Cadastros' => '', 'Compras' => '', 'Alterar Compras' => ''];
+
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items'));
+    }
+
+    public function alter_item_status_processamento()
+    {
+        $this->autoRender = false;
+
+        $is_multiple = true;
+        $orderId = $this->request->data['orderId'];
+        $itemOrderId = $this->request->data['orderItemIds'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        foreach ($itemOrderId as $key => $value) {
+            $orderItem = $this->OrderItem->findById($value);
+
+            $dados_log = [
+                "old_value" => $orderItem['OrderItem']['status_processamento'],
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $value,
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+        }
+
+        $this->OrderItem->unbindModel(
+            ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
+        );
+
+        $this->OrderItem->updateAll(
+            ['OrderItem.status_processamento' => "'".$statusProcess."'", 'OrderItem.updated' => "'".date('Y-m-d H:i:s')."'", 'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")],
+            ['OrderItem.id' => $itemOrderId, 'OrderItem.order_id' => $orderId]
+        );
+
+        $this->OrderItem->bindModel(
+            ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
+        );
+
+        echo json_encode(['success' => true]);
     }
 }
