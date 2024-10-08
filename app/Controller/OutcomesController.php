@@ -2,7 +2,7 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
+	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
 
 	public $paginate = [
         'Outcome' => [
@@ -629,7 +629,7 @@ public function edit_document($id, $document_id = null)
 				'limit' => 50,
 				'order' => [
 					'Outcome.id' => 'asc',
-					'Docoutcome.created' => 'desc'
+					'Docoutcome.created' => 'asc'
 				],
 				'joins' => [
 					[
@@ -665,10 +665,12 @@ public function edit_document($id, $document_id = null)
 	
 		$condition = ['and' => [], 'or' => []];
 	
+		// Filtro de busca
 		if (isset($_GET['q']) && $_GET['q'] != "") {
 			$condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
 		}
 	
+		// Filtro de Status
 		if (isset($_GET['t']) && $_GET['t'] != '') {
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
@@ -677,7 +679,7 @@ public function edit_document($id, $document_id = null)
 		if (isset($_GET['vencimento_de']) && $_GET['vencimento_de'] != '') {
 			$condition['and'][] = ['Outcome.vencimento >=' => $_GET['vencimento_de']];
 		}
-		
+	
 		if (isset($_GET['vencimento_ate']) && $_GET['vencimento_ate'] != '') {
 			$condition['and'][] = ['Outcome.vencimento <=' => $_GET['vencimento_ate']];
 		}
@@ -686,18 +688,25 @@ public function edit_document($id, $document_id = null)
 		if (isset($_GET['data_pagamento_de']) && $_GET['data_pagamento_de'] != '') {
 			$condition['and'][] = ['Outcome.data_pagamento >=' => $_GET['data_pagamento_de']];
 		}
-		
+	
 		if (isset($_GET['data_pagamento_ate']) && $_GET['data_pagamento_ate'] != '') {
 			$condition['and'][] = ['Outcome.data_pagamento <=' => $_GET['data_pagamento_ate']];
 		}
-		
+	
+		// Filtro por Tipo de Documento
+		if (isset($_GET['tipo_documento']) && $_GET['tipo_documento'] != '') {
+			$condition['and'][] = ['TipoDocumento.id' => $_GET['tipo_documento']];
+		}
+	
 		$action = 'Documentos';
 	
 		$data = $this->Paginator->paginate('Docoutcome', $condition);
 		$status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
+		$tiposDocumentos = $this->TipoDocumento->find('all'); // Busca os tipos de documento
 	
-		$this->set(compact('status', 'data', 'action'));
+		$this->set(compact('status', 'tiposDocumentos', 'data', 'action'));
 	}
+	
 	
 
 	
