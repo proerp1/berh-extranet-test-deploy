@@ -449,7 +449,7 @@ class OrdersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
-            $order['Order']['observation'] = isset($this->request->data['Order']['observation']) ? $this->request->data['Order']['observation'] : '';
+            $order['Order']['observation'] = $this->request->data['Order']['observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($old_order['Order']['status_id'] < 85) {

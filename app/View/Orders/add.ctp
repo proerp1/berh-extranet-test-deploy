@@ -172,17 +172,17 @@
 
                     <div class="mb-7 col">
                         <label class="form-label">Observação da Nota Fiscal</label>
-                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                     </div>
 
-                    <?php $is_dt_disabled = (($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86) ? '' : 'disabled'); ?>
+                    <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86); ?>
 
                     <div class="row">
                         <div class="mb-7 col-4">
                             <label class="form-label">Data Finalização</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 datepicker", 'disabled' => $is_dt_disabled)); ?>
+                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ".($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
                             </div>
                         </div>
 
