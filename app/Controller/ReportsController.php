@@ -855,7 +855,173 @@ class ReportsController extends AppController
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
     
         $action = 'Notas Fiscais Emitidas';
-        $breadcrumb = ['Cadastros' => '', 'Notas Fiscais Emitidas' => ''];
+        $breadcrumb = ['Relatórios' => '', 'Notas Fiscais Emitidas' => ''];
         $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+    }
+
+    public function compras()
+    {
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(70, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = ['OrderItem' => [
+            'limit' => 100,
+            'order' => ['Order.id' => 'desc'],
+            'fields' => ['OrderItem.*', 
+                            'CustomerUserItinerary.*', 
+                            'Benefit.*', 
+                            'Order.*', 
+                            'CustomerUser.*', 
+                            'Supplier.id', 
+                            'Supplier.nome_fantasia', 
+                            'Customer.codigo_associado',
+                            'Customer.nome_primario',
+                            'Status.label',
+                            'Status.name',
+                        ],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+            ]
+        ]];
+
+        $buscar = false;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (isset($_GET['sup']) and $_GET['sup'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
+        if (isset($_GET['st']) and $_GET['st'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
+        }
+
+        if (isset($_GET['c']) and $_GET['c'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
+        }
+
+        if (!empty($_GET['q'])) {
+            $buscar = true;
+
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 
+                'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 
+                'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 
+                'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 
+                'OrderItem.status_processamento LIKE' => "%" . $_GET['q'] . "%",
+            ]);
+        }
+
+        $items = [];
+        if ($buscar) {
+            $items = $this->Paginator->paginate('OrderItem', $condition);
+        }
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+
+        $action = 'Relatório de Compras';
+        $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
+
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar'));
+    }
+
+    public function getSupplierAndCustomer()
+    {
+        $this->autoRender = false;
+
+        $cond = [];
+
+        $suppliers = $this->OrderItem->find('all',
+            [
+                'fields' => ['Supplier.id', 'Supplier.nome_fantasia'],
+                'conditions' => $cond,
+                'group' => ['Supplier.id'],
+                'recursive' => -1,
+                'joins' => [
+                    [
+                        'table' => 'customer_user_itineraries',
+                        'alias' => 'CustomerUserItinerary',
+                        'type' => 'INNER',
+                        'conditions' => ['CustomerUserItinerary.id = OrderItem.customer_user_itinerary_id'],
+                    ],
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => ['Supplier.id = Benefit.supplier_id'],
+                    ]
+                ]
+            ]
+        );
+
+        $customers = $this->OrderItem->find('all',
+            [
+                'fields' => ['Customer.id', 'Customer.nome_primario'],
+                'conditions' => $cond,
+                'group' => ['Customer.id'],
+                'recursive' => -1,
+                'joins' => [
+                    [
+                        'table' => 'orders',
+                        'alias' => 'Order',
+                        'type' => 'INNER',
+                        'conditions' => ['Order.id = OrderItem.order_id'],
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => ['Customer.id = Order.customer_id'],
+                    ]
+                ]
+            ]
+        );
+        
+
+        echo json_encode(['suppliers' => $suppliers, 'customers' => $customers]);
     }
 }
