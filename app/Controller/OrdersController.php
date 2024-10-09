@@ -585,14 +585,23 @@ class OrdersController extends AppController
                 $benefit_type_desc = isset($benefit_types['BenefitType']) ? $benefit_types['BenefitType']['name'] : '';
             }
         }
-        
+
+        $v_is_partial = "";
+        if ($order['Order']['is_partial'] == 1) {
+            $v_is_partial = "Parcial";
+        } elseif ($order['Order']['is_partial'] == 2) {
+            $v_is_partial = "Todos beneficiários";
+        } elseif ($order['Order']['is_partial'] == 3) {
+            $v_is_partial = "PIX";
+        }                                            
+
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
         $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group', 'benefit_type_desc', 'order_balances_total'));
 
         $this->render("add");
