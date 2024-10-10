@@ -670,10 +670,20 @@ public function edit_document($id, $document_id = null)
 			$condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
 		}
 	
-		// Filtro de Status
-		if (isset($_GET['t']) && $_GET['t'] != '') {
-			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-		}
+	// Filtro de Status
+if (isset($_GET['t']) && $_GET['t'] != '') {
+    $statusId = $_GET['t'];
+    
+    // Verifica se o filtro de 't' corresponde ao status em 'outcomes'
+    $condition['and'] = array_merge(
+        $condition['and'], 
+        ['OR' => [
+            'Status.id' => $statusId,
+            'Outcome.status_id' => $statusId // Adiciona o filtro para outcomes
+        ]]
+    );
+}
+
 	
 		// Filtro de vencimento
 		if (isset($_GET['vencimento_de']) && $_GET['vencimento_de'] != '') {
