@@ -150,7 +150,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                        Pedido Parcial
+                                        Tipo
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $v_is_partial; ?></td>
