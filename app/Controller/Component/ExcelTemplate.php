@@ -2101,29 +2101,35 @@ class ExcelTemplate
 	public function getPedidosBeneficiariosPIX($objPHPExcel, $dados)
 	{
 		$col = 'A';
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "NOME"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "UNIT"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "DU"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "COD"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "QTDE"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "BANCO"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "AGENCIA"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CONTA"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CHAVE PIX"); $col++;
-		
-		foreach ($dados as $key => $dado) {		
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta de Origem"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência de Origem"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Banco do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de Conta do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Mesma Titularidade"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF/CNPJ do Favorecido"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Identificação no extrato"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de transferência"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de pagamento"); $col++;
+
+		foreach ($dados as $key => $dado) {
 			$col = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["conta"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["agencia"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["name"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["agencia"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["conta"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_id"]); $col++;
 		}
 	}
 
