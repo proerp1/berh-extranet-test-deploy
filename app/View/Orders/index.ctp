@@ -115,7 +115,7 @@
                         <th>Total</th>
                         <th>Usuário</th>
                         <th>Grupo Econômico</th>
-                        <th>Pedido Parcial</th>
+                        <th>Tipo</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
