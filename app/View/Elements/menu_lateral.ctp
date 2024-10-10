@@ -185,7 +185,15 @@
                                 </span>
                                 <span class="menu-title">Extrato</span>
                             </a>
-                        </div>                        
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'compras') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'compras']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Compras</span>
+                            </a>
+                        </div>                   
                     </div>
                 </div>
                 

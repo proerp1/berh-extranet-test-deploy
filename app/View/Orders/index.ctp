@@ -115,6 +115,7 @@
                         <th>Total</th>
                         <th>Usuário</th>
                         <th>Grupo Econômico</th>
+                        <th>Tipo</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -133,6 +134,15 @@
 
                                 $vl_economia = ($vl_economia - $fee_economia);
                                 $total_economia = ($vl_economia + $fee_economia);
+
+                                $v_is_partial = "";
+                                if ($data[$i]['Order']['is_partial'] == 1) {
+                                    $v_is_partial = "Parcial";
+                                } elseif ($data[$i]['Order']['is_partial'] == 2) {
+                                    $v_is_partial = "Todos beneficiários";
+                                } elseif ($data[$i]['Order']['is_partial'] == 3) {
+                                    $v_is_partial = "PIX";
+                                }
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
@@ -157,6 +167,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerCreator"]["name"] != '' ? $data[$i]["CustomerCreator"]["name"] : $data[$i]["Creator"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

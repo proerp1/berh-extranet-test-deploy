@@ -147,6 +147,14 @@
                                     <td class="fw-bolder text-end"><?php echo $income['Income']['data_pagamento']; ?></td>
                                 </tr>
                             <?php } ?>
+                            <tr>
+                                <td class="text-muted">
+                                    <div class="d-flex align-items-center">
+                                        Tipo
+                                    </div>
+                                </td>
+                                <td class="fw-bolder text-end"><?php echo $v_is_partial; ?></td>
+                            </tr>
                             <!--end::Date-->
                         </tbody>
                         <!--end::Table body-->
