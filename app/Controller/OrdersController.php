@@ -216,6 +216,13 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+
+            $obs_notafiscal = "";
+            if ($customer['Customer']['observacao_notafiscal']) {
+                $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
+            }
+
             $benefit_type_persist = 0;
             if ($benefit_type != '') {
                 $benefit_type_persist = $benefit_type;
@@ -225,35 +232,16 @@ class OrdersController extends AppController
                 }
             }
 
+            if ($this->request->data['clone_order'] == 1) {
+                $this->cloneOrder();
+            }
+
             $proposal = $this->Proposal->find('first', [
                 'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
             ]);
             if (empty($proposal)) {
                 $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action' => 'index']);
-            }
-
-            if ($this->request->data['clone_order'] == 1) {
-                $lastOrder = $this->Order->find('first', [
-                    'conditions' => ['Order.id' => $this->request->data['clone_order_id']],
-                    'recursive' => -1,
-                ]);
-
-                $benefit_type = $lastOrder['Order']['benefit_type'];
-                $is_partial = $lastOrder['Order']['is_partial'];
-
-                $is_consolidated = $lastOrder['Order']['is_consolidated'];
-                $is_partial = $lastOrder['Order']['is_partial'];
-                $benefit_type = $lastOrder['Order']['benefit_type'];
-
-                $benefit_type_persist = 0;
-                if ($benefit_type != '') {
-                    $benefit_type_persist = $benefit_type;
-                    $benefit_type = (int)$benefit_type;
-                    if($benefit_type == -1){
-                        $benefit_type = [1,2];
-                    }
-                }
             }
 
 
@@ -305,6 +293,7 @@ class OrdersController extends AppController
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
+                'observation' => $obs_notafiscal,
             ];
 
             $this->Order->create();
@@ -325,6 +314,79 @@ class OrdersController extends AppController
 
             $this->redirect(['action' => 'edit/' . $orderId]);
         }
+    }
+
+    public function cloneOrder()
+    {
+        $lastOrder = $this->Order->find('first', [
+            'contain' => ['OrderItem'],
+            'conditions' => ['Order.id' => $this->request->data['clone_order_id']],
+        ]);
+
+        $is_partial = $lastOrder['Order']['is_partial'];
+
+        $is_consolidated = $lastOrder['Order']['is_consolidated'];
+        $is_partial = $lastOrder['Order']['is_partial'];
+        $benefit_type = $lastOrder['Order']['benefit_type'];
+
+        $period_from = $this->request->data['period_from'];
+        $period_to = $this->request->data['period_to'];
+        $working_days = $this->request->data['working_days'];
+        $working_days_type = $this->request->data['working_days_type'];
+        $credit_release_date = $this->request->data['credit_release_date'];
+
+        $orderData = [
+            'customer_id' => $lastOrder['Order']['customer_id'],
+            'working_days' => $working_days,
+            'user_creator_id' => CakeSession::read("Auth.User.id"),
+            'order_period_from' => $period_from,
+            'order_period_to' => $period_to,
+            'status_id' => 83,
+            'is_partial' => $is_partial,
+            'credit_release_date' => $credit_release_date,
+            'created_at' => date('Y-m-d H:i:s'),
+            'working_days_type' => $working_days_type,
+            'benefit_type' => $benefit_type,
+            'due_date' => $this->request->data['due_date'],
+        ];
+
+        $this->Order->create();
+        $this->Order->save($orderData);
+        $newId = $this->Order->id;
+
+        $newItem = [];
+        foreach ($lastOrder['OrderItem'] as $item) {
+            unset($item['id']);
+            unset($item['created']);
+            unset($item['user_creator_id']);
+            unset($item['updated']);
+            unset($item['updated_user_id']);
+            unset($item['transfer_fee_not_formated']);
+            unset($item['commission_fee_not_formated']);
+            unset($item['var_not_formated']);
+            unset($item['price_per_day_not_formated']);
+            unset($item['subtotal_not_formated']);
+            unset($item['total_not_formated']);
+            unset($item['saldo_not_formated']);
+            unset($item['total_saldo_not_formated']);
+            unset($item['data_inicio_processamento_nao_formatado']);
+            unset($item['data_fim_processamento_nao_formatado']);
+
+            $item['order_id'] = $newId;
+            $item['data_inicio_processamento'] = null;
+            $item['data_fim_processamento'] = null;
+            $item['status_processamento'] = null;
+            $item['motivo_processamento'] = null;
+            $item['pedido_operadora'] = null;
+            $item['user_creator_id'] = CakeSession::read("Auth.User.id");
+            $newItem[] = $item;
+        }
+
+        $this->OrderItem->saveMany($newItem);
+        $this->Order->reProcessAmounts($newId);
+
+        $this->Flash->set(__('Pedido clonado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'edit/' . $newId]);
     }
 
     public function processItineraries($customerItineraries, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $proposal, $manualPricing = [])
