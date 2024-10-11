@@ -1,37 +1,30 @@
 <script>
-    // Passando as variáveis PHP para o JavaScript
-    var total_pedidos = <?php echo json_encode($totalReceivedRaw); ?>;
-    var total_desconto = <?php echo json_encode($totalDiscountRaw); ?>;
+    var total_pedidos = [<?php echo $totalReceivedRaw; ?>];
+    var total_desconto = [<?php echo $totalDiscountRaw; ?>];
     var mes_atual = '<?php echo date('m/Y'); ?>';
 </script>
-
 <style>
-    #kt_charts_widget_6 .apexcharts-xaxis {
-        display: none;
-    }
+    #kt_charts_widget_6 .apexcharts-xaxis {display: none}
 </style>
-
 <?php
-
-echo $this->Html->script('https://cdn.amcharts.com/lib/5/index.js', ['inline' => false]);
-echo $this->Html->script('https://cdn.amcharts.com/lib/5/xy.js', ['inline' => false]);
-echo $this->Html->script('https://cdn.amcharts.com/lib/5/themes/Animated.js', ['inline' => false]);
-echo $this->Html->script('https://cdn.amcharts.com/lib/5/percent.js', ['inline' => false]);
-echo $this->Html->script('https://cdn.amcharts.com/lib/5/radar.js', ['inline' => false]);
-echo $this->Html->script('widget/charts/widget-evolucao-pedidos.js', ['inline' => false]);
-echo $this->Html->script('widget/charts/widget-ranking-operadoras.js', ['inline' => false]);
-echo $this->Html->script('widget/charts/widget-gestao-eficiente.js', ['inline' => false]);
-echo $this->Html->script('widget/charts/widget-10.js', ['inline' => false]);
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/index.js', array('inline' => false));
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/xy.js', array('inline' => false));
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/themes/Animated.js', array('inline' => false));
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/percent.js', array('inline' => false));
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/radar.js', array('inline' => false));
+    echo $this->Html->script('https://cdn.amcharts.com/lib/5/themes/Animated.js', array('inline' => false));
+    echo $this->Html->script('widget/charts/widget-evolucao-pedidos.js', array('inline' => false));
+    // echo $this->Html->script('widget/charts/widget-radar-dash.js', array('inline' => false));
+    echo $this->Html->script('widget/charts/widget-ranking-operadoras.js', array('inline' => false));
+    echo $this->Html->script('widget/charts/widget-gestao-eficiente.js', array('inline' => false));
+    echo $this->Html->script('widget/charts/widget-10.js', array('inline' => false));
 ?>
-
-<!-- Ajustes de estilo -->
 <style type="text/css">
     .er-count {
         font-size: 20px !important;
     }
 </style>
 
-<!-- Layout de cards -->
 <div class="row g-5 g-xl-10 mb-xl-10">
     <div class="col-xl-4 mb-5 mb-xl-0">
         <div class="card card-flush h-xl-100">
@@ -54,15 +47,16 @@ echo $this->Html->script('widget/charts/widget-10.js', ['inline' => false]);
                         <div class="d-flex align-items-center mb-2">
                             <span class="fs-4 fw-bold text-gray-400 align-self-start me-1">R$</span>
                             <span class="fs-2hx fw-bolder text-gray-800 me-2 lh-1 ls-n2"><?php echo $totalDiscount; ?></span>
+                            
                         </div>
                         <span class="fs-6 fw-bold text-gray-400">Economia prevista</span>
                     </div>
                 </div>
                 <div id="kt_apexcharts_gestao_eficiente" class="w-100 h-300px"></div>
+                
             </div>
         </div>
     </div>
-
     <div class="col-xxl-8">
         <div class="card card-flush overflow-hidden h-md-100">
             <div class="card-header py-5">
@@ -78,7 +72,6 @@ echo $this->Html->script('widget/charts/widget-10.js', ['inline' => false]);
     </div>
 </div>
 
-<!-- Segunda linha de cards -->
 <div class="row g-5 g-xl-10 mb-xl-10">
     <div class="col-xl-8 mb-5 mb-xl-10">
         <div class="card card-flush overflow-hidden h-md-100">
@@ -108,3 +101,13 @@ echo $this->Html->script('widget/charts/widget-10.js', ['inline' => false]);
         </div>
     </div>
 </div>
+
+
+<!-- Calendar JavaScript -->
+<!-- <script src="../plugins/bower_components/calendar/jquery-ui.min.js"></script> -->
+<!-- <script src='../plugins/bower_components/calendar/dist/fullcalendar.min.js'></script> -->
+<!-- <script src="../plugins/bower_components/calendar/dist/jquery.fullcalendar.js"></script> -->
+<!-- <script src="../plugins/bower_components/calendar/dist/cal-init.js"></script> -->
+<!-- ============================================================== -->
+<!-- city-weather -->
+<!-- ============================================================== -->
