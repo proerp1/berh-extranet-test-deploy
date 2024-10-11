@@ -174,53 +174,41 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action'));
   }
 
+
+  
   public function financeiro()
-  {
-    $breadcrumb = ["Dashboard" => "/"];
-    $action = "Financeiro";
+{
+    $breadcrumb = ['Dashboard' => '/'];
+    $action = 'financeiro';
+    
+    // Carregar os models Order e OrderBalance manualmente
+    $this->loadModel('Order');
+    $this->loadModel('OrderBalance');
 
-    $incomes = $this->Income->find("all", [
-      "conditions" => ["Income.status_id" => [19, 20]],
-      "fields" => ["sum(Income.valor_bruto) as total", 'count(Income.id) as qtd_total']
+    $breadcrumb = ['Dashboard' => '/'];
+    $action = 'Financeiro';
+
+    // Total Recebido para todos os pedidos
+    $totalReceived = $this->Order->find('all', [
+        'fields' => ['sum(Order.total) as total'],
     ]);
-    $incomes = $incomes[0][0];
-    $totIn = $this->Income->find("all", ["fields" => ["sum(Income.valor_bruto) as total", 'count(Income.id) as qtd_total']]);
-    $totIn = $totIn[0][0];
+    $totalReceivedRaw = $totalReceived[0][0]['total'];
+    $totalReceived = number_format($totalReceivedRaw, 2, ',', '.');
 
-    $porcIn = 0;
-    if ($totIn['total'] != null) {
-      $porcIn = ($incomes['total'] / $totIn['total']) * 100;
-    }
-
-    $outcomesB = $this->Outcome->find("all", [
-      "fields" => ["sum(Outcome.valor_bruto) as total", 'count(Outcome.id) as qtd_total', 'Outcome.status_id'],
-      'group' => ['Outcome.status_id']
+    // Total de Desconto para todos os pedidos
+    $totalDiscount = $this->OrderBalance->find('first', [
+        'contain' => ['Order'],
+        'fields' => ['sum(OrderBalance.total) as total'],
+        'conditions' => ['OrderBalance.tipo' => 1]
     ]);
-    $totOut = $this->Outcome->find("all", ["fields" => ["sum(Outcome.valor_bruto) as total", 'count(Outcome.id) as qtd_total']]);
-    $totOut = $totOut[0][0];
+    $totalDiscountRaw = $totalDiscount[0]['total'];
+    $totalDiscount = number_format($totalDiscountRaw, 2, ',', '.');
 
-    $outcomes = [];
-    $totPend = 0;
-    for ($i = 0; $i < count($outcomesB); $i++) {
-      $porc = ($outcomesB[$i][0]['total'] / $totOut['total']) * 100;
-      $outcomes[$outcomesB[$i]['Outcome']['status_id']] = ['total' => $outcomesB[$i][0]['total'], 'qtd_total' => $outcomesB[$i][0]['qtd_total'], 'porc' => $porc];
+    $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
+}
 
-      if (in_array($outcomesB[$i]['Outcome']['status_id'], [15, 16])) {
-        $totPend += $outcomesB[$i][0]['total'];
-      }
-    }
 
-    $porcPendOut = 0;
-    if ($totOut['total'] != null) {
-      $porcPendOut = ($totPend / $totOut['total']) * 100;
-    }
-
-    $data = $this->Outcome->find("all", ["conditions" => ["Outcome.status_id" => [15, 16]], 'limit' => 10, 'order' => ["Outcome.id" => "desc"]]);
-
-    $status = $this->Status->find('list', array('conditions' => array('Status.categoria' => 4)));
-
-    $this->set(compact('breadcrumb', 'action', 'incomes', 'outcomes', 'porcIn', 'porcPendOut', 'data', 'totPend', 'status'));
-  }
+  
 
   public function comercial()
   {

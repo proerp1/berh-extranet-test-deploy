@@ -1,215 +1,112 @@
-<!-- .row -->
-<div class="row">
-	<div class="col-lg-3 col-sm-6 col-xs-12 mb-5 mb-xl-10">
-		<div class="card">
-			<div class="card-body">
-				<h3 class="box-title">Pedidos aprovados</h3>
-				<a href="#" class="text-dark text-hover-primary fs-2">R$25.563,23</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Aguardando emissão dos boletos</a>
-					<span class="text-muted fw-bold text-muted d-block fs-7">10%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-warning rounded h-10px" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6 col-xs-12 mb-5 mb-xl-10">
-		<div class="card">
-			<div class="card-body">
-				<h3 class="box-title">Pedidos faturados</h3>
-				<a href="#" class="text-dark text-hover-primary fs-2">R$25.563,23</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Aguardando emissão das notas</a>
-					<span class="text-muted fw-bold text-muted d-block fs-7">10%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-primary rounded h-10px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-			</div>
-
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6 col-xs-12 mb-5 mb-xl-10">
-		<div class="card">
-			<div class="card-body">
-				<h3 class="box-title">Contas a receber</h3>
-				<a href="#" class="text-dark text-hover-primary fs-2">R$25.563,23</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Aguardando recebimento</a>
-					<span class="text-muted fw-bold text-muted d-block fs-7">90,54%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-success rounded h-10px" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-			</div>
-
-		</div>
-	</div>
-	<div class="col-lg-3 col-sm-6 col-xs-12 mb-5 mb-xl-10">
-		<div class="card">
-
-			<div class="card-body">
-				<h3 class="box-title">Contas a pagar</h3>
-				<a href="#" class="text-dark text-hover-primary fs-2">R$1432,00</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Aguardando pagamento</a>
-					<span class="text-muted fw-bold text-muted d-block fs-7">10%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-info rounded h-10px" role="progressbar" style="width: 10%;" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-</div>
-<!-- /.row -->
-<!-- ============================================================== -->
-<!-- Extra-component -->
-<!-- ============================================================== -->
-<div class="row">
-	<div class="col-lg-3 col-md-6">
-		<div class="card">
-			<div class="card-body">
-				<h3 class="box-title">Workflow</h3>
-				<a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$25.563,23</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Pendente</a>
-					<span class="text-muted d-block fs-7">50%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-success rounded h-10px" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$145.652,54</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Reprogramar</a>
-					<span class="text-muted d-block fs-7">60%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-success rounded h-10px" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$45.123,78</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Programado</a>
-					<span class="text-muted d-block fs-7">12%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-danger rounded h-10px" role="progressbar" style="width: 12%;" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<a href="#" class="text-dark fw-bolder text-hover-primary fs-2">R$565.434,13</a>
-				<div class="d-flex flex-stack mb-2">
-					<a href="#" class="text-dark text-hover-primary fs-7">Pago</a>
-					<span class="text-muted d-block fs-7">30%</span>
-				</div>
-				<div class="h-10px mb-10 w-100 bg-light mb-3">
-					<div class="bg-warning rounded h-10px" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-	<div class="col-md-9">
-		<div class="card">
-			<div class="card-body">
-				<h3 class="box-title mb-10">AGUARDANDO APROVAÇÃO DE PAGAMENTO</h3>
-				<div class="table-responsive">
-					<table class="table table-hover manage-u-table">
-						<thead>
-							<tr>
-								<th class="text-center">NOME</th>
-								<th>BANCO</th>
-								<th>DATA</th>
-								<th>VALOR</th>
-								<th>AÇÕES</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="text-center" style="vertical-align: middle">
-									Cliente LTDA
-								</td>
-								<td>Itaú</td>
-								<td>Vencimeto: 01/08/23<br /><span class="text-muted">Competência: 07/23</span></td>
-								<td>Liquido: R$ 432,00<br /><span class="text-muted">Bruto: R$ 480,00</span></td>
-								<td>
-									<form action="<?php echo $this->base . '/outcomes/change_status/'; ?>" method="post">
-										<select class="form-control js_status" name="status_id">
-											<option value="">Selecione</option>
-											<option value="">Pendente</option>
-											<option value="">Pago</option>
-										</select>
-									</form>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center" style="vertical-align: middle">
-									Outro Cliente LTDA
-								</td>
-								<td>BB</td>
-								<td>Vencimeto: 01/08/23<br /><span class="text-muted">Competência: 07/23</span></td>
-								<td>Liquido: R$ 432,00<br /><span class="text-muted">Bruto: R$ 480,00</span></td>
-								<td>
-									<form action="<?php echo $this->base . '/outcomes/change_status/'; ?>" method="post">
-										<select class="form-control js_status" name="status_id">
-											<option value="">Selecione</option>
-											<option value="">Pendente</option>
-											<option value="">Pago</option>
-										</select>
-									</form>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center" style="vertical-align: middle">
-									Mais um Cliente LTDA
-								</td>
-								<td>Itaú</td>
-								<td>Vencimeto: 01/08/23<br /><span class="text-muted">Competência: 07/23</span></td>
-								<td>Liquido: R$ 432,00<br /><span class="text-muted">Bruto: R$ 480,00</span></td>
-								<td>
-									<form action="<?php echo $this->base . '/outcomes/change_status/'; ?>" method="post">
-										<select class="form-control js_status" name="status_id">
-											<option value="">Selecione</option>
-											<option value="">Pendente</option>
-											<option value="">Pago</option>
-										</select>
-									</form>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center" style="vertical-align: middle">
-									Joao LTDA
-								</td>
-								<td>BB</td>
-								<td>Vencimeto: 01/08/23<br /><span class="text-muted">Competência: 07/23</span></td>
-								<td>Liquido: R$ 432,00<br /><span class="text-muted">Bruto: R$ 480,00</span></td>
-								<td>
-									<form action="<?php echo $this->base . '/outcomes/change_status/'; ?>" method="post">
-										<select class="form-control js_status" name="status_id">
-											<option value="">Selecione</option>
-											<option value="">Pendente</option>
-											<option value="">Pago</option>
-										</select>
-									</form>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- ============================================================== -->
-<!-- city-weather -->
-<!-- ============================================================== -->
-
 <script>
-	$(document).ready(function() {
-		$('.js_status').on('change', function() {
-			$(this).parent().submit();
-		})
-	})
+    // Passando as variáveis PHP para o JavaScript
+    var total_pedidos = <?php echo json_encode($totalReceivedRaw); ?>;
+    var total_desconto = <?php echo json_encode($totalDiscountRaw); ?>;
+    var mes_atual = '<?php echo date('m/Y'); ?>';
 </script>
+
+<style>
+    #kt_charts_widget_6 .apexcharts-xaxis {
+        display: none;
+    }
+</style>
+
+<?php
+// Carregando os scripts necessários para os gráficos
+echo $this->Html->script('https://cdn.amcharts.com/lib/5/index.js', ['inline' => false]);
+echo $this->Html->script('https://cdn.amcharts.com/lib/5/xy.js', ['inline' => false]);
+echo $this->Html->script('https://cdn.amcharts.com/lib/5/themes/Animated.js', ['inline' => false]);
+echo $this->Html->script('https://cdn.amcharts.com/lib/5/percent.js', ['inline' => false]);
+echo $this->Html->script('https://cdn.amcharts.com/lib/5/radar.js', ['inline' => false]);
+
+// Incluindo seus scripts personalizados para os gráficos
+echo $this->Html->script('widget/charts/widget-evolucao-pedidos.js', ['inline' => false]);
+echo $this->Html->script('widget/charts/widget-ranking-operadoras.js', ['inline' => false]);
+echo $this->Html->script('widget/charts/widget-gestao-eficiente.js', ['inline' => false]);
+echo $this->Html->script('widget/charts/widget-10.js', ['inline' => false]);
+?>
+
+<!-- Ajustes de estilo -->
+<style type="text/css">
+    .er-count {
+        font-size: 20px !important;
+    }
+</style>
+
+<!-- Layout de cards -->
+<div class="row g-5 g-xl-10 mb-xl-10">
+    <div class="col-xl-4 mb-5 mb-xl-0">
+        <div class="card card-flush h-xl-100">
+            <div class="card-header pt-7 mb-7">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bolder text-gray-800">Gestão eficiente</span>
+                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo de resultado</span>
+                </h3>
+            </div>
+            <div class="card-body d-flex justify-content-between flex-column">
+                <div class="d-flex flex-wrap d-grid gap-5 mb-10">
+                    <div class="border-end-dashed border-1 border-gray-300 pe-xxl-7 me-xxl-5">
+                        <div class="d-flex mb-2">
+                            <span class="fs-4 fw-bold text-gray-400 me-1">R$</span>
+                            <span class="fs-2hx fw-bolder text-gray-800 me-2 lh-1 ls-n2"><?php echo $totalReceived; ?></span>
+                        </div>
+                        <span class="fs-6 fw-bold text-gray-400">Valor dos itens</span>
+                    </div>
+                    <div class="m-0">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="fs-4 fw-bold text-gray-400 align-self-start me-1">R$</span>
+                            <span class="fs-2hx fw-bolder text-gray-800 me-2 lh-1 ls-n2"><?php echo $totalDiscount; ?></span>
+                        </div>
+                        <span class="fs-6 fw-bold text-gray-400">Economia prevista</span>
+                    </div>
+                </div>
+                <div id="kt_apexcharts_gestao_eficiente" class="w-100 h-300px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-8">
+        <div class="card card-flush overflow-hidden h-md-100">
+            <div class="card-header py-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bolder text-dark">Evolução de pedidos</span>
+                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo</span>
+                </h3>
+            </div>
+            <div class="card-body pt-4">
+                <div id="kt_charts_widget_23" class="h-400px w-100"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda linha de cards -->
+<div class="row g-5 g-xl-10 mb-xl-10">
+    <div class="col-xl-8 mb-5 mb-xl-10">
+        <div class="card card-flush overflow-hidden h-md-100">
+            <div class="card-header py-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bolder text-dark">Evolução de economia</span>
+                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo</span>
+                </h3>
+            </div>
+            <div class="card-body pt-4">
+                <div id="chart_economia" class="h-400px w-100"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-4">
+        <div class="card card-flush h-lg-100">
+            <div class="card-header py-7 mb-3">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bolder text-gray-800">Ranking Operadoras</span>
+                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo</span>
+                </h3>
+            </div>
+            <div class="card-body py-0 ps-6 mt-n12">
+                <div id="kt_charts_widget_6"></div>
+            </div>
+        </div>
+    </div>
+</div>
