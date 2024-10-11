@@ -12,14 +12,12 @@
 </style>
 
 <?php
-// Carregando os scripts necessários para os gráficos
+
 echo $this->Html->script('https://cdn.amcharts.com/lib/5/index.js', ['inline' => false]);
 echo $this->Html->script('https://cdn.amcharts.com/lib/5/xy.js', ['inline' => false]);
 echo $this->Html->script('https://cdn.amcharts.com/lib/5/themes/Animated.js', ['inline' => false]);
 echo $this->Html->script('https://cdn.amcharts.com/lib/5/percent.js', ['inline' => false]);
 echo $this->Html->script('https://cdn.amcharts.com/lib/5/radar.js', ['inline' => false]);
-
-// Incluindo seus scripts personalizados para os gráficos
 echo $this->Html->script('widget/charts/widget-evolucao-pedidos.js', ['inline' => false]);
 echo $this->Html->script('widget/charts/widget-ranking-operadoras.js', ['inline' => false]);
 echo $this->Html->script('widget/charts/widget-gestao-eficiente.js', ['inline' => false]);

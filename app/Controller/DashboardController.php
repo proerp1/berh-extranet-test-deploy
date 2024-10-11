@@ -207,6 +207,10 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
 }
 
+
+
+
+
 public function getEvolucaoPedidos()
 {
     $this->autoRender = false;
@@ -296,7 +300,90 @@ public function getRankingOperadoras()
     echo json_encode($result);
 }
 
-  
+public function getRadarDash()
+{
+    $this->autoRender = false;
+
+    // Load the OrderItem model
+    $this->loadModel('OrderItem');
+
+    // Fetch total orders by department without filtering by CustomerUser ID
+    $ordersByDepartment = $this->OrderItem->find('all', [
+        'fields' => ['sum(Order.total) as total', 'CustomerDepartment.name'],
+        'joins' => [
+            [
+                'table' => 'customer_departments',
+                'alias' => 'CustomerDepartment',
+                'type' => 'INNER',
+                'conditions' => [
+                    'Order.customer_departments_id = CustomerDepartment.id', // Remove CustomerUser
+                ],
+            ],
+        ],
+        'conditions' => [
+            'Order.order_period_from >=' => date('Y-m-01'),
+            'Order.order_period_to <=' => date('Y-m-t'),
+            'Order.status_id' => 87,
+            // Removed CustomerUser ID condition
+        ],
+        'group' => ['CustomerDepartment.name'],
+    ]);
+
+    // Fetch total orders by cost center without filtering by CustomerUser ID
+    $ordersByCC = $this->OrderItem->find('all', [
+        'fields' => ['sum(Order.total) as total', 'CostCenter.name'],
+        'joins' => [
+            [
+                'table' => 'cost_center',
+                'alias' => 'CostCenter',
+                'type' => 'INNER',
+                'conditions' => [
+                    'Order.customer_cost_center_id = CostCenter.id', // Remove CustomerUser
+                ],
+            ],
+        ],
+        'conditions' => [
+            'Order.order_period_from >=' => date('Y-m-01'),
+            'Order.order_period_to <=' => date('Y-m-t'),
+            'Order.status_id' => 87,
+            // Removed CustomerUser ID condition
+        ],
+        'group' => ['CostCenter.name'],
+    ]);
+
+    // Prepare department data
+    $departmentHeader = [];
+    $departmentData = [];
+    foreach ($ordersByDepartment as $value) {
+        $departmentHeader[] = $value['CustomerDepartment']['name'];
+        $departmentData[] = (float) $value[0]['total'];
+    }
+
+    // Prepare cost center data
+    $ccHeader = [];
+    $ccData = [];
+    foreach ($ordersByCC as $value) {
+        $ccHeader[] = $value['CostCenter']['name'];
+        $ccData[] = (float) $value[0]['total'];
+    }
+
+    // Prepare the final result
+    $result = [
+        'department' => [
+            'header' => $departmentHeader,
+            'data' => $departmentData,
+        ],
+        'costCenter' => [
+            'header' => $ccHeader,
+            'data' => $ccData,
+        ],
+    ];
+
+    echo json_encode($result);
+}
+
+
+    
 
   public function comercial()
   {
