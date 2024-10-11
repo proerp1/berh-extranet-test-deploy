@@ -324,15 +324,12 @@ class OrdersController extends AppController
         ]);
 
         $is_partial = $lastOrder['Order']['is_partial'];
-
-        $is_consolidated = $lastOrder['Order']['is_consolidated'];
-        $is_partial = $lastOrder['Order']['is_partial'];
         $benefit_type = $lastOrder['Order']['benefit_type'];
+        $working_days = $lastOrder['Order']['working_days'];
+        $working_days_type = $lastOrder['Order']['working_days_type'];
 
         $period_from = $this->request->data['period_from'];
         $period_to = $this->request->data['period_to'];
-        $working_days = $this->request->data['working_days'];
-        $working_days_type = $this->request->data['working_days_type'];
         $credit_release_date = $this->request->data['credit_release_date'];
 
         $orderData = [

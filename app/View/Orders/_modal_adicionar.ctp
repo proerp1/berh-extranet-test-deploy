@@ -43,6 +43,36 @@
                         </div>
                     </div>
                     <div class="row mb-7">
+                        <div class="col-6">
+                            <label class="mb-2">Clona pedido anterior?</label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="1" id="cloneOrder1" />
+                                        <label class="form-check-label" for="cloneOrder1">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="2" id="cloneOrder2" checked />
+                                        <label class="form-check-label" for="cloneOrder2">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col d-none">
+                            <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
+                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
+                        </div>
+                    </div>
+                    <div class="row mb-7 div-new-order">
                         <div class="col">
                             <label class="mb-2">Utilizar Dias Úteis</label>
                             <div class="row">
@@ -71,36 +101,6 @@
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
                             <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
                             <p id="message_wd" style="color: red; margin: 0; display:none"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-7">
-                        <div class="col-6">
-                            <label class="mb-2">Clona pedido anterior?</label>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="1" id="cloneOrder1" />
-                                        <label class="form-check-label" for="cloneOrder1">
-                                            Sim
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="2" id="cloneOrder2" checked />
-                                        <label class="form-check-label" for="cloneOrder2">
-                                            Não
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="col d-none">
-                            <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
-                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
                         </div>
                     </div>
                     <div class="row mb-7 div-new-order">
