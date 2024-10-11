@@ -207,6 +207,94 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
 }
 
+public function getEvolucaoPedidos()
+{
+    $this->autoRender = false;
+
+    // Carregar o modelo Order
+    $this->loadModel('Order');
+
+    // Desvincular o modelo OrderItem
+    $this->Order->unbindModel(['hasMany' => ['OrderItem']]);
+
+    // Buscar a evolução dos pedidos
+    $evolucaoPedidos = $this->Order->find('all', [
+        'fields' => [
+            'sum(Order.total) as total',
+            '(select sum(total) from order_balances b where b.order_id = Order.id and b.tipo = 1 and b.data_cancel = "1901-01-01 00:00:00") as economia',
+            "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
+        ],
+        'conditions' => [
+            'Order.order_period_from >=' => date('Y-01-01'),
+            'Order.order_period_to <=' => date('Y-12-31'),
+            // Removendo filtros por customer_id e status_id
+        ],
+        'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
+        'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
+    ]);
+
+    $data = [];
+    foreach ($evolucaoPedidos as $value) {
+        $data[] = [
+            'mesAno' => $value[0]['mes'],
+            'totalPedido' => (float) $value[0]['total'],
+            'totalEconomia' => (float) $value[0]['economia'],
+        ];
+    }
+
+    $result = ['data' => $data];
+    echo json_encode($result);
+}
+
+
+public function getRankingOperadoras()
+{
+    $this->autoRender = false;
+
+    // Carregar o modelo OrderItem
+    $this->loadModel('OrderItem');
+
+    // Buscar o ranking de operadoras
+    $rankingOperadoras = $this->OrderItem->find('all', [
+        'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
+        'joins' => [
+            [
+                'table' => 'benefits',
+                'alias' => 'Benefit',
+                'type' => 'INNER',
+                'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id'],
+            ],
+            [
+                'table' => 'suppliers',
+                'alias' => 'Supplier',
+                'type' => 'INNER',
+                'conditions' => ['Benefit.supplier_id = Supplier.id'],
+            ],
+        ],
+        'conditions' => [
+            'Order.order_period_from >=' => date('Y-m-01'),
+            'Order.order_period_to <=' => date('Y-m-t'),
+            // Removendo filtros por customer_id e status_id
+        ],
+        'group' => ['Supplier.nome_fantasia'],
+        'limit' => 10,
+        'order' => ['total' => 'DESC'],
+    ]);
+
+    $header = [];
+    $data = [];
+    foreach ($rankingOperadoras as $value) {
+        $header[] = $value['Supplier']['nome_fantasia'];
+        $data[] = (float) $value[0]['total'];
+    }
+
+    $result = [
+        'header' => $header,
+        'data' => $data,
+    ];
+
+    echo json_encode($result);
+}
 
   
 
