@@ -216,6 +216,13 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+
+            $obs_notafiscal = "";
+            if ($customer['Customer']['observacao_notafiscal']) {
+                $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
+            }
+
             $benefit_type_persist = 0;
             if ($benefit_type != '') {
                 $benefit_type_persist = $benefit_type;
@@ -286,6 +293,7 @@ class OrdersController extends AppController
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
+                'observation' => $obs_notafiscal,
             ];
 
             $this->Order->create();
