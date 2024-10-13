@@ -231,7 +231,8 @@ public function getEvolucaoPedidos()
         'conditions' => [
             'Order.order_period_from >=' => date('Y-01-01'),
             'Order.order_period_to <=' => date('Y-12-31'),
-            // Removendo filtros por customer_id e status_id
+            'Order.status_id' => 87,
+            // Removendo filtros por customer_id 
         ],
         'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
         'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
