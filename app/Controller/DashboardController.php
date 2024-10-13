@@ -250,136 +250,125 @@ public function getEvolucaoPedidos()
     }
 
 public function getRankingOperadoras()
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    // Carregar o modelo OrderItem
-    $this->loadModel('OrderItem');
-
-    // Buscar o ranking de operadoras
-    $rankingOperadoras = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
-        'joins' => [
-            [
-                'table' => 'benefits',
-                'alias' => 'Benefit',
-                'type' => 'INNER',
-                'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id'],
+        $rankingOperadoras = $this->OrderItem->find('all', [
+            'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUserItinerary.benefit_id = Benefit.id',
+                    ],
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.supplier_id = Supplier.id',
+                    ],
+                ],
             ],
-            [
-                'table' => 'suppliers',
-                'alias' => 'Supplier',
-                'type' => 'INNER',
-                'conditions' => ['Benefit.supplier_id = Supplier.id'],
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            'Order.status_id' => 87,
-            // Removendo filtros por customer_id 
-        ],
-        'group' => ['Supplier.nome_fantasia'],
-        'limit' => 10,
-        'order' => ['total' => 'DESC'],
-    ]);
+            'group' => ['Supplier.nome_fantasia'],
+            'limit' => 10,
+            'order' => ['total' => 'DESC'],
+        ]);
 
-    $header = [];
-    $data = [];
-    foreach ($rankingOperadoras as $value) {
-        $header[] = $value['Supplier']['nome_fantasia'];
-        $data[] = (float) $value[0]['total'];
+        $header = [];
+        $data = [];
+        foreach ($rankingOperadoras as $value) {
+            $header[] = $value['Supplier']['nome_fantasia'];
+            $data[] = (float) $value[0]['total'];
+        }
+
+        $result = [
+            'header' => $header,
+            'data' => $data,
+        ];
+
+        echo json_encode($result);
     }
-
-    $result = [
-        'header' => $header,
-        'data' => $data,
-    ];
-
-    echo json_encode($result);
-}
 
 public function getRadarDash()
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    // Load the OrderItem model
-    $this->loadModel('OrderItem');
-
-    // Fetch total orders by department without filtering by CustomerUser ID
-    $ordersByDepartment = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'CustomerDepartment.name'],
-        'joins' => [
-            [
-                'table' => 'customer_departments',
-                'alias' => 'CustomerDepartment',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Order.customer_departments_id = CustomerDepartment.id', // Remove CustomerUser
+        $ordersByDepartment = $this->OrderItem->find('all', [
+            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CustomerDepartment.name'],
+            'joins' => [
+                [
+                    'table' => 'customer_departments',
+                    'alias' => 'CustomerDepartment',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.customer_departments_id = CustomerDepartment.id',
+                    ],
                 ],
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            'Order.status_id' => 87,
-            // Removed CustomerUser ID condition
-        ],
-        'group' => ['CustomerDepartment.name'],
-    ]);
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
+            ],
+            'group' => ['CustomerDepartment.name'],
+        ]);
 
-    // Fetch total orders by cost center without filtering by CustomerUser ID
-    $ordersByCC = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'CostCenter.name'],
-        'joins' => [
-            [
-                'table' => 'cost_center',
-                'alias' => 'CostCenter',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Order.customer_cost_center_id = CostCenter.id', // Remove CustomerUser
+        $ordersByCC = $this->OrderItem->find('all', [
+            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CostCenter.name'],
+            'joins' => [
+                [
+                    'table' => 'cost_center',
+                    'alias' => 'CostCenter',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.customer_cost_center_id = CostCenter.id',
+                    ],
                 ],
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            'Order.status_id' => 87,
-            // Removed CustomerUser ID condition
-        ],
-        'group' => ['CostCenter.name'],
-    ]);
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
+            ],
+            'group' => ['CostCenter.name'],
+        ]);
 
-    // Prepare department data
-    $departmentHeader = [];
-    $departmentData = [];
-    foreach ($ordersByDepartment as $value) {
-        $departmentHeader[] = $value['CustomerDepartment']['name'];
-        $departmentData[] = (float) $value[0]['total'];
+        $departmentHeader = [];
+        $departmentData = [];
+        foreach ($ordersByDepartment as $value) {
+            $departmentHeader[] = $value['CustomerDepartment']['name'];
+            $departmentData[] = $value[0]['total'];
+        }
+
+        $ccHeader = [];
+        $ccData = [];
+        foreach ($ordersByCC as $value) {
+            $ccHeader[] = $value['CostCenter']['name'];
+            $ccData[] = $value[0]['total'];
+        }
+
+        $result = [
+            'department' => [
+                'header' => $departmentHeader,
+                'data' => $departmentData,
+            ],
+            'costCenter' => [
+                'header' => $ccHeader,
+                'data' => $ccData,
+            ],
+        ];
+
+        echo json_encode($result);
     }
-
-    // Prepare cost center data
-    $ccHeader = [];
-    $ccData = [];
-    foreach ($ordersByCC as $value) {
-        $ccHeader[] = $value['CostCenter']['name'];
-        $ccData[] = (float) $value[0]['total'];
-    }
-
-    // Prepare the final result
-    $result = [
-        'department' => [
-            'header' => $departmentHeader,
-            'data' => $departmentData,
-        ],
-        'costCenter' => [
-            'header' => $ccHeader,
-            'data' => $ccData,
-        ],
-    ];
-
-    echo json_encode($result);
-}
 
 
     
