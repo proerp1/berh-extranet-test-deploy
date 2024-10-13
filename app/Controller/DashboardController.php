@@ -88,7 +88,7 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function add($clienteID = null)
+  /*public function add($clienteID = null)
   {
 
     $breadcrumb = ["Dashboard" => "/"];
@@ -164,7 +164,7 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action', 'naturezas', 'estabelecimentos', 'condicoesPagamento', 'clis', 'portadores', 'transportadores', 'customers', 'customersPayment', 'vendedores', 'buscaPedido', 'buscaCliente', 'buscaEndereco', 'buscaLimite'));
 
     $this->render("add");
-  }
+  }*/
 
   public function produto()
   {
@@ -248,47 +248,6 @@ public function getEvolucaoPedidos()
         echo json_encode($result);
     }
 
-/*public function getEvolucaoPedidos()
-{
-    $this->autoRender = false;
-
-    // Carregar o modelo Order
-    $this->loadModel('Order');
-
-    // Desvincular o modelo OrderItem
-    $this->Order->unbindModel(['hasMany' => ['OrderItem']]);
-
-    // Buscar a evolução dos pedidos
-    $evolucaoPedidos = $this->Order->find('all', [
-        'fields' => [
-            'sum(Order.total) as total',
-            '(select sum(total) from order_balances b where b.order_id = Order.id and b.tipo = 1 and b.data_cancel = "1901-01-01 00:00:00") as economia',
-            "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-01-01'),
-            'Order.order_period_to <=' => date('Y-12-31'),
-            'Order.status_id' => 87,
-            // Removendo filtros por customer_id 
-        ],
-        'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
-        'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
-    ]);
-
-    $data = [];
-    foreach ($evolucaoPedidos as $value) {
-        $data[] = [
-            'mesAno' => $value[0]['mes'],
-            'totalPedido' => (float) $value[0]['total'],
-            'totalEconomia' => (float) $value[0]['economia'],
-        ];
-    }
-
-    $result = ['data' => $data];
-    echo json_encode($result);
-}*/
-
-
 public function getRankingOperadoras()
 {
     $this->autoRender = false;
@@ -316,7 +275,8 @@ public function getRankingOperadoras()
         'conditions' => [
             'Order.order_period_from >=' => date('Y-m-01'),
             'Order.order_period_to <=' => date('Y-m-t'),
-            // Removendo filtros por customer_id e status_id
+            'Order.status_id' => 87,
+            // Removendo filtros por customer_id 
         ],
         'group' => ['Supplier.nome_fantasia'],
         'limit' => 10,
