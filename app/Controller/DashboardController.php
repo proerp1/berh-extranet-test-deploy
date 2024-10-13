@@ -225,13 +225,15 @@ public function getEvolucaoPedidos()
                 "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
             ],
             'conditions' => [
-                'Order.order_period_from >=' => date('Y-01-01'),
+                'Order.order_period_froms >=' => date('Y-01-01'),
                 'Order.order_period_to <=' => date('Y-12-31'),
                 'Order.status_id' => 87,
             ],
             'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
             'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
         ]);
+
+      debug($evolucaoPedidos);die;
 
         $data = [];
         foreach ($evolucaoPedidos as $value) {
