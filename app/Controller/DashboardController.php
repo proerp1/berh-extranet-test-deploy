@@ -227,7 +227,6 @@ public function getEvolucaoPedidos()
                 'Order.order_period_from >=' => date('Y-01-01'),
                 'Order.order_period_to <=' => date('Y-12-31'),
                 'Order.status_id' => 87,
-                'Order.customer_id' => CakeSession::read('Auth.CustomerUser.customer_id'),
             ],
             'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
             'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
