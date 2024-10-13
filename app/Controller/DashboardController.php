@@ -179,12 +179,11 @@ class DashboardController extends AppController
   public function financeiro()
 {
     $breadcrumb = ['Dashboard' => '/'];
-        $action = 'Financeiro';
+        $action = 'Principal';
 
         $totalReceived = $this->Order->find('all', [
             'conditions' => [
                 'Order.status_id' => 87,
-                //'Order.customer_id' => CakeSession::read('Auth.CustomerUser.customer_id'),
                 'Order.order_period_from >=' => date('Y-m-01'),
                 'Order.order_period_to <=' => date('Y-m-t'),
             ],
@@ -197,7 +196,6 @@ class DashboardController extends AppController
             'contain' => ['Order'],
             'conditions' => [
                 'Order.status_id' => 87,
-                //'Order.customer_id' => CakeSession::read('Auth.CustomerUser.customer_id'),
                 'Order.order_period_from >=' => date('Y-m-01'),
                 'Order.order_period_to <=' => date('Y-m-t'),
                 'OrderBalance.tipo' => 1
