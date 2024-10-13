@@ -1767,8 +1767,8 @@ class OrdersController extends AppController
             'fields' => [
                 'CustomerUserItinerary.benefit_id',
                 'sum(CustomerUserItinerary.quantity) as qtd',
-                'sum(OrderItem.subtotal) as valor',
-                'sum(OrderItem.total) as total',
+                'round(sum(OrderItem.subtotal),2) as valor',
+                'round(sum(OrderItem.total),2) as total',
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['CustomerUserItinerary.benefit_id']
