@@ -179,32 +179,35 @@ class DashboardController extends AppController
   public function financeiro()
 {
     $breadcrumb = ['Dashboard' => '/'];
-    $action = 'financeiro';
-    
-    // Carregar os models Order e OrderBalance manualmente
-    $this->loadModel('Order');
-    $this->loadModel('OrderBalance');
+        $action = 'Financeiro';
 
-    $breadcrumb = ['Dashboard' => '/'];
-    $action = 'Financeiro';
+        $totalReceived = $this->Order->find('all', [
+            'conditions' => [
+                'Order.status_id' => 87,
+                //'Order.customer_id' => CakeSession::read('Auth.CustomerUser.customer_id'),
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+            ],
+            'fields' => ['sum(Order.total) as total'],
+        ]);
+        $totalReceivedRaw = $totalReceived[0][0]['total'];
+        $totalReceived = number_format($totalReceivedRaw, 2, ',', '.');
 
-    // Total Recebido para todos os pedidos
-    $totalReceived = $this->Order->find('all', [
-        'fields' => ['sum(Order.total) as total'],
-    ]);
-    $totalReceivedRaw = $totalReceived[0][0]['total'];
-    $totalReceived = number_format($totalReceivedRaw, 2, ',', '.');
+        $totalDiscount = $this->OrderBalance->find('first', [
+            'contain' => ['Order'],
+            'conditions' => [
+                'Order.status_id' => 87,
+                //'Order.customer_id' => CakeSession::read('Auth.CustomerUser.customer_id'),
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'OrderBalance.tipo' => 1
+            ],
+            'fields' => ['sum(OrderBalance.total) as total'],
+        ]);
+        $totalDiscountRaw = $totalDiscount[0]['total'];
+        $totalDiscount = number_format($totalDiscountRaw, 2, ',', '.');
 
-    // Total de Desconto para todos os pedidos
-    $totalDiscount = $this->OrderBalance->find('first', [
-        'contain' => ['Order'],
-        'fields' => ['sum(OrderBalance.total) as total'],
-        'conditions' => ['OrderBalance.tipo' => 1]
-    ]);
-    $totalDiscountRaw = $totalDiscount[0]['total'];
-    $totalDiscount = number_format($totalDiscountRaw, 2, ',', '.');
-
-    $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
+        $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
 }
 
 
