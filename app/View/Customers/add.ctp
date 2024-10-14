@@ -20,21 +20,7 @@
             ]
         });
 
-        $('#summernote_notafiscal').summernote({
-            lang: 'pt-BR',
-            height: 200,
-            toolbar : [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize', 'fontname']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['group', [ 'video', 'link', 'picture', 'hr' ]],
-                ['misc', [ 'codeview', 'undo', 'redo' ]],
-                ['help', [ 'help' ]],
-            ]
-        });
+        
 
         $('.money_exchange').maskMoney({
             decimal: ',',
