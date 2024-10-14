@@ -93,6 +93,11 @@ class OrdersController extends AppController
             ]);
             $filtersFilled = true;
         }
+
+        if (!empty($_GET['tipo'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.is_partial' => $_GET['tipo']]);
+            $filtersFilled = true;
+        }
     
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
