@@ -3,7 +3,7 @@ class DashboardController extends AppController
 {
   public $helpers = array('Html', 'Form');
   public $components = array('Paginator', 'Permission', 'Email');
-  public $uses = ['Customer', 'Order', 'OrderItem', 'Proposal', 'Seller', 'Income', 'Outcome', 'Status', 'User'];
+  public $uses = ['Customer', 'Order', 'CustomerUser', 'CustomerUserVacation', 'OrderItem', 'OrderBalance'];
 
   public function beforeFilter()
   {
@@ -88,7 +88,7 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action'));
   }
 
-  public function add($clienteID = null)
+  /*public function add($clienteID = null)
   {
 
     $breadcrumb = ["Dashboard" => "/"];
@@ -164,7 +164,7 @@ class DashboardController extends AppController
     $this->set(compact('breadcrumb', 'action', 'naturezas', 'estabelecimentos', 'condicoesPagamento', 'clis', 'portadores', 'transportadores', 'customers', 'customersPayment', 'vendedores', 'buscaPedido', 'buscaCliente', 'buscaEndereco', 'buscaLimite'));
 
     $this->render("add");
-  }
+  }*/
 
   public function produto()
   {
@@ -179,208 +179,198 @@ class DashboardController extends AppController
   public function financeiro()
 {
     $breadcrumb = ['Dashboard' => '/'];
-    $action = 'financeiro';
-    
-    // Carregar os models Order e OrderBalance manualmente
-    $this->loadModel('Order');
-    $this->loadModel('OrderBalance');
+        $action = 'Principal';
 
-    $breadcrumb = ['Dashboard' => '/'];
-    $action = 'Financeiro';
+        $totalReceived = $this->Order->find('all', [
+            'conditions' => [
+                'Order.status_id' => 87,
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+            ],
+            'fields' => ['sum(Order.total) as total'],
+        ]);
+        $totalReceivedRaw = $totalReceived[0][0]['total'];
+        $totalReceived = number_format($totalReceivedRaw, 2, ',', '.');
 
-    // Total Recebido para todos os pedidos
-    $totalReceived = $this->Order->find('all', [
-        'fields' => ['sum(Order.total) as total'],
-    ]);
-    $totalReceivedRaw = $totalReceived[0][0]['total'];
-    $totalReceived = number_format($totalReceivedRaw, 2, ',', '.');
+        $totalDiscount = $this->OrderBalance->find('first', [
+            'contain' => ['Order'],
+            'conditions' => [
+                'Order.status_id' => 87,
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'OrderBalance.tipo' => 1
+            ],
+            'fields' => ['sum(OrderBalance.total) as total'],
+        ]);
+        $totalDiscountRaw = $totalDiscount[0]['total'];
+        $totalDiscount = number_format($totalDiscountRaw, 2, ',', '.');
 
-    // Total de Desconto para todos os pedidos
-    $totalDiscount = $this->OrderBalance->find('first', [
-        'contain' => ['Order'],
-        'fields' => ['sum(OrderBalance.total) as total'],
-        'conditions' => ['OrderBalance.tipo' => 1]
-    ]);
-    $totalDiscountRaw = $totalDiscount[0]['total'];
-    $totalDiscount = number_format($totalDiscountRaw, 2, ',', '.');
-
-    $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
+        $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
 }
-
-
 
 
 
 public function getEvolucaoPedidos()
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    // Carregar o modelo Order
-    $this->loadModel('Order');
+        $this->Order->unbindModel([
+            'hasMany' => ['OrderItem'],
+        ]);
 
-    // Desvincular o modelo OrderItem
-    $this->Order->unbindModel(['hasMany' => ['OrderItem']]);
+        $evolucaoPedidos = $this->Order->find('all', [
+            'fields' => [
+                'sum(Order.total) as total',
+                '(select sum(total) from order_balances b where b.order_id = Order.id and b.tipo = 1 and b.data_cancel = "1901-01-01 00:00:00") as economia',
+                "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
+            ],
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-01-01'),
+                'Order.order_period_to <=' => date('Y-12-31'),
+                'Order.status_id' => 87,
+            ],
+            'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
+            'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
+        ]);
 
-    // Buscar a evolução dos pedidos
-    $evolucaoPedidos = $this->Order->find('all', [
-        'fields' => [
-            'sum(Order.total) as total',
-            '(select sum(total) from order_balances b where b.order_id = Order.id and b.tipo = 1 and b.data_cancel = "1901-01-01 00:00:00") as economia',
-            "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-01-01'),
-            'Order.order_period_to <=' => date('Y-12-31'),
-            // Removendo filtros por customer_id e status_id
-        ],
-        'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
-        'order' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
-    ]);
+      debug($evolucaoPedidos);die;
 
-    $data = [];
-    foreach ($evolucaoPedidos as $value) {
-        $data[] = [
-            'mesAno' => $value[0]['mes'],
-            'totalPedido' => (float) $value[0]['total'],
-            'totalEconomia' => (float) $value[0]['economia'],
+        $data = [];
+        foreach ($evolucaoPedidos as $value) {
+            $data[] = [
+                'mesAno' => $value[0]['mes'],
+                'totalPedido' => (float) $value[0]['total'],
+                'totalEconomia' => (float) $value[0]['economia'],
+            ];
+        }
+
+        $result = [
+            'data' => $data,
         ];
+
+        echo json_encode($result);
     }
-
-    $result = ['data' => $data];
-    echo json_encode($result);
-}
-
 
 public function getRankingOperadoras()
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    // Carregar o modelo OrderItem
-    $this->loadModel('OrderItem');
-
-    // Buscar o ranking de operadoras
-    $rankingOperadoras = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
-        'joins' => [
-            [
-                'table' => 'benefits',
-                'alias' => 'Benefit',
-                'type' => 'INNER',
-                'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id'],
+        $rankingOperadoras = $this->OrderItem->find('all', [
+            'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUserItinerary.benefit_id = Benefit.id',
+                    ],
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.supplier_id = Supplier.id',
+                    ],
+                ],
             ],
-            [
-                'table' => 'suppliers',
-                'alias' => 'Supplier',
-                'type' => 'INNER',
-                'conditions' => ['Benefit.supplier_id = Supplier.id'],
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            // Removendo filtros por customer_id e status_id
-        ],
-        'group' => ['Supplier.nome_fantasia'],
-        'limit' => 10,
-        'order' => ['total' => 'DESC'],
-    ]);
+            'group' => ['Supplier.nome_fantasia'],
+            'limit' => 10,
+            'order' => ['total' => 'DESC'],
+        ]);
 
-    $header = [];
-    $data = [];
-    foreach ($rankingOperadoras as $value) {
-        $header[] = $value['Supplier']['nome_fantasia'];
-        $data[] = (float) $value[0]['total'];
+        $header = [];
+        $data = [];
+        foreach ($rankingOperadoras as $value) {
+            $header[] = $value['Supplier']['nome_fantasia'];
+            $data[] = (float) $value[0]['total'];
+        }
+
+        $result = [
+            'header' => $header,
+            'data' => $data,
+        ];
+
+        echo json_encode($result);
     }
-
-    $result = [
-        'header' => $header,
-        'data' => $data,
-    ];
-
-    echo json_encode($result);
-}
 
 public function getRadarDash()
-{
-    $this->autoRender = false;
+    {
+        $this->autoRender = false;
 
-    // Load the OrderItem model
-    $this->loadModel('OrderItem');
-
-    // Fetch total orders by department without filtering by CustomerUser ID
-    $ordersByDepartment = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'CustomerDepartment.name'],
-        'joins' => [
-            [
-                'table' => 'customer_departments',
-                'alias' => 'CustomerDepartment',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Order.customer_departments_id = CustomerDepartment.id', // Remove CustomerUser
+        $ordersByDepartment = $this->OrderItem->find('all', [
+            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CustomerDepartment.name'],
+            'joins' => [
+                [
+                    'table' => 'customer_departments',
+                    'alias' => 'CustomerDepartment',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.customer_departments_id = CustomerDepartment.id',
+                    ],
                 ],
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            'Order.status_id' => 87,
-            // Removed CustomerUser ID condition
-        ],
-        'group' => ['CustomerDepartment.name'],
-    ]);
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
+            ],
+            'group' => ['CustomerDepartment.name'],
+        ]);
 
-    // Fetch total orders by cost center without filtering by CustomerUser ID
-    $ordersByCC = $this->OrderItem->find('all', [
-        'fields' => ['sum(Order.total) as total', 'CostCenter.name'],
-        'joins' => [
-            [
-                'table' => 'cost_center',
-                'alias' => 'CostCenter',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Order.customer_cost_center_id = CostCenter.id', // Remove CustomerUser
+        $ordersByCC = $this->OrderItem->find('all', [
+            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CostCenter.name'],
+            'joins' => [
+                [
+                    'table' => 'cost_center',
+                    'alias' => 'CostCenter',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'CustomerUser.customer_cost_center_id = CostCenter.id',
+                    ],
                 ],
             ],
-        ],
-        'conditions' => [
-            'Order.order_period_from >=' => date('Y-m-01'),
-            'Order.order_period_to <=' => date('Y-m-t'),
-            'Order.status_id' => 87,
-            // Removed CustomerUser ID condition
-        ],
-        'group' => ['CostCenter.name'],
-    ]);
+            'conditions' => [
+                'Order.order_period_from >=' => date('Y-m-01'),
+                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.status_id' => 87,
+            ],
+            'group' => ['CostCenter.name'],
+        ]);
 
-    // Prepare department data
-    $departmentHeader = [];
-    $departmentData = [];
-    foreach ($ordersByDepartment as $value) {
-        $departmentHeader[] = $value['CustomerDepartment']['name'];
-        $departmentData[] = (float) $value[0]['total'];
+        $departmentHeader = [];
+        $departmentData = [];
+        foreach ($ordersByDepartment as $value) {
+            $departmentHeader[] = $value['CustomerDepartment']['name'];
+            $departmentData[] = $value[0]['total'];
+        }
+
+        $ccHeader = [];
+        $ccData = [];
+        foreach ($ordersByCC as $value) {
+            $ccHeader[] = $value['CostCenter']['name'];
+            $ccData[] = $value[0]['total'];
+        }
+
+        $result = [
+            'department' => [
+                'header' => $departmentHeader,
+                'data' => $departmentData,
+            ],
+            'costCenter' => [
+                'header' => $ccHeader,
+                'data' => $ccData,
+            ],
+        ];
+
+        echo json_encode($result);
     }
-
-    // Prepare cost center data
-    $ccHeader = [];
-    $ccData = [];
-    foreach ($ordersByCC as $value) {
-        $ccHeader[] = $value['CostCenter']['name'];
-        $ccData[] = (float) $value[0]['total'];
-    }
-
-    // Prepare the final result
-    $result = [
-        'department' => [
-            'header' => $departmentHeader,
-            'data' => $departmentData,
-        ],
-        'costCenter' => [
-            'header' => $ccHeader,
-            'data' => $ccData,
-        ],
-    ];
-
-    echo json_encode($result);
-}
 
 
     
