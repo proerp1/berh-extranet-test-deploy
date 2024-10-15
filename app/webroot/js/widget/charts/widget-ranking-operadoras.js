@@ -138,7 +138,7 @@ if (typeof module !== 'undefined') {
 KTUtil.onDOMContentLoaded(function() {
     $.ajax({
         type: "GET",
-        url: base_url + '/dashboard/getRankingOperadoras',
+        url: base_url + '/financeiro_report/getRankingOperadoras',
         // data: "data",
         dataType: "json",
         success: function(response) {

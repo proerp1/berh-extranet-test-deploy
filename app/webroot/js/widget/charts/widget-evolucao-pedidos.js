@@ -291,7 +291,7 @@ if (typeof module !== "undefined") {
 KTUtil.onDOMContentLoaded(function () {
   $.ajax({
     type: "GET",
-    url: base_url + '/dashboard/getEvolucaoPedidos',
+    url: base_url + '/financeiro_report/getEvolucaoPedidos',
     // data: "data",
     dataType: "json",
     success: function (response) {
