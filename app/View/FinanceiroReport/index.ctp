@@ -32,9 +32,9 @@
                 <div class="col-3">
                     <label class="form-label fs-5 fw-bold mb-3">Data:</label>
                     <div class="input-group input-daterange" id="datepicker">
-                        <input class="form-control" id="de" name="de" value="<?php echo isset($_GET["de"]) ? $_GET["de"] : ""; ?>" autocomplete="off">
+                        <input class="form-control" id="de" name="de" value="<?php echo isset($_GET["de"]) ? $_GET["de"] : date('01/m/Y'); ?>" autocomplete="off">
                         <span class="input-group-text" style="padding: 5px;"> até </span>
-                        <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>" autocomplete="off">
+                        <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : date('t/m/Y'); ?>" autocomplete="off">
                     </div>
                 </div>
                 <div class="col-2 d-flex align-items-end">

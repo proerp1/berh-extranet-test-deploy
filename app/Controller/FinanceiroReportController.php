@@ -16,8 +16,8 @@ class FinanceiroReportController extends AppController
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Principal';
 
-        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
-        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+        $get_de = !empty($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = !empty($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
     
         $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
         $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
@@ -53,8 +53,8 @@ class FinanceiroReportController extends AppController
     {
         $this->autoRender = false;
 
-        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
-        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+        $get_de = !empty($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = !empty($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
     
         $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
         $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
@@ -108,8 +108,8 @@ class FinanceiroReportController extends AppController
     {
         $this->autoRender = false;
 
-        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
-        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+        $get_de = !empty($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = !empty($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
     
         $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
         $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
