@@ -139,7 +139,10 @@ KTUtil.onDOMContentLoaded(function() {
     $.ajax({
         type: "GET",
         url: base_url + '/financeiro_report/getRankingOperadoras',
-        // data: "data",
+        data: {
+            de: $("#de").val(),
+            ate: $("#ate").val()
+        },
         dataType: "json",
         success: function(response) {
             KTChartsWidget6.init(response);

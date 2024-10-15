@@ -25,6 +25,26 @@
     }
 </style>
 
+<form action="" role="form" id="busca" autocomplete="off">
+    <div class="card mb-xl-10">
+        <div class="card-body">
+            <div class="row g-5 g-xl-10">
+                <div class="col-3">
+                    <label class="form-label fs-5 fw-bold mb-3">Data:</label>
+                    <div class="input-group input-daterange" id="datepicker">
+                        <input class="form-control" id="de" name="de" value="<?php echo isset($_GET["de"]) ? $_GET["de"] : ""; ?>" autocomplete="off">
+                        <span class="input-group-text" style="padding: 5px;"> até </span>
+                        <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 <div class="row g-5 g-xl-10 mb-xl-10">
     <div class="col-xl-4 mb-5 mb-xl-0">
         <div class="card card-flush h-xl-100">

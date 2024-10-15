@@ -16,11 +16,17 @@ class FinanceiroReportController extends AppController
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Principal';
 
+        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+    
+        $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+        $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+
         $totalReceived = $this->Order->find('all', [
             'conditions' => [
                 'Order.status_id' => 87,
-                'Order.order_period_from >=' => date('Y-m-01'),
-                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.order_period_from >= ?' => [$de],
+                'Order.order_period_to <= ?' => [$ate],
             ],
             'fields' => ['sum(Order.total) as total'],
         ]);
@@ -31,8 +37,8 @@ class FinanceiroReportController extends AppController
             'contain' => ['Order'],
             'conditions' => [
                 'Order.status_id' => 87,
-                'Order.order_period_from >=' => date('Y-m-01'),
-                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.order_period_from >= ?' => [$de],
+                'Order.order_period_to <= ?' => [$ate],
                 'OrderBalance.tipo' => 1
             ],
             'fields' => ['sum(OrderBalance.total) as total'],
@@ -43,81 +49,15 @@ class FinanceiroReportController extends AppController
         $this->set(compact('breadcrumb', 'action', 'totalReceived', 'totalDiscount', 'totalReceivedRaw', 'totalDiscountRaw'));
     }
 
-    public function getRadarDash()
-    {
-        $this->autoRender = false;
-
-        $ordersByDepartment = $this->OrderItem->find('all', [
-            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CustomerDepartment.name'],
-            'joins' => [
-                [
-                    'table' => 'customer_departments',
-                    'alias' => 'CustomerDepartment',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'CustomerUser.customer_departments_id = CustomerDepartment.id',
-                    ],
-                ],
-            ],
-            'conditions' => [
-                'Order.order_period_from >=' => date('Y-m-01'),
-                'Order.order_period_to <=' => date('Y-m-t'),
-                'Order.status_id' => 87,
-            ],
-            'group' => ['CustomerDepartment.name'],
-        ]);
-
-        $ordersByCC = $this->OrderItem->find('all', [
-            'fields' => ['count(DISTINCT CustomerUser.id) as total', 'CostCenter.name'],
-            'joins' => [
-                [
-                    'table' => 'cost_center',
-                    'alias' => 'CostCenter',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'CustomerUser.customer_cost_center_id = CostCenter.id',
-                    ],
-                ],
-            ],
-            'conditions' => [
-                'Order.order_period_from >=' => date('Y-m-01'),
-                'Order.order_period_to <=' => date('Y-m-t'),
-                'Order.status_id' => 87,
-            ],
-            'group' => ['CostCenter.name'],
-        ]);
-
-        $departmentHeader = [];
-        $departmentData = [];
-        foreach ($ordersByDepartment as $value) {
-            $departmentHeader[] = $value['CustomerDepartment']['name'];
-            $departmentData[] = $value[0]['total'];
-        }
-
-        $ccHeader = [];
-        $ccData = [];
-        foreach ($ordersByCC as $value) {
-            $ccHeader[] = $value['CostCenter']['name'];
-            $ccData[] = $value[0]['total'];
-        }
-
-        $result = [
-            'department' => [
-                'header' => $departmentHeader,
-                'data' => $departmentData,
-            ],
-            'costCenter' => [
-                'header' => $ccHeader,
-                'data' => $ccData,
-            ],
-        ];
-
-        echo json_encode($result);
-    }
-
     public function getRankingOperadoras()
     {
         $this->autoRender = false;
+
+        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+    
+        $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+        $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
         $rankingOperadoras = $this->OrderItem->find('all', [
             'fields' => ['sum(Order.total) as total', 'Supplier.nome_fantasia'],
@@ -140,8 +80,8 @@ class FinanceiroReportController extends AppController
                 ],
             ],
             'conditions' => [
-                'Order.order_period_from >=' => date('Y-m-01'),
-                'Order.order_period_to <=' => date('Y-m-t'),
+                'Order.order_period_from >= ?' => [$de],
+                'Order.order_period_to <= ?' => [$ate],
                 'Order.status_id' => 87,
             ],
             'group' => ['Supplier.nome_fantasia'],
@@ -168,6 +108,12 @@ class FinanceiroReportController extends AppController
     {
         $this->autoRender = false;
 
+        $get_de = isset($_GET['de']) ? $_GET['de'] : date('01/m/Y');
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : date('t/m/Y');
+    
+        $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+        $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+
         $this->Order->unbindModel([
             'hasMany' => ['OrderItem'],
         ]);
@@ -179,8 +125,8 @@ class FinanceiroReportController extends AppController
                 "DATE_FORMAT(Order.order_period_from, '%m/%Y') as mes",
             ],
             'conditions' => [
-                'Order.order_period_from >=' => date('Y-01-01'),
-                'Order.order_period_to <=' => date('Y-12-31'),
+                'Order.order_period_from >= ?' => [$de],
+                'Order.order_period_to <= ?' => [$ate],
                 'Order.status_id' => 87,
             ],
             'group' => ["DATE_FORMAT(Order.order_period_from, '%m/%Y')"],
