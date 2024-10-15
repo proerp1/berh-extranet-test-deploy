@@ -2455,7 +2455,7 @@ $itens = $this->OrderItem->find('all', [
         $order = $this->Order->findById($id);
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 100,
+            'limit' => 200,
             'order' => ['CustomerUser.name' => 'asc'],
             'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'Supplier.*'],
             'joins' => [
@@ -2485,6 +2485,12 @@ $itens = $this->OrderItem->find('all', [
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 'Supplier.nome_fantasia LIKE' => "%" . $_GET['q'] . "%", 'OrderItem.status_processamento LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
+        if (isset($_GET['sup']) and $_GET['sup'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $action = 'Compras';
@@ -2498,7 +2504,6 @@ $itens = $this->OrderItem->find('all', [
         $this->autoRender = false;
 
         $is_multiple = true;
-        $orderId = $this->request->data['orderId'];
         $itemOrderId = $this->request->data['orderItemIds'];
         $statusProcess = $this->request->data['v_status_processamento'];
 
@@ -2506,7 +2511,7 @@ $itens = $this->OrderItem->find('all', [
             $orderItem = $this->OrderItem->findById($value);
 
             $dados_log = [
-                "old_value" => $orderItem['OrderItem']['status_processamento'],
+                "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',
                 "new_value" => $statusProcess,
                 "route" => "orders/compras",
                 "log_action" => "Alterou",
@@ -2532,7 +2537,7 @@ $itens = $this->OrderItem->find('all', [
 
         $this->OrderItem->updateAll(
             ['OrderItem.status_processamento' => "'".$statusProcess."'", 'OrderItem.updated' => "'".date('Y-m-d H:i:s')."'", 'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")],
-            ['OrderItem.id' => $itemOrderId, 'OrderItem.order_id' => $orderId]
+            ['OrderItem.id' => $itemOrderId]
         );
 
         $this->OrderItem->bindModel(
