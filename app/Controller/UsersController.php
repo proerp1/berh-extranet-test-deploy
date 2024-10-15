@@ -147,7 +147,7 @@ class UsersController extends AppController
         $dados = ['viewVars' => ['nome'  => $data['User']['name'],
             'email' => $data['User']['username'],
             'senha' => $data['User']['password'],
-            'link'  => 'https://admin.berh.com.br/'
+            'link'  => 'https://sig.berh.com.br/'
         ],
             'template' => 'reenviar_senha',
             'subject'  => 'Reenviar Senha',
