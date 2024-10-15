@@ -78,7 +78,7 @@
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
-                                <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                                <button type="submit" class="btn btn-primary filter" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
                             </div>
                         </div>
                     </div>
@@ -172,8 +172,43 @@
             }
         });
     }
+
+    function fnc_dt_range() {
+        $('.filter').attr('disabled', false);
+
+        var dataInicialStr = $('#de').val();
+        var dataFinalStr = $('#ate').val();
+
+        var regexData = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+        var matchInicial = dataInicialStr.match(regexData);
+        var matchFinal = dataFinalStr.match(regexData);
+
+        if (matchInicial && matchFinal) {
+            var dataInicial = new Date(matchInicial[3], matchInicial[2] - 1, matchInicial[1]);
+            var dataFinal = new Date(matchFinal[3], matchFinal[2] - 1, matchFinal[1]);
+
+            var diff = (dataFinal - dataInicial);
+            var diffDays = (diff / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 365 || diffDays < 0) {
+                alert('A data final deve ser no máximo 1 ano após a data inicial.');
+                $('.filter').attr('disabled', true);
+
+                return false;
+            }
+        } else {
+            alert('Formato de data inválido. Use o formato dd/mm/yyyy.');
+            $('.filter').attr('disabled', true);
+
+            return false;
+        }
+    }
+
     $(document).ready(function() {
         trigger_date_change();
+
+        $(".input-daterange").datepicker({format: 'dd/mm/yyyy', multidate: false, weekStart: 1, autoclose: true, language: "pt-BR", todayHighlight: true, toggleActive: true, changeMonth: true, changeYear: true});
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
@@ -187,10 +222,12 @@
         });
 
         $('#de').on('change', function() {
+            fnc_dt_range();
             trigger_date_change();
         });
         
         $('#ate').on('change', function() {
+            fnc_dt_range();
             trigger_date_change();
         });
 
