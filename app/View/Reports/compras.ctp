@@ -18,6 +18,11 @@
                         Filtro
                     </button>
 
+                    <a href="#" id="alterar_sel" class="btn btn-primary me-3">
+                        <i class="fas fa-edit"></i>
+                        Alterar Status Processamento
+                    </a>
+
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
@@ -75,6 +80,9 @@
             <?php echo $this->element("table"); ?>
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
+                    <th class="ps-4 w-80px min-w-80px rounded-start">
+                        <input type="checkbox" class="check_all">
+                    </th>
                     <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Código</th>
                     <th>Data de criação</th>
@@ -111,6 +119,9 @@
                         $total += $items[$i]["OrderItem"]["total_not_formated"];
                     ?>
                         <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
+                            <td class="fw-bold fs-7 ps-4">
+                                <input type="checkbox" name="alt_linha" class="check_individual" id="">
+                            </td>
                             <td class="fw-bold fs-7 ps-4">
                                 <span class='badge <?php echo $items[$i]["Status"]["label"] ?>'>
                                     <?php echo $items[$i]["Status"]["name"] ?>
@@ -154,6 +165,46 @@
         <?php } ?>
     </div>
 </div>
+
+<div class="modal fade" tabindex="-1" id="modal_alterar_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Alterar Status Processamento</p>
+
+                <div class="row" style="margin-top:20px;">
+                    <label class="mb-2">Status Processamento</label>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-check-custom form-check-solid">
+                                <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
+                                    <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                    <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                    <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                    <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                    <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="alterar_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     function trigger_change() {
@@ -215,6 +266,53 @@
 
         $('#tp').on('change', function() {
             $("#busca").submit();
+        });
+
+        $('#alterar_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="alt_linha"]:checked').length > 0) {
+                $('#modal_alterar_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a ser alterado.');
+            }
+        });
+
+        $('#alterar_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const v_status_processamento = $('#status_processamento').val();
+            const checkboxes = $('input[name="alt_linha"]:checked');
+            const orderItemIds = [];
+
+            checkboxes.each(function() {
+                orderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            if (orderItemIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/orders/alter_item_status_processamento',
+                    data: {
+                        orderItemIds,
+                        v_status_processamento
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".check_all").on("change", function(){
+            if ($(this).is(':checked')) {
+                $(".check_individual").prop('checked', true);
+            } else {
+                $(".check_individual").prop('checked', false);
+            }
         });
     });
 </script>

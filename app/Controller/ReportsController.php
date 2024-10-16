@@ -866,7 +866,7 @@ class ReportsController extends AppController
         $this->Permission->check(70, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 100,
+            'limit' => 200,
             'order' => ['Order.id' => 'desc'],
             'fields' => ['OrderItem.*', 
                             'CustomerUserItinerary.*', 
@@ -972,6 +972,7 @@ class ReportsController extends AppController
         $suppliers = $this->OrderItem->find('all',
             [
                 'fields' => ['Supplier.id', 'Supplier.nome_fantasia'],
+                'order' => ['Supplier.nome_fantasia'],
                 'conditions' => $cond,
                 'group' => ['Supplier.id'],
                 'recursive' => -1,
@@ -1001,6 +1002,7 @@ class ReportsController extends AppController
         $customers = $this->OrderItem->find('all',
             [
                 'fields' => ['Customer.id', 'Customer.nome_primario'],
+                'order' => ['Customer.nome_primario'],
                 'conditions' => $cond,
                 'group' => ['Customer.id'],
                 'recursive' => -1,

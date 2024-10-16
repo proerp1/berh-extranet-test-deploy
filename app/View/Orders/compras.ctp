@@ -3,20 +3,9 @@
 <div class="row">
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
-            <div class="row">
-                <div class="col-6">
-                    <h3>Itens</h3>
-                </div>
-                <div class="col-6">
-                    <a href="#" id="alterar_sel" class="btn btn-sm btn-primary me-3 mb-3" style="float:right">
-                        <i class="fas fa-edit"></i>
-                        Alterar Status Processamento
-                    </a>
-                </div>
-            </div>
             <div class="table-responsive" id="search_form">
-                <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "compras/" . $id . '#search_form')); ?>" role="form" id="busca" autocomplete="off">
-                    <div class="card-header border-0 pt-6 pb-6" style="padding-left: 0px;">
+                <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "compras/" . $id)); ?>" role="form" id="busca" autocomplete="off">
+                    <div class="card-header border-0 pt-6 pb-6">
                         <div class="card-title">
                             <div class="row">
                                 <div class="col d-flex align-items-center">
@@ -24,6 +13,41 @@
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-toolbar">
+                            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                                <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    <i class="fas fa-filter"></i>
+                                    Filtro
+                                </button>
+
+                                <a href="#" id="alterar_sel" class="btn btn-primary me-3">
+                                    <i class="fas fa-edit"></i>
+                                    Alterar Status Processamento
+                                </a>
+
+                                <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
+                                    <div class="px-7 py-5">
+                                        <div class="fs-4 text-dark fw-bolder">Opções</div>
+                                    </div>
+                                    <div class="separator border-gray-200"></div>
+
+                                    <div class="px-7 py-5">
+
+                                        <div class="mb-10">
+                                            <label class="form-label fs-5 fw-bold mb-3">Fornecedores:</label>
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="sup" id="sup">
+                                                <option value="">Selecione</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
+                                            <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -192,8 +216,40 @@
     </div>
 </div>
 
+
 <script>
+    function trigger_change() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const curr_sup = urlParams.get('sup');
+
+        $.ajax({
+            url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getSupplierAndCustomer")); ?>',
+            type: 'POST',
+            data: { },
+            success: function(data) {
+
+                var obj = JSON.parse(data);
+                var html = '<option value="">Selecione</option>';
+                var sel_sup = '';
+                for (var i = 0; i < obj.suppliers.length; i++) {
+                    if (obj.suppliers[i].Supplier.id == curr_sup) {
+                        sel_sup = 'selected';
+                    } else {
+                        sel_sup = '';
+                    }
+                    html += '<option value="' + obj.suppliers[i].Supplier.id + '" '+sel_sup+'>' + obj.suppliers[i].Supplier.nome_fantasia + '</option>';
+                }
+                $("#sup").html(html);
+
+                // reload select2
+                $("#sup").select2();
+            }
+        });
+    }
     $(document).ready(function() {
+        trigger_change();
+
         $('#alterar_sel').on('click', function(e) {
             e.preventDefault();
 
@@ -207,7 +263,6 @@
         $('#alterar_confirm').on('click', function(e) {
             e.preventDefault();
 
-            const orderId = <?php echo $id; ?>;
             const v_status_processamento = $('#status_processamento').val();
             const checkboxes = $('input[name="alt_linha"]:checked');
             const orderItemIds = [];
@@ -222,7 +277,6 @@
                     url: base_url+'/orders/alter_item_status_processamento',
                     data: {
                         orderItemIds,
-                        orderId,
                         v_status_processamento
                     },
                     dataType: 'json',
