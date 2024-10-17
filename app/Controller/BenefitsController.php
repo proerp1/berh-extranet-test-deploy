@@ -16,7 +16,7 @@ class BenefitsController extends AppController
 
     public function index()
     {
-        $this->Permission->check(16, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(71, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => [], "or" => []];
@@ -61,7 +61,7 @@ class BenefitsController extends AppController
     
     public function add()
     {
-        $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->Benefit->create();
             if ($this->Benefit->validates()) {
@@ -90,7 +90,7 @@ class BenefitsController extends AppController
 
     public function edit($id = null)
     {
-        $this->Permission->check(16, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Benefit->id = $id;
         $antigo = $this->Benefit->read();
         // debug($antigo['Benefit']['unit_price']);die;
@@ -151,7 +151,7 @@ class BenefitsController extends AppController
 
     public function delete($id)
     {
-        $this->Permission->check(16, 'excluir') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(71, 'excluir') ? '' : $this->redirect('/not_allowed');
         $this->Benefit->id = $id;
 
         $data = ['Benefit' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
@@ -164,7 +164,7 @@ class BenefitsController extends AppController
 
     public function log_status($id)
     {
-        $this->Permission->check(16, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(71, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['LogBenefits.id' => $id], 'or' => []];
