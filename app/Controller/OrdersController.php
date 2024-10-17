@@ -221,11 +221,8 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
-            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
-
-            $obs_notafiscal = "";
-            if ($customer['Customer']['observacao_notafiscal']) {
-                $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
+            if ($this->request->data['clone_order'] == 1) {
+                $this->cloneOrder();
             }
 
             $benefit_type_persist = 0;
@@ -235,10 +232,6 @@ class OrdersController extends AppController
                 if($benefit_type == -1){
                     $benefit_type = [1,2];
                 }
-            }
-
-            if ($this->request->data['clone_order'] == 1) {
-                $this->cloneOrder();
             }
 
             $proposal = $this->Proposal->find('first', [
@@ -283,6 +276,13 @@ class OrdersController extends AppController
                     $this->Flash->set(__('Nenhum itinerário encontrado para este cliente.'), ['params' => ['class' => "alert alert-danger"]]);
                     $this->redirect(['action' => 'index']);
                 }
+            }
+
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+
+            $obs_notafiscal = "";
+            if ($customer['Customer']['observacao_notafiscal']) {
+                $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
             }
 
             $orderData = [
@@ -339,6 +339,7 @@ class OrdersController extends AppController
 
         $orderData = [
             'customer_id' => $lastOrder['Order']['customer_id'],
+            'economic_group_id' => $lastOrder['Order']['economic_group_id'],
             'working_days' => $working_days,
             'user_creator_id' => CakeSession::read("Auth.User.id"),
             'order_period_from' => $period_from,
@@ -632,11 +633,6 @@ class OrdersController extends AppController
 
         $gerarNota = $this->Permission->check(66, "leitura");
 
-        $economic_group = null;
-        if ($order['Order']['economic_group_id'] != null) {
-            $economic_group = $this->EconomicGroup->findById($order['Order']['economic_group_id']);
-        }
-
         $benefit_type_desc = 'Todos';
         if ($order['Order']['benefit_type'] != 0) {
             if($order['Order']['benefit_type'] == -1){
@@ -666,7 +662,7 @@ class OrdersController extends AppController
 
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'economic_group', 'benefit_type_desc', 'order_balances_total'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total'));
 
         $this->render("add");
     }

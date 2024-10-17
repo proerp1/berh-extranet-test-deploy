@@ -60,6 +60,7 @@ $(document).ready(function() {
         const periodFromValue = $('#period_from').val();
         const periodToValue = $('#period_to').val();
         const workingDaysValue = $('#working_days').val();
+        const cloneOrder = $('.clone_order:checked').val();
 
         $('#message_wd').val('');
         $('#message_classification').val('');
@@ -71,7 +72,7 @@ $(document).ready(function() {
             return; // Evita a execução adicional
         }
 
-        if (workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
+        if (!cloneOrder && workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
             $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
             event.preventDefault();
             return; // Evita a execução adicional
@@ -116,10 +117,12 @@ $(document).ready(function() {
         var val = $('.clone_order:checked').val();
 
         if (val == 1) {
+            $('#working_days').attr('required', false);
             $("#clone_order_select").attr('required', true);
             $("#clone_order_select").parent().parent().removeClass('d-none');
             $(".div-new-order").addClass('d-none');
         } else {
+            $('#working_days').attr('required', true);
             $("#clone_order_select").attr('required', false);
             $("#clone_order_select").parent().parent().addClass('d-none');
             $(".div-new-order").removeClass('d-none');

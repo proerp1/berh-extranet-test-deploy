@@ -118,7 +118,7 @@
                                             Grupo Econômico
                                         </div>
                                     </td>
-                                    <td class="fw-bolder text-end"><?php echo $economic_group['EconomicGroup']['name']; ?></td>
+                                    <td class="fw-bolder text-end"><?php echo $order['EconomicGroup']['name']; ?></td>
                                 </tr>
                             <?php } ?>
                             <tr>
