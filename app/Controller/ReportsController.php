@@ -669,8 +669,6 @@ class ReportsController extends AppController
 
     public function robos($menu)
     {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-
         $url_cookie = 'https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841';
 
         $url_iframe = "";
