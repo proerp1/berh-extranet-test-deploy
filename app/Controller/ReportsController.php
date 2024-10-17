@@ -675,16 +675,22 @@ class ReportsController extends AppController
 
         $url_iframe = "";
         if ($menu == 'roteirizacao') {
+	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/roteirizacao";
         } elseif ($menu == 'extratos') {
+	    $this->Permission->check(72, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/extratos";
         } elseif ($menu == 'consulta_transurc') {
+	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/transurc";
         } elseif ($menu == 'consulta_sptrans') {
+	    $this->Permission->check(73, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/sptrans";
         } elseif ($menu == 'captura_boletos') {
+            $this->Permission->check(74, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/captura_boletos";
         } elseif ($menu == 'conversor_layouts') {
+	    $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_layouts";
         }
 
