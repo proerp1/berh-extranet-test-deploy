@@ -695,7 +695,8 @@ class OrdersController extends AppController
 
         $order = $this->Order->find('first', [
             'contain' => ['Customer'],
-            'conditions' => ['Order.id' => $id]
+            'conditions' => ['Order.id' => $id],
+            'recursive' => -1
         ]);
 
         $bankTicket = $this->BankTicket->find('first', [

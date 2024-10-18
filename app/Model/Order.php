@@ -1,4 +1,5 @@
 <?php
+App::uses('CakeEmail', 'Network/Email');
 class Order extends AppModel
 {
     public $name = 'Order';
@@ -233,7 +234,83 @@ class Order extends AppModel
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
+        $this->transactionNotifications($this->data);
+
         return true;
+    }
+
+    public function transactionNotifications($data)
+    {
+        if ($data['Status']['id'] != $data['Order']['status_id']) {
+            $status = $this->Status->find('first', [
+                'conditions' => [
+                    'Status.id' => $data['Order']['status_id']
+                ],
+                'recursive' => -1
+            ]);
+
+            $emails['guilherme_gralho@hotmail.com'] = 'gui';
+
+            $dados = [
+                'viewVars' => [
+                    'tos' => $emails,
+                    'mensagem' => 'Seu pedido '.$data['Order']['id'].' foi atualizado para '.$status['Status']['name']
+                ],
+                'template' => 'email_transacional',
+                'layout' => 'default',
+                'subject' => 'Atualização de pedido',
+                'config' => 'default',
+            ];
+
+            $this->sendMail($dados);
+        }
+    }
+
+    public function sendMail($dados)
+    {
+        $key = Configure::read('sendgridKey');
+        $email = new \SendGrid\Mail\Mail(); 
+        $email->setFrom("noreply@berh.com.br", "BeRH");
+        $email->setReplyTo("operacao@berh.com.br", "BeRH");
+        $email->setSubject($dados['subject']);
+
+        $email->addTos($dados['viewVars']['tos']);
+
+        $html = $this->generateHTML($dados);
+
+        $email->addContent("text/html", $html);
+        $sendgrid = new \SendGrid($key);
+        try
+        {
+            $response = $sendgrid->send($email);
+
+            if ($response->statusCode() != '202') {
+                return false;    
+            }
+            
+            return true;
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+    }
+
+    private function generateHTML($dados){
+        $ce = new CakeEmail();
+        $ce->viewVars($dados['viewVars']);
+        if (isset($dados['layout'])) {
+            $ce->template($dados['template'], $dados['layout']);
+        } else {
+            $ce->template($dados['template']);
+        }
+
+        $ce->emailFormat('html');
+
+        // Funcao customizada, se atualizara o cakephp, verificar se ainda funciona
+        $ce->customRender();
+
+        return $ce->message('html');
     }
 
     public function reProcessAmounts()

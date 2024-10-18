@@ -1,0 +1,2 @@
+<p><?php echo $mensagem ?></p>
+<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, fugiat asperiores provident necessitatibus nisi voluptas quod iusto libero iste fuga, ullam obcaecati consequuntur omnis beatae. Nostrum culpa laborum, aspernatur. Est.</p>
