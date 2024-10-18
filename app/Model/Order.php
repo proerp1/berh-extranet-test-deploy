@@ -249,7 +249,11 @@ class Order extends AppModel
                 'recursive' => -1
             ]);
 
-            $emails['guilherme_gralho@hotmail.com'] = 'gui';
+            $emails[$data['Customer']['email']] = $data['Customer']['nome_secundario'];
+
+            if ($data['Customer']['email1'] != '') {
+                $emails[$data['Customer']['email1']] = $data['Customer']['nome_primario'];
+            }
 
             $dados = [
                 'viewVars' => [
