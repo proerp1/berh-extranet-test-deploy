@@ -234,7 +234,7 @@ class Order extends AppModel
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
-        $this->transactionNotifications($this->data[$this->alias]);
+        // $this->transactionNotifications($this->data[$this->alias]);
 
         return true;
     }
@@ -258,7 +258,7 @@ class Order extends AppModel
                 ]);
                 $customer = $this->Customer->find('first', [
                     'conditions' => [
-                        'Customer.id' => $data['customer_id']
+                        'Customer.id' => $old['Order']['customer_id']
                     ],
                     'recursive' => -1
                 ]);
