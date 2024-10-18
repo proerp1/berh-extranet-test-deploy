@@ -234,39 +234,54 @@ class Order extends AppModel
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
-        $this->transactionNotifications($this->data);
+        $this->transactionNotifications($this->data[$this->alias]);
 
         return true;
     }
 
     public function transactionNotifications($data)
     {
-        if ($data['Status']['id'] != $data['Order']['status_id']) {
-            $status = $this->Status->find('first', [
+        if (isset($data['id']) && isset($data['status_id'])) {
+            $old = $this->find('first', [
                 'conditions' => [
-                    'Status.id' => $data['Order']['status_id']
+                    'Order.id' => $data['id']
                 ],
                 'recursive' => -1
             ]);
 
-            $emails[$data['Customer']['email']] = $data['Customer']['nome_secundario'];
+            if ($old['Order']['status_id'] != $data['status_id']) {
+                $status = $this->Status->find('first', [
+                    'conditions' => [
+                        'Status.id' => $data['status_id']
+                    ],
+                    'recursive' => -1
+                ]);
+                $customer = $this->Customer->find('first', [
+                    'conditions' => [
+                        'Customer.id' => $data['customer_id']
+                    ],
+                    'recursive' => -1
+                ]);
 
-            if ($data['Customer']['email1'] != '') {
-                $emails[$data['Customer']['email1']] = $data['Customer']['nome_primario'];
+                $emails[$customer['Customer']['email']] = $customer['Customer']['nome_secundario'];
+
+                if ($customer['Customer']['email1'] != '') {
+                    $emails[$customer['Customer']['email1']] = $customer['Customer']['nome_primario'];
+                }
+
+                $dados = [
+                    'viewVars' => [
+                        'tos' => $emails,
+                        'mensagem' => 'Seu pedido '.$data['id'].' foi atualizado para '.$status['Status']['name']
+                    ],
+                    'template' => 'email_transacional',
+                    'layout' => 'default',
+                    'subject' => 'Atualização de pedido',
+                    'config' => 'default',
+                ];
+
+                $this->sendMail($dados);
             }
-
-            $dados = [
-                'viewVars' => [
-                    'tos' => $emails,
-                    'mensagem' => 'Seu pedido '.$data['Order']['id'].' foi atualizado para '.$status['Status']['name']
-                ],
-                'template' => 'email_transacional',
-                'layout' => 'default',
-                'subject' => 'Atualização de pedido',
-                'config' => 'default',
-            ];
-
-            $this->sendMail($dados);
         }
     }
 
