@@ -199,6 +199,7 @@ class CustomerUser extends AppModel
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                             AND c.data_cancel = '1901-01-01 00:00:00' 
                             AND u.data_cancel = '1901-01-01 00:00:00' 
+                            AND i.data_cancel = '1901-01-01 00:00:00' 
                     GROUP BY u.id 
                     ORDER BY 1 
                     ";
