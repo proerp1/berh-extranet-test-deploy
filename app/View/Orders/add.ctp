@@ -920,7 +920,7 @@
 
                 <div class="modal-footer d-flex justify-content-between">
                     <div>
-                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Básico</a>
+                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Simplificado</a>
                         <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloCompletoImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Completo</a>
                     </div>
                     <div>
