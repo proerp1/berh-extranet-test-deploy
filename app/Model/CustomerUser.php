@@ -186,7 +186,7 @@ class CustomerUser extends AppModel
 
     public function find_pedido_beneficiarios_info($orderID)
     {
-        $sql = "SELECT u.name, u.cpf, k.name, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_id, t.description 
+        $sql = "SELECT u.name, u.cpf, k.name, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_id, t.description, SUM(i.total) as total
                     FROM orders o 
                         INNER JOIN order_items i ON i.order_id = o.id 
                         INNER JOIN customers c ON c.id = o.customer_id 
