@@ -269,10 +269,23 @@ class Order extends AppModel
                     $emails[$customer['Customer']['email1']] = $customer['Customer']['nome_primario'];
                 }
 
+                if ($data['status_id'] == 83) {
+                    $mensagem = 'Seu pedido foi gerado com sucesso em: '.date('d/m/Y \à\s H:i\h\s', strtotime($old['Order']['created_nao_formatado']));
+                } else if ($data['status_id'] == 84) {
+                    $emails['ti@berh.com.br'] = 'BERH';
+                    $mensagem = 'Seu boleto foi gerado e aguarda pagamento para avançar na liberação junto as operadoras. <br> '.date('d/m/Y \à\s H:i\h\s');
+                } else if ($data['status_id'] == 85) {
+                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido foi confirmado pagamento. A partir de agora iniciaremos o processamento do seu pedido junto as Operadoras.';
+                } else if ($data['status_id'] == 86) {
+                    $mensagem = 'Aguarde próxima atualização de Status.';
+                } else if ($data['status_id'] == 87) {
+                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido teve o processo concluído nas Operadoras e os Créditos foram disponibilizados conforme programação.';
+                }
+
                 $dados = [
                     'viewVars' => [
                         'tos' => $emails,
-                        'mensagem' => 'Seu pedido '.$data['id'].' foi atualizado para '.$status['Status']['name']
+                        'mensagem' => $mensagem
                     ],
                     'template' => 'email_transacional',
                     'layout' => 'default',

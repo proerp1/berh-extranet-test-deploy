@@ -316,7 +316,7 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'is_partial' => $is_partial,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s'),
+                'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
@@ -540,6 +540,7 @@ class OrdersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
+            $order['Order']['status_id'] = 87;
             $order['Order']['observation'] = $this->request->data['Order']['observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
