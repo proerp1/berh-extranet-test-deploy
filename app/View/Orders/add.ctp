@@ -106,7 +106,7 @@
                             <tr>
                                 <td class="text-muted">
                                     <div class="d-flex align-items-center">
-                                       N° Pedido
+                                        N° Pedido
                                     </div>
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $order['Order']['id']; ?></td>
@@ -190,7 +190,7 @@
                             <label class="form-label">Data Finalização</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ".($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
+                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 " . ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
                             </div>
                         </div>
 
@@ -219,11 +219,11 @@
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                     Relatórios e Ações
                                 </button>
-                                
-                               
+
+
                                 <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
                                     <div class="d-flex flex-column justify-content-start">
-                                        
+
                                         <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
                                             <i class="fas fa-download"></i> Benefícios
                                         </a>
@@ -242,7 +242,7 @@
                                         <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
                                             <i class="fas fa-download"></i> Resumo
                                         </a>
-                                        
+
                                         <!-- Verificação de status para mostrar os botões adicionais -->
                                         <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
                                             <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
@@ -268,9 +268,9 @@
                                             </a>
                                         <?php } ?>
                                     </div>
-                                </div>                           
-                                
-                               
+                                </div>
+
+
                                 <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
                                     Salvar dados
                                 </button>
@@ -498,17 +498,17 @@
             <!--begin::Body-->
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
 
-                <?php 
-                    $total_economia = 0;
-                    $fee_economia = 0;
-                    $vl_economia = $order_balances_total[0][0]['total'];
+                <?php
+                $total_economia = 0;
+                $fee_economia = 0;
+                $vl_economia = $order_balances_total[0][0]['total'];
 
-                    if ($order['Order']['fee_saldo_not_formated'] != 0 and $vl_economia != 0) {
-                        $fee_economia = (($order['Order']['fee_saldo_not_formated'] / 100) * ($vl_economia));
-                    }
+                if ($order['Order']['fee_saldo_not_formated'] != 0 and $vl_economia != 0) {
+                    $fee_economia = (($order['Order']['fee_saldo_not_formated'] / 100) * ($vl_economia));
+                }
 
-                    $vl_economia = ($vl_economia - $fee_economia);
-                    $total_economia = ($vl_economia + $fee_economia);
+                $vl_economia = ($vl_economia - $fee_economia);
+                $total_economia = ($vl_economia + $fee_economia);
                 ?>
 
                 <!--begin::Section-->
@@ -566,7 +566,7 @@
                             Beneficiários em lote (CSV)
                         </a>
                         <?php if ($order['Order']['is_partial'] == 3) { ?>
-                            <a href="<?php echo $this->base.'/orders/baixar_beneficiarios/'.$id ;?>" class="btn btn-sm btn-primary me-3" style="float:right">
+                            <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
                                 <i class="fas fa-file-excel"></i>
                                 Baixar lista de Beneficiários - PIX
                             </a>
@@ -640,7 +640,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                    <td>Total</td>
+                        <td>Total</td>
                         <td colspan="5"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
@@ -710,7 +710,7 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                        <td>Total</td>
+                            <td>Total</td>
                             <td colspan="5"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
@@ -871,6 +871,27 @@
                 <input type="hidden" name="customer_id" value="<?php echo $order['Order']['customer_id']; ?>">
                 <input type="hidden" name="order_id" value="<?php echo $id; ?>">
                 <div class="modal-body">
+                    <div class="row" style="margin-bottom:20px;">
+                        <label class="mb-2">Tipo Importação</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[tipo_importacao]" value="2" id="tipoBeneficioChk1" checked="checked" />
+                                    <label class="form-check-label" for="tipoBeneficioChk1">
+                                        Simplicada
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" name="data[tipo_importacao]" value="1" id="tipoBeneficioChk2" />
+                                    <label class="form-check-label" for="tipoBeneficioChk2">
+                                        Completa
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <p>Enviar CSV com beneficiários a serem incluídos</p>
                     <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
 
@@ -897,11 +918,17 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" targe="_blank" download>Baixar Modelo</a>
-                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Sim</button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Básico</a>
+                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloCompletoImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Completo</a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Sim</button>
+                    </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -960,7 +987,7 @@
             if (newValue != '' && newValue != undefined && newValue != null) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
+                    url: base_url + '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
                     data: {
                         newValue,
                         orderItemId,
@@ -1000,7 +1027,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: base_url+'/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
+                url: base_url + '/orders/updateWorkingDays', // Adjust the URL to your CakePHP action
                 data: {
                     newValue,
                     orderItemId,
@@ -1028,7 +1055,7 @@
             if (orderItemId != '' && orderItemId != undefined && orderItemId != null) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/removeOrderItem', // Adjust the URL to your CakePHP action
+                    url: base_url + '/orders/removeOrderItem', // Adjust the URL to your CakePHP action
                     data: {
                         orderItemId,
                         userId
@@ -1045,7 +1072,7 @@
 
         $('#customer_user_id').select2({
             ajax: {
-                url: base_url+'/orders/listOfCustomerUsers',
+                url: base_url + '/orders/listOfCustomerUsers',
                 dataType: 'json',
                 data: function(params) {
                     var query = {
@@ -1062,7 +1089,7 @@
 
         $('#customer_user_id_iti').select2({
             ajax: {
-                url: base_url+'/orders/listOfCustomerUsers',
+                url: base_url + '/orders/listOfCustomerUsers',
                 dataType: 'json',
                 data: function(params) {
                     var query = {
@@ -1101,7 +1128,7 @@
             if (orderItemIds.length > 0) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/removeOrderItem',
+                    url: base_url + '/orders/removeOrderItem',
                     data: {
                         orderItemIds,
                         orderId
@@ -1116,7 +1143,7 @@
             }
         });
 
-        $(".check_all").on("change", function(){
+        $(".check_all").on("change", function() {
             if ($(this).is(':checked')) {
                 $(".check_individual").prop('checked', true);
             } else {
