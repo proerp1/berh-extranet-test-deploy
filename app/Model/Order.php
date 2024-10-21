@@ -312,7 +312,9 @@ class Order extends AppModel
         $email->setSubject($dados['subject']);
 
         $email->addTos($dados['viewVars']['tos']);
-        $email->addBccs($dados['viewVars']['bccs']);
+        if (!empty($dados['viewVars']['bccs'])) {
+            $email->addBccs($dados['viewVars']['bccs']);
+        }
 
         $html = $this->generateHTML($dados);
 
