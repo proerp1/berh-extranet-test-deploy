@@ -234,7 +234,7 @@ class Order extends AppModel
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
-        // $this->transactionNotifications($this->data[$this->alias]);
+        $this->transactionNotifications($this->data[$this->alias]);
 
         return true;
     }
