@@ -413,12 +413,12 @@
 
                 <div class="mb-7 col-2">
                     <label class="form-label">Qtde mínina de diária por cliente</label>
-                    <?php echo $this->Form->input('qtde_minina_diaria', ['type' => 'text', 'placeholder' => 'Qtde mínina de diária por cliente', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                    <?php echo $this->Form->input('qtde_minina_diaria', ['type' => 'text', 'placeholder' => 'Qtde mínina de diária por cliente', 'class' => 'form-control mb-3 mb-lg-0','default' => '2']); ?>
                 </div>
 
                 <div class="mb-7 col-2">
                     <label class="form-label">Tipos de GE</label>
-                    <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'GE pré pago', '2' => 'GE Pós pago', '3' => 'GE garantido'), "class" => "form-select mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'GE pré pago', '2' => 'GE Pós pago', '3' => 'GE garantido'), "class" => "form-select mb-3 mb-lg-0",'default' => '2'));  ?>
                 </div>
             </div>
 
