@@ -407,7 +407,7 @@
                     <label class="form-label">Margem de segurança</label>
                     <div class="input-group">
                         <span class="input-group-text">%</span>
-                        <?php echo $this->Form->input('porcentagem_margem_seguranca', ['type' => 'text', 'placeholder' => 'Margem de segurança', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>
+                        <?php echo $this->Form->input('porcentagem_margem_seguranca', ['type' => 'text', 'placeholder' => 'Margem de segurança', 'class' => 'form-control money_exchange mb-3 mb-lg-0','default' => '0']); ?>
                     </div>
                 </div>
 
