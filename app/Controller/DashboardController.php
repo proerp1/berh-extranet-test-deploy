@@ -15,10 +15,10 @@ class DashboardController extends AppController
         $this->Permission->check(4, 'leitura') ? '' : $this->redirect('/not_allowed');
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Principal';
-
+        /*
         if (CakeSession::read('Auth.User.is_seller')) {
             $this->redirect('/dashboard/comercial');
-        }
+        }*/
 
         $this->set(compact('breadcrumb', 'action'));
     }

@@ -316,7 +316,7 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'is_partial' => $is_partial,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s'),
+                'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
