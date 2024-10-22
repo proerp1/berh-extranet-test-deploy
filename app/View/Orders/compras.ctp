@@ -182,7 +182,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
                 <p>Alterar Status Processamento</p>
@@ -209,8 +208,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="alterar_confirm" class="btn btn-success">Sim</a>
+                <button type="button" class="btn btn-light-dark" id="canc_confirm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="alterar_confirm">Sim</button>
             </div>
         </div>
     </div>
@@ -247,6 +246,7 @@
             }
         });
     }
+    
     $(document).ready(function() {
         trigger_change();
 
@@ -262,22 +262,26 @@
 
         $('#alterar_confirm').on('click', function(e) {
             e.preventDefault();
+            
+            $(this).prop('disabled', true);
+            $("#canc_confirm").prop('disabled', true);
 
-            const v_status_processamento = $('#status_processamento').val();
-            const checkboxes = $('input[name="alt_linha"]:checked');
-            const orderItemIds = [];
+            if ($(".check_all").is(':checked')) {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const order_id = <?php echo $id ?>;
+                const v_status_processamento = $('#status_processamento').val();
+                const curr_q = urlParams.get('q');
+                const curr_sup = urlParams.get('sup');
 
-            checkboxes.each(function() {
-                orderItemIds.push($(this).parent().parent().find('.item_id').val());
-            });
-
-            if (orderItemIds.length > 0) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/alter_item_status_processamento',
+                    url: base_url+'/orders/alter_item_status_processamento_order_all',
                     data: {
-                        orderItemIds,
-                        v_status_processamento
+                        order_id,
+                        v_status_processamento,
+                        curr_q,
+                        curr_sup
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -286,6 +290,31 @@
                         }
                     }
                 });
+            } else {
+                const v_status_processamento = $('#status_processamento').val();
+                const checkboxes = $('input[name="alt_linha"]:checked');
+                const orderItemIds = [];
+
+                checkboxes.each(function() {
+                    orderItemIds.push($(this).parent().parent().find('.item_id').val());
+                });
+
+                if (orderItemIds.length > 0) {
+                    $.ajax({
+                        type: 'POST',
+                        url: base_url+'/orders/alter_item_status_processamento',
+                        data: {
+                            orderItemIds,
+                            v_status_processamento
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();
+                            }
+                        }
+                    });
+                }
             }
         });
 
