@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
+    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile'];
 
     public function beforeFilter()
     {
@@ -1029,5 +1029,36 @@ class ReportsController extends AppController
         
 
         echo json_encode(['suppliers' => $suppliers, 'customers' => $customers]);
+    }
+
+    public function importar_movimentacao()
+    {
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(76, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = ['OrderBalanceFile' => [
+            'limit' => 200,
+            'order' => ['OrderBalanceFile.created' => 'desc'],
+        ]];
+
+        $buscar = false;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (!empty($_GET['q'])) {
+            $buscar = true;
+
+            $condition['or'] = array_merge($condition['or'], [
+                'OrderBalanceFile.file_name LIKE' => "%" . $_GET['q'] . "%", 
+            ]);
+        }
+
+        $data = $this->Paginator->paginate('OrderBalanceFile', $condition);
+        
+        $action = 'Relatório de Movimentações';
+        $breadcrumb = ['Relatórios' => '', 'Relatório de Movimentações' => ''];
+
+        $this->set(compact('action', 'breadcrumb', 'data', 'buscar'));
     }
 }

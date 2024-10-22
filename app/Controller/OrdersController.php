@@ -30,7 +30,8 @@ class OrdersController extends AppController
         'Log',
         'Supplier',
         'CustomerUserAddress',
-        'CustomerUserBankAccount'
+        'CustomerUserBankAccount',
+        'OrderBalanceFile'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -2413,35 +2414,6 @@ class OrdersController extends AppController
         return $valueFormatado;
     }
 
-    public function upload_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_cancel_balances_all(CakeSession::read("Auth.User.id"));
-
-            $this->OrderBalance->find_order_balances_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
-    public function update_user_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_user_order_item_saldo_all();
-        }
-
-        die;
-    }
-
-    public function update_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_order_item_saldo_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
     public function getOrderByCustomer($customerId)
     {
         $this->layout = false;
@@ -2781,5 +2753,146 @@ class OrdersController extends AppController
         }
 
         return ['customerUsersIds' => $customerUsersIds, 'unitPriceMapping' => $unitPriceMapping];
+    }
+
+    public function upload_saldo_csv_all()
+    {
+        $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
+
+        $groupTpOrder = [];
+        $groupOrder = [];
+
+        foreach ($ret['data'] as $item) {
+            $keyTp = $item['tipo'].'-'.$item['order_id'];
+            $keyOr = $item['order_id'];
+            
+            if (!isset($groupTpOrder[$keyTp])) {
+                $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
+            }
+
+            if (!isset($groupOrder[$keyOr])) {
+                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
+            }
+        }
+
+        foreach ($groupTpOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        foreach ($ret['data'] as $data) {
+            if ($data['tipo']) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+
+                if (isset($benefit['Benefit'])) {
+                    $benefit_id = $benefit['Benefit']['id'];
+                } else {
+                    $benefit_id = null;
+                }
+
+                $orderBalanceData = [
+                    'order_id' => $data['order_id'],
+                    'order_item_id' => $data['order_item_id'],
+                    'customer_user_id' => $data['customer_user_id'],
+                    'benefit_id' => $benefit_id,
+                    'document' => $data['document'],
+                    'total' => $data['total'],
+                    'pedido_operadora' => $data['pedido_operadora'],
+                    'tipo' => $data['tipo'],
+                    'observacao' => $data['observacao'],
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
+            }
+        }
+
+        foreach ($groupOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        $file = new File($this->request->data['file']['name']);
+        $dir = new Folder(APP."webroot/files/order_balances_all/", true);
+
+        $file = $this->Uploader->up($this->request->data['file'], $dir->path);
+
+        $orderBalanceFile = [
+            'file_name' => $file['nome'],
+            'user_creator_id' => CakeSession::read("Auth.User.id"),
+            'created' => date('Y-m-d H:i:s'),
+        ];
+
+        $this->OrderBalanceFile->create();
+        $this->OrderBalanceFile->save($orderBalanceFile);
+
+        $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect('/reports/importar_movimentacao');
+    }
+
+    private function parseCSVSaldoAll($tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $rec = iterator_to_array($csv->getRecords());
+
+        usort($rec, function($a, $b) {
+            if ($a[7] != 'PEDIDO_CLIENTE') {
+                return strcmp($a[7], $b[7]);
+            }
+        });
+
+        $line = 0;
+        $data = [];
+        foreach ($rec as $row) {
+            $saldo = 0;
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);          
+
+            $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
+
+            $customer_user_id = null;
+            if (isset($existingUser[0]['u'])) {
+                $customer_user_id = $existingUser[0]['u']['id'];
+            }
+
+            $total = str_replace("R$", "", $row[2]);
+            $total = str_replace(" ", "", $total);
+
+            $data[] = [
+                'customer_user_id' => $customer_user_id,
+                'document' => $row[0],
+                'benefit_code' => $row[1],
+                'total' => $total,
+                'pedido_operadora' => $row[3],
+                'order_item_id' => $row[4],
+                'tipo' => $row[5],
+                'observacao' => $row[6],
+                'order_id' => $row[7],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 }
