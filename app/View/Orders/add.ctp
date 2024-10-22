@@ -878,7 +878,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[tipo_importacao]" value="2" id="tipoBeneficioChk1" checked="checked" />
                                     <label class="form-check-label" for="tipoBeneficioChk1">
-                                        Simplicada
+                                        Simplificada
                                     </label>
                                 </div>
                             </div>
