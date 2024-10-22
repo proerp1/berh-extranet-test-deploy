@@ -878,7 +878,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[tipo_importacao]" value="2" id="tipoBeneficioChk1" checked="checked" />
                                     <label class="form-check-label" for="tipoBeneficioChk1">
-                                        Simplificada
+                                        Simplificada <span class="badge badge-warning">Atual</span>
                                     </label>
                                 </div>
                             </div>
@@ -886,7 +886,7 @@
                                 <div class="form-check form-check-custom form-check-solid">
                                     <input class="form-check-input" type="radio" name="data[tipo_importacao]" value="1" id="tipoBeneficioChk2" />
                                     <label class="form-check-label" for="tipoBeneficioChk2">
-                                        Completa
+                                        Completa <span class="badge badge-success">Novo</span>
                                     </label>
                                 </div>
                             </div>
@@ -920,7 +920,7 @@
 
                 <div class="modal-footer d-flex justify-content-between">
                     <div>
-                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Simplificado</a>
+                        <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Simplificada</a>
                         <a class="btn btn-info btn-sm" style="font-size: 10px" href="<?php echo $this->base; ?>/files/ModeloCompletoImportacaoBeneficiariosLote.csv" target="_blank" download>Modelo Completo</a>
                     </div>
                     <div>
