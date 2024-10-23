@@ -202,6 +202,7 @@
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
                                     <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
                                     <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                 </select>
                             </div>
                         </div>
