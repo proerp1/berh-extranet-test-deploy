@@ -6,12 +6,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <form autocomplete="off" action="<?php echo $this->base . '/orders/createOrder' ?>" id="order_creation_form" class="form-horizontal" method="post">
+                <input type="hidden" class="flag_gestao_economico">
                 <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
                     <div class="row mb-7 ">
                         <div class="col-6">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>
@@ -136,7 +137,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="2" id="partialOrderChk2" checked="checked" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="2" id="partialOrderChk2" checked="checked" />
                                         <label class="form-check-label" for="partialOrderChk2">
                                             Todos beneficiários
                                         </label>
@@ -145,7 +146,7 @@
 
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
                                         <label class="form-check-label" for="partialOrderChk1">
                                             Parcial
                                         </label>
@@ -154,7 +155,7 @@
 
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
                                         <label class="form-check-label" for="partialOrderChk3">
                                             PIX
                                         </label>
@@ -193,6 +194,31 @@
                                         ?>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-7 div-new-order pedido_comp">
+                        <div class="col">
+                            <label class="mb-2">Pedido Complementar</label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input pedido_complementar" type="radio" name="data[pedido_complementar]" value="1" id="pedidoComp1" checked />
+                                        <label class="form-check-label" for="pedidoComp1">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input pedido_complementar" type="radio" name="data[pedido_complementar]" value="2" id="pedidoComp2" />
+                                        <label class="form-check-label" for="pedidoComp2">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

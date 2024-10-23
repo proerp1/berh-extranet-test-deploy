@@ -236,6 +236,7 @@ class OrdersController extends AppController
             $period_to = $this->request->data['period_to'];
             $is_consolidated = $this->request->data['is_consolidated'];
             $is_partial = $this->request->data['is_partial'];
+            $pedido_complementar = $this->request->data['pedido_complementar'];
             $working_days_type = $this->request->data['working_days_type'];
             $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
             $benefit_type = $this->request->data['benefit_type'];
@@ -316,6 +317,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'is_partial' => $is_partial,
+                'pedido_complementar' => $pedido_complementar,
                 'credit_release_date' => $credit_release_date,
                 'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
@@ -2427,6 +2429,19 @@ class OrdersController extends AppController
         ]);
 
         echo json_encode($orders);
+    }
+
+    public function getCustomerGE($customerId)
+    {
+        $this->layout = false;
+        $this->autoRender = false;
+
+        $customers = $this->Customer->find('first', [
+            'fields' => ['Customer.flag_gestao_economico'],
+            'conditions' => ['Customer.id' => $customerId]
+        ]);
+
+        echo json_encode($customers);
     }
 
     public function baixar_beneficiarios($id)
