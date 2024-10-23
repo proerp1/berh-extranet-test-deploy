@@ -2510,6 +2510,12 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
+        if (isset($_GET['stp']) and $_GET['stp'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
+        }
+
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $action = 'Compras';
@@ -2572,6 +2578,7 @@ class OrdersController extends AppController
         $order_id = $this->request->data['order_id'];
         $q = $this->request->data['curr_q'];
         $sup = $this->request->data['curr_sup'];
+        $stp = $this->request->data['curr_stp'];
         $statusProcess = $this->request->data['v_status_processamento'];
 
         $condition = ["and" => ['Order.id' => $order_id], "or" => []];
@@ -2582,6 +2589,12 @@ class OrdersController extends AppController
 
         if (isset($sup) and $sup != '') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($stp) and $stp != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
         }
 
         $items = $this->OrderItem->find('all', [
