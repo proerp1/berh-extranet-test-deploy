@@ -1,4 +1,5 @@
 <?php
+App::uses('CakeEmail', 'Network/Email');
 class Order extends AppModel
 {
     public $name = 'Order';
@@ -233,7 +234,123 @@ class Order extends AppModel
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
 
+        $this->transactionNotifications($this->data[$this->alias]);
+
         return true;
+    }
+
+    public function transactionNotifications($data)
+    {
+        if (isset($data['id']) && isset($data['status_id'])) {
+            $old = $this->find('first', [
+                'conditions' => [
+                    'Order.id' => $data['id']
+                ],
+                'recursive' => -1
+            ]);
+
+            if ($old['Order']['status_id'] != $data['status_id']) {
+                $status = $this->Status->find('first', [
+                    'conditions' => [
+                        'Status.id' => $data['status_id']
+                    ],
+                    'recursive' => -1
+                ]);
+                $customer = $this->Customer->find('first', [
+                    'conditions' => [
+                        'Customer.id' => $old['Order']['customer_id']
+                    ],
+                    'recursive' => -1
+                ]);
+
+                $emails[$customer['Customer']['email']] = $customer['Customer']['nome_secundario'];
+
+                if ($customer['Customer']['email1'] != '') {
+                    $emails[$customer['Customer']['email1']] = $customer['Customer']['nome_primario'];
+                }
+
+                $bccs = [];
+                if ($old['Order']['status_id'] == 83 && $data['status_id'] == 84) {
+                    $bccs['ti@berh.com.br'] = 'BERH';
+                }
+
+                if ($data['status_id'] == 83) {
+                    $mensagem = 'Seu pedido foi gerado com sucesso em: '.date('d/m/Y \à\s H:i\h\s', strtotime($old['Order']['created_nao_formatado']));
+                } else if ($data['status_id'] == 84) {
+                    $mensagem = 'Seu boleto foi gerado e aguarda pagamento para avançar na liberação junto as operadoras. <br> '.date('d/m/Y \à\s H:i\h\s');
+                } else if ($data['status_id'] == 85) {
+                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido foi confirmado pagamento. A partir de agora iniciaremos o processamento do seu pedido junto as Operadoras.';
+                } else if ($data['status_id'] == 86) {
+                    $mensagem = 'Aguarde próxima atualização de Status.';
+                } else if ($data['status_id'] == 87) {
+                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido teve o processo concluído nas Operadoras e os Créditos foram disponibilizados conforme programação.';
+                }
+
+                $dados = [
+                    'viewVars' => [
+                        'tos' => $emails,
+                        'bccs' => $bccs,
+                        'mensagem' => $mensagem
+                    ],
+                    'template' => 'email_transacional',
+                    'layout' => 'default',
+                    'subject' => 'Atualização de pedido '.$old['Order']['id'],
+                    'config' => 'default',
+                ];
+
+                $this->sendMail($dados);
+            }
+        }
+    }
+
+    public function sendMail($dados)
+    {
+        $key = Configure::read('sendgridKey');
+        $email = new \SendGrid\Mail\Mail(); 
+        $email->setFrom("noreply@berh.com.br", "BeRH");
+        $email->setReplyTo("operacao@berh.com.br", "BeRH");
+        $email->setSubject($dados['subject']);
+
+        $email->addTos($dados['viewVars']['tos']);
+        if (!empty($dados['viewVars']['bccs'])) {
+            $email->addBccs($dados['viewVars']['bccs']);
+        }
+
+        $html = $this->generateHTML($dados);
+
+        $email->addContent("text/html", $html);
+        $sendgrid = new \SendGrid($key);
+        try
+        {
+            $response = $sendgrid->send($email);
+
+            if ($response->statusCode() != '202') {
+                return false;    
+            }
+            
+            return true;
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
+    }
+
+    private function generateHTML($dados){
+        $ce = new CakeEmail();
+        $ce->viewVars($dados['viewVars']);
+        if (isset($dados['layout'])) {
+            $ce->template($dados['template'], $dados['layout']);
+        } else {
+            $ce->template($dados['template']);
+        }
+
+        $ce->emailFormat('html');
+
+        // Funcao customizada, se atualizara o cakephp, verificar se ainda funciona
+        $ce->customRender();
+
+        return $ce->message('html');
     }
 
     public function reProcessAmounts()

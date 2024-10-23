@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
+    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile'];
 
     public function beforeFilter()
     {
@@ -669,22 +669,26 @@ class ReportsController extends AppController
 
     public function robos($menu)
     {
-        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-
         $url_cookie = 'https://robo.berh.com.br/set-cookie?hash=6eb0fed6ec2700a0ecabe9752644c8d4b43942f6f0193a6b6da7babef9e56841';
 
         $url_iframe = "";
         if ($menu == 'roteirizacao') {
+	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/roteirizacao";
         } elseif ($menu == 'extratos') {
+	    $this->Permission->check(72, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/extratos";
         } elseif ($menu == 'consulta_transurc') {
+	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/transurc";
         } elseif ($menu == 'consulta_sptrans') {
+	    $this->Permission->check(73, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/sptrans";
         } elseif ($menu == 'captura_boletos') {
+            $this->Permission->check(74, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/captura_boletos";
         } elseif ($menu == 'conversor_layouts') {
+	    $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_layouts";
         }
 
@@ -868,17 +872,18 @@ class ReportsController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 200,
             'order' => ['Order.id' => 'desc'],
-            'fields' => ['OrderItem.*', 
-                            'CustomerUserItinerary.*', 
-                            'Benefit.*', 
-                            'Order.*', 
-                            'CustomerUser.*', 
-                            'Supplier.id', 
-                            'Supplier.nome_fantasia', 
-                            'Customer.codigo_associado',
-                            'Customer.nome_primario',
-                            'Status.label',
-                            'Status.name',
+            'fields' => ['OrderItem.*',
+                        'Order.id',
+                        'Order.working_days',
+                        'Order.created',
+                        'Status.label',
+                        'Status.name',
+                        'Customer.codigo_associado',
+                        'Customer.nome_primario',
+                        'Supplier.nome_fantasia',
+                        'CustomerUser.name',
+                        'Benefit.name',
+                        'CustomerUserItinerary.quantity',
                         ],
             'joins' => [
                 [
@@ -1025,5 +1030,36 @@ class ReportsController extends AppController
         
 
         echo json_encode(['suppliers' => $suppliers, 'customers' => $customers]);
+    }
+
+    public function importar_movimentacao()
+    {
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(76, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = ['OrderBalanceFile' => [
+            'limit' => 200,
+            'order' => ['OrderBalanceFile.created' => 'desc'],
+        ]];
+
+        $buscar = false;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (!empty($_GET['q'])) {
+            $buscar = true;
+
+            $condition['or'] = array_merge($condition['or'], [
+                'OrderBalanceFile.file_name LIKE' => "%" . $_GET['q'] . "%", 
+            ]);
+        }
+
+        $data = $this->Paginator->paginate('OrderBalanceFile', $condition);
+        
+        $action = 'Relatório de Movimentações';
+        $breadcrumb = ['Relatórios' => '', 'Relatório de Movimentações' => ''];
+
+        $this->set(compact('action', 'breadcrumb', 'data', 'buscar'));
     }
 }

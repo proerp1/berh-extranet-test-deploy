@@ -4,6 +4,7 @@
 /app/Private/customer_users/*
 !/app/webroot/files/ModeloAtualizacaoGrupos.csv
 !/app/webroot/files/ModeloImportacaoMovimentacao.csv
+!/app/webroot/files/ModeloImportacaoMovimentacaoAll.csv
 /vendor/
 /composer.phar
 .idea

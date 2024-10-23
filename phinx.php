@@ -45,6 +45,15 @@ return
             'port' => '3306',
             'charset' => 'utf8',
         ],
+        'dev_eric' => [
+            'adapter' => 'mysql',
+            'host' => 'localhost',
+            'name' => 'berh',
+            'user' => 'berh_usr',
+            'pass' => 'berh123',
+            'port' => '3306',
+            'charset' => 'utf8',
+        ]
     ],
     'version_order' => 'creation'
 ];

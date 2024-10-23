@@ -7,13 +7,36 @@ class OrdersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'HtmltoPdf', 'Uploader', 'Email'];
-    public $uses = ['Order', 'Customer', 'CustomerUserItinerary', 'Benefit', 'OrderItem', 'CustomerUserVacation', 
-    'CustomerUser','Income', 'Bank', 'BankTicket', 'CnabLote', 'CnabItem', 'PaymentImportLog', 'EconomicGroup',
-     'BenefitType', 'Outcome', 'Status', 'Proposal', 'OrderBalance', 'Log'];
+    public $uses = [
+        'Order',
+        'Customer',
+        'CustomerUserItinerary',
+        'Benefit',
+        'OrderItem',
+        'CustomerUserVacation',
+        'CustomerUser',
+        'Income',
+        'Bank',
+        'BankTicket',
+        'CnabLote',
+        'CnabItem',
+        'PaymentImportLog',
+        'EconomicGroup',
+        'BenefitType',
+        'Outcome',
+        'Status',
+        'Proposal',
+        'OrderBalance',
+        'Log',
+        'Supplier',
+        'CustomerUserAddress',
+        'CustomerUserBankAccount',
+        'OrderBalanceFile'
+    ];
     public $groupBenefitType = [
-        -1 => [1,2],
-        4 => [4,5],
-        999 => [6,7,8,9,10]
+        -1 => [1, 2],
+        4 => [4, 5],
+        999 => [6, 7, 8, 9, 10]
     ];
 
     public $paginate = [
@@ -39,7 +62,7 @@ class OrdersController extends AppController
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                 ) as total_balances"
             ],
-            'limit' => 50, 
+            'limit' => 50,
             'order' => ['Order.id' => 'desc']
         ],
         'OrderBalance' => [
@@ -64,30 +87,30 @@ class OrdersController extends AppController
 
         $condition = ["and" => [], "or" => []];
         $filtersFilled = false;
-    
+
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => $_GET['q'], 
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
-                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Order.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
             $filtersFilled = true;
         }
-    
+
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
             $filtersFilled = true;
         }
-    
+
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-    
+
         if ($get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
@@ -98,36 +121,36 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.is_partial' => $_GET['tipo']]);
             $filtersFilled = true;
         }
-    
+
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-    
+
         if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
             $filtersFilled = true;
         }
-    
+
         $queryString = http_build_query($_GET);
-    
+
         if (isset($_GET['exportar'])) {
             $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
-    
+
             $data = $this->Order->find('all', [
                 'contain' => [
-                    'Status', 
-                    'Customer', 
-                    'CustomerCreator', 
-                    'EconomicGroup', 
+                    'Status',
+                    'Customer',
+                    'CustomerCreator',
+                    'EconomicGroup',
                     'Income.data_pagamento'
                 ],
                 'conditions' => $condition,
             ]);
-    
+
             foreach ($data as $k => $pedido) {
                 $suppliersCount = $this->OrderItem->find('count', [
                     'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
@@ -152,7 +175,7 @@ class OrdersController extends AppController
                     'group' => ['Supplier.id'],
                     'fields' => ['Supplier.id']
                 ]);
-    
+
                 $usersCount = $this->OrderItem->find('count', [
                     'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
                     'group' => ['OrderItem.customer_user_id'],
@@ -160,17 +183,17 @@ class OrdersController extends AppController
                 ]);
 
                 $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
-    
+
                 $data[$k]['Order']['suppliersCount'] = $suppliersCount;
                 $data[$k]['Order']['usersCount'] = $usersCount;
                 $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
             }
-    
+
             $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
-    
+
             $this->redirect("/files/excel/" . $nome);
         }
-    
+
         $data = $this->Paginator->paginate('Order', $condition);
 
         $customers = $this->Customer->find('list', [
@@ -178,7 +201,7 @@ class OrdersController extends AppController
             'fields' => ['id', 'nome_primario'],
             'order' => ['nome_primario' => 'asc']
         ]);
-    
+
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
@@ -191,16 +214,16 @@ class OrdersController extends AppController
             'conditions' => $condition,
             'recursive' => -1
         ]);
-    
+
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
-    
+
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
-    
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
-    
+
 
     public function createOrder()
     {
@@ -229,8 +252,8 @@ class OrdersController extends AppController
             if ($benefit_type != '') {
                 $benefit_type_persist = $benefit_type;
                 $benefit_type = (int)$benefit_type;
-                if($benefit_type == -1){
-                    $benefit_type = [1,2];
+                if ($benefit_type == -1) {
+                    $benefit_type = [1, 2];
                 }
             }
 
@@ -294,7 +317,7 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'is_partial' => $is_partial,
                 'credit_release_date' => $credit_release_date,
-                'created_at' => date('Y-m-d H:i:s'),
+                'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
@@ -406,13 +429,13 @@ class OrdersController extends AppController
             if (!empty($manualPricing)) {
                 $currentUserId = $itinerary['CustomerUserItinerary']['customer_user_id'];
 
-                if(!isset($manualPricing[$currentUserId])){
+                if (!isset($manualPricing[$currentUserId])) {
                     continue;
                 }
 
                 $parsedManualRow = $this->parseManualRow($itinerary, $manualPricing[$currentUserId]);
 
-                if($parsedManualRow == false){
+                if ($parsedManualRow == false) {
                     // se não encontrou o preço manual, pula para o próximo itinerário
                     continue;
                 }
@@ -425,7 +448,7 @@ class OrdersController extends AppController
 
                 $values_from_csv = 1;
             }
-            
+
 
             $commissionFee = 0;
             $commissionPerc = $this->getCommissionPerc($itinerary['Benefit']['benefit_type_id'], $proposal);
@@ -442,7 +465,7 @@ class OrdersController extends AppController
                 $workingDaysUser = 0;
             }
 
-            if($manualWorkingDays != 0){
+            if ($manualWorkingDays != 0) {
                 $workingDaysUser = $manualWorkingDays;
             }
 
@@ -453,9 +476,9 @@ class OrdersController extends AppController
             $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
                 ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
                 : 0;
-            
+
             // 1 = 'Valor', 2 = 'Percentual'
-            if($benefit['Supplier']['transfer_fee_type'] == 2){
+            if ($benefit['Supplier']['transfer_fee_type'] == 2) {
                 $transferFee = $subtotal * ($transferFeePercentage / 100);
             } else {
                 $transferFee = $transferFeePercentage;
@@ -485,19 +508,23 @@ class OrdersController extends AppController
             $this->OrderItem->create();
             $this->OrderItem->save($orderItemData);
         }
-
     }
 
     private function parseManualRow($itinerary, $manualPricing)
     {
         foreach ($manualPricing as $row) {
-            if($row['benefitId'] == $itinerary['Benefit']['code']){
+            $isNewCsv = isset($row['newCsv']) ? $row['newCsv'] : false;
+            $benefitIdOrCode = $isNewCsv ? $itinerary['Benefit']['id'] : $itinerary['Benefit']['code'];
+            $benefitIdOrCode = (int)$benefitIdOrCode;
+            $row['benefitId'] = (int)$row['benefitId'];
+
+            if ($row['benefitId'] == $benefitIdOrCode) {
                 $manualUnitPrice = $row['unitPrice'];
                 $manualWorkingDays = (int)$row['workingDays'];
                 $manualQuantity = $row['quantity'];
 
                 $pricePerDay = $manualUnitPrice * $manualQuantity;
-                
+
                 return ['pricePerDay' => $pricePerDay, 'manualWorkingDays' => $manualWorkingDays, 'manualQuantity' => $manualQuantity];
             }
         }
@@ -635,13 +662,13 @@ class OrdersController extends AppController
 
         $benefit_type_desc = 'Todos';
         if ($order['Order']['benefit_type'] != 0) {
-            if($order['Order']['benefit_type'] == -1){
+            if ($order['Order']['benefit_type'] == -1) {
                 $benefit_type_desc = 'Transporte';
             } else {
                 $benefit_types = $this->BenefitType->find('first', [
                     'conditions' => ['BenefitType.id' => $order['Order']['benefit_type']]
                 ]);
-                
+
                 $benefit_type_desc = isset($benefit_types['BenefitType']) ? $benefit_types['BenefitType']['name'] : '';
             }
         }
@@ -653,7 +680,7 @@ class OrdersController extends AppController
             $v_is_partial = "Todos beneficiários";
         } elseif ($order['Order']['is_partial'] == 3) {
             $v_is_partial = "PIX";
-        }                                            
+        }
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
@@ -695,7 +722,8 @@ class OrdersController extends AppController
 
         $order = $this->Order->find('first', [
             'contain' => ['Customer'],
-            'conditions' => ['Order.id' => $id]
+            'conditions' => ['Order.id' => $id],
+            'recursive' => -1
         ]);
 
         $bankTicket = $this->BankTicket->find('first', [
@@ -776,7 +804,8 @@ class OrdersController extends AppController
                     'alias' => 'Customer',
                     'type' => 'inner',
                     'conditions' => [
-                        'Customer.id = Income.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        'Customer.id = Income.customer_id',
+                        'Customer.data_cancel' => '1901-01-01',
                     ],
                 ],
                 [
@@ -784,7 +813,8 @@ class OrdersController extends AppController
                     'alias' => 'BankAccount',
                     'type' => 'inner',
                     'conditions' => [
-                        'BankAccount.id = Income.bank_account_id', 'BankAccount.data_cancel' => '1901-01-01',
+                        'BankAccount.id = Income.bank_account_id',
+                        'BankAccount.data_cancel' => '1901-01-01',
                     ],
                 ],
                 [
@@ -792,7 +822,8 @@ class OrdersController extends AppController
                     'alias' => 'BankTicket',
                     'type' => 'inner',
                     'conditions' => [
-                        'BankAccount.id = BankTicket.bank_account_id', 'BankTicket.data_cancel' => '1901-01-01',
+                        'BankAccount.id = BankTicket.bank_account_id',
+                        'BankTicket.data_cancel' => '1901-01-01',
                     ],
                 ],
                 [
@@ -950,10 +981,16 @@ class OrdersController extends AppController
 
         $file = $this->request->data['CustomerUserItinerary'];
         $incluir_valor_unitario = (int)$this->request->data['incluir_valor_unitario'] == 1;
+        $tipo_importacao = (int)$this->request->data['tipo_importacao'];
 
-        $ret = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name'], $incluir_valor_unitario);
+        if ($tipo_importacao == 2) {
+            $ret = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name'], $incluir_valor_unitario);
+        } else {
+            $ret = $this->parseNewCsv($customerId, $file['file']['tmp_name']);
+        }
+
         $customerUsersIds = $ret['customerUsersIds'];
-        $manualPricing = $ret['unitPriceMaping'];
+        $manualPricing = $ret['unitPriceMapping'];
 
         $order = $this->Order->findById($orderId);
         $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
@@ -1028,7 +1065,7 @@ class OrdersController extends AppController
         $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
 
         $file = new File($this->request->data['file']['name']);
-        $dir = new Folder(APP."webroot/files/order_balances/".$orderId."/", true);
+        $dir = new Folder(APP . "webroot/files/order_balances/" . $orderId . "/", true);
 
         $this->Uploader->up($this->request->data['file'], $dir->path);
 
@@ -1051,7 +1088,7 @@ class OrdersController extends AppController
         $line = 0;
         $customerUsersIds = [];
         $unitPrice = 0;
-        $unitPriceMaping = [];
+        $unitPriceMapping = [];
         foreach ($csv->getRecords() as $row) {
             $unitPrice = 0;
             $workingDays = 0;
@@ -1064,7 +1101,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);            
+            $cpf = preg_replace('/\D/', '', $row[0]);
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -1078,7 +1115,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            if($include_new_price){
+            if ($include_new_price) {
                 $unitPrice = $row[1];
                 // convert brl string to float
                 $unitPrice = str_replace(".", "", $unitPrice);
@@ -1086,7 +1123,7 @@ class OrdersController extends AppController
                 $workingDays = $row[2];
                 $benefitId = $row[3];
                 $quantity = $row[4];
-                $unitPriceMaping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
+                $unitPriceMapping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
             }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
@@ -1094,7 +1131,7 @@ class OrdersController extends AppController
             $line++;
         }
 
-        return ['customerUsersIds' => $customerUsersIds, 'unitPriceMaping' => $unitPriceMaping];
+        return ['customerUsersIds' => $customerUsersIds, 'unitPriceMapping' => $unitPriceMapping];
     }
 
     private function parseCSVSaldo($customerId, $orderId, $tmpFile)
@@ -1121,7 +1158,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);            
+            $cpf = preg_replace('/\D/', '', $row[0]);
 
             $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
 
@@ -1181,10 +1218,10 @@ class OrdersController extends AppController
 
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
-        
+
         $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
         // 1 = 'Valor', 2 = 'Percentual'
-        if($benefit['Supplier']['transfer_fee_type'] == 2){
+        if ($benefit['Supplier']['transfer_fee_type'] == 2) {
             $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
         } else {
             $transferFee = $transferFeePercentage;
@@ -1237,7 +1274,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $is_multiple = false;
-        if($orderId == false || $itemOrderId == false){
+        if ($orderId == false || $itemOrderId == false) {
             $is_multiple = true;
             $orderId = $this->request->data['orderId'];
             $itemOrderId = $this->request->data['orderItemIds'];
@@ -1259,11 +1296,11 @@ class OrdersController extends AppController
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
 
-        if($is_multiple){
+        if ($is_multiple) {
             echo json_encode(['success' => true]);
         } else {
             $this->redirect('/orders/edit/' . $orderId);
-        }        
+        }
     }
 
     public function addItinerary()
@@ -1389,7 +1426,7 @@ class OrdersController extends AppController
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
             ];
-            
+
             if ($benefit_type != '') {
                 $cond2['Benefit.benefit_type_id'] = $benefit_type;
             }
@@ -1518,34 +1555,34 @@ class OrdersController extends AppController
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
             'fields' => [
-                            'Order.id',
-                            'Supplier.id', 
-                            'Supplier.razao_social', 
-                            'OrderItem.status_processamento',
-                            'sum(OrderItem.subtotal) as subtotal', 
-                            "(SELECT sum(b.total) as total_saldo 
+                'Order.id',
+                'Supplier.id',
+                'Supplier.razao_social',
+                'OrderItem.status_processamento',
+                'sum(OrderItem.subtotal) as subtotal',
+                "(SELECT sum(b.total) as total_saldo 
                                 FROM order_balances b 
                                 INNER JOIN benefits be ON be.id = b.benefit_id 
                                 WHERE be.supplier_id = Supplier.id  
                                         AND b.tipo = 1 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS total_saldo", 
-                            "(SELECT max(b.pedido_operadora) as pedido_operadora 
+                            ) AS total_saldo",
+                "(SELECT max(b.pedido_operadora) as pedido_operadora 
                                 FROM order_balances b 
                                 WHERE b.benefit_id = Benefit.id 
                                         AND b.tipo = 1 
                                         AND b.order_id = OrderItem.order_id 
                                         AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS pedido_operadora", 
-                            "(SELECT COUNT(1) 
+                            ) AS pedido_operadora",
+                "(SELECT COUNT(1) 
                                 FROM outcomes o
                                 WHERE o.order_id = OrderItem.order_id 
                                         AND o.supplier_id = Supplier.id 
                                         AND o.data_cancel = '1901-01-01 00:00:00'
                             ) AS count_outcomes"
-                        ],
-             'joins' => [
+            ],
+            'joins' => [
                 [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
@@ -1564,12 +1601,12 @@ class OrdersController extends AppController
                 ],
             ],
             'group' => ['Supplier.id', 'OrderItem.status_processamento']
-            
+
         ]);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => ''];
-        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id', 'suppliersAll'));
     }
 
     public function operadoras_detalhes($id, $supplier_id)
@@ -1580,13 +1617,13 @@ class OrdersController extends AppController
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
             'fields' => [
-                            'Order.id',
-                            'Supplier.id', 
-                            'Supplier.razao_social', 
-                            'Benefit.name',
-                            'CustomerUser.name',
-                            'OrderItem.*',
-                        ],
+                'Order.id',
+                'Supplier.id',
+                'Supplier.razao_social',
+                'Benefit.name',
+                'CustomerUser.name',
+                'OrderItem.*',
+            ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -1606,15 +1643,16 @@ class OrdersController extends AppController
                 ],
             ],
             'group' => ['OrderItem.id']
-            
+
         ]);
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => '', 'Detalhes' => ''];
-        $this->set(compact('action', 'breadcrumb', 'id' ,'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id', 'suppliersAll'));
     }
 
-    public function confirma_pagamento($id){
+    public function confirma_pagamento($id)
+    {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->autoRender = false;
 
@@ -1631,11 +1669,11 @@ class OrdersController extends AppController
         ]);
 
         $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-    
+
         $this->redirect(['action' => 'edit/' . $id]);
     }
 
-   
+
     public function gerar_pagamento()
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
@@ -1643,11 +1681,11 @@ class OrdersController extends AppController
 
         $id = $this->request->data['orderId'];
         $supplier_id = $this->request->data['suppliersIds'];
-    
+
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
             'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
-             'joins' => [
+            'joins' => [
                 [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
@@ -1665,10 +1703,10 @@ class OrdersController extends AppController
                     ]
                 ]
             ],
-            'group' => ['Supplier.id']            
+            'group' => ['Supplier.id']
         ]);
 
-        foreach ($suppliersAll as $supplier) { 
+        foreach ($suppliersAll as $supplier) {
             $outcome = [];
 
             $outcome['Outcome']['order_id'] = $id;
@@ -1681,8 +1719,8 @@ class OrdersController extends AppController
             $outcome['Outcome']['supplier_id'] = $supplier['Supplier']['id'];
             $outcome['Outcome']['name'] = 'Pagamento Fornecedor';
             $outcome['Outcome']['valor_multa'] = 0;
-            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'],2,',','.');
-            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'],2,',','.');
+            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
+            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
             $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
             $outcome['Outcome']['created'] = date('d/m/Y H:i:s');
@@ -1790,14 +1828,14 @@ class OrdersController extends AppController
 
     public function relatorio_beneficio($id)
     {
-        
+
         ini_set('pcre.backtrack_limit', '20000000');
         $this->layout = 'ajax';
         $this->autoRender = false;
         ini_set('max_execution_time', '-1');
 
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
 
@@ -1811,7 +1849,7 @@ class OrdersController extends AppController
             'contain' => ['CustomerUser'],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['CustomerUser.id'],
-            'order' => ['trim(CustomerUser.name)'] 
+            'order' => ['trim(CustomerUser.name)']
         ]);
 
         $itens = [];
@@ -1830,7 +1868,7 @@ class OrdersController extends AppController
                     'sum(OrderItem.subtotal) as valor',
                     'sum(OrderItem.total) as total',
                     'sum(OrderItem.working_days) as working_days',
-                    'OrderItem.saldo', 
+                    'OrderItem.saldo',
                     'OrderItem.pedido_operadora'
 
                 ],
@@ -1839,19 +1877,18 @@ class OrdersController extends AppController
                     'CustomerUser.id' => $pagina['CustomerUser']['id'],
                 ],
                 'group' => ['CustomerUser.id', 'OrderItem.id'],
-                'order' => ['trim(CustomerUser.name)']                                                           
+                'order' => ['trim(CustomerUser.name)']
             ]);
         }
-//debug($order);die;
+        //debug($order);die;
 
         $link = APP . 'webroot';
         // $link = '';
 
-        $view->set(compact("link","order", "itens", "paginas"));
+        $view->set(compact("link", "order", "itens", "paginas"));
 
         $html = $view->render('../Elements/relatorio_beneficio');
         $this->HtmltoPdf->convert($html, 'relatorio_beneficio.pdf', 'download');
-
     }
 
     public function listagem_entrega($id)
@@ -1861,7 +1898,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
@@ -1869,46 +1906,46 @@ class OrdersController extends AppController
             'conditions' => ['Order.id' => $id],
         ]);
 
-$itens = $this->OrderItem->find('all', [
-    'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
-    'joins' => [
-        [
-            'table' => 'customers',
-            'alias' => 'Customer',
-            'type' => 'INNER',
-            'conditions' => ['Customer.id = Order.customer_id'],
-        ],
-    ],
-    'fields' => [
-        'OrderItem.*',
-        'Customer.documento',
-        'Customer.nome_secundario',
-        'CustomerUser.name as nome',
-        'CustomerUser.cpf as cpf',
-        'CustomerUser.matricula as matricula',
-        'CustomerUserItinerary.benefit_id as benefit_id',
-        'Order.credit_release_date',
-        'Order.id',
-        'Order.created',
-        'CustomerUserItinerary.benefit_id',
-        'CustomerUserItinerary.unit_price',
-        'sum(CustomerUserItinerary.quantity) as qtd',
-        'sum(OrderItem.subtotal) as valor',
-        'sum(OrderItem.total) as total',
-        'sum(OrderItem.working_days) as working_days',
-        'OrderItem.saldo' // Ensure 'desconto' is included
-    ],
-    'conditions' => ['OrderItem.order_id' => $id],
-    'group' => ['OrderItem.id'],
-    'order' => ['trim(CustomerUser.name)']                           
-]);
-//debug($itens);die;
+        $itens = $this->OrderItem->find('all', [
+            'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => ['Customer.id = Order.customer_id'],
+                ],
+            ],
+            'fields' => [
+                'OrderItem.*',
+                'Customer.documento',
+                'Customer.nome_secundario',
+                'CustomerUser.name as nome',
+                'CustomerUser.cpf as cpf',
+                'CustomerUser.matricula as matricula',
+                'CustomerUserItinerary.benefit_id as benefit_id',
+                'Order.credit_release_date',
+                'Order.id',
+                'Order.created',
+                'CustomerUserItinerary.benefit_id',
+                'CustomerUserItinerary.unit_price',
+                'sum(CustomerUserItinerary.quantity) as qtd',
+                'sum(OrderItem.subtotal) as valor',
+                'sum(OrderItem.total) as total',
+                'sum(OrderItem.working_days) as working_days',
+                'OrderItem.saldo' // Ensure 'desconto' is included
+            ],
+            'conditions' => ['OrderItem.order_id' => $id],
+            'group' => ['OrderItem.id'],
+            'order' => ['trim(CustomerUser.name)']
+        ]);
+        //debug($itens);die;
 
         $de = $order['Order']['order_period_from_nao_formatado'];
         $para = $order['Order']['order_period_to_nao_formatado'];
 
         $link = APP . 'webroot';
-        $view->set(compact("link","order", "itens", "de", "para"));
+        $view->set(compact("link", "order", "itens", "de", "para"));
 
         $html = $view->render('../Elements/listagem_entrega');
         $this->HtmltoPdf->convert($html, 'listagem_entrega.pdf', 'download');
@@ -1918,18 +1955,18 @@ $itens = $this->OrderItem->find('all', [
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-    
+
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'conditions' => ['Order.id' => $id],
         ]);
-    
+
         $itens = $this->OrderItem->find('all', [
-            'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary', ],
+            'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary',],
             'fields' => [
                 'CustomerUser.name as nome',
                 'CustomerUser.cpf as cpf',
@@ -1943,12 +1980,12 @@ $itens = $this->OrderItem->find('all', [
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.working_days) as working_days',
                 'OrderItem.saldo',
-                
+
             ],
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['Order.id']
         ]);
-    
+
         $suppliersCount = $this->OrderItem->find('count', [
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
@@ -1972,7 +2009,7 @@ $itens = $this->OrderItem->find('all', [
             'group' => ['Supplier.id'],
             'fields' => ['Supplier.id']
         ]);
-    
+
         $usersCount = $this->OrderItem->find('count', [
             'conditions' => ['OrderItem.order_id' => $id],
             'group' => ['OrderItem.customer_user_id'],
@@ -1981,12 +2018,12 @@ $itens = $this->OrderItem->find('all', [
         $link = APP . 'webroot';
 
         $view->set(compact("order", "itens", "suppliersCount", "usersCount", "link"));
-    
+
         $html = $view->render('../Elements/resumo');
-       // echo $html;
-         $this->HtmltoPdf->convert($html, 'resumo.pdf', 'download');
+        // echo $html;
+        $this->HtmltoPdf->convert($html, 'resumo.pdf', 'download');
     }
-    
+
 
 
     public function cobranca($id)
@@ -1995,26 +2032,26 @@ $itens = $this->OrderItem->find('all', [
         $this->autoRender = false;
         ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
-    
+
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'OrderItem.CustomerUserItinerary'],
             'conditions' => ['Order.id' => $id],
         ]);
-    
+
         $itens = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id],
             'fields' => [
-                'Supplier.razao_social', 
+                'Supplier.razao_social',
                 'sum(OrderItem.subtotal) as subtotal',
                 'sum(OrderItem.total) as total',
                 'sum(OrderItem.transfer_fee) as transfer_fee',
                 'sum(OrderItem.commission_fee) as commission_fee',
                 'OrderItem.saldo',
             ],
-            
-             'joins' => [
+
+            'joins' => [
                 [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
@@ -2034,25 +2071,25 @@ $itens = $this->OrderItem->find('all', [
             ],
             'group' => ['Benefit.supplier_id']
         ]);
-    
-         /*
+
+        /*
         debug($itens);
         
         die;*/
-    
+
         $link = APP . 'webroot';
         $view->set(compact("link", "order", "itens"));
-    
+
         $html = $view->render('../Elements/cobranca');
-    
+
         // Em vez de converter para PDF, exibe o HTML
-       // echo $html;
-    
-         $this->HtmltoPdf->convert($html, 'Cobranca.pdf', 'download');
+        // echo $html;
+
+        $this->HtmltoPdf->convert($html, 'Cobranca.pdf', 'download');
     }
-    
-    
-    
+
+
+
 
     public function relatorio_pedidos()
     {
@@ -2060,63 +2097,63 @@ $itens = $this->OrderItem->find('all', [
         ini_set('memory_limit', '-1');
         $this->layout = 'ajax';
         $this->autoRender = false;
-            
+
         $view = new View($this, false);
         $view->layout = false;
-    
+
         // Inicializando as condições de filtragem
         $condition = ["and" => [], "or" => []];
-    
+
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => $_GET['q'], 
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
-                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Order.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
         }
-    
+
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
         }
-    
+
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-    
+
         if ($get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
         }
-    
+
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-        
+
         if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
         }
-    
+
         $data = $this->Order->find('all', [
             'contain' => [
-                'Status', 
-                'Customer', 
-                'CustomerCreator', 
-                'EconomicGroup', 
+                'Status',
+                'Customer',
+                'CustomerCreator',
+                'EconomicGroup',
                 'Income.data_pagamento'
             ],
             'conditions' => $condition,
         ]);
-        
-    
+
+
         foreach ($data as $k => $pedido) {
             $suppliersCount = $this->OrderItem->find('count', [
                 'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
@@ -2141,32 +2178,32 @@ $itens = $this->OrderItem->find('all', [
                 'group' => ['Supplier.id'],
                 'fields' => ['Supplier.id']
             ]);
-    
+
             $usersCount = $this->OrderItem->find('count', [
                 'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
                 'group' => ['OrderItem.customer_user_id'],
                 'fields' => ['OrderItem.customer_user_id']
             ]);
-    
+
             $data[$k]['Order']['suppliersCount'] = $suppliersCount;
             $data[$k]['Order']['usersCount'] = $usersCount;
         }
-    
+
         $link = APP . 'webroot';
         $view->set(compact("link", "data", "get_de", "get_ate"));
-    
+
         $html = $view->render('../Elements/relatorio_pedidos');
-    
+
         $this->HtmltoPdf->convert($html, 'relatorio_pedidos.pdf', 'download');
     }
-    
+
     public function relatorio_processamento($id)
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
 
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
         $order = $this->Order->find('first', [
@@ -2185,52 +2222,52 @@ $itens = $this->OrderItem->find('all', [
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
-    
+
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
-    
+
         $condition = ["and" => [], "or" => []];
-    
+
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => $_GET['q'], 
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%", 
-                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
-                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%", 
+                'Order.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
         }
-    
+
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
         }
-    
+
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-    
+
         if ($get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
         }
-    
+
         $get_de_pagamento = isset($_GET['de_pagamento']) ? $_GET['de_pagamento'] : '';
         $get_ate_pagamento = isset($_GET['ate_pagamento']) ? $_GET['ate_pagamento'] : '';
-    
+
         if ($get_de_pagamento != '' && $get_ate_pagamento != '') {
             $de_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_de_pagamento)));
             $ate_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate_pagamento)));
-    
+
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
         }
-    
+
         $orders = $this->Order->find('all', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => $condition,
@@ -2239,33 +2276,33 @@ $itens = $this->OrderItem->find('all', [
         $data = [];
         foreach ($orders as $order) {
             $orderItems = $this->OrderItem->getProcessamentoPedido('all', ['OrderItem.order_id' => $order['Order']['id']]);
-    
+
             $data = array_merge($data, $orderItems);
         }
-        
+
         $this->ExcelGenerator->gerarExcelOrdersprocessamento('ProcessamentoPedidoOperadora', $data);
-    
+
         $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
     }
-    
+
     public function processamentopdf($id)
     {
         ini_set('pcre.backtrack_limit', '35000000');
 
         $this->layout = 'ajax';
         $this->autoRender = false;
-    
+
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
-    
+
         $order = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
         ]);
 
-        
+
 
         $data = $this->OrderItem->find('all', [
             'fields' => [
@@ -2326,18 +2363,18 @@ $itens = $this->OrderItem->find('all', [
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']
         ]);
-    
+
         $link = APP . 'webroot';
         $view->set(compact("link", "data", "order"));
-    
+
         $html = $view->render('../Elements/processamentopdf');
-    
+
         //echo $html;
         $this->HtmltoPdf->convert($html, 'processamento.pdf', 'download');
-
     }
-    
-    private function getCommissionPerc($benefitType, $proposal){
+
+    private function getCommissionPerc($benefitType, $proposal)
+    {
         $commissionPerc = 0;
         switch ($benefitType) {
             case 1:
@@ -2377,35 +2414,6 @@ $itens = $this->OrderItem->find('all', [
         return $valueFormatado;
     }
 
-    public function upload_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_cancel_balances_all(CakeSession::read("Auth.User.id"));
-
-            $this->OrderBalance->find_order_balances_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
-    public function update_user_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_user_order_item_saldo_all();
-        }
-
-        die;
-    }
-
-    public function update_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_order_item_saldo_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
     public function getOrderByCustomer($customerId)
     {
         $this->layout = false;
@@ -2420,18 +2428,18 @@ $itens = $this->OrderItem->find('all', [
 
         echo json_encode($orders);
     }
-    
+
     public function baixar_beneficiarios($id)
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
 
         ini_set('memory_limit', '-1');
-        
+
         $view = new View($this, false);
         $view->layout = false;
 
-        $nome = 'beneficiarios_pedido_'.$id.'.xlsx';
+        $nome = 'beneficiarios_pedido_' . $id . '.xlsx';
 
         $data = $this->CustomerUser->find_pedido_beneficiarios_info($id);
 
@@ -2499,7 +2507,6 @@ $itens = $this->OrderItem->find('all', [
     {
         $this->autoRender = false;
 
-        $is_multiple = true;
         $itemOrderId = $this->request->data['orderItemIds'];
         $statusProcess = $this->request->data['v_status_processamento'];
 
@@ -2532,7 +2539,7 @@ $itens = $this->OrderItem->find('all', [
         );
 
         $this->OrderItem->updateAll(
-            ['OrderItem.status_processamento' => "'".$statusProcess."'", 'OrderItem.updated' => "'".date('Y-m-d H:i:s')."'", 'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")],
+            ['OrderItem.status_processamento' => "'" . $statusProcess . "'", 'OrderItem.updated' => "'" . date('Y-m-d H:i:s') . "'", 'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")],
             ['OrderItem.id' => $itemOrderId]
         );
 
@@ -2541,5 +2548,532 @@ $itens = $this->OrderItem->find('all', [
         );
 
         echo json_encode(['success' => true]);
+    }
+
+    public function alter_item_status_processamento_order_all()
+    {
+        $this->autoRender = false;
+
+        $order_id = $this->request->data['order_id'];
+        $q = $this->request->data['curr_q'];
+        $sup = $this->request->data['curr_sup'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+
+        if (isset($q) and $q != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
+        }
+
+        if (isset($sup) and $sup != '') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        $items = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+
+            ]
+        ]);
+
+        foreach ($items as $item) {
+            $dados_log = [
+                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $item['OrderItem']['id'],
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function alter_item_status_processamento_all()
+    {
+        $this->autoRender = false;
+
+        $q = $this->request->data['curr_q'];
+        $sup = $this->request->data['curr_sup'];
+        $st = $this->request->data['curr_st'];
+        $c = $this->request->data['curr_c'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        $condition = ["and" => [], "or" => []];
+
+        if (isset($sup) and $sup != '') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($st) and $st != '') {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
+        }
+
+        if (isset($c) and $c != '') {
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        }
+
+        if (!empty($q)) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => "%" . $q . "%", 
+                'CustomerUser.cpf LIKE' => "%" . $q . "%", 
+                'Benefit.name LIKE' => "%" . $q . "%", 
+                'Benefit.code LIKE' => "%" . $q . "%", 
+                'OrderItem.status_processamento LIKE' => "%" . $q . "%",
+            ]);
+        }
+
+        $items = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+            ]
+        ]);
+
+        foreach ($items as $item) {
+            $dados_log = [
+                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $item['OrderItem']['id'],
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+
+        echo json_encode(['success' => true]);
+    }
+
+    /*
+    * Novo upload the beneficiarios
+    */
+    private function parseNewCsv($customerId, $tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        $unitPriceMapping = [];
+        $customerUsersIds = [];
+
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                $line++;
+                continue;
+            }
+
+            // Map all CSV fields to variables
+            $cnpjCliente = $row[0];                           // CNPJ CLIENTE
+            $name = $row[1];                                  // NOME
+            $cpf = preg_replace('/\D/', '', $row[2]);          // CPF
+            $rg = $row[3];                                    // RG
+            $dataNascimento = $row[4];                        // DATA NASCIMENTO
+            $nomeMae = $row[5];                               // NOME DA MÃE
+            $workingDays = (int)$row[6];                      // DIAS UTEIS
+            $codigoOperadora = $row[7];                       // CODIGO OPERADORA
+            $codigoBeneficio = $row[8];                       // CODIGO BENEFICIO
+            $numeroCartao = $row[9];                          // NUMERO CARTAO
+            $unitPrice = $row[10];                            // VALOR_UNIT
+            $quantity = (int)$row[11];                        // QUANTIDADE
+            $faixaSalarial = $row[12];                        // FAIXA SALARIAL
+            $tipoChavePix = $row[13];                         // TIPO CHAVE PIX
+            $chavePix = $row[14];                             // CHAVE PIX
+
+            // Find the benefit ID using the supplier_id (codigoOperadora) and code (codigoBeneficio)
+            $benefit = $this->Benefit->find('first', [
+                'conditions' => [
+                    'Benefit.supplier_id' => $codigoOperadora,
+                    'Benefit.code' => $codigoBeneficio,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00' // Only active benefits
+                ],
+                'fields' => ['Benefit.id']
+            ]);
+
+            if (empty($benefit)) {
+                $line++;
+                continue; // Skip if no benefit is found
+            }
+
+            $benefitId = $benefit['Benefit']['id'];
+
+            // Find or create the CustomerUser
+            $existingUser = $this->CustomerUser->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                    'CustomerUser.customer_id' => $customerId,
+                    'CustomerUser.data_cancel' => '1901-01-01 00:00:00' // Only active users
+                ]
+            ]);
+
+            if (empty($existingUser)) {
+                // Create a new CustomerUser record
+                $this->CustomerUser->create();
+                $this->CustomerUser->save([
+                    'CustomerUser' => [
+                        'cpf' => $cpf,
+                        'customer_id' => $customerId,
+                        'name' => $name,
+                        'rg' => $rg,
+                        'data_nascimento' => $dataNascimento,
+                        'nome_mae' => $nomeMae,
+                        'status_id' => 1,
+                        'created' => date('Y-m-d H:i:s'),
+                        'data_cancel' => '1901-01-01 00:00:00', // Active status
+                    ]
+                ]);
+                $customerUserId = $this->CustomerUser->id;
+            } else {
+                $customerUserId = $existingUser['CustomerUser']['id'];
+            }
+
+            // Add the user ID to the list, ensuring uniqueness
+            if (!in_array($customerUserId, $customerUsersIds)) {
+                $customerUsersIds[] = $customerUserId;
+            }
+
+            // Check for a CustomerUserAddress
+            $existingAddress = $this->CustomerUserAddress->find('first', [
+                'conditions' => [
+                    'CustomerUserAddress.customer_user_id' => $customerUserId,
+                    'CustomerUserAddress.data_cancel' => '1901-01-01 00:00:00' // Only active addresses
+                ]
+            ]);
+
+            if (empty($existingAddress)) {
+                // Get the Customer's address information
+                $customer = $this->Customer->findById($customerId);
+
+                if (!empty($customer)) {
+                    $this->CustomerUserAddress->create();
+                    $this->CustomerUserAddress->save([
+                        'CustomerUserAddress' => [
+                            'customer_id' => $customerId,
+                            'customer_user_id' => $customerUserId,
+                            'address_line' => $customer['Customer']['endereco'],
+                            'address_number' => $customer['Customer']['numero'] ?? null,
+                            'address_complement' => $customer['Customer']['complemento'] ?? null,
+                            'neighborhood' => $customer['Customer']['bairro'],
+                            'city' => $customer['Customer']['cidade'],
+                            'state' => $customer['Customer']['estado'],
+                            'zip_code' => preg_replace('/\D/', '', $customer['Customer']['cep']),
+                            'data_cancel' => '1901-01-01 00:00:00', // Active status
+                        ]
+                    ]);
+                }
+            }
+
+            // Check for an existing itinerary with the same customer_user_id and benefit_id
+            $existingItinerary = $this->CustomerUserItinerary->find('first', [
+                'conditions' => [
+                    'CustomerUserItinerary.customer_user_id' => $customerUserId,
+                    'CustomerUserItinerary.benefit_id' => $benefitId,
+                    'CustomerUserItinerary.customer_id' => $customerId,
+                    'CustomerUserItinerary.data_cancel' => '1901-01-01 00:00:00' // Only active itineraries
+                ]
+            ]);
+
+            if (!empty($existingItinerary)) {
+                // Set the existing itinerary as excluded
+                $this->CustomerUserItinerary->id = $existingItinerary['CustomerUserItinerary']['id'];
+                $this->CustomerUserItinerary->saveField('data_cancel', date('Y-m-d H:i:s'));
+            }
+
+            $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
+            
+            // Create a new itinerary record
+            $this->CustomerUserItinerary->create();
+            $this->CustomerUserItinerary->save([
+                'CustomerUserItinerary' => [
+                    'customer_user_id' => $customerUserId,
+                    'benefit_id' => $benefitId,
+                    'customer_id' => $customerId,
+                    'working_days' => $workingDays,
+                    'unit_price' => $unitPrice,
+                    'quantity' => $quantity,
+                    'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
+                    'card_number' => $numeroCartao,
+                    'data_cancel' => '1901-01-01 00:00:00' // Active status
+                ]
+            ]);
+
+            if ($chavePix != '') {
+                $existingBankAccount = $this->CustomerUserBankAccount->find('first', [
+                    'conditions' => [
+                        'CustomerUserBankAccount.customer_user_id' => $customerUserId,
+                        'CustomerUserBankAccount.pix_id' => $chavePix,
+                        'CustomerUserBankAccount.data_cancel' => '1901-01-01 00:00:00' // Only active accounts
+                    ]
+                ]);
+
+                if (empty($existingBankAccount)) {
+                    $this->CustomerUserBankAccount->create();
+                    $this->CustomerUserBankAccount->save([
+                        'CustomerUserBankAccount' => [
+                            'customer_id' => $customerId,
+                            'customer_user_id' => $customerUserId,
+                            'account_type_id' => 1,
+                            'bank_code_id' => 11,
+                            'pix_type' => $tipoChavePix,
+                            'pix_id' => $chavePix,
+                            'data_cancel' => '1901-01-01 00:00:00' // Active status
+                        ]
+                    ]);
+                }
+            }
+
+
+
+            // Map the unit price data for the user
+            $unitPriceMapping[$customerUserId][] = [
+                'unitPrice' => $unitPriceForm,
+                'unitPriceNonForm' => $unitPrice,
+                'workingDays' => $workingDays,
+                'quantity' => $quantity,
+                'benefitId' => $benefitId,
+                'newCsv' => true
+            ];
+
+            $line++;
+        }
+
+        return ['customerUsersIds' => $customerUsersIds, 'unitPriceMapping' => $unitPriceMapping];
+    }
+
+    public function upload_saldo_csv_all()
+    {
+        $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
+
+        $groupTpOrder = [];
+        $groupOrder = [];
+
+        foreach ($ret['data'] as $item) {
+            $keyTp = $item['tipo'].'-'.$item['order_id'];
+            $keyOr = $item['order_id'];
+            
+            if (!isset($groupTpOrder[$keyTp])) {
+                $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
+            }
+
+            if (!isset($groupOrder[$keyOr])) {
+                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
+            }
+        }
+
+        foreach ($groupTpOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        foreach ($ret['data'] as $data) {
+            if ($data['tipo']) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+
+                if (isset($benefit['Benefit'])) {
+                    $benefit_id = $benefit['Benefit']['id'];
+                } else {
+                    $benefit_id = null;
+                }
+
+                $orderBalanceData = [
+                    'order_id' => $data['order_id'],
+                    'order_item_id' => $data['order_item_id'],
+                    'customer_user_id' => $data['customer_user_id'],
+                    'benefit_id' => $benefit_id,
+                    'document' => $data['document'],
+                    'total' => $data['total'],
+                    'pedido_operadora' => $data['pedido_operadora'],
+                    'tipo' => $data['tipo'],
+                    'observacao' => $data['observacao'],
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
+            }
+        }
+
+        foreach ($groupOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        $file = new File($this->request->data['file']['name']);
+        $dir = new Folder(APP."webroot/files/order_balances_all/", true);
+
+        $file = $this->Uploader->up($this->request->data['file'], $dir->path);
+
+        $orderBalanceFile = [
+            'file_name' => $file['nome'],
+            'user_creator_id' => CakeSession::read("Auth.User.id"),
+            'created' => date('Y-m-d H:i:s'),
+        ];
+
+        $this->OrderBalanceFile->create();
+        $this->OrderBalanceFile->save($orderBalanceFile);
+
+        $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect('/reports/importar_movimentacao');
+    }
+
+    private function parseCSVSaldoAll($tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $rec = iterator_to_array($csv->getRecords());
+
+        usort($rec, function($a, $b) {
+            if ($a[7] != 'PEDIDO_CLIENTE') {
+                return strcmp($a[7], $b[7]);
+            }
+        });
+
+        $line = 0;
+        $data = [];
+        foreach ($rec as $row) {
+            $saldo = 0;
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);          
+
+            $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
+
+            $customer_user_id = null;
+            if (isset($existingUser[0]['u'])) {
+                $customer_user_id = $existingUser[0]['u']['id'];
+            }
+
+            $total = str_replace("R$", "", $row[2]);
+            $total = str_replace(" ", "", $total);
+
+            $data[] = [
+                'customer_user_id' => $customer_user_id,
+                'document' => $row[0],
+                'benefit_code' => $row[1],
+                'total' => $total,
+                'pedido_operadora' => $row[3],
+                'order_item_id' => $row[4],
+                'tipo' => $row[5],
+                'observacao' => $row[6],
+                'order_id' => $row[7],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 }

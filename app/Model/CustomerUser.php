@@ -186,7 +186,7 @@ class CustomerUser extends AppModel
 
     public function find_pedido_beneficiarios_info($orderID)
     {
-        $sql = "SELECT u.name, u.cpf, k.name, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_id, t.description 
+        $sql = "SELECT u.name, u.cpf, k.name, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_id, t.description, i.total 
                     FROM orders o 
                         INNER JOIN order_items i ON i.order_id = o.id 
                         INNER JOIN customers c ON c.id = o.customer_id 
@@ -199,7 +199,7 @@ class CustomerUser extends AppModel
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                             AND c.data_cancel = '1901-01-01 00:00:00' 
                             AND u.data_cancel = '1901-01-01 00:00:00' 
-                    GROUP BY u.id 
+                            AND i.data_cancel = '1901-01-01 00:00:00' 
                     ORDER BY 1 
                     ";
 
