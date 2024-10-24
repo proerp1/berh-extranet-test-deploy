@@ -199,7 +199,7 @@
                     </div>
                     <div class="row mb-7 div-new-order pedido_comp">
                         <div class="col">
-                            <label class="mb-2">Pedido Complementar</label>
+                            <label class="mb-2">Gestão Eficiente</label>
                             <div class="row">
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
