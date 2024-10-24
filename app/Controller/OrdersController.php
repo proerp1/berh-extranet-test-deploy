@@ -236,6 +236,7 @@ class OrdersController extends AppController
             $period_to = $this->request->data['period_to'];
             $is_consolidated = $this->request->data['is_consolidated'];
             $is_partial = $this->request->data['is_partial'];
+            $pedido_complementar = $this->request->data['pedido_complementar'];
             $working_days_type = $this->request->data['working_days_type'];
             $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
             $benefit_type = $this->request->data['benefit_type'];
@@ -316,6 +317,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'is_partial' => $is_partial,
+                'pedido_complementar' => $pedido_complementar,
                 'credit_release_date' => $credit_release_date,
                 'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
@@ -746,7 +748,7 @@ class OrdersController extends AppController
         $income['Income']['valor_total'] = $order['Order']['total'];
         $income['Income']['vencimento'] = $order['Order']['due_date'];
         $income['Income']['data_competencia'] = date('01/m/Y');
-        $income['Income']['created'] = date('Y-m-d H:i:s');
+        $income['Income']['created'] = date('d/m/Y H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
         $this->Income->create();
@@ -2429,6 +2431,19 @@ class OrdersController extends AppController
         echo json_encode($orders);
     }
 
+    public function getCustomerGE($customerId)
+    {
+        $this->layout = false;
+        $this->autoRender = false;
+
+        $customers = $this->Customer->find('first', [
+            'fields' => ['Customer.flag_gestao_economico'],
+            'conditions' => ['Customer.id' => $customerId]
+        ]);
+
+        echo json_encode($customers);
+    }
+
     public function baixar_beneficiarios($id)
     {
         $this->layout = 'ajax';
@@ -2495,6 +2510,12 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
+        if (isset($_GET['stp']) and $_GET['stp'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
+        }
+
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $action = 'Compras';
@@ -2557,6 +2578,7 @@ class OrdersController extends AppController
         $order_id = $this->request->data['order_id'];
         $q = $this->request->data['curr_q'];
         $sup = $this->request->data['curr_sup'];
+        $stp = $this->request->data['curr_stp'];
         $statusProcess = $this->request->data['v_status_processamento'];
 
         $condition = ["and" => ['Order.id' => $order_id], "or" => []];
@@ -2567,6 +2589,12 @@ class OrdersController extends AppController
 
         if (isset($sup) and $sup != '') {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($stp) and $stp != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
         }
 
         $items = $this->OrderItem->find('all', [

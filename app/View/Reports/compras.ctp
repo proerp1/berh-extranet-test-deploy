@@ -181,15 +181,17 @@
                         <div class="col">
                             <div class="form-check form-check-custom form-check-solid">
                                 <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
-                                    <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
-                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                    <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
-                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
-                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                    <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
                                 </select>
                             </div>
                         </div>

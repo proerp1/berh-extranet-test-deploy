@@ -155,6 +155,18 @@
                                 </td>
                                 <td class="fw-bolder text-end"><?php echo $v_is_partial; ?></td>
                             </tr>
+                            <?php if ($order['Customer']['flag_gestao_economico'] == 'S') { ?>
+                                <?php if ($v_is_partial != 'PIX') { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Pedido Complementar
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['Order']['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } ?>
                             <!--end::Date-->
                         </tbody>
                         <!--end::Table body-->

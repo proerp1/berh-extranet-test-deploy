@@ -418,7 +418,7 @@
 
                 <div class="mb-7 col-2">
                     <label class="form-label">Tipos de GE</label>
-                    <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'GE pré pago', '2' => 'GE Pós pago', '3' => 'GE garantido'), "class" => "form-select mb-3 mb-lg-0",'default' => '2'));  ?>
+                    <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Pré', '2' => 'Pós', '3' => 'Garantido'), "class" => "form-select mb-3 mb-lg-0",'default' => '2'));  ?>
                 </div>
             </div>
 

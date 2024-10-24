@@ -10,6 +10,8 @@ function addWorkingDays(startDate, daysToAdd) {
 }
 
 $(document).ready(function() {
+    $(".pedido_comp").hide();
+
     $('[data-kt-customer-table-filter="reset"]').on('click', function() {
         $("#t").val(null).trigger('change');
         $("#f").val(null).trigger('change');
@@ -222,5 +224,47 @@ $(document).ready(function() {
                 $("#clone_order_select").html(html_opt);
             }
         });
+    });
+
+    $("#customer_id").on("change", function() {
+        var el = $(this);
+        var customer_id = $(this).val();
+
+        $.ajax({
+            url: base_url + "/orders/getCustomerGE/" + customer_id,
+            type: "post",
+            dataType: "json",
+            beforeSend: function(xhr) {
+                $(".loading_img").remove();
+                el.parent().append("<img src='" + base_url + "/img/loading.gif' class='loading_img'>");
+            },
+            success: function(data) {
+                $(".loading_img").remove();
+
+                $(".flag_gestao_economico").val(data.Customer.flag_gestao_economico);
+
+                if (data.Customer.flag_gestao_economico == 'S') {
+                    if ($(".is_partial:checked").val() == 3) {
+                        $(".pedido_comp").hide();
+                    } else {
+                        $(".pedido_comp").show();
+                    }
+                } else {
+                    $(".pedido_comp").hide();
+                }
+            }
+        });
+    });
+
+    $(".is_partial").on("change", function() {
+        if ($(".flag_gestao_economico").val() == 'S') {
+            if ($(".is_partial:checked").val() == 3) {
+                $(".pedido_comp").hide();
+            } else {
+                $(".pedido_comp").show();
+            }
+        } else {
+            $(".pedido_comp").hide();
+        }
     });
 })
