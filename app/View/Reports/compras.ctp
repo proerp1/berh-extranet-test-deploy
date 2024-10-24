@@ -187,6 +187,7 @@
                                     <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                    <option value="VALIDACAO_PENDENTE">VALIDACAO PENDENTE</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
                                     <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
                                     <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
