@@ -160,7 +160,7 @@
                                     <tr>
                                         <td class="text-muted">
                                             <div class="d-flex align-items-center">
-                                                Pedido Complementar
+                                                Gestão Eficiente
                                             </div>
                                         </td>
                                         <td class="fw-bolder text-end"><?php echo $order['Order']['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
