@@ -262,11 +262,12 @@
                                             </a>
                                         <?php } ?>
 
-                                        <?php if ($gerarNota) { ?>
+                                        <?php if ($gerarNota && $order["Order"]["status_id"] != 83) { ?>
                                             <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
                                                 <i class="fas fa-download"></i> Nota de Débito
                                             </a>
                                         <?php } ?>
+
                                     </div>
                                 </div>
 
