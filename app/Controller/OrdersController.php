@@ -135,6 +135,11 @@ class OrdersController extends AppController
             $filtersFilled = true;
         }
 
+        if (!empty($_GET['ge'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.pedido_complementar' => $_GET['ge']]);
+            $filtersFilled = true;
+        }
+
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {

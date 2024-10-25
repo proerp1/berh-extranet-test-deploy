@@ -47,18 +47,19 @@
 
                                         <div class="mb-10">
                                             <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
-                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp" id="stp">
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
                                                 <option value="">Selecione</option>
-                                                <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'ARQUIVO_GERADO' ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
-                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'CADASTRO_INCONSISTENTE' ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
-                                                <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'CADASTRO_PROCESSADO' ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
-                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'CREDITO_INCONSISTENTE' ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
-                                                <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'CREDITO_PROCESSADO' ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
-                                                <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'FALHA_GERACAO_ARQUIVO' ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
-                                                <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'GERAR_PAGAMENTO' ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
-                                                <option value="INICIO_PROCESSAMENTO" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'INICIO_PROCESSAMENTO' ? 'selected' : ''; ?>>INICIO_PROCESSAMENTO</option>
-                                                <option value="PROCESSAMENTO_PENDENTE" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'PROCESSAMENTO_PENDENTE' ? 'selected' : ''; ?>>PROCESSAMENTO_PENDENTE</option>
-                                                <option value="VALIDACAO_PENDENTE" <?php echo isset($_GET['stp']) && $_GET['stp'] == 'VALIDACAO_PENDENTE' ? 'selected' : ''; ?>>VALIDACAO_PENDENTE</option>
+                                                <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                                <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                                <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                                <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                                <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                                <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                                <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                                <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                                <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
+                                                <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                                <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                             </select>
                                         </div>
 
@@ -211,17 +212,17 @@
                         <div class="col">
                             <div class="form-check form-check-custom form-check-solid">
                                 <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
-                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
-                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
-                                    <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
-                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
-                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
-                                    <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
-                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                    <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                    <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
                                     <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
+                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                 </select>
                             </div>
                         </div>
