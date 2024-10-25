@@ -110,27 +110,52 @@ class CustomersController extends AppController
 
         if (isset($_GET['exportar'])) {
             $nome = 'clientes' . date('d_m_Y_H_i_s') . '.xlsx';
-
+        
             $data = $this->Customer->find('all', [
-                'contain' => ['Resale', 'Status', 'Seller','Proposal'],
                 'joins' => [
-            [
-                'table' => 'proposals',
-                'alias' => 'Proposal',
-                'type' => 'INNER',
-                'conditions' => [
-                    'Proposal.customer_id = Customer.id',
-                    'Proposal.status_id' => 99
-                ]
-            ]
-        ],
-                'conditions' => $condition, 
+                    [
+                        'table' => 'proposals',
+                        'alias' => 'Proposal',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Proposal.customer_id = Customer.id',
+                            'Proposal.status_id' => 99  // Filtra apenas propostas com status ativo
+                        ]
+                    ],
+                    [
+                        'table' => 'resales',
+                        'alias' => 'Resale',
+                        'type' => 'LEFT',
+                        'conditions' => 'Resale.id = Customer.resale_id'
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'LEFT',
+                        'conditions' => 'Status.id = Customer.status_id'
+                    ],
+                    [
+                        'table' => 'sellers',
+                        'alias' => 'Seller',
+                        'type' => 'LEFT',
+                        'conditions' => 'Seller.id = Customer.seller_id'
+                    ]
+                ],
+                'fields' => [
+                    'Customer.*', 
+                    'Resale.nome_fantasia', 
+                    'Status.name', 
+                    'Seller.name', 
+                    'Proposal.management_feel', 
+                    'Proposal.tpp'
+                ],
+                'conditions' => $condition,
             ]);
-
+        
             $this->ExcelGenerator->gerarExcelClientes($nome, $data);
-
             $this->redirect("/files/excel/" . $nome);
         }
+        
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
