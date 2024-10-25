@@ -110,11 +110,19 @@ class CustomersController extends AppController
 
         if (isset($_GET['exportar'])) {
             $nome = 'clientes' . date('d_m_Y_H_i_s') . '.xlsx';
-
+        
             $data = $this->Customer->find('all', [
-                'contain' => ['Resale', 'Status', 'Seller','Proposal'],
+                'contain' => [
+                    'Resale', 
+                    'Status', 
+                    'Seller',
+                    'Proposal' => [
+                        'conditions' => ['Proposal.status' => 99] 
+                    ]
+                ],
                 'conditions' => $condition, 
             ]);
+        
 
             $this->ExcelGenerator->gerarExcelClientes($nome, $data);
 
