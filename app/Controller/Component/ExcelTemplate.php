@@ -737,6 +737,8 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Operadoras"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Beneficiários"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data pagamento"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente"); $col++;
 		
 		foreach ($dados as $key => $dado) {
 			$fee_economia = 0;
@@ -772,6 +774,10 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['suppliersCount']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['usersCount']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Income']['data_pagamento']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['is_partial']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['pedido_complementar'] ? 'S' : 'N'); $col++;
+
+
 		}
 	}
 
