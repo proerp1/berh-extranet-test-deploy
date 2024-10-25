@@ -113,6 +113,17 @@ class CustomersController extends AppController
 
             $data = $this->Customer->find('all', [
                 'contain' => ['Resale', 'Status', 'Seller','Proposal'],
+                'joins' => [
+            [
+                'table' => 'proposals',
+                'alias' => 'Proposal',
+                'type' => 'INNER',
+                'conditions' => [
+                    'Proposal.customer_id = Customer.id',
+                    'Proposal.status_id' => 99
+                ]
+            ]
+        ],
                 'conditions' => $condition, 
             ]);
 
