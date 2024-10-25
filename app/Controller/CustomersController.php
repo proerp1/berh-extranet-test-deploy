@@ -112,16 +112,21 @@ class CustomersController extends AppController
             $nome = 'clientes' . date('d_m_Y_H_i_s') . '.xlsx';
         
             $data = $this->Customer->find('all', [
-                'contain' => [
-                    'Resale', 
-                    'Status', 
-                    'Seller',
-                    'Proposal' => [
-                        'conditions' => ['Proposal.status' => 99] 
+                'joins' => [
+                    [
+                        'table' => 'proposals',
+                        'alias' => 'Proposal',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Proposal.customer_id = Customer.id',
+                            'Proposal.status' => 99  
+                        ]
                     ]
                 ],
-                'conditions' => $condition, 
+                'contain' => ['Resale', 'Status', 'Seller'],
+                'conditions' => $condition,
             ]);
+        }
         
 
             $this->ExcelGenerator->gerarExcelClientes($nome, $data);
