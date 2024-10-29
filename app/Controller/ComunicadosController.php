@@ -2,16 +2,12 @@
 class ComunicadosController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission'];
-    public $uses = ['Comunicado', 'Permission', 'Status', 'Categoria'];
-
+    public $components = ['Paginator', 'Permission', 'Email'];
+    public $uses = ['Comunicado', 'ComunicadoCliente', 'Permission', 'Status', 'Categoria', 'Customer'];
+    
     public $paginate = [
-        'limit' => 100,
-        'order' => [
-            'data' => 'asc',
-            'Status.id' => 'asc',
-            'Comunicado.titulo' => 'asc'
-        ]
+        'Comunicado'            => ['limit' => 100, 'order' => ['Comunicado.data' => 'asc', 'Status.id' => 'asc', 'Comunicado.titulo' => 'asc']],
+        'ComunicadoCliente'     => ['limit' => 100, 'order' => ['ComunicadoCliente.created' => 'desc']],
     ];
 
     public function beforeFilter()
@@ -120,5 +116,97 @@ class ComunicadosController extends AppController
         }
     }
 
+    public function clientes($id)
+    {
+        $this->Permission->check(2, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ["and" => ['ComunicadoCliente.comunicado_id' => $id], "or" => []];
+
+        $data = $this->Paginator->paginate('ComunicadoCliente', $condition);
+
+        $cadastrados = $this->ComunicadoCliente->find('all', ['conditions' => $condition]);
+        $ids_cadastrados = [];
+        foreach ($cadastrados as $resale) {
+            $ids_cadastrados[] = $resale['ComunicadoCliente']['customer_id'];
+        }
+
+        $customers = $this->Customer->find("list", ['conditions' => ['Customer.status_id' => 3, 'Customer.enviar_email' => 1, 'not' => ['Customer.id' => $ids_cadastrados]], 'order' => ['Customer.nome_primario' => 'asc']]);
+
+        $customersIds = [];
+        foreach ($customers as $comunicado_id => $name) {
+            $customersIds[$comunicado_id] = $name;
+        }
+
+        $action = 'Clientes';
+        $breadcrumb = ['Configurações' => '', 'Comunicados' => '', 'Clientes' => ''];
+
+        $this->set("form_action", "../comunicados/add_cliente/" . $id);
+        $this->set(compact('data', 'id', 'action', 'breadcrumb', 'customersIds'));
+    }
     
+    public function add_cliente($id)
+    {
+        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        if ($this->request->is(['post', 'put'])) {
+            $this->request->data['ComunicadoCliente']['comunicado_id'] = $id;
+            $this->request->data['ComunicadoCliente']['user_creator_id'] = CakeSession::read("Auth.User.id");
+
+            $this->ComunicadoCliente->create();
+            if ($this->ComunicadoCliente->save($this->request->data)) {
+                $this->Flash->set(__('O cliente foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                $this->redirect($this->referer());
+            } else {
+                $this->Flash->set(__('O cliente não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+            }
+        }
+    }
+
+    public function delete_cliente($id)
+    {
+        $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->ComunicadoCliente->id = $id;
+
+        $data['ComunicadoCliente']['data_cancel'] = date("Y-m-d H:i:s");
+        $data['ComunicadoCliente']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->ComunicadoCliente->save($data)) {
+            $this->Flash->set(__('O cliente foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function enviar_comunicado($id)
+    {
+        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $comunicado_clientes = $this->ComunicadoCliente->find('all', ['conditions' => ['ComunicadoCliente.comunicado_id' => $id, 'ComunicadoCliente.sent' => null]]);
+        
+        foreach ($comunicado_clientes as $cliente) {
+            $dados = 
+                ['viewVars' => [
+                    'nome'  => $cliente['Customer']['nome_primario'],
+                    'email' => $cliente['Customer']['email'],
+                    'link'  => 'https://cliente.berh.com.br/'
+                ],
+                'template' => 'comunicado_cliente',
+                'subject'  => 'BeRH - Comunicado: '.$cliente['Comunicado']['titulo'].' ',
+                'config'   => 'default'
+            ];
+
+            if (!$this->Email->send($dados)) {
+                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect($this->referer());
+            } else {
+                $this->ComunicadoCliente->id = $cliente['ComunicadoCliente']['id'];
+
+                $data['ComunicadoCliente']['sent'] = date("Y-m-d H:i:s");
+                $data['ComunicadoCliente']['user_sent_id'] = CakeSession::read("Auth.User.id");
+
+                $this->ComunicadoCliente->save($data);
+            }
+        }
+
+        $this->redirect($this->referer());
+    }
 }

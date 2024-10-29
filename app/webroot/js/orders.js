@@ -267,4 +267,14 @@ $(document).ready(function() {
             $(".pedido_comp").hide();
         }
     });
-})
+
+    $(".is_partial").on("change", function() {
+        if ($(".is_partial:checked").val() == 3) {
+            $(".js-pedido_parc").hide();
+            $(".working_days").val("0");
+        } else {
+            $(".js-pedido_parc").show();
+        }
+    });
+
+});

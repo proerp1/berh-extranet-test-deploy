@@ -26,7 +26,7 @@
                             <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
-                    <div class="row mb-7 ">
+                    <div class="row mb-7">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
                             <div class="input-group">
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-7">
+                    <div class="row mb-7 js-pedido_parc">
                         <div class="col-6">
                             <label class="mb-2">Clona pedido anterior?</label>
                             <div class="row">
@@ -73,7 +73,7 @@
                             <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
                         </div>
                     </div>
-                    <div class="row mb-7 div-new-order">
+                    <div class="row mb-7 div-new-order js-pedido_parc">
                         <div class="col">
                             <label class="mb-2">Utilizar Dias Úteis</label>
                             <div class="row">
@@ -100,7 +100,7 @@
 
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
+                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", 'required' => true, 'div' => false, 'label' => false]); ?>
                             <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
