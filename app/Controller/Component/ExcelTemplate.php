@@ -623,9 +623,15 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['flag_gestao_economico'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['porcentagem_margem_seguranca']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $proposalManagementFeel); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $proposalTpp); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);		}
+			 $proposal = isset($dado['Proposal'][0]) ? $dado['Proposal'][0] : null;
+        if ($proposal) {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $proposal['management_feel']);
+            $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $proposal['tpp']);
+            $col++;
+        }
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
+		}
 	}
 
 	public function getFornecedoresRelatorio($objPHPExcel, $dados)
