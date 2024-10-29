@@ -15,6 +15,17 @@ class Customer extends AppModel
         'Seller',
         'ActivityArea',
     ];
+    
+    
+    public $hasMany = [
+        'Proposal' => [
+            'className' => 'Proposal',
+            'foreignKey' => 'customer_id',
+            'conditions' => ['Proposal.status_id' => 99], 
+
+        ]
+    ];
+
 
     public $hasOne = [
         'PlanoAtivo' => [
