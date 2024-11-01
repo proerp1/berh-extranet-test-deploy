@@ -6,7 +6,7 @@ class ComunicadosController extends AppController
     public $uses = ['Comunicado', 'ComunicadoCliente', 'Permission', 'Status', 'Categoria', 'Customer'];
     
     public $paginate = [
-        'Comunicado'            => ['limit' => 100, 'order' => ['Comunicado.data' => 'asc', 'Status.id' => 'asc', 'Comunicado.titulo' => 'asc']],
+        'Comunicado'            => ['limit' => 100, 'order' => ['Comunicado.data' => 'desc', 'Status.id' => 'asc', 'Comunicado.titulo' => 'asc']],
         'ComunicadoCliente'     => ['limit' => 100, 'order' => ['ComunicadoCliente.created' => 'desc']],
     ];
 
