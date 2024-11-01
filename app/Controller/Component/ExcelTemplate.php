@@ -633,8 +633,7 @@ class ExcelTemplate
 				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "N/A");
 				$col++;
 			}
-			//$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['tipo_ge']);
-
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['tipo_ge']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
 		}
 	}
