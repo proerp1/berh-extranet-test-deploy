@@ -580,6 +580,7 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde mínina de diária por cliente"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "PGE*FeeGestao"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "TPP"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipos de GE"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observações");
 
 		foreach ($dados as $key => $dado) {
@@ -632,6 +633,7 @@ class ExcelTemplate
 				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "N/A");
 				$col++;
 			}
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['tipo_ge']);
 
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
 		}
