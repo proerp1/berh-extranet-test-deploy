@@ -633,8 +633,10 @@ class ExcelTemplate
 				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "N/A");
 				$col++;
 			}
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['tipo_ge']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
+			switch ($dado['Customer']['tipo_ge']) {case '1':$tipoGeNome = 'pré';break;case '2':$tipoGeNome = 'pós';break;case '3':$tipoGeNome = 'garantido';break;		}
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $tipoGeNome);
+			$col++;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
 		}
 	}
 
