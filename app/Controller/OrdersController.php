@@ -421,115 +421,173 @@ class OrdersController extends AppController
         $totalOrder = 0;
 
         foreach ($customerItineraries as $itinerary) {
-            $values_from_csv = 0;
-            $manualWorkingDays = 0;
-            $manualQuantity = $itinerary['CustomerUserItinerary']['quantity'];
-            $currentUserId = 0;
-            if (!empty($manualPricing)) {
-                $currentUserId = $itinerary['CustomerUserItinerary']['customer_user_id'];
+            $currentUserId = $itinerary['CustomerUserItinerary']['customer_user_id'];
 
-                if (!isset($manualPricing[$currentUserId])) {
-                    continue;
+            // Skip if no manual pricing exists for this user
+            if (!empty($manualPricing) && !isset($manualPricing[$currentUserId])) {
+                continue;
+            }
+
+            // If manual pricing exists, create multiple order items
+            if (!empty($manualPricing[$currentUserId])) {
+                foreach ($manualPricing[$currentUserId] as $manualEntry) {
+                    $parsedManualRow = $this->parseManualRow($itinerary, $manualEntry);
+
+                    if ($parsedManualRow === false) {
+                        continue;
+                    }
+
+                    $pricePerDay = abs($parsedManualRow['pricePerDay']);
+                    $manualWorkingDays = abs($parsedManualRow['manualWorkingDays']);
+                    $manualQuantity = abs($parsedManualRow['manualQuantity']);
+
+                    $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $pricePerDay;
+
+                    $this->createOrderItem(
+                        $itinerary,
+                        $orderId,
+                        $workingDays,
+                        $period_from,
+                        $period_to,
+                        $working_days_type,
+                        $proposal,
+                        $pricePerDay,
+                        $manualWorkingDays,
+                        $manualQuantity,
+                        1, // values_from_csv
+                        $totalTransferFee,
+                        $totalSubtotal,
+                        $totalOrder
+                    );
                 }
-
-                $parsedManualRow = $this->parseManualRow($itinerary, $manualPricing[$currentUserId]);
-
-                if ($parsedManualRow == false) {
-                    // se não encontrou o preço manual, pula para o próximo itinerário
-                    continue;
-                }
-
-                $pricePerDay = $parsedManualRow['pricePerDay'] < 0 ? $parsedManualRow['pricePerDay'] * -1 : $parsedManualRow['pricePerDay'];
-                $manualWorkingDays = $parsedManualRow['manualWorkingDays'] < 0 ? $parsedManualRow['manualWorkingDays'] * -1 : $parsedManualRow['manualWorkingDays'];
-                $manualQuantity = $parsedManualRow['manualQuantity'] < 0 ? $parsedManualRow['manualQuantity'] * -1 : $parsedManualRow['manualQuantity'];
-
-                $itinerary['CustomerUserItinerary']['price_per_day_not_formated'] = $pricePerDay;
-
-                $values_from_csv = 1;
-            }
-
-
-            $commissionFee = 0;
-            $commissionPerc = $this->getCommissionPerc($itinerary['Benefit']['benefit_type_id'], $proposal);
-            $pricePerDay = $itinerary['CustomerUserItinerary']['price_per_day_not_formated'];
-            $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
-
-            if ($working_days_type == 2) {
-                $workingDays = $itinerary['CustomerUserItinerary']['working_days'];
-            }
-
-            $workingDaysUser = $workingDays - $vacationDays;
-
-            if ($workingDaysUser < 0) {
-                $workingDaysUser = 0;
-            }
-
-            if ($manualWorkingDays != 0) {
-                $workingDaysUser = $manualWorkingDays;
-            }
-
-            $subtotal = $workingDaysUser * $pricePerDay;
-
-            $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
-            $benefit = $this->Benefit->findById($benefitId);
-            $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
-                ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
-                : 0;
-
-            // 1 = 'Valor', 2 = 'Percentual'
-            if ($benefit['Supplier']['transfer_fee_type'] == 2) {
-                $transferFee = $subtotal * ($transferFeePercentage / 100);
             } else {
-                $transferFee = $transferFeePercentage;
+                // Create single order item without manual pricing
+                $this->createOrderItem(
+                    $itinerary,
+                    $orderId,
+                    $workingDays,
+                    $period_from,
+                    $period_to,
+                    $working_days_type,
+                    $proposal,
+                    $itinerary['CustomerUserItinerary']['price_per_day_not_formated'],
+                    0, // manualWorkingDays
+                    $itinerary['CustomerUserItinerary']['quantity'],
+                    0, // values_from_csv
+                    $totalTransferFee,
+                    $totalSubtotal,
+                    $totalOrder
+                );
             }
-            $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
-
-            $total = $subtotal + $transferFee + $commissionFee;
-
-            $totalTransferFee += $transferFee;
-            $totalSubtotal += $subtotal;
-            $totalOrder += $total;
-
-            $orderItemData = [
-                'order_id' => $orderId,
-                'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
-                'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
-                'working_days' => $workingDaysUser,
-                'price_per_day' => $pricePerDay,
-                'subtotal' => $subtotal,
-                'transfer_fee' => $transferFee,
-                'total' => $total,
-                'commission_fee' => $commissionFee,
-                'values_from_csv' => $values_from_csv,
-                'manual_quantity' => $manualQuantity,
-            ];
-
-            $this->OrderItem->create();
-            $this->OrderItem->save($orderItemData);
         }
     }
 
-    private function parseManualRow($itinerary, $manualPricing)
+    private function parseManualRow($itinerary, $row)
     {
-        foreach ($manualPricing as $row) {
-            $isNewCsv = isset($row['newCsv']) ? $row['newCsv'] : false;
-            $benefitIdOrCode = $isNewCsv ? $itinerary['Benefit']['id'] : $itinerary['Benefit']['code'];
-            $benefitIdOrCode = (int)$benefitIdOrCode;
-            $row['benefitId'] = (int)$row['benefitId'];
+        $isNewCsv = isset($row['newCsv']) ? $row['newCsv'] : false;
+        $benefitIdOrCode = $isNewCsv ? $itinerary['Benefit']['id'] : $itinerary['Benefit']['code'];
+        $benefitIdOrCode = (int)$benefitIdOrCode;
+        $row['benefitId'] = (int)$row['benefitId'];
 
-            if ($row['benefitId'] == $benefitIdOrCode) {
-                $manualUnitPrice = $row['unitPrice'];
-                $manualWorkingDays = (int)$row['workingDays'];
-                $manualQuantity = $row['quantity'];
+        if ($row['benefitId'] == $benefitIdOrCode) {
+            $manualUnitPrice = $row['unitPrice'];
+            $manualWorkingDays = (int)$row['workingDays'];
+            $manualQuantity = $row['quantity'];
 
-                $pricePerDay = $manualUnitPrice * $manualQuantity;
+            $pricePerDay = $manualUnitPrice * $manualQuantity;
 
-                return ['pricePerDay' => $pricePerDay, 'manualWorkingDays' => $manualWorkingDays, 'manualQuantity' => $manualQuantity];
-            }
+            return [
+                'pricePerDay' => $pricePerDay,
+                'manualWorkingDays' => $manualWorkingDays,
+                'manualQuantity' => $manualQuantity
+            ];
         }
 
         return false;
     }
+
+    private function createOrderItem($itinerary, $orderId, $workingDays, $period_from, $period_to, $working_days_type, $proposal, $pricePerDay, $manualWorkingDays, $manualQuantity, $values_from_csv, &$totalTransferFee, &$totalSubtotal, &$totalOrder)
+    {
+        $commissionFee = 0;
+        $commissionPerc = $this->getCommissionPerc($itinerary['Benefit']['benefit_type_id'], $proposal);
+        $vacationDays = $this->CustomerUserVacation->getVacationsDays($itinerary['CustomerUserItinerary']['customer_user_id'], $period_from, $period_to);
+
+        if ($working_days_type == 2) {
+            $workingDays = $itinerary['CustomerUserItinerary']['working_days'];
+        }
+
+        $workingDaysUser = $workingDays - $vacationDays;
+
+        if ($workingDaysUser < 0) {
+            $workingDaysUser = 0;
+        }
+
+        if ($manualWorkingDays != 0) {
+            $workingDaysUser = $manualWorkingDays;
+        }
+
+        $subtotal = $workingDaysUser * $pricePerDay;
+
+        $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
+        $benefit = $this->Benefit->findById($benefitId);
+        $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
+            ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
+            : 0;
+
+        // 1 = 'Valor', 2 = 'Percentual'
+        if ($benefit['Supplier']['transfer_fee_type'] == 2) {
+            $transferFee = $subtotal * ($transferFeePercentage / 100);
+        } else {
+            $transferFee = $transferFeePercentage;
+        }
+
+        $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
+
+        $total = $subtotal + $transferFee + $commissionFee;
+
+        $totalTransferFee += $transferFee;
+        $totalSubtotal += $subtotal;
+        $totalOrder += $total;
+
+        $orderItemData = [
+            'order_id' => $orderId,
+            'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
+            'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
+            'working_days' => $workingDaysUser,
+            'price_per_day' => $pricePerDay,
+            'subtotal' => $subtotal,
+            'transfer_fee' => $transferFee,
+            'total' => $total,
+            'commission_fee' => $commissionFee,
+            'values_from_csv' => $values_from_csv,
+            'manual_quantity' => $manualQuantity,
+        ];
+
+        $this->OrderItem->create();
+        $this->OrderItem->save($orderItemData);
+    }
+
+    // private function parseManualRow($itinerary, $manualPricing)
+    // {
+    //     foreach ($manualPricing as $row) {
+    //         $isNewCsv = isset($row['newCsv']) ? $row['newCsv'] : false;
+    //         $benefitIdOrCode = $isNewCsv ? $itinerary['Benefit']['id'] : $itinerary['Benefit']['code'];
+    //         $benefitIdOrCode = (int)$benefitIdOrCode;
+    //         $row['benefitId'] = (int)$row['benefitId'];
+
+    //         if ($row['benefitId'] == $benefitIdOrCode) {
+    //             $manualUnitPrice = $row['unitPrice'];
+    //             $manualWorkingDays = (int)$row['workingDays'];
+    //             $manualQuantity = $row['quantity'];
+
+    //             $pricePerDay = $manualUnitPrice * $manualQuantity;
+
+    //             return ['pricePerDay' => $pricePerDay, 'manualWorkingDays' => $manualWorkingDays, 'manualQuantity' => $manualQuantity];
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
     public function edit($id = null)
     {
@@ -2723,7 +2781,7 @@ class OrdersController extends AppController
             }
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-            
+
             // Create a new itinerary record
             $this->CustomerUserItinerary->create();
             $this->CustomerUserItinerary->save([
