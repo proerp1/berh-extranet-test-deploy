@@ -52,10 +52,8 @@
                                     <?php
                                         for($a = 0; $a < count($status); $a++){
                                             $selected = "";
-                                            if (isset($_GET["t"])) {
-                                                if($status[$a]['Status']['id'] == $_GET["t"]){
-                                                    $selected = "selected";
-                                                }
+                                            if (isset($_GET["t"]) && $status[$a]['Status']['id'] == $_GET["t"]){
+                                                $selected = "selected";
                                             }
                                             echo '<option value="'.$status[$a]['Status']['id'].'" '.$selected.'>'.$status[$a]['Status']['name'].'</option>';
                                         }
@@ -69,14 +67,21 @@
                                     <?php
                                         for($a = 0; $a < count($codFranquias); $a++){
                                             $selected = "";
-                                            if (isset($_GET["f"])) {
-                                                if($codFranquias[$a]['Resale']['id'] == $_GET["f"]){
-                                                    $selected = "selected";
-                                                }
+                                            if (isset($_GET["f"]) && $codFranquias[$a]['Resale']['id'] == $_GET["f"]){
+                                                $selected = "selected";
                                             }
                                             echo '<option value="'.$codFranquias[$a]['Resale']['id'].'" '.$selected.'>'.$codFranquias[$a]['Resale']['nome_fantasia'].'</option>';
                                         }
                                     ?>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipos de GE:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo_ge" id="tipo_ge">
+                                    <option value=""></option>
+                                    <option value="1" <?php echo isset($_GET["tipo_ge"]) && $_GET["tipo_ge"] == '1' ? 'selected' : ''; ?>>Pré</option>
+                                    <option value="2" <?php echo isset($_GET["tipo_ge"]) && $_GET["tipo_ge"] == '2' ? 'selected' : ''; ?>>Pós</option>
+                                    <option value="3" <?php echo isset($_GET["tipo_ge"]) && $_GET["tipo_ge"] == '3' ? 'selected' : ''; ?>>Garantido</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -89,10 +94,10 @@
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
-                                
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
