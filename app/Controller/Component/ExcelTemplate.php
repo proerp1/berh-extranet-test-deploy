@@ -1521,7 +1521,9 @@ class ExcelTemplate
         ->setCellValue('F1', "Arquivo") 
         ->setCellValue('G1', "Assunto")
         ->setCellValue('H1', "Enviado em")
-        ->setCellValue('I1', "Finalizado em");
+        ->setCellValue('I1', "Finalizado em")
+		->setCellValue('J1', "Atendente");
+
 
     $indx = 1;
     for ($i = 0; $i < count($data); $i++) {
@@ -1535,7 +1537,9 @@ class ExcelTemplate
             ->setCellValue('F' . $indx, $data[$i]['Atendimento']['file_atendimento']) 
             ->setCellValue('G' . $indx, $data[$i]['Atendimento']['subject'])
 			->setCellValue('H' . $indx, date('d/m/Y H:i:s', strtotime($data[$i]['Atendimento']['created'])))
-            ->setCellValue('I' . $indx, $data[$i]['Atendimento']['data_finalizacao']);
+            ->setCellValue('I' . $indx, $data[$i]['Atendimento']['data_finalizacao'])
+			->setCellValue('J' . $indx, $data[$i]['Atendimento']['name_atendente']);
+
     }
 }
 

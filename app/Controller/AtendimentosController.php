@@ -56,6 +56,7 @@ class AtendimentosController extends AppController
                     'Customer.nome_primario',
                     'Customer.documento',
                     'Department.name',
+                    'Atendimento.name_atendente',
                     'Atendimento.subject',
                     'Atendimento.created',
                     'Atendimento.data_finalizacao',
