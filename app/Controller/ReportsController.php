@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status'];
+    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile'];
 
     public function beforeFilter()
     {
@@ -872,17 +872,18 @@ class ReportsController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 200,
             'order' => ['Order.id' => 'desc'],
-            'fields' => ['OrderItem.*', 
-                            'CustomerUserItinerary.*', 
-                            'Benefit.*', 
-                            'Order.*', 
-                            'CustomerUser.*', 
-                            'Supplier.id', 
-                            'Supplier.nome_fantasia', 
-                            'Customer.codigo_associado',
-                            'Customer.nome_primario',
-                            'Status.label',
-                            'Status.name',
+            'fields' => ['OrderItem.*',
+                        'Order.id',
+                        'Order.working_days',
+                        'Order.created',
+                        'Status.label',
+                        'Status.name',
+                        'Customer.codigo_associado',
+                        'Customer.nome_primario',
+                        'Supplier.nome_fantasia',
+                        'CustomerUser.name',
+                        'Benefit.name',
+                        'CustomerUserItinerary.quantity',
                         ],
             'joins' => [
                 [
@@ -1029,5 +1030,36 @@ class ReportsController extends AppController
         
 
         echo json_encode(['suppliers' => $suppliers, 'customers' => $customers]);
+    }
+
+    public function importar_movimentacao()
+    {
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(76, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = ['OrderBalanceFile' => [
+            'limit' => 200,
+            'order' => ['OrderBalanceFile.created' => 'desc'],
+        ]];
+
+        $buscar = false;
+
+        $condition = ["and" => [], "or" => []];
+
+        if (!empty($_GET['q'])) {
+            $buscar = true;
+
+            $condition['or'] = array_merge($condition['or'], [
+                'OrderBalanceFile.file_name LIKE' => "%" . $_GET['q'] . "%", 
+            ]);
+        }
+
+        $data = $this->Paginator->paginate('OrderBalanceFile', $condition);
+        
+        $action = 'Relatório de Movimentações';
+        $breadcrumb = ['Relatórios' => '', 'Relatório de Movimentações' => ''];
+
+        $this->set(compact('action', 'breadcrumb', 'data', 'buscar'));
     }
 }

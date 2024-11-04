@@ -6,12 +6,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <form autocomplete="off" action="<?php echo $this->base . '/orders/createOrder' ?>" id="order_creation_form" class="form-horizontal" method="post">
+                <input type="hidden" class="flag_gestao_economico">
                 <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
                     <div class="row mb-7 ">
                         <div class="col-6">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "options" => $customers)); ?>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>
@@ -25,7 +26,7 @@
                             <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
-                    <div class="row mb-7 ">
+                    <div class="row mb-7">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
                             <div class="input-group">
@@ -42,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-7">
+                    <div class="row mb-7 js-pedido_parc">
                         <div class="col-6">
                             <label class="mb-2">Clona pedido anterior?</label>
                             <div class="row">
@@ -72,7 +73,7 @@
                             <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
                         </div>
                     </div>
-                    <div class="row mb-7 div-new-order">
+                    <div class="row mb-7 div-new-order js-pedido_parc">
                         <div class="col">
                             <label class="mb-2">Utilizar Dias Úteis</label>
                             <div class="row">
@@ -99,7 +100,7 @@
 
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0", 'required' => true, 'div' => false, 'label' => false]); ?>
+                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", 'required' => true, 'div' => false, 'label' => false]); ?>
                             <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
@@ -136,7 +137,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="2" id="partialOrderChk2" checked="checked" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="2" id="partialOrderChk2" checked="checked" />
                                         <label class="form-check-label" for="partialOrderChk2">
                                             Todos beneficiários
                                         </label>
@@ -145,7 +146,7 @@
 
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
                                         <label class="form-check-label" for="partialOrderChk1">
                                             Parcial
                                         </label>
@@ -154,7 +155,7 @@
 
                                 <div class="col">
                                     <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
+                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
                                         <label class="form-check-label" for="partialOrderChk3">
                                             PIX
                                         </label>
@@ -193,6 +194,31 @@
                                         ?>
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-7 div-new-order pedido_comp">
+                        <div class="col">
+                            <label class="mb-2">Gestão Eficiente</label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input pedido_complementar" type="radio" name="data[pedido_complementar]" value="1" id="pedidoComp1" checked />
+                                        <label class="form-check-label" for="pedidoComp1">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input pedido_complementar" type="radio" name="data[pedido_complementar]" value="2" id="pedidoComp2" />
+                                        <label class="form-check-label" for="pedidoComp2">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

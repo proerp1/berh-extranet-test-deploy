@@ -43,6 +43,26 @@
                                             </select>
                                         </div>
 
+                                        <div id="selectedNumbers"></div>
+
+                                        <div class="mb-10">
+                                            <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
+                                                <option value="">Selecione</option>
+                                                <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                                <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                                <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                                <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                                <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                                <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                                <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                                <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                                <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
+                                                <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                                <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
+                                            </select>
+                                        </div>
+
                                         <div class="d-flex justify-content-end">
                                             <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                             <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -182,7 +202,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
                 <p>Alterar Status Processamento</p>
@@ -201,7 +220,9 @@
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
                                     <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                    <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
                                     <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                 </select>
                             </div>
                         </div>
@@ -209,8 +230,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="alterar_confirm" class="btn btn-success">Sim</a>
+                <button type="button" class="btn btn-light-dark" id="canc_confirm" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="alterar_confirm">Sim</button>
             </div>
         </div>
     </div>
@@ -247,6 +268,7 @@
             }
         });
     }
+    
     $(document).ready(function() {
         trigger_change();
 
@@ -262,22 +284,29 @@
 
         $('#alterar_confirm').on('click', function(e) {
             e.preventDefault();
+            
+            $(this).prop('disabled', true);
+            $("#canc_confirm").prop('disabled', true);
 
-            const v_status_processamento = $('#status_processamento').val();
-            const checkboxes = $('input[name="alt_linha"]:checked');
-            const orderItemIds = [];
+            if ($(".check_all").is(':checked')) {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const order_id = <?php echo $id ?>;
+                const v_status_processamento = $('#status_processamento').val();
+                const curr_q = urlParams.get('q');
+                const curr_sup = urlParams.get('sup');
+                const curr_stp = urlParams.get('stp');
 
-            checkboxes.each(function() {
-                orderItemIds.push($(this).parent().parent().find('.item_id').val());
-            });
 
-            if (orderItemIds.length > 0) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/alter_item_status_processamento',
+                    url: base_url+'/orders/alter_item_status_processamento_order_all',
                     data: {
-                        orderItemIds,
-                        v_status_processamento
+                        order_id,
+                        v_status_processamento,
+                        curr_q,
+                        curr_sup,
+                        curr_stp
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -286,6 +315,31 @@
                         }
                     }
                 });
+            } else {
+                const v_status_processamento = $('#status_processamento').val();
+                const checkboxes = $('input[name="alt_linha"]:checked');
+                const orderItemIds = [];
+
+                checkboxes.each(function() {
+                    orderItemIds.push($(this).parent().parent().find('.item_id').val());
+                });
+
+                if (orderItemIds.length > 0) {
+                    $.ajax({
+                        type: 'POST',
+                        url: base_url+'/orders/alter_item_status_processamento',
+                        data: {
+                            orderItemIds,
+                            v_status_processamento
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();
+                            }
+                        }
+                    });
+                }
             }
         });
 

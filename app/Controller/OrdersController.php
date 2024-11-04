@@ -30,7 +30,8 @@ class OrdersController extends AppController
         'Log',
         'Supplier',
         'CustomerUserAddress',
-        'CustomerUserBankAccount'
+        'CustomerUserBankAccount',
+        'OrderBalanceFile'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -131,6 +132,11 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
+            $filtersFilled = true;
+        }
+
+        if (!empty($_GET['ge'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.pedido_complementar' => $_GET['ge']]);
             $filtersFilled = true;
         }
 
@@ -235,6 +241,7 @@ class OrdersController extends AppController
             $period_to = $this->request->data['period_to'];
             $is_consolidated = $this->request->data['is_consolidated'];
             $is_partial = $this->request->data['is_partial'];
+            $pedido_complementar = $this->request->data['pedido_complementar'];
             $working_days_type = $this->request->data['working_days_type'];
             $grupo_especifico = isset($this->request->data['grupo_especifico']) ? $this->request->data['grupo_especifico'] : '';
             $benefit_type = $this->request->data['benefit_type'];
@@ -315,6 +322,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'is_partial' => $is_partial,
+                'pedido_complementar' => $pedido_complementar,
                 'credit_release_date' => $credit_release_date,
                 'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
@@ -803,7 +811,7 @@ class OrdersController extends AppController
         $income['Income']['valor_total'] = $order['Order']['total'];
         $income['Income']['vencimento'] = $order['Order']['due_date'];
         $income['Income']['data_competencia'] = date('01/m/Y');
-        $income['Income']['created'] = date('Y-m-d H:i:s');
+        $income['Income']['created'] = date('d/m/Y H:i:s');
         $income['Income']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
         $this->Income->create();
@@ -2471,35 +2479,6 @@ class OrdersController extends AppController
         return $valueFormatado;
     }
 
-    public function upload_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_cancel_balances_all(CakeSession::read("Auth.User.id"));
-
-            $this->OrderBalance->find_order_balances_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
-    public function update_user_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_user_order_item_saldo_all();
-        }
-
-        die;
-    }
-
-    public function update_saldo_csv_all()
-    {
-        if (CakeSession::read("Auth.User.id") == 37) {
-            $this->OrderBalance->update_order_item_saldo_all(CakeSession::read("Auth.User.id"));
-        }
-
-        die;
-    }
-
     public function getOrderByCustomer($customerId)
     {
         $this->layout = false;
@@ -2513,6 +2492,19 @@ class OrdersController extends AppController
         ]);
 
         echo json_encode($orders);
+    }
+
+    public function getCustomerGE($customerId)
+    {
+        $this->layout = false;
+        $this->autoRender = false;
+
+        $customers = $this->Customer->find('first', [
+            'fields' => ['Customer.flag_gestao_economico'],
+            'conditions' => ['Customer.id' => $customerId]
+        ]);
+
+        echo json_encode($customers);
     }
 
     public function baixar_beneficiarios($id)
@@ -2581,6 +2573,12 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
         }
 
+        if (isset($_GET['stp']) and $_GET['stp'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
+        }
+
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $action = 'Compras';
@@ -2593,7 +2591,6 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
-        $is_multiple = true;
         $itemOrderId = $this->request->data['orderItemIds'];
         $statusProcess = $this->request->data['v_status_processamento'];
 
@@ -2637,11 +2634,200 @@ class OrdersController extends AppController
         echo json_encode(['success' => true]);
     }
 
+    public function alter_item_status_processamento_order_all()
+    {
+        $this->autoRender = false;
+
+        $order_id = $this->request->data['order_id'];
+        $q = $this->request->data['curr_q'];
+        $sup = $this->request->data['curr_sup'];
+        $stp = $this->request->data['curr_stp'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+
+        if (isset($q) and $q != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
+        }
+
+        if (isset($sup) and $sup != '') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($stp) and $stp != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
+        }
+
+        $items = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+
+            ]
+        ]);
+
+        foreach ($items as $item) {
+            $dados_log = [
+                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $item['OrderItem']['id'],
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function alter_item_status_processamento_all()
+    {
+        $this->autoRender = false;
+
+        $q = $this->request->data['curr_q'];
+        $sup = $this->request->data['curr_sup'];
+        $st = $this->request->data['curr_st'];
+        $c = $this->request->data['curr_c'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        $condition = ["and" => [], "or" => []];
+
+        if (isset($sup) and $sup != '') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($st) and $st != '') {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
+        }
+
+        if (isset($c) and $c != '') {
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        }
+
+        if (!empty($q)) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => "%" . $q . "%", 
+                'CustomerUser.cpf LIKE' => "%" . $q . "%", 
+                'Benefit.name LIKE' => "%" . $q . "%", 
+                'Benefit.code LIKE' => "%" . $q . "%", 
+                'OrderItem.status_processamento LIKE' => "%" . $q . "%",
+            ]);
+        }
+
+        $items = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+            ]
+        ]);
+
+        foreach ($items as $item) {
+            $dados_log = [
+                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $item['OrderItem']['id'],
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+
+        echo json_encode(['success' => true]);
+    }
 
     /*
     * Novo upload the beneficiarios
     */
-
     private function parseNewCsv($customerId, $tmpFile)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
@@ -2839,5 +3025,146 @@ class OrdersController extends AppController
         }
 
         return ['customerUsersIds' => $customerUsersIds, 'unitPriceMapping' => $unitPriceMapping];
+    }
+
+    public function upload_saldo_csv_all()
+    {
+        $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
+
+        $groupTpOrder = [];
+        $groupOrder = [];
+
+        foreach ($ret['data'] as $item) {
+            $keyTp = $item['tipo'].'-'.$item['order_id'];
+            $keyOr = $item['order_id'];
+            
+            if (!isset($groupTpOrder[$keyTp])) {
+                $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
+            }
+
+            if (!isset($groupOrder[$keyOr])) {
+                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
+            }
+        }
+
+        foreach ($groupTpOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        foreach ($ret['data'] as $data) {
+            if ($data['tipo']) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
+
+                if (isset($benefit['Benefit'])) {
+                    $benefit_id = $benefit['Benefit']['id'];
+                } else {
+                    $benefit_id = null;
+                }
+
+                $orderBalanceData = [
+                    'order_id' => $data['order_id'],
+                    'order_item_id' => $data['order_item_id'],
+                    'customer_user_id' => $data['customer_user_id'],
+                    'benefit_id' => $benefit_id,
+                    'document' => $data['document'],
+                    'total' => $data['total'],
+                    'pedido_operadora' => $data['pedido_operadora'],
+                    'tipo' => $data['tipo'],
+                    'observacao' => $data['observacao'],
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
+            }
+        }
+
+        foreach ($groupOrder as $item) {
+            if ($item['order_id']) {
+                $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
+            }
+        }
+
+        $file = new File($this->request->data['file']['name']);
+        $dir = new Folder(APP."webroot/files/order_balances_all/", true);
+
+        $file = $this->Uploader->up($this->request->data['file'], $dir->path);
+
+        $orderBalanceFile = [
+            'file_name' => $file['nome'],
+            'user_creator_id' => CakeSession::read("Auth.User.id"),
+            'created' => date('Y-m-d H:i:s'),
+        ];
+
+        $this->OrderBalanceFile->create();
+        $this->OrderBalanceFile->save($orderBalanceFile);
+
+        $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect('/reports/importar_movimentacao');
+    }
+
+    private function parseCSVSaldoAll($tmpFile)
+    {
+        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $rec = iterator_to_array($csv->getRecords());
+
+        usort($rec, function($a, $b) {
+            if ($a[7] != 'PEDIDO_CLIENTE') {
+                return strcmp($a[7], $b[7]);
+            }
+        });
+
+        $line = 0;
+        $data = [];
+        foreach ($rec as $row) {
+            $saldo = 0;
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $cpf = preg_replace('/\D/', '', $row[0]);          
+
+            $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
+
+            $customer_user_id = null;
+            if (isset($existingUser[0]['u'])) {
+                $customer_user_id = $existingUser[0]['u']['id'];
+            }
+
+            $total = str_replace("R$", "", $row[2]);
+            $total = str_replace(" ", "", $total);
+
+            $data[] = [
+                'customer_user_id' => $customer_user_id,
+                'document' => $row[0],
+                'benefit_code' => $row[1],
+                'total' => $total,
+                'pedido_operadora' => $row[3],
+                'order_item_id' => $row[4],
+                'tipo' => $row[5],
+                'observacao' => $row[6],
+                'order_id' => $row[7],
+            ];
+
+            $line++;
+        }
+
+        return ['data' => $data];
     }
 }

@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal'];
 
     public $paginate = [
         'Customer' => [
@@ -112,8 +112,8 @@ class CustomersController extends AppController
             $nome = 'clientes' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Customer->find('all', [
-                'contain' => ['Resale', 'Status', 'Seller'],
-                'conditions' => $condition, 
+                'contain' => ['Resale', 'Status', 'Seller', 'Proposal'],
+                'conditions' => $condition,
             ]);
 
             $this->ExcelGenerator->gerarExcelClientes($nome, $data);
