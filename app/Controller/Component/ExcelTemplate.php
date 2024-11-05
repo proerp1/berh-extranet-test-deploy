@@ -2202,4 +2202,38 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderDocument"]["file_name"]); $col++;
 		}
 	}
+
+	public function getPedidoMovimentacoes($objPHPExcel, $dados)
+	{
+		$col = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Beneficiário"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código Benefício"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Benefício"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido Operadora"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observação"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
+		
+		foreach ($dados as $key => $dado) {
+            $tipo = "";
+            if ($dado["OrderBalance"]["tipo"] == '1') {
+                $tipo = 'Credita conta';
+            } elseif ($dado["OrderBalance"]["tipo"] == '2') {
+                $tipo = 'Credita e Debita';
+            } elseif ($dado["OrderBalance"]["tipo"] == '3') {
+                $tipo = 'Somente Credita';
+            }
+		
+			$col = 'A';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["document"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["code"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["pedido_operadora"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $tipo); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["observacao"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["total"]); $col++;
+		}
+	}
 }

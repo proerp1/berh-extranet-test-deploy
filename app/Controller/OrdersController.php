@@ -1837,6 +1837,18 @@ class OrdersController extends AppController
             $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
+        if (isset($_GET['exportar'])) {
+            $nome = 'movimentacoes_'.date('d_m_Y_H_i_s').'.xlsx';
+
+            $data = $this->OrderBalance->find('all', [
+                'conditions' => $condition,
+            ]);
+
+            $this->ExcelGenerator->gerarExcelPedidoMovimentacoes($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
+        }
+
         $data = $this->Paginator->paginate('OrderBalance', $condition);
 
         $order = $this->Order->findById($id);

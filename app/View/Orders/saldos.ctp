@@ -78,9 +78,14 @@
 
         <div class="row">
             <div class="col-12">
-                <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
+                <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
                     <i class="fas fa-arrow-up"></i>
                     Importar (CSV)
+                </a>
+
+                <a href="<?php echo $this->base.'/orders/saldos/'.$id.'?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" style="float:right" class="btn btn-light-primary me-3">
+                    <i class="fas fa-file-excel"></i>
+                    Exportar
                 </a>
             </div>
         </div>
