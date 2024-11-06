@@ -173,10 +173,12 @@ echo $this->element("abas_customers", array('id' => $id));
                             <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["EconomicGroup"][0]["name"]) ? $data[$i]["EconomicGroup"][0]["name"] : ''; ?></td>
 
                             <td class="fw-bold fs-7 ps-4">
+                            <?php debug($user); ?>
+                            <?php if (isset($user['Group']['id']) && $user['Group']['id'] == 1): ?>
                                 <a href="<?php echo $this->base . '/customer_users/' . $urlEdit . '/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-
+                            <?php endif; ?>
                             </td>
                         </tr>
                     <?php } ?>
