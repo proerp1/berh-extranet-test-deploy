@@ -90,13 +90,16 @@
                                 <td><?php echo $value['CustomerUserItinerary']['card_number']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['total']; ?></td>
                                 <td>
-                                    <a href="<?php echo $this->base.'/customer_users/edit_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
+                                <?php if (isset($user['Group']['id']) && $user['Group']['id'] == 1): ?>
+                                    <a href="<?php echo $this->base . '/customer_users/edit_itinerary/' . $id . '/' . $user_id . '/' . $value["CustomerUserItinerary"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customer_users/delete_itinerary/'.$id.'/'.$user_id.'/'.$value["CustomerUserItinerary"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customer_users/delete_itinerary/' . $id . '/' . $user_id . '/' . $value["CustomerUserItinerary"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
+                                <?php endif; ?>
+
                                 </td>
                             </tr>
                         <?php } ?>

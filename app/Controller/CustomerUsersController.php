@@ -11,7 +11,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','Group'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -625,13 +625,13 @@ class CustomerUsersController extends AppController
         }
 
         $data = $this->Paginator->paginate('CustomerUserItinerary', $condition);
-
+        $user = $this->Auth->user();
         $action = 'Dados Bancários';
         $breadcrumb = [
             'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Dados Bancários' => ''
         ];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id','user'));
     }
 
     public function add_itinerary($id, $user_id)
