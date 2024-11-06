@@ -11,7 +11,7 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','Groups'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup'];
 
     public $paginate = [
         'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
@@ -54,55 +54,52 @@ class CustomerUsersController extends AppController
     {
         ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
-    
+
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
     
-        $user = $this->Auth->user();
-    
         $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
-        
+    
         if($is_admin){
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin' => 1]);
         }
-        
+    
         if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.cpf LIKE' => "%".$_GET['q']."%",
-                'CustomerUser.name LIKE' => "%".$_GET['q']."%",
-                'CustomerUser.email LIKE' => "%".$_GET['q']."%"
-            ]);
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.cpf LIKE' => "%".$_GET['q']."%",'CustomerUser.name LIKE' => "%".$_GET['q']."%", 'CustomerUser.email LIKE' => "%".$_GET['q']."%"]);
         }
     
         if (!empty($_GET["t"])) {
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.status_id' => $_GET['t']]);
         }
-        
+    
         if (!empty($_GET["cc"])) {
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.customer_cost_center_id' => $_GET['cc']]);
         }
-        
+    
         if (!empty($_GET["d"])) {
             $condition['and'] = array_merge($condition['and'], ['CustomerUser.customer_departments_id' => $_GET['d']]);
         }
-        //debug($data);die;
+    
         $data = $this->Paginator->paginate('CustomerUser', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1], 'order' => 'Status.name']);
         $cost_centers = $this->CostCenter->find('all', ['conditions' => ['CostCenter.customer_id' => $id]]);
         $departments = $this->CustomerDepartment->find('all', ['conditions' => ['CustomerDepartment.customer_id' => $id]]);
-        
+    
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-        
+    
         $action = $is_admin ? 'Usuários' : 'Beneficiários';
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             $action => ''
         ];
-        
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments', 'user'));
-    }
     
+        // Remova ou comente a linha abaixo
+        // $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
+    
+        // $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario_xlsx');
+        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments'));
+    }
     public function generate_excel_report($id)
     {
         ini_set('memory_limit', '-1');
