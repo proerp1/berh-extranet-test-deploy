@@ -48,10 +48,6 @@ class Income extends AppModel
         if (!empty($this->data[$this->alias]['vencimento'])) {
             $this->data[$this->alias]['vencimento'] = $this->dateFormatBeforeSave($this->data[$this->alias]['vencimento']);
         }
-
-        if (!empty($this->data[$this->alias]['created'])) {
-            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
-        }        
  
         if (!empty($this->data[$this->alias]['data_competencia'])) {
             $this->data[$this->alias]['data_competencia'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_competencia']);
