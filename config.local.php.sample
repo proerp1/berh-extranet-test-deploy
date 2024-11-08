@@ -14,14 +14,23 @@ Configure::write('Meproteja.password', '760#Me27');
 Configure::write('Extranet.path', realpath(APP.'../').'/');
 Configure::write('Areadoassociado.link', 'http://localhost:8010/');
 
-Configure::write('SecretKey', '9d205b1525d27b9030e6b94066acf2a2ac9b6c342fa9be65585345367e4fe5f054990c32561830577f716f306d5586696a165828cce5077514c6327ebec9d760');
+Configure::write('SecretKey', '');
 
-Configure::write('sendgridKey', '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');
+Configure::write('sendgridKey', '');
 
-Configure::write('Itau.ClientId', '8c95e09a-e2ca-4bc8-9100-5af093ffb7fa');
-Configure::write('Itau.ClientSecret', '2afacb7b-5519-4664-a235-bcf8898848be');
+Configure::write('Itau.ClientId', '');
+Configure::write('Itau.ClientSecret', '');
 Configure::write('Itau.BaseUrl', 'https://api.itau.com.br/cash_management/v2');
 Configure::write('Itau.BaseUrlBusca', 'https://secure.api.cloud.itau.com.br/boletoscash/v2');
+
+Configure::write('Btg.BaseUrl', 'https://id.sandbox.btgpactual.com');
+Configure::write('Btg.BaseUrlApi', 'https://api.sandbox.empresas.btgpactual.com');
+Configure::write('Btg.Code', '');
+Configure::write('Btg.ClientId', '');
+Configure::write('Btg.ClientSecret', '');
+Configure::write('Btg.AccessToken', '');
+Configure::write('Btg.RefreshToken', '');
+Configure::write('Btg.AccountId', '');
 
 define('ROOT_SITE', Configure::read('Extranet.path'));
 
