@@ -29,9 +29,6 @@ class BoletosController extends AppController
                 'Income.cnab_gerado' => 2,
                 'Income.valor_total >' => 0,
                 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales'),
-                'not' => [
-                    'Income.bank_account_id' => 4,
-                ],
             ],
             'or' => [],
         ];
