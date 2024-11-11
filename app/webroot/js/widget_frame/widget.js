@@ -21,7 +21,9 @@
 
     // Criar o iframe    
     var iframe = document.createElement('iframe');
-    iframe.src = 'https://contactmail.directtalk.com.br/clientes/BeRH/index.html?Nome='+v_user_name+'&Email='+v_user_email;
+    var iframeSrc = 'https://contactmail.directtalk.com.br/clientes/BeRH/index.html?Nome='+v_user_name+'&Email='+v_user_email+'&Codigo=&NomeCliente=&CNPJ=';
+
+    iframe.src = iframeSrc;
     iframe.id = 'iframeContainerBerh';
     iframe.title = 'Página de Suporte';
     iframeContainer.appendChild(iframe);
@@ -34,5 +36,6 @@
     // Função para fechar o widget
     function closeWidget() {
         iframeContainer.style.display = 'none';
+        iframe.src = iframeSrc;
     }
 })();
