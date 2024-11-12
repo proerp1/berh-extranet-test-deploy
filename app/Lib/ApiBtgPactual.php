@@ -31,9 +31,8 @@ class ApiBtgPactual extends Controller
         try {
             $response = $client->post($this->baseUrl.'/oauth2/token', [
                 'form_params' => [
-                    'code' => Configure::read('Btg.Code'),
-                    'redirect_uri' => 'https://localhost.com',
-                    'grant_type' => 'authorization_code'
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => Configure::read('Btg.RefreshToken')
                 ],
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded',
@@ -43,9 +42,9 @@ class ApiBtgPactual extends Controller
 
             $contents = json_decode($response->getBody()->getContents(), true);
 
-            /*if (isset($contents['access_token'])) {
+            if (isset($contents['access_token'])) {
                 CakeSession::write('ApiBtg.credentials', $contents);
-            }*/
+            }
 
             return true;
         } catch (ClientException $e) {
@@ -58,7 +57,7 @@ class ApiBtgPactual extends Controller
     {
         $requestedUrl = $this->baseUrlApi.$endpoint;
 
-        // $this->authenticate();
+        $this->authenticate();
 
         $client = new Client();
 
@@ -74,7 +73,7 @@ class ApiBtgPactual extends Controller
                     'headers' => [
                         'accept' => $accept,
                         'Content-Type' => 'application/json',
-                        'authorization' => 'Bearer '.Configure::read('Btg.AccessToken'),
+                        'authorization' => 'Bearer '.CakeSession::read('ApiBtg.credentials.access_token'),
                     ],
                 ])
             );

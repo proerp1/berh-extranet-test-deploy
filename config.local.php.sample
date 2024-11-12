@@ -28,7 +28,6 @@ Configure::write('Btg.BaseUrlApi', 'https://api.sandbox.empresas.btgpactual.com'
 Configure::write('Btg.Code', '');
 Configure::write('Btg.ClientId', '');
 Configure::write('Btg.ClientSecret', '');
-Configure::write('Btg.AccessToken', '');
 Configure::write('Btg.RefreshToken', '');
 Configure::write('Btg.AccountId', '');
 
