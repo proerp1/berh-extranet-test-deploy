@@ -131,6 +131,7 @@ class ApiBtgPactual extends Controller
         } else {
             $payer = [
                 'name' => $conta['Customer']['nome_primario'],
+                'email' => $conta['Customer']['email'],
                 'taxId' => str_replace(['.', '/', '-'], '', $conta['Customer']['documento']),
                 'address' => [
                     'street' => $conta['Customer']['endereco'],
