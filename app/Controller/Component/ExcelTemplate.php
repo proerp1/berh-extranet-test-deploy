@@ -577,7 +577,7 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Exibir Demanda"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Elegível para gestão econômico"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Margem de segurança"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde mínina de diária por cliente"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Incluir qtde. mínina diária"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "PGE*FeeGestao"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "TPP"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipos de GE"); $col++;
@@ -620,7 +620,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['exibir_demanda'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['flag_gestao_economico'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['porcentagem_margem_seguranca']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não'); $col++;
 			$proposal = isset($dado['Proposal'][0]) ? $dado['Proposal'][0] : null;
 			if ($proposal) {
 				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $proposal['management_feel']);
@@ -1775,7 +1775,7 @@ class ExcelTemplate
 		->setCellValue('BU1', "Período Fim")
 		->setCellValue('BV1', "Elegível para gestão econômico")
 		->setCellValue('BW1', "Margem de segurança")
-		->setCellValue('BX1', "Qtde mínina de diária por cliente")
+		->setCellValue('BX1', "Incluir qtde. mínina diária")
 		->setCellValue('BY1', "Tipos de GE")
 		->setCellValue('BZ1', "Compra Operadora");
 
@@ -1871,7 +1871,7 @@ class ExcelTemplate
 				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to'])
 				->setCellValue('BV'. $indx, $dados[$i]['Customer']['flag_gestao_economico'] == 'S' ? 'Sim' : 'Não')
 				->setCellValue('BW'. $indx, $dados[$i]['Customer']['porcentagem_margem_seguranca'])
-				->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'])
+				->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não')
 				->setCellValue('BY'. $indx, $tipo_ge)
 				->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
 		}
