@@ -1777,7 +1777,8 @@ class ExcelTemplate
 		->setCellValue('BW1', "Margem de segurança")
 		->setCellValue('BX1', "Incluir qtde. mínina diária")
 		->setCellValue('BY1', "Tipos de GE")
-		->setCellValue('BZ1', "Compra Operadora");
+		->setCellValue('BZ1', "Compra Operadora")
+		->setCellValue('CA1', "Primeira Compra");
 
 		$indx = 1;
 		$total = 0;
@@ -1873,7 +1874,8 @@ class ExcelTemplate
 				->setCellValue('BW'. $indx, $dados[$i]['Customer']['porcentagem_margem_seguranca'])
 				->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não')
 				->setCellValue('BY'. $indx, $tipo_ge)
-				->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
+				->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
+				->setCellValue('CA'. $indx, $dados[$i][0]["qtde_pedido"] > 1 ? "Não" : "Sim");
 		}
 	}
 
