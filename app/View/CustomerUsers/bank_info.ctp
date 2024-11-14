@@ -71,10 +71,9 @@
                 <?php if ($data) { ?>
                     <?php foreach ($data as $key => $value) { ?>
                         <tr>
-                            <!-- Acesse o valor correto de Status e exiba a classe e o nome -->
                             <td class="fw-bold fs-7 ps-4">
                                 <span class='badge <?php echo isset($value['Status']['label']) ? $value['Status']['label'] : 'badge-secondary'; ?>'>
-                                    <?php echo isset($value['Status']['name']) ? $value['Status']['name'] : 'Indefinido'; ?>
+                                    <?php echo isset($value['Status']['name']) ? $value['Status']['name'] : ''; ?>
                                 </span>
                             </td>
                             <td><?php echo $value['BankAccountType']['description']; ?></td>
