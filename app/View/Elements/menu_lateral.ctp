@@ -41,6 +41,7 @@
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
+                <!--
                 <div class="menu-item">
                     <a class="menu-link <?php echo $class.($this->request->params['controller'] == 'atendimentos' ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'atendimentos', 'action' => 'index']) ?>">
                         <span class="menu-icon">
@@ -51,6 +52,7 @@
                         </span>
                     </a>
                 </div>
+                -->
                 <div class="menu-item">
                     <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'customers' && $this->request->params['action'] != 'customers_files') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'customers', 'action' => 'index']) ?>">
                         <span class="menu-icon">
