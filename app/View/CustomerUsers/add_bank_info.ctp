@@ -16,6 +16,11 @@ if ($user_id) {
 
         <div class="row">
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Status</label>
+                <?php echo $this->Form->input('status_id', ["class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "empty" => "Selecione", 'options' => $statuses]); ?>
+            </div>
+
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Tipo Conta</label>
                 <?php echo $this->Form->input('account_type_id', array("id" => "tipo_conta", "required" => false, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'options' => $bank_account_type)); ?>
             </div>
