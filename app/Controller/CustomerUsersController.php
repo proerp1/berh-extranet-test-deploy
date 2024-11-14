@@ -13,29 +13,38 @@ class CustomerUsersController extends AppController
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
                     'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','Group'];
 
-    public $paginate = [
-        'CustomerUserAddress' => ['limit' => 10, 'order' => ['CustomerUserAddress.id' => 'asc']],
-        'CustomerUser' => [
-            'limit' => 20,
-            'order' => ['CustomerUser.name' => 'asc'],
-            'conditions' => []
-        ],
-
-        'OrderItem' => [
-            'limit' => 100, 
-            'order' => ['OrderItem.id' => 'asc'],
-            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*'],
-            'joins' => [
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Benefit.id = CustomerUserItinerary.benefit_id'
-                    ]
-                ]
-        ]]
-    ];
+                    public $paginate = [
+                        'CustomerUserAddress' => [
+                            'limit' => 10, 
+                            'order' => ['CustomerUserAddress.id' => 'asc']
+                        ],
+                        'CustomerUser' => [
+                            'limit' => 20,
+                            'order' => ['CustomerUser.name' => 'asc'],
+                            'conditions' => []
+                        ],
+                        'OrderItem' => [
+                            'limit' => 100, 
+                            'order' => ['OrderItem.id' => 'asc'],
+                            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*'],
+                            'joins' => [
+                                [
+                                    'table' => 'benefits',
+                                    'alias' => 'Benefit',
+                                    'type' => 'INNER',
+                                    'conditions' => [
+                                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                                    ]
+                                ]
+                            ]
+                        ],
+                        'CustomerUserBankAccount' => [
+                            'limit' => 10,
+                            'order' => ['CustomerUserBankAccount.id' => 'asc'],
+                            'contain' => ['Status', 'BankCode', 'BankAccountType'] // Incluir a associação Status
+                        ]
+                    ];
+                    
 
     public function beforeFilter()
     {
@@ -527,7 +536,7 @@ class CustomerUsersController extends AppController
         if (!empty($_GET['q'])) {
             $condition['or'] = array_merge($condition['or'], ['BankCode.name LIKE' => "%" . $_GET['q'] . "%", 'BankCode.code LIKE' => "%" . $_GET['q'] . "%", 'CustomerUserBankAccount.acc_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.acc_digit LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_number LIKE' => "%".$_GET['q']."%", 'CustomerUserBankAccount.branch_digit LIKE' => "%".$_GET['q']."%"]);
         }
-
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $data = $this->Paginator->paginate('CustomerUserBankAccount', $condition);
 
         $action = 'Dados Bancários';
@@ -535,7 +544,7 @@ class CustomerUsersController extends AppController
             'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
             'Dados Bancários' => ''
         ];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id','statuses'));
     }
 
     public function add_bank_info($id, $user_id)
@@ -556,6 +565,7 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O endereço não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
@@ -569,7 +579,7 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
             'Nova Conta Bancária' => ''
         ];
-        $this->set(compact('action', 'id', 'breadcrumb', 'states', 'user_id', 'bank_account_type', 'banks'));
+        $this->set(compact('action', 'id', 'breadcrumb', 'states', 'user_id', 'bank_account_type', 'banks','statuses'));
     }
 
     public function edit_bank_info($id, $user_id, $id_bank)
@@ -652,10 +662,10 @@ class CustomerUsersController extends AppController
                 $this->Flash->set(__('O itinerário não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
-
         $action = 'Beneficiários';
 
         $benefits = $this->Benefit->find('list', ['fields' => ['id', 'complete_name']]);
@@ -663,7 +673,7 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
             'Novo Benefício' => ''
         ];
-        $this->set(compact('action', 'id', 'breadcrumb', 'user_id', 'benefits'));
+        $this->set(compact('action', 'id', 'breadcrumb', 'user_id', 'benefits','statuses'));
     }
 
     public function edit_itinerary($id, $user_id, $id_itinerary)

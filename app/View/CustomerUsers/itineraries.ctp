@@ -66,6 +66,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <th>status</th>
                         <th>Benefício</th>
                         <th>Dias Úteis</th>
                         <th>Valor Unitário</th>
@@ -82,6 +83,11 @@
                             $total += $value['CustomerUserItinerary']['total_not_formated'];
                             ?>
                             <tr>
+                            <td class="fw-bold fs-7 ps-4">
+                                <span class='badge <?php echo isset($value['Status']['label']) ? $value['Status']['label'] : 'badge-secondary'; ?>'>
+                                    <?php echo isset($value['Status']['name']) ? $value['Status']['name'] : ''; ?>
+                                </span>
+                            </td>
                                 <td><?php echo $value['Benefit']['code'].' - '.$value['Benefit']['name']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['working_days']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['unit_price']; ?></td>
