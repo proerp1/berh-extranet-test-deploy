@@ -2209,12 +2209,12 @@ class ExcelTemplate
 	{
 		$col = 'A';
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Beneficiário"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código Benefício"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Benefício"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido Operadora"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observação"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Beneficiário"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Benefício"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
 		
 		foreach ($dados as $key => $dado) {
@@ -2229,12 +2229,12 @@ class ExcelTemplate
 		
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["document"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["code"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["pedido_operadora"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $tipo); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["observacao"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["total"]); $col++;
 		}
 	}
