@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal','CustomerGeLog'];
 
     public $paginate = [
         'Customer' => [
@@ -28,12 +28,13 @@ class CustomersController extends AppController
             ],
             // 'recursive' => 2,
         ],
-        'PlanCustomer'                  => ['limit' => 10, 'order' => ['PlanCustomer.status_id' => 'asc']],
-        'LoginConsulta'                 => ['limit' => 10, 'order' => ['LoginConsulta.status_id' => 'asc']],
+        'PlanCustomer'                      => ['limit' => 10, 'order' => ['PlanCustomer.status_id' => 'asc']],
+        'LoginConsulta'                     => ['limit' => 10, 'order' => ['LoginConsulta.status_id' => 'asc']],
+        'CustomerGeLog'                     => ['limit' => 10, 'order' => ['CustomerGeLog.created' => 'desc']],        
         'Document'                          => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'Document.name' => 'asc']],
-        'CadastroPefin'                 => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'CadastroPefin.nome' => 'asc'], 'recursive' => 2],
-        'MovimentacaoCredor'        => ['limit' => 10, 'order' => ['MovimentacaoCredor.created' => 'desc']],
-        'CustomerUser'                  => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'CustomerUser.name' => 'asc']]
+        'CadastroPefin'                     => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'CadastroPefin.nome' => 'asc'], 'recursive' => 2],
+        'MovimentacaoCredor'                => ['limit' => 10, 'order' => ['MovimentacaoCredor.created' => 'desc']],
+        'CustomerUser'                      => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'CustomerUser.name' => 'asc']]
     ];
 
     public function beforeFilter()
@@ -196,10 +197,8 @@ class CustomersController extends AppController
         $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Customer->id = $id;
         if ($this->request->is(['post', 'put'])) {
-            //debug($this->request->data);
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read('Auth.User.id');
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
-           // unset($this->request->data['Customer']['created']);
 
             $log_old_value = $this->request->data['log_old_value'];
             unset($this->request->data['log_old_value']);
@@ -220,9 +219,20 @@ class CustomersController extends AppController
                 'usuario_data_cancel' => 0,
                 'ip' => $_SERVER['REMOTE_ADDR'],
             ];
-            //debug($this->request->data);die;
+
+            $dados_ge_log = [
+                'customer_id' => $id,
+                'flag_gestao_economico' => $this->request->data['Customer']['flag_gestao_economico'],
+                'porcentagem_margem_seguranca' => $this->request->data['Customer']['porcentagem_margem_seguranca'],
+                'qtde_minina_diaria' => $this->request->data['Customer']['qtde_minina_diaria'],
+                'tipo_ge' => $this->request->data['Customer']['tipo_ge'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_creator_id' => CakeSession::read('Auth.User.id'),
+            ];
+
             if ($this->Customer->save($this->request->data)) {
                 $this->Log->save($dados_log);
+                $this->CustomerGeLog->save($dados_ge_log);
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
 
                 $this->redirect("/customers/edit/" . $id);
@@ -1177,6 +1187,30 @@ class CustomersController extends AppController
         $this->set(compact('statuses', 'id', 'data', 'breadcrumb'));
 
         $this->render("log_status");
+    }
+
+    /***********************
+                LOG GE
+     ************************/
+    public function log_ge($id = null)
+    {
+        $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
+        $this->Paginator->settings = $this->paginate;
+
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
+        $condition = ['and' => ['CustomerGeLog.customer_id' => $id], 'or' => []];
+
+        $data = $this->Paginator->paginate('CustomerGeLog', $condition);
+
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Log GE' => '',
+        ];
+
+        $this->set('action', 'Log GE');
+        $this->set(compact('id', 'data', 'breadcrumb'));
     }
 
     /*******************************

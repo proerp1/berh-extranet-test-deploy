@@ -1,6 +1,7 @@
 <?php
 
 App::uses('ApiItau', 'Lib');
+App::uses('ApiBtgPactual', 'Lib');
 App::uses('BoletoItau', 'Lib');
 class BoletosController extends AppController
 {
@@ -28,9 +29,6 @@ class BoletosController extends AppController
                 'Income.cnab_gerado' => 2,
                 'Income.valor_total >' => 0,
                 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales'),
-                'not' => [
-                    'Income.bank_account_id' => 4,
-                ],
             ],
             'or' => [],
         ];
@@ -100,7 +98,7 @@ class BoletosController extends AppController
                         'status_id' => 46,
                         'arquivo' => $nome_arquivo,
                         'remessa' => $remessa,
-                        'bank_id' => 1,
+                        'bank_id' => $conta['BankAccount']['bank_id'],
                         'user_creator_id' => CakeSession::read('Auth.User.id'),
                     ],
                 ];
@@ -108,17 +106,23 @@ class BoletosController extends AppController
                 $this->CnabLote->create();
                 $this->CnabLote->save($data_pefin_lote);
 
-                $ApiItau = new ApiItau();
                 foreach ($contas as $conta) {
-                    $boleto = $ApiItau->gerarBoleto($conta);
+                    if ($conta['BankAccount']['bank_id'] == 9) {
+                        $ApiBtgPactual = new ApiBtgPactual();
+                        $boleto = $ApiBtgPactual->gerarBoleto($conta);
+                    } else {
+                        $ApiItau = new ApiItau();
+                        $boleto = $ApiItau->gerarBoleto($conta);
+                    }
 
                     if ($boleto['success']) {
+                        $idWeb = $conta['BankAccount']['bank_id'] == 9 ? $boleto['contents']['bankSlipId'] : $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'];
                         $this->CnabItem->create();
                         $this->CnabItem->save([
                             'CnabItem' => [
                                 'cnab_lote_id' => $this->CnabLote->id,
                                 'income_id' => $conta['Income']['id'],
-                                'id_web' => $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
+                                'id_web' => $idWeb,
                                 'status_id' => 48,
                                 'user_creator_id' => CakeSession::read('Auth.User.id'),
                             ],

@@ -568,18 +568,20 @@
                 <div class="col-6">
                     <h3>Itens</h3>
                 </div>
-                <?php if ($order['Order']['status_id'] == 83) { ?>
-                    <div class="col-6">
+                <div class="col-6">
+                    <?php if ($order['Order']['status_id'] == 83) { ?>
                         <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
                             <i class="fas fa-arrow-up"></i>
                             Beneficiários em lote (CSV)
                         </a>
-                        <?php if ($order['Order']['is_partial'] == 3) { ?>
-                            <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
-                                <i class="fas fa-file-excel"></i>
-                                Baixar lista de Beneficiários - PIX
-                            </a>
-                        <?php } ?>
+                    <?php } ?>
+                    <?php if ($order['Order']['is_partial'] == 3) { ?>
+                        <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
+                            <i class="fas fa-file-excel"></i>
+                            Baixar lista de Beneficiários - PIX
+                        </a>
+                    <?php } ?>
+                    <?php if ($order['Order']['status_id'] == 83) { ?>
                         <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
                             <i class="fas fa-user"></i>
                             Novo Beneficiário
@@ -588,8 +590,8 @@
                             <i class="fas fa-bus"></i>
                             Novo Itinerário
                         </a>
-                    </div>
-                <?php } ?>
+                    <?php } ?>
+                </div>
             </div>
             <div class="table-responsive" id="search_form">
                 <form action="<?php echo $this->Html->url(array("controller" => "orders", "action" => "edit/" . $id . '#search_form')); ?>" role="form" id="busca" autocomplete="off">

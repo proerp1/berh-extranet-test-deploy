@@ -247,7 +247,13 @@ class CustomReportsComponent extends Component
                         'Order.created',
                         'Order.status_id',
                         'Status.name',
-                        'Customer.codigo_associado'
+                        'Customer.codigo_associado',
+                        '(SELECT COUNT(1) 
+                            FROM orders o
+                                INNER JOIN order_items i ON i.order_id = o.id
+                            WHERE i.customer_user_id = OrderItem.customer_user_id
+                                    AND o.id != Order.id
+                        ) AS qtde_pedido'
                     ],
                     'joins' => [
                         [

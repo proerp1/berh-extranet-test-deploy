@@ -1,6 +1,7 @@
 <?php
 App::uses('BoletoItau', 'Lib');
 App::uses('ApiItau', 'Lib');
+App::uses('ApiBtgPactual', 'Lib');
 class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -504,19 +505,42 @@ class IncomesController extends AppController
         $conta = $this->Income->getDadosBoleto($id);
 
         if (!empty($conta)) {
-            $ApiItau = new ApiItau();
-            $boleto = $ApiItau->buscarBoleto($conta);
+            if ($conta['BankAccount']['bank_id'] == 9) {
+                $ApiBtgPactual = new ApiBtgPactual();
+                $boleto = $ApiBtgPactual->gerarPdf($id);
 
-            if ($boleto['success'] && !empty($boleto['contents']['data'])) {
-                $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
+                $this->printPdf($boleto['contents']);
+            } else {
+                $ApiItau = new ApiItau();
+                $boleto = $ApiItau->buscarBoleto($conta);
+
+                if ($boleto['success'] && !empty($boleto['contents']['data'])) {
+                    $conta['mensagens_cobranca'] = Hash::extract($boleto['contents']['data'][0]['dado_boleto']['dados_individuais_boleto'][0]['mensagens_cobranca'], '{n}.mensagem');
+                }
+
+                $Bancoob = new BoletoItau();
+                $Bancoob->printBoleto($conta, $pdf);
             }
-
-            $Bancoob = new BoletoItau();
-            $Bancoob->printBoleto($conta, $pdf);
         } else {
             $this->Flash->set(__('Não foi possível gerar o boleto'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
         }
+    }
+
+    public function printPdf($pdf)
+    {
+        $pdf_base64 = $pdf;
+
+        // Decodificar a string base64 para binário
+        $pdf_content = $pdf_base64;
+
+        // Definir os cabeçalhos HTTP para exibir o PDF
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="arquivo.pdf"');
+        header('Content-Length: ' . strlen($pdf_content));
+
+        // Exibir o conteúdo PDF
+        echo $pdf_content;
     }
 
     public function calc_juros_multa($id)

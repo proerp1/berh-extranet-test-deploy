@@ -217,6 +217,12 @@ class ExcelConfigurationComponent extends Component {
                     'Customer.porcentagem_margem_seguranca',
                     'Customer.qtde_minina_diaria',
                     'Customer.tipo_ge',
+                    '(SELECT COUNT(1) 
+                        FROM orders o
+                            INNER JOIN order_items i ON i.order_id = o.id
+                        WHERE i.customer_user_id = OrderItem.customer_user_id
+                                AND o.id != Order.id
+                    ) AS qtde_pedido'
 				],
 				'joins' => [
 					[
