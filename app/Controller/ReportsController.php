@@ -674,25 +674,31 @@ class ReportsController extends AppController
         $url_iframe = "";
         if ($menu == 'roteirizacao') {
 	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+            $breadcrumb='Roteirização';
             $url_iframe = "https://robo.berh.com.br/roteirizacao";
         } elseif ($menu == 'extratos') {
 	    $this->Permission->check(72, "leitura") ? "" : $this->redirect("/not_allowed");
+            $breadcrumb='Extratos';
             $url_iframe = "https://robo.berh.com.br/extratos";
         } elseif ($menu == 'consulta_transurc') {
 	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/transurc";
+            $breadcrumb='Transurc';
         } elseif ($menu == 'consulta_sptrans') {
 	    $this->Permission->check(73, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/sptrans";
+            $breadcrumb='Consulta SPTrans';
         } elseif ($menu == 'captura_boletos') {
             $this->Permission->check(74, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/captura_boletos";
+            $breadcrumb='Captura de boletos';
         } elseif ($menu == 'conversor_layouts') {
 	    $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_layouts";
+            $breadcrumb='Conversor de layouts';
         }
 
-        $this->set("action", "Robô - Roteirização");
+        $this->set("action", $breadcrumb);
         $this->set(compact("url_cookie", "url_iframe"));
     }
 
