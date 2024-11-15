@@ -48,7 +48,7 @@
 
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status Pedido:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="st" id="st">
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="st[]" id="st" multiple>
                                     <option value="">Selecione</option>
                                     <?php
                                     foreach ($statuses as $keySt => $status) {
@@ -108,15 +108,30 @@
                 </tr>
             </thead>
             <tbody>
+                <?php if (isset($items_total[0])) { ?>
+                    <tr>
+                        <td>Total</td>
+                        <td colspan="11"></td>
+                        <td class="subtotal_sum">R$<?php echo number_format($items_total[0][0]['subtotal'], 2, ',', '.'); ?></td>
+                        <td class="transfer_fee_sum">R$<?php echo number_format($items_total[0][0]['transfer_fee'], 2, ',', '.'); ?></td>
+                        <td class="commission_fee_sum">R$<?php echo number_format($items_total[0][0]['commission_fee'], 2, ',', '.'); ?></td>
+                        <td class="total_sum">R$<?php echo number_format($items_total[0][0]['total'], 2, ',', '.'); ?></td>
+                        <td class="saldo_sum">R$<?php echo number_format($items_total[0][0]['saldo'], 2, ',', '.'); ?></td>
+                    </tr>
+                <?php } ?>
                 <?php
-                $subtotal = 0;
-                $transfer_fee = 0;
-                $total = 0;
+                $v_subtotal = 0;
+                $v_transfer_fee = 0;
+                $v_commission_fee = 0;
+                $v_total = 0;
+                $v_saldo = 0;
                 if ($items) { ?>
                     <?php for ($i = 0; $i < count($items); $i++) {
-                        $subtotal += $items[$i]["OrderItem"]["subtotal_not_formated"];
-                        $transfer_fee += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
-                        $total += $items[$i]["OrderItem"]["total_not_formated"];
+                        $v_subtotal += $items[$i]['OrderItem']['subtotal_not_formated'];
+                        $v_transfer_fee += $items[$i]['OrderItem']['transfer_fee_not_formated'];
+                        $v_commission_fee += $items[$i]['OrderItem']['commission_fee_not_formated'];
+                        $v_total += $items[$i]['OrderItem']['total_not_formated'];
+                        $v_saldo += $items[$i]['OrderItem']['saldo_not_formated'];
                     ?>
                         <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
                             <td class="fw-bold fs-7 ps-4">
@@ -152,6 +167,15 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
                         </tr>
                     <?php } ?>
+                    <tr>
+                        <td>Total</td>
+                        <td colspan="11"></td>
+                        <td class="subtotal_sum">R$<?php echo number_format($v_subtotal, 2, ',', '.'); ?></td>
+                        <td class="transfer_fee_sum">R$<?php echo number_format($v_transfer_fee, 2, ',', '.'); ?></td>
+                        <td class="commission_fee_sum">R$<?php echo number_format($v_commission_fee, 2, ',', '.'); ?></td>
+                        <td class="total_sum">R$<?php echo number_format($v_total, 2, ',', '.'); ?></td>
+                        <td class="saldo_sum">R$<?php echo number_format($v_saldo, 2, ',', '.'); ?></td>
+                    </tr>
                 <?php } else { ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4" colspan="50">Nenhum registro encontrado</td>

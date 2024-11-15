@@ -2592,10 +2592,34 @@ class OrdersController extends AppController
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
+        $items_total = $this->OrderItem->find('all', [
+            'fields' => ['SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee', 'SUM(OrderItem.commission_fee) as commission_fee', 'SUM(OrderItem.total) as total', 'SUM(OrderItem.saldo) as saldo'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+
+            ],
+            'conditions' => $condition,
+        ]);
+
         $action = 'Compras';
         $breadcrumb = ['Cadastros' => '', 'Compras' => '', 'Alterar Compras' => ''];
 
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'items_total'));
     }
 
     public function alter_item_status_processamento()
