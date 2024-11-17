@@ -50,7 +50,7 @@ class ComunicadosController extends AppController
                 $this->request->data['Comunicado']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Comunicado->save($this->request->data)) {
                     $this->Flash->set(__('O Comunicado foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                    $this->redirect(['action' => "../comunicados/index"]);
+                    $this->redirect(['action' => 'edit/'.$this->Comunicado->id]);
                     
                 } else {
                     $this->Flash->set(__('O Comunicado não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
@@ -127,8 +127,8 @@ class ComunicadosController extends AppController
 
         $cadastrados = $this->ComunicadoCliente->find('all', ['conditions' => $condition]);
         $ids_cadastrados = [];
-        foreach ($cadastrados as $resale) {
-            $ids_cadastrados[] = $resale['ComunicadoCliente']['customer_id'];
+        foreach ($cadastrados as $cad) {
+            $ids_cadastrados[] = $cad['ComunicadoCliente']['customer_id'];
         }
 
         $customers = $this->Customer->find("list", ['conditions' => ['Customer.status_id' => 3, 'Customer.enviar_email' => 1, 'not' => ['Customer.id' => $ids_cadastrados]], 'order' => ['Customer.nome_primario' => 'asc']]);
@@ -160,6 +160,39 @@ class ComunicadosController extends AppController
                 $this->Flash->set(__('O cliente não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
+    }
+    
+    public function add_all_clientes($id)
+    {
+        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $condition = ["and" => ['ComunicadoCliente.comunicado_id' => $id], "or" => []];
+
+        $cadastrados = $this->ComunicadoCliente->find('all', ['conditions' => $condition]);
+        $ids_cadastrados = [];
+        foreach ($cadastrados as $cad) {
+            $ids_cadastrados[] = $cad['ComunicadoCliente']['customer_id'];
+        }
+
+        $customers = $this->Customer->find("list", ['conditions' => ['Customer.status_id' => 3, 'Customer.enviar_email' => 1, 'not' => ['Customer.id' => $ids_cadastrados]], 'order' => ['Customer.nome_primario' => 'asc']]);
+
+        $status = false;
+        foreach ($customers as $customer_id => $customer) {
+            $this->request->data['ComunicadoCliente']['comunicado_id'] = $id;
+            $this->request->data['ComunicadoCliente']['customer_id'] = $customer_id;
+            $this->request->data['ComunicadoCliente']['user_creator_id'] = CakeSession::read("Auth.User.id");
+
+            $this->ComunicadoCliente->create();
+            $this->ComunicadoCliente->save($this->request->data);
+
+            $status = true;
+        }
+
+        if ($status) {
+            $this->Flash->set(__('Os clientes foram cadastrados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        }
+
+        $this->redirect($this->referer());        
     }
 
     public function delete_cliente($id)

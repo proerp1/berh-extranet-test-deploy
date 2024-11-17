@@ -11,6 +11,7 @@
                 <div class="col-12 mb-7">
                     <div class="col-sm-offset-2 col-sm-9">
                         <button type="submit" class="btn btn-success js-salvar">Salvar</button>
+                        <a type="button" class="btn btn-primary" href="<?php echo $this->base.'/comunicados/add_all_clientes/'.$id; ?>">Adicionar todos os Clientes</a>
                         <a type="button" class="btn btn-primary" href="<?php echo $this->base.'/comunicados/enviar_comunicado/'.$id; ?>">Enviar Comunicado</a>
                     </div>
                 </div>
