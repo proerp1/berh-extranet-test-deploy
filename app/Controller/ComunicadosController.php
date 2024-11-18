@@ -155,7 +155,7 @@ class ComunicadosController extends AppController
             $this->ComunicadoCliente->create();
             if ($this->ComunicadoCliente->save($this->request->data)) {
                 $this->Flash->set(__('O cliente foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect($this->referer());
+                $this->redirect(['action' => 'clientes/'.$id]);
             } else {
                 $this->Flash->set(__('O cliente não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -192,20 +192,37 @@ class ComunicadosController extends AppController
             $this->Flash->set(__('Os clientes foram cadastrados com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         }
 
-        $this->redirect($this->referer());        
+        $this->redirect(['action' => 'clientes/'.$id]);        
     }
 
-    public function delete_cliente($id)
+    public function delete_all_clientes()
+    {
+        $this->autoRender = false;
+        
+        $id = $this->request->data['comunicadoId'];
+        $itemIds = $this->request->data['itemIds'];
+
+        $this->ComunicadoCliente->updateAll(
+            ['ComunicadoCliente.data_cancel' => 'CURRENT_DATE', 'ComunicadoCliente.usuario_id_cancel' => CakeSession::read("Auth.User.id")],
+            ['ComunicadoCliente.id' => $itemIds]
+        );
+
+        $this->Flash->set(__('Os clientes foram excluidos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function delete_cliente($id, $comunicado_cliente_id)
     {
         $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
-        $this->ComunicadoCliente->id = $id;
+        $this->ComunicadoCliente->id = $comunicado_cliente_id;
 
         $data['ComunicadoCliente']['data_cancel'] = date("Y-m-d H:i:s");
         $data['ComunicadoCliente']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->ComunicadoCliente->save($data)) {
             $this->Flash->set(__('O cliente foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['action' => 'clientes/'.$id]);
         }
     }
 
@@ -216,30 +233,32 @@ class ComunicadosController extends AppController
         $comunicado_clientes = $this->ComunicadoCliente->find('all', ['conditions' => ['ComunicadoCliente.comunicado_id' => $id, 'ComunicadoCliente.sent' => null]]);
         
         foreach ($comunicado_clientes as $cliente) {
-            $dados = 
-                ['viewVars' => [
-                    'nome'  => $cliente['Customer']['nome_primario'],
-                    'email' => $cliente['Customer']['email'],
-                    'link'  => 'https://cliente.berh.com.br/'
-                ],
-                'template' => 'comunicado_cliente',
-                'subject'  => 'BeRH - Comunicado: '.$cliente['Comunicado']['titulo'].' ',
-                'config'   => 'default'
-            ];
+            if ($cliente['Customer']['status_id'] == 3) {
+                $dados = 
+                    ['viewVars' => [
+                        'nome'  => $cliente['Customer']['nome_primario'],
+                        'email' => $cliente['Customer']['email'],
+                        'link'  => 'https://cliente.berh.com.br/'
+                    ],
+                    'template' => 'comunicado_cliente',
+                    'subject'  => 'BeRH - Comunicado: '.$cliente['Comunicado']['titulo'].' ',
+                    'config'   => 'default'
+                ];
 
-            if (!$this->Email->send($dados)) {
-                $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
-                $this->redirect($this->referer());
-            } else {
-                $this->ComunicadoCliente->id = $cliente['ComunicadoCliente']['id'];
+                if (!$this->Email->send($dados)) {
+                    $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->redirect(['action' => 'clientes/'.$id]);
+                } else {
+                    $this->ComunicadoCliente->id = $cliente['ComunicadoCliente']['id'];
 
-                $data['ComunicadoCliente']['sent'] = date("Y-m-d H:i:s");
-                $data['ComunicadoCliente']['user_sent_id'] = CakeSession::read("Auth.User.id");
+                    $data['ComunicadoCliente']['sent'] = date("Y-m-d H:i:s");
+                    $data['ComunicadoCliente']['user_sent_id'] = CakeSession::read("Auth.User.id");
 
-                $this->ComunicadoCliente->save($data);
+                    $this->ComunicadoCliente->save($data);
+                }
             }
         }
 
-        $this->redirect($this->referer());
+        $this->redirect(['action' => 'clientes/'.$id]);
     }
 }
