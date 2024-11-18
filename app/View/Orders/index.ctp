@@ -89,6 +89,7 @@
                                     <option value="2" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '2' ? 'selected' : ''; ?>>Todos beneficiários</option>
                                     <option value="1" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '1' ? 'selected' : ''; ?>>Parcial</option>
                                     <option value="3" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '3' ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="4" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '4' ? 'selected' : ''; ?>>Emissão</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -165,6 +166,8 @@
                                     $v_is_partial = "Todos beneficiários";
                                 } elseif ($data[$i]['Order']['is_partial'] == 3) {
                                     $v_is_partial = "PIX";
+                                }elseif ($data[$i]['Order']['is_partial'] == 4) {
+                                    $v_is_partial = "Emissão";
                                 }
                             ?>
                             <tr>

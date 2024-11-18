@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal_gerar_arquivo" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Gerar Pedido</h4>
@@ -9,11 +9,55 @@
                 <input type="hidden" class="flag_gestao_economico">
                 <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
+
+                    <div class="row mb-7 div-new-order">
+                        <div class="col">
+                            <label class="mb-2">Modalidade</label>
+                            <div class="row" style=" margin-top: 10px; margin-bottom: 10px; ">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="radio" name="data[is_consolidated]" value="1" id="flexRadioChecked1" checked="checked" />
+                                        <label class="form-check-label" for="flexRadioChecked1">
+                                            Por Cliente
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="radio" name="data[is_consolidated]" value="2" id="flexRadioChecked2" />
+                                        <label class="form-check-label" for="flexRadioChecked2">
+                                            Por Grupo Econômico
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mt-5 opcao_grupo_economico" style="display:none">
+                            <select name="grupo_especifico" id="grupo_selecionado" class="form-control">
+                            </select>
+                        </div>
+
+                        <div class="col">
+                            <label class="mb-2">Tipo de Pedido</label>
+                            <div class="row">
+                                <select name="data[is_partial]" id="is_partial" data-control="select2" class="form-select mb-3 mb-lg-0 select2-hidden-accessible is_partial" data-select2-id="select2-data-tipo_pessoa" tabindex="-1" aria-hidden="true">
+                                    <option value="2">Todos beneficiários</option>
+                                    <option value="1">Parcial</option>
+                                    <option value="3">PIX</option>
+                                    <option value="4">Emissão</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row mb-7 ">
-                        <div class="col-6">
+                        <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
                             <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
+                    </div>
+
+                    <div class="row mb-7 js-pedido_parc">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>
                             <div class="input-group">
@@ -25,8 +69,6 @@
                             </div>
                             <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
                         </div>
-                    </div>
-                    <div class="row mb-7">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
                             <div class="input-group">
@@ -42,37 +84,13 @@
                                 <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => date('d/m/Y', strtotime(' + 30 day'))]);  ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mb-7 js-pedido_parc">
-                        <div class="col-6">
-                            <label class="mb-2">Clona pedido anterior?</label>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="1" id="cloneOrder1" />
-                                        <label class="form-check-label" for="cloneOrder1">
-                                            Sim
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="2" id="cloneOrder2" checked />
-                                        <label class="form-check-label" for="cloneOrder2">
-                                            Não
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div class="col d-none">
-                            <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
-                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
+                        <div class="col">
+                            <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
+                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", 'required' => true, 'div' => false, 'label' => false]); ?>
+                            <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
+
                     <div class="row mb-7 div-new-order js-pedido_parc">
                         <div class="col">
                             <label class="mb-2">Utilizar Dias Úteis</label>
@@ -98,72 +116,6 @@
                             </div>
                         </div>
 
-                        <div class="col">
-                            <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", 'required' => true, 'div' => false, 'label' => false]); ?>
-                            <p id="message_wd" style="color: red; margin: 0; display:none"></p>
-                        </div>
-                    </div>
-                    <div class="row mb-7 div-new-order">
-                        <div class="col">
-                            <label class="mb-2">Criação de Pedidos</label>
-                            <div class="row" style=" margin-top: 10px; margin-bottom: 10px; ">
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_consolidated]" value="1" id="flexRadioChecked1" checked="checked" />
-                                        <label class="form-check-label" for="flexRadioChecked1">
-                                            Por Cliente
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="radio" name="data[is_consolidated]" value="2" id="flexRadioChecked2" />
-                                        <label class="form-check-label" for="flexRadioChecked2">
-                                            Por Grupo Econômico
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col mt-5 opcao_grupo_economico" style="display:none">
-                            <select name="grupo_especifico" id="grupo_selecionado" class="form-control">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-7 div-new-order">
-                        <div class="col">
-                            <label class="mb-2">Pedido Parcial</label>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="2" id="partialOrderChk2" checked="checked" />
-                                        <label class="form-check-label" for="partialOrderChk2">
-                                            Todos beneficiários
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="1" id="partialOrderChk1" />
-                                        <label class="form-check-label" for="partialOrderChk1">
-                                            Parcial
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="form-check form-check-custom form-check-solid">
-                                        <input class="form-check-input is_partial" type="radio" name="data[is_partial]" value="3" id="partialOrderChk3" />
-                                        <label class="form-check-label" for="partialOrderChk3">
-                                            PIX
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
                         <div class="col">
                             <label class="mb-2">Tipo Benefício</label>
                             <div class="row">
@@ -197,6 +149,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-7 js-pedido_parc">
+                        <div class="col-6">
+                            <label class="mb-2">Clona pedido anterior?</label>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="1" id="cloneOrder1" />
+                                        <label class="form-check-label" for="cloneOrder1">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input clone_order" type="radio" name="data[clone_order]" value="2" id="cloneOrder2" checked />
+                                        <label class="form-check-label" for="cloneOrder2">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col d-none">
+                            <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
+                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
+                        </div>
+                    </div>
+
                     <div class="row mb-7 div-new-order pedido_comp">
                         <div class="col">
                             <label class="mb-2">Gestão Eficiente</label>
@@ -222,7 +206,16 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="alert alert-secondary" role="alert">
+                        <strong>Tipo de Pedido</strong> <br>
+                        Todos beneficiários: realizar a manutenção no cadastro de beneficiário Inativando beneficios ou beneficiários que não deverão fazer parte do pedido e atualizar dias úteis. <br>
+                        Parcial: opção válida para importação de planilha dentro do pedido. <br>
+                        PIX: opção válida para importação de planilha dentro do pedido. <br>
+                        Emissão: apenas para geração de novos cartões ou re-emissões. <br>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Gerar</button>

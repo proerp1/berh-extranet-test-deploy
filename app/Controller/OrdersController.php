@@ -745,6 +745,8 @@ class OrdersController extends AppController
             $v_is_partial = "Todos beneficiários";
         } elseif ($order['Order']['is_partial'] == 3) {
             $v_is_partial = "PIX";
+        } elseif ($order['Order']['is_partial'] == 4) {
+            $v_is_partial = "Emissão";
         }
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
