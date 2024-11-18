@@ -10,6 +10,13 @@
                 <input autocomplete="off" name="hidden" type="text" style="display:none;">
                 <div class="modal-body">
 
+                    <div class="row mb-7">
+                        <div class="col">
+                            <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
+                        </div>
+                    </div>
+
                     <div class="row mb-7 div-new-order">
                         <div class="col">
                             <label class="mb-2">Modalidade</label>
@@ -47,13 +54,6 @@
                                     <option value="4">Emissão</option>
                                 </select>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-7 ">
-                        <div class="col">
-                            <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
                     </div>
 
