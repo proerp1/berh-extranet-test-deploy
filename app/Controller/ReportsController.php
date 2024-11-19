@@ -983,7 +983,23 @@ class ReportsController extends AppController
                         'conditions' => [
                             'Supplier.id = Benefit.supplier_id'
                         ]
-                    ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
 
                 ],
                 'conditions' => $condition,
