@@ -993,6 +993,19 @@ class CustomerUsersController extends AppController
                 continue;
             }
 
+            $benefit_id = null;
+            if(isset($row[2])){
+                $benefitCode = $row[2];
+
+                $benefit = $this->Benefit->find('first', [
+                    'conditions' => [
+                        'Benefit.code' => $benefitCode
+                    ]
+                ]);
+
+                $benefit_id = $benefit ? $benefit['Benefit']['id'] : null;
+            }
+
             $cpf = preg_replace('/\D/', '', $row[0]);            
 
             $existingUser = $this->CustomerUser->find('first', [
@@ -1020,6 +1033,13 @@ class CustomerUsersController extends AppController
                 'document' => $row[0],
                 'status' => $row[1],
             ];
+
+            if($benefit_id && $customer_user_id){
+                $this->CustomerUserItinerary->updateAll(
+                    ['CustomerUserItinerary.status_id' => $status_id],
+                    ['CustomerUserItinerary.customer_user_id' => $customer_user_id, 'CustomerUserItinerary.benefit_id' => $benefit_id]
+                );
+            }
 
             $line++;
         }
