@@ -17,7 +17,7 @@ if($user_id){
         <?php } ?>
 
         <div class="row">
-        <div class="mb-7 col">
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Status</label>
                 <?php echo $this->Form->input('status_id', ["class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "empty" => "Selecione", 'options' => $statuses]); ?>
             </div>
