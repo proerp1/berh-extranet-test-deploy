@@ -939,6 +939,10 @@ class ReportsController extends AppController
             $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
             $de = $dateObjectDe->format('Y-m-d');
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
+
+            $de = date('d/m/Y', strtotime($de));
+        } else {
+            $de = date("01/m/Y");
         }
 
         if (isset($_GET['para']) and $_GET['para'] != '') {
@@ -948,6 +952,10 @@ class ReportsController extends AppController
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
+
+            $para = date('d/m/Y', strtotime($para));
+        } else {
+            $para = date("d/m/Y");
         }
 
         if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
@@ -1050,9 +1058,6 @@ class ReportsController extends AppController
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
-
-        $de = date('d/m/Y', strtotime($de));
-        $para = date('d/m/Y', strtotime($para));
 
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
