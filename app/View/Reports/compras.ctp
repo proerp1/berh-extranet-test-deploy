@@ -30,7 +30,16 @@
                         <div class="separator border-gray-200"></div>
 
                         <div class="px-7 py-5">
-
+                            
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data:</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <span class="input-group-text" style="padding: 5px;"> de </span>
+                                    <input class="form-control" id="de" name="de" value="<?php echo $de ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="ate" name="para" value="<?php echo $para; ?>">
+                                </div>
+                            </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
@@ -43,7 +52,10 @@
                                     <option value="">Selecione</option>
                                 </select>
                             </div>
-
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Número(s) de Pedido:</label>
+                                <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula" value="<?php echo isset($_GET['num']) ? $_GET['num'] : ''; ?>">
+                            </div>
                             <div id="selectedNumbers"></div>
 
                             <div class="mb-10">
@@ -232,20 +244,26 @@
 
 
 <script>
-    function trigger_change() {
+    function trigger_date_change() {
+        var v_ini = $("#de").val();
+        var v_end = $("#ate").val();
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const curr_c = urlParams.get('c');
         const curr_sup = urlParams.get('sup');
 
         $.ajax({
-            url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getSupplierAndCustomer")); ?>',
+            url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getSupplierAndCustomerByDate")); ?>',
             type: 'POST',
-            data: { },
+            data: {
+                ini: v_ini,
+                end: v_end
+            },
             success: function(data) {
 
                 var obj = JSON.parse(data);
-                var html = '<option value="">Selecione</option>';
+                var html = '<option>Selecione</option>';
                 var sel = '';
                 for (var i = 0; i < obj.customers.length; i++) {
                     if (obj.customers[i].Customer.id == curr_c) {
@@ -257,7 +275,7 @@
                 }
                 $("#c").html(html);
 
-                html = '<option value="">Selecione</option>';
+                html = '<option>Selecione</option>';
                 var sel_sup = '';
                 for (var i = 0; i < obj.suppliers.length; i++) {
                     if (obj.suppliers[i].Supplier.id == curr_sup) {
@@ -275,8 +293,41 @@
             }
         });
     }
+
+    function fnc_dt_range() {
+        $('.filter').attr('disabled', false);
+
+        var dataInicialStr = $('#de').val();
+        var dataFinalStr = $('#ate').val();
+
+        var regexData = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+
+        var matchInicial = dataInicialStr.match(regexData);
+        var matchFinal = dataFinalStr.match(regexData);
+
+        if (matchInicial && matchFinal) {
+            var dataInicial = new Date(matchInicial[3], matchInicial[2] - 1, matchInicial[1]);
+            var dataFinal = new Date(matchFinal[3], matchFinal[2] - 1, matchFinal[1]);
+
+            var diff = (dataFinal - dataInicial);
+            var diffDays = (diff / (1000 * 60 * 60 * 24));
+
+            if (diffDays > 365 || diffDays < 0) {
+                alert('A data final deve ser no máximo 1 ano após a data inicial.');
+                $('.filter').attr('disabled', true);
+
+                return false;
+            }
+        } else {
+            alert('Formato de data inválido. Use o formato dd/mm/yyyy.');
+            $('.filter').attr('disabled', true);
+
+            return false;
+        }
+    }
+
     $(document).ready(function() {
-        trigger_change();
+        trigger_date_change();
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
@@ -287,6 +338,16 @@
 
         $('#q').on('change', function() {
             $("#busca").submit();
+        });
+
+        $('#de').on('change', function() {
+            fnc_dt_range();
+            trigger_date_change();
+        });
+        
+        $('#ate').on('change', function() {
+            fnc_dt_range();
+            trigger_date_change();
         });
 
         $('#tp').on('change', function() {
@@ -312,21 +373,29 @@
             if ($(".check_all").is(':checked')) {
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
+
                 const v_status_processamento = $('#status_processamento').val();
+
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
                 const curr_st = urlParams.get('st');
                 const curr_c = urlParams.get('c');
+                const curr_de = urlParams.get('de');
+                const curr_para = urlParams.get('para');
+                const curr_num = urlParams.get('num');
 
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/alter_item_status_processamento_all',
+                    url: base_url+'/reports/alter_item_status_processamento_all',
                     data: {
                         v_status_processamento,
                         curr_q,
                         curr_sup,
                         curr_st,
-                        curr_c
+                        curr_c,
+                        curr_de,
+                        curr_para,
+                        curr_num
                     },
                     dataType: 'json',
                     success: function(response) {

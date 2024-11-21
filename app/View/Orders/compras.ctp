@@ -283,7 +283,6 @@
                 const curr_sup = urlParams.get('sup');
                 const curr_stp = urlParams.get('stp');
 
-
                 $.ajax({
                     type: 'POST',
                     url: base_url+'/orders/alter_item_status_processamento_order_all',
