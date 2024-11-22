@@ -140,6 +140,7 @@
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
+                        <th>Vencimento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -195,6 +196,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>     
+
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
