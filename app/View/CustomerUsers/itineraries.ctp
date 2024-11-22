@@ -66,7 +66,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th>status</th>
+                        <th>Status</th>
                         <th>Benefício</th>
                         <th>Dias Úteis</th>
                         <th>Valor Unitário</th>

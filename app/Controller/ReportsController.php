@@ -5,7 +5,7 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile'];
+    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile', 'Log'];
 
     public function beforeFilter()
     {
@@ -927,14 +927,60 @@ class ReportsController extends AppController
             ]
         ]];
 
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
+        
         $buscar = false;
+        $de = null;
+        $para = null;
+        if (isset($_GET['de']) and $_GET['de'] != '') {
+            $buscar = true;
 
-        $condition = ["and" => [], "or" => []];
+            $deRaw = $_GET['de'];
+            $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
+            $de = $dateObjectDe->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
 
-        if (isset($_GET['sup']) and $_GET['sup'] != '') {
+            $de = date('d/m/Y', strtotime($de));
+        } else {
+            $de = date("01/m/Y");
+        }
+
+        if (isset($_GET['para']) and $_GET['para'] != '') {
+            $buscar = true;
+
+            $paraRaw = $_GET['para'];
+            $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
+            $para = $dateObjectPara->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
+
+            $para = date('d/m/Y', strtotime($para));
+        } else {
+            $para = date("d/m/Y");
+        }
+
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
+        if (isset($_GET['num']) && $_GET['num'] != '') {
+            $buscar = true;
+
+            // Dividindo a entrada em uma matriz de números
+            $selectedNumbers = preg_split("/[\s,]+/", $_GET['num']);
+            
+            // Removendo valores em branco da matriz
+            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
+
+            // Adicionando a condição para cada número selecionado
+            $orConditions = [];
+            foreach ($selectedNumbers as $number) {
+                $orConditions[] = ['Order.id' => $number];
+            }
+
+            // Unindo as condições com OR
+            $condition['and'][] = ['or' => $orConditions];
         }
 
         if (isset($_GET['st']) and $_GET['st'] != '') {
@@ -943,7 +989,7 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != '') {
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
@@ -953,17 +999,62 @@ class ReportsController extends AppController
             $buscar = true;
 
             $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 
-                'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 
-                'Benefit.name LIKE' => "%" . $_GET['q'] . "%", 
-                'Benefit.code LIKE' => "%" . $_GET['q'] . "%", 
-                'OrderItem.status_processamento LIKE' => "%" . $_GET['q'] . "%",
+                'CustomerUser.name LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.email LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.nome_primario LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
+                'Order.id LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.id LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
+
             ]);
         }
 
         $items = [];
+        $items_total = null;
         if ($buscar) {
             $items = $this->Paginator->paginate('OrderItem', $condition);
+
+            $items_total = $this->OrderItem->find('all', [
+                'fields' => ['SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee', 'SUM(OrderItem.commission_fee) as commission_fee', 'SUM(OrderItem.total) as total', 'SUM(OrderItem.saldo) as saldo'],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
+
+                ],
+                'conditions' => $condition,
+            ]);
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
@@ -971,7 +1062,7 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para'));
     }
 
     public function getSupplierAndCustomer()
@@ -1067,5 +1158,168 @@ class ReportsController extends AppController
         $breadcrumb = ['Relatórios' => '', 'Relatório de Movimentações' => ''];
 
         $this->set(compact('action', 'breadcrumb', 'data', 'buscar'));
+    }
+
+    public function alter_item_status_processamento_all()
+    {
+        $this->autoRender = false;
+
+        $statusProcess = $this->request->data['v_status_processamento'];
+
+        $de = $this->request->data['curr_de'];
+        $para = $this->request->data['curr_para'];
+        $num = $this->request->data['curr_num'];
+        $sup = $this->request->data['curr_sup'];
+        $st = $this->request->data['curr_st'];
+        $c = $this->request->data['curr_c'];
+        $q = $this->request->data['curr_q'];
+
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
+        
+        $buscar = false;
+        $de = null;
+        $para = null;
+        if (isset($de) and $de != '') {
+            $buscar = true;
+
+            $deRaw = $de;
+            $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
+            $de = $dateObjectDe->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
+        }
+
+        if (isset($para) and $para != '') {
+            $buscar = true;
+
+            $paraRaw = $para;
+            $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
+            $para = $dateObjectPara->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
+        }
+
+        if (isset($sup) and $sup != 'Selecione') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
+        }
+
+        if (isset($num) && $num != '') {
+            $buscar = true;
+
+            // Dividindo a entrada em uma matriz de números
+            $selectedNumbers = preg_split("/[\s,]+/", $num);
+            
+            // Removendo valores em branco da matriz
+            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
+
+            // Adicionando a condição para cada número selecionado
+            $orConditions = [];
+            foreach ($selectedNumbers as $number) {
+                $orConditions[] = ['Order.id' => $number];
+            }
+
+            // Unindo as condições com OR
+            $condition['and'][] = ['or' => $orConditions];
+        }
+
+        if (isset($st) and $st != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
+        }
+
+        if (isset($c) and $c != 'Selecione') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        }
+
+        if (!empty($q)) {
+            $buscar = true;
+
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => '%' . $q . '%',
+                'CustomerUser.email LIKE' => '%' . $q . '%',
+                'CustomerUser.cpf LIKE' => '%' . $q . '%',
+                'Customer.nome_primario LIKE' => '%' . $q . '%',
+                'Customer.documento LIKE' => '%' . $q . '%',
+                'Order.id LIKE' => '%' . $q . '%',
+                'Customer.id LIKE' => '%' . $q . '%',
+                'Customer.codigo_associado LIKE' => "%" . $q . "%",
+
+            ]);
+        }
+
+        $items = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+            ]
+        ]);
+
+        foreach ($items as $item) {
+            $dados_log = [
+                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "new_value" => $statusProcess,
+                "route" => "orders/compras",
+                "log_action" => "Alterou",
+                "log_table" => "OrderItem",
+                "primary_key" => $item['OrderItem']['id'],
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_processamento do item foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+
+        echo json_encode(['success' => true]);
     }
 }

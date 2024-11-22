@@ -745,6 +745,8 @@ class OrdersController extends AppController
             $v_is_partial = "Todos beneficiários";
         } elseif ($order['Order']['is_partial'] == 3) {
             $v_is_partial = "PIX";
+        } elseif ($order['Order']['is_partial'] == 4) {
+            $v_is_partial = "Emissão";
         }
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
@@ -2592,10 +2594,34 @@ class OrdersController extends AppController
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
+        $items_total = $this->OrderItem->find('all', [
+            'fields' => ['SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee', 'SUM(OrderItem.commission_fee) as commission_fee', 'SUM(OrderItem.total) as total', 'SUM(OrderItem.saldo) as saldo'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+
+            ],
+            'conditions' => $condition,
+        ]);
+
         $action = 'Compras';
         $breadcrumb = ['Cadastros' => '', 'Compras' => '', 'Alterar Compras' => ''];
 
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'items_total'));
     }
 
     public function alter_item_status_processamento()
@@ -2692,113 +2718,6 @@ class OrdersController extends AppController
                     ]
                 ]
 
-            ]
-        ]);
-
-        foreach ($items as $item) {
-            $dados_log = [
-                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
-                "new_value" => $statusProcess,
-                "route" => "orders/compras",
-                "log_action" => "Alterou",
-                "log_table" => "OrderItem",
-                "primary_key" => $item['OrderItem']['id'],
-                "parent_log" => 0,
-                "user_type" => "ADMIN",
-                "user_id" => CakeSession::read("Auth.User.id"),
-                "message" => "O status_processamento do item foi alterado com sucesso",
-                "log_date" => date("Y-m-d H:i:s"),
-                "data_cancel" => "1901-01-01",
-                "usuario_data_cancel" => 0,
-                "ip" => $_SERVER["REMOTE_ADDR"]
-            ];
-
-            $this->Log->create();
-            $this->Log->save($dados_log);
-
-            $this->OrderItem->save([
-                'OrderItem' => [
-                    'id' => $item['OrderItem']['id'],
-                    'status_processamento' => $statusProcess,
-                    'updated_user_id' => CakeSession::read("Auth.User.id"),
-                    'updated' => date('Y-m-d H:i:s'),
-                ]
-            ]);
-        }
-
-        echo json_encode(['success' => true]);
-    }
-
-    public function alter_item_status_processamento_all()
-    {
-        $this->autoRender = false;
-
-        $q = $this->request->data['curr_q'];
-        $sup = $this->request->data['curr_sup'];
-        $st = $this->request->data['curr_st'];
-        $c = $this->request->data['curr_c'];
-        $statusProcess = $this->request->data['v_status_processamento'];
-
-        $condition = ["and" => [], "or" => []];
-
-        if (isset($sup) and $sup != '') {
-            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
-        }
-
-        if (isset($st) and $st != '') {
-            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
-        }
-
-        if (isset($c) and $c != '') {
-            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
-        }
-
-        if (!empty($q)) {
-            $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.name LIKE' => "%" . $q . "%", 
-                'CustomerUser.cpf LIKE' => "%" . $q . "%", 
-                'Benefit.name LIKE' => "%" . $q . "%", 
-                'Benefit.code LIKE' => "%" . $q . "%", 
-                'OrderItem.status_processamento LIKE' => "%" . $q . "%",
-            ]);
-        }
-
-        $items = $this->OrderItem->find('all', [
-            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
-            'conditions' => $condition,
-            'joins' => [
-                [
-                    'table' => 'benefits',
-                    'alias' => 'Benefit',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
-                    ]
-                ],
-                [
-                    'table' => 'suppliers',
-                    'alias' => 'Supplier',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
-                    ]
-                ],
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
-                    ],
-                ],
-                [
-                    'table' => 'statuses',
-                    'alias' => 'Status',
-                    'type' => 'INNER',
-                    'conditions' => [
-                        'Status.id = Order.status_id',
-                    ]
-                ],
             ]
         ]);
 

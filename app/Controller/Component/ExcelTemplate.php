@@ -585,6 +585,12 @@ class ExcelTemplate
 
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
+
+			$porcentagem_margem_seguranca = $dado['Customer']['porcentagem_margem_seguranca'];
+			if (empty($porcentagem_margem_seguranca)) {
+				$porcentagem_margem_seguranca = "0";
+			}
+
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['codigo_associado']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['created']); $col++;
@@ -619,7 +625,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['emitir_nota_fiscal']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['exibir_demanda'] ? 'S' : 'N'); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['flag_gestao_economico'] ? 'S' : 'N'); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['porcentagem_margem_seguranca']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $porcentagem_margem_seguranca); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não'); $col++;
 			$proposal = isset($dado['Proposal'][0]) ? $dado['Proposal'][0] : null;
 			if ($proposal) {
@@ -788,7 +794,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['suppliersCount']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['usersCount']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Income']['data_pagamento']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2),$dado['Order']['is_partial'] == 1 ? "Parcial" :($dado['Order']['is_partial'] == 2 ? "Todos beneficiários" :($dado['Order']['is_partial'] == 3 ? "PIX" : "Desconhecido")));$col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['is_partial'] == 1 ? "Parcial" :($dado['Order']['is_partial'] == 2 ? "Todos beneficiários" :($dado['Order']['is_partial'] == 3 ? "PIX" :($dado['Order']['is_partial'] == 4 ? "Emissão" : "Desconhecido"))));$col++;
 
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['pedido_complementar'] ? 'S' : 'N'); $col++;
 
@@ -1796,6 +1802,11 @@ class ExcelTemplate
 				$tipo_ge = 'GE garantido';
 			}
 
+			$porcentagem_margem_seguranca = $dados[$i]['Customer']['porcentagem_margem_seguranca'];
+			if (empty($porcentagem_margem_seguranca)) {
+				$porcentagem_margem_seguranca = "0";
+			}
+
 			$indx++;
 
 			$activeWorksheet
@@ -1873,7 +1884,7 @@ class ExcelTemplate
 				->setCellValue('BT'. $indx, $dados[$i]['Order']['order_period_from'])
 				->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to'])
 				->setCellValue('BV'. $indx, $dados[$i]['Customer']['flag_gestao_economico'] == 'S' ? 'Sim' : 'Não')
-				->setCellValue('BW'. $indx, $dados[$i]['Customer']['porcentagem_margem_seguranca'])
+				->setCellValue('BW'. $indx, $porcentagem_margem_seguranca)
 				->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não')
 				->setCellValue('BY'. $indx, $tipo_ge)
 				->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
