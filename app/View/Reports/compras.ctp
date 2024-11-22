@@ -66,7 +66,7 @@
                                     foreach ($statuses as $keySt => $status) {
                                         $selected = "";
                                         if (isset($_GET["st"])) {
-                                            if ($keySt == $_GET["st"]) {
+                                            if (in_array($keySt, $_GET["st"])) {
                                                 $selected = "selected";
                                             }
                                         }

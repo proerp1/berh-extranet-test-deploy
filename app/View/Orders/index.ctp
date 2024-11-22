@@ -53,13 +53,13 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t[]" id="t" multiple>
                                     <option value=''></option>
                                     <?php
                                         $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado'];
 
                                         foreach ($statusOptions as $statusId => $statusName) {
-                                            $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
+                                            $selected = ($_GET["t"] ?? '') && in_array($statusId, $_GET["t"]) ? 'selected' : '';
                                             echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
                                         }
                                     ?>
@@ -84,12 +84,12 @@
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo" id="tipo">
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo[]" id="tipo" multiple>
                                     <option value=''></option>
-                                    <option value="2" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '2' ? 'selected' : ''; ?>>Todos beneficiários</option>
-                                    <option value="1" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '1' ? 'selected' : ''; ?>>Parcial</option>
-                                    <option value="3" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '3' ? 'selected' : ''; ?>>PIX</option>
-                                    <option value="4" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '4' ? 'selected' : ''; ?>>Emissão</option>
+                                    <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Todos beneficiários</option>
+                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Parcial</option>
+                                    <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="4" <?php echo isset($_GET['tipo']) && in_array('4', $_GET['tipo']) ? 'selected' : ''; ?>>Emissão</option>
                                 </select>
                             </div>
                             <div class="mb-10">

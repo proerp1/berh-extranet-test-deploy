@@ -49,17 +49,17 @@
                                             <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
                                             <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
                                                 <option value="">Selecione</option>
-                                                <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                                <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
-                                                <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
-                                                <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
-                                                <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
-                                                <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
-                                                <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
-                                                <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
-                                                <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
-                                                <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
-                                                <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
+                                                <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
+                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
+                                                <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
+                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
+                                                <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
+                                                <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
+                                                <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && in_array('GERAR_PAGAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
+                                                <option value="INICIO_PROCESSAMENTO" <?php echo isset($_GET['stp']) && in_array('INICIO_PROCESSAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>INICIO_PROCESSAMENTO</option>
+                                                <option value="PAGAMENTO_REALIZADO" <?php echo isset($_GET['stp']) && in_array('PAGAMENTO_REALIZADO', $_GET['stp']) ? 'selected' : ''; ?>>PAGAMENTO_REALIZADO</option>
+                                                <option value="PROCESSAMENTO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('PROCESSAMENTO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>PROCESSAMENTO_PENDENTE</option>
+                                                <option value="VALIDACAO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('VALIDACAO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>VALIDACAO_PENDENTE</option>
                                             </select>
                                         </div>
 
