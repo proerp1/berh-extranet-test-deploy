@@ -1889,7 +1889,7 @@ class ExcelTemplate
 				->setCellValue('BY'. $indx, $tipo_ge)
 				->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
 				->setCellValue('CA'. $indx, $dados[$i][0]["qtde_pedido"] > 1 ? "Não" : "Sim")
-				->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar']== 'S' ? 'Sim' : 'Não');
+				->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar']);
 
 		}
 	}
