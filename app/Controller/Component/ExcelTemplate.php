@@ -766,13 +766,14 @@ class ExcelTemplate
 		foreach ($dados as $key => $dado) {
 			$fee_economia = 0;
 			$total_economia = 0;
+			$period = $dado["Order"]["order_period_from"] . " a " . $dado["Order"]["order_period_to"];
 			$vl_economia = $dado["Order"]["total_balances"];
 			$fee_saldo = $dado["Order"]["fee_saldo_not_formated"];
 	
 			if ($fee_saldo != 0 and $vl_economia != 0) {
 			    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
 			}
-	
+
 			$vl_economia = ($vl_economia - $fee_economia);
 			$total_economia = ($vl_economia + $fee_economia);
 		
@@ -781,7 +782,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["codigo_associado"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["id"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["nome_primario"]); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["order_period_from"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $period);$col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["subtotal"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["transfer_fee"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["commission_fee"]); $col++;
