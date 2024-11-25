@@ -208,11 +208,15 @@
                     </div>
                     
                     <div class="alert alert-secondary" role="alert">
-                        <strong>Tipo de Pedido</strong> <br>
-                        Todos beneficiários: realizar a manutenção no cadastro de beneficiário Inativando beneficios ou beneficiários que não deverão fazer parte do pedido e atualizar dias úteis. <br>
-                        Parcial: opção válida para importação de planilha dentro do pedido. <br>
-                        PIX: opção válida para importação de planilha dentro do pedido. <br>
-                        Emissão: apenas para geração de novos cartões ou re-emissões. <br>
+                        <strong>Tipo de Pedido</strong><br>
+                        Todos beneficiários: realizar a manutenção no cadastro de beneficiário Inativando beneficios ou beneficiários que não deverão fazer parte do pedido e atualizar dias úteis.<br>
+                        Parcial: opção válida para importação de planilha dentro do pedido.<br>
+                        PIX: opção válida para importação de planilha dentro do pedido.<br>
+                        Emissão: apenas para geração de novos cartões ou re-emissões.<br>
+                        <br>
+                        <strong>Modalidade</strong><br>
+                        Por Cliente: a emissão ocorrerá em um único pedido independente de grupo economico cadastrado e associado ao beneficiário.<br>
+                        Por Grupo Economico: a emissão ocorrerá de acordo com os grupo cadastrados e beneficiáriários associados.<br>
                     </div>
                 </div>
 
