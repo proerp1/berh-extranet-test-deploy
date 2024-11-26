@@ -99,6 +99,7 @@
                     <th class="ps-4 w-150px min-w-150px rounded-start">CPF</th>
                     <th>Beneficiário</th>
                     <th>Código Benefício</th>
+                    <th>Item ID</th>
                     <th>Benefício</th>
                     <th>Pedido Operadora</th>
                     <th>Tipo</th>
@@ -131,6 +132,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["document"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["code"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
