@@ -98,7 +98,7 @@ class BoletosController extends AppController
                         'status_id' => 46,
                         'arquivo' => $nome_arquivo,
                         'remessa' => $remessa,
-                        'bank_id' => $conta['BankAccount']['bank_id'],
+                        'bank_id' => $contas[0]['BankAccount']['bank_id'],
                         'user_creator_id' => CakeSession::read('Auth.User.id'),
                     ],
                 ];
