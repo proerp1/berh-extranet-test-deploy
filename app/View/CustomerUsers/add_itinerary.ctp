@@ -38,9 +38,9 @@ if($user_id){
                 <?php 
                 $workingDaysOptions = array("id" => "working_days", "placeholder" => "Dias Úteis", "required" => true, "class" => "form-control mb-3 mb-lg-0");
 
-                if (isset($isEdit) && $isEdit) {
+               /* if (isset($isEdit) && $isEdit) {
                     $workingDaysOptions['readonly'] = 'readonly';$workingDaysOptions['disabled'] = 'disabled';
-                }
+                }*/
                 echo $this->Form->input('working_days', $workingDaysOptions); 
                 ?>
             </div>
@@ -71,9 +71,9 @@ if($user_id){
                 <?php 
                 $quantityOptions = array("id" => "quantity", "placeholder" => "Quantidade", "required" => true, "class" => "form-control mb-3 mb-lg-0");
 
-                if (isset($isEdit) && $isEdit) {
+               /* if (isset($isEdit) && $isEdit) {
                     $quantityOptions['readonly'] = 'readonly';$quantityOptions['disabled'] = 'disabled';
-                }
+                }*/
                 echo $this->Form->input('quantity', $quantityOptions); 
                 ?>
             </div>
