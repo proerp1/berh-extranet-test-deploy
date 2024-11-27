@@ -167,7 +167,7 @@
                                     $v_is_partial = "Todos beneficiários";
                                 } elseif ($data[$i]['Order']['is_partial'] == 3) {
                                     $v_is_partial = "PIX";
-                                }elseif ($data[$i]['Order']['is_partial'] == 4) {
+                                } elseif ($data[$i]['Order']['is_partial'] == 4) {
                                     $v_is_partial = "Emissão";
                                 }
                             ?>
