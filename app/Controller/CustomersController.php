@@ -252,7 +252,7 @@ class CustomersController extends AppController
 
 
         $activityAreas = $this->ActivityArea->find('list', ['conditions' => ['ActivityArea.status_id' => 1], 'order' => 'ActivityArea.name']);
-        $sellers = $this->Seller->find('list', ['conditions' => ['Seller.status_id' => 1], 'order' => 'Seller.name']);
+        $sellers = $this->Seller->find('list', ['order' => 'Seller.name']);
         $codFranquias = $this->Resale->find('list', ['conditions' => ['Resale.status_id' => 1], ['order' => 'Resale.nome_fantasia']]);
 
         if ($this->request->data['Status']['id'] != 6) {
