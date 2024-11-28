@@ -3,6 +3,7 @@
         $("#OrderLastFareUpdate").datepicker({
             language: "pt-BR",
             format: 'dd/mm/yyyy',
+            daysOfWeekDisabled: [0, 6],
             autoclose: true
         });
 
@@ -14,6 +15,7 @@
             autoclose: true,
             language: "pt-BR",
             todayHighlight: true,
+            daysOfWeekDisabled: [0, 6],
             toggleActive: true
         });
         $('.OrderDueDate').mask('99/99/9999');

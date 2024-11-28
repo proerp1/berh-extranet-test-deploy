@@ -77,11 +77,24 @@
                             </div>
                             <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
+                        <?php
+                            $vencTimestamp = strtotime('+30 days');
+                            $week = date('w', $vencTimestamp);
+
+                            // Ajusta a data de vencimento se cair no fim de semana
+                            if ($week == 6) { // Sábado
+                                $vencTimestamp = strtotime('+2 days', $vencTimestamp);
+                            } elseif ($week == 0) { // Domingo
+                                $vencTimestamp = strtotime('+1 day', $vencTimestamp);
+                            }
+
+                            $venc = date('d/m/Y', $vencTimestamp);
+                        ?>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Data de vencimento</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => date('d/m/Y', strtotime(' + 30 day'))]);  ?>
+                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => $venc]);  ?>
                             </div>
                         </div>
                         <div class="col">

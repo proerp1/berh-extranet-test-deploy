@@ -37,12 +37,27 @@ $(document).ready(function() {
         });
     });
 
-    $(".datepicker2").datepicker({
-        startView: 1,
-        minViewMode: 1,
+    $(".input-daterange").datepicker({
+        format: 'dd/mm/yyyy',
+        multidate: false,
+        weekStart: 1,
+        autoclose: true,
         language: "pt-BR",
-        format: 'mm/yyyy',
-        autoclose: true
+        todayHighlight: true,
+        toggleActive: true,
+        daysOfWeekDisabled: [0, 6],
+        orientation: "auto"
+    });
+
+    $(".datepicker").datepicker({
+        format: 'dd/mm/yyyy',
+        weekStart: 1,
+        orientation: "bottom auto",
+        autoclose: true,
+        language: "pt-BR",
+        todayHighlight: true,
+        daysOfWeekDisabled: [0, 6],
+        toggleActive: true
     });
 
     $(".duedate_datepicker").datepicker({
@@ -53,6 +68,7 @@ $(document).ready(function() {
         autoclose: true,
         language: "pt-BR",
         todayHighlight: true,
+        daysOfWeekDisabled: [0, 6],
         toggleActive: true
     });
 
