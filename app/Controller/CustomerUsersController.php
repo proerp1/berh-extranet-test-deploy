@@ -953,7 +953,7 @@ class CustomerUsersController extends AppController
             $ret = $this->parseCSVAtivarInativar($customerId, $this->request->data['file']['tmp_name']);
 
             foreach ($ret['data'] as $data) {
-                if ($data['status_id'] != 0 and empty($data['benefit_id'])) {
+                if ($data['customer_user_id'] and $data['status_id'] != 0 and empty($data['benefit_id'])) {
                     $this->CustomerUser->id = $data['customer_user_id'];
                     $this->CustomerUser->save([
                         'CustomerUser' => [
