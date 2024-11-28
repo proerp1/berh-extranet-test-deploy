@@ -6,7 +6,14 @@ class BenefitsController extends AppController
     public $uses = ['Benefit', 'Status', 'Supplier', 'BenefitType', 'CepbrEstado', 'CustomerUserItinerary', 'LogBenefits', 'User'];
 
     public $paginate = [
-        'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
+        'Benefit' => [
+            'limit' => 10,
+            'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
+        ],
+        'LogBenefits' => [
+            'limit' => 50,
+            'order' => ['LogBenefits.log_date' => 'desc']
+        ]
     ];
 
     public function beforeFilter()
@@ -67,8 +74,10 @@ class BenefitsController extends AppController
             if ($this->Benefit->validates()) {
                 $this->request->data['Benefit']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Benefit->save($this->request->data)) {
+                    $id = $this->Benefit->id;
+
                     $this->Flash->set(__('O Benefício foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                    $this->redirect(['action' => 'index']);
+                    $this->redirect(['action' => 'edit/' . $id]);
                 } else {
                     $this->Flash->set(__('O Benefício não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
                 }
@@ -92,23 +101,20 @@ class BenefitsController extends AppController
     {
         $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Benefit->id = $id;
-        $antigo = $this->Benefit->read();
-        // debug($antigo['Benefit']['unit_price']);die;
+        $benef = $this->Benefit->read();
+
         if ($this->request->is(['post', 'put'])) {
             $unit_price = str_replace(',', '.', str_replace('.', '', $this->request->data['Benefit']['unit_price']));
 
-            if($antigo['Benefit']['unit_price']<>$unit_price){
+            if($benef['Benefit']['unit_price_not_formated'] <> $unit_price){
                 $dados_log = [
-                   
-                    'old_value' => $antigo['Benefit']['unit_price'],
+                    'old_value' => $benef['Benefit']['unit_price'],
                     'benefit_id' => $id,
                     'user_id' => CakeSession::read("Auth.User.id")
-                   
                 ];
+
                 $this->LogBenefits->save($dados_log);
             }
-           
-    
 
             $ShouldUpdateItinerary = $this->request->data['ShouldUpdateItinerary'];
             $this->Benefit->validates();
@@ -124,13 +130,13 @@ class BenefitsController extends AppController
                         ['CustomerUserItinerary.benefit_id' => $id]
                     );
                 }
+
                 $this->Flash->set(__('O Benefício foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'index']);
+                $this->redirect(['action' => 'edit/' . $id]);
             } else {
                 $this->Flash->set(__('O Benefício não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
-
         
         $temp_errors = $this->Benefit->validationErrors;
         $this->request->data = $this->Benefit->read();
@@ -167,18 +173,34 @@ class BenefitsController extends AppController
         $this->Permission->check(71, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
-        $condition = ['and' => ['LogBenefits.id' => $id], 'or' => []];
+        $condition = ['and' => ['LogBenefits.benefit_id' => $id], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'User.name LIKE' => "%".$_GET['q']."%", 
+                'LogBenefits.old_value LIKE' => "%".$_GET['q']."%", 
+            ]);
+        }
 
         $this->LogBenefits->id = $id;
         $cliente = $this->LogBenefits->read();
 
         $action = 'Log Status';
 
-       $data = $this->Paginator->paginate('LogBenefits', $condition);
-     
+        $data = $this->Paginator->paginate('LogBenefits', $condition);
+
+        if (isset($_GET['exportar'])) {
+            $nome = 'log_beneficios.xlsx';
+
+            $data = $this->LogBenefits->find('all', [
+                'conditions' => $condition,
+            ]);
+
+            $this->ExcelGenerator->gerarExcelLogBeneficios($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
+        }
+
         $this->set(compact('data', 'id', 'action'));
     }
-
-
-
 }

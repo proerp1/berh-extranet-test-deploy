@@ -2263,4 +2263,25 @@ class ExcelTemplate
 
 		}
 	}
+
+	public function getLogBeneficiosRelatorio($objPHPExcel, $dados)
+	{
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
+
+		$col = 'A';
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
+
+		foreach ($dados as $key => $dado) {
+			$col = 'A';
+
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['User']['name']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['log_date']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['old_value']); $col++;
+			$col++;
+		}
+	}
 }
