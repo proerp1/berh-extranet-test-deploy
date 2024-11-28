@@ -1520,6 +1520,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
+                'is_partial' => $is_partial,
                 'created' => date('Y-m-d H:i:s'),
                 'economic_group_id' => $k,
                 'working_days_type' => $working_days_type,
