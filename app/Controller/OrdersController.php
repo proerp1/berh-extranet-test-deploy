@@ -288,6 +288,7 @@ class OrdersController extends AppController
             if ($is_partial == 2) {
                 $condNotPartial = [
                     'CustomerUserItinerary.customer_id' => $customerId,
+                    'CustomerUserItinerary.status_id' => 1,
                     'CustomerUser.id is not null',
                     'CustomerUser.status_id' => 1,
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
@@ -993,7 +994,7 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId, 'CustomerUserItinerary.status_id' => 1];
 
         $proposal = $this->Proposal->find('first', [
             'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
@@ -1058,7 +1059,7 @@ class OrdersController extends AppController
         $manualPricing = $ret['unitPriceMapping'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds, 'CustomerUserItinerary.status_id' => 1];
 
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
@@ -1413,6 +1414,7 @@ class OrdersController extends AppController
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
+            'CustomerUserItinerary.status_id' => 1,
             'CustomerUser.status_id' => 1,
             'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
         ];
@@ -1487,6 +1489,7 @@ class OrdersController extends AppController
         foreach ($economicGroupUsers as $k => $user_list) {
             $cond2 = [
                 'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUserItinerary.status_id' => 1,
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
@@ -1559,6 +1562,7 @@ class OrdersController extends AppController
         $economic_groups = $this->CustomerUserItinerary->find('all', [
             'conditions' => [
                 'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUserItinerary.status_id' => 1,
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
             ],
@@ -2950,8 +2954,8 @@ class OrdersController extends AppController
                             'customer_id' => $customerId,
                             'customer_user_id' => $customerUserId,
                             'address_line' => $customer['Customer']['endereco'],
-                            'address_number' => $customer['Customer']['numero'] ?? null,
-                            'address_complement' => $customer['Customer']['complemento'] ?? null,
+                            'address_number' => isset($customer['Customer']['numero']) ? $customer['Customer']['numero'] : null,
+                            'address_complement' =>  isset($customer['Customer']['complemento']) ? $customer['Customer']['complemento'] : null,
                             'neighborhood' => $customer['Customer']['bairro'],
                             'city' => $customer['Customer']['cidade'],
                             'state' => $customer['Customer']['estado'],
@@ -2967,6 +2971,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     'CustomerUserItinerary.customer_user_id' => $customerUserId,
                     'CustomerUserItinerary.benefit_id' => $benefitId,
+                    'CustomerUserItinerary.status_id' => 1,
                     'CustomerUserItinerary.customer_id' => $customerId,
                     'CustomerUserItinerary.data_cancel' => '1901-01-01 00:00:00' // Only active itineraries
                 ]
@@ -2992,7 +2997,8 @@ class OrdersController extends AppController
                     'quantity' => $quantity,
                     'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
                     'card_number' => $numeroCartao,
-                    'data_cancel' => '1901-01-01 00:00:00' // Active status
+                    'data_cancel' => '1901-01-01 00:00:00',
+                    'status_id' => 1
                 ]
             ]);
 
