@@ -37,12 +37,27 @@ $(document).ready(function() {
         });
     });
 
-    $(".datepicker2").datepicker({
-        startView: 1,
-        minViewMode: 1,
+    $(".input-daterange").datepicker({
+        format: 'dd/mm/yyyy',
+        multidate: false,
+        weekStart: 1,
+        autoclose: true,
         language: "pt-BR",
-        format: 'mm/yyyy',
-        autoclose: true
+        todayHighlight: true,
+        toggleActive: true,
+        daysOfWeekDisabled: [0, 6],
+        orientation: "auto"
+    });
+
+    $(".datepicker").datepicker({
+        format: 'dd/mm/yyyy',
+        weekStart: 1,
+        orientation: "bottom auto",
+        autoclose: true,
+        language: "pt-BR",
+        todayHighlight: true,
+        daysOfWeekDisabled: [0, 6],
+        toggleActive: true
     });
 
     $(".duedate_datepicker").datepicker({
@@ -53,8 +68,10 @@ $(document).ready(function() {
         autoclose: true,
         language: "pt-BR",
         todayHighlight: true,
+        daysOfWeekDisabled: [0, 6],
         toggleActive: true
     });
+
     $('.duedate_datepicker').mask('99/99/9999');
 
     $('#order_creation_form').on('submit', function(event) {
@@ -67,48 +84,50 @@ $(document).ready(function() {
         $('#message_wd').val('');
         $('#message_classification').val('');
 
-        // Mostra uma mensagem de erro se algum dos campos estiver vazio
-        if (!creditReleaseDateValue || !periodFromValue || !periodToValue) {
-            $('#message_classification').text('Todos os campos de data devem ser preenchidos.').show();
-            event.preventDefault();
-            return; // Evita a execução adicional
-        }
+        if ($(".is_partial").val() != 3 && $(".is_partial").val() != 4) {
+            // Mostra uma mensagem de erro se algum dos campos estiver vazio
+            if (!creditReleaseDateValue || !periodFromValue || !periodToValue) {
+                $('#message_classification').text('Todos os campos de data devem ser preenchidos.').show();
+                event.preventDefault();
+                return; // Evita a execução adicional
+            }
 
-        if (!cloneOrder && workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
-            $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
-            event.preventDefault();
-            return; // Evita a execução adicional
-        }
+            if (!cloneOrder && workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
+                $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
+                event.preventDefault();
+                return; // Evita a execução adicional
+            }
 
-        let currDate = new Date();
-        currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
+            let currDate = new Date();
+            currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
 
-        // Converte os valores de string para objetos Date
-        const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
-        const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
-        const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
+            // Converte os valores de string para objetos Date
+            const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
+            const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
+            const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
 
-        // Verifica se period_to é posterior a data atual
-        if (periodFromDate < currDate) {
-            $('#message_classification_period').text('A data "De" não deve ser posterior à data atual.').show();
-            event.preventDefault();
-            return; // Evita a execução adicional
-        }
+            // Verifica se period_to é posterior a data atual
+            if (periodFromDate < currDate) {
+                $('#message_classification_period').text('A data "De" não deve ser posterior à data atual.').show();
+                event.preventDefault();
+                return; // Evita a execução adicional
+            }
 
-        // Verifica se period_to é posterior a period_from
-        if (periodToDate <= periodFromDate) {
-            $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
-            event.preventDefault();
-            return; // Evita a execução adicional
-        }
-        
-        const futureDate = addWorkingDays(currDate, 4);
+            // Verifica se period_to é posterior a period_from
+            if (periodToDate <= periodFromDate) {
+                $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
+                event.preventDefault();
+                return; // Evita a execução adicional
+            }
+            
+            const futureDate = addWorkingDays(currDate, 4);
 
-        // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
-        if (creditReleaseDate < futureDate) {
-            $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 4 dias úteis.').show();
-            event.preventDefault();
-            return; // Evita a execução adicional
+            // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
+            if (creditReleaseDate < futureDate) {
+                $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 4 dias úteis.').show();
+                event.preventDefault();
+                return; // Evita a execução adicional
+            }
         }
 
         // Se todas as validações passarem, esconde a mensagem
@@ -244,7 +263,7 @@ $(document).ready(function() {
                 $(".flag_gestao_economico").val(data.Customer.flag_gestao_economico);
 
                 if (data.Customer.flag_gestao_economico == 'S') {
-                    if ($(".is_partial:checked").val() == 3) {
+                    if ($(".is_partial").val() == 3 || $(".is_partial").val() == 4) {
                         $(".pedido_comp").hide();
                     } else {
                         $(".pedido_comp").show();
@@ -258,7 +277,7 @@ $(document).ready(function() {
 
     $(".is_partial").on("change", function() {
         if ($(".flag_gestao_economico").val() == 'S') {
-            if ($(".is_partial:checked").val() == 3) {
+            if ($(".is_partial").val() == 3 || $(".is_partial").val() == 4) {
                 $(".pedido_comp").hide();
             } else {
                 $(".pedido_comp").show();
@@ -269,7 +288,7 @@ $(document).ready(function() {
     });
 
     $(".is_partial").on("change", function() {
-        if ($(".is_partial:checked").val() == 3) {
+        if ($(".is_partial").val() == 3 || $(".is_partial").val() == 4) {
             $(".js-pedido_parc").hide();
             $(".working_days").val("0");
         } else {

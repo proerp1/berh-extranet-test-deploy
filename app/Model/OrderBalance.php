@@ -2,20 +2,24 @@
 class OrderBalance extends AppModel {
     public $name = 'OrderBalance';
 
-    public $belongsTo = array(
-        'Order' => array(
-            'className' => 'Order',
-            'foreignKey' => 'order_id'
-        ),
-        'CustomerUser' => array(
-            'className' => 'CustomerUser',
-            'foreignKey' => 'customer_user_id'
-        ),
-        'Benefit' => array(
-            'className' => 'Benefit',
-            'foreignKey' => 'benefit_id'
-        ),
-    );
+public $belongsTo = array(
+    'Order' => array(
+        'className' => 'Order',
+        'foreignKey' => 'order_id'
+    ),
+    'CustomerUser' => array(
+        'className' => 'CustomerUser',
+        'foreignKey' => 'customer_user_id'
+    ),
+    'Benefit' => array(
+        'className' => 'Benefit',
+        'foreignKey' => 'benefit_id'
+    ),
+    'OrderItem' => array( // Adicione esta associação
+        'className' => 'OrderItem',
+        'foreignKey' => 'order_item_id'
+    ),
+);
 
     public $actsAs = ['Containable'];
 

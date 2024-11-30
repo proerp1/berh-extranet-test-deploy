@@ -26,7 +26,7 @@ class ComunicadoCliente extends AppModel {
         foreach ($results as $key => $val) {
             if (isset($val[$this->alias]['sent'])) {
                 $results[$key][$this->alias]['sent_nao_formatado'] = $results[$key][$this->alias]['sent'];
-                $results[$key][$this->alias]['sent'] = date('d/m/Y', strtotime($results[$key][$this->alias]['sent']));
+                $results[$key][$this->alias]['sent'] = date('d/m/Y H:i:s', strtotime($results[$key][$this->alias]['sent']));
             }
         }
 

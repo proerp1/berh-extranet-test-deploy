@@ -16,6 +16,13 @@ class CustomerUserBankAccount extends AppModel {
         'BankCode' => [
             'className' => 'BankCode',
             'foreignKey' => 'bank_code_id'
+        ],
+        'Status' => [
+            'className' => 'Status', // Nome do modelo de status
+            'foreignKey' => 'status_id', // Nome da chave estrangeira no banco
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
         ]
     ];
 

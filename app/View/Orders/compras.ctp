@@ -49,17 +49,17 @@
                                             <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
                                             <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
                                                 <option value="">Selecione</option>
-                                                <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                                <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
-                                                <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
-                                                <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
-                                                <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
-                                                <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
-                                                <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
-                                                <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
-                                                <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
-                                                <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
-                                                <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
+                                                <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
+                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
+                                                <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
+                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
+                                                <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
+                                                <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
+                                                <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && in_array('GERAR_PAGAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
+                                                <option value="INICIO_PROCESSAMENTO" <?php echo isset($_GET['stp']) && in_array('INICIO_PROCESSAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>INICIO_PROCESSAMENTO</option>
+                                                <option value="PAGAMENTO_REALIZADO" <?php echo isset($_GET['stp']) && in_array('PAGAMENTO_REALIZADO', $_GET['stp']) ? 'selected' : ''; ?>>PAGAMENTO_REALIZADO</option>
+                                                <option value="PROCESSAMENTO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('PROCESSAMENTO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>PROCESSAMENTO_PENDENTE</option>
+                                                <option value="VALIDACAO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('VALIDACAO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>VALIDACAO_PENDENTE</option>
                                             </select>
                                         </div>
 
@@ -84,7 +84,6 @@
                         <th>Beneficiário</th>
                         <th>Benefício</th>
                         <th width="90px">Dias Úteis</th>
-                        <!--<th width="120px">Desconto</th>-->
                         <th width="120px">Quantidade por dia</th>
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
@@ -104,29 +103,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td>Total</td>
-                        <td colspan="6"></td>
-                        <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
-                        <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
-                        <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
-                        <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
-                        <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
-                        <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
-                        <td colspan="6"></td>
-                        <?php if ($order['Order']['status_id'] == 83) { ?>
-                            <td>&nbsp;</td>
-                        <?php } ?>
-                    </tr>
+                    <?php if (isset($items_total[0])) { ?>
+                        <tr>
+                            <td>Total</td>
+                            <td colspan="6"></td>
+                            <td class="subtotal_sum">R$<?php echo number_format($items_total[0][0]['subtotal'], 2, ',', '.'); ?></td>
+                            <td class="transfer_fee_sum">R$<?php echo number_format($items_total[0][0]['transfer_fee'], 2, ',', '.'); ?></td>
+                            <td class="commission_fee_sum">R$<?php echo number_format($items_total[0][0]['commission_fee'], 2, ',', '.'); ?></td>
+                            <td class="total_sum">R$<?php echo number_format($items_total[0][0]['total'], 2, ',', '.'); ?></td>
+                            <td class="saldo_sum">R$<?php echo number_format($items_total[0][0]['saldo'], 2, ',', '.'); ?></td>
+                        </tr>
+                    <?php } ?>
                     <?php
-                    $subtotal = 0;
-                    $transfer_fee = 0;
-                    $total = 0;
+                    $v_subtotal = 0;
+                    $v_transfer_fee = 0;
+                    $v_commission_fee = 0;
+                    $v_total = 0;
+                    $v_saldo = 0;
                     if ($items) { ?>
                         <?php for ($i = 0; $i < count($items); $i++) {
-                            $subtotal += $items[$i]["OrderItem"]["subtotal_not_formated"];
-                            $transfer_fee += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
-                            $total += $items[$i]["OrderItem"]["total_not_formated"];
+                            $v_subtotal += $items[$i]['OrderItem']['subtotal_not_formated'];
+                            $v_transfer_fee += $items[$i]['OrderItem']['transfer_fee_not_formated'];
+                            $v_commission_fee += $items[$i]['OrderItem']['commission_fee_not_formated'];
+                            $v_total += $items[$i]['OrderItem']['total_not_formated'];
+                            $v_saldo += $items[$i]['OrderItem']['saldo_not_formated'];
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
                                 <td class="fw-bold fs-7 ps-4">
@@ -138,13 +138,6 @@
                                 <td class="fw-bold fs-7 ps-4">
                                     <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
                                 </td>
-                                <!--<td class="fw-bold fs-7 ps-4">
-                                    <?php if ($order['Order']['status_id'] == 83) { ?>
-                                        <input type="text" class="form-control money_field var_days_input" value="<?php echo $items[$i]["OrderItem"]["var"]; ?>">
-                                    <?php } else { ?>
-                                        <?php echo $items[$i]["OrderItem"]["var"]; ?>
-                                    <?php } ?>
-                                </td> !-->
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
@@ -158,8 +151,6 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
-
-
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este benefício?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["id"]; ?>')">
@@ -170,18 +161,13 @@
                             </tr>
                         <?php } ?>
                         <tr>
-                        <td>Total</td>
+                            <td>Total</td>
                             <td colspan="6"></td>
-                            <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
-                            <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
-                            <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
-                            <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
-                            <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
-                            <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
-                            <td colspan="6"></td>
-                            <?php if ($order['Order']['status_id'] == 83) { ?>
-                                <td>&nbsp;</td>
-                            <?php } ?>
+                            <td class="subtotal_sum">R$<?php echo number_format($v_subtotal, 2, ',', '.'); ?></td>
+                            <td class="transfer_fee_sum">R$<?php echo number_format($v_transfer_fee, 2, ',', '.'); ?></td>
+                            <td class="commission_fee_sum">R$<?php echo number_format($v_commission_fee, 2, ',', '.'); ?></td>
+                            <td class="total_sum">R$<?php echo number_format($v_total, 2, ',', '.'); ?></td>
+                            <td class="saldo_sum">R$<?php echo number_format($v_saldo, 2, ',', '.'); ?></td>
                         </tr>
                     <?php } else { ?>
                         <tr>
@@ -296,7 +282,6 @@
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
                 const curr_stp = urlParams.get('stp');
-
 
                 $.ajax({
                     type: 'POST',

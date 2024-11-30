@@ -24,18 +24,22 @@
                         <i class="fas fa-file-excel"></i>
                         Exportar
                     </a>
+                   
                     <?php if ($filtersFilled): ?>
                         <a href="<?php echo $this->base . '/orders/relatorio_processamento_index?' . $queryString; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                             <i class="fas fa-download"></i>
                             Relatorio de Processamento
                         </a>
                     <?php endif; ?>
-                 
+                    
+
+                    <!--
                     <a href="<?php echo $this->base . '/orders/relatorio_pedidos/'; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                         <i class="fas fa-download"></i>
                         Relatório de Pedidos
                     </a>
-
+                    -->
+                    
                     <a href="#" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_gerar_arquivo">
                         <i class="fas fa-file"></i>
                         Novo Pedido
@@ -49,13 +53,13 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t[]" id="t" multiple>
                                     <option value=''></option>
                                     <?php
                                         $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado'];
 
                                         foreach ($statusOptions as $statusId => $statusName) {
-                                            $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
+                                            $selected = ($_GET["t"] ?? '') && in_array($statusId, $_GET["t"]) ? 'selected' : '';
                                             echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
                                         }
                                     ?>
@@ -80,11 +84,12 @@
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo" id="tipo">
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo[]" id="tipo" multiple>
                                     <option value=''></option>
-                                    <option value="2" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '2' ? 'selected' : ''; ?>>Todos beneficiários</option>
-                                    <option value="1" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '1' ? 'selected' : ''; ?>>Parcial</option>
-                                    <option value="3" <?php echo isset($_GET['tipo']) && $_GET['tipo'] == '3' ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Todos beneficiários</option>
+                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Parcial</option>
+                                    <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="4" <?php echo isset($_GET['tipo']) && in_array('4', $_GET['tipo']) ? 'selected' : ''; ?>>Emissão</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -135,6 +140,7 @@
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
+                        <th>Vencimento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -161,6 +167,8 @@
                                     $v_is_partial = "Todos beneficiários";
                                 } elseif ($data[$i]['Order']['is_partial'] == 3) {
                                     $v_is_partial = "PIX";
+                                } elseif ($data[$i]['Order']['is_partial'] == 4) {
+                                    $v_is_partial = "Emissão";
                                 }
                             ?>
                             <tr>
@@ -188,6 +196,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>     
+
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

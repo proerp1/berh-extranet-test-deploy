@@ -232,7 +232,7 @@
                 </tr>
                 <tr>
                     <td width="25%"><b>Endereço:</b></td>
-                    <td><b> Av. Marquês de São Vicente, 446 - Várzea da Barra Funda, - São Paulo/SP</b></td>
+                    <td><b> R. Júlio Gonzalez, 132, Barra Funda, São Paulo - State of São Paulo, 05003-020, Brazil</b></td>
                 </tr>
                 <tr>
                     <td width="25%"><b>CEP:</b></td>

@@ -66,6 +66,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <th>Status</th>
                         <th>Benefício</th>
                         <th>Dias Úteis</th>
                         <th>Valor Unitário</th>
@@ -82,6 +83,11 @@
                             $total += $value['CustomerUserItinerary']['total_not_formated'];
                             ?>
                             <tr>
+                            <td class="fw-bold fs-7 ps-4">
+                                <span class='badge <?php echo isset($value['Status']['label']) ? $value['Status']['label'] : 'badge-secondary'; ?>'>
+                                    <?php echo isset($value['Status']['name']) ? $value['Status']['name'] : ''; ?>
+                                </span>
+                            </td>
                                 <td><?php echo $value['Benefit']['code'].' - '.$value['Benefit']['name']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['working_days']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['unit_price']; ?></td>
@@ -90,11 +96,12 @@
                                 <td><?php echo $value['CustomerUserItinerary']['card_number']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['total']; ?></td>
                                 <td>
-                                <?php if (isset($user['Group']['id']) && $user['Group']['id'] == 1): ?>
                                     <a href="<?php echo $this->base . '/customer_users/edit_itinerary/' . $id . '/' . $user_id . '/' . $value["CustomerUserItinerary"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
                                     
+                                    <?php if (isset($user['Group']['id']) && $user['Group']['id'] == 1): ?>
+
                                     <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customer_users/delete_itinerary/' . $id . '/' . $user_id . '/' . $value["CustomerUserItinerary"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>

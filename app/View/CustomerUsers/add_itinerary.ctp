@@ -18,6 +18,11 @@ if($user_id){
 
         <div class="row">
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Status</label>
+                <?php echo $this->Form->input('status_id', ["class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "empty" => "Selecione", 'options' => $statuses]); ?>
+            </div>
+            
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Benefício</label>
                 <?php 
                 $benefitOptions = array("id" => "benefit_id", "required" => true, "class" => "form-select form-select-solid fw-bolder", "data-kt-select2" => "true", "data-placeholder" => "Selecione", "data-allow-clear" => "true", 'empty' => 'Selecione');
@@ -30,12 +35,28 @@ if($user_id){
             
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                <?php echo $this->Form->input('working_days', array("id" => "working_days",  "placeholder" => "Dias Úteis", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php 
+                $workingDaysOptions = array("id" => "working_days", "placeholder" => "Dias Úteis", "required" => true, "class" => "form-control mb-3 mb-lg-0");
+
+               /* if (isset($isEdit) && $isEdit) {
+                    $workingDaysOptions['readonly'] = 'readonly';$workingDaysOptions['disabled'] = 'disabled';
+                }*/
+                echo $this->Form->input('working_days', $workingDaysOptions); 
+                ?>
             </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Valor Unitário</label>
-                <?php echo $this->Form->input('unit_price', array("id" => "unit_price", 'type' => 'text', "placeholder" => "Valor Unitário", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field"));  ?>
+                <?php 
+                $unitPriceOptions = array("id" => "unit_price", 'type' => 'text', "placeholder" => "Valor Unitário", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field"
+                );
+
+                if (isset($isEdit) && $isEdit) {
+                    $unitPriceOptions['readonly'] = 'readonly';$unitPriceOptions['disabled'] = 'disabled';
+                }
+
+                echo $this->Form->input('unit_price', $unitPriceOptions); 
+                ?>
             </div>
         </div>
 
@@ -47,7 +68,14 @@ if($user_id){
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Quantidade</label>
-                <?php echo $this->Form->input('quantity', array("id" => "quantity", "placeholder" => "Quantidade", "required" => true, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                <?php 
+                $quantityOptions = array("id" => "quantity", "placeholder" => "Quantidade", "required" => true, "class" => "form-control mb-3 mb-lg-0");
+
+               /* if (isset($isEdit) && $isEdit) {
+                    $quantityOptions['readonly'] = 'readonly';$quantityOptions['disabled'] = 'disabled';
+                }*/
+                echo $this->Form->input('quantity', $quantityOptions); 
+                ?>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Valor por dia</label>

@@ -412,8 +412,8 @@
                 </div>
 
                 <div class="mb-7 col-2">
-                    <label class="form-label">Qtde mínina de diária por cliente</label>
-                    <?php echo $this->Form->input('qtde_minina_diaria', ['type' => 'text', 'placeholder' => 'Qtde mínina de diária por cliente', 'class' => 'form-control mb-3 mb-lg-0','default' => '2']); ?>
+                    <label class="form-label">Incluir qtde. mínina diária</label>
+                    <?php echo $this->Form->input('qtde_minina_diaria', array("id" => "qtde_minina_diaria", "data-control" => "select2", "empty" => "Selecione", 'options' => array('2' => 'Sim', '0' => 'Não'), "class" => "form-select mb-3 mb-lg-0",'default' => '2'));  ?>
                 </div>
 
                 <div class="mb-7 col-2">
