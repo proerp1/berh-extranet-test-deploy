@@ -82,6 +82,15 @@ class Order extends AppModel
                 $results[$key][$this->alias]['total'] = number_format($results[$key][$this->alias]['total'], 2, ',', '.');
             }
 
+            $results[$key][$this->alias]['saldo_transfer_fee_not_formated'] = 0;
+            if (isset($val[$this->alias]['saldo_transfer_fee'])) {
+                $results[$key][$this->alias]['saldo_transfer_fee_not_formated'] = $results[$key][$this->alias]['saldo_transfer_fee'];
+                $results[$key][$this->alias]['saldo_transfer_fee'] = number_format($results[$key][$this->alias]['saldo_transfer_fee'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['saldo_transfer_fee_not_formated'] = 0;
+                $results[$key][$this->alias]['saldo_transfer_fee'] = '0,00';
+            }
+
             $results[$key][$this->alias]['saldo_not_formated'] = 0;
             if (isset($val[$this->alias]['saldo'])) {
                 $results[$key][$this->alias]['saldo_not_formated'] = $results[$key][$this->alias]['saldo'];

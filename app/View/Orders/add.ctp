@@ -637,6 +637,7 @@
                         <th>Valor por dia</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
+                        <th>Repasse com Economia</th>
                         <th>Taxa</th>
                         <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
                         <th>Economia</th>
@@ -657,6 +658,7 @@
                         <td colspan="5"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
+                        <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
                         <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
                         <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
@@ -702,6 +704,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 saldo_transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo_transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 commission_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo"]; ?></td>
@@ -727,6 +730,7 @@
                             <td colspan="5"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
+                            <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                             <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
                             <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
                             <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>

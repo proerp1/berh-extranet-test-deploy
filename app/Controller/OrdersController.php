@@ -1755,7 +1755,17 @@ class OrdersController extends AppController
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
-            'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
+            'fields' => ['Supplier.id', 
+                            'round(sum(OrderItem.subtotal),2) as subtotal',
+                            "(SELECT round(sum(b.total),2) as total_saldo 
+                                FROM order_balances b 
+                                INNER JOIN benefits be ON be.id = b.benefit_id 
+                                WHERE be.supplier_id = Supplier.id  
+                                        AND b.tipo = 1 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS total_saldo",
+                        ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -1780,6 +1790,8 @@ class OrdersController extends AppController
         foreach ($suppliersAll as $supplier) {
             $outcome = [];
 
+            $valor_total = ($supplier[0]['subtotal'] - $supplier[0]['total_saldo']);
+
             $outcome['Outcome']['order_id'] = $id;
             $outcome['Outcome']['parcela'] = 1;
             $outcome['Outcome']['status_id'] = 11;
@@ -1790,8 +1802,8 @@ class OrdersController extends AppController
             $outcome['Outcome']['supplier_id'] = $supplier['Supplier']['id'];
             $outcome['Outcome']['name'] = 'Pagamento Fornecedor';
             $outcome['Outcome']['valor_multa'] = 0;
-            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
-            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
+            $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
+            $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
             $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
             $outcome['Outcome']['created'] = date('d/m/Y H:i:s');
