@@ -2693,12 +2693,14 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+
         $q = $this->request->data['curr_q'];
         $sup = $this->request->data['curr_sup'];
         $stp = $this->request->data['curr_stp'];
-        $statusProcess = $this->request->data['v_status_processamento'];
 
-        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderId], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
