@@ -308,12 +308,14 @@ class OrdersController extends AppController
                 }
             }
 
-            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
 
             $obs_notafiscal = "";
             if ($customer['Customer']['observacao_notafiscal']) {
                 $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
             }
+
+            $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -330,6 +332,11 @@ class OrdersController extends AppController
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
                 'observation' => $obs_notafiscal,
+                'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
+                'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
+                'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
+                'tipo_ge' => $customer['Customer']['tipo_ge'],
+                'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
             ];
 
             $this->Order->create();
@@ -2693,12 +2700,14 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+
         $q = $this->request->data['curr_q'];
         $sup = $this->request->data['curr_sup'];
         $stp = $this->request->data['curr_stp'];
-        $statusProcess = $this->request->data['v_status_processamento'];
 
-        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderId], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
