@@ -1168,7 +1168,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);
+            $cpf = $this->ensureLeadingZeroes($row[0]);
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -2800,7 +2800,7 @@ class OrdersController extends AppController
             // Map all CSV fields to variables
             $cnpjCliente = $row[0];                           // CNPJ CLIENTE
             $name = $row[1];                                  // NOME
-            $cpf = preg_replace('/\D/', '', $row[2]);          // CPF
+            $cpf = $this->ensureLeadingZeroes($row[2]);       // CPF
             $rg = $row[3];                                    // RG
             $dataNascimento = $row[4];                        // DATA NASCIMENTO
             $nomeMae = $row[5];                               // NOME DA MÃE
@@ -3053,6 +3053,15 @@ class OrdersController extends AppController
 
         $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect('/reports/importar_movimentacao');
+    }
+
+    private function ensureLeadingZeroes($cpf) {
+        $cpf = preg_replace('/\D/', '', $cpf);
+
+    
+        $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+    
+        return $cpf;
     }
 
     private function parseCSVSaldoAll($tmpFile)
