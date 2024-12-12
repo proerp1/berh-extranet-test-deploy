@@ -375,6 +375,12 @@
                 const urlParams = new URLSearchParams(queryString);
 
                 const v_status_processamento = $('#status_processamento').val();
+                const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
+                const notOrderItemIds = [];
+
+                not_checkboxes.each(function() {
+                    notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
+                });
 
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
@@ -388,6 +394,7 @@
                     type: 'POST',
                     url: base_url+'/reports/alter_item_status_processamento_all',
                     data: {
+                        notOrderItemIds,
                         v_status_processamento,
                         curr_q,
                         curr_sup,

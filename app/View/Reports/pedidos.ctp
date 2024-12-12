@@ -145,7 +145,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["qtde_pedido"] > 1 ? "Não" : "Sim"; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["primeiro_pedido"] == "N" ? "Não" : "Sim"; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["nome_fantasia"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["CustomerUserItinerary"]["unit_price"]; ?></td>

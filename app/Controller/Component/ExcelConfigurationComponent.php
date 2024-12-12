@@ -222,7 +222,9 @@ class ExcelConfigurationComponent extends Component {
                             INNER JOIN order_items i ON i.order_id = o.id
                         WHERE i.customer_user_id = OrderItem.customer_user_id
                                 AND o.id != Order.id
-                    ) AS qtde_pedido'
+                    ) AS qtde_pedido',
+                    'Order.primeiro_pedido',
+                    'Order.pedido_complementar',
 				],
 				'joins' => [
 					[

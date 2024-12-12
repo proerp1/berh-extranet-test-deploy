@@ -288,6 +288,7 @@ class OrdersController extends AppController
             if ($is_partial == 2) {
                 $condNotPartial = [
                     'CustomerUserItinerary.customer_id' => $customerId,
+                    'CustomerUserItinerary.status_id' => 1,
                     'CustomerUser.id is not null',
                     'CustomerUser.status_id' => 1,
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
@@ -307,12 +308,14 @@ class OrdersController extends AppController
                 }
             }
 
-            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
 
             $obs_notafiscal = "";
             if ($customer['Customer']['observacao_notafiscal']) {
                 $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
             }
+
+            $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -329,6 +332,11 @@ class OrdersController extends AppController
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
                 'observation' => $obs_notafiscal,
+                'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
+                'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
+                'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
+                'tipo_ge' => $customer['Customer']['tipo_ge'],
+                'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
             ];
 
             $this->Order->create();
@@ -994,7 +1002,7 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId];
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId, 'CustomerUserItinerary.status_id' => 1];
 
         $proposal = $this->Proposal->find('first', [
             'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
@@ -1059,7 +1067,7 @@ class OrdersController extends AppController
         $manualPricing = $ret['unitPriceMapping'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds];
+        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds, 'CustomerUserItinerary.status_id' => 1];
 
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
@@ -1167,7 +1175,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);
+            $cpf = $this->ensureLeadingZeroes($row[0]);
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -1414,6 +1422,7 @@ class OrdersController extends AppController
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
+            'CustomerUserItinerary.status_id' => 1,
             'CustomerUser.status_id' => 1,
             'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
         ];
@@ -1488,6 +1497,7 @@ class OrdersController extends AppController
         foreach ($economicGroupUsers as $k => $user_list) {
             $cond2 = [
                 'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUserItinerary.status_id' => 1,
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
                 'CustomerUser.id' => $user_list
@@ -1520,6 +1530,7 @@ class OrdersController extends AppController
                 'order_period_to' => $period_to,
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
+                'is_partial' => $is_partial,
                 'created' => date('Y-m-d H:i:s'),
                 'economic_group_id' => $k,
                 'working_days_type' => $working_days_type,
@@ -1560,6 +1571,7 @@ class OrdersController extends AppController
         $economic_groups = $this->CustomerUserItinerary->find('all', [
             'conditions' => [
                 'CustomerUserItinerary.customer_id' => $customerId,
+                'CustomerUserItinerary.status_id' => 1,
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
             ],
@@ -1750,7 +1762,17 @@ class OrdersController extends AppController
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
-            'fields' => ['Supplier.id', 'round(sum(OrderItem.subtotal),2) as subtotal'],
+            'fields' => ['Supplier.id', 
+                            'round(sum(OrderItem.subtotal),2) as subtotal',
+                            "(SELECT round(sum(b.total),2) as total_saldo 
+                                FROM order_balances b 
+                                INNER JOIN benefits be ON be.id = b.benefit_id 
+                                WHERE be.supplier_id = Supplier.id  
+                                        AND b.tipo = 1 
+                                        AND b.order_id = OrderItem.order_id 
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                            ) AS total_saldo",
+                        ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -1775,6 +1797,8 @@ class OrdersController extends AppController
         foreach ($suppliersAll as $supplier) {
             $outcome = [];
 
+            $valor_total = ($supplier[0]['subtotal'] - $supplier[0]['total_saldo']);
+
             $outcome['Outcome']['order_id'] = $id;
             $outcome['Outcome']['parcela'] = 1;
             $outcome['Outcome']['status_id'] = 11;
@@ -1785,8 +1809,8 @@ class OrdersController extends AppController
             $outcome['Outcome']['supplier_id'] = $supplier['Supplier']['id'];
             $outcome['Outcome']['name'] = 'Pagamento Fornecedor';
             $outcome['Outcome']['valor_multa'] = 0;
-            $outcome['Outcome']['valor_bruto'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
-            $outcome['Outcome']['valor_total'] =  number_format($supplier[0]['subtotal'], 2, ',', '.');
+            $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
+            $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
             $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));;
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
             $outcome['Outcome']['created'] = date('d/m/Y H:i:s');
@@ -2676,12 +2700,14 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
+        $statusProcess = $this->request->data['v_status_processamento'];
+        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+
         $q = $this->request->data['curr_q'];
         $sup = $this->request->data['curr_sup'];
         $stp = $this->request->data['curr_stp'];
-        $statusProcess = $this->request->data['v_status_processamento'];
 
-        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderId], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
@@ -2783,7 +2809,7 @@ class OrdersController extends AppController
             // Map all CSV fields to variables
             $cnpjCliente = $row[0];                           // CNPJ CLIENTE
             $name = $row[1];                                  // NOME
-            $cpf = preg_replace('/\D/', '', $row[2]);          // CPF
+            $cpf = $this->ensureLeadingZeroes($row[2]);       // CPF
             $rg = $row[3];                                    // RG
             $dataNascimento = $row[4];                        // DATA NASCIMENTO
             $nomeMae = $row[5];                               // NOME DA MÃE
@@ -2868,8 +2894,8 @@ class OrdersController extends AppController
                             'customer_id' => $customerId,
                             'customer_user_id' => $customerUserId,
                             'address_line' => $customer['Customer']['endereco'],
-                            'address_number' => $customer['Customer']['numero'] ?? null,
-                            'address_complement' => $customer['Customer']['complemento'] ?? null,
+                            'address_number' => isset($customer['Customer']['numero']) ? $customer['Customer']['numero'] : null,
+                            'address_complement' =>  isset($customer['Customer']['complemento']) ? $customer['Customer']['complemento'] : null,
                             'neighborhood' => $customer['Customer']['bairro'],
                             'city' => $customer['Customer']['cidade'],
                             'state' => $customer['Customer']['estado'],
@@ -2885,6 +2911,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     'CustomerUserItinerary.customer_user_id' => $customerUserId,
                     'CustomerUserItinerary.benefit_id' => $benefitId,
+                    'CustomerUserItinerary.status_id' => 1,
                     'CustomerUserItinerary.customer_id' => $customerId,
                     'CustomerUserItinerary.data_cancel' => '1901-01-01 00:00:00' // Only active itineraries
                 ]
@@ -2910,7 +2937,8 @@ class OrdersController extends AppController
                     'quantity' => $quantity,
                     'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
                     'card_number' => $numeroCartao,
-                    'data_cancel' => '1901-01-01 00:00:00' // Active status
+                    'data_cancel' => '1901-01-01 00:00:00',
+                    'status_id' => 1
                 ]
             ]);
 
@@ -3034,6 +3062,15 @@ class OrdersController extends AppController
 
         $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect('/reports/importar_movimentacao');
+    }
+
+    private function ensureLeadingZeroes($cpf) {
+        $cpf = preg_replace('/\D/', '', $cpf);
+
+    
+        $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+    
+        return $cpf;
     }
 
     private function parseCSVSaldoAll($tmpFile)

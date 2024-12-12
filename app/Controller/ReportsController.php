@@ -1165,6 +1165,7 @@ class ReportsController extends AppController
         $this->autoRender = false;
 
         $statusProcess = $this->request->data['v_status_processamento'];
+        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
         $de = $this->request->data['curr_de'];
         $para = $this->request->data['curr_para'];
@@ -1174,7 +1175,7 @@ class ReportsController extends AppController
         $c = $this->request->data['curr_c'];
         $q = $this->request->data['curr_q'];
 
-        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
         
         $buscar = false;
         $de = null;

@@ -93,30 +93,64 @@ public $belongsTo = array(
                 $itemID = $result[$i]['be']['order_item_id'] ? $result[$i]['be']['order_item_id'] : $result[$i][0]['id'];
                 $total  = $result[$i]['be']['total'];
 
-                $this->query("UPDATE order_items SET saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." WHERE id = ".$itemID);
+                $sql_sup = "SELECT i.id, s.transfer_fee_type, IFNULL(s.transfer_fee_percentage, 0) AS transfer_fee_percentage 
+                                FROM order_items i 
+                                    INNER JOIN customer_user_itineraries u ON u.id = i.customer_user_itinerary_id 
+                                    INNER JOIN benefits b ON b.id = u.benefit_id 
+                                    INNER JOIN suppliers s ON s.id = b.supplier_id 
+                                WHERE i.id = ".$itemID." 
+                                        AND i.data_cancel = '1901-01-01 00:00:00'
+                                        AND u.data_cancel = '1901-01-01 00:00:00'
+                                        AND b.data_cancel = '1901-01-01 00:00:00'
+                                        AND s.data_cancel = '1901-01-01 00:00:00'
+                            ";
+                $res_sup = $this->query($sql_sup);
+
+                if (isset($res_sup[0])) {
+                    $transfer_fee_percentage = $res_sup[0][0]['transfer_fee_percentage'];
+
+                    if ($res_sup[0]['s']['transfer_fee_type'] == 2) {
+                        $transfer_fee = $total * ($transfer_fee_percentage / 100);
+                    } else {
+                        $transfer_fee = $transfer_fee_percentage;
+                    }     
+                } else {
+                    $transfer_fee = 0;
+                }
+
+                $this->query("UPDATE order_items 
+                                SET saldo_transfer_fee = ".$transfer_fee.", saldo = ".$total.", total_saldo = (subtotal - ".$total."), updated = now(), updated_user_id = ".$userID." 
+                                WHERE id = ".$itemID);
             }
         }
 
-        $sql = "SELECT o.id, COALESCE(SUM(i.saldo), 0) AS saldo, COALESCE(SUM(i.total_saldo), 0) AS total_saldo, COALESCE(p.management_feel, 0) AS fee_saldo
-                    FROM orders o
-                        INNER JOIN order_items i ON i.order_id = o.id
-                        INNER JOIN customers c ON c.id = o.customer_id
-                        LEFT JOIN proposals p ON p.customer_id = c.id AND p.status_id = 99 AND p.data_cancel = '1901-01-01 00:00:00'
+        $sql = "SELECT o.id, 
+                        COALESCE(SUM(i.saldo_transfer_fee), 0) AS saldo_transfer_fee, 
+                        COALESCE(SUM(i.saldo), 0) AS saldo, 
+                        COALESCE(SUM(i.total_saldo), 0) AS total_saldo, 
+                        COALESCE(p.management_feel, 0) AS fee_saldo 
+                    FROM orders o 
+                        INNER JOIN order_items i ON i.order_id = o.id 
+                        INNER JOIN customers c ON c.id = o.customer_id 
+                        LEFT JOIN proposals p ON p.customer_id = c.id AND p.status_id = 99 AND p.data_cancel = '1901-01-01 00:00:00' 
                     WHERE o.id = ".$orderID." 
                     AND o.data_cancel = '1901-01-01 00:00:00' 
-                    AND i.data_cancel = '1901-01-01 00:00:00'
-                    AND c.data_cancel = '1901-01-01 00:00:00'
+                    AND i.data_cancel = '1901-01-01 00:00:00' 
+                    AND c.data_cancel = '1901-01-01 00:00:00' 
                 ";
         $result = $this->query($sql);
 
         if ($result) { 
             for ($i=0; $i < count($result); $i++) { 
                 $orderID = $result[$i]['o']['id'];
+                $saldo_transfer_fee = $result[$i][0]['saldo_transfer_fee'];
                 $saldo = $result[$i][0]['saldo'];
                 $total_saldo = $result[$i][0]['total_saldo'];
                 $fee_saldo = $result[$i][0]['fee_saldo'];
 
-                $this->query("UPDATE orders SET saldo = ".$saldo.", total_saldo = ".$total_saldo.", fee_saldo = ".$fee_saldo.", updated = now() WHERE id = ".$orderID);
+                $this->query("UPDATE orders 
+                                SET saldo_transfer_fee = ".$saldo_transfer_fee.", saldo = ".$saldo.", total_saldo = ".$total_saldo.", fee_saldo = ".$fee_saldo.", updated = now() 
+                                WHERE id = ".$orderID);
             }
         }
 

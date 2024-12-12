@@ -277,8 +277,16 @@
             if ($(".check_all").is(':checked')) {
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
+
                 const order_id = <?php echo $id ?>;
                 const v_status_processamento = $('#status_processamento').val();
+                const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
+                const notOrderItemIds = [];
+
+                not_checkboxes.each(function() {
+                    notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
+                });
+                
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
                 const curr_stp = urlParams.get('stp');
@@ -287,6 +295,7 @@
                     type: 'POST',
                     url: base_url+'/orders/alter_item_status_processamento_order_all',
                     data: {
+                        notOrderItemIds,
                         order_id,
                         v_status_processamento,
                         curr_q,
