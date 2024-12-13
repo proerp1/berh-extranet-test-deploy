@@ -66,7 +66,7 @@ class CustomerUsersController extends AppController
 
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-    
+        $user = $this->Auth->user();
         $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
     
         if($is_admin){
@@ -102,12 +102,13 @@ class CustomerUsersController extends AppController
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
             $action => ''
         ];
+        
     
         // Remova ou comente a linha abaixo
         // $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
     
         // $this->redirect('/private_files/baixar/excel/RelatorioBeneficiario_xlsx');
-        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments'));
+        $this->set(compact('data', 'action', 'id', 'status', 'breadcrumb', 'is_admin', 'cost_centers', 'departments','user'));
     }
     public function generate_excel_report($id)
     {
@@ -314,7 +315,8 @@ class CustomerUsersController extends AppController
 
         $this->request->data['CustomerUser']['data_cancel'] = date("Y-m-d H:i:s");
         $this->request->data['CustomerUser']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
-
+   
+        
         if ($this->CustomerUser->save($this->request->data)) {
             $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index/'.$customer_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);

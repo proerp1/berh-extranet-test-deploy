@@ -176,12 +176,14 @@ echo $this->element("abas_customers", array('id' => $id));
                                 <a href="<?php echo $this->base . '/customer_users/' . $urlEdit . '/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                     Editar
                                 </a>
-                                <?php if (isset($user['Group']['id']) && $user['Group']['id'] == 1): ?>
 
-                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customer_users/delete_user/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
-                                        Excluir
-                                    </a>
-                                    <?php endif; ?>
+                            <?php if (!empty($user['Group']['id']) && $user['Group']['id'] == 1): ?>
+                                <a href="javascript:" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    Excluir
+                                </a>
+                            <?php endif; ?>
+
+
                             </td>
                         </tr>
                     <?php } ?>
