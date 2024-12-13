@@ -1899,10 +1899,8 @@ class ExcelTemplate
 				->setCellValue('CA'. $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim")
 				->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar'])
 				->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
-				->setCellValue('CD'. $indx, $dados[$i]['OrderItem']['transfer_fee'] - $dados[$i]['Order']['saldo_transfer_fee'])
-				$objPHPExcel->getActiveSheet()->getStyle('CD' . $indx)
-    ->getNumberFormat()
-    ->setFormatCode('0.00');
+				->setCellValue('CD'. $indx, $dados[$i]['OrderItem']['transfer_fee'] - $dados[$i]['Order']['saldo_transfer_fee']);
+				
 
 		}
 	}
