@@ -48,7 +48,7 @@ return
         'dev_eric' => [
             'adapter' => 'mysql',
             'host' => 'localhost',
-            'name' => 'berh',
+            'name' => 'berh2',
             'user' => 'berh_usr',
             'pass' => 'berh123',
             'port' => '3306',
