@@ -146,7 +146,7 @@ class ApiBtgPactual extends Controller
         $params = [
             'payer' => $payer,
             'referenceNumber' => $conta['Income']['id'],
-            'amount' => 1,
+            'amount' => $conta['Income']['valor_total_nao_formatado'],
             'dueDate' => $conta['Income']['vencimento_nao_formatado'],
             'installments' => 1
         ];
@@ -173,5 +173,16 @@ class ApiBtgPactual extends Controller
         ];
 
         return $this->makeRequest('GET', '/v1/bank-slips', $params, true);
+    }
+
+    public function teste()
+    {
+        $client = new Client();
+        $headers = [
+          'Authorization' => 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCIsImtpZCI6InZfT2NvN21uRjBwbERCTU9FTUxlRjFhc01jR3hERURxVVhXdktHWUtWOFkifQ.eyJzdWIiOiIzNjY0NDc2NDg0MyIsImVtcHJlc2FzLmJ0Z3BhY3R1YWwuY29tL2FjY291bnRzIjoiNDg1MDM5ODQwMDAxNTAiLCJpc3MiOiJodHRwczovL2lkLmJ0Z3BhY3R1YWwuY29tIiwic2Vzc2lvbl9pZCI6ImRmYTE0Nzg1LTk1ZTUtNGJkMi04YjQ3LTlkZWRiZWUwODMwMSIsInNlc3Npb25JZCI6ImRmYTE0Nzg1LTk1ZTUtNGJkMi04YjQ3LTlkZWRiZWUwODMwMSIsImNsaWVudF9pZCI6IjM3ODVmY2IyLTdmNTAtNGY3YS04ZjdhLTVmNDUzZDRhMDc0MiIsImF1ZCI6Imh0dHBzOi8vYXBpLmVtcHJlc2FzLmJ0Z3BhY3R1YWwuY29tL2NvbXBhbmllcy80ODUwMzk4NDAwMDE1MCIsImdyYW50X3R5cGUiOiJhdXRob3JpemF0aW9uX2NvZGUiLCJzY29wZSI6ImVtcHJlc2FzLmJ0Z3BhY3R1YWwuY29tL2FjY291bnRzIG9wZW5pZCBlbXByZXNhcy5idGdwYWN0dWFsLmNvbS9iYW5rLXNsaXBzIiwiZXhwIjoxNzMyNzM0ODcyLCJlbXByZXNhcy5idGdwYWN0dWFsLmNvbS9iYW5rLXNsaXBzIjoiNDg1MDM5ODQwMDAxNTAiLCJpYXQiOjE3MzI2NDg0NzIsImp0aSI6ImJMa25ObFVMUnh6N0xBRjBDRUNHSnJkcWtKYVJOWlp5Zzh2dHhiNGNyMnMifQ.Qc_fGU0_TtAWMd-Vpseq7RB2y15c2M8rdxd5lpt7ZNRi3pOVB3ioaPfX-TXTSKd5t2K_zza-_k5Ojka-tFIjckMt18aOkKhG9SDcRpxEd1Sn2KTYBWkIg_DJaA1jtTi0yCqBDhErzSf3uHhYPNW0cGbKCkgyic3K4MYFNWk_Whe8bW8dBxKbK__4MsZBdUzZiuBTB7TM7LEEj1hnqPIJhRhvK_POhVcfcXlxTNJWyFq-4vCseHx24HuK9_PB5jqsWQHtuuoTYRG_UDLSInLf_ccuXby1pz4-amtU1vhI-fQWoXO0WMfD0-XMftPDwRMG7J2g6N5btb_Hj1kOh-09Qg',
+        ];
+        $request = new Request('GET', 'https://api.empresas.btgpactual.com/v1/accounts', $headers);
+        $res = $client->sendAsync($request)->wait();
+        debug($res);die(); 
     }
 }

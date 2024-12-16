@@ -255,6 +255,7 @@ class CustomReportsComponent extends Component
                                     AND o.id != Order.id
                         ) AS qtde_pedido',
                         'Order.primeiro_pedido',
+                        'Order.pedido_complementar',
                     ],
                     'joins' => [
                         [

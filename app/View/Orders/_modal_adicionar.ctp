@@ -227,8 +227,8 @@
                         PIX: opção válida para importação de planilha dentro do pedido.<br>
                         Emissão: apenas para geração de novos cartões ou re-emissões.<br>
                         <br>
-                        <strong>Modalidade</strong><br>
-                        Por Cliente: a emissão ocorrerá em um único pedido independente de grupo economico cadastrado e associado ao beneficiário.<br>
+                        <strong>Modalidade</strong><br><br>
+                        Por Cliente: a emissão ocorrerá em um único pedido independente de grupo economico cadastrado e associado ao beneficiário.<br><br>
                         Por Grupo Economico: a emissão ocorrerá de acordo com os grupo cadastrados e beneficiáriários associados.<br>
                     </div>
                 </div>

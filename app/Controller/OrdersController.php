@@ -1608,6 +1608,23 @@ class OrdersController extends AppController
         echo json_encode(['economicGroups' => $economic_groups]);
     }
 
+    public function getEconomicGroupByCustomer()
+    {
+        $this->autoRender = false;
+
+        $customerId = $this->request->data['customer_id'];
+
+        // find all customer user itineraries by customer
+        $economic_groups = $this->EconomicGroup->find('all', [
+            'conditions' => [
+                'EconomicGroup.customer_id' => $customerId,
+                'EconomicGroup.status_id' => 1,
+            ],
+            'fields' => ['EconomicGroup.name', 'EconomicGroup.id']
+        ]);
+
+        echo json_encode(['economicGroups' => $economic_groups]);
+    }
 
     public function delete($id)
     {

@@ -177,6 +177,13 @@ echo $this->element("abas_customers", array('id' => $id));
                                     Editar
                                 </a>
 
+                            <?php if (!empty($user['Group']['id']) && $user['Group']['id'] == 1): ?>
+                                <a href="javascript:" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    Excluir
+                                </a>
+                            <?php endif; ?>
+
+
                             </td>
                         </tr>
                     <?php } ?>

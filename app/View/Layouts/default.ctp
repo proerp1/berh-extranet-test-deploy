@@ -50,6 +50,8 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 	echo "\n\t";
 	?>
 
+	<script src="https://cdn.jsdelivr.net/npm/cleave.js"></script>
+
 	<style>
 		textarea.form-control.form-error {
 			padding-right: calc(1.5em + 1.5rem);
@@ -223,6 +225,22 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 				}
 			});
 		});
+
+		function formatCpf(field) {
+			new Cleave(field, {
+                delimiters: ['.', '.', '-'],
+                blocks: [3, 3, 3, 2],
+                uppercase: true,
+            });
+		}
+
+		function formatCnpj(field) {
+			new Cleave(field, {
+                delimiters: ['.', '.', '/', '-'],
+                blocks: [2, 3, 3, 4, 2],
+                uppercase: true,
+            });
+		}
 
 		function confirm(message, link) {
 			bootbox.confirm({

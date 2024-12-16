@@ -2,7 +2,7 @@
 <?php echo $this->Html->script("html_editor/summernote-pt-BR", array('block' => 'script')); ?>
 <?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
 
-<script type="text/javascript">    
+<script type="text/javascript">
     $(document).ready(function(){
         $('#summernote').summernote({
             lang: 'pt-BR',
@@ -19,8 +19,6 @@
                 ['help', [ 'help' ]],
             ]
         });
-
-        
 
         $('.money_exchange').maskMoney({
             decimal: ',',
@@ -114,37 +112,6 @@
             });
         });
 
-        // $("#CustomerCodFranquia").on("change", function(){
-        //     var el = $(this);
-        //     var source   = $("#template_cidade").html();
-        //     var template = Handlebars.compile(source);
-
-        //     var resale_id = $(this).val(); 
-
-        //     $.ajax({
-        //         url: base_url+"/customers/find_sellers/",
-        //         type: "post",
-        //         data: {resale_id: resale_id},
-        //         dataType: "json",
-        //         beforeSend: function(xhr){
-        //             $(".loading_img").remove();
-        //             el.parent().append("<img src='"+base_url+"/img/loading.gif' class='loading_img'>");
-        //         },
-        //         success: function(data){
-        //             $(".loading_img").remove();
-        //             var html_opt  = "<option value=''>Selecione</option>";
-
-        //             $.each(data, function(index, value) {
-        //               var context = {name: value.Seller.nome_fantasia, id: value.Seller.id};
-        //               html_opt    += template(context);
-        //             });
-
-        //             $("#CustomerSellerId").html(html_opt);
-        //         }
-        //     });
-        // });
-
-        //$("#cep").mask("99999-999");
         $("#cep").mask("99999-999");
         $("#CustomerCreated").mask("99/99/9999");
         $("#CustomerCpfResponsavel").mask("999.999.999-99")
@@ -171,7 +138,7 @@
             $("#nome_secundario").attr('placeholder', "Sobrenome");
             $("#CustomerCpfResponsavel").parent().find("label").text("CPF Responsável");
             $("#CustomerCpfResponsavel").attr('placeholder', "CPF Responsável");
-            $("#documento").mask("999.999.999-99");
+            formatCpf('#documento');
             $("#ie").parent().hide();
         } else {
             $("#documento").parent().find("label").text("CNPJ");
@@ -182,7 +149,7 @@
             $("#nome_secundario").attr('placeholder', "Nome fantasia");
             $("#CustomerCpfResponsavel").parent().find("label").text("CPF Responsável");
             $("#CustomerCpfResponsavel").attr('placeholder', "CPF Responsável");
-            $("#documento").mask("99.999.999/9999-99");
+            formatCnpj('#documento');
             $("#ie").parent().show();
         }
     }

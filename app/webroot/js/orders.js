@@ -189,7 +189,7 @@ $(document).ready(function() {
         // load all grupo economico and beneficio by customer
         const customerId = $(this).val();
         $.ajax({
-            url: base_url + '/orders/getEconomicGroupAndBenefitByCustomer',
+            url: base_url + '/orders/getEconomicGroupByCustomer',
             type: 'POST',
             responseType: 'json',
             data: {
