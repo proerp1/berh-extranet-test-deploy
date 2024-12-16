@@ -1188,7 +1188,17 @@ class OrdersController extends AppController
                 continue;
             }
 
-            if ($include_new_price) {
+            $benefitId = $row[3];
+
+            $benefit = $this->Benefit->find('first', [
+                'conditions' => [
+                    'Benefit.id' => $benefitId,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00'
+                ],
+                'fields' => ['Benefit.id', 'Benefit.is_variable']
+            ]);
+
+            if ((int)$benefit['Benefit']['is_variable'] === 1) {
                 $unitPrice = $row[1];
                 // convert brl string to float
                 $unitPrice = str_replace(".", "", $unitPrice);
