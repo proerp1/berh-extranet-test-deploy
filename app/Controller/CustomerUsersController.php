@@ -319,8 +319,13 @@ class CustomerUsersController extends AppController
         
         if ($this->CustomerUser->save($this->request->data)) {
             $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-            $this->redirect(['action' => 'index/'.$customer_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
-        }
+            $this->redirect([
+                'controller' => 'customerusers',
+                'action' => 'index',
+                $customer_id,
+                '?' => isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''
+            ]);
+                    }
     }
 
     /*******************
