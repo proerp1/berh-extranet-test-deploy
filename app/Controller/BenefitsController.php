@@ -116,6 +116,13 @@ class BenefitsController extends AppController
                 $this->LogBenefits->save($dados_log);
             }
 
+            // if is_variable is not present set it as 2
+            if(!isset($this->request->data['Benefit']['is_variable']) 
+                || $this->request->data['Benefit']['is_variable'] == ''
+                || $this->request->data['Benefit']['is_variable'] == 0){
+                $this->request->data['Benefit']['is_variable'] = 2;
+            }
+
             $ShouldUpdateItinerary = $this->request->data['ShouldUpdateItinerary'];
             $this->Benefit->validates();
             $this->request->data['Benefit']['user_updated_id'] = CakeSession::read("Auth.User.id");

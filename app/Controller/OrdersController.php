@@ -1054,11 +1054,10 @@ class OrdersController extends AppController
         }
 
         $file = $this->request->data['CustomerUserItinerary'];
-        $incluir_valor_unitario = (int)$this->request->data['incluir_valor_unitario'] == 1;
         $tipo_importacao = (int)$this->request->data['tipo_importacao'];
 
         if ($tipo_importacao == 2) {
-            $ret = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name'], $incluir_valor_unitario);
+            $ret = $this->parseCSVwithCPFColumn($customerId, $file['file']['tmp_name']);
         } else {
             $ret = $this->parseNewCsv($customerId, $file['file']['tmp_name']);
         }
@@ -1147,7 +1146,7 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'saldos/' . $orderId]);
     }
 
-    private function parseCSVwithCPFColumn($customerId, $tmpFile, $include_new_price = false)
+    private function parseCSVwithCPFColumn($customerId, $tmpFile)
     {
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
@@ -1189,7 +1188,17 @@ class OrdersController extends AppController
                 continue;
             }
 
-            if ($include_new_price) {
+            $benefitId = $row[3];
+
+            $benefit = $this->Benefit->find('first', [
+                'conditions' => [
+                    'Benefit.id' => $benefitId,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00'
+                ],
+                'fields' => ['Benefit.id', 'Benefit.is_variable']
+            ]);
+
+            if ((int)$benefit['Benefit']['is_variable'] === 1) {
                 $unitPrice = $row[1];
                 // convert brl string to float
                 $unitPrice = str_replace(".", "", $unitPrice);
@@ -2838,7 +2847,7 @@ class OrdersController extends AppController
             $quantity = (int)$row[11];                        // QUANTIDADE
             $faixaSalarial = $row[12];                        // FAIXA SALARIAL
             $tipoChavePix = $row[13];                         // TIPO CHAVE PIX
-            $chavePix = $row[14];                             // CHAVE PIX
+            $chavePix = isset($row[14]) ? $row[14] : '';      // CHAVE PIX
 
             // Find the benefit ID using the supplier_id (codigoOperadora) and code (codigoBeneficio)
             $benefit = $this->Benefit->find('first', [
@@ -2847,7 +2856,7 @@ class OrdersController extends AppController
                     'Benefit.code' => $codigoBeneficio,
                     'Benefit.data_cancel' => '1901-01-01 00:00:00' // Only active benefits
                 ],
-                'fields' => ['Benefit.id']
+                'fields' => ['Benefit.id', 'Benefit.is_variable']
             ]);
 
             if (empty($benefit)) {
@@ -2856,6 +2865,7 @@ class OrdersController extends AppController
             }
 
             $benefitId = $benefit['Benefit']['id'];
+            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
 
             // Find or create the CustomerUser
             $existingUser = $this->CustomerUser->find('first', [
@@ -2934,30 +2944,32 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if (!empty($existingItinerary)) {
+            if (!empty($existingItinerary) && $is_variable) {
                 // Set the existing itinerary as excluded
                 $this->CustomerUserItinerary->id = $existingItinerary['CustomerUserItinerary']['id'];
                 $this->CustomerUserItinerary->saveField('data_cancel', date('Y-m-d H:i:s'));
             }
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-
+            
             // Create a new itinerary record
-            $this->CustomerUserItinerary->create();
-            $this->CustomerUserItinerary->save([
-                'CustomerUserItinerary' => [
-                    'customer_user_id' => $customerUserId,
-                    'benefit_id' => $benefitId,
-                    'customer_id' => $customerId,
-                    'working_days' => $workingDays,
-                    'unit_price' => $unitPrice,
-                    'quantity' => $quantity,
-                    'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
-                    'card_number' => $numeroCartao,
-                    'data_cancel' => '1901-01-01 00:00:00',
-                    'status_id' => 1
-                ]
-            ]);
+            if (empty($existingItinerary) || $is_variable) {
+                $this->CustomerUserItinerary->create();
+                $this->CustomerUserItinerary->save([
+                    'CustomerUserItinerary' => [
+                        'customer_user_id' => $customerUserId,
+                        'benefit_id' => $benefitId,
+                        'customer_id' => $customerId,
+                        'working_days' => $workingDays,
+                        'unit_price' => $unitPriceForm,
+                        'quantity' => $quantity,
+                        'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
+                        'card_number' => $numeroCartao,
+                        'data_cancel' => '1901-01-01 00:00:00',
+                        'status_id' => 1
+                    ]
+                ]);
+            }
 
             if ($chavePix != '') {
                 $existingBankAccount = $this->CustomerUserBankAccount->find('first', [

@@ -161,6 +161,15 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
                 </div>
             </div>
 
+            <!-- New field is_variable as cakephp checkbox -->
+             <!-- create variable 1 is checked 2 is not checked -->
+            <div class="row mt-5">
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Variável</label>
+                    <?php echo $this->Form->input('is_variable', ['type' => 'checkbox', 'class' => 'form-check-input', 'value' => 1]); ?>
+                </div>
+            </div>
+
             <br>
 
             <div class="mb-7">
