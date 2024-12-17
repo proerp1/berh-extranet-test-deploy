@@ -178,9 +178,12 @@ echo $this->element("abas_customers", array('id' => $id));
                                 </a>
 
                             <?php if (!empty($user['Group']['id']) && $user['Group']['id'] == 1): ?>
-                                <a href="javascript:" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                
+                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customerusers/delete_user/' . $data[$i]["CustomerUser"]["customer_id"] . '/' . $data[$i]["CustomerUser"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                     Excluir
                                 </a>
+
+
                             <?php endif; ?>
 
 
