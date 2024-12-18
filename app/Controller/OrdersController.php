@@ -2872,7 +2872,7 @@ class OrdersController extends AppController
                 'fields' => ['Benefit.id', 'Benefit.is_variable']
             ]);
 
-            if (empty($benefit)) {
+            if (empty($benefit) || empty($dataNascimento)) {
                 $line++;
                 continue; // Skip if no benefit is found
             }
