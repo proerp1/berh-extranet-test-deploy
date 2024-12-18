@@ -1062,6 +1062,11 @@ class OrdersController extends AppController
             $ret = $this->parseNewCsv($customerId, $file['file']['tmp_name']);
         }
 
+        if (isset($ret['error'])) {
+            $this->Flash->set($ret['error'], ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
         $customerUsersIds = $ret['customerUsersIds'];
         $manualPricing = $ret['unitPriceMapping'];
 
@@ -1172,6 +1177,10 @@ class OrdersController extends AppController
                     $line++;
                 }
                 continue;
+            }
+
+            if(count($row) > 5) {
+                return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
             $cpf = $this->ensureLeadingZeroes($row[0]);
@@ -2830,6 +2839,10 @@ class OrdersController extends AppController
             if ($line == 0 || empty($row[0])) {
                 $line++;
                 continue;
+            }
+
+            if(count($row) <= 5) {
+                return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
             // Map all CSV fields to variables

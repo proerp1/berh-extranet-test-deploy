@@ -212,7 +212,7 @@ class OrderItem extends AppModel {
         SELECT b.cpf, b.name AS beneficiario, c.nome_secundario AS cliente,
             o.credit_release_date AS data_credito,
             be.name AS beneficio,
-            SUM(i.subtotal) AS valor_credito,
+            SUM(i.subtotal-IFNULL(i.saldo, 0)) AS valor_credito,
             o.end_date as data_liberacao_credito,
             CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('5803-', o.id), '-'), c.id), '-'), su.id) AS pedido_id,
             o.id as pedido_numero
