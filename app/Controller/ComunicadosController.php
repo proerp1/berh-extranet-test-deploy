@@ -29,16 +29,24 @@ class ComunicadosController extends AppController
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+
+        if (isset($_GET["c"]) && $_GET["c"] != "") {
+            $condition['and'][] = ['Comunicado.categoria_id' => intval($_GET["c"])];
+        }
+        
+        
     
         $this->Paginator->settings['order'] = ['Comunicado.data' => 'desc'];
     
         $data = $this->Paginator->paginate('Comunicado', $condition);
-    
-        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+        $categorias = $this->Categoria->find('all', [
+            'fields' => ['Categoria.id', 'Categoria.name'],
+            'order' => ['Categoria.name' => 'ASC']
+        ]);        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
     
         $action = 'Comunicados';
         $breadcrumb = ['Configurações' => '', 'Comunicados' => ''];
-        $this->set(compact('status', 'data', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'action', 'breadcrumb','categorias'));
     }
     
     public function add()

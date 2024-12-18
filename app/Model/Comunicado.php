@@ -10,6 +10,11 @@ class Comunicado extends AppModel
             'className' => 'Status',
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 1]
+        ],
+        'Categoria' => [
+            'className' => 'Categoria',
+            'foreignKey' => 'categoria_id',
+            'fields' => ['id', 'name']
         ]
     ];
 

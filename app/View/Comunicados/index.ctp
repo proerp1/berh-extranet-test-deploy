@@ -45,6 +45,21 @@
                                     ?>
                                 </select>
                             </div>
+                            <div class="mb-10">
+    <label class="form-label fs-5 fw-bold mb-3">Categoria:</label>
+    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
+        <option></option>
+        <?php
+            for ($b = 0; $b < count($categorias); $b++) {
+                $selected = "";
+                if (isset($_GET["c"]) && $categorias[$b]['Categoria']['id'] == $_GET["c"]) {
+                    $selected = "selected";
+                }
+                echo '<option value="'.$categorias[$b]['Categoria']['id'].'" '.$selected.'>'.$categorias[$b]['Categoria']['name'].'</option>';
+            }
+        ?>
+    </select>
+</div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -64,6 +79,7 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         <th>Titulo</th>
+                        <th>Categoria</th>
                         <th>Data</th>
                         <th>Observação</th>
                         <th>Upload</th>
@@ -75,6 +91,7 @@
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["titulo"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["Categoria"]["name"]) ? $data[$i]["Categoria"]["name"] : 'Sem categoria'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["data"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["observacao"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/files/comunicado/file/'.$data[$i]["Comunicado"]["id"].'/'.$data[$i]["Comunicado"]["file"] ?>"><?php echo $data[$i]["Comunicado"]["file"] ?></a></td>
@@ -103,16 +120,18 @@
 </div>
 
 <script>
-    $( document ).ready(function() {
-        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
-            $("#t").val(null).trigger('change');
-            $("#q").val(null);
+$(document).ready(function() {
+    $('[data-kt-customer-table-filter="reset"]').on('click', function () {
+        $("#t").val(null).trigger('change');
+        $("#c").val(null).trigger('change');
+        $("#q").val(null);
 
-            $("#busca").submit();
-        });
-
-        $('#q').on('change', function () {
-            $("#busca").submit();
-        });
+        $("#busca").submit();
     });
+
+    $('#q, #c, #t').on('change', function () {
+        $("#busca").submit();
+    });
+});
+
 </script>
