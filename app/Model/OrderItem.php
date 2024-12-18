@@ -208,6 +208,8 @@ class OrderItem extends AppModel {
     public function apiBenficiaryCurrentOrders($data, $customer_user_id){
         $dateOneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($data)));
 
+        // SUM(i.subtotal-IFNULL(i.saldo, 0)) AS valor_credito,
+
         $sql = "
         SELECT b.cpf, b.name AS beneficiario, c.nome_secundario AS cliente,
             o.credit_release_date AS data_credito,
