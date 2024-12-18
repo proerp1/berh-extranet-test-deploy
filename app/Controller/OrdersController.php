@@ -1163,6 +1163,53 @@ class OrdersController extends AppController
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
+        $has_valor_unitario_invalido = false;
+        $line = 0;
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                $line++;
+                continue;
+            }
+
+            if (count($row) > 5) {
+                return ['success' => false, 'error' => 'Arquivo inválido.'];
+            }
+
+            $benefitId = $row[3];
+            $unitPrice = $row[1];
+
+            $benefit = $this->Benefit->find('first', [
+                'conditions' => [
+                    'Benefit.id' => $benefitId,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00'
+                ],
+                'fields' => ['Benefit.id', 'Benefit.is_variable']
+            ]);
+
+            if (empty($benefit)) {
+                $line++;
+                continue; // Skip if no benefit is found
+            }
+
+            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
+
+            if (empty($unitPrice) && $is_variable) {
+                $has_valor_unitario_invalido = true;
+                break;
+            }
+            $unitPrice = str_replace(".", "", $unitPrice);
+            $unitPrice = (float)str_replace(",", ".", $unitPrice);
+
+            if ($unitPrice <= 0 && $is_variable) {
+                $has_valor_unitario_invalido = true;
+                break;
+            }
+        }
+
+        if ($has_valor_unitario_invalido) {
+            return ['success' => false, 'error' => 'Favor verificar os valores unitários do arquivo.'];
+        }
+
         $line = 0;
         $customerUsersIds = [];
         $unitPrice = 0;
@@ -1177,10 +1224,6 @@ class OrdersController extends AppController
                     $line++;
                 }
                 continue;
-            }
-
-            if(count($row) > 5) {
-                return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
             $cpf = $this->ensureLeadingZeroes($row[0]);
@@ -2831,6 +2874,56 @@ class OrdersController extends AppController
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
+        $has_valor_unitario_invalido = false;
+        $line = 0;
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                $line++;
+                continue;
+            }
+
+            if (count($row) <= 5) {
+                return ['success' => false, 'error' => 'Arquivo inválido.'];
+            }
+
+            $codigoOperadora = $row[7];
+            $codigoBeneficio = $row[8];
+            $dataNascimento = $row[4];
+
+            $benefit = $this->Benefit->find('first', [
+                'conditions' => [
+                    'Benefit.supplier_id' => $codigoOperadora,
+                    'Benefit.code' => $codigoBeneficio,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00' // Only active benefits
+                ],
+                'fields' => ['Benefit.id', 'Benefit.is_variable']
+            ]);
+
+            if (empty($benefit) || empty($dataNascimento)) {
+                $line++;
+                continue; // Skip if no benefit is found
+            }
+
+            $unitPrice = $row[10];
+            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
+
+            if (empty($unitPrice) && $is_variable) {
+                $has_valor_unitario_invalido = true;
+                break;
+            }
+            $unitPrice = str_replace(".", "", $unitPrice);
+            $unitPrice = (float)str_replace(",", ".", $unitPrice);
+
+            if ($unitPrice <= 0 && $is_variable) {
+                $has_valor_unitario_invalido = true;
+                break;
+            }
+        }
+
+        if ($has_valor_unitario_invalido) {
+            return ['success' => false, 'error' => 'Favor verificar os valores unitários do arquivo.'];
+        }
+
         $line = 0;
         $unitPriceMapping = [];
         $customerUsersIds = [];
@@ -2839,10 +2932,6 @@ class OrdersController extends AppController
             if ($line == 0 || empty($row[0])) {
                 $line++;
                 continue;
-            }
-
-            if(count($row) <= 5) {
-                return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
             // Map all CSV fields to variables
