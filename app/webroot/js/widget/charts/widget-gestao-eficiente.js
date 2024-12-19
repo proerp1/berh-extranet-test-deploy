@@ -103,7 +103,13 @@ var KTChartsWidget5 = function() {
                 },
                 y: {
                     formatter: function(val) {
-                        return 'R$' + val
+                        var Format = wNumb({
+                            prefix: 'R$ ',
+                            thousand: '.',
+                            mark: ','
+                        });
+
+                        return Format.to(val);
                     }
                 }
             },

@@ -46,56 +46,6 @@ var KTChartsWidget6 = function() {
                 }
             },
             colors: ['#3E97FF', '#F1416C', '#50CD89', '#FFC700', '#7239EA'],
-            /*xaxis: {
-                categories: response.header,
-                labels: {
-                    formatter: function(val) {
-                        return val + "K"
-                    },
-                    style: {
-                        colors: labelColor,
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        align: 'left'
-                    }
-                },
-                axisBorder: {
-                    show: false
-                }
-            },
-            yaxis: {
-                labels: {
-                    formatter: function(val, opt) {
-                        if (Number.isInteger(val)) {
-                            var percentage = parseInt(val * 100 / maxValue).toString();
-                            return val + ' - ' + percentage + '%';
-                        } else {
-                            return val;
-                        }
-                    },
-                    style: {
-                        colors: labelColor,
-                        fontSize: '14px',
-                        fontWeight: '600'
-                    },
-                    offsetY: 2,
-                    align: 'left'
-                }
-            },
-            grid: {
-                borderColor: borderColor,
-                xaxis: {
-                    lines: {
-                        show: true
-                    }
-                },
-                yaxis: {
-                    lines: {
-                        show: false
-                    }
-                },
-                strokeDashArray: 4
-            },*/
             tooltip: {
                 style: {
                     fontSize: '12px'
@@ -105,6 +55,7 @@ var KTChartsWidget6 = function() {
                         var Format = wNumb({
                             prefix: 'R$ ',
                             thousand: '.',
+                            mark: ','
                         });
 
                         return Format.to(val);
