@@ -28,8 +28,15 @@
                                 <tbody>
                                     <tr>
                                         <td><?php echo date('d/m/Y'); ?></td>
-                                        <td><?php echo $order['EconomicGroup']['document']; ?></td>
-                                        <td><?php echo $suppliersCount; ?></td>
+                                        <td>
+                                            <?php 
+                                            if (!empty($order['EconomicGroup']['document'])) {
+                                                echo $order['EconomicGroup']['document'];
+                                            } else {
+                                                echo $order['Customer']['documento'];
+                                            }
+                                            ?>
+                                        </td>                                        <td><?php echo $suppliersCount; ?></td>
                                         <td><?php echo $order['Order']['id']; ?></td>
                                         <td><?php echo $usersCount; ?></td>
                                         <td><?php echo $order['Order']['created']; ?></td>
