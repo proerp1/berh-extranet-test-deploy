@@ -1180,7 +1180,7 @@ class OrdersController extends AppController
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
-                    'Benefit.id' => $benefitId,
+                    'Benefit.code' => $benefitId,
                     'Benefit.data_cancel' => '1901-01-01 00:00:00'
                 ],
                 'fields' => ['Benefit.id', 'Benefit.is_variable']
@@ -1244,7 +1244,7 @@ class OrdersController extends AppController
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
-                    'Benefit.id' => $benefitId,
+                    'Benefit.code' => $benefitId,
                     'Benefit.data_cancel' => '1901-01-01 00:00:00'
                 ],
                 'fields' => ['Benefit.id', 'Benefit.is_variable']
