@@ -267,6 +267,7 @@ class ComunicadosController extends AppController
             }
         }
 
+        $this->Flash->set(__('O comunicado foi enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'clientes/'.$id]);
     }
 }
