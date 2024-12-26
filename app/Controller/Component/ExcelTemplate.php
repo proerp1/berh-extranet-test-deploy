@@ -813,6 +813,7 @@ class ExcelTemplate
 
 		$col = 'A';
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome "); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Id"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedor"); $col++;
@@ -827,6 +828,7 @@ class ExcelTemplate
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['code']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['name']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['id']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['nome_fantasia']); $col++;
