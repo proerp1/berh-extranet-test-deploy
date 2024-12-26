@@ -93,20 +93,6 @@
 </div>
 
 <div class="row g-5 g-xl-10 mb-xl-10">
-    <div class="col-xl-8 mb-5 mb-xl-10">
-        <div class="card card-flush overflow-hidden h-md-100">
-            <div class="card-header py-5">
-                <h3 class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bolder text-dark">Evolução de economia</span>
-                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo</span>
-                </h3>
-            </div>
-            <div class="card-body pt-4">
-                <div id="chart_economia" class="h-400px w-100"></div>
-            </div>
-        </div>
-    </div>
-
     <div class="col-xxl-4">
         <div class="card card-flush h-lg-100">
             <div class="card-header py-7 mb-3">
@@ -117,6 +103,20 @@
             </div>
             <div class="card-body py-0 ps-6 mt-n12">
                 <div id="kt_charts_widget_6"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8 mb-5 mb-xl-10">
+        <div class="card card-flush overflow-hidden h-md-100">
+            <div class="card-header py-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bolder text-dark">Evolução de economia</span>
+                    <span class="text-gray-400 mt-1 fw-bold fs-6">Demonstrativo</span>
+                </h3>
+            </div>
+            <div class="card-body pt-4">
+                <div id="chart_economia" class="h-400px w-100"></div>
             </div>
         </div>
     </div>

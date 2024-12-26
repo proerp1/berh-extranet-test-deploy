@@ -91,6 +91,11 @@ var KTChartsWidget23 = (function() {
             // Add series
             // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
 
+            root.numberFormatter.set("numberFormat", {
+                style: "decimal",
+                minimumFractionDigits: 2
+            });
+
             var series1 = chart.series.push(
                 am5xy.ColumnSeries.new(root, {
                     name: "Valor Pedidos",
@@ -168,6 +173,11 @@ var KTChartsWidget23 = (function() {
             // Set themes
             // https://www.amcharts.com/docs/v5/concepts/themes/
             root.setThemes([am5themes_Animated.new(root)]);
+
+            root.numberFormatter.set("numberFormat", {
+                style: "decimal",
+                minimumFractionDigits: 2
+            });
 
             // Create chart
             // https://www.amcharts.com/docs/v5/charts/xy-chart/
