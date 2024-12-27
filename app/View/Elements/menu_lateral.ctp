@@ -176,6 +176,18 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="menu-item">
+                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'link_benefits') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'link_benefits', 'action' => 'index']) ?>">
+                        <span class="menu-icon">
+                            <i class="fas fa-list"></i> 
+                        </span>
+                        <span class="menu-title">
+                            Associar Cartão
+                        </span>
+                    </a>
+                </div>
                 
 
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
