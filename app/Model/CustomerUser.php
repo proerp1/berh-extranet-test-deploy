@@ -76,12 +76,6 @@ class CustomerUser extends AppModel
                 'message' => 'O e-mail fornecido já foi cadastrado',
             ],
         ],
-        'password' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatória',
-            ],
-        ],
         'name' => [
             'required' => [
                 'rule' => ['notBlank'],
