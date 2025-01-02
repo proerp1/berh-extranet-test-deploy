@@ -1484,7 +1484,7 @@ class OrdersController extends AppController
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
             'CustomerUserItinerary.status_id' => 1,
-            'CustomerUser.status_id' => 1,
+            // 'CustomerUser.status_id' => 1,
             'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
         ];
         if ($grupo_especifico != '') {
