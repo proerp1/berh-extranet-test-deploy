@@ -2958,7 +2958,7 @@ class OrdersController extends AppController
                     'Benefit.code' => $codigoBeneficio,
                     'Benefit.data_cancel' => '1901-01-01 00:00:00' // Only active benefits
                 ],
-                'fields' => ['Benefit.id', 'Benefit.is_variable']
+                'fields' => ['Benefit.id', 'Benefit.is_variable', 'Benefit.unit_price']
             ]);
 
             if (empty($benefit) || empty($dataNascimento)) {
@@ -3056,6 +3056,11 @@ class OrdersController extends AppController
             
             // Create a new itinerary record
             if (empty($existingItinerary) || $is_variable) {
+
+                if (empty($existingItinerary) && !$is_variable) {
+                    $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
+                }
+
                 $this->CustomerUserItinerary->create();
                 $this->CustomerUserItinerary->save([
                     'CustomerUserItinerary' => [

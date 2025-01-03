@@ -32,6 +32,9 @@
     tbody tr th:first-child {
         padding: 0px 10px !important;
     }
+    .working_days_input {
+        width: 60px;
+    }
 </style>
 
 <?php echo $this->element("../Orders/_abas"); ?>
