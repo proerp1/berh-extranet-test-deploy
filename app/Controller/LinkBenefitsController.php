@@ -40,7 +40,7 @@ class LinkBenefitsController extends AppController
             $this->redirect($this->referer());
         } else {
             $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['action' => 'index']);
         }
     }
 
