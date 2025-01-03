@@ -33,8 +33,6 @@ class ComunicadosController extends AppController
         if (isset($_GET["c"]) && $_GET["c"] != "") {
             $condition['and'][] = ['Comunicado.categoria_id' => intval($_GET["c"])];
         }
-        
-        
     
         $this->Paginator->settings['order'] = ['Comunicado.data' => 'desc'];
     

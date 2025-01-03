@@ -6,6 +6,7 @@
 !/app/webroot/files/ModeloAtualizacaoDiasUteis.csv
 !/app/webroot/files/ModeloImportacaoMovimentacao.csv
 !/app/webroot/files/ModeloImportacaoMovimentacaoAll.csv
+!/app/webroot/files/ModeloAssociarCartao.csv
 /vendor/
 /composer.phar
 .idea

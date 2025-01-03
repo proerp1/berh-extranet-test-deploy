@@ -63,8 +63,6 @@ class BoletoItau extends Controller
             'convenio' => $boleto['BankAccount']['convenio'],
             'descricaoDemonstrativo' => [
                 $boleto['BankTicket']['informativo_boleto'], 
-                '-',
-                '-',
                 $num_pedido_demonstrativo, 
             ],
             'instrucoes' => isset($boleto['mensagens_cobranca']) ? $boleto['mensagens_cobranca'] : [

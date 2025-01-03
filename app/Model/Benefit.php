@@ -1,37 +1,32 @@
 <?php
-class Benefit extends AppModel {
+
+class Benefit extends AppModel
+{
     public $name = 'Benefit';
     public $useTable = 'benefits';
     public $primaryKey = 'id';
 
-    public $belongsTo = array(
-        'Supplier' => array(
+    public $belongsTo = [
+        'Supplier' => [
             'className' => 'Supplier',
-            'foreignKey' => 'supplier_id'
-        ),
-        'BenefitType' => array(
+            'foreignKey' => 'supplier_id',
+        ],
+        'BenefitType' => [
             'className' => 'BenefitType',
-            'foreignKey' => 'benefit_type_id'
-        ),
-	'Status' => [
+            'foreignKey' => 'benefit_type_id',
+        ],
+        'Status' => [
             'className' => 'Status',
             'foreignKey' => 'status_id',
-            'conditions' => ['Status.categoria' => 1]
+            'conditions' => ['Status.categoria' => 1],
         ],
-    );
+    ];
 
-    var $virtualFields = array(
-        'complete_name' => "CONCAT(CONCAT(Benefit.code, ' - '), Benefit.name)"
-    );
+    public $virtualFields = [
+        'complete_name' => "CONCAT(CONCAT(Benefit.code, ' - '), Benefit.name)",
+    ];
 
-    public function beforeFind($queryData)
-    {
-        $queryData['conditions'][] = ['Benefit.data_cancel' => '1901-01-01 00:00:00'];
-        
-        return $queryData;
-    }
-
-	public $validate = [
+    public $validate = [
         'code' => [
             'required' => [
                 'rule' => ['notBlank'],
@@ -44,76 +39,82 @@ class Benefit extends AppModel {
                 'on' => 'create',
             ],
         ],
-	];
+    ];
 
-    public function beforeSave($options = array())
-	{
-		if (!empty($this->data[$this->alias]['last_fare_update'])) {
-			$this->data[$this->alias]['last_fare_update'] = $this->dateFormatBeforeSave($this->data[$this->alias]['last_fare_update']);
-		}
+    public function beforeFind($queryData)
+    {
+        $queryData['conditions'][] = ['Benefit.data_cancel' => '1901-01-01 00:00:00'];
 
-		if (!empty($this->data[$this->alias]['unit_price'])) {
-			$this->data[$this->alias]['unit_price'] = $this->priceFormatBeforeSave($this->data[$this->alias]['unit_price']);
-		}
+        return $queryData;
+    }
 
-		if (!empty($this->data[$this->alias]['ate'])) {
-			$this->data[$this->alias]['ate'] = $this-> dateFormatBeforeSave($this->data[$this->alias]['ate']);
-		}
+    public function beforeSave($options = [])
+    {
+        if (!empty($this->data[$this->alias]['last_fare_update'])) {
+            $this->data[$this->alias]['last_fare_update'] = $this->dateFormatBeforeSave($this->data[$this->alias]['last_fare_update']);
+        }
 
-		if (!empty($this->data[$this->alias]['de'])) {
-			$this->data[$this->alias]['de'] = $this-> dateFormatBeforeSave($this->data[$this->alias]['de']);
-		}
+        if (!empty($this->data[$this->alias]['unit_price'])) {
+            $this->data[$this->alias]['unit_price'] = $this->priceFormatBeforeSave($this->data[$this->alias]['unit_price']);
+        }
 
-		return true;
-	}
+        if (!empty($this->data[$this->alias]['ate'])) {
+            $this->data[$this->alias]['ate'] = $this->dateFormatBeforeSave($this->data[$this->alias]['ate']);
+        }
 
-	public function priceFormatBeforeSave($price)
-	{
-		$valueFormatado = str_replace('.', '', $price);
-		$valueFormatado = str_replace(',', '.', $valueFormatado);
+        if (!empty($this->data[$this->alias]['de'])) {
+            $this->data[$this->alias]['de'] = $this->dateFormatBeforeSave($this->data[$this->alias]['de']);
+        }
 
-		return $valueFormatado;
-	}
+        return true;
+    }
 
-	public function dateFormatBeforeSave($dateString)
-	{
-		return date('Y-m-d', strtotime($this->date_converter($dateString)));
-	}
+    public function priceFormatBeforeSave($price)
+    {
+        $valueFormatado = str_replace('.', '', $price);
 
-	public function date_converter($_date = null)
-	{
-		$format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
-		if ($_date != null && preg_match($format, $_date, $partes)) {
-			return $partes[3] . '-' . $partes[2] . '-' . $partes[1];
-		}
+        return str_replace(',', '.', $valueFormatado);
+    }
 
-		return false;
-	}
+    public function dateFormatBeforeSave($dateString)
+    {
+        return date('Y-m-d', strtotime($this->date_converter($dateString)));
+    }
 
-	public function afterFind($results, $primary = false)
-	{
-		foreach ($results as $key => $val) {
-			if (isset($val[$this->alias]['unit_price'])) {
-				$results[$key][$this->alias]['unit_price_not_formated'] = $results[$key][$this->alias]['unit_price'];
-				$results[$key][$this->alias]['unit_price'] = number_format($results[$key][$this->alias]['unit_price'], 2, ',', '.');
-			}
+    public function date_converter($_date = null)
+    {
+        $format = '/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/';
+        if ($_date != null && preg_match($format, $_date, $partes)) {
+            return $partes[3].'-'.$partes[2].'-'.$partes[1];
+        }
 
-			if (isset($val[$this->alias]['last_fare_update'])) {
-				$results[$key][$this->alias]['last_fare_update_nao_formatado'] = $val[$this->alias]['last_fare_update'];
-				$results[$key][$this->alias]['last_fare_update'] = date("d/m/Y", strtotime($val[$this->alias]['last_fare_update']));
-			}
+        return false;
+    }
 
-			if (isset($val[$this->alias]['de'])) {
-				$results[$key][$this->alias]['de_nao_formatado'] = $val[$this->alias]['de'];
-				$results[$key][$this->alias]['de'] = date("d/m/Y", strtotime($val[$this->alias]['de']));
-			}
+    public function afterFind($results, $primary = false)
+    {
+        foreach ($results as $key => $val) {
+            if (isset($val[$this->alias]['unit_price'])) {
+                $results[$key][$this->alias]['unit_price_not_formated'] = $results[$key][$this->alias]['unit_price'];
+                $results[$key][$this->alias]['unit_price'] = number_format($results[$key][$this->alias]['unit_price'], 2, ',', '.');
+            }
 
-			if (isset($val[$this->alias]['ate'])) {
-				$results[$key][$this->alias]['ate_nao_formatado'] = $val[$this->alias]['ate'];
-				$results[$key][$this->alias]['ate'] = date("d/m/Y", strtotime($val[$this->alias]['ate']));
-			}
-		}
+            if (isset($val[$this->alias]['last_fare_update'])) {
+                $results[$key][$this->alias]['last_fare_update_nao_formatado'] = $val[$this->alias]['last_fare_update'];
+                $results[$key][$this->alias]['last_fare_update'] = date('d/m/Y', strtotime($val[$this->alias]['last_fare_update']));
+            }
 
-		return $results;
-	}
+            if (isset($val[$this->alias]['de'])) {
+                $results[$key][$this->alias]['de_nao_formatado'] = $val[$this->alias]['de'];
+                $results[$key][$this->alias]['de'] = date('d/m/Y', strtotime($val[$this->alias]['de']));
+            }
+
+            if (isset($val[$this->alias]['ate'])) {
+                $results[$key][$this->alias]['ate_nao_formatado'] = $val[$this->alias]['ate'];
+                $results[$key][$this->alias]['ate'] = date('d/m/Y', strtotime($val[$this->alias]['ate']));
+            }
+        }
+
+        return $results;
+    }
 }
