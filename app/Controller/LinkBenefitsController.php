@@ -98,7 +98,7 @@ class LinkBenefitsController extends AppController
             ]);
 
             if (empty($benefit)) {
-                return ['success' => false, 'error' => 'Benefício não encontrado.'];
+                return ['success' => false, 'error' => 'Benefício '.$code.' não existente.'];
             }
 
             $itineraries = $this->CustomerUserItinerary->find('first', [
@@ -108,6 +108,10 @@ class LinkBenefitsController extends AppController
                 ],
                 'recursive' => -1
             ]);
+
+            if (empty($itineraries)) {
+                return ['success' => false, 'error' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']];
+            }
 
             $update[] = [
                 'CustomerUserItinerary' => [
