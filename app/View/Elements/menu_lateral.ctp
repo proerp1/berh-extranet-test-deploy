@@ -502,7 +502,7 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Comunicados</span>
+                                <span class="menu-title">Informativos</span>
                             </a>
                         </div>
                         

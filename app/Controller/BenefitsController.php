@@ -109,6 +109,8 @@ class BenefitsController extends AppController
             if($benef['Benefit']['unit_price_not_formated'] <> $unit_price){
                 $dados_log = [
                     'old_value' => $benef['Benefit']['unit_price'],
+                    'de' => $benef['Benefit']['de'],
+                    'ate' => $benef['Benefit']['ate'],
                     'benefit_id' => $id,
                     'user_id' => CakeSession::read("Auth.User.id")
                 ];

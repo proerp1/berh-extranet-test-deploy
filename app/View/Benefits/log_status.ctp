@@ -32,6 +32,8 @@
                         <th class="ps-4 rounded-start">Nome</th>
                         <th>Data</th>
                         <th>Valor</th>
+                        <th>De</th>
+                        <th>Até</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,6 +43,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["User"]["name"] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["LogBenefits"]["log_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["LogBenefits"]["old_value"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["LogBenefits"]["de"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["LogBenefits"]["ate"]; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

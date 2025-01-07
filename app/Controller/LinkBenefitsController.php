@@ -37,10 +37,10 @@ class LinkBenefitsController extends AppController
                 $this->Flash->set(__($ret['error']), ['params' => ['class' => "alert alert-danger"]]);    
             }
 
-            $this->redirect($this->referer());
+            $this->redirect(['controller' => 'link_benefits', 'action' => 'index']);
         } else {
             $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['controller' => 'link_benefits', 'action' => 'index']);
         }
     }
 
@@ -98,7 +98,7 @@ class LinkBenefitsController extends AppController
             ]);
 
             if (empty($benefit)) {
-                return ['success' => false, 'error' => 'Benefício não encontrado.'];
+                return ['success' => false, 'error' => 'Benefício '.$code.' não existente.'];
             }
 
             $itineraries = $this->CustomerUserItinerary->find('first', [
@@ -108,6 +108,10 @@ class LinkBenefitsController extends AppController
                 ],
                 'recursive' => -1
             ]);
+
+            if (empty($itineraries)) {
+                return ['success' => false, 'error' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']];
+            }
 
             $update[] = [
                 'CustomerUserItinerary' => [
