@@ -72,7 +72,7 @@ class CustomerUserItinerary extends AppModel
 
         // 
         if (!empty($this->data[$this->alias]['price_per_day_non'])) {
-            $this->data[$this->alias]['unit_price'] = $this->data[$this->alias]['price_per_day_non'];
+            $this->data[$this->alias]['price_per_day'] = $this->data[$this->alias]['price_per_day_non'];
         }
 
         return true;
