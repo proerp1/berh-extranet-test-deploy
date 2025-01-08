@@ -449,6 +449,10 @@ class OrdersController extends AppController
                 foreach ($manualPricing[$currentUserId] as $manualEntry) {
                     $parsedManualRow = $this->parseManualRow($itinerary, $manualEntry);
 
+                    if(isset($manualEntry['idItinerary']) && $manualEntry['idItinerary'] != $itinerary['CustomerUserItinerary']['id']) {
+                        continue;
+                    }
+
                     if ($parsedManualRow === false) {
                         continue;
                     }
@@ -3054,7 +3058,7 @@ class OrdersController extends AppController
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
             
-            // Create a new itinerary record
+            $idItinerary = 0;
             if (empty($existingItinerary) || $is_variable) {
 
                 if (empty($existingItinerary) && !$is_variable) {
@@ -3077,6 +3081,10 @@ class OrdersController extends AppController
                         'status_id' => 1
                     ]
                 ]);
+
+                $idItinerary = $this->CustomerUserItinerary->id;
+            } else {
+                $idItinerary = $existingItinerary['CustomerUserItinerary']['id'];
             }
 
             if ($chavePix != '') {
@@ -3113,7 +3121,8 @@ class OrdersController extends AppController
                 'workingDays' => $workingDays,
                 'quantity' => $quantity,
                 'benefitId' => $benefitId,
-                'newCsv' => true
+                'newCsv' => true,
+                'idItinerary' => $idItinerary
             ];
 
             $line++;
