@@ -147,7 +147,7 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Data Atualizacão Tarifa</label>
-                <?php echo $this->Form->input('last_fare_update', ['type' => 'text', "placeholder" => "Nome", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                <?php echo $this->Form->input('last_fare_update', ['type' => 'text', "placeholder" => "Data", "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
             <div class="mb-7 col">
