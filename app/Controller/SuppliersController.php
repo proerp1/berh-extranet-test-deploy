@@ -20,45 +20,40 @@ class SuppliersController extends AppController
     {
         $this->Permission->check(9, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
-
+    
         $condition = ["and" => [], "or" => []];
-
+    
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Supplier.id LIKE' => "%".$_GET['q']."%",'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Supplier.id LIKE' => "%".$_GET['q']."%", 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
         }
-        
-
+    
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
-
-        // $suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'conditions' => ['Supplier.status_id' => 3], 'recursive' => -1]);
-
+    
         if (isset($_GET['exportar'])) {
-            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
-
-            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
-            $nome = 'Forncedores_' . date('d_m_Y_H_i_s') . '.xlsx';
-
+            $nome = 'Fornecedores_' . date('d_m_Y_H_i_s') . '.xlsx';
+    
             $data = $this->Supplier->find('all', [
-                'contain' => ['Status'],
-                'conditions' => $condition, 
+                'contain' => ['Status', 'BankAccountType'], 
+                'conditions' => $condition,
             ]);
-
+    
             $this->ExcelGenerator->gerarExcelFornecedores($nome, $data);
-
+    
+            // Redirecionar para o download
             $this->redirect("/files/excel/" . $nome);
         }
-
-        
-
+    
+        // Paginação
         $data = $this->Paginator->paginate('Supplier', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-
+    
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
     }
+    
     
     public function add()
     {
