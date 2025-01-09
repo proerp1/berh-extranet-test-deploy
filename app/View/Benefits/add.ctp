@@ -3,7 +3,18 @@
 <?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
 
 <script type="text/javascript">
-        $(document).ready(function(){
+    
+    function submitOptions(){
+        var unit_price_changed = $('#BenefitUnitPriceChanged').val();
+
+        if (unit_price_changed == 1) {
+            $('#modal-confirm').modal('show');
+        } else {
+            $('#js-form-submit').unbind('submit').submit();
+        }
+    }
+
+    $(document).ready(function(){
         $('#summernote').summernote({
             lang: 'pt-BR',
             height: 200,
@@ -19,16 +30,7 @@
                 ['help', [ 'help' ]],
             ]
         });
-        
-    function submitOptions(){
-        var unit_price_changed = $('#BenefitUnitPriceChanged').val();
 
-        if (unit_price_changed == 1) {
-            $('#modal-confirm').modal('show');
-        } else {
-            $('#js-form-submit').unbind('submit').submit();
-        }
-    }
     $(document).ready(function() {
         $("#BenefitLastFareUpdate").datepicker({
             language: "pt-BR",
