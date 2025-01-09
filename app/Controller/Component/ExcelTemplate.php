@@ -824,6 +824,8 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Atualizacão Tarifa"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Item Vraiável "); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observação "); $col++;
 
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
@@ -839,6 +841,9 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['last_fare_update']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['city']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['state']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['is_variable']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['observation']); $col++;
+
 			
 		}
 	}
