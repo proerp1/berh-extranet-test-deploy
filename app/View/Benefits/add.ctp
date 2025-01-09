@@ -1,4 +1,25 @@
+<?php echo $this->Html->script("html_editor/summernote", array('block' => 'script')); ?>
+<?php echo $this->Html->script("html_editor/summernote-pt-BR", array('block' => 'script')); ?>
+<?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
+
 <script type="text/javascript">
+        $(document).ready(function(){
+        $('#summernote').summernote({
+            lang: 'pt-BR',
+            height: 200,
+            toolbar : [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize', 'fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['group', [ 'video', 'link', 'picture', 'hr' ]],
+                ['misc', [ 'codeview', 'undo', 'redo' ]],
+                ['help', [ 'help' ]],
+            ]
+        });
+        
     function submitOptions(){
         var unit_price_changed = $('#BenefitUnitPriceChanged').val();
 
