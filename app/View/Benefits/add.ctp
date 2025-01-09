@@ -1,9 +1,4 @@
-<?php echo $this->Html->script("html_editor/summernote", array('block' => 'script')); ?>
-<?php echo $this->Html->script("html_editor/summernote-pt-BR", array('block' => 'script')); ?>
-<?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
-
 <script type="text/javascript">
-    
     function submitOptions(){
         var unit_price_changed = $('#BenefitUnitPriceChanged').val();
 
@@ -14,22 +9,23 @@
         }
     }
 
-    $(document).ready(function(){
-        $('#summernote').summernote({
-            lang: 'pt-BR',
-            height: 200,
-            toolbar : [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['strikethrough', 'superscript', 'subscript']],
-                ['fontsize', ['fontsize', 'fontname']],
+    $(document).ready(function() {
+        $('#observation').summernote({
+            height: 150, 
+            placeholder: 'observação...',
+            tabsize: 2,
+            lang: 'pt-BR', 
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['group', [ 'video', 'link', 'picture', 'hr' ]],
-                ['misc', [ 'codeview', 'undo', 'redo' ]],
-                ['help', [ 'help' ]],
+                ['table', ['table']],
+                ['view', ['fullscreen', 'codeview', 'help']]
             ]
         });
+    });
 
     $(document).ready(function() {
         $("#BenefitLastFareUpdate").datepicker({
@@ -193,13 +189,12 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
                 </div>
             </div>
 
-            <div class="row">
-                <div class="mb-7 col-12">
-                    <label class="fw-semibold fs-6 mb-2">Observações</label>
-                    <?php echo $this->Form->input('observacao', array("placeholder" => "Observações", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
+            <div class="row mt-5">
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Observação</label>
+                    <?php echo $this->Form->textarea('observation', ['id' => 'observation', 'class' => 'form-control']); ?>
                 </div>
             </div>
-
 
             <br>
 
