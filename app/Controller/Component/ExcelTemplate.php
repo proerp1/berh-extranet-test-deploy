@@ -691,7 +691,6 @@ class ExcelTemplate
 
 	    foreach ($dados as $key => $dado) {
 
-			$accountTypeDescription = isset($supplier['BankAccountType']['description']) ? $supplier['BankAccountType']['description'] : '';
 
 	        $col = 'A';
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . ($key + 2), $dado['Status']['name']); $col++;
@@ -721,6 +720,7 @@ class ExcelTemplate
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Y' . ($key + 2), $dado['Supplier']['url']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Z' . ($key + 2), $dado['Supplier']['login']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
+			$accountTypeDescription = isset($supplier['BankAccountType']['description']) ? $supplier['BankAccountType']['description'] : '';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('AB' . ($key + 2), $accountTypeDescription);$col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('AC' . ($key + 2), $dado['Supplier']['bank_code_id']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AD' . ($key + 2), $dado['Supplier']['payment_method']); $col++;
