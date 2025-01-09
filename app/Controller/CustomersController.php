@@ -1195,8 +1195,9 @@ class CustomersController extends AppController
     public function log_ge($id = null)
     {
         $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
-        $this->Paginator->settings = $this->paginate;
-
+        $this->Paginator->settings = array_merge($this->paginate, [
+            'order' => ['CustomerGeLog.created' => 'desc'] 
+        ]);
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
