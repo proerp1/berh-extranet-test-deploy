@@ -828,7 +828,6 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observação "); $col++;
 
 		foreach ($dados as $key => $dado) {
-			
 			$col = 'A';
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['code']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
@@ -842,7 +841,8 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['last_fare_update']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['city']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['state']); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $isVariable); $col++; $isVariable = !empty($dado['Benefit']['is_variable']) && $dado['Benefit']['is_variable'] == 1 ? 'S' : 'N';
+			$isVariable = !empty($dado['Benefit']['is_variable']) && $dado['Benefit']['is_variable'] == 1 ? 'S' : 'N';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $isVariable); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Benefit']['observation']); $col++;
 
 			
