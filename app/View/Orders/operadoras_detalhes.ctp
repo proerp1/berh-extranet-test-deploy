@@ -21,13 +21,13 @@
                 <?php 
                 $total=0;
                 foreach ($suppliersAll as $supplier) {
-                    $total += $supplier["OrderItem"]["total_not_formated"];
+                    $total += $supplier["OrderItem"]["subtotal_not_formated"];
                     ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Benefit']['name']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['CustomerUser']['name']; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$supplier["OrderItem"]["total"]; ?></td>                        
+                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$'.$supplier["OrderItem"]["subtotal"]; ?></td>                        
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier["OrderItem"]["data_inicio_processamento"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier["OrderItem"]["data_fim_processamento"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier["OrderItem"]["status_processamento"]; ?></td>
