@@ -449,6 +449,10 @@ class OrdersController extends AppController
                 foreach ($manualPricing[$currentUserId] as $manualEntry) {
                     $parsedManualRow = $this->parseManualRow($itinerary, $manualEntry);
 
+                    if(isset($manualEntry['idItinerary']) && $manualEntry['idItinerary'] != $itinerary['CustomerUserItinerary']['id']) {
+                        continue;
+                    }
+
                     if ($parsedManualRow === false) {
                         continue;
                     }
@@ -3054,11 +3058,12 @@ class OrdersController extends AppController
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
             
-            // Create a new itinerary record
+            $idItinerary = 0;
             if (empty($existingItinerary) || $is_variable) {
 
                 if (empty($existingItinerary) && !$is_variable) {
                     $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
+                    $unitPrice = $benefit['Benefit']['unit_price'];
                 }
 
                 $this->CustomerUserItinerary->create();
@@ -3068,7 +3073,7 @@ class OrdersController extends AppController
                         'benefit_id' => $benefitId,
                         'customer_id' => $customerId,
                         'working_days' => $workingDays,
-                        'unit_price' => $unitPriceForm,
+                        'unit_price' => $unitPrice,
                         'quantity' => $quantity,
                         'price_per_day_non' => ($unitPriceForm * $quantity), // Avoid division by zero
                         'card_number' => $numeroCartao,
@@ -3076,6 +3081,10 @@ class OrdersController extends AppController
                         'status_id' => 1
                     ]
                 ]);
+
+                $idItinerary = $this->CustomerUserItinerary->id;
+            } else {
+                $idItinerary = $existingItinerary['CustomerUserItinerary']['id'];
             }
 
             if ($chavePix != '') {
@@ -3112,7 +3121,8 @@ class OrdersController extends AppController
                 'workingDays' => $workingDays,
                 'quantity' => $quantity,
                 'benefitId' => $benefitId,
-                'newCsv' => true
+                'newCsv' => true,
+                'idItinerary' => $idItinerary
             ];
 
             $line++;

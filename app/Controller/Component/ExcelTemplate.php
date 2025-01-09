@@ -2198,7 +2198,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["total"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_type"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
@@ -2277,11 +2277,15 @@ class ExcelTemplate
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(25);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
 
 		$col = 'A';
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "De"); $col++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Até"); $col++;
 
 		foreach ($dados as $key => $dado) {
 			$col = 'A';
@@ -2289,6 +2293,8 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['User']['name']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['log_date']); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['old_value']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['de']); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['LogBenefits']['ate']); $col++;
 			$col++;
 		}
 	}
