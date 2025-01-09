@@ -172,8 +172,8 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
 
             <div class="row">
                 <div class="mb-7 col-12">
-                    <label class="fw-semibold fs-6 mb-2">Observação</label>
-                    <?php echo $this->Form->input('observacao', array("placeholder" => "Observação","id" => "summernote","class" => "form-control mb-3 mb-lg-0","style" => "height: 200px;" )); ?>
+                    <label class="fw-semibold fs-6 mb-2">Observações</label>
+                    <?php echo $this->Form->input('observacao', array("placeholder" => "Observações", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
 
