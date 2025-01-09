@@ -683,7 +683,7 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Digito"); $col++;
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Digito"); $col++;
-	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Chave "); $col++;
+	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Chave"); $col++;
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Chave PIX"); $col++;
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor Boleto"); $col++;
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor 1° Via"); $col++;
@@ -2188,7 +2188,8 @@ class ExcelTemplate
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF/CNPJ do Favorecido"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Identificação no extrato"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Chave PIX"); $col++;
+	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Chave"); $col++;
+	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Chave PIX"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de transferência"); $col++;
 		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de pagamento"); $col++;
 
@@ -2206,6 +2207,7 @@ class ExcelTemplate
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_type"]); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_id"]); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
 		}
