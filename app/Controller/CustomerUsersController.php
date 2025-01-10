@@ -1051,25 +1051,6 @@ class CustomerUsersController extends AppController
         return ['data' => $data];
     }
 
-    public function baixar_beneficiarios1($id)
-    {
-        $this->layout = 'ajax';
-        $this->autoRender = false;
-
-        ini_set('memory_limit', '-1');
-
-        $view = new View($this, false);
-        $view->layout = false;
-
-        $nome = 'beneficiarios_pedido_' . $id . '.xlsx';
-
-        $data = $this->CustomerUser->find_pedido_beneficiarios_info($id);
-
-        $this->ExcelGenerator->gerarExcelModeloImportacaoBeneficiarios($nome, $data);
-
-        $this->redirect("/files/excel/" . $nome);
-    }
-
     public function baixar_beneficiarios($id, $is_admin = false)
     {
         $this->layout = 'ajax';
