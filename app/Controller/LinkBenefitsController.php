@@ -105,6 +105,7 @@ class LinkBenefitsController extends AppController
                 'conditions' => [
                     'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
                     'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
+                    'CustomerUserItinerary.status_id' => 1
                 ],
                 'recursive' => -1
             ]);
