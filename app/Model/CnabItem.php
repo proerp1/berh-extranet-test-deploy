@@ -5,6 +5,8 @@ class CnabItem extends AppModel
 {
     public $name = 'CnabItem';
 
+    public $actsAs = ['Containable'];
+
     public $belongsTo = [
         'CnabLote',
         'Income' => [
