@@ -8,6 +8,25 @@
             $('#js-form-submit').unbind('submit').submit();
         }
     }
+
+    $(document).ready(function() {
+        $('#observation').summernote({
+            height: 150, 
+            placeholder: 'observação...',
+            tabsize: 2,
+            lang: 'pt-BR', 
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+
     $(document).ready(function() {
         $("#BenefitLastFareUpdate").datepicker({
             language: "pt-BR",
@@ -128,7 +147,7 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Data Atualizacão Tarifa</label>
-                <?php echo $this->Form->input('last_fare_update', ['type' => 'text', "placeholder" => "Nome", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                <?php echo $this->Form->input('last_fare_update', ['type' => 'text', "placeholder" => "Data", "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
             <div class="mb-7 col">
@@ -167,6 +186,13 @@ $oldUnitPrice = isset($this->request->data['Benefit']['unit_price_not_formated']
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Variável</label>
                     <?php echo $this->Form->input('is_variable', ['type' => 'checkbox', 'class' => 'form-check-input', 'value' => 1]); ?>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Observação</label>
+                    <?php echo $this->Form->textarea('observation', ['id' => 'observation', 'class' => 'form-control']); ?>
                 </div>
             </div>
 

@@ -1092,7 +1092,7 @@ class OrdersController extends AppController
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
 
-        $this->Flash->set(__('Beneficiários incluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->Flash->set(__('Beneficiário(s) incluído(s) com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'edit/' . $orderId]);
     }
 

@@ -1051,4 +1051,53 @@ class CustomerUsersController extends AppController
         return ['data' => $data];
     }
 
+    public function baixar_beneficiarios($id, $is_admin = false)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+
+        $view = new View($this, false);
+        $view->layout = false;
+        
+        $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
+    
+        if($is_admin){
+            $condition['and'] = array_merge($condition['and'], ['CustomerUser.is_admin' => 1]);
+        }
+
+        $data = $this->CustomerUser->find('all', [
+            'conditions' => $condition,
+            'joins' => [
+                [
+                    'table' => 'marital_statuses', 
+                    'alias' => 'MaritalStatus',
+                    'type' => 'LEFT',
+                    'conditions' => ['MaritalStatus.id = CustomerUser.marital_status_id']
+                ],
+            ],
+            'fields' => [
+                'Customer.documento',
+                'CustomerDepartment.name',
+                'MaritalStatus.status',
+                'CustomerUser.matricula',
+                'CustomerUser.name',
+                'CustomerUser.cpf',
+                'CustomerUser.rg',
+                'CustomerUser.emissor_rg',
+                'CustomerUser.data_nascimento',
+                'CustomerUser.nome_mae',
+                'CustomerUser.sexo',
+                'CustomerUser.email',
+            ],
+            'order' => ['CustomerUser.name' => 'asc'],
+        ]);
+
+        $nome = 'ModeloImportacaoBeneficiarios.xlsx';
+
+        $this->ExcelGenerator->gerarExcelModeloImportacaoBeneficiarios($nome, $data);
+
+        $this->redirect("/files/excel/" . $nome);
+    }
 }

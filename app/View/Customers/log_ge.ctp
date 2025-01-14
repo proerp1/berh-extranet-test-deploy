@@ -28,6 +28,7 @@
                         <th>Incluir qtde. mínina diária </th>
                         <th>Tipos de GE </th>
                         <th>Usuário</th>
+                        <th>Criação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +40,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['CustomerGeLog']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['CustomerGeLog']['tipo_ge'] == 1 ? 'Pré' : ($data[$i]['CustomerGeLog']['tipo_ge'] == 2 ? 'Pós' : ($data[$i]['CustomerGeLog']['tipo_ge'] == 3 ? 'Garantido' : '')) ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['UsuarioCriacao']['name'] ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['CustomerGeLog']['created'] ?></td>
+
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
