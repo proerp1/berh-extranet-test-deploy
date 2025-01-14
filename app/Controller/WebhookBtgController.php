@@ -56,10 +56,8 @@ class WebhookBtgController extends AppController
                 $this->Income->save([
                     'id' => $boleto['Income']['id'],
                     'status_id' => 17,
-                    'payment_method_baixa' => 1,
                     'valor_pago' => $data['amountPaid'],
                     'data_pagamento' => $data['paidAt'],
-                    'data_baixa' => date('Y-m-d H:i:s'),
                 ]);
             }
         }
