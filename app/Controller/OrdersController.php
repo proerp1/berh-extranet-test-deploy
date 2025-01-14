@@ -2954,6 +2954,7 @@ class OrdersController extends AppController
             $faixaSalarial = $row[12];                        // FAIXA SALARIAL
             $tipoChavePix = $row[13];                         // TIPO CHAVE PIX
             $chavePix = isset($row[14]) ? $row[14] : '';      // CHAVE PIX
+            $matricula = isset($row[15]) ? $row[15] : '';     // MATRICULA
 
             // Find the benefit ID using the supplier_id (codigoOperadora) and code (codigoBeneficio)
             $benefit = $this->Benefit->find('first', [
@@ -2995,7 +2996,8 @@ class OrdersController extends AppController
                         'nome_mae' => $nomeMae,
                         'status_id' => 1,
                         'created' => date('Y-m-d H:i:s'),
-                        'data_cancel' => '1901-01-01 00:00:00', // Active status
+                        'data_cancel' => '1901-01-01 00:00:00',
+                        'matricula' => $matricula
                     ]
                 ]);
                 $customerUserId = $this->CustomerUser->id;
