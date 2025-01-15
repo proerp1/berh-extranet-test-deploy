@@ -318,6 +318,10 @@ class OrdersController extends AppController
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
 
+            if ($is_partial == 3 || $is_partial == 4) {
+                $pedido_complementar = 2;
+            }
+
             $orderData = [
                 'customer_id' => $customerId,
                 'working_days' => $workingDays,
