@@ -1,5 +1,6 @@
 <?php
 App::uses('ApiItau', 'Lib');
+App::uses('ApiBtgPactual', 'Lib');
 
 use League\Csv\Reader;
 
@@ -934,17 +935,22 @@ class OrdersController extends AppController
             $this->CnabLote->create();
             $this->CnabLote->save($data_pefin_lote);
 
-            $ApiItau = new ApiItau();
-
-            $boleto = $ApiItau->gerarBoleto($conta);
+            if ($conta['BankAccount']['bank_id'] == 9) {
+                $ApiBtgPactual = new ApiBtgPactual();
+                $boleto = $ApiBtgPactual->gerarBoleto($conta);
+            } else {
+                $ApiItau = new ApiItau();
+                $boleto = $ApiItau->gerarBoleto($conta);
+            }
 
             if ($boleto['success']) {
+                $idWeb = $conta['BankAccount']['bank_id'] == 9 ? $boleto['contents']['bankSlipId'] : $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'];
                 $this->CnabItem->create();
                 $this->CnabItem->save([
                     'CnabItem' => [
                         'cnab_lote_id' => $this->CnabLote->id,
                         'income_id' => $conta['Income']['id'],
-                        'id_web' => $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
+                        'id_web' => $idWeb,
                         'status_id' => 48,
                         'user_creator_id' => CakeSession::read("Auth.User.id"),
                     ],
