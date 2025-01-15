@@ -107,10 +107,6 @@ class ApiBtgPactual extends Controller
 
     public function gerarBoleto($conta)
     {
-        $valor = str_pad(str_replace('.', '', $conta['Income']['valor_total_nao_formatado']), 17, '0', STR_PAD_LEFT);
-        $multa = str_pad(str_replace('.', '', $conta['BankTicket']['multa_boleto']), 12, '0', STR_PAD_LEFT);
-        $juros = str_pad(str_replace('.', '', $conta['BankTicket']['juros_boleto_dia']), 12, '0', STR_PAD_LEFT);
-
         if (!empty($conta['Order']) && $conta['Order']['economic_group_id'] != null) {
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
 
@@ -148,7 +144,8 @@ class ApiBtgPactual extends Controller
             'referenceNumber' => $conta['Income']['id'],
             'amount' => $conta['Income']['valor_total_nao_formatado'],
             'dueDate' => $conta['Income']['vencimento_nao_formatado'],
-            'installments' => 1
+            'installments' => 1,
+            'description' => $conta['BankTicket']['instrucao_boleto_1'].' '.$conta['BankTicket']['instrucao_boleto_2'].' '.$conta['BankTicket']['instrucao_boleto_3'].' '.$conta['BankTicket']['instrucao_boleto_4']
         ];
 
         return $this->makeRequest('POST', '/v1/bank-slips?accountId='.Configure::read('Btg.AccountId'), [
@@ -173,6 +170,37 @@ class ApiBtgPactual extends Controller
         ];
 
         return $this->makeRequest('GET', '/v1/bank-slips', $params, true);
+    }
+
+    public function alterarBoleto($bankSlipId, $conta)
+    {
+        $params = [
+            'query' => [
+                'accountId' => Configure::read('Btg.AccountId'),
+            ],
+            'json' => [
+                'amount' => $conta['Income']['valor_total_nao_formatado'],
+                'dueDate' => $conta['Income']['vencimento_nao_formatado'],
+                "interests" => [
+                    "arrears" => [
+                        "type" => "PERCENTAGE",
+                        "value" => 0
+                    ],
+                    "penalty" => [
+                        "type" => "PERCENTAGE",
+                        "value" => 0
+                    ]
+                ],
+                "discounts" => [
+                    [
+                        "type" => "PERCENTAGE",
+                        "value" => 0
+                    ]
+                ]
+            ]
+        ];
+
+        return $this->makeRequest('PUT', '/v1/bank-slips/'.$bankSlipId, $params, true);
     }
 
     public function teste()
