@@ -718,7 +718,7 @@ class ExcelTemplate
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Y' . ($key + 2), $dado['Supplier']['url']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Z' . ($key + 2), $dado['Supplier']['login']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
-	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AB' . ($key + 2), $dado['Supplier']['account_type_id']); $col++;
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['name']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AC' . ($key + 2), $dado['Supplier']['bank_code_id']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AD' . ($key + 2), $dado['Supplier']['payment_method']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
