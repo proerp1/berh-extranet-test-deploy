@@ -648,6 +648,9 @@ class ExcelTemplate
 
 	public function getFornecedoresRelatorio($objPHPExcel, $dados)
 	{
+
+		$paymentMethods = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transferência','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
+
 	    $col = 'A';
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
 	    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de pessoa "); $col++;
@@ -719,9 +722,11 @@ class ExcelTemplate
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Z' . ($key + 2), $dado['Supplier']['login']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['description']); $col++;
-	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AC' . ($key + 2), $dado['Supplier']['bank_code_id']); $col++;
-	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AD' . ($key + 2), $dado['Supplier']['payment_method']); $col++;
-	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
+	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AC' . ($key + 2), $dado['BankCode']['name']); $col++;
+			$paymentMethodId = $dado['Supplier']['payment_method'];
+			$paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('AD' . ($key + 2), $paymentMethodName); $col++;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AF' . ($key + 2), $dado['Supplier']['branch_digit']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AG' . ($key + 2), $dado['Supplier']['acc_number']); $col++;
 	        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AH' . ($key + 2), $dado['Supplier']['acc_digit']); $col++;
