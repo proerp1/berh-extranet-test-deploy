@@ -92,11 +92,11 @@ class ApiBtgPactual extends Controller
                 $message = Hash::extract($error['campos'], '{n}.mensagem');
             }
 
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $message, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
+            return ['success' => false, 'code' => $e->getCode(), 'error' => 'Serviço temporariamente fora do ar. Tente novamente em instantes', 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         } catch (ServerException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true);
 
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $error, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
+            return ['success' => false, 'code' => $e->getCode(), 'error' => 'Serviço temporariamente fora do ar. Tente novamente em instantes', 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         }
     }
 
