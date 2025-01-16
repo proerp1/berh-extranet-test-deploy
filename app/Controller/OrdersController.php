@@ -1,5 +1,6 @@
 <?php
 App::uses('ApiItau', 'Lib');
+App::uses('ApiBtgPactual', 'Lib');
 
 use League\Csv\Reader;
 
@@ -31,7 +32,8 @@ class OrdersController extends AppController
         'Supplier',
         'CustomerUserAddress',
         'CustomerUserBankAccount',
-        'OrderBalanceFile'
+        'OrderBalanceFile',
+        'BankAccount'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -809,8 +811,11 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
 
-        $bankTicket = $this->BankTicket->find('first', [
-            'conditions' => ['BankTicket.status_id' => 1]
+        $account = $this->BankAccount->find('first', [
+            'conditions' => [
+                'BankAccount.status_id' => 1,
+                'BankAccount.bank_id' => 9,
+            ]
         ]);
 
         $income = [];
@@ -821,7 +826,7 @@ class OrdersController extends AppController
         $income['Income']['revenue_id'] = 1;
         $income['Income']['cost_center_id'] = 5;
         $income['Income']['payment_method'] = 1;
-        $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
+        $income['Income']['bank_account_id'] = $account['BankAccount']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
         $income['Income']['valor_multa'] = 0;
@@ -938,17 +943,22 @@ class OrdersController extends AppController
             $this->CnabLote->create();
             $this->CnabLote->save($data_pefin_lote);
 
-            $ApiItau = new ApiItau();
-
-            $boleto = $ApiItau->gerarBoleto($conta);
+            if ($conta['BankAccount']['bank_id'] == 9) {
+                $ApiBtgPactual = new ApiBtgPactual();
+                $boleto = $ApiBtgPactual->gerarBoleto($conta);
+            } else {
+                $ApiItau = new ApiItau();
+                $boleto = $ApiItau->gerarBoleto($conta);
+            }
 
             if ($boleto['success']) {
+                $idWeb = $conta['BankAccount']['bank_id'] == 9 ? $boleto['contents']['bankSlipId'] : $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'];
                 $this->CnabItem->create();
                 $this->CnabItem->save([
                     'CnabItem' => [
                         'cnab_lote_id' => $this->CnabLote->id,
                         'income_id' => $conta['Income']['id'],
-                        'id_web' => $boleto['contents']['data']['dado_boleto']['dados_individuais_boleto'][0]['numero_nosso_numero'],
+                        'id_web' => $idWeb,
                         'status_id' => 48,
                         'user_creator_id' => CakeSession::read("Auth.User.id"),
                     ],
