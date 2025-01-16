@@ -62,16 +62,11 @@ class ApiBtgPactual extends Controller
         $client = new Client();
 
         try {
-            if ($pdf) {
-                $accept = 'application/pdf';
-            }
-
             $response = $client->request(
                 $method,
                 $requestedUrl,
                 array_merge($params, [
                     'headers' => [
-                        'accept' => $accept,
                         'Content-Type' => 'application/json',
                         'authorization' => 'Bearer '.CakeSession::read('ApiBtg.credentials.access_token'),
                     ],
@@ -97,11 +92,11 @@ class ApiBtgPactual extends Controller
                 $message = Hash::extract($error['campos'], '{n}.mensagem');
             }
 
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $message, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
+            return ['success' => false, 'code' => $e->getCode(), 'error' => 'Serviço temporariamente fora do ar. Tente novamente em instantes', 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         } catch (ServerException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true);
 
-            return ['success' => false, 'code' => $e->getCode(), 'error' => $error, 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
+            return ['success' => false, 'code' => $e->getCode(), 'error' => 'Serviço temporariamente fora do ar. Tente novamente em instantes', 'params' => $params, 'requestedUrl' => $requestedUrl, 'headers' => $e->getRequest()->getHeaders()];
         }
     }
 
