@@ -947,6 +947,29 @@ class CustomerUsersController extends AppController
         }        
     }
 
+    public function exclui_customer_user($customerId = false, $custUserIds = false)
+    {
+        $this->autoRender = false;
+
+        $is_multiple = false;
+        if($customerId == false || $custUserIds == false){
+            $is_multiple = true;
+            $customerId = $this->request->data['customerId'];
+            $custUserIds = $this->request->data['custUserIds'];
+        }
+
+        $this->CustomerUser->updateAll(
+            ['CustomerUser.data_cancel' => 'current_timestamp', 'usuario_id_cancel' => CakeSession::read("Auth.User.id")],
+            ['CustomerUser.id' => $custUserIds]
+        );
+
+        if($is_multiple){
+            echo json_encode(['success' => true]);
+        } else {
+            $this->redirect('/customer_users/index/' . $customerId);
+        }        
+    }
+
     public function update_ativar_inativar()
     {
         if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {
