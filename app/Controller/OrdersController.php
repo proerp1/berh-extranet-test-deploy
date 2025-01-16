@@ -32,7 +32,8 @@ class OrdersController extends AppController
         'Supplier',
         'CustomerUserAddress',
         'CustomerUserBankAccount',
-        'OrderBalanceFile'
+        'OrderBalanceFile',
+        'BankAccount'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -810,8 +811,11 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
 
-        $bankTicket = $this->BankTicket->find('first', [
-            'conditions' => ['BankTicket.status_id' => 1]
+        $account = $this->BankAccount->find('first', [
+            'conditions' => [
+                'BankAccount.status_id' => 1,
+                'BankAccount.bank_id' => 9,
+            ]
         ]);
 
         $income = [];
@@ -822,7 +826,7 @@ class OrdersController extends AppController
         $income['Income']['revenue_id'] = 1;
         $income['Income']['cost_center_id'] = 5;
         $income['Income']['payment_method'] = 1;
-        $income['Income']['bank_account_id'] = $bankTicket['Bank']['id'];
+        $income['Income']['bank_account_id'] = $bankTicket['BankAccount']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
         $income['Income']['valor_multa'] = 0;
