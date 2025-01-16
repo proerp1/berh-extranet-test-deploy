@@ -1094,7 +1094,7 @@ class CustomerUsersController extends AppController
             'order' => ['CustomerUser.name' => 'asc'],
         ]);
 
-        $nome = 'ModeloImportacaoBeneficiarios.csv';
+        $nome = 'ModeloImportacaoBeneficiarios.xlsx';
 
         $this->ExcelGenerator->gerarExcelModeloImportacaoBeneficiarios($nome, $data);
 
