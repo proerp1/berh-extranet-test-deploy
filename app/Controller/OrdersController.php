@@ -814,7 +814,7 @@ class OrdersController extends AppController
         $account = $this->BankAccount->find('first', [
             'conditions' => [
                 'BankAccount.status_id' => 1,
-                'BankAccount.bank_id' => 9,
+                'BankAccount.bank_id' => 3, // 3 para itau e 9 para btg
             ]
         ]);
 
