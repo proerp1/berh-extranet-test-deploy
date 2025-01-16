@@ -826,7 +826,7 @@ class OrdersController extends AppController
         $income['Income']['revenue_id'] = 1;
         $income['Income']['cost_center_id'] = 5;
         $income['Income']['payment_method'] = 1;
-        $income['Income']['bank_account_id'] = $bankTicket['BankAccount']['id'];
+        $income['Income']['bank_account_id'] = $account['BankAccount']['id'];
         $income['Income']['customer_id'] = $order['Order']['customer_id'];
         $income['Income']['name'] = 'Conta a receber - Pedido ' . $order['Order']['id'];
         $income['Income']['valor_multa'] = 0;
