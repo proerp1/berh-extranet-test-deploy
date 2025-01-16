@@ -266,7 +266,7 @@
                         <?php if (($this->request->data['Status']['id'] == 15 || $this->request->data['Status']['id'] == 16) && $this->request->data['Income']['cnab_gerado'] == 1){ ?>
                             <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$this->request->data["Income"]["id"].'/1'; ?>" class="btn btn-success">Ver boleto</a>
                             <?php if ($this->request->data["CnabItem"]["id_web"] && $this->request->data["BankAccount"]["bank_id"] != 9){ ?>
-                                <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto - Itaú</a>
+                                <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto</a>
                             <?php } ?>
                         <?php } ?>
                         <?php if (in_array($this->request->data['Status']['id'], [15, 16, 19, 51])){ ?>
