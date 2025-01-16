@@ -62,16 +62,11 @@ class ApiBtgPactual extends Controller
         $client = new Client();
 
         try {
-            if ($pdf) {
-                $accept = 'application/pdf';
-            }
-
             $response = $client->request(
                 $method,
                 $requestedUrl,
                 array_merge($params, [
                     'headers' => [
-                        'accept' => $accept,
                         'Content-Type' => 'application/json',
                         'authorization' => 'Bearer '.CakeSession::read('ApiBtg.credentials.access_token'),
                     ],
