@@ -1806,7 +1806,9 @@ class ExcelTemplate
 		->setCellValue('CA1', "Primeira Compra")
 		->setCellValue('CB1', "Pedido GE")
 		->setCellValue('CC1', "Calculo repasse economia")
-		->setCellValue('CD1', "Calculo repasse pedido compra");
+		->setCellValue('CD1', "Calculo repasse pedido compra")
+		->setCellValue('CE1', "Status Operadora");
+
 
 
 		$indx = 1;
@@ -1912,7 +1914,9 @@ class ExcelTemplate
 				->setCellValue('CA'. $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim")
 				->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar'])
 				->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
-				->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee'] - $dados[$i]['Order']['saldo_transfer_fee'], 2, ',', '.'));				
+				->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee'] - $dados[$i]['Order']['saldo_transfer_fee'], 2, ',', '.'))
+				->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento']);
+				
 
 		}
 	}
