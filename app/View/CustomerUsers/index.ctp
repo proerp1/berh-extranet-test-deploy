@@ -48,8 +48,12 @@ echo $this->element("abas_customers", array('id' => $id));
                         <i class="fas fa-thumbs-down"></i>
                         Inativar em Lote
                     </a>
-<<<<<<< Updated upstream
                     -->
+
+                    <a href="#" id="excluir_sel" class="btn btn-secondary me-3" style="float:right">
+                        <i class="fas fa-thumbs-down"></i>
+                        Excluir em Lote
+                    </a>
 
                     <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "generate_excel_report", $id)); ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center text-center">
                         <i class="fas fa-download me-2"></i>
@@ -336,7 +340,7 @@ echo $this->element("abas_customers", array('id' => $id));
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_inativar_sel" role="dialog">
+<div class="modal fade" tabindex="-1" id="modal_excluir_sel" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -344,11 +348,11 @@ echo $this->element("abas_customers", array('id' => $id));
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p>Inativar items selecionados?</p>
+                <p>Excluir items selecionados?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="inativa_confirm" class="btn btn-success">Sim</a>
+                <a id="exclui_confirm" class="btn btn-success">Sim</a>
             </div>
         </div>
     </div>
@@ -377,11 +381,11 @@ echo $this->element("abas_customers", array('id' => $id));
             }
         });
 
-        $('#inativar_sel').on('click', function(e) {
+        $('#excluir_sel').on('click', function(e) {
             e.preventDefault();
 
             if ($('input[name="item_ck"]:checked').length > 0) {
-                $('#modal_inativar_sel').modal('show');
+                $('#modal_excluir_sel').modal('show');
             } else {
                 alert('Selecione ao menos um item a inativar');
             }
@@ -416,7 +420,7 @@ echo $this->element("abas_customers", array('id' => $id));
             }
         });
 
-        $('#inativa_confirm').on('click', function(e) {
+        $('#exclui_confirm').on('click', function(e) {
             e.preventDefault();
 
             const customerId = <?php echo $id; ?>;
@@ -430,7 +434,7 @@ echo $this->element("abas_customers", array('id' => $id));
             if (custUserIds.length > 0) {
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/customer_users/inativa_customer_user',
+                    url: base_url+'/customer_users/exclui_customer_user',
                     data: {
                         custUserIds,
                         customerId
