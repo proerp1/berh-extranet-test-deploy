@@ -1978,7 +1978,7 @@ class ExcelTemplate
 				->setCellValue('M'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
 				->setCellValue('N'. $indx, $dados[$i]['Benefit']['code'].'/'.$dados[$i]['Benefit']['name'])
 				->setCellValue('O'. $indx, $dados[$i]['OrderItem']['price_per_day'])
-				->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
+				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['manual_quantity'])
 				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['subtotal'])
 				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
 				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['commission_fee'])
