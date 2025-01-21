@@ -19,46 +19,79 @@ echo $this->element("abas_customers", array('id' => $id));
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_grupo_economico">
+                    <!-- <a href="#" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#modal_grupo_economico">
                         <i class="fas fa-arrow-up"></i>
                         Atualizar Grupo Econômico
                     </a>
-                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_dias_uteis">
+                    <a href="#" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#modal_dias_uteis">
                         <i class="fas fa-arrow-up"></i>
                         Atualizar Dias Úteis
                     </a>
 
-                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                    <a href="#" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                         <i class="fas fa-arrow-up"></i>
                         Importar
                     </a>
 
-                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
+                    <a href="#" class="btn btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
                         <i class="fas fa-arrow-up"></i>
                         Ativar/Inativar (csv)
                     </a>
 
-                    <!--
-                    <a href="#" id="ativar_sel" class="btn btn-secondary me-3" style="float:right">
-                        <i class="fas fa-thumbs-up"></i>
-                        Ativar em Lote
-                    </a>
-
-                    <a href="#" id="inativar_sel" class="btn btn-secondary me-3" style="float:right">
-                        <i class="fas fa-thumbs-down"></i>
-                        Inativar em Lote
-                    </a>
-                    -->
-
-                    <a href="#" id="excluir_sel" class="btn btn-secondary me-3" style="float:right">
+                    <a href="#" id="excluir_sel" class="btn btn-secondary me-3">
                         <i class="fas fa-thumbs-down"></i>
                         Excluir em Lote
                     </a>
+
+                    <a href="#" onclick="confirm('Você realmente deseja excluir todos os registros da lista?', '<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "exclui_todos", $id)); ?>');" class="btn btn-danger me-3">
+                        <i class="fas fa-trash"></i>
+                        Excluir Todos
+                    </a> -->
 
                     <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "generate_excel_report", $id)); ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center text-center">
                         <i class="fas fa-download me-2"></i>
                         Relatório de Benefícios
                     </a>
+
+                    <div class="dropdown me-3">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ações
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton" style="width: 300px;">
+                            <div class="d-flex flex-column justify-content-start gap-3">
+                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_grupo_economico">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Atualizar Grupo Econômico
+                                </a>
+
+                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_dias_uteis">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Atualizar Dias Úteis
+                                </a>
+
+                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Importar
+                                </a>
+
+                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Ativar/Inativar (csv)
+                                </a>
+
+                                <a href="#" id="excluir_sel" class="btn btn-secondary">
+                                    <i class="fas fa-thumbs-down"></i>
+                                    Excluir em Lote
+                                </a>
+
+                                <a href="#" onclick="confirm('Você realmente deseja excluir todos os registros da lista?', '<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "exclui_todos", $id)); ?>');" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                    Excluir Todos
+                                </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
