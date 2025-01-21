@@ -970,6 +970,16 @@ class CustomerUsersController extends AppController
         }        
     }
 
+    public function exclui_todos($customerId)
+    {
+        $this->CustomerUser->updateAll(
+            ['CustomerUser.data_cancel' => 'current_timestamp', 'usuario_id_cancel' => CakeSession::read("Auth.User.id")],
+            ['CustomerUser.customer_id' => $customerId]
+        );
+
+        $this->redirect('/customer_users/index/' . $customerId);
+    }
+
     public function update_ativar_inativar()
     {
         if ($this->request->is('post') && !empty($this->request->data['file']['name']) && $this->request->data['file']['type'] == 'text/csv') {

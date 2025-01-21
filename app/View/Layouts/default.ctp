@@ -252,8 +252,8 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 						className: 'btn-success'
 					},
 					cancel: {
-						label: 'Não',
-						className: 'btn-danger'
+						label: 'Cancelar',
+						className: 'btn-light-dark'
 					}
 				},
 				callback: function(result) {
