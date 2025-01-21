@@ -1941,25 +1941,26 @@ class ExcelTemplate
 		->setCellValue('M1', "Operadora")
 		->setCellValue('N1', "Id(Código do Benefício / ítem)")
 		->setCellValue('O1', "Valor por dia")
-		->setCellValue('P1', "Qtde do Benefício por Dia")
-		->setCellValue('Q1', "Subtotal")
-		->setCellValue('R1', "Repasse")
-		->setCellValue('S1', "Taxa ADM")
-		->setCellValue('T1', "Status Operadora")
-		->setCellValue('U1', "Economia")
-		->setCellValue('V1', "Compra Operadora")
-		->setCellValue('W1', "Departamento")
-		->setCellValue('X1', "Centro de Custo")
-		->setCellValue('Y1', " CNPJ Grupo Economico")
-		->setCellValue('Z1', "Nome Grupo Economicoo")
-		->setCellValue('AA1', "Compra Operadora");
+		->setCellValue('P1', "Valor unitario")
+		->setCellValue('Q1', "Qtde do Benefício por Dia")
+		->setCellValue('R1', "Subtotal")
+		->setCellValue('S1', "Repasse")
+		->setCellValue('T1', "Taxa ADM")
+		->setCellValue('U1', "Status Operadora")
+		->setCellValue('V1', "Economia")
+		->setCellValue('W1', "Compra Operadora")
+		->setCellValue('X1', "Departamento")
+		->setCellValue('Y1', "Centro de Custo")
+		->setCellValue('Z1', " CNPJ Grupo Economico")
+		->setCellValue('AA1', "Nome Grupo Economicoo")
+		->setCellValue('AB1', "Compra Operadora");
 
 
 		$indx = 1;
 		$total = 0;
 		for ($i = 0; $i < count($dados); $i++) {
 			$total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
-
+			$valor_unit = ($dados[$i]['OrderItem']['manual_quantity'] > 0 ? $dados[$i]['OrderItem']['price_per_day_not_formated'] / $dados[$i]['OrderItem']['manual_quantity'] : $dados[$i]['OrderItem']['price_per_day']);
 			$indx++;
 
 			$activeWorksheet
@@ -1978,18 +1979,19 @@ class ExcelTemplate
 				->setCellValue('M'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
 				->setCellValue('N'. $indx, $dados[$i]['Benefit']['code'].'/'.$dados[$i]['Benefit']['name'])
 				->setCellValue('O'. $indx, $dados[$i]['OrderItem']['price_per_day'])
-				->setCellValue('P'. $indx, $dados[$i]['OrderItem']['manual_quantity'])
-				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['subtotal'])
-				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
-				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['commission_fee'])
-				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['saldo'])
-				->setCellValue('V'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
-				->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
-				->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
-				->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
-				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name'])
-				->setCellValue('AA'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
+				->setCellValue('P'. $indx, $valor_unit)
+				->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['manual_quantity'])
+				->setCellValue('R'. $indx, $dados[$i]['OrderItem']['subtotal'])
+				->setCellValue('S'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
+				->setCellValue('T'. $indx, $dados[$i]['OrderItem']['commission_fee'])
+				->setCellValue('U'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+				->setCellValue('V'. $indx, $dados[$i]['OrderItem']['saldo'])
+				->setCellValue('W'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
+				->setCellValue('X'. $indx, $dados[$i]['CustomerDepartments']['name'])
+				->setCellValue('Y'. $indx, $dados[$i]['CostCenter']['name'])
+				->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['document'])
+				->setCellValue('AA'. $indx, $dados[$i]['EconomicGroups']['name'])
+				->setCellValue('AB'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
 
 		}
 	}
