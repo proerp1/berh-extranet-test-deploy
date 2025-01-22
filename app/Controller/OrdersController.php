@@ -273,6 +273,13 @@ class OrdersController extends AppController
                 $this->redirect(['action' => 'index']);
             }
 
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+
+            if ($is_partial == 3 || $is_partial == 4) {
+                $pedido_complementar = 2;
+            } else {
+                $pedido_complementar = ($customer['Customer']['flag_gestao_economico'] == "S" ? 1 : 2);
+            }
 
             if ($is_consolidated == 2) {
                 $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
@@ -310,18 +317,12 @@ class OrdersController extends AppController
                 }
             }
 
-            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
-
             $obs_notafiscal = "";
             if ($customer['Customer']['observacao_notafiscal']) {
                 $obs_notafiscal = $customer['Customer']['observacao_notafiscal'];
             }
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
-
-            if ($is_partial == 3 || $is_partial == 4) {
-                $pedido_complementar = 2;
-            }
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -1604,10 +1605,6 @@ class OrdersController extends AppController
             $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
-
-            if ($is_partial == 3 || $is_partial == 4) {
-                $pedido_complementar = 2;
-            }
 
             $orderData = [
                 'customer_id' => $customerId,
