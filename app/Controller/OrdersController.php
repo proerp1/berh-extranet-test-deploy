@@ -276,7 +276,7 @@ class OrdersController extends AppController
 
             if ($is_consolidated == 2) {
                 $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -1497,7 +1497,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -1601,6 +1601,14 @@ class OrdersController extends AppController
                 $k = null;
             }
 
+            $customer = $this->Customer->find('first', ['fields' => ['Customer.observacao_notafiscal', 'Customer.flag_gestao_economico', 'Customer.porcentagem_margem_seguranca', 'Customer.qtde_minina_diaria', 'Customer.tipo_ge'], 'conditions' => ['Customer.id' => $customerId], 'recursive' => -1]);
+
+            $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
+
+            if ($is_partial == 3 || $is_partial == 4) {
+                $pedido_complementar = 2;
+            }
+
             $orderData = [
                 'customer_id' => $customerId,
                 'working_days' => $workingDays,
@@ -1610,10 +1618,16 @@ class OrdersController extends AppController
                 'status_id' => 83,
                 'credit_release_date' => $credit_release_date,
                 'is_partial' => $is_partial,
+                'pedido_complementar' => $pedido_complementar,
                 'created' => date('Y-m-d H:i:s'),
                 'economic_group_id' => $k,
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
+                'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
+                'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
+                'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
+                'tipo_ge' => $customer['Customer']['tipo_ge'],
+                'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
             ];
 
             $this->Order->create();
