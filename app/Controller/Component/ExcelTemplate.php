@@ -1834,7 +1834,7 @@ class ExcelTemplate
 
 			$activeWorksheet
 				->setCellValue('A'. $indx, $dados[$i]["Customer"]["documento"])
-				->setCellValue('B'. $indx, '-')
+				->setCellValue('B'. $indx, $dados[$i]["CustomerUser"]["matricula"])
 				->setCellValue('C'. $indx, $dados[$i]['CustomerUser']['name'])
 				->setCellValue('D'. $indx, $dados[$i]['CustomerUser']['cpf'])
 				->setCellValue('E'. $indx, $dados[$i]['CustomerUser']['rg'])
