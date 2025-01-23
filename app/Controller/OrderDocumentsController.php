@@ -198,6 +198,8 @@ class OrderDocumentsController extends AppController
         ];
         $this->set('form_action', '../order_documents/documentos_add/'.$id);
         $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+
+        
     }
 
     public function edit_documentos($id, $document_id = null)
@@ -210,7 +212,7 @@ class OrderDocumentsController extends AppController
             $this->request->data['OrderDocumentos']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->OrderDocumentos->save($this->request->data)) {
                 $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-                $this->redirect(['action' => 'index', $id]);
+                $this->redirect(['action' => 'documentos', $id]);
             } else {
                 $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
@@ -230,7 +232,7 @@ class OrderDocumentsController extends AppController
         $this->set('form_action', '../order_documents/edit_documentos/'.$id);
         $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
 
-        $this->render('add');
+        $this->render('documentos_add');
     }
 
     public function delete_documentos($order_id, $id)
