@@ -508,6 +508,11 @@ class IncomesController extends AppController
                 $ApiBtgPactual = new ApiBtgPactual();
                 $boleto = $ApiBtgPactual->gerarPdf($id);
 
+                if (!empty($boleto['error'])) {
+                    $this->Flash->set(__($boleto['error']), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->redirect($this->referer());
+                }
+
                 $this->printPdf($boleto['contents']);
             } else {
                 $ApiItau = new ApiItau();
