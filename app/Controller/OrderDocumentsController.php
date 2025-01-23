@@ -4,7 +4,7 @@ class OrderDocumentsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email'];
-    public $uses = ['OrderDocument', 'Order', 'Status', 'CustomerUser'];
+    public $uses = ['OrderDocument', 'Order', 'Status', 'CustomerUser','OrderDocumentos'];
 
     public $paginate = [
         'OrderDocument' => [
@@ -149,4 +149,104 @@ class OrderDocumentsController extends AppController
 
         $this->Email->send($dados, true);
     }
+
+    public function documentos($id) {
+        $this->Paginator->settings = $this->paginate;
+
+        $condition = ['and' => ['OrderDocumentos.order_id' => $id], 'or' => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != '') {
+            $condition['or'] = array_merge($condition['or'], ['OrderDocumentos.name LIKE' => '%'.$_GET['q'].'%']);
+        }
+
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+        }
+
+        $action = 'Pedido';
+
+        $data = $this->Paginator->paginate('OrderDocumentos', $condition);
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            'Cadastros' => ['controller' => 'orders', 'action' => 'edit', $id],
+            'Documento' => '',
+        ];
+        $this->set(compact('status', 'data', 'id', 'action', 'breadcrumb'));
+	}
+
+    public function documentos_add($id) {
+        if ($this->request->is(['post', 'put'])) {
+            $this->request->data['OrderDocumentos']['user_created_id'] = CakeSession::read('Auth.User.id');
+
+            $this->OrderDocumentos->create();
+            if ($this->OrderDocumentos->save($this->request->data)) {
+
+                $this->Flash->set(__('O documento foi salvo com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+                $this->redirect(['action' => 'documentos', $id]);
+            } else {
+                $this->Flash->set(__('O documento não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $action = 'Pedido';
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            'Cadastros' => ['controller' => 'orders', 'action' => 'edit', $id],
+            'Documento' => '',
+            'Novo Documento' => '',
+        ];
+        $this->set('form_action', '../order_documents/documentos_add/'.$id);
+        $this->set(compact('statuses', 'action', 'id', 'breadcrumb'));
+    }
+
+    public function edit_documentos($id, $document_id = null)
+    {
+        $this->OrderDocumentos->id = $document_id;
+        if ($this->request->is(['post', 'put'])) {
+            if ($this->request->data['OrderDocumentos']['file_name']['name'] == '') {
+                unset($this->request->data['OrderDocumentos']['file_name']);
+            }
+            $this->request->data['OrderDocumentos']['user_updated_id'] = CakeSession::read('Auth.User.id');
+            if ($this->OrderDocumentos->save($this->request->data)) {
+                $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+                $this->redirect(['action' => 'index', $id]);
+            } else {
+                $this->Flash->set(__('O documento não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $temp_errors = $this->OrderDocumentos->validationErrors;
+        $this->request->data = $this->OrderDocumentos->read();
+        $this->OrderDocumentos->validationErrors = $temp_errors;
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
+        $breadcrumb = [
+            'Cadastros' => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Notas fiscais' => '',
+            'Alterar nota' => '',
+        ];
+        $this->set('action', 'Pedido');
+        $this->set('form_action', '../order_documents/edit_documentos/'.$id);
+        $this->set(compact('statuses', 'id', 'document_id', 'breadcrumb'));
+
+        $this->render('add');
+    }
+
+    public function delete_documentos($order_id, $id)
+    {
+        $this->OrderDocumentos->id = $id;
+        $order = $this->OrderDocumentos->read();
+
+        $data['OrderDocumentos']['data_cancel'] = date('Y-m-d H:i:s');
+        $data['OrderDocumentos']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
+
+        if ($this->OrderDocumentos->save($data)) {
+            unlink(APP.'webroot/files/order_documentos/file_name/'.$order['OrderDocumentos']['id'].'/'.$order['OrderDocumentos']['file_name']);
+
+            $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+            $this->redirect(['action' => 'index', $order_id]);
+        }
+    }
+
 }
