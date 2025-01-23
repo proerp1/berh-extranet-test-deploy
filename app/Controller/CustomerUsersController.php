@@ -972,6 +972,8 @@ class CustomerUsersController extends AppController
 
     public function exclui_todos($customerId)
     {
+        $this->Permission->check(78, "excluir") ? "" : $this->redirect("/not_allowed");
+
         $this->CustomerUser->updateAll(
             ['CustomerUser.data_cancel' => 'current_timestamp', 'usuario_id_cancel' => CakeSession::read("Auth.User.id")],
             ['CustomerUser.customer_id' => $customerId]
