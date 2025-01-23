@@ -207,11 +207,11 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
-    public function gerarExcelFornecedores($nome, $dados)
+    public function gerarExcelFornecedores($nome, $dados_sup, $dados_log)
     {
         $spreadsheet = new Spreadsheet();
 
-        $this->templates_list->getFornecedoresRelatorio($spreadsheet, $dados);
+        $this->templates_list->getFornecedoresRelatorio($spreadsheet, $dados_sup, $dados_log);
 
         $local_salva = APP.'webroot/files/excel/'.$nome;
 

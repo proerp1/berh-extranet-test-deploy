@@ -1,11 +1,10 @@
-
 <?php
+
 class SuppliersController extends AppController
-{
-    
+{    
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier',];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -34,15 +33,17 @@ class SuppliersController extends AppController
         if (isset($_GET['exportar'])) {
             $nome = 'Fornecedores_' . date('d_m_Y_H_i_s') . '.xlsx';
     
-            $data = $this->Supplier->find('all', [
+            $data_sup = $this->Supplier->find('all', [
                 'contain' => ['Status', 'BankAccountType'], 
                 'conditions' => $condition,
             ]);
     
-            $this->ExcelGenerator->gerarExcelFornecedores($nome, $data);
+            $data_log = $this->CustomerSupplierLogin->find('all');
+
+            $this->ExcelGenerator->gerarExcelFornecedores($nome, $data_sup, $data_log);
     
             // Redirecionar para o download
-            $this->redirect("/files/excel/" . $nome);
+            $this->redirect("/files/excel/".$nome);
         }
     
         // Paginação

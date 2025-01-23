@@ -40,7 +40,7 @@
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Senha</label>
-                    <?php echo $this->Form->input('password', array("id" => "password", "placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('password', array("type" => "text", "id" => "password", "placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
 

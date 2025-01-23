@@ -35,10 +35,13 @@
                         <?php if ($tipo == 1) { ?>
                             <th class="ps-4 w-500px min-w-500px rounded-start">Fornecedor</th>
                         <?php } else { ?>
-                            <th class="ps-4 w-500px min-w-500px rounded-start">Cliente</th>
+                            <th class="ps-4 w-150px min-w-150px rounded-start">ID Cliente</th>
+                            <th>Razão Social</th>
+                            <th>CNPJ</th>
                         <?php } ?>
                         <th>URL</th>
                         <th>Login</th>
+                        <th>Senha</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -49,10 +52,13 @@
                                 <?php if ($tipo == 1) { ?>
                                     <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
                                 <?php } else { ?>
-                                    <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
+                                    <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["id"]; ?></td>
+                                    <td><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
+                                    <td><?php echo $data[$i]["Customer"]["documento"]; ?></td>
                                 <?php } ?>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["login"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["password"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/customer_supplier_logins/edit/'.$tipo.'/'.$id.'/'.$data[$i]["CustomerSupplierLogin"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
