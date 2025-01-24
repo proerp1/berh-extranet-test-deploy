@@ -67,6 +67,46 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
+                    <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                        <i class="fas fa-filter"></i>
+                        Filtro
+                    </button>
+                    <a href="<?php echo $this->base.'/orders/saldos/'.$id.'?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" style="float:right" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        Exportar
+                    </a>
+                    
+                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
+                        <i class="fas fa-arrow-up"></i>
+                        Importar (CSV)
+                    </a>
+
+                    
+                    <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
+                        <div class="px-7 py-5">
+                            <div class="fs-4 text-dark fw-bolder">Opções</div>
+                        </div>
+                        <div class="separator border-gray-200"></div>
+                        
+                        <div class="px-7 py-5">
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                    <option></option>
+                                    <option value="1" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 1 ? "selected" : "") : "") ?> >Credita conta</option>
+                                    <option value="2" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 2 ? "selected" : "") : "") ?> >Credita e Debita</option>
+                                    <option value="3" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 3 ? "selected" : "") : "") ?> >Somente Credita</option>
+                                    <option value="4" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 4 ? "selected" : "") : "") ?> >Saldo</option>
+                                    <option value="5" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 5 ? "selected" : "") : "") ?> >Bolsa de Crédito</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
+                                <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -74,23 +114,6 @@
 
     <div class="card-body pt-0 py-3">
         <?php echo $this->element("pagination"); ?>
-        <br>
-
-        <div class="row">
-            <div class="col-12">
-                <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
-                    <i class="fas fa-arrow-up"></i>
-                    Importar (CSV)
-                </a>
-
-                <a href="<?php echo $this->base.'/orders/saldos/'.$id.'?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" style="float:right" class="btn btn-light-primary me-3">
-                    <i class="fas fa-file-excel"></i>
-                    Exportar
-                </a>
-            </div>
-        </div>
-        <br>
-        <br>
 
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
@@ -126,6 +149,10 @@
                                 $tipo = 'Credita e Debita';
                             } elseif ($data[$i]["OrderBalance"]["tipo"] == '3') {
                                 $tipo = 'Somente Credita';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '4') {
+                                $tipo = 'Saldo';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '5') {
+                                $tipo = 'Bolsa de Crédito';
                             }
                         ?>
                         <tr class="<?php echo $tr_class; ?>">
@@ -181,3 +208,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    $( document ).ready(function() {
+        $('[data-kt-customer-table-filter="reset"]').on('click', function () {
+            $("#t").val(null).trigger('change');
+            $("#q").val(null);
+
+            $("#busca").submit();
+        });
+
+        $('#q').on('change', function () {
+            $("#busca").submit();
+        });
+    });
+</script>

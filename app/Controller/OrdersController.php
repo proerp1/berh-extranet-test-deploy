@@ -1969,6 +1969,10 @@ class OrdersController extends AppController
             $condition['or'] = array_merge($condition['or'], ['OrderBalance.document LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
+        if (isset($_GET['t']) and $_GET['t'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['OrderBalance.tipo' => $_GET['t']]);
+        }
+
         if (isset($_GET['exportar'])) {
             $nome = 'movimentacoes_'.date('d_m_Y_H_i_s').'.xlsx';
 
