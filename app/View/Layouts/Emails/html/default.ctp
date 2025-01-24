@@ -1,35 +1,86 @@
-<style>html,body { padding: 0; margin:0; }</style>
-<div style="font-family:Arial,Helvetica,sans-serif; line-height: 1.5; font-weight: normal; font-size: 15px; color: #2F3044; min-height: 100%; margin:0; padding:0; width:100%; background-color:#494c50">
-    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin:0 auto; padding:0; max-width:100%">
-        <tbody>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background-color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #2F3044;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 800px;
+        }
+        .header, .footer {
+            background-color: #472F92;
+            padding: 15px;
+            text-align: center;
+            color: #ffffff;
+            border-radius: 6px 6px 0 0;
+        }
+        .footer {
+            border-radius: 0 0 6px 6px;
+            font-size: 13px;
+        }
+        .header img {
+            width: 120px;
+        }
+        .content {
+            background-color: #f7f7f7;
+            border-radius: 6px;
+            padding: 30px;
+            margin: 10px 20px;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color:#ffffff; padding: 20px 0;">
+        <table>
             <tr>
-                <td align="center" valign="center" style="text-align:center;">
-                    <div style="margin: 0 20px; background-color: #472F92;border-top-left-radius: 6px;border-top-right-radius: 6px; padding: 10px 0 10px 0;">
-                        <a href="https://berh.com.br/" rel="noopener" target="_blank">
-                            <img alt="Logo" src="https://sig.berh.com.br/img/BE_Logo_Horizontal_Branco.png" width="100" />
-                        </a>
+                <td class="header">
+                    <a href="https://berh.com.br/" target="_blank" rel="noopener">
+                        <img src="https://sig.berh.com.br/img/BE_Logo_Horizontal_Branco.png" alt="BeRH Logo">
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="content">
+                        <?php echo $this->fetch('content'); ?>
+                        <p style="margin-top: 20px;">Atenciosamente,<br><strong>BeRH</strong></p>
                     </div>
                 </td>
             </tr>
+
             <tr>
-                <td align="left" valign="center">
-                    <div style="text-align:left; margin: 0 20px; padding: 40px; background-color:#eee; border-radius: 6px">
-                        <?php echo $this->fetch('content');?>
-                        
-                        <!--end:Email content-->
-                        <div style="padding-bottom: 10px">Atenciosamente,
-                            <br>BeRH
-                            <tr>
-                                <td align="center" valign="center" style="font-size: 13px; text-align:center;padding: 20px; color: #fff;">
-                                    <p>Atendimento (11) 5043-0544 | <a href="mailto:atendimento@berh.com.br" style="border:none; color:#fff;">atendimento@berh.com.br </a></p>
-                                    <p>Copyright © <a href="https://berh.com.br/" rel="noopener" target="_blank" style="border:none; color:#fff;">BeRH</a>.</p>
-                                </td>
-                            </tr>
-                            </br>
-                        </div>
-                    </div>
+                <td class="footer">
+                    <p>Atendimento (11) 5043-0544 | 
+                        <a href="mailto:atendimento@berh.com.br">atendimento@berh.com.br</a>
+                    </p>
+                    <p>Copyright © <a href="https://berh.com.br/" target="_blank" rel="noopener">BeRH</a>.</p>
                 </td>
             </tr>
-        </tbody>
-    </table>
-</div>
+        </table>
+    </div>
+</body>
+</html>
