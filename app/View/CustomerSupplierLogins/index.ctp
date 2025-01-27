@@ -56,7 +56,11 @@
                                     <td><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                                     <td><?php echo $data[$i]["Customer"]["documento"]; ?></td>
                                 <?php } ?>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <a href="<?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?>" target="_blank" rel="noopener noreferrer">
+                                        <?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?>
+                                    </a>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["login"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerSupplierLogin"]["password"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
