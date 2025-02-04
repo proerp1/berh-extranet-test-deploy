@@ -395,7 +395,11 @@ class Order extends AppModel
             ],
         ]);
 
-        $items[0]['total'] = $items[0]['total'] + $tpp_fee;
+        $items[0]['total'] = $items[0]['subtotal'] 
+                            + $tpp_fee 
+                            + $items[0]['commission_fee'] 
+                            + $items[0]['transfer_fee'];
+
         if(!empty($order['Order']['desconto_not_formated']) && $order['Order']['desconto_not_formated'] > 0){
             $items[0]['total'] = $items[0]['total'] - $order['Order']['desconto_not_formated'];
         }
