@@ -42,7 +42,6 @@ class CustomersController extends AppController
         parent::beforeFilter();
     }
 
-
     /*******************
                 CLIENTES
      ********************/
@@ -1947,6 +1946,19 @@ class CustomersController extends AppController
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
+                'count(1) as qtde_pedidos',
+                "(SELECT COUNT(1) 
+                    FROM (
+                        SELECT COUNT(1), o.customer_id 
+                            FROM orders o 
+                                INNER JOIN order_items i ON i.order_id = o.id 
+                                INNER JOIN customer_users c ON c.id = i.customer_user_id 
+                            WHERE i.data_cancel = '1901-01-01 00:00:00' 
+                                    AND o.data_cancel = '1901-01-01 00:00:00' 
+                            GROUP BY c.cpf, o.customer_id 
+                    ) rw 
+                    WHERE rw.customer_id = Customer.id 
+                ) as qtde_order_customers",
                 'sum(Order.subtotal) as subtotal',
                 'sum(Order.transfer_fee) as transfer_fee',
                 'sum(Order.commission_fee) as commission_fee',
