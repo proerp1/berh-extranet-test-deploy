@@ -2,7 +2,7 @@
 class CustomerSupplierLoginsController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission','Email'];
-	public $uses = ['Customer', 'Supplier', 'CustomerSupplierLogin', 'Log'];
+	public $uses = ['Customer', 'Supplier', 'CustomerSupplierLogin', 'Log','Status'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -37,9 +37,10 @@ class CustomerSupplierLoginsController extends AppController {
 		}
 
 		$action = 'Logins e Senhas';
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
 		$data = $this->Paginator->paginate('CustomerSupplierLogin', $condition);
-		$this->set(compact('data', 'action', 'id', 'breadcrumb', 'tipo'));
+		$this->set(compact('statuses','data', 'action', 'id', 'breadcrumb', 'tipo'));
 	}
 
 	public function add($tipo, $id) {
@@ -79,9 +80,10 @@ class CustomerSupplierLoginsController extends AppController {
 
         	$breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Logins' => '', 'Novo Login' => ''];
 		}
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
 		$this->set("form_action", "../customer_supplier_logins/add/".$tipo."/".$id);
-		$this->set(compact('action', 'id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
+		$this->set(compact('statuses','action', 'id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
 	}
 
 	public function edit($tipo, $id, $cust_supp_id = null) {
@@ -146,9 +148,10 @@ class CustomerSupplierLoginsController extends AppController {
 
         	$breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Logins' => '', 'Novo Login' => ''];
 		}
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
 		$this->set("form_action", "../customer_supplier_logins/edit/".$tipo."/".$id);
-		$this->set(compact('action', 'id', 'cust_supp_id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
+		$this->set(compact('statuses','action', 'id', 'cust_supp_id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
 		
 		$this->render("add");
 	}

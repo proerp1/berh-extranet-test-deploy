@@ -4,45 +4,56 @@
     <?php echo $this->element("abas_suppliers", ['id' => $id]); ?>
 <?php } ?>
 
-<div class="card mb-5 mb-xl-8">
-    <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('CustomerSupplierLogin', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
-            <?php if (isset($id)) { ?>
-                <textarea name="log_old_value" style="display:none"><?php echo json_encode(['CustomerSupplierLogin' => $this->request->data['CustomerSupplierLogin']]); ?></textarea>
-            <?php } ?>
+            <div class="card mb-5 mb-xl-8">
+                <div class="card-body pt-7 py-3">
+                    <?php echo $this->Form->create('CustomerSupplierLogin', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+                        <?php if (isset($id)) { ?>
+                            <textarea name="log_old_value" style="display:none"><?php echo json_encode(['CustomerSupplierLogin' => $this->request->data['CustomerSupplierLogin']]); ?></textarea>
+                        <?php } ?>
 
-            <div class="row">
+                        <div class="row">
+                <div class="mb-7 col-md-4">
+                    <label class="fw-semibold fs-6 mb-2 required">Status</label>
+                    <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
+                </div>
+
                 <?php if ($tipo == 1) { ?>
                     <input type="hidden" name="data[CustomerSupplierLogin][customer_id]" value="<?php echo $id ?>">
 
-                    <div class="mb-7 col">
+                    <div class="mb-7 col-md-4">
                         <label class="fw-semibold fs-6 mb-2">Fornecedor</label>
-                        <?php echo $this->Form->input('supplier_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
+                        <?php echo $this->Form->input('supplier_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
                     </div>
                 <?php } else { ?>
                     <input type="hidden" name="data[CustomerSupplierLogin][supplier_id]" value="<?php echo $id ?>">
 
-                    <div class="mb-7 col">
+                    <div class="mb-7 col-md-4">
                         <label class="fw-semibold fs-6 mb-2">Cliente</label>
-                        <?php echo $this->Form->input('customer_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
+                        <?php echo $this->Form->input('customer_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
                     </div>
                 <?php } ?>
 
-                <div class="mb-7 col">
+                <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2">URL</label>
-                    <?php echo $this->Form->input('url', array("id" => "url", "placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('url', array("id" => "url", "placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0")); ?>
                 </div>
 
-                <div class="mb-7 col">
+                <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2">Login</label>
-                    <?php echo $this->Form->input('login', array("id" => "login", "placeholder" => "Login", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('login', array("id" => "login", "placeholder" => "Login", "class" => "form-control mb-3 mb-lg-0")); ?>
                 </div>
 
-                <div class="mb-7 col">
+                <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2">Senha</label>
-                    <?php echo $this->Form->input('password', array("type" => "text", "id" => "password", "placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('password', array("type" => "text", "id" => "password", "placeholder" => "Senha", "class" => "form-control mb-3 mb-lg-0")); ?>
+                </div>
+
+                <div class="mb-7 col-md-4">
+                    <label class="fw-semibold fs-6 mb-2">Observação</label>
+                    <?php echo $this->Form->input('observation', array("type" => "text", "id" => "observation", "placeholder" => "Observação", "class" => "form-control mb-3 mb-lg-0")); ?>
                 </div>
             </div>
+
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">

@@ -15,6 +15,11 @@ class CustomerSupplierLogin extends AppModel {
             'className' => 'User',
             'foreignKey' => 'user_updated_id',
         ],
+        'Status' => [
+            'className' => 'Status',
+            'foreignKey' => 'status_id',
+            'conditions' => ['Status.categoria' => 1],
+        ]
     );
 
     public function beforeFind($queryData) {
