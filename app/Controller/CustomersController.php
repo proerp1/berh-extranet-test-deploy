@@ -1973,7 +1973,10 @@ class CustomersController extends AppController
                             AND b.tipo = 1 
                             AND b.data_cancel = '1901-01-01 00:00:00' 
                             AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as total_balances"
+                ) as total_balances",
+                '"0" as vl_vlb',
+                '"0" as vl_vlc',
+                '"0" as vl_tpp',
             ],
             'conditions' => $condition,
             'recursive' => -1
