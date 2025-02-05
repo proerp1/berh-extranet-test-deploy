@@ -1976,7 +1976,7 @@ class CustomersController extends AppController
                 ) as total_balances",
                 '"0" as vl_vlb',
                 '"0" as vl_vlc',
-                '"0" as vl_tpp',
+                'sum(Order.tpp_fee) as vl_tpp',
             ],
             'conditions' => $condition,
             'recursive' => -1
