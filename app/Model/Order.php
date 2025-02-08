@@ -37,7 +37,7 @@ class Order extends AppModel
         'Income' => [
             'className' => 'Income',
             'foreignKey' => 'order_id',
-             'conditions' => ['Income.data_cancel' => '1901-01-01 00:00:00']
+            'conditions' => ['Income.data_cancel' => '1901-01-01 00:00:00']
         ]
     ];
 
@@ -226,7 +226,7 @@ class Order extends AppModel
         if (!empty($this->data[$this->alias]['due_date'])) {
             $this->data[$this->alias]['due_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['due_date']);
         }
-        
+
         if (!empty($this->data[$this->alias]['validation_date'])) {
             $this->data[$this->alias]['validation_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['validation_date']);
         }
@@ -284,15 +284,15 @@ class Order extends AppModel
                 }
 
                 if ($data['status_id'] == 83) {
-                    $mensagem = 'Seu pedido foi gerado com sucesso em: '.date('d/m/Y \à\s H:i\h\s', strtotime($old['Order']['created_nao_formatado']));
+                    $mensagem = 'Seu pedido foi gerado com sucesso em: ' . date('d/m/Y \à\s H:i\h\s', strtotime($old['Order']['created_nao_formatado']));
                 } else if ($data['status_id'] == 84) {
-                    $mensagem = 'Seu boleto foi gerado e aguarda pagamento para avançar na liberação junto as operadoras. <br> '.date('d/m/Y \à\s H:i\h\s');
+                    $mensagem = 'Seu boleto foi gerado e aguarda pagamento para avançar na liberação junto as operadoras. <br> ' . date('d/m/Y \à\s H:i\h\s');
                 } else if ($data['status_id'] == 85) {
-                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido foi confirmado pagamento. A partir de agora iniciaremos o processamento do seu pedido junto as Operadoras.';
+                    $mensagem = 'Em ' . date('d/m/Y \à\s H:i\h\s') . ' seu pedido foi confirmado pagamento. A partir de agora iniciaremos o processamento do seu pedido junto as Operadoras.';
                 } else if ($data['status_id'] == 86) {
                     $mensagem = 'Aguarde próxima atualização de Status.';
                 } else if ($data['status_id'] == 87) {
-                    $mensagem = 'Em '.date('d/m/Y \à\s H:i\h\s').' seu pedido teve o processo concluído nas Operadoras e os Créditos foram disponibilizados conforme programação.';
+                    $mensagem = 'Em ' . date('d/m/Y \à\s H:i\h\s') . ' seu pedido teve o processo concluído nas Operadoras e os Créditos foram disponibilizados conforme programação.';
                 }
 
                 $dados = [
@@ -303,7 +303,7 @@ class Order extends AppModel
                     ],
                     'template' => 'email_transacional',
                     'layout' => 'default',
-                    'subject' => 'Atualização de pedido '.$old['Order']['id'],
+                    'subject' => 'Atualização de pedido ' . $old['Order']['id'],
                     'config' => 'default',
                 ];
 
@@ -315,7 +315,7 @@ class Order extends AppModel
     public function sendMail($dados)
     {
         $key = Configure::read('sendgridKey');
-        $email = new \SendGrid\Mail\Mail(); 
+        $email = new \SendGrid\Mail\Mail();
         $email->setFrom("noreply@berh.com.br", "BeRH");
         $email->setReplyTo("operacao@berh.com.br", "BeRH");
         $email->setSubject($dados['subject']);
@@ -329,23 +329,21 @@ class Order extends AppModel
 
         $email->addContent("text/html", $html);
         $sendgrid = new \SendGrid($key);
-        try
-        {
+        try {
             $response = $sendgrid->send($email);
 
             if ($response->statusCode() != '202') {
-                return false;    
+                return false;
             }
-            
+
             return true;
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             return false;
         }
     }
 
-    private function generateHTML($dados){
+    private function generateHTML($dados)
+    {
         $ce = new CakeEmail();
         $ce->viewVars($dados['viewVars']);
         if (isset($dados['layout'])) {
@@ -382,7 +380,7 @@ class Order extends AppModel
         if (!empty($proposal)) {
             $tpp_fee = $proposal['Proposal']['tpp_not_formatted'];
         }
-        
+
         $items = $this->OrderItem->find('first', [
             'conditions' => [
                 'Order.id' => $this->id
@@ -395,12 +393,12 @@ class Order extends AppModel
             ],
         ]);
 
-        $items[0]['total'] = $items[0]['subtotal'] 
-                            + $tpp_fee 
-                            + $items[0]['commission_fee'] 
-                            + $items[0]['transfer_fee'];
+        $items[0]['total'] = $items[0]['subtotal']
+            + $tpp_fee
+            + $items[0]['commission_fee']
+            + $items[0]['transfer_fee'];
 
-        if(!empty($order['Order']['desconto_not_formated']) && $order['Order']['desconto_not_formated'] > 0){
+        if (!empty($order['Order']['desconto_not_formated']) && $order['Order']['desconto_not_formated'] > 0) {
             $items[0]['total'] = $items[0]['total'] - $order['Order']['desconto_not_formated'];
         }
 
@@ -417,6 +415,76 @@ class Order extends AppModel
             'subtotal' => $subtotal,
             'total' => $total
         ]]);
+    }
+
+    public function reprocessFirstOrder($orderId)
+    {
+        $OrderItem = ClassRegistry::init('OrderItem');
+        $CustomerUserItinerary = ClassRegistry::init('CustomerUserItinerary');
+
+
+        $orderItems = $OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $orderId],
+            'fields' => ['OrderItem.id', 'OrderItem.customer_user_id', 'OrderItem.customer_user_itinerary_id'],
+            'recursive' => -1
+        ]);
+
+        if (empty($orderItems)) {
+            die('1');
+            return false;
+        }
+
+        foreach ($orderItems as $orderItem) {
+            $customerUserId = $orderItem['OrderItem']['customer_user_id'];
+            $itineraryId = $orderItem['OrderItem']['customer_user_itinerary_id'];
+
+            $itinerary = $CustomerUserItinerary->find('first', [
+                'conditions' => ['CustomerUserItinerary.id' => $itineraryId],
+                'fields' => ['CustomerUserItinerary.benefit_id'],
+                'recursive' => -1
+            ]);
+
+            if (empty($itinerary)) {
+                die('2');
+                continue;
+            }
+
+            $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
+
+            // Pedido deve ser diferente do atual e status todos menos inicio e cancelado
+            $firstOrder = $OrderItem->find('first', [
+                'joins' => [
+                    [
+                        'table' => 'customer_user_itineraries',
+                        'alias' => 'Itinerary',
+                        'type' => 'INNER',
+                        'conditions' => ['Itinerary.id = OrderItem.customer_user_itinerary_id']
+                    ]
+                ],
+                'conditions' => [
+                    'OrderItem.customer_user_id' => $customerUserId,
+                    'Itinerary.benefit_id' => $benefitId,
+                    'OrderItem.order_id <>' => $orderId,
+                    'Order.status_id NOT IN(83,18)'
+                ],
+                'fields' => ['MIN(OrderItem.id) AS first_order_item_id'],
+                'recursive' => -1
+            ]);
+
+            $firstOrder = $firstOrder[0]['first_order_item_id'];
+
+            if(empty($firstOrder)) {
+                $this->OrderItem->bindModel(
+                    ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
+                );
+                $OrderItem->updateAll(
+                    ['OrderItem.first_order' => 1],
+                    ['OrderItem.id' => $orderItem['OrderItem']['id']]
+                );
+            }
+        }
+
+        return true;
     }
 
     public function priceFormatBeforeSave($price)
@@ -442,7 +510,7 @@ class Order extends AppModel
         if (strpos($dateString, ':') !== false) {
             return $date->format('Y-m-d H:i:s');
         }
-        
+
         return $date->format('Y-m-d');
     }
 }
