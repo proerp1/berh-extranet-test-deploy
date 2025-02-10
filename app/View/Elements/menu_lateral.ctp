@@ -480,7 +480,7 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Modalidade</span>
+                                <span class="menu-title">Modalidades</span>
                             </a>
                         </div>
 
