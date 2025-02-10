@@ -33,7 +33,7 @@ class ModalidadesController extends AppController
         
         $data = $this->Paginator->paginate('Modalidade', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-        debug($data);die;
+        
 
         $action = 'Modalidade';
         $breadcrumb = ['Cadastros' => '', 'Modalidade' => ''];
