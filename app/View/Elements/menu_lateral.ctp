@@ -471,7 +471,7 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Receitas</span>
+                                <span class="menu-title">Receita</span>
                             </a>
                         </div>
 
