@@ -17,8 +17,23 @@ if (isset($id)) {
             </div>
 
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Modalidade</label>
+                <?php echo $this->Form->input('Supplier.modalidade_id', ["class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione","options" => $modalidades]); ?>
+            </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Tecnologia</label>
+                <?php echo $this->Form->input('Supplier.tecnologia_id', ["class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione","options" => $tecnologias]); ?>
+            </div>
+
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
                 <?php echo $this->Form->input('tipo_pessoa', ["id" => "tipo_pessoa", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['2' => 'Jurídica', '1' => 'Física']]); ?>
+            </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Região</label>
+                <?php echo $this->Form->input('regioes', ["id" => "regioes", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Norte', '2' => 'Nordeste', '3' => 'Centro-Oeste', '4' => 'Sudeste', '5' => 'Sul']]); ?>
             </div>
         </div>
 

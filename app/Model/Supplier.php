@@ -9,6 +9,16 @@ class Supplier extends AppModel
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 1]
         ],
+        'Modalidade' => [
+            'className' => 'Modalidade',
+            'foreignKey' => 'modalidade_id'
+        ],  
+        
+        'Tecnologia' => [
+            'className' => 'Tecnologia',
+            'foreignKey' => 'tecnologia_id'
+        ],
+        
         'BankAccountType' => [
             'className' => 'BankAccountType',
             'foreignKey' => 'account_type_id'
