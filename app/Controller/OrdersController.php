@@ -356,6 +356,7 @@ class OrdersController extends AppController
 
                 $this->Order->id = $orderId;
                 $this->Order->reProcessAmounts($orderId);
+                $this->Order->reprocessFirstOrder($orderId);
 
                 $this->Flash->set(__('Pedido gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
             } else {
@@ -432,6 +433,7 @@ class OrdersController extends AppController
 
         $this->OrderItem->saveMany($newItem);
         $this->Order->reProcessAmounts($newId);
+        $this->Order->reprocessFirstOrder($newId);
 
         $this->Flash->set(__('Pedido clonado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'edit/' . $newId]);
@@ -647,6 +649,7 @@ class OrdersController extends AppController
 
             if ($this->Order->save($order)) {
                 $this->Order->reProcessAmounts($id);
+                $this->Order->reprocessFirstOrder($id);
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'edit/' . $id]);
             } else {
@@ -1054,6 +1057,7 @@ class OrdersController extends AppController
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
+        $this->Order->reprocessFirstOrder($orderId);
 
         $this->Flash->set(__('Beneficiário incluído com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'edit/' . $orderId]);
@@ -1106,6 +1110,7 @@ class OrdersController extends AppController
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
+        $this->Order->reprocessFirstOrder($orderId);
 
         $this->Flash->set(__('Beneficiário(s) incluído(s) com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect(['action' => 'edit/' . $orderId]);
@@ -1402,6 +1407,7 @@ class OrdersController extends AppController
 
         $this->Order->id = $orderItem['OrderItem']['order_id'];
         $this->Order->reProcessAmounts($orderItem['OrderItem']['order_id']);
+        $this->Order->reprocessFirstOrder($orderItem['OrderItem']['order_id']);
 
         $order = $this->Order->findById($orderItem['OrderItem']['order_id']);
 
@@ -1449,6 +1455,7 @@ class OrdersController extends AppController
 
         $this->Order->id = $orderId;
         $this->Order->reProcessAmounts($orderId);
+        $this->Order->reprocessFirstOrder($orderId);
 
         if ($is_multiple) {
             echo json_encode(['success' => true]);
@@ -1490,6 +1497,7 @@ class OrdersController extends AppController
 
             $this->Order->id = $orderId;
             $this->Order->reProcessAmounts($orderId);
+            $this->Order->reprocessFirstOrder($orderId);
 
             $this->Flash->set(__('Itinerário adicionado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect('/orders/edit/' . $orderId);
@@ -1637,6 +1645,7 @@ class OrdersController extends AppController
 
                 $this->Order->id = $orderId;
                 $this->Order->reProcessAmounts($orderId);
+                $this->Order->reprocessFirstOrder($orderId);
 
                 if ($k == 0) {
                     $this->Flash->set(__('Pedido gerado com sucesso.'), ['params' => ['class' => "alert alert-success"]]);

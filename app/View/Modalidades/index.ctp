@@ -1,6 +1,6 @@
-<?php $url_novo = $this->base."/suppliers/add/"; ?>
+<?php $url_novo = $this->base."/modalidades/add/"; ?>
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "suppliers", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array( "controller" => "modalidades", "action" => "index")); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
@@ -19,18 +19,12 @@
                         Filtro
                     </button>
 
-                    <a href="<?php echo $this->base.'/suppliers/index/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
-                        <i class="fas fa-file-excel"></i>
-                        Exportar
-                    </a>
-
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                     
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
                         </div>
-                        
                         <div class="separator border-gray-200"></div>
                         
                         <div class="px-7 py-5">
@@ -51,27 +45,6 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Região:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="r" id="r">
-                                    <option></option>
-                                    <?php
-                                    $regioes = [
-                                        '1' => 'Norte',
-                                        '2' => 'Nordeste',
-                                        '3' => 'Centro-Oeste',
-                                        '4' => 'Sudeste',
-                                        '5' => 'Sul'
-                                    ];
-
-                                    foreach ($regioes as $key => $value) {
-                                        $selected = (isset($_GET["r"]) && $_GET["r"] == $key) ? "selected" : "";
-                                        echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -91,12 +64,8 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>CNPJ</th>
-                        <th>Tecnologia</th>
-                        <th>Telefone</th>
-                        <th>Região</th>
+                        <th>Name</th>
+                        <th>Descrição</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -109,26 +78,13 @@
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Tecnologia"]["name"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["tel_comercial"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php $regioes = ['1' => 'Norte','2' => 'Nordeste','3' => 'Centro-Oeste','4' => 'Sudeste','5' => 'Sul']; $regiao = $data[$i]["Supplier"]["regioes"];
-                                if ($regiao && isset($regioes[$regiao])) {
-                                    echo $regioes[$regiao];
-                                } else {
-                                    echo ''; 
-                                }
-                                ?>
-                            </td>
-
-
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Modalidade"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Modalidade"]["description"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
-                                    <a href="<?php echo $this->base.'/suppliers/edit/'.$data[$i]["Supplier"]["id"]; ?>" class="btn btn-info btn-sm">
+                                    <a href="<?php echo $this->base.'/modalidades/edit/'.$data[$i]["Modalidade"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/suppliers/delete/'.$data[$i]["Supplier"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/modalidades/delete/'.$data[$i]["Modalidade"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
                                 </td>
@@ -136,7 +92,7 @@
                         <?php } ?>
                     <?php } else { ?>
                         <tr>
-                            <td class="fw-bold fs-7 ps-4" colspan="5">Nenhum registro encontrado</td>
+                            <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
                         </tr>
                     <?php } ?>
                 </tbody>

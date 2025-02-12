@@ -471,7 +471,25 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Receitas</span>
+                                <span class="menu-title">Receita</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'modalidades') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'modalidades', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Modalidades</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'tecnologias') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'tecnologias', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Tecnologias</span>
                             </a>
                         </div>
 

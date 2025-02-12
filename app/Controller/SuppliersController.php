@@ -4,7 +4,7 @@ class SuppliersController extends AppController
 {    
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -23,23 +23,29 @@ class SuppliersController extends AppController
         $condition = ["and" => [], "or" => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Supplier.id LIKE' => "%".$_GET['q']."%", 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%"]);
+            $condition['or'] = array_merge($condition['or'], ['Supplier.id LIKE' => "%".$_GET['q']."%", 'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Supplier.razao_social LIKE' => "%".$_GET['q']."%", 'Supplier.documento LIKE' => "%".$_GET['q']."%", 'Tecnologia.name LIKE' => "%".$_GET['q']."%"]);
         }
     
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+
+         // Filtro de região
+        if (isset($_GET['r']) and $_GET['r'] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.regioes' => $_GET['r']]);
+        }
+        
     
         if (isset($_GET['exportar'])) {
             $nome = 'Fornecedores_' . date('d_m_Y_H_i_s') . '.xlsx';
     
             $data_sup = $this->Supplier->find('all', [
-                'contain' => ['Status', 'BankAccountType'], 
+                'contain' => ['Status', 'BankAccountType', 'Tecnologia'], // Incluir a tabela Tecnologia
                 'conditions' => $condition,
             ]);
     
             $data_log = $this->CustomerSupplierLogin->find('all');
-
+    
             $this->ExcelGenerator->gerarExcelFornecedores($nome, $data_sup, $data_log);
     
             // Redirecionar para o download
@@ -59,10 +65,21 @@ class SuppliersController extends AppController
     public function add()
     {
         $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
+        
         if ($this->request->is(['post', 'put'])) {
             $this->Supplier->create();
+            
             if ($this->Supplier->validates()) {
                 $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
+                
+                if (!empty($this->request->data['Supplier']['modalidade_id'])) {
+                    $this->request->data['Supplier']['modalidade_id'] = $this->request->data['Supplier']['modalidade_id'];
+                }
+    
+                if (!empty($this->request->data['Supplier']['tecnologia_id'])) {
+                    $this->request->data['Supplier']['tecnologia_id'] = $this->request->data['Supplier']['tecnologia_id'];
+                }
+                
                 if ($this->Supplier->save($this->request->data)) {
                     $this->Flash->set(__('O fornecedor foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Supplier->id]);
@@ -73,15 +90,21 @@ class SuppliersController extends AppController
                 $this->Flash->set(__('O fornecedor não pode ser salvo, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
-
+    
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $banks = $this->BankCode->find('list');
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
+        $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
+        $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
+    
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Novo fornecedor' => ''];
-        $this->set(compact('statuses', 'action', 'breadcrumb', 'banks', 'bank_account_type'));
+        
+        $this->set(compact('statuses', 'action', 'breadcrumb', 'banks', 'bank_account_type', 'modalidades', 'tecnologias'));
         $this->set("form_action", "add");
     }
+    
+    
 
     public function edit($id = null)
     {
@@ -103,11 +126,13 @@ class SuppliersController extends AppController
         
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $banks = $this->BankCode->find('list');
+        $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
+        $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Alterar fornecedor' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'action', 'breadcrumb','banks','bank_account_type'));
+        $this->set(compact('statuses', 'id', 'action', 'breadcrumb','banks','bank_account_type', 'modalidades', 'tecnologias'));
         
         $this->render("add");
     }

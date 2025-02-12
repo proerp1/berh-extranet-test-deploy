@@ -24,10 +24,11 @@ jobs:
           known_hosts: unnecessary
 
       - name: Adding Known Hosts
-        run: ssh-keyscan ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
+        run: ssh-keyscan -p 4501 ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
-        run: rsync -avuz -P --exclude=".*" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
+        run: rsync -avuz -P --exclude=".*" -e "ssh -p 4501" . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
+
 
       - name: Install composer and run migration
         uses: appleboy/ssh-action@master
@@ -35,6 +36,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 4501
           script: |
             cd /var/www/vhosts/berh.com.br/httpdocs/admin/
             export PATH=/var/www/vhosts/berh.com.br/.phpenv/shims:$PATH
