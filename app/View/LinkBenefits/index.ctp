@@ -32,7 +32,8 @@
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 rounded-start">Data</th>
                     <th>Arquivo</th>
-                    <th class="rounded-end">Usuário</th>
+                    <th>Usuário</th>
+                    <th class="rounded-end">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,6 +47,11 @@
                                 <a download href="<?php echo $this->base.'/files/link_benefit/file_name/'.$data[$i]["LinkBenefit"]["id"].'/'.$data[$i]["LinkBenefit"]["file_name"] ?>"><?php echo $data[$i]["LinkBenefit"]["file_name"] ?></a>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserCreated"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4">
+                                <a href="<?php echo $this->Html->url(['action' => 'logs', $data[$i]["LinkBenefit"]["id"]]); ?>" class="btn btn-info btn-sm">
+                                    Logs
+                                </a>
+                            </td>
                         </tr>
                     <?php } ?>
                 <?php } else { ?>
