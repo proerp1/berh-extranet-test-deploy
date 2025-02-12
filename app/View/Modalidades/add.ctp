@@ -19,7 +19,7 @@
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
-                    <a href="<?php echo $this->base.'/index' ?>" class="btn btn-light-dark">Voltar</a>
+                    <a href="<?php echo $this->base.'/modalidades/index' ?>" class="btn btn-light-dark">Voltar</a>
                     <button type="submit" class="btn btn-success js-salvar">Salvar</button>
                 </div>
             </div>
