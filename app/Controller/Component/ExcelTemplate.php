@@ -693,9 +693,27 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Chave PIX"); $col++;
         $sheet->setCellValue($col.'1', "Valor Boleto"); $col++;
         $sheet->setCellValue($col.'1', "Valor 1° Via"); $col++;
-        $sheet->setCellValue($col.'1', "Valor 2° Via");
+        $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
+        $sheet->setCellValue($col.'1', "Modalidade"); $col++;
+        $sheet->setCellValue($col.'1', "Tecnologia"); $col++; 
+        $sheet->setCellValue($col.'1', "Região"); 
+
+
 
         foreach ($dados_sup as $key => $dado) {
+
+            $regioes = [
+                '1' => 'Norte',
+                '2' => 'Nordeste',
+                '3' => 'Centro-Oeste',
+                '4' => 'Sudeste',
+                '5' => 'Sul'
+            ];
+            
+            $regiao = $dado['Supplier']['regioes'];
+            
+            $nomeRegiao = isset($regioes[$regiao]) ? $regioes[$regiao] : '';
+
             $col = 'A';
             $sheet->setCellValue('A' . ($key + 2), $dado['Status']['name']); $col++;
             $sheet->setCellValue('B' . ($key + 2), ($dado['Supplier']['tipo_pessoa'] == 1 ? 'Fisica' : 'Juridica')); $col++;
@@ -738,6 +756,10 @@ class ExcelTemplate
             $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['valor_boleto']);
             $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['valor_1_via']);
             $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
+            $sheet->setCellValue('AN' . ($key + 2), $dado['Tecnologia']['name']);
+            $sheet->setCellValue('AO' . ($key + 2), $dado['Modalidade']['name']);
+            $sheet->setCellValue('AP' . ($key + 2), $nomeRegiao);
+
         }
 
         $sheet2 = $objPHPExcel->createSheet();
@@ -800,6 +822,7 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Vencimento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Disponiblização "); $col++;
+        
 
         
         foreach ($dados as $key => $dado) {
@@ -1900,7 +1923,9 @@ class ExcelTemplate
         ->setCellValue('CB1', "Pedido GE")
         ->setCellValue('CC1', "Calculo repasse economia")
         ->setCellValue('CD1', "Calculo repasse pedido compra")
-        ->setCellValue('CE1', "Status Operadora");
+        ->setCellValue('CE1', "Status Operadora")
+        ->setCellValue('CF1', "Motivo Processamento");
+
 
 
 
@@ -2008,7 +2033,9 @@ class ExcelTemplate
                 ->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar'])
                 ->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
                 ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
-                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento']);
+                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
+
                 
 
         }

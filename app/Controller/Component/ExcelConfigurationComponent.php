@@ -19,6 +19,8 @@ class ExcelConfigurationComponent extends Component {
 					'Benefit.code',
 					'Supplier.id',
 					'Supplier.code',
+					'Modalidade.name',
+					'Tecnologia.name',
 					'MAX(CustomerUserAddress.zip_code) as cep',
 					'MAX(CustomerUserAddress.address_line) as endereco',
 					'MAX(CustomerUserAddress.address_number) as numero',
