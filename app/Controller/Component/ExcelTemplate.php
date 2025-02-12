@@ -741,8 +741,8 @@ class ExcelTemplate
             $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['valor_boleto']);
             $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['valor_1_via']);
             $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
-            $sheet->setCellValue('AM' . ($key + 2), $dado['Tecnologia']['name']);
-            $sheet->setCellValue('AM' . ($key + 2), $dado['Modalidade']['name']);
+            $sheet->setCellValue('AN' . ($key + 2), $dado['Tecnologia']['name']);
+            $sheet->setCellValue('AO' . ($key + 2), $dado['Modalidade']['name']);
 
         }
 
