@@ -23,6 +23,11 @@
                         Alterar Status Processamento
                     </a>
 
+                    <a href="<?php echo $this->here.'?excel&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
+                        <i class="fas fa-table"></i>
+                        Exportar
+                    </a>
+
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>

@@ -878,19 +878,20 @@ class ReportsController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 200,
             'order' => ['Order.id' => 'desc'],
-            'fields' => ['OrderItem.*',
-                        'Order.id',
-                        'Order.working_days',
-                        'Order.created',
-                        'Status.label',
-                        'Status.name',
-                        'Customer.codigo_associado',
-                        'Customer.nome_primario',
-                        'Supplier.nome_fantasia',
-                        'CustomerUser.name',
-                        'Benefit.name',
-                        'CustomerUserItinerary.quantity',
-                        ],
+            'fields' => [
+                'OrderItem.*',
+                'Order.id',
+                'Order.working_days',
+                'Order.created',
+                'Status.label',
+                'Status.name',
+                'Customer.codigo_associado',
+                'Customer.nome_primario',
+                'Supplier.nome_fantasia',
+                'CustomerUser.name',
+                'Benefit.name',
+                'CustomerUserItinerary.quantity',
+            ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -1009,6 +1010,65 @@ class ReportsController extends AppController
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
 
             ]);
+        }
+
+        if (isset($_GET['excel'])) {
+            $nome = 'relatorio_compras.xlsx';
+
+            $data = $this->OrderItem->find('all', [
+                'fields' => [
+                    'OrderItem.*',
+                    'Order.id',
+                    'Order.working_days',
+                    'Order.created',
+                    'Status.label',
+                    'Status.name',
+                    'Customer.codigo_associado',
+                    'Customer.nome_primario',
+                    'Supplier.nome_fantasia',
+                    'CustomerUser.name',
+                    'Benefit.name',
+                    'CustomerUserItinerary.quantity',
+                ],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                        ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
+                ],
+                'conditions' => $condition,
+            ]);
+
+            $this->ExcelGenerator->gerarRelatorioCompras($nome, $data);
+            $this->redirect('/files/excel/' . $nome);
         }
 
         $items = [];
