@@ -3,7 +3,11 @@ use League\Csv\Reader;
 class LinkBenefitsController extends AppController
 {
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['CustomerUser', 'CustomerUserItinerary', 'Benefit', 'LinkBenefit'];
+    public $uses = ['CustomerUser', 'CustomerUserItinerary', 'Benefit', 'LinkBenefit', 'LinkBenefitLog'];
+
+    public $paginate = [
+        'LinkBenefit' => ['limit' => 10, 'order' => ['LinkBenefit.id' => 'desc']],
+    ];
 
     public function beforeFilter()
     {
@@ -12,6 +16,7 @@ class LinkBenefitsController extends AppController
 
     public function index()
     {
+        $this->Paginator->settings = $this->paginate;
         $condition = ["and" => [], "or" => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
@@ -23,6 +28,19 @@ class LinkBenefitsController extends AppController
         $action = 'Associar Cartão';
 
         $this->set(compact('data', 'action'));
+    }
+
+    public function logs($id)
+    {
+        $this->Paginator->settings = $this->paginate;
+        $condition = ["and" => ['LinkBenefitLog.link_benefit_id' => $id], "or" => []];
+
+        $data = $this->Paginator->paginate('LinkBenefitLog', $condition);
+
+        $action = 'Associar Cartão';
+
+        $breadcrumb = ['Associar Cartão' => ['action' => 'index'], 'Logs' => ''];
+        $this->set(compact('data', 'action', 'breadcrumb'));
     }
 
     public function upload_csv()
@@ -61,12 +79,20 @@ class LinkBenefitsController extends AppController
 
         $numLines = substr_count($file, "\n");
 
-        if ($numLines < 2) {
+        if ($numLines < 1) {
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
+        $this->LinkBenefit->save([
+            'LinkBenefit' => [
+                'file_name' => $this->request->data['file'],
+                'user_creator_id' => CakeSession::read("Auth.User.id")
+            ]
+        ]);
+
         $line = 0;
         $update = [];
+        $log = [];
         foreach ($csv->getRecords() as $row) {
             if ($line == 0 || empty($row[0])) {
                 if($line == 0){
@@ -87,7 +113,11 @@ class LinkBenefitsController extends AppController
             ]);
 
             if (empty($user)) {
-                return ['success' => false, 'error' => 'Beneficiário não encontrado.'];
+                $log[] = [
+                    'link_benefit_id' => $this->LinkBenefit->id,
+                    'description' => 'Beneficiário '.$cpf.' não encontrado.'
+                ];
+                continue;
             }
 
             $benefit = $this->Benefit->find('first', [
@@ -98,7 +128,11 @@ class LinkBenefitsController extends AppController
             ]);
 
             if (empty($benefit)) {
-                return ['success' => false, 'error' => 'Benefício '.$code.' não existente.'];
+                $log[] = [
+                    'link_benefit_id' => $this->LinkBenefit->id,
+                    'description' => 'Benefício '.$code.' não existente.'
+                ];
+                continue;
             }
 
             $itineraries = $this->CustomerUserItinerary->find('first', [
@@ -111,7 +145,11 @@ class LinkBenefitsController extends AppController
             ]);
 
             if (empty($itineraries)) {
-                return ['success' => false, 'error' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']];
+                $log[] = [
+                    'link_benefit_id' => $this->LinkBenefit->id,
+                    'description' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']
+                ];
+                continue;
             }
 
             $update[] = [
@@ -122,14 +160,11 @@ class LinkBenefitsController extends AppController
             ];
         }
 
-        $this->CustomerUserItinerary->saveMany($update);
+        $this->LinkBenefitLog->saveMany($log);
 
-        $this->LinkBenefit->save([
-            'LinkBenefit' => [
-                'file_name' => $this->request->data['file'],
-                'user_creator_id' => CakeSession::read("Auth.User.id")
-            ]
-        ]);
+        if (!empty($update)) {
+            $this->CustomerUserItinerary->saveMany($update);
+        }
 
         return ['success' => true];
     }
