@@ -692,7 +692,10 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Chave PIX"); $col++;
         $sheet->setCellValue($col.'1', "Valor Boleto"); $col++;
         $sheet->setCellValue($col.'1', "Valor 1° Via"); $col++;
-        $sheet->setCellValue($col.'1', "Valor 2° Via");
+        $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
+        $sheet->setCellValue($col.'1', "Modalidade"); $col++;
+        $sheet->setCellValue($col.'1', "Tecnologia"); 
+
 
         foreach ($dados_sup as $key => $dado) {
             $col = 'A';
@@ -737,6 +740,9 @@ class ExcelTemplate
             $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['valor_boleto']);
             $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['valor_1_via']);
             $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
+            $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
+            $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
+
         }
 
         $sheet2 = $objPHPExcel->createSheet();
@@ -1842,7 +1848,7 @@ class ExcelTemplate
         ->setCellValue('CC1', "Calculo repasse economia")
         ->setCellValue('CD1', "Calculo repasse pedido compra")
         ->setCellValue('CE1', "Status Operadora")
-        ->setCellValue('CE1', "Motivo Processamento");
+        ->setCellValue('CF1', "Motivo Processamento");
 
 
 
