@@ -39,7 +39,11 @@ class BenefitsController extends AppController
         }
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['o']]);
+        }
+
+        if (isset($_GET["o"]) and $_GET["o"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['BenefitType.name' => $_GET['o']]);
         }
 
         if (isset($_GET['exportar'])) {
@@ -60,10 +64,14 @@ class BenefitsController extends AppController
 
         $data = $this->Paginator->paginate('Benefit', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+        $benefitTypes = $this->BenefitType->find('all', [
+            'fields' => ['BenefitType.name'],
+            'order' => ['BenefitType.name ASC']
+        ]);        
 
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => ''];
-        $this->set(compact('status', 'data', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'action', 'breadcrumb','benefitTypes'));
     }
     
     public function add()

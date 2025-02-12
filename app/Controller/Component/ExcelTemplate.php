@@ -799,6 +799,7 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Vencimento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Disponiblização "); $col++;
+        
 
         
         foreach ($dados as $key => $dado) {
@@ -1840,7 +1841,9 @@ class ExcelTemplate
         ->setCellValue('CB1', "Pedido GE")
         ->setCellValue('CC1', "Calculo repasse economia")
         ->setCellValue('CD1', "Calculo repasse pedido compra")
-        ->setCellValue('CE1', "Status Operadora");
+        ->setCellValue('CE1', "Status Operadora")
+        ->setCellValue('CE1', "Motivo Processamento");
+
 
 
 
@@ -1948,7 +1951,9 @@ class ExcelTemplate
                 ->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar'])
                 ->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
                 ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
-                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento']);
+                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
+
                 
 
         }

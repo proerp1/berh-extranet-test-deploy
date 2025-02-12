@@ -53,6 +53,21 @@
                                 ?>
                             </select>
                         </div>
+
+                        <div class="mb-10">
+                            <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
+                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="o" id="o">
+                                <option></option>
+                                <?php
+                                    foreach ($benefitTypes as $type) {
+                                        $selected = (isset($_GET["o"]) && $_GET["o"] == $type['BenefitType']['name']) ? "selected" : "";
+                                        echo '<option value="'.$type['BenefitType']['name'].'" '.$selected.'>'.$type['BenefitType']['name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
+
+                        
                         <div class="d-flex justify-content-end">
                             <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                             <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
