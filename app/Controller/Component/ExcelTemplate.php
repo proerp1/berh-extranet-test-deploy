@@ -1,7 +1,8 @@
 <?php
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 class ExcelTemplate
 {
-
     public function getCnabLotes($spreadsheet, $dados)
     {
 
@@ -1756,6 +1757,10 @@ class ExcelTemplate
     {
         
         $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        $activeWorksheet->getStyle('D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        $activeWorksheet->getStyle('P')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
         $activeWorksheet
         ->setCellValue('A1', "CNPJ CLIENTE")
