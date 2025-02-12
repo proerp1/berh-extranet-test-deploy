@@ -22,14 +22,15 @@ class TecnologiasController extends AppController
         $condition = ["and" => [], "or" => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Tecnologia.name LIKE' => "%".$_GET['q']."%", 'Tecnologia.description LIKE' => "%".$_GET['q']."%"], ['customer_id' => null]);
+            $condition['or'] = [
+                'Tecnologia.name LIKE' => "%" . $_GET['q'] . "%",
+                'Tecnologia.id LIKE' => "%" . $_GET['q'] . "%"
+            ];
         }
     
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => 0]);
+            $condition['and'][] = ['Status.id' => $_GET['t']];
         }
-
-        $condition['and'] = array_merge($condition['and'],  ['customer_id' => 0]);
         
         $data = $this->Paginator->paginate('Tecnologia', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);

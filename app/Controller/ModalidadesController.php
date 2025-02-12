@@ -22,19 +22,19 @@ class ModalidadesController extends AppController
         $condition = ["and" => [], "or" => []];
     
         if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], ['Modalidade.name LIKE' => "%".$_GET['q']."%", 'Modalidade.description LIKE' => "%".$_GET['q']."%"], ['customer_id' => null]);
+            $condition['or'] = [
+                'Modalidade.name LIKE' => "%" . $_GET['q'] . "%",
+                'Modalidade.id LIKE' => "%" . $_GET['q'] . "%"
+            ];
         }
     
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']], ['customer_id' => 0]);
+            $condition['and'][] = ['Status.id' => $_GET['t']];
         }
-
-        $condition['and'] = array_merge($condition['and'],  ['customer_id' => 0]);
         
         $data = $this->Paginator->paginate('Modalidade', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
-        
-
+    
         $action = 'Modalidade';
         $breadcrumb = ['Cadastros' => '', 'Modalidade' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
