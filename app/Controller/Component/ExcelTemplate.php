@@ -695,7 +695,9 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Valor 1° Via"); $col++;
         $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
         $sheet->setCellValue($col.'1', "Modalidade"); $col++;
-        $sheet->setCellValue($col.'1', "Tecnologia"); 
+        $sheet->setCellValue($col.'1', "Tecnologia"); $col++; 
+        $sheet->setCellValue($col.'1', "Região"); 
+
 
 
         foreach ($dados_sup as $key => $dado) {
