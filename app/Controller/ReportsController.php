@@ -1065,7 +1065,6 @@ class ReportsController extends AppController
                     ],
                 ],
                 'conditions' => $condition,
-                'limit' => 2
             ]);
 
             $this->ExcelGenerator->gerarRelatorioCompras($nome, $data);
