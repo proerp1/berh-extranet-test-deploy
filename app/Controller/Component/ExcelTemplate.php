@@ -1,4 +1,5 @@
 <?php
+
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ExcelTemplate
@@ -260,8 +261,8 @@ class ExcelTemplate
                 ->setCellValue('K' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
                 ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["valor_pago"])
                 ->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"])
-                ->setCellValue('N' . $indx, $dados[$i][""][""])
-                ->setCellValue('O' . $indx, $dados[$i][""][""])
+                ->setCellValue('N' . $indx, $dados[$i]["Outcome"]["observation"])
+                ->setCellValue('O' . $indx, $dados[$i]["Outcome"]["observation"])
                 ->setCellValue('P' . $indx, $dados[$i]["Supplier"]["branch_number"])
                 ->setCellValue('Q' . $indx, $dados[$i]["Supplier"]["branch_digit"])
                 ->setCellValue('R' . $indx, $dados[$i]["Supplier"]["acc_number"])
@@ -271,7 +272,7 @@ class ExcelTemplate
                 ->setCellValue('V' . $indx, $dados[$i]["Supplier"]["valor_boleto"])
                 ->setCellValue('W' . $indx, $dados[$i]["Supplier"]["valor_1_via"])
                 ->setCellValue('X' . $indx, $dados[$i]["Supplier"]["valor_2_via"])
-                ->setCellValue('Y' . $indx, $dados[$i][""][""]);
+                ->setCellValue('Y' . $indx, $dados[$i]["Supplier"]["observation"]);
 
         }
     }
@@ -1868,7 +1869,9 @@ class ExcelTemplate
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         $activeWorksheet->getStyle('D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
         $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
         $activeWorksheet->getStyle('P')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
         $activeWorksheet
@@ -1957,6 +1960,9 @@ class ExcelTemplate
         ->setCellValue('CE1', "Status Operadora")
         ->setCellValue('CF1', "Motivo Processamento");
 
+
+
+
         $indx = 1;
         $total = 0;
         for ($i = 0; $i < count($dados); $i++) {
@@ -1994,7 +2000,7 @@ class ExcelTemplate
                 ->setCellValue('M'. $indx, $dados[$i]['Supplier']['id'])
                 ->setCellValue('N'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
                 ->setCellValue('O'. $indx, $dados[$i]['Benefit']['code'])
-                ->setCellValueExplicit('P'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING)
+                ->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
                 ->setCellValue('Q'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
                 ->setCellValue('R'. $indx, $dados[$i]['OrderItem']['working_days'])
                 ->setCellValue('S'. $indx, 'Dia')
