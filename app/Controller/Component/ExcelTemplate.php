@@ -1839,6 +1839,7 @@ class ExcelTemplate
         $activeWorksheet->getStyle('D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         $activeWorksheet->getStyle('P')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+        
 
         $activeWorksheet
         ->setCellValue('A1', "CNPJ CLIENTE")
