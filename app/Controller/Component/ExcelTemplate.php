@@ -1,4 +1,5 @@
 <?php
+
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ExcelTemplate
@@ -1839,7 +1840,9 @@ class ExcelTemplate
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         $activeWorksheet->getStyle('D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
         $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
         $activeWorksheet->getStyle('P')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
         $activeWorksheet
