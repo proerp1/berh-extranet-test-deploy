@@ -230,6 +230,7 @@ class ExcelTemplate
             ->setCellValue('K1', "Data pagamento")
             ->setCellValue('L1', "Valor pago")
             ->setCellValue('M1', "Observação");
+            
 
         $indx = 1;
         for ($i = 0; $i < count($dados); $i++) {
@@ -1971,7 +1972,7 @@ class ExcelTemplate
                 ->setCellValue('M'. $indx, $dados[$i]['Supplier']['id'])
                 ->setCellValue('N'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
                 ->setCellValue('O'. $indx, $dados[$i]['Benefit']['code'])
-                ->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
+                ->setCellValueExplicit('P'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING) 
                 ->setCellValue('Q'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
                 ->setCellValue('R'. $indx, $dados[$i]['OrderItem']['working_days'])
                 ->setCellValue('S'. $indx, 'Dia')
