@@ -150,6 +150,7 @@
     $( document ).ready(function() {
         $('[data-kt-customer-table-filter="reset"]').on('click', function () {
             $("#t").val(null).trigger('change');
+            $("#r").val(null).trigger('change');
             $("#q").val(null);
 
             $("#busca").submit();
