@@ -461,6 +461,7 @@ class Order extends AppModel
                         'conditions' => ['Itinerary.id = OrderItem.customer_user_itinerary_id']
                     ]
                 ],
+                'contain' => ['Order'],
                 'conditions' => [
                     'OrderItem.customer_user_id' => $customerUserId,
                     'Itinerary.benefit_id' => $benefitId,
@@ -468,7 +469,6 @@ class Order extends AppModel
                     'Order.status_id NOT IN(83,18)'
                 ],
                 'fields' => ['MIN(OrderItem.id) AS first_order_item_id'],
-                'recursive' => -1
             ]);
 
             $firstOrder = $firstOrder[0]['first_order_item_id'];
