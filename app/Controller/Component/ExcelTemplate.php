@@ -229,7 +229,19 @@ class ExcelTemplate
             ->setCellValue('J1', "Valor a pagar")
             ->setCellValue('K1', "Data pagamento")
             ->setCellValue('L1', "Valor pago")
-            ->setCellValue('M1', "Observação");
+            ->setCellValue('M1', "Observação")
+            ->setCellValue('N1', "Tipo Conta")
+            ->setCellValue('O1', "Banco")
+            ->setCellValue('P1', "Forma de pagamento")
+            ->setCellValue('Q1', "Agência")
+            ->setCellValue('R1', "Digito")
+            ->setCellValue('S1', "Conta")
+            ->setCellValue('T1', "Digito")
+            ->setCellValue('U1', "Tipo Chave")
+            ->setCellValue('V1', "Chave PIX")
+            ->setCellValue('Y1', "Valor Boleto")
+            ->setCellValue('X1', "Valor 1° Via")
+            ->setCellValue('Y1', "Valor 2° Via");
 
         $indx = 1;
         for ($i = 0; $i < count($dados); $i++) {
@@ -248,7 +260,20 @@ class ExcelTemplate
                 ->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_total"])
                 ->setCellValue('K' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
                 ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["valor_pago"])
-                ->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"]);
+                ->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"])
+                ->setCellValue('N' . $indx, $dados[$i][""][""])
+                ->setCellValue('O' . $indx, $dados[$i][""][""])
+                ->setCellValue('P' . $indx, $dados[$i]["Supplier"]["branch_number"])
+                ->setCellValue('Q' . $indx, $dados[$i]["Supplier"]["branch_digit"])
+                ->setCellValue('R' . $indx, $dados[$i]["Supplier"]["acc_number"])
+                ->setCellValue('S' . $indx, $dados[$i]["Supplier"]["acc_digit"])
+                ->setCellValue('T' . $indx, $dados[$i]["Supplier"]["pix_type"])
+                ->setCellValue('U' . $indx, $dados[$i]["Supplier"]["pix_id"])
+                ->setCellValue('V' . $indx, $dados[$i]["Supplier"]["valor_boleto"])
+                ->setCellValue('W' . $indx, $dados[$i]["Supplier"]["valor_1_via"])
+                ->setCellValue('X' . $indx, $dados[$i]["Supplier"]["valor_2_via"])
+                ->setCellValue('Y' . $indx, $dados[$i][""][""]);
+
         }
     }
 
@@ -745,6 +770,8 @@ class ExcelTemplate
             $sheet->setCellValue('Y' . ($key + 2), $dado['Supplier']['url']); $col++;
             $sheet->setCellValue('Z' . ($key + 2), $dado['Supplier']['login']); $col++;
             $sheet->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
+
+
             $sheet->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['description']); $col++;
             $sheet->setCellValue('AC' . ($key + 2), $dado['BankCode']['name']); $col++;
             $paymentMethodId = $dado['Supplier']['payment_method'];
@@ -759,6 +786,8 @@ class ExcelTemplate
             $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['valor_boleto']);
             $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['valor_1_via']);
             $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
+
+
             $sheet->setCellValue('AN' . ($key + 2), $dado['Tecnologia']['name']);
             $sheet->setCellValue('AO' . ($key + 2), $dado['Modalidade']['name']);
             $sheet->setCellValue('AP' . ($key + 2), $nomeRegiao);
