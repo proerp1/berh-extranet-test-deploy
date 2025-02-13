@@ -682,6 +682,7 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Url"); $col++;
         $sheet->setCellValue($col.'1', "Login"); $col++;
         $sheet->setCellValue($col.'1', "Senha"); $col++;
+
         $sheet->setCellValue($col.'1', "Tipo Conta "); $col++;
         $sheet->setCellValue($col.'1', "Banco"); $col++;
         $sheet->setCellValue($col.'1', "Forma de pagamento"); $col++;
@@ -694,8 +695,9 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Valor Boleto"); $col++;
         $sheet->setCellValue($col.'1', "Valor 1° Via"); $col++;
         $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
-        $sheet->setCellValue($col.'1', "Modalidade"); $col++;
-        $sheet->setCellValue($col.'1', "Tecnologia"); $col++; 
+        
+        $sheet->setCellValue($col.'1', "Tecnologia"); $col++;
+        $sheet->setCellValue($col.'1', "Modalidade"); $col++; 
         $sheet->setCellValue($col.'1', "Região"); 
 
 
