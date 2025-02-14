@@ -429,11 +429,6 @@ class Order extends AppModel
             'recursive' => -1
         ]);
 
-        if (empty($orderItems)) {
-            die('1');
-            return false;
-        }
-
         foreach ($orderItems as $orderItem) {
             $customerUserId = $orderItem['OrderItem']['customer_user_id'];
             $itineraryId = $orderItem['OrderItem']['customer_user_itinerary_id'];
@@ -443,11 +438,6 @@ class Order extends AppModel
                 'fields' => ['CustomerUserItinerary.benefit_id'],
                 'recursive' => -1
             ]);
-
-            if (empty($itinerary)) {
-                die('2');
-                continue;
-            }
 
             $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
 
