@@ -2,7 +2,7 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
+	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode'];
 
 	public $paginate = [
         'Outcome' => [
@@ -82,7 +82,33 @@ class OutcomesController extends AppController {
 		if (isset($_GET['exportar'])) {
 			$nome = 'contas_pagar.xlsx';
 
-			$data = $this->Outcome->find('all', ['conditions' => $condition]);
+			$data = $this->Outcome->find('all', ['conditions' => $condition, 'joins' => [[
+				'table' => 'bank_codes',
+				'alias' => 'BankCode',
+				'type' => 'LEFT',
+				'conditions' => ['BankCode.id = Supplier.bank_code_id']
+
+			],
+		
+			[
+				'table' => 'bank_account_types',
+				'alias' => 'BankAccountType',
+				'type' => 'LEFT',
+				'conditions' => ['BankAccountType.id = Supplier.account_type_id'],
+			]
+		
+		
+		
+		],'fields' => [
+                        'BankCode.name',
+                        'BankCode.code',
+						'Supplier.*',
+						'Status.name',
+						'BankAccountType.description',
+						'Outcome.*',
+						'BankAccount.*' ]]);
+
+			//debug($data);die;
 
 			$this->ExcelGenerator->gerarExcelOutcome($nome, $data);
 

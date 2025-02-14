@@ -174,6 +174,14 @@
                                 <span class="menu-title">Movimentações</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robos' && $this->request->params['pass'][0] == 'conversor_compras') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robos', 'conversor_compras']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Conversor de Compras</span>
+                            </a>
+                        </div>  
                     </div>
                 </div>
 

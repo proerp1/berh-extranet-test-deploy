@@ -693,9 +693,13 @@ class ReportsController extends AppController
             $url_iframe = "https://robo.berh.com.br/captura_boletos";
             $breadcrumb='Captura de boletos';
         } elseif ($menu == 'conversor_layouts') {
-	    $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_layouts";
             $breadcrumb='Conversor de layouts';
+        } elseif ($menu == 'conversor_compras') {
+        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+            $url_iframe = "https://robo.berh.com.br/conversor_compras";
+            $breadcrumb='Conversor de compras';
         }
 
         $this->set("action", $breadcrumb);

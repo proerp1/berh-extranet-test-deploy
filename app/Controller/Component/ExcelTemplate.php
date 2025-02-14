@@ -215,6 +215,7 @@ class ExcelTemplate
 
     public function getOutcome($objPHPExcel, $dados)
     {
+        $paymentMethods = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transferência','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
 
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', "N° Documento")
@@ -229,28 +230,52 @@ class ExcelTemplate
             ->setCellValue('J1', "Valor a pagar")
             ->setCellValue('K1', "Data pagamento")
             ->setCellValue('L1', "Valor pago")
-            ->setCellValue('M1', "Observação");
+            ->setCellValue('M1', "Observação")
+            ->setCellValue('N1', "Tipo Conta")
+            ->setCellValue('O1', "Banco")
+            ->setCellValue('P1', "Forma de pagamento")
+            ->setCellValue('Q1', "Agência")
+            ->setCellValue('R1', "Digito")
+            ->setCellValue('S1', "Conta")
+            ->setCellValue('T1', "Digito")
+            ->setCellValue('U1', "Tipo Chave")
+            ->setCellValue('V1', "Chave PIX");
+          
+
+            $indx = 1;
+            for ($i = 0; $i < count($dados); $i++) {
+                $indx++;
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $indx, $dados[$i]["Outcome"]["doc_num"] ?? '')
+                    ->setCellValue('B' . $indx, $dados[$i]["Outcome"]["supplier_id"] ?? '')
+                    ->setCellValue('C' . $indx, $dados[$i]["Supplier"]["nome_fantasia"] ?? '')
+                    ->setCellValue('D' . $indx, $dados[$i]["Outcome"]["name"] ?? '')
+                    ->setCellValue('E' . $indx, $dados[$i]['Status']['name'] ?? '')
+                    ->setCellValue('F' . $indx, $dados[$i]["BankAccount"]["name"] ?? '')
+                    ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
+                    ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"] ?? '')
+                    ->setCellValue('I' . $indx, ($dados[$i]["Outcome"]["parcela"] ?? '') . 'ª')
+                    ->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_total"] ?? '')
+                    ->setCellValue('K' . $indx, $dados[$i]["Outcome"]["data_pagamento"] ?? '')
+                    ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["valor_pago"] ?? '')
+                    ->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"] ?? '')
+                    ->setCellValue('N' . $indx, $dados[$i]['BankAccountType']['description'] ?? '')
+                    ->setCellValue('O' . $indx, $dados[$i]['BankCode']['name'] ?? '');
             
+                $paymentMethodId = $dados[$i]['Supplier']['payment_method'] ?? null;
+                $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
+            
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('P' . $indx, $paymentMethodName)
+                    ->setCellValue('Q' . $indx, $dados[$i]['Supplier']['branch_number'] ?? '')
+                    ->setCellValue('R' . $indx, $dados[$i]['Supplier']['branch_digit'] ?? '')
+                    ->setCellValue('S' . $indx, $dados[$i]['Supplier']['acc_number'] ?? '')
+                    ->setCellValue('T' . $indx, $dados[$i]['Supplier']['acc_digit'] ?? '')
+                    ->setCellValue('U' . $indx, $dados[$i]['Supplier']['pix_type'] ?? '')
+                    ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '');
 
-        $indx = 1;
-        for ($i = 0; $i < count($dados); $i++) {
-
-            $indx++;
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A' . $indx, $dados[$i]["Outcome"]["doc_num"])
-                ->setCellValue('B' . $indx, $dados[$i]["Outcome"]["supplier_id"])
-                ->setCellValue('C' . $indx, $dados[$i]["Supplier"]["nome_fantasia"])
-                ->setCellValue('D' . $indx, $dados[$i]["Outcome"]["name"])
-                ->setCellValue('E' . $indx, $dados[$i]['Status']['name'])
-                ->setCellValue('F' . $indx, $dados[$i]["BankAccount"]["name"])
-                ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"])
-                ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"])
-                ->setCellValue('I' . $indx, $dados[$i]["Outcome"]["parcela"] . 'ª')
-                ->setCellValue('J' . $indx, $dados[$i]["Outcome"]["valor_total"])
-                ->setCellValue('K' . $indx, $dados[$i]["Outcome"]["data_pagamento"])
-                ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["valor_pago"])
-                ->setCellValue('M' . $indx, $dados[$i]["Outcome"]["observation"]);
-        }
+            }
+            
     }
 
     public function getFluxo($objPHPExcel, $dados, $conta)
@@ -748,9 +773,11 @@ class ExcelTemplate
             $sheet->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
             $sheet->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['description']); $col++;
             $sheet->setCellValue('AC' . ($key + 2), $dado['BankCode']['name']); $col++;
+
             $paymentMethodId = $dado['Supplier']['payment_method'];
             $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
             $sheet->setCellValue('AD' . ($key + 2), $paymentMethodName); $col++;
+
             $sheet->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
             $sheet->setCellValue('AF' . ($key + 2), $dado['Supplier']['branch_digit']); $col++;
             $sheet->setCellValue('AG' . ($key + 2), $dado['Supplier']['acc_number']); $col++;
@@ -2040,7 +2067,7 @@ class ExcelTemplate
                 ->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
                 ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
                 ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
+                ->setCellValue('CF'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
 
                 
 
