@@ -1274,7 +1274,8 @@ class OrdersController extends AppController
                 'fields' => ['Benefit.id', 'Benefit.is_variable']
             ]);
 
-            if ((int)$benefit['Benefit']['is_variable'] === 1) {
+            // desabilita temporariamente a verificação de benefício
+            // if ((int)$benefit['Benefit']['is_variable'] === 1) {
                 $unitPrice = $row[1];
                 // convert brl string to float
                 $unitPrice = str_replace(".", "", $unitPrice);
@@ -1283,7 +1284,7 @@ class OrdersController extends AppController
                 $benefitId = $row[3];
                 $quantity = $row[4];
                 $unitPriceMapping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
-            }
+            // }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
 
