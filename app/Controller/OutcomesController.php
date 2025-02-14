@@ -103,6 +103,7 @@ class OutcomesController extends AppController {
                         'BankCode.name',
                         'BankCode.code',
 						'Supplier.*',
+						'Status.name',
 						'BankAccountType.description',
 						'Outcome.*',
 						'BankAccount.*' ]]);

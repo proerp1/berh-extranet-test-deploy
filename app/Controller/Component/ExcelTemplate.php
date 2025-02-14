@@ -239,10 +239,8 @@ class ExcelTemplate
             ->setCellValue('S1', "Conta")
             ->setCellValue('T1', "Digito")
             ->setCellValue('U1', "Tipo Chave")
-            ->setCellValue('V1', "Chave PIX")
-            ->setCellValue('W1', "Valor Boleto")
-            ->setCellValue('X1', "Valor 1° Via")
-            ->setCellValue('Y1', "Valor 2° Via");
+            ->setCellValue('V1', "Chave PIX");
+          
 
             $indx = 1;
             for ($i = 0; $i < count($dados); $i++) {
@@ -274,10 +272,8 @@ class ExcelTemplate
                     ->setCellValue('S' . $indx, $dados[$i]['Supplier']['acc_number'] ?? '')
                     ->setCellValue('T' . $indx, $dados[$i]['Supplier']['acc_digit'] ?? '')
                     ->setCellValue('U' . $indx, $dados[$i]['Supplier']['pix_type'] ?? '')
-                    ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '')
-                    ->setCellValue('Y' . $indx, $dados[$i]['Supplier']['valor_boleto'] ?? '')
-                    ->setCellValue('X' . $indx, $dados[$i]['Supplier']['valor_1_via'] ?? '')
-                    ->setCellValue('Y' . $indx, $dados[$i]['Supplier']['valor_2_via'] ?? '');
+                    ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '');
+
             }
             
     }
