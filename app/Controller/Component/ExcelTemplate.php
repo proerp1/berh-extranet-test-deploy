@@ -2040,7 +2040,7 @@ class ExcelTemplate
                 ->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
                 ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
                 ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
+                ->setCellValue('CF'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
 
                 
 
