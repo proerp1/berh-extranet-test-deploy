@@ -174,6 +174,10 @@ class BoletosController extends AppController
             $condition .= "AND CnabLote.remessa LIKE '%".$_GET['q']."%' ";
         }
 
+        if (isset($_GET['b']) and $_GET['b'] != '') {
+            $condition .= "AND Bank.name LIKE '%".$_GET['b']."%' ";
+        }
+
         if (isset($_GET['t']) and $_GET['t'] != '') {
             $condition .= 'AND CnabLote.status_id = '.$_GET['t'].' ';
         }
@@ -202,10 +206,10 @@ class BoletosController extends AppController
         }
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 12], 'order' => ['Status.name']]);
-
+        $bancos = $this->Bank->find('all', ['fields' => ['Bank.id', 'Bank.name'],'order' => ['Bank.name' => 'ASC']]);
         $action = 'Lotes Boleto';
         $breadcrumb = ['Financeiro' => '', 'Boletos' => '', 'Lotes Boleto' => ''];
-        $this->set(compact('status', 'data', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'action', 'breadcrumb','bancos'));
     }
 
     public function detalhes_lote($id)
