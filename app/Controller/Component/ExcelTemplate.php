@@ -215,6 +215,7 @@ class ExcelTemplate
 
     public function getOutcome($objPHPExcel, $dados)
     {
+        $paymentMethods = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transferência','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
 
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', "N° Documento")
@@ -776,9 +777,11 @@ class ExcelTemplate
             $sheet->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
             $sheet->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['description']); $col++;
             $sheet->setCellValue('AC' . ($key + 2), $dado['BankCode']['name']); $col++;
+
             $paymentMethodId = $dado['Supplier']['payment_method'];
             $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
             $sheet->setCellValue('AD' . ($key + 2), $paymentMethodName); $col++;
+
             $sheet->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
             $sheet->setCellValue('AF' . ($key + 2), $dado['Supplier']['branch_digit']); $col++;
             $sheet->setCellValue('AG' . ($key + 2), $dado['Supplier']['acc_number']); $col++;
