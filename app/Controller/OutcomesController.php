@@ -2,7 +2,7 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order'];
+	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode'];
 
 	public $paginate = [
         'Outcome' => [
@@ -83,6 +83,8 @@ class OutcomesController extends AppController {
 			$nome = 'contas_pagar.xlsx';
 
 			$data = $this->Outcome->find('all', ['conditions' => $condition]);
+
+			//debug($data);die;
 
 			$this->ExcelGenerator->gerarExcelOutcome($nome, $data);
 
