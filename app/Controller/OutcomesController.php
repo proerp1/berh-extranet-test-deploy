@@ -595,7 +595,7 @@ public function edit_document($id, $document_id = null)
 		}
 
 		if ($arq_file) {
-        	return json_encode(['success' => true, 'url_zip' => APP.'webroot/files/docoutcome/file/'.$zip_name]);
+        	return json_encode(['success' => true, 'nome_zip' => $zip_name]);
 		} else {
 			return json_encode(['success' => false]);
 		}
@@ -640,7 +640,7 @@ public function edit_document($id, $document_id = null)
 		}
 
 		if ($arq_file) {
-        	return json_encode(['success' => true, 'url_zip' => APP.'webroot/files/docoutcome/file/'.$zip_name]);
+        	return json_encode(['success' => true, 'nome_zip' => $zip_name]);
 		} else {
 			return json_encode(['success' => false]);
 		}

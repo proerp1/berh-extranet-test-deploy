@@ -214,7 +214,7 @@
                         dataType: 'json',
                         success: function(response) {
                             if (response.success) {
-                                window.location.href = response.url_zip;
+                                window.location.href = base_url+'/files/docoutcome/file/'+response.nome_zip;
                             } else {
                                 alert('Nenhum arquivo encontrado');
                             }
