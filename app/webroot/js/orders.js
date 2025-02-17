@@ -296,4 +296,32 @@ $(document).ready(function() {
         }
     });
 
+    let today = new Date();
+    let minDate = addBusinessDays(today, 4);
+
+    $(".credit_datepicker").datepicker({
+        format: 'dd/mm/yyyy',
+        weekStart: 1,
+        startDate: minDate,
+        orientation: "bottom auto",
+        autoclose: true,
+        language: "pt-BR",
+        daysOfWeekDisabled: [0, 6],
+        toggleActive: true
+    }).datepicker('setDate', minDate);
+
+    function addBusinessDays(startDate, daysToAdd) {
+        let date = new Date(startDate);
+        let addedDays = 0;
+
+        while (addedDays < daysToAdd) {
+            date.setDate(date.getDate() + 1);
+            let day = date.getDay();
+
+            if (day !== 0 && day !== 6) { 
+                addedDays++;
+            }
+        }
+        return date;
+    }
 });
