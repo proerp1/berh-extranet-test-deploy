@@ -89,6 +89,14 @@
                         <th>Cliente</th>
                         <th>Data Pagamento</th>
                         <th>Data Finalização</th>
+                        <th>Subtotal</th>
+                        <th>Repasse</th>
+                        <th>Taxa</th>
+                        <th>Desconto</th>
+                        <th>TPP</th>
+                        <th>Fee Economia</th>
+                        <th>Cliente</th>
+                        <th>Economia</th>
                         <th>Total</th>
                         <th>Nome Documento</th>
                         <th>Arquivo</th>
@@ -123,6 +131,14 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($vl_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['OrderDocument']['name']; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
