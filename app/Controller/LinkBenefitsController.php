@@ -104,6 +104,7 @@ class LinkBenefitsController extends AppController
             $cpf = $row[0];
             $code = $row[1];
             $number = $row[2];
+            $id_operadora = $row[3];
 
             $user = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -122,9 +123,9 @@ class LinkBenefitsController extends AppController
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
-                    'Benefit.code' => $code
+                    'Benefit.code' => $code,
+                    'Supplier.id' => $id_operadora
                 ],
-                'recursive' => -1
             ]);
 
             if (empty($benefit)) {
