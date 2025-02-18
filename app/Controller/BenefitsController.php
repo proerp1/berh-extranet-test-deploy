@@ -8,7 +8,8 @@ class BenefitsController extends AppController
     public $paginate = [
         'Benefit' => [
             'limit' => 10,
-            'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
+            'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc'],
+            'recursive' => 2
         ],
         'LogBenefits' => [
             'limit' => 50,
@@ -47,13 +48,10 @@ class BenefitsController extends AppController
         }
 
         if (isset($_GET['exportar'])) {
-            // $this->ExcelGenerator->gerarExcelFornecedores('fornecedores_', $data);
-
-            // $this->redirect('/private_files/baixar/excel/fornecedores_xlsx');
             $nome = 'Beneficios_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Benefit->find('all', [
-                'contain' => ['Status'],
+                'contain' => ['Status', 'Supplier.Status', 'BenefitType'],
                 'conditions' => $condition, 
             ]);
 
@@ -63,6 +61,7 @@ class BenefitsController extends AppController
         }
 
         $data = $this->Paginator->paginate('Benefit', $condition);
+
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
         $benefitTypes = $this->BenefitType->find('all', [
             'fields' => ['BenefitType.name'],
