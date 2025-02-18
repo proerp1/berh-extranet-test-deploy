@@ -80,14 +80,14 @@
 
     <div class="card-body pt-0 py-3">
         <?php echo $this->element("pagination"); ?>
-        <div class="table-responsive">
+        <div class="table-responsive mt-3">
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        
-                        <th>ID</th>
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
-                        <th class="ps-4">Código</th>
+                        <th class="ps-4 w-70px min-w-70px rounded-start">ID</th>
+                        <th>Status Fornecedor</th>
+                        <th>Status Item</th>
+                        <th>Código</th>
                         <th>Tipo</th>
                         <th>Nome</th>
                         <th>Preço</th>
@@ -103,6 +103,11 @@
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <span class='badge <?php echo $data[$i]["Supplier"]["Status"]["label"] ?>'>
+                                        <?php echo $data[$i]["Supplier"]["Status"]["name"] ?>
+                                    </span>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>

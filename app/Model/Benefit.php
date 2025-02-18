@@ -5,6 +5,8 @@ class Benefit extends AppModel
     public $name = 'Benefit';
     public $useTable = 'benefits';
     public $primaryKey = 'id';
+    
+    public $actsAs = ['Containable'];
 
     public $belongsTo = [
         'Supplier' => [
