@@ -87,7 +87,12 @@ class OrdersController extends AppController
         $this->Paginator->settings = $this->paginate;
         ini_set('memory_limit', '-1');
 
-        $condition = ["and" => [], "or" => []];
+        if (!in_array(CakeSession::read("Auth.User.Group.name"), array('Administrador', 'Diretoria'))) {
+            $condition = ["and" => ["Customer.id != " => 88357], "or" => []];
+        } else {
+            $condition = ["and" => [], "or" => []];
+        }
+
         $filtersFilled = false;
 
         if (isset($_GET['q']) && $_GET['q'] != "") {
