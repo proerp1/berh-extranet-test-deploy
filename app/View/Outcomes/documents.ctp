@@ -72,6 +72,7 @@
                         <th>Nome</th>
                         <th>Tipo</th>
                         <th>Documento</th>
+                        <th>Criado por</th>
                         <th>Data</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -100,6 +101,11 @@
                         <?php echo $data[$i]["Docoutcome"]["file"]; ?>
                     </a>
                 </td>
+
+                <td class="fw-bold fs-7 ps-4">
+                    <?php$userId = $data[$i]["Docoutcome"]["user_creator_id"];App::import('Model', 'User');$User = new User();$user = $User->find('first', ['conditions' => ['User.id' => $userId],'fields' => ['User.name'],'recursive' => -1]);echo !empty($user) ? h($user['User']['name']) : 'Usuário Desconhecido';?>
+                </td>
+
                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Docoutcome']['created'])); ?></td>
 
                 <td class="fw-bold fs-7 ps-4">
