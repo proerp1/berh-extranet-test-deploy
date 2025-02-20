@@ -116,7 +116,7 @@
                         </a>
                     <?php } ?>
 
-                    <?php if (isset($_GET["t"]) && $_GET["t"] == 12) { ?>
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 12 || $_GET["t"] == 103)) { ?>
                         <a href="#" id="conta_paga_sel" class="btn btn-secondary me-3">
                             Pagar em Lote
                         </a>
@@ -200,7 +200,7 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
+                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
                             <th class="ps-4 w-80px min-w-80px rounded-start">
                                 <input type="checkbox" class="check_all">
                             </th>
@@ -240,7 +240,7 @@
                                
                             ?>
 							<tr>
-                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
+                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
                                     </td>
