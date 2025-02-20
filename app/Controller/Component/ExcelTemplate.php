@@ -610,6 +610,13 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "TPP"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipos de GE"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observações");
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CEP Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Endereço Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Complemento Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Bairro Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado Entrega"); $col++;
 
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -670,7 +677,13 @@ class ExcelTemplate
             switch ($dado['Customer']['tipo_ge']) {case '1':$tipoGeNome = 'pré';break;case '2':$tipoGeNome = 'pós';break;case '3':$tipoGeNome = 'garantido';break;      }
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $tipoGeNome);
             $col++;
-                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['observacao']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cepentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['enderecoentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['numeroentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['complementoentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cidadeentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['bairroentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['estadoentrega']); $col++;
         }
     }
 
