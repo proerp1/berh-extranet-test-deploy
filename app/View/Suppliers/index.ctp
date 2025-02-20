@@ -97,6 +97,7 @@
                         <th>Tecnologia</th>
                         <th>Telefone</th>
                         <th>Região</th>
+                        <th>Observação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -123,6 +124,7 @@
                                 ?>
                             </td>
 
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["observacao"]; ?></td>
 
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/suppliers/edit/'.$data[$i]["Supplier"]["id"]; ?>" class="btn btn-info btn-sm">
