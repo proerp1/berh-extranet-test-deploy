@@ -26,57 +26,47 @@
             precision: 2
         });
 
-        $("#cep").change(function() {
-            var $el = $(this);
-            
-            $.ajax({
-                url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
-                type: "get",
-                beforeSend: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
-                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
-                },
-                success: function(data){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    $("#endereco").val(data["logradouro"]);
-                    $("#bairro").val(data["bairro"]);
-                    $("#cidade").val(data["cidade"]);
-                    $("#estado").val(data["estado"]);
-                },
-                error: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    alert('Informe um CEP válido.');
-                }
-            });
+        $(document).ready(function(){
+    function buscarCEP(cepInput, enderecoInput, bairroInput, cidadeInput, estadoInput) {
+        var $el = $(cepInput);
+        
+        $.ajax({
+            url: 'https://viacep.com.br/ws/' + $el.val() + '/json/',
+            type: "GET",
+            dataType: "json",
+            beforeSend: function(){
+                $el.parent().find('span > i').removeClass('fas fa-map-marker');
+                $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
+            }
+        }).done(function(data) {
+            if (!data.erro) {
+                $(enderecoInput).val(data.logradouro);
+                $(bairroInput).val(data.bairro);
+                $(cidadeInput).val(data.localidade);
+                $(estadoInput).val(data.uf);
+            } else {
+                alert("CEP não encontrado.");
+            }
+        }).fail(function(){
+            alert("Erro ao consultar o CEP. Tente novamente.");
+        }).always(function() {
+            $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+            $el.parent().find('span > i').addClass('fas fa-map-marker');
         });
+    }
 
-        $("#cepentrega").change(function() {
-            var $el = $(this);
-            
-            $.ajax({
-                url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
-                type: "get",
-                beforeSend: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
-                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
-                },
-                success: function(data){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    $("#enderecoentrega").val(data["logradouroentrega"]);
-                    $("#bairroentrega").val(data["bairroentrega"]);
-                    $("#cidadeentrega").val(data["cidadeentrega"]);
-                    $("#estadoentrega").val(data["estadoentrega"]);
-                },
-                error: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    alert('Informe um CEP válido.');
-                }
-            });
-        });
+    $("#cep").change(function() {
+        buscarCEP("#cep", "#endereco", "#bairro", "#cidade", "#estado");
+    });
+
+    $("#cepentrega").change(function() {
+        buscarCEP("#cepentrega", "#enderecoentrega", "#bairroentrega", "#cidadeentrega", "#estadoentrega");
+    });
+
+    // Aplicando máscara aos campos de CEP
+    $("#cep, #cepentrega").mask("99999-999");
+});
+
         
         tipo_cliente();
 
