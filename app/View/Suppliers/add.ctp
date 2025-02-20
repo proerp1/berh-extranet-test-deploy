@@ -4,6 +4,9 @@ if (isset($id)) {
     echo $this->element("abas_suppliers", array('id' => $id, 'url' => $url));
 }
 ?>
+<?php echo $this->Html->script("html_editor/summernote", array('block' => 'script')); ?>
+<?php echo $this->Html->script("html_editor/summernote-pt-BR", array('block' => 'script')); ?>
+<?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <div class="card mb-5 mb-xl-8">
@@ -106,6 +109,8 @@ if (isset($id)) {
                     <label class="fw-semibold fs-6 mb-2">Número</label>
                     <?php echo $this->Form->input('numero', ["id" => "numero", "placeholder" => "Número", "required" => false, "class" => "form-control mb-3 mb-lg-0"]);  ?>
                 </div>
+
+               
             </div>
 
             <div class="row">
@@ -127,6 +132,16 @@ if (isset($id)) {
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Estado</label>
                     <?php echo $this->Form->input('estado', ["id" => "estado", "placeholder" => "Estado", "required" => false, "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Endereço Faturamento</label>
+                    <?php echo $this->Form->input('enderecofaturamento', ["id" => "enderecofaturamento", "placeholder" => "Endereço", "required" => false, "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Número</label>
+                    <?php echo $this->Form->input('numerofaturamento', ["id" => "numerofaturamento", "placeholder" => "Número", "required" => false, "class" => "form-control mb-3 mb-lg-0"]);  ?>
                 </div>
             </div>
 
@@ -273,6 +288,13 @@ if (isset($id)) {
                 </div>
             </div>
 
+            <div class="row">
+                <div class="mb-7 col-12">
+                    <label class="fw-semibold fs-6 mb-2">Observações</label>
+                    <?php echo $this->Form->input('observacao', array("placeholder" => "Observações", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+            </div>
+
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
@@ -312,6 +334,22 @@ if (isset($id)) {
         }
 
         $(document).ready(function() {
+
+            $('#summernote').summernote({
+            lang: 'pt-BR',
+            height: 200,
+            toolbar : [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize', 'fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['group', [ 'video', 'link', 'picture', 'hr' ]],
+                ['misc', [ 'codeview', 'undo', 'redo' ]],
+                ['help', [ 'help' ]],
+            ]
+        });
 
             $("#cep").change(function() {
                 var $el = $(this);

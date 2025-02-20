@@ -700,6 +700,8 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Bairro"); $col++;
         $sheet->setCellValue($col.'1', "Cidade"); $col++;
         $sheet->setCellValue($col.'1', "Estado"); $col++;
+        $sheet->setCellValue($col.'1', "Endereço Faturamento"); 
+        $sheet->setCellValue($col.'1', "Numero"); 
         $sheet->setCellValue($col.'1', "Telefone comercial"); $col++;
         $sheet->setCellValue($col.'1', "Telefone residencial"); $col++;
         $sheet->setCellValue($col.'1', "Operadora"); $col++;
@@ -709,7 +711,6 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Url"); $col++;
         $sheet->setCellValue($col.'1', "Login"); $col++;
         $sheet->setCellValue($col.'1', "Senha"); $col++;
-
         $sheet->setCellValue($col.'1', "Tipo Conta "); $col++;
         $sheet->setCellValue($col.'1', "Banco"); $col++;
         $sheet->setCellValue($col.'1', "Forma de pagamento"); $col++;
@@ -722,10 +723,10 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Valor Boleto"); $col++;
         $sheet->setCellValue($col.'1', "Valor 1° Via"); $col++;
         $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
-        
         $sheet->setCellValue($col.'1', "Tecnologia"); $col++;
         $sheet->setCellValue($col.'1', "Modalidade"); $col++; 
         $sheet->setCellValue($col.'1', "Região"); 
+        $sheet->setCellValue($col.'1', "Observação"); 
 
 
 
@@ -762,6 +763,8 @@ class ExcelTemplate
             $sheet->setCellValue('P' . ($key + 2), $dado['Supplier']['bairro']); $col++;
             $sheet->setCellValue('Q' . ($key + 2), $dado['Supplier']['cidade']); $col++;
             $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['estado']); $col++;
+            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['enderecofaturamento']); $col++;
+            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['numerofaturamento']); $col++;
             $sheet->setCellValue('S' . ($key + 2), $dado['Supplier']['tel_comercial']); $col++;
             $sheet->setCellValue('T' . ($key + 2), $dado['Supplier']['tel_residencial']); $col++;
             $sheet->setCellValue('U' . ($key + 2), $dado['Supplier']['operadora']); $col++;
@@ -790,6 +793,7 @@ class ExcelTemplate
             $sheet->setCellValue('AN' . ($key + 2), $dado['Tecnologia']['name']);
             $sheet->setCellValue('AO' . ($key + 2), $dado['Modalidade']['name']);
             $sheet->setCellValue('AP' . ($key + 2), $nomeRegiao);
+            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['observacao']); $col++;
 
         }
 
