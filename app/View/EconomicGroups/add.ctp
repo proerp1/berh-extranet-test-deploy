@@ -44,6 +44,8 @@
 
     // Aplicando máscara aos campos de CEP
     $("#cep, #cepentrega").mask("99999-999");
+    $("#documento").mask("99.999.999/9999-99");
+
 });
    
 
