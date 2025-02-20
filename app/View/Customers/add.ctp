@@ -51,6 +51,32 @@
                 }
             });
         });
+
+        $("#cepentrega").change(function() {
+            var $el = $(this);
+            
+            $.ajax({
+                url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
+                type: "get",
+                beforeSend: function(){
+                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
+                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
+                },
+                success: function(data){
+                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                    $el.parent().find('span > i').addClass('fas fa-map-marker');
+                    $("#enderecoentrega").val(data["logradouroentrega"]);
+                    $("#bairroentrega").val(data["bairroentrega"]);
+                    $("#cidadeentrega").val(data["cidadeentrega"]);
+                    $("#estadoentrega").val(data["estadoentrega"]);
+                },
+                error: function(){
+                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                    $el.parent().find('span > i').addClass('fas fa-map-marker');
+                    alert('Informe um CEP válido.');
+                }
+            });
+        });
         
         tipo_cliente();
 
@@ -113,6 +139,7 @@
         });
 
         $("#cep").mask("99999-999");
+        $("#cepentrega").mask("99999-999");
         $("#CustomerCreated").mask("99/99/9999");
         $("#CustomerCpfResponsavel").mask("999.999.999-99")
         $(".telefone").focusout(function(){
@@ -247,6 +274,8 @@
                 </div>
             </div>
 
+            <h3 class="mb-4">Endereço de Faturamento</h3>
+
             <div class="row">
 
                 <div class="mb-7 col">
@@ -287,6 +316,49 @@
                     <?php echo $this->Form->input('estado', array("id" => "estado", "placeholder" => "Estado", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
                 </div>
             </div>
+
+            <h3 class="mb-4">Endereço de Entrega</h3>
+
+            <div class="row">
+
+                <div class="mb-7 col">
+                    <label for="cep" class="form-label required">CEP</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-map-marker"></i></span>
+                        <?php echo $this->Form->input('cepentrega', array("id" => "cepentrega", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    </div>
+                </div>
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2 required">Endereço</label>
+                    <?php echo $this->Form->input('enderecoentrega', array("id" => "enderecoentrega", "placeholder" => "Endereço", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2 required">Número</label>
+                    <?php echo $this->Form->input('numeroentrega', array("id" => "numeroentrega", "placeholder" => "Número", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Complemento</label>
+                    <?php echo $this->Form->input('complementoentrega', array("id" => "complemento", "placeholder" => "Complemento", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+
+                </div>
+
+                <div class="row">
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2 required">Cidade</label>
+                    <?php echo $this->Form->input('cidadeentrega', array("id" => "cidadeentrega", "placeholder" => "Cidade", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2 required">Bairro</label>
+                    <?php echo $this->Form->input('bairroentrega', array("id" => "bairroentrega", "placeholder" => "Bairro", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2 required">Estado</label>
+                    <?php echo $this->Form->input('estadoentrega', array("id" => "estadoentrega", "placeholder" => "Estado", "required" => false, "class" => "form-control mb-3 mb-lg-0"));  ?>
+                </div>
+                </div>
 
             <div class="row">
                 <div class="mb-7 col">
