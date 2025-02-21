@@ -713,8 +713,8 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Bairro"); $col++;
         $sheet->setCellValue($col.'1', "Cidade"); $col++;
         $sheet->setCellValue($col.'1', "Estado"); $col++;
-        $sheet->setCellValue($col.'1', "Endereço Faturamento"); 
-        $sheet->setCellValue($col.'1', "Numero"); 
+        $sheet->setCellValue($col.'1', "Endereço Faturamento");$col++;
+        $sheet->setCellValue($col.'1', "Numero");$col++; 
         $sheet->setCellValue($col.'1', "Telefone comercial"); $col++;
         $sheet->setCellValue($col.'1', "Telefone residencial"); $col++;
         $sheet->setCellValue($col.'1', "Operadora"); $col++;
@@ -738,8 +738,8 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Valor 2° Via"); $col++;
         $sheet->setCellValue($col.'1', "Tecnologia"); $col++;
         $sheet->setCellValue($col.'1', "Modalidade"); $col++; 
-        $sheet->setCellValue($col.'1', "Região"); 
-        $sheet->setCellValue($col.'1', "Observação"); 
+        $sheet->setCellValue($col.'1', "Região");$col++; 
+        $sheet->setCellValue($col.'1', "Observação");$col++; 
 
 
 
@@ -776,37 +776,37 @@ class ExcelTemplate
             $sheet->setCellValue('P' . ($key + 2), $dado['Supplier']['bairro']); $col++;
             $sheet->setCellValue('Q' . ($key + 2), $dado['Supplier']['cidade']); $col++;
             $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['estado']); $col++;
-            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['enderecofaturamento']); $col++;
-            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['numerofaturamento']); $col++;
-            $sheet->setCellValue('S' . ($key + 2), $dado['Supplier']['tel_comercial']); $col++;
-            $sheet->setCellValue('T' . ($key + 2), $dado['Supplier']['tel_residencial']); $col++;
-            $sheet->setCellValue('U' . ($key + 2), $dado['Supplier']['operadora']); $col++;
-            $sheet->setCellValue('V' . ($key + 2), $dado['Supplier']['celular']); $col++;
-            $sheet->setCellValue('W' . ($key + 2), $dado['Supplier']['email']); $col++;
-            $sheet->setCellValue('X' . ($key + 2), $dado['Supplier']['site']); $col++;
-            $sheet->setCellValue('Y' . ($key + 2), $dado['Supplier']['url']); $col++;
-            $sheet->setCellValue('Z' . ($key + 2), $dado['Supplier']['login']); $col++;
-            $sheet->setCellValue('AA' . ($key + 2), $dado['Supplier']['senha']); $col++;
-            $sheet->setCellValue('AB' . ($key + 2), $dado['BankAccountType']['description']); $col++;
-            $sheet->setCellValue('AC' . ($key + 2), $dado['BankCode']['name']); $col++;
+            $sheet->setCellValue('S' . ($key + 2), $dado['Supplier']['enderecofaturamento']); $col++;
+            $sheet->setCellValue('T' . ($key + 2), $dado['Supplier']['numerofaturamento']); $col++;
+            $sheet->setCellValue('U' . ($key + 2), $dado['Supplier']['tel_comercial']); $col++;
+            $sheet->setCellValue('V' . ($key + 2), $dado['Supplier']['tel_residencial']); $col++;
+            $sheet->setCellValue('W' . ($key + 2), $dado['Supplier']['operadora']); $col++;
+            $sheet->setCellValue('X' . ($key + 2), $dado['Supplier']['celular']); $col++;
+            $sheet->setCellValue('Y' . ($key + 2), $dado['Supplier']['email']); $col++;
+            $sheet->setCellValue('Z' . ($key + 2), $dado['Supplier']['site']); $col++;
+            $sheet->setCellValue('AA' . ($key + 2), $dado['Supplier']['url']); $col++;
+            $sheet->setCellValue('AB' . ($key + 2), $dado['Supplier']['login']); $col++;
+            $sheet->setCellValue('AC' . ($key + 2), $dado['Supplier']['senha']); $col++;
+            $sheet->setCellValue('AD' . ($key + 2), $dado['BankAccountType']['description']); $col++;
+            $sheet->setCellValue('AE' . ($key + 2), $dado['BankCode']['name']); $col++;
 
             $paymentMethodId = $dado['Supplier']['payment_method'];
             $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
-            $sheet->setCellValue('AD' . ($key + 2), $paymentMethodName); $col++;
+            $sheet->setCellValue('AF' . ($key + 2), $paymentMethodName); $col++;
 
-            $sheet->setCellValue('AE' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
-            $sheet->setCellValue('AF' . ($key + 2), $dado['Supplier']['branch_digit']); $col++;
-            $sheet->setCellValue('AG' . ($key + 2), $dado['Supplier']['acc_number']); $col++;
-            $sheet->setCellValue('AH' . ($key + 2), $dado['Supplier']['acc_digit']); $col++;
-            $sheet->setCellValue('AI' . ($key + 2), $dado['Supplier']['pix_type']); $col++;
-            $sheet->setCellValue('AJ' . ($key + 2), $dado['Supplier']['pix_id']);
-            $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['valor_boleto']);
-            $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['valor_1_via']);
-            $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_2_via']);
-            $sheet->setCellValue('AN' . ($key + 2), $dado['Tecnologia']['name']);
-            $sheet->setCellValue('AO' . ($key + 2), $dado['Modalidade']['name']);
-            $sheet->setCellValue('AP' . ($key + 2), $nomeRegiao);
-            $sheet->setCellValue('R' . ($key + 2), $dado['Supplier']['observacao']); $col++;
+            $sheet->setCellValue('AG' . ($key + 2), $dado['Supplier']['branch_number']); $col++;
+            $sheet->setCellValue('AH' . ($key + 2), $dado['Supplier']['branch_digit']); $col++;
+            $sheet->setCellValue('AI' . ($key + 2), $dado['Supplier']['acc_number']); $col++;
+            $sheet->setCellValue('AJ' . ($key + 2), $dado['Supplier']['acc_digit']); $col++;
+            $sheet->setCellValue('AK' . ($key + 2), $dado['Supplier']['pix_type']); $col++;
+            $sheet->setCellValue('AL' . ($key + 2), $dado['Supplier']['pix_id']);
+            $sheet->setCellValue('AM' . ($key + 2), $dado['Supplier']['valor_boleto']);
+            $sheet->setCellValue('AN' . ($key + 2), $dado['Supplier']['valor_1_via']);
+            $sheet->setCellValue('AO' . ($key + 2), $dado['Supplier']['valor_2_via']);
+            $sheet->setCellValue('AP' . ($key + 2), $dado['Tecnologia']['name']);
+            $sheet->setCellValue('AQ' . ($key + 2), $dado['Modalidade']['name']);
+            $sheet->setCellValue('AR' . ($key + 2), $nomeRegiao);
+            $sheet->setCellValue('AS' . ($key + 2), $dado['Supplier']['observacao']); $col++;
 
         }
 
