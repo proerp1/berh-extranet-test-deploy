@@ -110,6 +110,12 @@
                         </a>
                     <?php } ?>
 
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                        <a href="#" id="pendente_sel" class="btn btn-secondary me-3">
+                            Pendente em Lote 
+                        </a>
+                    <?php } ?>
+
                     <?php if (isset($_GET["t"]) && $_GET["t"] == 11) { ?>
                         <a href="#" id="aprovar_sel" class="btn btn-secondary me-3">
                             Aprovar em Lote
@@ -320,6 +326,24 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_pendente_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tornar Pendente items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="pendente_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalContaPaga" tabindex="-1" role="dialog" aria-labelledby="labelModalContaPaga">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -394,6 +418,16 @@
             }
         });
 
+        $('#pendente_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_pendente_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a tornar pendente');
+            }
+        });
+
         $('#download_sel').on('click', function(e) {
             e.preventDefault();
 
@@ -465,6 +499,34 @@
                     data: {
                         outcomeIds,
                         status: 12
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#pendente_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const outcomeIds = [];
+
+            checkboxes.each(function() {
+                outcomeIds.push($(this).data('id'));
+            });
+
+            if (outcomeIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/outcomes/change_status_lote',
+                    data: {
+                        outcomeIds,
+                        status: 103
                     },
                     dataType: 'json',
                     success: function(response) {
