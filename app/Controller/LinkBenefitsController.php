@@ -160,7 +160,7 @@ class LinkBenefitsController extends AppController
                         'card_number' => $number,
                     ]
                 ];
-            } else {
+            } elseif ($id_operadora) {
                 $benefits = $this->Benefit->find('all', [
                     'fields' => [
                         'Benefit.id',
