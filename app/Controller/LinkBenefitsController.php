@@ -123,6 +123,9 @@ class LinkBenefitsController extends AppController
 
             if ($code) {
                 $benefit = $this->Benefit->find('first', [
+                    'fields' => [
+                        'Benefit.id',
+                    ],
                     'conditions' => [
                         'Benefit.code' => $code,
                         'Supplier.id' => $id_operadora
@@ -141,7 +144,6 @@ class LinkBenefitsController extends AppController
                     'conditions' => [
                         'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
                         'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
-                        'CustomerUserItinerary.status_id' => 1
                     ],
                     'recursive' => -1
                 ]);
@@ -183,7 +185,6 @@ class LinkBenefitsController extends AppController
                         'conditions' => [
                             'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
                             'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
-                            'CustomerUserItinerary.status_id' => 1
                         ],
                         'recursive' => -1
                     ]);
