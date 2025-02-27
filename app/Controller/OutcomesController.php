@@ -561,8 +561,10 @@ public function edit_document($id, $document_id = null)
 			$zip_name = "arquivos_programado.zip";
 		} elseif ($status == 12) {
 			$zip_name = "arquivos_aprovado.zip";
+		} elseif ($status == 13) {
+			$zip_name = "arquivos_pago.zip";
 		} else {
-			$zip_name = "arquivos_pago.zip";			
+			$zip_name = "arquivos_pendente.zip";			
 		}
 	    
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
