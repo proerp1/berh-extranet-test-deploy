@@ -58,7 +58,7 @@
             <tr>
                 <td class="header">
                     <a href="https://berh.com.br/" target="_blank" rel="noopener">
-                        <img src="https://sig.berh.com.br/img/BE_Logo_Horizontal_Branco.png" alt="BeRH Logo">
+                        <img src="https://sig.berh.com.br/img/BE_Logo_Horizontal_Branco.png" width="120" alt="BeRH Logo">
                     </a>
                 </td>
             </tr>
