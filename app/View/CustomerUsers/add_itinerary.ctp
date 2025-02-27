@@ -37,7 +37,7 @@ if($user_id){
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">N° Matricula</label>
+                <label class="fw-semibold fs-6 mb-2">N° Matricula Operadora</label>
                 <?php echo $this->Form->input('matricula', array("id" => "matricula", "placeholder" => "N° matricula", "class" => "form-control mb-3 mb-lg-0"));  ?>
             </div>
             
