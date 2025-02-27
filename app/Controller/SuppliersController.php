@@ -92,8 +92,9 @@ class SuppliersController extends AppController
         }
     
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $banks = $this->BankCode->find('list');
-        $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
+        $this->BankCode->virtualFields = ['name' => "concat(BankCode.name, ' - ', BankCode.code)"];
+        $this->BankCode->displayField = 'name';
+        $banks = $this->BankCode->find('list');         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
         $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
     
@@ -125,7 +126,9 @@ class SuppliersController extends AppController
         $this->Supplier->validationErrors = $temp_errors;
         
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
-        $banks = $this->BankCode->find('list');
+        $this->BankCode->virtualFields = ['name' => "concat(BankCode.name, ' - ', BankCode.code)"];
+        $this->BankCode->displayField = 'name';
+        $banks = $this->BankCode->find('list'); 
         $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
         $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
