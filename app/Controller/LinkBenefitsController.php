@@ -105,6 +105,8 @@ class LinkBenefitsController extends AppController
             $code = $row[1];
             $number = $row[2];
             $id_operadora = $row[3];
+            $matricula = $row[4];
+
 
             $user = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -160,6 +162,7 @@ class LinkBenefitsController extends AppController
                     'CustomerUserItinerary' => [
                         'id' => $itineraries['CustomerUserItinerary']['id'],
                         'card_number' => $number,
+                        'matricula' => $matricula
                     ]
                 ];
             } elseif ($id_operadora) {
