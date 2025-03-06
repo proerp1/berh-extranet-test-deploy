@@ -170,20 +170,14 @@ class ApiItau extends Controller
                         ],
                     ],
                     'multa' => [
-                        /*'codigo_tipo_multa' => '03',
-                        'quantidade_dias_multa' => 1,
-                        'valor_multa' => $multa,*/
+                        'valor_multa' => $conta['Customer']['cobrar_juros'] == 'S' ? $multa : 0,
                         'codigo_tipo_multa' => '03',
-                        'quantidade_dias_multa' => 0,
-                        //'valor_multa' => 0,
+                        'quantidade_dias_multa' => $conta['Customer']['cobrar_juros'] == 'S' ? 1 : 0,
                     ],
                     'juros' => [
-                        /*'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => 1,
-                        'percentual_juros' => $juros,*/
+                        'percentual_juros' => $conta['Customer']['cobrar_juros'] == 'S' ? $juros : 0,
                         'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => 0,
-                        //'percentual_juros' => 0,
+                        'quantidade_dias_juros' => $conta['Customer']['cobrar_juros'] == 'S' ? 1 : 0,,
                     ],
                     'recebimento_divergente' => [
                         'codigo_tipo_autorizacao' => '03',
