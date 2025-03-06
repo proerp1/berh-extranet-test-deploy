@@ -62,22 +62,28 @@ if (isset($user_id) && !$is_admin) {
 
         <div class="row">
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Usuário Interno</label><br>
+                <label class="fw-semibold fs-6 mb-2" for="CustomerUserIsAdmin">Usuário Interno</label><br>
                 <div class="form-check form-check-custom form-check-solid">
                     <?php echo $this->Form->input('is_admin', ['type' => 'checkbox', 'class' => 'form-check-input']); ?>
                 </div>
             </div>
+
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Status*</label>
+                <label class="fw-semibold fs-6 mb-2" for="CustomerUserPerfilUsuario">Pode criar pedidos</label><br>
+                <div class="form-check form-check-custom form-check-solid">
+                    <?php echo $this->Form->input('perfil', ['type' => 'checkbox', 'class' => 'form-check-input']); ?>
+                </div>
+            </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2 required">Status</label>
                 <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
             </div>
 
-
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2 required">Nome*</label>
+                <label class="fw-semibold fs-6 mb-2 required">Nome</label>
                 <?php echo $this->Form->input('name', ['placeholder' => 'Nome', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
-
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Matrícula</label>
@@ -86,11 +92,10 @@ if (isset($user_id) && !$is_admin) {
         </div>
 
         <div class="row">
-        <div class="mb-7 col">
-            <label class="fw-semibold fs-6 mb-2">Email</label>
-            <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0', 'required' => false]); ?>
-        </div>
-
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Email</label>
+                <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0', 'required' => false]); ?>
+            </div>
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Telefone</label>
@@ -129,7 +134,6 @@ if (isset($user_id) && !$is_admin) {
                 <?php echo $this->Form->input('nome_mae', ['placeholder' => 'Nome da Mãe', 'class' => 'form-control mb-3 mb-lg-0', 'required' => true]); ?>
             </div>
 
-
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Sexo</label>
                 <?php echo $this->Form->input('sexo', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'options' => ['M' => 'Masculino', 'F' => 'Feminino', 'O' => 'Outros', 'required' => true]]); ?>
@@ -139,6 +143,7 @@ if (isset($user_id) && !$is_admin) {
                 <label class="fw-semibold fs-6 mb-2 required">Data Nascimento*</label>
                 <?php echo $this->Form->input('data_nascimento', ['type' => 'text', 'placeholder' => 'Data Nascimento', 'class' => 'form-control mb-3 data mb-lg-0', 'required' => true]); ?>
             </div>
+        </div>
 
 
         <div class="row">
@@ -175,9 +180,9 @@ if (isset($user_id) && !$is_admin) {
             </div>
         </div>
         <div class="mb-7 col">
-    <label class="fw-semibold fs-6 mb-2">Observações</label>
-    <?php echo $this->Form->input('observation', ["placeholder" => "Observações", "class" => "form-control mb-3 mb-lg-0 textarea resize-vertical"]); ?>
-</div>
+            <label class="fw-semibold fs-6 mb-2">Observações</label>
+            <?php echo $this->Form->input('observation', ["placeholder" => "Observações", "class" => "form-control mb-3 mb-lg-0 textarea resize-vertical"]); ?>
+        </div>
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
