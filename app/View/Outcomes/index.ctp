@@ -206,14 +206,13 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
+                        <?php if (isset($_GET["t"]) && in_array($_GET["t"], [11, 12, 13, 103])) { ?>
                             <th class="ps-4 w-80px min-w-80px rounded-start">
                                 <input type="checkbox" class="check_all">
                             </th>
                         <?php } ?>
-			            <th>ID</th>
-                        <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
-                        
+			            <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>ID</th>
+                        <th>N° Documento</th>
                         <th>Pedido</th>
                         <th>Cliente</th>
                         <th>Fornecedor</th>
@@ -276,7 +275,7 @@
                                     <span class='badge badge-success'><i class="fas fa-info" style="color:#fff" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
 
                                         
-									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
+									<a href="<?php echo $this->Html->url(['controller' => 'outcomes', 'action' => 'edit', $data[$i]["Outcome"]["id"], '?' => $_SERVER['QUERY_STRING']]); ?>" class="btn btn-info btn-sm">
 										Editar
 									</a>
                                     <?php if($data[$i]["Status"]["id"]!= 13){?>
