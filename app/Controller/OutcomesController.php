@@ -30,7 +30,9 @@ class OutcomesController extends AppController {
 
 	public function index() {
 		$this->Permission->check(15, "leitura") ? "" : $this->redirect("/not_allowed");
-		$this->Paginator->settings = $this->paginate;
+		$limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+        $this->paginate['Outcome']['limit'] = $limit;
+        $this->Paginator->settings = $this->paginate;
 
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
 		
@@ -155,7 +157,7 @@ class OutcomesController extends AppController {
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
 		$action = 'Contas a pagar';
-		$this->set(compact('status', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
+		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
 	}
 	
 	public function add() {

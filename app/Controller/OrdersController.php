@@ -85,6 +85,9 @@ class OrdersController extends AppController
         ini_set('pcre.backtrack_limit', '15000000');
 
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+        $this->paginate['Order']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
         ini_set('memory_limit', '-1');
 
@@ -234,7 +237,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
 
 

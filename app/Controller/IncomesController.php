@@ -36,6 +36,8 @@ class IncomesController extends AppController
     public function index()
     {
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+        $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+        $this->paginate['Income']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['Customer.cod_franquia' => CakeSession::read("Auth.User.resales")], "or" => []];
@@ -187,7 +189,7 @@ class IncomesController extends AppController
         $statusCliente = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
         $action = 'Contas a Receber';
-        $this->set(compact('status', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
+        $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
     }
     
     public function add()

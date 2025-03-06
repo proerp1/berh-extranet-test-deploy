@@ -217,6 +217,7 @@
                 </tbody>
             </table>
         </div>
+
         <?php echo $this->element("pagination"); ?>
     </div>
 </div>
