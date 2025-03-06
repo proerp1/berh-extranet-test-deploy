@@ -45,6 +45,15 @@ class OutcomesController extends AppController {
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
 
+		if(isset($_GET['supplier_id']) && $_GET['supplier_id'] != "") {
+			$condition['and'] = array_merge($condition['and'], ['Outcome.supplier_id' => $_GET['supplier_id']]);
+		}
+		
+		if(isset($_GET['supplier_nome']) && $_GET['supplier_nome'] != "") {
+			$condition['and'] = array_merge($condition['and'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['supplier_nome']."%"]);
+		}
+		
+
 		$get_de = isset($_GET["de"]) ? $_GET["de"] : '';
 		$get_ate = isset($_GET["ate"]) ? $_GET["ate"] : '';
 		
