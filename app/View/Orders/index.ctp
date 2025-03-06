@@ -135,7 +135,7 @@
                         <th>Fee Economia</th>
                         <th>Cliente</th>
                         <th>Economia</th>
-                        <th>Total</th>
+                        <th data-priority="1"><?php echo $this->Paginator->sort('Order.total', 'Total'); ?> <?php echo $this->Paginator->sortKey() == 'Order.total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
                         <th>Usuário</th>
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>

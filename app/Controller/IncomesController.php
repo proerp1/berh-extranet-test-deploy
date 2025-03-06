@@ -15,6 +15,7 @@ class IncomesController extends AppController
                 'Income.vencimento' => 'desc',
             ],
             'group' => 'Income.id',
+            'paramType' => 'querystring'
         ],
         'ChargesHistory' => [
             'limit' => 10,

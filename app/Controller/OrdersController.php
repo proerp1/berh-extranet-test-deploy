@@ -65,7 +65,8 @@ class OrdersController extends AppController
                 ) as total_balances"
             ],
             'limit' => 50,
-            'order' => ['Order.id' => 'desc']
+            'order' => ['Order.id' => 'desc'],
+            'paramType' => 'querystring'
         ],
         'OrderBalance' => [
             'limit' => 100,

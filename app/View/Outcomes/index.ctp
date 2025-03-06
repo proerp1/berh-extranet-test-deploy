@@ -222,7 +222,7 @@
 			            <th>Vencimento</th>
                         <th>Data de criação</th>
 						<th>Parcela</th>
-						<th>Valor a pagar R$</th>
+                        <th data-priority="1"><?php echo $this->Paginator->sort('Outcome.valor_total', 'Valor a pagar R$'); ?> <?php echo $this->Paginator->sortKey() == 'Outcome.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
                         <th>Observação</th>
