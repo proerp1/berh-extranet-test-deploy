@@ -831,7 +831,10 @@ class OrdersController extends AppController
             ]
         ]);
 
-        $this->Income->deleteAll(['Income.order_id' => $id], false);
+        $this->Income->updateAll(
+            ['Income.data_cancel' => 'CURRENT_DATE', 'Income.usuario_id_cancel' => CakeSession::read("Auth.User.id")],
+            ['Income.order_id' => $id]
+        );
 
         $income = [];
 
