@@ -177,7 +177,7 @@ class ApiItau extends Controller
                     'juros' => [
                         'percentual_juros' => $conta['Customer']['cobrar_juros'] == 'S' ? $juros : 0,
                         'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => $conta['Customer']['cobrar_juros'] == 'S' ? 1 : 0,,
+                        'quantidade_dias_juros' => $conta['Customer']['cobrar_juros'] == 'S' ? 1 : 0,
                     ],
                     'recebimento_divergente' => [
                         'codigo_tipo_autorizacao' => '03',
