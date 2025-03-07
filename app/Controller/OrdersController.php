@@ -831,6 +831,8 @@ class OrdersController extends AppController
             ]
         ]);
 
+        $this->Income->deleteAll(['Income.order_id' => $id], false);
+
         $income = [];
 
         $income['Income']['order_id'] = $id;
