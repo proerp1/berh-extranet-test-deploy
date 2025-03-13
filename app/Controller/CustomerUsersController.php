@@ -575,7 +575,9 @@ class CustomerUsersController extends AppController
         $action = 'Beneficiários';
 
         $states = $this->CepbrEstado->find('list');
-        $banks = $this->BankCode->find('list');
+        $this->BankCode->virtualFields = ['name' => "concat(BankCode.name, ' - ', BankCode.code)"];
+        $this->BankCode->displayField = 'name';
+        $banks = $this->BankCode->find('list'); 
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customer_users', 'action' => 'edit', $id, $user_id],
@@ -615,6 +617,8 @@ class CustomerUsersController extends AppController
             'Alterar Conta Bancária' => ''
         ];
         $estados = $this->CepbrEstado->find('list');
+        $this->BankCode->virtualFields = ['name' => "concat(BankCode.name, ' - ', BankCode.code)"];
+        $this->BankCode->displayField = 'name';
         $banks = $this->BankCode->find('list');
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $this->set("form_action", "../customer_users/edit_bank_info/".$id.'/'. $user_id . '/' . $id_bank);

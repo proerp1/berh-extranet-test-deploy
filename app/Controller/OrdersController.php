@@ -65,7 +65,8 @@ class OrdersController extends AppController
                 ) as total_balances"
             ],
             'limit' => 50,
-            'order' => ['Order.id' => 'desc']
+            'order' => ['Order.id' => 'desc'],
+            'paramType' => 'querystring'
         ],
         'OrderBalance' => [
             'limit' => 100,
@@ -84,6 +85,9 @@ class OrdersController extends AppController
         ini_set('pcre.backtrack_limit', '15000000');
 
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+        $this->paginate['Order']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
         ini_set('memory_limit', '-1');
 
@@ -233,7 +237,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
 
 
@@ -826,6 +830,11 @@ class OrdersController extends AppController
                 'BankAccount.bank_id' => 1, // 1 para itau e 9 para btg
             ]
         ]);
+
+        $this->Income->updateAll(
+            ['Income.data_cancel' => 'CURRENT_DATE', 'Income.usuario_id_cancel' => CakeSession::read("Auth.User.id")],
+            ['Income.order_id' => $id]
+        );
 
         $income = [];
 

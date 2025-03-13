@@ -222,14 +222,28 @@
                     
                     <div class="alert alert-secondary" role="alert">
                         <strong>Tipo de Pedido</strong><br>
-                        Todos beneficiários: realizar a manutenção no cadastro de beneficiário Inativando beneficios ou beneficiários que não deverão fazer parte do pedido e atualizar dias úteis.<br>
-                        Parcial: opção válida para importação de planilha dentro do pedido.<br>
-                        PIX: opção válida para importação de planilha dentro do pedido.<br>
-                        Emissão: apenas para geração de novos cartões ou re-emissões.<br>
+                        Todos beneficiários: No cadastro de beneficiário atualize dias úteis e inative benefícios e(ou) beneficiários que não deverão fazer parte do pedido. Após executar essa manutenção pode realizar o pedido preenchendo os campos de acordo com o modal escolhido. Não precisa importar planilha para gerar o pedido.<br>
                         <br>
-                        <strong>Modalidade</strong><br><br>
-                        Por Cliente: a emissão ocorrerá em um único pedido independente de grupo economico cadastrado e associado ao beneficiário.<br><br>
-                        Por Grupo Economico: a emissão ocorrerá de acordo com os grupo cadastrados e beneficiáriários associados.<br>
+                        Parcial:  Opção válida para importação de planilha dentro do pedido.<br>
+                        PIX: Opção válida para importação de planilha dentro do pedido.<br>
+                        Emissão: Apenas para geração de novos cartões ou remissões.<br>
+                        <br>
+                        <strong>Modalidade</strong><br>
+                        Por Cliente: a emissão ocorrerá em um único pedido independente de grupo econômico cadastrado e associado ao beneficiário.<br>
+                        Por Grupo Econômico: a emissão ocorrerá de acordo com o(s) grupo(s) cadastrado(s) e beneficiário(s) associado(s).<br>
+                        <br>
+                        
+                        <strong>Relatórios</strong><br>
+                        Pedidos com “status finalizado ou cancelado” demonstram que o processo foi concluído em todas as etapas. Todos os demais status envolvendo os processamentos poderão sofrer atualizações ao longo desses processamentos. 
+                        <br>
+                        <br>
+                        <strong>Calendário de Datas</strong><br>
+                        Período: Obrigatório informar a primeira e a última data de utilização do benefício considerando sempre as regras de disponibilização dos créditos. <br>
+                        Agendamento do crédito previsto:  a contagem inicia após o pagamento do boleto. <br>
+                        Data de vencimento: considere a data em que deseja a disponibilização dos créditos e informe a data que pretende pagar. Os processos iniciam após a identificação do pagamento via compensação bancária.<br>
+                        Utilizar dias úteis: se optar por padrão informe no campo Dias úteis.<br>  
+                        Utilizar dias úteis: se optar por cadastro de beneficiário realize primeiro a manutenção dos dias no cadastro antes de iniciar a geração do pedido.<br>
+
                     </div>
                 </div>
 

@@ -115,7 +115,7 @@ class Supplier extends AppModel
                 'message' => 'O documento fornecido já foi cadastrado.'
             ]
         ],
-        'email' => [
+        /*'email' => [
             'email' => [
                 'rule' => 'email',
                 'message' => 'O e-mail deve ser válido',
@@ -130,7 +130,7 @@ class Supplier extends AppModel
                 'rule' => 'isUnique',
                 'message' => 'O e-mail fornecido já foi cadastrado.'
             ]
-        ],
+        ],*/
         'cep' => [
             'required' => [
                 'rule' => ['notBlank'],

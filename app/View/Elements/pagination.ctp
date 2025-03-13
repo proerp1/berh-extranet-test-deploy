@@ -1,6 +1,6 @@
 <div class="row">
-	<label class="col-md-6"><?php echo $this->Paginator->counter("{:count} registro(s)"); ?></label>
-	<ul class="pagination col-md-6 justify-content-end">
+	<label class="col"><?php echo $this->Paginator->counter("{:count} registro(s)"); ?></label>
+	<ul class="col pagination <?php echo !isset($limit) ? 'justify-content-end' : '' ?>">
 		<?php 
 			echo $this->Paginator->first('<i class="fa fa-angle-double-left"></i>', array('tag' => 'li', 'escape' => false, 'class' => 'page-item'), null, array('escape'=>false, 'class' => 'page-item disabled', 'tag' => 'li' ));
 			if ($this->Paginator->hasPrev()) {
@@ -13,6 +13,25 @@
 			echo $this->Paginator->last('<i class="fa fa-angle-double-right"></i>', array('tag' => 'li', 'escape' => false, 'class' => 'page-item'), null, array('escape'=>false, 'class' => 'page-item disabled', 'tag' => 'li' ));
 		?> 
 	</ul>
+
+	<?php if (isset($limit)) { ?>
+		<div class="col">
+		    <?php
+		        echo $this->Form->create(false, ['type' => 'get', 'style' => 'display: flex;align-items: center;gap: 10px;', 'class' => 'justify-content-end']);
+		            echo $this->Form->input('limit', [
+		                'type' => 'select',
+		                'options' => [5 => '5', 10 => '10', 20 => '20', 50 => '50'],
+		                'default' => $this->request->query('limit') ? $this->request->query('limit') : $limit,
+		                'style' => 'flex: 0.1',
+		                'div' => false,
+		                'class' => 'form-select',
+		                'label' => 'Linhas por página',
+		                'onchange' => 'this.form.submit();'
+		            ]);
+		        echo $this->Form->end();
+		    ?>
+		</div>
+	<?php } ?>
 </div>
 
 <style>

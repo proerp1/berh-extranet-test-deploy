@@ -108,6 +108,9 @@ class ApiBtgPactual extends Controller
 
     public function gerarBoleto($conta)
     {
+        $multa = $conta['BankTicket']['multa_boleto_nao_formatada'];
+        $juros = $conta['BankTicket']['juros_boleto_dia'];
+
         if (!empty($conta['Order']) && $conta['Order']['economic_group_id'] != null) {
             $econ = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $conta['Order']['economic_group_id']], 'recursive' => -1]);
 
@@ -145,6 +148,16 @@ class ApiBtgPactual extends Controller
             'referenceNumber' => $conta['Income']['id'],
             'amount' => $conta['Income']['valor_total_nao_formatado'],
             'dueDate' => $conta['Income']['vencimento_nao_formatado'],
+            "interests" => [
+                "arrears" => [
+                    "type" => $conta['Customer']['cobrar_juros'] == 'S' ? "PERCENTAGE" : "NOT_APPLICABLE",
+                    "value" => $conta['Customer']['cobrar_juros'] == 'S' ? $juros : 0
+                ],
+                "penalty" => [
+                    "type" => $conta['Customer']['cobrar_juros'] == 'S' ? "FIXED_VALUE" : "NOT_APPLICABLE",
+                    "value" => $conta['Customer']['cobrar_juros'] == 'S' ? $multa : 0
+                ]
+            ],
             'installments' => 1,
             'description' => $conta['BankTicket']['instrucao_boleto_1'].' '.$conta['BankTicket']['instrucao_boleto_2'].' '.$conta['BankTicket']['instrucao_boleto_3'].' '.$conta['BankTicket']['instrucao_boleto_4']
         ];
@@ -184,17 +197,17 @@ class ApiBtgPactual extends Controller
                 'dueDate' => $conta['Income']['vencimento_nao_formatado'],
                 "interests" => [
                     "arrears" => [
-                        "type" => "PERCENTAGE",
-                        "value" => 0
+                        "type" => $conta['Customer']['cobrar_juros'] == 'S' ? "PERCENTAGE" : "NOT_APPLICABLE",
+                        "value" => $conta['Customer']['cobrar_juros'] == 'S' ? $juros : 0
                     ],
                     "penalty" => [
-                        "type" => "PERCENTAGE",
-                        "value" => 0
+                        "type" => $conta['Customer']['cobrar_juros'] == 'S' ? "FIXED_VALUE" : "NOT_APPLICABLE",
+                        "value" => $conta['Customer']['cobrar_juros'] == 'S' ? $multa : 0
                     ]
                 ],
                 "discounts" => [
                     [
-                        "type" => "PERCENTAGE",
+                        "type" => "NOT_APPLICABLE",
                         "value" => 0
                     ]
                 ]

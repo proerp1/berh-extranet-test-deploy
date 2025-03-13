@@ -256,7 +256,10 @@ if (isset($id)) {
                         'cpf' => 'CPF',
                         'email' => 'e-mail',
                         'celular' => 'celular',
-                        'chave' => 'chave'
+                        'chave' => 'chave',
+                        'qr code' => 'Qr code',
+                        'aleatoria' => 'Aleatoria',
+
                     ];
                     ?>
                     <label class="fw-semibold fs-6 mb-2">Tipo Chave</label>

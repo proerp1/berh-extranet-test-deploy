@@ -141,6 +141,30 @@ class ApiItau extends Controller
             ];
         }
 
+        $multaArr = [
+            'codigo_tipo_multa' => '03',
+            'quantidade_dias_multa' => 0
+        ];
+
+        $jurosArr = [
+            'codigo_tipo_juros' => '05',
+            'quantidade_dias_juros' => 0
+        ];
+
+        if ($conta['Customer']['cobrar_juros'] == 'S') {
+            $multaArr = [
+                'valor_multa' => $multa,
+                'codigo_tipo_multa' => '03',
+                'quantidade_dias_multa' => 1
+            ];
+
+            $jurosArr = [
+                'percentual_juros' => $juros,
+                'codigo_tipo_juros' => '05',
+                'quantidade_dias_juros' => 1
+            ];
+        }
+
         $params = [
             'data' => [
                 'etapa_processo_boleto' => Configure::read('App.type') == 'dev' ? 'validacao' : 'efetivacao', // envia o tipo 'validacao' para testes
@@ -169,22 +193,8 @@ class ApiItau extends Controller
                             'texto_seu_numero' => str_pad($conta['Income']['id'], 8, '0', STR_PAD_LEFT),
                         ],
                     ],
-                    'multa' => [
-                        /*'codigo_tipo_multa' => '03',
-                        'quantidade_dias_multa' => 1,
-                        'valor_multa' => $multa,*/
-                        'codigo_tipo_multa' => '03',
-                        'quantidade_dias_multa' => 0,
-                        //'valor_multa' => 0,
-                    ],
-                    'juros' => [
-                        /*'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => 1,
-                        'percentual_juros' => $juros,*/
-                        'codigo_tipo_juros' => '05',
-                        'quantidade_dias_juros' => 0,
-                        //'percentual_juros' => 0,
-                    ],
+                    'multa' => $multaArr,
+                    'juros' => $jurosArr,
                     'recebimento_divergente' => [
                         'codigo_tipo_autorizacao' => '03',
                     ],

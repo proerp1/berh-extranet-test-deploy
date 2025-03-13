@@ -108,14 +108,14 @@ $(document).ready(function() {
 
             // Verifica se period_to é posterior a data atual
             if (periodFromDate < currDate) {
-                $('#message_classification_period').text('A data "De" não deve ser posterior à data atual.').show();
+                $('#message_classification_period').text('A data "De" não deve ser anterior à data atual.').show();
                 event.preventDefault();
                 return; // Evita a execução adicional
             }
 
             // Verifica se period_to é posterior a period_from
             if (periodToDate <= periodFromDate) {
-                $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
+                $('#message_classification_period').text('A data "Até" deve ser anterior à data "De".').show();
                 event.preventDefault();
                 return; // Evita a execução adicional
             }

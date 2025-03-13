@@ -439,7 +439,7 @@ class Order extends AppModel
                 'recursive' => -1
             ]);
 
-            $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
+            $benefitId = isset($itinerary['CustomerUserItinerary']) ? $itinerary['CustomerUserItinerary']['benefit_id'] : null;
 
             // Pedido deve ser diferente do atual e status todos menos inicio e cancelado
             $firstOrder = $OrderItem->find('first', [

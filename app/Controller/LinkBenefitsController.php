@@ -105,6 +105,8 @@ class LinkBenefitsController extends AppController
             $code = $row[1];
             $number = $row[2];
             $id_operadora = $row[3];
+            $matricula = $row[4];
+
 
             $user = $this->CustomerUser->find('first', [
                 'conditions' => [
@@ -121,44 +123,87 @@ class LinkBenefitsController extends AppController
                 continue;
             }
 
-            $benefit = $this->Benefit->find('first', [
-                'conditions' => [
-                    'Benefit.code' => $code,
-                    'Supplier.id' => $id_operadora
-                ],
-            ]);
+            if ($code) {
+                $benefit = $this->Benefit->find('first', [
+                    'fields' => [
+                        'Benefit.id',
+                    ],
+                    'conditions' => [
+                        'Benefit.code' => $code,
+                        'Supplier.id' => $id_operadora
+                    ],
+                ]);
 
-            if (empty($benefit)) {
-                $log[] = [
-                    'link_benefit_id' => $this->LinkBenefit->id,
-                    'description' => 'Benefício '.$code.' não existente.'
+                if (empty($benefit)) {
+                    $log[] = [
+                        'link_benefit_id' => $this->LinkBenefit->id,
+                        'description' => 'Benefício '.$code.' não existente.'
+                    ];
+                    continue;
+                }
+
+                $itineraries = $this->CustomerUserItinerary->find('first', [
+                    'conditions' => [
+                        'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
+                        'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
+                    ],
+                    'recursive' => -1
+                ]);
+
+                if (empty($itineraries)) {
+                    $log[] = [
+                        'link_benefit_id' => $this->LinkBenefit->id,
+                        'description' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']
+                    ];
+                    continue;
+                }
+
+                $update[] = [
+                    'CustomerUserItinerary' => [
+                        'id' => $itineraries['CustomerUserItinerary']['id'],
+                        'card_number' => $number,
+                        'matricula' => $matricula
+                    ]
                 ];
-                continue;
+            } elseif ($id_operadora) {
+                $benefits = $this->Benefit->find('all', [
+                    'fields' => [
+                        'Benefit.id',
+                    ],
+                    'conditions' => [
+                        'Supplier.id' => $id_operadora
+                    ],
+                ]);
+
+                if (empty($benefits)) {
+                    $log[] = [
+                        'link_benefit_id' => $this->LinkBenefit->id,
+                        'description' => 'ID Operadora '.$id_operadora.' não existente.'
+                    ];
+                    continue;
+                }
+
+                foreach ($benefits as $benefit) {
+                    $itineraries = $this->CustomerUserItinerary->find('first', [
+                        'conditions' => [
+                            'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
+                            'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
+                        ],
+                        'recursive' => -1
+                    ]);
+
+                    if (empty($itineraries)) {
+                        continue;
+                    }
+
+                    $update[] = [
+                        'CustomerUserItinerary' => [
+                            'id' => $itineraries['CustomerUserItinerary']['id'],
+                            'card_number' => $number,
+                        ]
+                    ];
+                }
             }
-
-            $itineraries = $this->CustomerUserItinerary->find('first', [
-                'conditions' => [
-                    'CustomerUserItinerary.customer_user_id' => $user['CustomerUser']['id'],
-                    'CustomerUserItinerary.benefit_id' => $benefit['Benefit']['id'],
-                    'CustomerUserItinerary.status_id' => 1
-                ],
-                'recursive' => -1
-            ]);
-
-            if (empty($itineraries)) {
-                $log[] = [
-                    'link_benefit_id' => $this->LinkBenefit->id,
-                    'description' => 'Benefício '.$code.' ainda não foi vinculado ao beneficiáro '.$user['CustomerUser']['name']
-                ];
-                continue;
-            }
-
-            $update[] = [
-                'CustomerUserItinerary' => [
-                    'id' => $itineraries['CustomerUserItinerary']['id'],
-                    'card_number' => $number,
-                ]
-            ];
         }
 
         $this->LinkBenefitLog->saveMany($log);

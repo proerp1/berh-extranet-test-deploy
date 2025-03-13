@@ -104,9 +104,15 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
-                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13)) { ?>
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
                         <a href="#" id="download_sel" class="btn btn-secondary me-3">
                             Download em Lote
+                        </a>
+                    <?php } ?>
+
+                    <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12)) { ?>
+                        <a href="#" id="pendente_sel" class="btn btn-secondary me-3">
+                            Pendente em Lote 
                         </a>
                     <?php } ?>
 
@@ -182,6 +188,14 @@
                                     <input class="form-control" id="pagamento_ate" name="pagamento_ate" value="<?php echo isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+            <label class="form-label fs-5 fw-bold mb-3">Fornecedor (ID):</label>
+            <input class="form-control" id="supplier_id" name="supplier_id" value="<?php echo isset($_GET['supplier_id']) ? $_GET['supplier_id'] : ''; ?>">
+        </div>
+        <div class="mb-10">
+            <label class="form-label fs-5 fw-bold mb-3">Fornecedor (Nome Fantasia):</label>
+            <input class="form-control" id="supplier_nome" name="supplier_nome" value="<?php echo isset($_GET['supplier_nome']) ? $_GET['supplier_nome'] : ''; ?>">
+        </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -200,14 +214,13 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
+                        <?php if (isset($_GET["t"]) && in_array($_GET["t"], [11, 12, 13, 103])) { ?>
                             <th class="ps-4 w-80px min-w-80px rounded-start">
                                 <input type="checkbox" class="check_all">
                             </th>
                         <?php } ?>
-			            <th>ID</th>
-                        <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>N° Documento</th>
-                        
+			            <th <?php echo (!isset($_GET["t"]) || $_GET["t"] != 11 && $_GET["t"] != 12) ? 'class="ps-4 w-80px min-w-80px rounded-start"' : '' ?>>ID</th>
+                        <th>N° Documento</th>
                         <th>Pedido</th>
                         <th>Cliente</th>
                         <th>Fornecedor</th>
@@ -217,7 +230,7 @@
 			            <th>Vencimento</th>
                         <th>Data de criação</th>
 						<th>Parcela</th>
-						<th>Valor a pagar R$</th>
+                        <th data-priority="1"><?php echo $this->Paginator->sort('Outcome.valor_total', 'Valor a pagar R$'); ?> <?php echo $this->Paginator->sortKey() == 'Outcome.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
 						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
                         <th>Observação</th>
@@ -270,7 +283,7 @@
                                     <span class='badge badge-success'><i class="fas fa-info" style="color:#fff" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
 
                                         
-									<a href="<?php echo $this->base.'/outcomes/edit/'.$data[$i]["Outcome"]["id"]; ?>" class="btn btn-info btn-sm">
+									<a href="<?php echo $this->Html->url(['controller' => 'outcomes', 'action' => 'edit', $data[$i]["Outcome"]["id"], '?' => $_SERVER['QUERY_STRING']]); ?>" class="btn btn-info btn-sm">
 										Editar
 									</a>
                                     <?php if($data[$i]["Status"]["id"]!= 13){?>
@@ -298,6 +311,7 @@
                 </tfoot>
 			</table>
         </div>
+
         <?php echo $this->element("pagination"); ?>
     </div>
 </div>
@@ -315,6 +329,24 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                 <a id="aprova_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_pendente_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tornar Pendente items selecionados?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="pendente_confirm" class="btn btn-success">Sim</a>
             </div>
         </div>
     </div>
@@ -394,6 +426,16 @@
             }
         });
 
+        $('#pendente_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_pendente_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um item a tornar pendente');
+            }
+        });
+
         $('#download_sel').on('click', function(e) {
             e.preventDefault();
 
@@ -465,6 +507,34 @@
                     data: {
                         outcomeIds,
                         status: 12
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#pendente_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const outcomeIds = [];
+
+            checkboxes.each(function() {
+                outcomeIds.push($(this).data('id'));
+            });
+
+            if (outcomeIds.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: base_url+'/outcomes/change_status_lote',
+                    data: {
+                        outcomeIds,
+                        status: 103
                     },
                     dataType: 'json',
                     success: function(response) {

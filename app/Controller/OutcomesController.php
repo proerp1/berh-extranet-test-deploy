@@ -19,7 +19,8 @@ class OutcomesController extends AppController {
                 ) as nome_primario"
             ],
             'limit' => 175, 
-            'order' => ['Status.id' => 'asc', 'Outcome.vencimento' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc']
+            'order' => ['Status.id' => 'asc', 'Outcome.vencimento' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc'],
+            'paramType' => 'querystring'
         ]
 	];
 
@@ -29,7 +30,9 @@ class OutcomesController extends AppController {
 
 	public function index() {
 		$this->Permission->check(15, "leitura") ? "" : $this->redirect("/not_allowed");
-		$this->Paginator->settings = $this->paginate;
+		$limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+        $this->paginate['Outcome']['limit'] = $limit;
+        $this->Paginator->settings = $this->paginate;
 
 		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
 		
@@ -41,6 +44,15 @@ class OutcomesController extends AppController {
 		if(isset($_GET["t"]) and $_GET["t"] != ""){
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
+
+		if(isset($_GET['supplier_id']) && $_GET['supplier_id'] != "") {
+			$condition['and'] = array_merge($condition['and'], ['Outcome.supplier_id' => $_GET['supplier_id']]);
+		}
+		
+		if(isset($_GET['supplier_nome']) && $_GET['supplier_nome'] != "") {
+			$condition['and'] = array_merge($condition['and'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['supplier_nome']."%"]);
+		}
+		
 
 		$get_de = isset($_GET["de"]) ? $_GET["de"] : '';
 		$get_ate = isset($_GET["ate"]) ? $_GET["ate"] : '';
@@ -154,7 +166,7 @@ class OutcomesController extends AppController {
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
 		$action = 'Contas a pagar';
-		$this->set(compact('status', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
+		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
 	}
 	
 	public function add() {
@@ -561,8 +573,10 @@ public function edit_document($id, $document_id = null)
 			$zip_name = "arquivos_programado.zip";
 		} elseif ($status == 12) {
 			$zip_name = "arquivos_aprovado.zip";
+		} elseif ($status == 13) {
+			$zip_name = "arquivos_pago.zip";
 		} else {
-			$zip_name = "arquivos_pago.zip";			
+			$zip_name = "arquivos_pendente.zip";			
 		}
 	    
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
