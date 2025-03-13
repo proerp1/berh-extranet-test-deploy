@@ -108,7 +108,7 @@ class ApiBtgPactual extends Controller
 
     public function gerarBoleto($conta)
     {
-        $multa = $conta['BankTicket']['multa_boleto_nao_formatada'];
+        $multa = $conta['BankTicket']['multa_boleto'];
         $juros = $conta['BankTicket']['juros_boleto_dia'];
 
         if (!empty($conta['Order']) && $conta['Order']['economic_group_id'] != null) {
