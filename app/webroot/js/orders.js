@@ -108,7 +108,7 @@ $(document).ready(function() {
 
             // Verifica se period_to é posterior a data atual
             if (periodFromDate < currDate) {
-                $('#message_classification_period').text('A data "De" não deve ser posterior à data atual.').show();
+                $('#message_classification_period').text('A data "De" não deve ser anterior à data atual.').show();
                 event.preventDefault();
                 return; // Evita a execução adicional
             }
