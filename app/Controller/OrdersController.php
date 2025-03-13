@@ -2789,6 +2789,7 @@ class OrdersController extends AppController
 
         $itemOrderId = $this->request->data['orderItemIds'];
         $statusProcess = $this->request->data['v_status_processamento'];
+        $pedido_operadora = $this->request->data['v_pedido_operadora'];
 
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
@@ -2819,7 +2820,12 @@ class OrdersController extends AppController
         );
 
         $this->OrderItem->updateAll(
-            ['OrderItem.status_processamento' => "'" . $statusProcess . "'", 'OrderItem.updated' => "'" . date('Y-m-d H:i:s') . "'", 'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")],
+            [
+                'OrderItem.status_processamento' => "'" . $statusProcess . "'", 
+                'OrderItem.pedido_operadora' => "'" . $pedido_operadora . "'", 
+                'OrderItem.updated' => "'" . date('Y-m-d H:i:s') . "'", 
+                'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")
+            ],
             ['OrderItem.id' => $itemOrderId]
         );
 
@@ -2835,7 +2841,10 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
+        
         $statusProcess = $this->request->data['v_status_processamento'];
+        $pedido_operadora = $this->request->data['v_pedido_operadora'];
+
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
         $q = $this->request->data['curr_q'];
@@ -2907,6 +2916,7 @@ class OrdersController extends AppController
                 'OrderItem' => [
                     'id' => $item['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
+                    'pedido_operadora' => $pedido_operadora,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]
