@@ -9,42 +9,49 @@ if (isset($id)) {
 <?php echo $this->Html->css("html_editor/summernote", array('block' => 'css')); ?>
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
-<div class="card mb-5 mb-xl-8">
-    <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('Supplier', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
-           
-        <div class="col-auto d-flex align-items-center">
-                <div class="form-check form-switch mb-0">
-                <label for="registro_cobranca" class="form-check-label ms-2">Registro Cobrança</label>
-
-                    <?php echo $this->Form->input('registro_cobranca', array(
-                        "type" => "checkbox",
-                        "id" => "registro_cobranca",
-                        "div" => false,
-                        "label" => false,
-                        "class" => "form-check-input"
-                    )); ?>
-                </div>
-            </div>
-            <br>
-                        <!-- Campo para valor, oculto por padrão -->
-        <div id="campo_valor" style="display: none;" class="mb-4 col-12">
-            <div class="row">
-                <div class="col-6">
-                    <label for="valor">Quantidade</label>
-                    <?php echo $this->Form->input('valor', ["id" => "nome_secundario", "placeholder" => "Quantidade de Tempo ou Dias", "class" => "form-control mb-3 mb-lg-0"]);  ?>
-                </div>
+        <div class="card mb-5 mb-xl-8">
+            <div class="card-body pt-7 py-3">
+                <?php echo $this->Form->create('Supplier', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
                 
+                <div class="col-auto d-flex align-items-center">
+                    <div class="form-check form-switch mb-0">
+                        <label for="registro_cobranca" class="form-check-label ms-2">Registro Cobrança</label>
+
+                        <?php echo $this->Form->input('registro_cobranca', array(
+                            "type" => "checkbox",
+                            "id" => "registro_cobranca",
+                            "div" => false,
+                            "label" => false,
+                            "class" => "form-check-input"
+                        )); ?>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Campo para valor, oculto por padrão -->
+                <div id="campo_valor" style="display: none;" class="mb-4 col-12">
+                    <div class="row">
+                    <div class="col-6">
+                    <label for="valor">Quantidade</label>
+                    <?php echo $this->Form->input('valor', [
+                        "id" => "valor", 
+                        "placeholder" => "Quantidade de Tempo ou Dias", 
+                        "class" => "form-control mb-3 mb-lg-0", 
+                        "style" => "margin-top: 6px;" 
+                    ]); ?>
+                </div>
+
+
                 <div class="col-6">
                     <label for="unidade_tempo">Unidade de Tempo</label>
                     <?php
                         echo $this->Form->input('unidade_tempo', [
-                        'type' => 'select', 
-                        'options' => ['hrs' => 'Horas', 'dias' => 'Dias'], 
-                        'id' => 'unidade_tempo', 
-                        'class' => 'form-select mt-2', 
-                     ]);?>
-
+                            'type' => 'select', 
+                            'options' => ['' => 'Selecione', 'hrs' => 'Horas', 'dias' => 'Dias'], 
+                            'id' => 'unidade_tempo', 
+                            'class' => 'form-select mt-2', 
+                        ]);
+                    ?>
                 </div>
             </div>
         </div>
@@ -473,6 +480,8 @@ if (isset($id)) {
         document.addEventListener('DOMContentLoaded', function() {
     const registroCobranca = document.getElementById('registro_cobranca');
     const campoValor = document.getElementById('campo_valor');
+    const valorInput = document.getElementById('valor');
+    const unidadeTempoSelect = document.getElementById('unidade_tempo');
 
     // Verifique o estado do campo de checkbox ao carregar a página
     if (registroCobranca.checked) {
@@ -487,10 +496,12 @@ if (isset($id)) {
             campoValor.style.display = 'block';
         } else {
             campoValor.style.display = 'none';
+            // Resetar os campos
+            valorInput.value = '';  // Limpar o campo "Quantidade"
+            unidadeTempoSelect.value = '';  // Definir "Selecione" como valor selecionado
         }
     });
 });
-
 
     </script>
     
