@@ -225,6 +225,7 @@
                                     <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
                                     <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                    <option value="CARTAO_NOVO">CARTAO_NOVO</option>
                                     <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
@@ -389,11 +390,13 @@
 
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
-                const curr_st = urlParams.get('st');
                 const curr_c = urlParams.get('c');
                 const curr_de = urlParams.get('de');
                 const curr_para = urlParams.get('para');
                 const curr_num = urlParams.get('num');
+
+                const statusElements = document.querySelectorAll('#kt-toolbar-filter #st option:checked');
+                const curr_st = Array.from(statusElements).map(el => el.value);
 
                 $.ajax({
                     type: 'POST',
