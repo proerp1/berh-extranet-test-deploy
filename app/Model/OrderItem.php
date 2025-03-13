@@ -217,7 +217,8 @@ class OrderItem extends AppModel {
             SUM(i.subtotal) AS valor_credito,
             o.end_date as data_liberacao_credito,
             CONCAT(CONCAT(CONCAT(CONCAT(CONCAT('5803-', o.id), '-'), c.id), '-'), su.id) AS pedido_id,
-            o.id as pedido_numero
+            o.id as pedido_numero,
+            o.is_partial
         FROM customer_users b
             INNER JOIN customers c ON c.id = b.customer_id AND c.data_cancel = '1901-01-01' AND c.status_id = 3
             INNER JOIN orders o ON o.customer_id = c.id AND o.data_cancel = '1901-01-01' AND o.status_id IN (85, 86, 87)
