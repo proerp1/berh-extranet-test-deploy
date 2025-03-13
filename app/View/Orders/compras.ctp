@@ -201,6 +201,7 @@
                                     <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
                                     <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                    <option value="CARTAO_NOVO">CARTAO_NOVO</option>
                                     <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
@@ -211,6 +212,15 @@
                                     <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row js_pedido_operadora" style="margin-top:20px;">
+                    <label class="mb-2">Pedido Operadora</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -258,6 +268,16 @@
     $(document).ready(function() {
         trigger_change();
 
+        $(".js_pedido_operadora").hide();
+
+        $('#status_processamento').on('change', function() {
+            if ($(this).val() == 'PAGAMENTO_REALIZADO') {
+                $(".js_pedido_operadora").show();
+            } else {
+                $(".js_pedido_operadora").hide();
+            }
+        });
+
         $('#alterar_sel').on('click', function(e) {
             e.preventDefault();
 
@@ -279,7 +299,10 @@
                 const urlParams = new URLSearchParams(queryString);
 
                 const order_id = <?php echo $id ?>;
+
                 const v_status_processamento = $('#status_processamento').val();
+                const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+
                 const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
                 const notOrderItemIds = [];
 
@@ -289,7 +312,9 @@
                 
                 const curr_q = urlParams.get('q');
                 const curr_sup = urlParams.get('sup');
-                const curr_stp = urlParams.get('stp');
+
+                const statusElements = document.querySelectorAll('#kt-toolbar-filter #stp option:checked');
+                const curr_stp = Array.from(statusElements).map(el => el.value);
 
                 $.ajax({
                     type: 'POST',
@@ -298,6 +323,7 @@
                         notOrderItemIds,
                         order_id,
                         v_status_processamento,
+                        v_pedido_operadora,
                         curr_q,
                         curr_sup,
                         curr_stp
@@ -311,6 +337,8 @@
                 });
             } else {
                 const v_status_processamento = $('#status_processamento').val();
+                const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+
                 const checkboxes = $('input[name="alt_linha"]:checked');
                 const orderItemIds = [];
 
@@ -324,7 +352,8 @@
                         url: base_url+'/orders/alter_item_status_processamento',
                         data: {
                             orderItemIds,
-                            v_status_processamento
+                            v_status_processamento,
+                            v_pedido_operadora
                         },
                         dataType: 'json',
                         success: function(response) {

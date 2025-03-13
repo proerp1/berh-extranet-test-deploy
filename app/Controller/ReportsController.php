@@ -1229,6 +1229,8 @@ class ReportsController extends AppController
         $this->autoRender = false;
 
         $statusProcess = $this->request->data['v_status_processamento'];
+        $pedido_operadora = $this->request->data['v_pedido_operadora'];
+
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
         $de = $this->request->data['curr_de'];
@@ -1379,6 +1381,7 @@ class ReportsController extends AppController
                 'OrderItem' => [
                     'id' => $item['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
+                    'pedido_operadora' => $pedido_operadora,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]

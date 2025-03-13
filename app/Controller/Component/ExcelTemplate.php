@@ -239,7 +239,9 @@ class ExcelTemplate
             ->setCellValue('S1', "Conta")
             ->setCellValue('T1', "Digito")
             ->setCellValue('U1', "Tipo Chave")
-            ->setCellValue('V1', "Chave PIX");
+            ->setCellValue('V1', "Chave PIX")
+            ->setCellValue('W1', "Registro Cobrança");
+            
           
 
             $indx = 1;
@@ -272,7 +274,8 @@ class ExcelTemplate
                     ->setCellValue('S' . $indx, $dados[$i]['Supplier']['acc_number'] ?? '')
                     ->setCellValue('T' . $indx, $dados[$i]['Supplier']['acc_digit'] ?? '')
                     ->setCellValue('U' . $indx, $dados[$i]['Supplier']['pix_type'] ?? '')
-                    ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '');
+                    ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '')
+                    ->setCellValue('X' . $indx, ($dados[$i]['Supplier']['valor'] ?? '') . ' ' . ($dados[$i]['Supplier']['unidade_tempo'] ?? ''));
 
             }
             

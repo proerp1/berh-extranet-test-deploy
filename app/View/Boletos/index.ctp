@@ -126,6 +126,7 @@
                         </th>
                         <th>Nome</th>
                         <th>Vencimento</th>
+                        <th>Pedido</th>
                         <th>Valor a receber R$</th>
                         <th>Valor recebido R$</th>
                         <th class="w-250px min-w-250px rounded-end">Saldo devedor</th>
@@ -140,6 +141,7 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"].' - '.$data[$i]["Customer"]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["order_id"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_pago"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
