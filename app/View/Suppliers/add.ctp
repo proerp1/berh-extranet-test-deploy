@@ -12,8 +12,44 @@ if (isset($id)) {
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Supplier', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+           
+        <div class="col-auto d-flex align-items-center">
+                <div class="form-check form-switch mb-0">
+                <label for="registro_cobranca" class="form-check-label ms-2">Registro Cobrança</label>
 
-        <div class="row">
+                    <?php echo $this->Form->input('registro_cobranca', array(
+                        "type" => "checkbox",
+                        "id" => "registro_cobranca",
+                        "div" => false,
+                        "label" => false,
+                        "class" => "form-check-input"
+                    )); ?>
+                </div>
+            </div>
+            <br>
+                        <!-- Campo para valor, oculto por padrão -->
+        <div id="campo_valor" style="display: none;" class="mb-4 col-12">
+            <div class="row">
+                <div class="col-6">
+                    <label for="valor">Quantidade</label>
+                    <?php echo $this->Form->input('valor', ["id" => "nome_secundario", "placeholder" => "Quantidade de Tempo ou Dias", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+                
+                <div class="col-6">
+                    <label for="unidade_tempo">Unidade de Tempo</label>
+                    <?php
+                        echo $this->Form->input('unidade_tempo', [
+                        'type' => 'select', 
+                        'options' => ['hrs' => 'Horas', 'dias' => 'Dias'], 
+                        'id' => 'unidade_tempo', 
+                        'class' => 'form-select mt-2', 
+                     ]);?>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Status</label>
                 <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
@@ -38,7 +74,12 @@ if (isset($id)) {
                 <label class="fw-semibold fs-6 mb-2">Região</label>
                 <?php echo $this->Form->input('regioes', ["id" => "regioes", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Norte', '2' => 'Nordeste', '3' => 'Centro-Oeste', '4' => 'Sudeste', '5' => 'Sul']]); ?>
             </div>
-        </div>
+
+
+</div>
+
+
+
 
         <div class="row">
             <div class="mb-7 col">
@@ -428,4 +469,28 @@ if (isset($id)) {
                 document.getElementById('copyButton').classList.add('btn-outline-secondary');
             }, 1000);
         });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+    const registroCobranca = document.getElementById('registro_cobranca');
+    const campoValor = document.getElementById('campo_valor');
+
+    // Verifique o estado do campo de checkbox ao carregar a página
+    if (registroCobranca.checked) {
+        campoValor.style.display = 'block';
+    } else {
+        campoValor.style.display = 'none';
+    }
+
+    // Evento de mudança no checkbox
+    registroCobranca.addEventListener('change', function() {
+        if (this.checked) {
+            campoValor.style.display = 'block';
+        } else {
+            campoValor.style.display = 'none';
+        }
+    });
+});
+
+
     </script>
+    
