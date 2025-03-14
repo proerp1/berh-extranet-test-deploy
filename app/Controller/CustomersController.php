@@ -1974,13 +1974,67 @@ class CustomersController extends AppController
                             AND b.data_cancel = '1901-01-01 00:00:00' 
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                 ) as total_balances",
-                'sum(Order.saldo_transfer_fee) as vl_vlb',
-                '"0" as vl_vlc',
                 'sum(Order.tpp_fee) as vl_tpp',
             ],
             'conditions' => $condition,
             'recursive' => -1
         ]);
+
+        $data_orders = $this->Order->find('all', [
+            'contain' => ['Customer'],
+            'fields' => [
+                'Order.fee_saldo',
+                'Order.transfer_fee',
+                'Order.subtotal',
+                'Order.total',
+                'Order.transfer_fee',
+                "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                    FROM order_balances b 
+                        INNER JOIN orders o ON o.id = b.order_id 
+                    WHERE o.id = Order.id 
+                            AND b.tipo = 1 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                ) as total_balances"
+            ],
+            'conditions' => $condition,
+            'order' => ['Order.created' => 'asc'],
+            'recursive' => -1
+        ]);
+        
+        $total_fee_economia = 0;
+        $total_vl_economia = 0;
+        $total_repasse_economia = 0;
+        $total_diferenca_repasse = 0;
+        
+        if ($data_orders) {
+            for ($i = 0; $i < count($data_orders); $i++) {
+                $fee_economia = 0;
+                $vl_economia = $this->priceFormatBeforeSave($data_orders[$i][0]["total_balances"]);
+                $fee_saldo = $this->priceFormatBeforeSave($data_orders[$i]["Order"]["fee_saldo"]);
+
+                if ($fee_saldo != 0 and $vl_economia != 0) {
+                    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
+                }
+
+                $vl_economia = ($vl_economia - $fee_economia);
+                $total_economia = ($vl_economia + $fee_economia);
+
+                $v_perc_repasse = (($this->priceFormatBeforeSave($data_orders[$i]["Order"]["transfer_fee"]) / $this->priceFormatBeforeSave($data_orders[$i]["Order"]["subtotal"])));
+                
+                $v_repasse_economia = ($v_perc_repasse * $total_economia);
+
+                $v_valor_pedido_compra = ($this->priceFormatBeforeSave($data_orders[$i]["Order"]["total"]) - $total_economia);
+                $v_repasse_pedido_compra = ($v_perc_repasse * $v_valor_pedido_compra);
+
+                $v_diferenca_repasse = ($this->priceFormatBeforeSave($data_orders[$i]["Order"]["transfer_fee"]) - $v_repasse_pedido_compra);
+
+                $total_fee_economia += $fee_economia;
+                $total_vl_economia += $vl_economia;
+                $total_repasse_economia += $v_repasse_economia;
+                $total_diferenca_repasse += $v_diferenca_repasse;
+            }
+        }
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
@@ -1991,6 +2045,21 @@ class CustomersController extends AppController
             'Extrato' => '',
         ];
 
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo'));
+        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo', 'total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse'));
     }
+
+    public function priceFormatBeforeSave($price)
+    {
+        if (is_numeric($price)) {
+            return $price;
+        }
+        if ($price == '') {
+            return 0;
+        }
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
+
+        return $valueFormatado;
+    }
+
 }

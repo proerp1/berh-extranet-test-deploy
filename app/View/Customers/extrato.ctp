@@ -77,24 +77,38 @@
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['vl_vlb'],2,',','.') ?></span>
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_fee_economia,2,',','.') ?></span>
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">VLB</span>
+                        <span class="fw-bold fs-6 text-gray-400">VLB (Fee economia)</span>
                     </div>
                 </div>
 
-                <?php 
-                    $vlc = 0;
-
-                    if ($totalOrders[0]['vl_vlb'] != 0 and $totalOrders[0]['total'] != 0) {
-                        $vlc = ($totalOrders[0]['total'] - $totalOrders[0]['vl_vlb']);
-                    }
-                ?>
-
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['vl_vlc'],2,',','.') ?></span>
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_vl_economia,2,',','.') ?></span>
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">VLC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-xl-5">
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_repasse_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Repasse Economia</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_diferenca_repasse,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Diferença Repasse</span>
                     </div>
                 </div>
             </div>
@@ -227,7 +241,12 @@
                         <th>Cliente</th>
                         <th>Economia</th>
                         <th>Total</th>
-                        <th class="w-150px min-w-150px rounded-end">Saldo</th>
+                        <th>Saldo</th>
+
+                        <th>Repasse Economia</th>
+                        <th>Valor Pedido Compra</th>
+                        <th>Repasse Pedido Compra</th>
+                        <th class="w-150px min-w-150px rounded-end">Diferença Repasse</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -249,6 +268,15 @@
 
                                 $vl_economia = ($vl_economia - $fee_economia);
                                 $total_economia = ($vl_economia + $fee_economia);
+
+                                $v_perc_repasse = (($data[$i]["Order"]["transfer_fee_not_formated"] / $data[$i]["Order"]["subtotal_not_formated"]));
+                                
+                                $v_repasse_economia = ($v_perc_repasse * $total_economia);
+
+                                $v_valor_pedido_compra = ($data[$i]["Order"]["total_not_formated"] - $total_economia);
+                                $v_repasse_pedido_compra = ($v_perc_repasse * $v_valor_pedido_compra);
+
+                                $v_diferenca_repasse = ($data[$i]["Order"]["transfer_fee_not_formated"] - $v_repasse_pedido_compra);
                                 
                                 $saldo = $saldo + ($data[$i][0]["total_balances"] - $data[$i]["Order"]['desconto_not_formated']);
                             ?>
@@ -274,6 +302,11 @@
                                 <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></td>
+
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_valor_pedido_compra,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_pedido_compra,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_diferenca_repasse,2,',','.'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
