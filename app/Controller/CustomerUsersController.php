@@ -420,6 +420,20 @@ class CustomerUsersController extends AppController
         $this->render("add_address");
     }
 
+    public function delete_address($customer_id, $user_id, $id){
+        $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->CustomerUserAddress->id = $id;
+        $this->request->data = $this->CustomerUserAddress->read();
+
+        $this->request->data['CustomerUserAddress']['data_cancel'] = date("Y-m-d H:i:s");
+        $this->request->data['CustomerUserAddress']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->CustomerUserAddress->save($this->request->data)) {
+            $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'addresses/'.$customer_id.'/'.$user_id.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
+        }
+    }
+
     /*******************
                 FERIAS
     ********************/

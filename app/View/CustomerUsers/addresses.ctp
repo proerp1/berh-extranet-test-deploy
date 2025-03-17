@@ -88,7 +88,7 @@
                                         Editar
                                     </a>
 
-                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customers/delete_user/'.$id.'/'.$value["CustomerUser"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/customer_users/delete_address/' . $id . '/' . $user_id . '/' . $value["CustomerUserAddress"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
                                     </a>
                                 </td>
