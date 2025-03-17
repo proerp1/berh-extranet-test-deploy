@@ -16,32 +16,38 @@
         }).trigger('focusout');
 
         $("#cep").change(function() {
-            var $el = $(this);
-            
-            $.ajax({
-                url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
-                type: "get",
-                beforeSend: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
-                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
-                },
-                success: function(data){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    $("#endereco").val(data["logradouro"]);
-                    $("#bairro").val(data["bairro"]);
-                    $("#cidade").val(data["cidade"]);
-                    $("#estado").val(data["estado"]);
+        var $el = $(this);
+        
+        $.ajax({
+            url: 'https://viacep.com.br/ws/' + $(this).val() + '/json/',
+            type: "get",
+            dataType: "json",
+            beforeSend: function(){
+                $el.parent().find('span > i').removeClass('fas fa-map-marker');
+                $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
+            },
+            success: function(data){
+                $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                $el.parent().find('span > i').addClass('fas fa-map-marker');
+                if (!("erro" in data)) {
+                    $("#endereco").val(data.logradouro);
+                    $("#bairro").val(data.bairro);
+                    $("#cidade").val(data.localidade);
+                    $("#estado").val(data.uf);
                     $('#estado').trigger('change.select2');
-                },
-                error: function(){
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                    alert('Informe um CEP válido.');
+                } else {
+                    alert('CEP não encontrado. Informe um CEP válido.');
                 }
-            });
+            },
+            error: function(){
+                $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                $el.parent().find('span > i').addClass('fas fa-map-marker');
+                alert('Erro ao buscar CEP. Informe um CEP válido.');
+            }
         });
-    })
+    });
+});
+
 </script>
 
 <?php

@@ -402,31 +402,43 @@ if (isset($id)) {
             ]
         });
 
-            $("#cep").change(function() {
-                var $el = $(this);
+        $("#cep").change(function() {
+    var $el = $(this);
+    var cep = $el.val().replace(/\D/g, ''); // Remove caracteres não numéricos
 
-                $.ajax({
-                    url: 'https://api.postmon.com.br/v1/cep/' + $(this).val(),
-                    type: "get",
-                    beforeSend: function() {
-                        $el.parent().find('span > i').removeClass('fas fa-map-marker');
-                        $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
-                    },
-                    success: function(data) {
-                        $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                        $el.parent().find('span > i').addClass('fas fa-map-marker');
-                        $("#endereco").val(data["logradouro"]);
-                        $("#bairro").val(data["bairro"]);
-                        $("#cidade").val(data["cidade"]);
-                        $("#estado").val(data["estado"]);
-                    },
-                    error: function() {
-                        $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                        $el.parent().find('span > i').addClass('fas fa-map-marker');
-                        alert('Informe um CEP válido.');
-                    }
-                });
-            });
+    if (cep.length !== 8) {
+        alert('Informe um CEP válido.');
+        return;
+    }
+
+    $.ajax({
+        url: 'https://viacep.com.br/ws/' + cep + '/json/',
+        type: "get",
+        dataType: "json",
+        beforeSend: function() {
+            $el.parent().find('span > i').removeClass('fas fa-map-marker');
+            $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
+        },
+        success: function(data) {
+            if ("erro" in data) {
+                alert('CEP não encontrado.');
+            } else {
+                $("#endereco").val(data.logradouro);
+                $("#bairro").val(data.bairro);
+                $("#cidade").val(data.localidade);
+                $("#estado").val(data.uf);
+            }
+        },
+        error: function() {
+            alert('Erro ao buscar o CEP. Tente novamente.');
+        },
+        complete: function() {
+            $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+            $el.parent().find('span > i').addClass('fas fa-map-marker');
+        }
+    });
+});
+
 
             tipo_cliente();
 
