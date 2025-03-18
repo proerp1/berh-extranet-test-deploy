@@ -268,16 +268,6 @@
     $(document).ready(function() {
         trigger_change();
 
-        $(".js_pedido_operadora").hide();
-
-        $('#status_processamento').on('change', function() {
-            if ($(this).val() == 'PAGAMENTO_REALIZADO') {
-                $(".js_pedido_operadora").show();
-            } else {
-                $(".js_pedido_operadora").hide();
-            }
-        });
-
         $('#alterar_sel').on('click', function(e) {
             e.preventDefault();
 
