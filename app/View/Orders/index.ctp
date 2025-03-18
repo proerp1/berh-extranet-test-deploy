@@ -86,10 +86,10 @@
                                 <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo[]" id="tipo" multiple>
                                     <option value=''></option>
-                                    <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Todos beneficiários</option>
-                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Parcial</option>
-                                    <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Automático</option>
                                     <option value="4" <?php echo isset($_GET['tipo']) && in_array('4', $_GET['tipo']) ? 'selected' : ''; ?>>Emissão</option>
+                                    <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
+                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Regular</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -162,9 +162,9 @@
 
                                 $v_is_partial = "";
                                 if ($data[$i]['Order']['is_partial'] == 1) {
-                                    $v_is_partial = "Parcial";
+                                    $v_is_partial = "Regular";
                                 } elseif ($data[$i]['Order']['is_partial'] == 2) {
-                                    $v_is_partial = "Todos beneficiários";
+                                    $v_is_partial = "Automático";
                                 } elseif ($data[$i]['Order']['is_partial'] == 3) {
                                     $v_is_partial = "PIX";
                                 } elseif ($data[$i]['Order']['is_partial'] == 4) {

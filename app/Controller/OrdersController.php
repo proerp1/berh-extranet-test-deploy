@@ -771,9 +771,9 @@ class OrdersController extends AppController
 
         $v_is_partial = "";
         if ($order['Order']['is_partial'] == 1) {
-            $v_is_partial = "Parcial";
+            $v_is_partial = "Regular";
         } elseif ($order['Order']['is_partial'] == 2) {
-            $v_is_partial = "Todos beneficiários";
+            $v_is_partial = "Automático";
         } elseif ($order['Order']['is_partial'] == 3) {
             $v_is_partial = "PIX";
         } elseif ($order['Order']['is_partial'] == 4) {

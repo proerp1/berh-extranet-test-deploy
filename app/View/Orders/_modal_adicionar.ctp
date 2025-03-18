@@ -48,10 +48,10 @@
                             <label class="mb-2">Tipo de Pedido</label>
                             <div class="row">
                                 <select name="data[is_partial]" id="is_partial" data-control="select2" class="form-select mb-3 mb-lg-0 select2-hidden-accessible is_partial" data-select2-id="select2-data-tipo_pessoa" tabindex="-1" aria-hidden="true">
-                                    <option value="2">Todos beneficiários</option>
-                                    <option value="1">Parcial</option>
-                                    <option value="3">PIX</option>
+                                    <option value="2">Automático</option>
                                     <option value="4">Emissão</option>
+                                    <option value="3">PIX</option>
+                                    <option value="1">Regular</option>
                                 </select>
                             </div>
                         </div>
@@ -222,17 +222,16 @@
                     
                     <div class="alert alert-secondary" role="alert">
                         <strong>Tipo de Pedido</strong><br>
-                        Todos beneficiários: No cadastro de beneficiário atualize dias úteis e inative benefícios e(ou) beneficiários que não deverão fazer parte do pedido. Após executar essa manutenção pode realizar o pedido preenchendo os campos de acordo com o modal escolhido. Não precisa importar planilha para gerar o pedido.<br>
+                        Automático: No cadastro de beneficiário atualize dias úteis e inative benefícios e(ou) beneficiários que não deverão fazer parte do pedido. Após executar essa manutenção pode realizar o pedido preenchendo os campos de acordo com o modal escolhido. Não precisa importar planilha para gerar o pedido.<br>
                         <br>
-                        Parcial:  Opção válida para importação de planilha dentro do pedido.<br>
-                        PIX: Opção válida para importação de planilha dentro do pedido.<br>
                         Emissão: Apenas para geração de novos cartões ou remissões.<br>
+                        PIX: Opção válida para importação de planilha dentro do pedido.<br>
+                        Regular: Opção válida para importação de planilha dentro do pedido.<br>
                         <br>
                         <strong>Modalidade</strong><br>
                         Por Cliente: a emissão ocorrerá em um único pedido independente de grupo econômico cadastrado e associado ao beneficiário.<br>
                         Por Grupo Econômico: a emissão ocorrerá de acordo com o(s) grupo(s) cadastrado(s) e beneficiário(s) associado(s).<br>
-                        <br>
-                        
+                        <br>                        
                         <strong>Relatórios</strong><br>
                         Pedidos com “status finalizado ou cancelado” demonstram que o processo foi concluído em todas as etapas. Todos os demais status envolvendo os processamentos poderão sofrer atualizações ao longo desses processamentos. 
                         <br>
@@ -242,7 +241,7 @@
                         Agendamento do crédito previsto:  a contagem inicia após o pagamento do boleto. <br>
                         Data de vencimento: considere a data em que deseja a disponibilização dos créditos e informe a data que pretende pagar. Os processos iniciam após a identificação do pagamento via compensação bancária.<br>
                         Utilizar dias úteis: se optar por padrão informe no campo Dias úteis.<br>  
-                        Utilizar dias úteis: se optar por cadastro de beneficiário realize primeiro a manutenção dos dias no cadastro antes de iniciar a geração do pedido.<br>
+                        Utilizar dias úteis: se optar por cadastro de beneficiário realize primeiro a manutenção dos dias no cadastro antes de iniciar a geração do pedido.<br>
 
                     </div>
                 </div>
