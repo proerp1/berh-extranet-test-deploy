@@ -122,6 +122,7 @@
                     <th>Status Processamento</th>
                     <th>Motivo Processamento</th>
                     <th>Pedido Operadora</th>
+                    <th>Data Entrega</th>
                 </tr>
             </thead>
             <tbody>
@@ -182,6 +183,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
                         </tr>
                     <?php } ?>
                     <tr>
@@ -241,11 +243,20 @@
                     </div>
                 </div>
 
-                <div class="row js_pedido_operadora" style="margin-top:20px;">
+                <div class="row" style="margin-top:20px;">
                     <label class="mb-2">Pedido Operadora</label>
                     <div class="row">
                         <div class="col">
                             <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:20px;">
+                    <label class="mb-2">Data Entrega</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="data_entrega" id="data_entrega" class="form-control datepicker">
                         </div>
                     </div>
                 </div>
@@ -343,6 +354,8 @@
     }
 
     $(document).ready(function() {
+        $(".datepicker").mask("99/99/9999");
+
         trigger_date_change();
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
@@ -392,6 +405,7 @@
 
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
 
                 const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
                 const notOrderItemIds = [];
@@ -417,6 +431,7 @@
                         notOrderItemIds,
                         v_status_processamento,
                         v_pedido_operadora,
+                        v_data_entrega,
                         curr_q,
                         curr_sup,
                         curr_st,
@@ -435,6 +450,7 @@
             } else {
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
 
                 const checkboxes = $('input[name="alt_linha"]:checked');
                 const orderItemIds = [];
@@ -450,7 +466,8 @@
                         data: {
                             orderItemIds,
                             v_status_processamento,
-                            v_pedido_operadora
+                            v_pedido_operadora,
+                            v_data_entrega
                         },
                         dataType: 'json',
                         success: function(response) {

@@ -2790,6 +2790,7 @@ class OrdersController extends AppController
         $itemOrderId = $this->request->data['orderItemIds'];
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
+        $data_entrega = $this->request->data['v_data_entrega'];
 
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
@@ -2813,26 +2814,19 @@ class OrdersController extends AppController
 
             $this->Log->create();
             $this->Log->save($dados_log);
+
+            $this->OrderItem->save([
+                'OrderItem' => [
+                    'id' => $orderItem['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'pedido_operadora' => $pedido_operadora,
+                    'data_entrega' => $data_entrega,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
         }
-
-        $this->OrderItem->unbindModel(
-            ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
-        );
-
-        $this->OrderItem->updateAll(
-            [
-                'OrderItem.status_processamento' => "'" . $statusProcess . "'", 
-                'OrderItem.pedido_operadora' => "'" . $pedido_operadora . "'", 
-                'OrderItem.updated' => "'" . date('Y-m-d H:i:s') . "'", 
-                'OrderItem.updated_user_id' => CakeSession::read("Auth.User.id")
-            ],
-            ['OrderItem.id' => $itemOrderId]
-        );
-
-        $this->OrderItem->bindModel(
-            ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
-        );
-
+        
         echo json_encode(['success' => true]);
     }
 
@@ -2844,6 +2838,7 @@ class OrdersController extends AppController
         
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
+        $data_entrega = $this->request->data['v_data_entrega'];
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
@@ -2917,6 +2912,7 @@ class OrdersController extends AppController
                     'id' => $item['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
+                    'data_entrega' => $data_entrega,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]

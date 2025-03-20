@@ -97,6 +97,11 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['data_fim_processamento_nao_formatado'] = $val[$this->alias]['data_fim_processamento'];
                 $results[$key][$this->alias]['data_fim_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_fim_processamento']));
             }
+
+            if (isset($val[$this->alias]['data_entrega'])) {
+                $results[$key][$this->alias]['data_entrega_nao_formatado'] = $val[$this->alias]['data_entrega'];
+                $results[$key][$this->alias]['data_entrega'] = date("d/m/Y", strtotime($val[$this->alias]['data_entrega']));
+            }
         }
 
         return $results;
@@ -134,6 +139,10 @@ class OrderItem extends AppModel {
         if (!empty($this->data[$this->alias]['total_saldo'])) {
             $this->data[$this->alias]['total_saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['total_saldo']);
         }
+
+        if (!empty($this->data[$this->alias]['data_entrega'])) {
+            $this->data[$this->alias]['data_entrega'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_entrega']);
+        }
 		
 		return true;
 	}
@@ -148,6 +157,22 @@ class OrderItem extends AppModel {
 
 		return $valueFormatado;
 	}
+
+    public function dateFormatBeforeSave($dateString)
+    {
+        $date = DateTime::createFromFormat('d/m/Y', $dateString);
+
+        if ($date === false) {
+            $date = new DateTime($dateString);
+        }
+
+        # Check if it contains time
+        if (strpos($dateString, ':') !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        return $date->format('Y-m-d');
+    }
 
     public function apiLastOrders(){
         $sql = "

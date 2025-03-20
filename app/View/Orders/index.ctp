@@ -179,7 +179,7 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/orders/edit/'.$data[$i]["Order"]["id"]; ?>"><?php echo $data[$i]["Order"]["id"]; ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>     

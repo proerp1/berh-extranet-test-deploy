@@ -99,6 +99,7 @@
                         <th>Status Processamento</th>
                         <th>Motivo Processamento</th>
                         <th>Pedido Operadora</th>
+                        <th>Data Entrega</th>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <th class="rounded-end"></th>
                         <?php } ?>
@@ -153,6 +154,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este benefício?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["id"]; ?>')">
@@ -219,11 +221,20 @@
                     </div>
                 </div>
 
-                <div class="row js_pedido_operadora" style="margin-top:20px;">
+                <div class="row" style="margin-top:20px;">
                     <label class="mb-2">Pedido Operadora</label>
                     <div class="row">
                         <div class="col">
                             <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:20px;">
+                    <label class="mb-2">Data Entrega</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" name="data_entrega" id="data_entrega" class="form-control datepicker">
                         </div>
                     </div>
                 </div>
@@ -269,6 +280,8 @@
     }
     
     $(document).ready(function() {
+        $(".datepicker").mask("99/99/9999");
+
         trigger_change();
 
         $('#alterar_sel').on('click', function(e) {
@@ -295,6 +308,7 @@
 
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
 
                 const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
                 const notOrderItemIds = [];
@@ -317,6 +331,7 @@
                         order_id,
                         v_status_processamento,
                         v_pedido_operadora,
+                        v_data_entrega,
                         curr_q,
                         curr_sup,
                         curr_stp
@@ -331,6 +346,7 @@
             } else {
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
+                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
 
                 const checkboxes = $('input[name="alt_linha"]:checked');
                 const orderItemIds = [];
@@ -346,7 +362,8 @@
                         data: {
                             orderItemIds,
                             v_status_processamento,
-                            v_pedido_operadora
+                            v_pedido_operadora,
+                            v_data_entrega
                         },
                         dataType: 'json',
                         success: function(response) {
