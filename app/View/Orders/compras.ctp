@@ -52,6 +52,8 @@
                                                 <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
                                                 <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
                                                 <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
+                                                <option value="CARTAO_NOVO" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO</option>
+                                                <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO_CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
                                                 <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
                                                 <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
                                                 <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
@@ -202,6 +204,7 @@
                                     <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
                                     <option value="CARTAO_NOVO">CARTAO_NOVO</option>
+                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
