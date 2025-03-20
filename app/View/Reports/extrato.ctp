@@ -7,6 +7,25 @@
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo $totalOrders[0]['qtde_pedidos'] ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Qtde. Pedidos</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo $totalOrders[0]['qtde_order_customers'] ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Qtde. Colaboradores</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
                 <?php if (isset($first_order[0]['data_criacao'])) { ?>
                     <div class="d-flex flex-column my-7">
                         <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo date("d/m/Y", strtotime($first_order[0]['data_criacao'])) ?></span>
@@ -23,7 +42,7 @@
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['subtotal'],2,',','.') ?></span>
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Subtotal</span>
+                        <span class="fw-bold fs-6 text-gray-400">Volume</span>
                     </div>
                 </div>
             </div>
@@ -32,24 +51,12 @@
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
-                </div>
 
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['transfer_fee'],2,',','.') ?></span>
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">Repasse</span>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
                 </div>
 
                 <div class="d-flex flex-column my-7">
@@ -64,8 +71,52 @@
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="m-0">
-                    <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_fee_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">VLB (Fee economia)</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_vl_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">VLC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-xl-5">
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_repasse_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Repasse Economia</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_diferenca_repasse,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Diferença Repasse</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['vl_tpp'],2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">TPP</span>
+                    </div>
                 </div>
 
                 <div class="d-flex flex-column my-7">
@@ -81,16 +132,16 @@
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total'],2,',','.') ?></span>
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total_balances'],2,',','.') ?></span>
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total</span>
+                        <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
                     </div>
                 </div>
 
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total_balances'],2,',','.') ?></span>
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total'],2,',','.') ?></span>
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
+                        <span class="fw-bold fs-6 text-gray-400">Total</span>
                     </div>
                 </div>
             </div>
@@ -161,11 +212,10 @@
                                     <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>">
                                 </div>
                             </div>
-
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 
-                                <button type="submit" class="btn btn-primary filter" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                                <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
                             </div>
                         </div>
                     </div>
@@ -191,29 +241,50 @@
                         <th>Data Pagamento</th>
                         <th>Data Finalização</th>
                         <th>Subtotal</th>
+                        <th>Repasse</th>
+                        <th>Taxa</th>
                         <th>Desconto</th>
-                        <th>Total</th>
-                        <th>Economia</th>
+                        <th>TPP</th>
                         <th>Fee Economia</th>
-                        <th class="w-150px min-w-150px rounded-end">Saldo</th>
+                        <th>Cliente</th>
+                        <th>Economia</th>
+                        <th>Total</th>
+                        <th>Saldo</th>
+
+                        <th>Repasse Economia</th>
+                        <th>Valor Pedido Compra</th>
+                        <th>Repasse Pedido Compra</th>
+                        <th class="w-150px min-w-150px rounded-end">Diferença Repasse</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="11" class="fw-bold fs-7 ps-4"></td>
+                        <td colspan="16" class="fw-bold fs-7 ps-4"></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($saldo,2,',','.') ?></td>
                     </tr>
                     <?php if ($data) { ?>
                         <?php for ($i = 0; $i < count($data); $i++) { ?>
                             <?php
                                 $fee_economia = 0;
-                                $total_economia = $data[$i][0]["total_balances"];
+                                $total_economia = 0;
+                                $vl_economia = $data[$i][0]["total_balances"];
+                                $fee_saldo = $data[$i]["Order"]["fee_saldo_not_formated"];
 
-                                if ($data[$i]["Order"]['fee_saldo_not_formated'] != 0 and $total_economia != 0) {
-                                    $fee_economia = (($data[$i]["Order"]['fee_saldo_not_formated'] / 100) * ($total_economia));
+                                if ($fee_saldo != 0 and $vl_economia != 0) {
+                                    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
                                 }
 
-                                $total_economia = $total_economia - $fee_economia;
+                                $vl_economia = ($vl_economia - $fee_economia);
+                                $total_economia = ($vl_economia + $fee_economia);
+
+                                $v_perc_repasse = (($data[$i]["Order"]["transfer_fee_not_formated"] / $data[$i]["Order"]["subtotal_not_formated"]));
+                                
+                                $v_repasse_economia = ($v_perc_repasse * $total_economia);
+
+                                $v_valor_pedido_compra = ($data[$i]["Order"]["total_not_formated"] - $total_economia);
+                                $v_repasse_pedido_compra = ($v_perc_repasse * $v_valor_pedido_compra);
+
+                                $v_diferenca_repasse = ($data[$i]["Order"]["transfer_fee_not_formated"] - $v_repasse_pedido_compra);
                                 
                                 $saldo = $saldo + ($data[$i][0]["total_balances"] - $data[$i]["Order"]['desconto_not_formated']);
                             ?>
@@ -230,11 +301,20 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4" style="color: #f00;"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($vl_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($total_economia,2,',','.') ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["fee_saldo"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.') ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></td>
+
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_valor_pedido_compra,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_pedido_compra,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_diferenca_repasse,2,',','.'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
@@ -244,7 +324,7 @@
                     <?php } ?>
                 </tbody>
                 <tfoot>
-                    <th colspan="11" class="fw-bold fs-7 ps-4">Total:</th>
+                    <th colspan="16" class="fw-bold fs-7 ps-4">Total:</th>
                     <th class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></th>
                 </tfoot>
                 </table>
@@ -255,61 +335,18 @@
 </div>
 
 <script>
-    function fnc_dt_range() {
-        $('.filter').attr('disabled', false);
-
-        var dataInicialStr = $('#de').val();
-        var dataFinalStr = $('#ate').val();
-
-        var regexData = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-
-        var matchInicial = dataInicialStr.match(regexData);
-        var matchFinal = dataFinalStr.match(regexData);
-
-        if (matchInicial && matchFinal) {
-            var dataInicial = new Date(matchInicial[3], matchInicial[2] - 1, matchInicial[1]);
-            var dataFinal = new Date(matchFinal[3], matchFinal[2] - 1, matchFinal[1]);
-
-            var diff = (dataFinal - dataInicial);
-            var diffDays = (diff / (1000 * 60 * 60 * 24));
-
-            if (diffDays > 365 || diffDays < 0) {
-                alert('A data final deve ser no máximo 1 ano após a data inicial.');
-                $('.filter').attr('disabled', true);
-
-                return false;
-            }
-        } else {
-            alert('Formato de data inválido. Use o formato dd/mm/yyyy.');
-            $('.filter').attr('disabled', true);
-
-            return false;
-        }
-    }
-
     $(document).ready(function() {
         $('[data-kt-customer-table-filter="reset"]').on('click', function () {
-            $("#c").val(null).trigger('change');
             $("#t").val(null).trigger('change');
-            $("#f").val(null).trigger('change');
+            $("#c").val(null).trigger('change');
             $("#de").val(null);
             $("#ate").val(null);
-            $("#de_pagamento").val(null);
-            $("#ate_pagamento").val(null);
 
             $("#busca").submit();
         });
 
         $('#q').on('change', function() {
             $("#busca").submit();
-        });
-
-        $('#de').on('change', function() {
-            fnc_dt_range();
-        });
-        
-        $('#ate').on('change', function() {
-            fnc_dt_range();
-        });         
+        });            
     });
 </script>

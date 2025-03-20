@@ -330,11 +330,8 @@
     $(document).ready(function() {
         $('[data-kt-customer-table-filter="reset"]').on('click', function () {
             $("#t").val(null).trigger('change');
-            $("#f").val(null).trigger('change');
             $("#de").val(null);
             $("#ate").val(null);
-            $("#de_pagamento").val(null);
-            $("#ate_pagamento").val(null);
 
             $("#busca").submit();
         });
