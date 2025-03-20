@@ -88,8 +88,8 @@
                                     <option value=''></option>
                                     <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Automático</option>
                                     <option value="4" <?php echo isset($_GET['tipo']) && in_array('4', $_GET['tipo']) ? 'selected' : ''; ?>>Emissão</option>
+                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Importação</option>
                                     <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
-                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Regular</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -162,7 +162,7 @@
 
                                 $v_is_partial = "";
                                 if ($data[$i]['Order']['is_partial'] == 1) {
-                                    $v_is_partial = "Regular";
+                                    $v_is_partial = "Importação";
                                 } elseif ($data[$i]['Order']['is_partial'] == 2) {
                                     $v_is_partial = "Automático";
                                 } elseif ($data[$i]['Order']['is_partial'] == 3) {

@@ -50,8 +50,8 @@
                                 <select name="data[is_partial]" id="is_partial" data-control="select2" class="form-select mb-3 mb-lg-0 select2-hidden-accessible is_partial" data-select2-id="select2-data-tipo_pessoa" tabindex="-1" aria-hidden="true">
                                     <option value="2">Automático</option>
                                     <option value="4">Emissão</option>
+                                    <option value="1">Importação</option>
                                     <option value="3">PIX</option>
-                                    <option value="1">Regular</option>
                                 </select>
                             </div>
                         </div>
@@ -225,8 +225,8 @@
                         Automático: No cadastro de beneficiário atualize dias úteis e inative benefícios e(ou) beneficiários que não deverão fazer parte do pedido. Após executar essa manutenção pode realizar o pedido preenchendo os campos de acordo com o modal escolhido. Não precisa importar planilha para gerar o pedido.<br>
                         <br>
                         Emissão: Apenas para geração de novos cartões ou remissões.<br>
+                        Importação: Opção válida para importação de planilha dentro do pedido.<br>
                         PIX: Opção válida para importação de planilha dentro do pedido.<br>
-                        Regular: Opção válida para importação de planilha dentro do pedido.<br>
                         <br>
                         <strong>Modalidade</strong><br>
                         Por Cliente: a emissão ocorrerá em um único pedido independente de grupo econômico cadastrado e associado ao beneficiário.<br>
