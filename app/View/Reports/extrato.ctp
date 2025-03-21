@@ -20,12 +20,7 @@
                         <span class="fw-bold fs-6 text-gray-400">Qtde. Colaboradores</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+
                 <?php if (isset($first_order[0]['data_criacao'])) { ?>
                     <div class="d-flex flex-column my-7">
                         <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2"><?php echo date("d/m/Y", strtotime($first_order[0]['data_criacao'])) ?></span>
@@ -38,6 +33,13 @@
                         <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
                     </div>
                 <?php } ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
 
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['subtotal'],2,',','.') ?></span>
@@ -45,12 +47,6 @@
                         <span class="fw-bold fs-6 text-gray-400">Volume</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
 
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['transfer_fee'],2,',','.') ?></span>
@@ -68,47 +64,7 @@
             </div>
         </div>
     </div>
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_fee_economia,2,',','.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">VLB (Fee economia)</span>
-                    </div>
-                </div>
 
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_vl_economia,2,',','.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">VLC</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-xl-5">
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_repasse_economia,2,',','.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Repasse Economia</span>
-                    </div>
-                </div>
-
-                <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_diferenca_repasse,2,',','.') ?></span>
-                    <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Diferença Repasse</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col">
         <div class="card h-lg-100">
             <div class="card-body d-flex justify-content-between align-items-start flex-column">
@@ -125,16 +81,87 @@
                         <span class="fw-bold fs-6 text-gray-400">Desconto</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card h-lg-100">
-            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+
                 <div class="d-flex flex-column my-7">
                     <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($totalOrders[0]['total_balances'],2,',','.') ?></span>
                     <div class="m-0">
                         <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-xl-5">
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_bal_ajuste_cred,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Ajuste Creditado</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_bal_ajuste_deb,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Ajuste Debitado</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_bal_inconsistencia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Inconsistência</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_fee_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">VLB (Fee economia)</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_vl_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">VLC</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_vlca,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">VLCA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-lg-100">
+            <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_repasse_economia,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Repasse Economia</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column my-7">
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($total_diferenca_repasse,2,',','.') ?></span>
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Diferença Repasse</span>
                     </div>
                 </div>
 
@@ -254,7 +281,11 @@
                         <th>Repasse Economia</th>
                         <th>Valor Pedido Compra</th>
                         <th>Repasse Pedido Compra</th>
-                        <th class="w-150px min-w-150px rounded-end">Diferença Repasse</th>
+                        <th>Diferença Repasse</th>
+
+                        <th>Ajuste Creditado</th>
+                        <th>Ajuste Debitado</th>
+                        <th class="w-150px min-w-150px rounded-end">Inconsistência</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -265,28 +296,24 @@
                     <?php if ($data) { ?>
                         <?php for ($i = 0; $i < count($data); $i++) { ?>
                             <?php
-                                $fee_economia = 0;
-                                $total_economia = 0;
-                                $vl_economia = $data[$i][0]["total_balances"];
-                                $fee_saldo = $data[$i]["Order"]["fee_saldo_not_formated"];
+                                $data_extrato = $data[$i]['Order']['extrato'];
 
-                                if ($fee_saldo != 0 and $vl_economia != 0) {
-                                    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
-                                }
-
-                                $vl_economia = ($vl_economia - $fee_economia);
-                                $total_economia = ($vl_economia + $fee_economia);
-
-                                $v_perc_repasse = (($data[$i]["Order"]["transfer_fee_not_formated"] / $data[$i]["Order"]["subtotal_not_formated"]));
+                                $v_fee_economia             = $data_extrato['v_fee_economia'];
+                                $v_vl_economia              = $data_extrato['v_vl_economia'];
+                                $v_total_economia           = $data_extrato['v_total_economia'];
+                                $v_perc_repasse             = $data_extrato['v_perc_repasse'];
+                                $v_repasse_economia         = $data_extrato['v_repasse_economia'];
+                                $v_valor_pedido_compra      = $data_extrato['v_valor_pedido_compra'];
+                                $v_repasse_pedido_compra    = $data_extrato['v_repasse_pedido_compra'];
+                                $v_diferenca_repasse        = $data_extrato['v_diferenca_repasse'];
+                                $v_saldo                    = $data_extrato['v_saldo'];
                                 
-                                $v_repasse_economia = ($v_perc_repasse * $total_economia);
-
-                                $v_valor_pedido_compra = ($data[$i]["Order"]["total_not_formated"] - $total_economia);
-                                $v_repasse_pedido_compra = ($v_perc_repasse * $v_valor_pedido_compra);
-
-                                $v_diferenca_repasse = ($data[$i]["Order"]["transfer_fee_not_formated"] - $v_repasse_pedido_compra);
+                                $saldo = $saldo + ($v_saldo);
                                 
-                                $saldo = $saldo + ($data[$i][0]["total_balances"] - $data[$i]["Order"]['desconto_not_formated']);
+                                $v_total_bal_ajuste_cred    = $data_extrato['v_total_bal_ajuste_cred'];
+                                $v_total_bal_ajuste_deb     = $data_extrato['v_total_bal_ajuste_deb'];
+                                $v_total_bal_inconsistencia = $data_extrato['v_total_bal_inconsistencia'];
+                                $v_observacao               = $data_extrato['v_observacao'];
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
@@ -298,16 +325,16 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4" style="color: #f00;"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($fee_economia,2,',','.'); ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($vl_economia,2,',','.'); ?></td>
-                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($total_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_fee_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_vl_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($v_total_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></td>
 
@@ -315,6 +342,10 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_valor_pedido_compra,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_pedido_compra,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_diferenca_repasse,2,',','.'); ?></td>
+
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_ajuste_cred,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_ajuste_deb,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_inconsistencia,2,',','.'); ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

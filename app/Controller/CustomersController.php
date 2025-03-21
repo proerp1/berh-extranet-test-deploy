@@ -1856,14 +1856,6 @@ class CustomersController extends AppController
                         'Creator.*',
                         'CustomerCreator.*',
                         'EconomicGroup.*',
-                        "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                            FROM order_balances b 
-                                INNER JOIN orders o ON o.id = b.order_id 
-                            WHERE o.id = Order.id 
-                                    AND b.tipo = 1 
-                                    AND b.data_cancel = '1901-01-01 00:00:00' 
-                                    AND o.data_cancel = '1901-01-01 00:00:00' 
-                        ) as total_balances"
                     ],
                     'limit' => 25,
                     'group' => 'EconomicGroup.id',
@@ -1882,14 +1874,6 @@ class CustomersController extends AppController
                         'Creator.*',
                         'CustomerCreator.*',
                         'EconomicGroup.*',
-                        "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                            FROM order_balances b 
-                                INNER JOIN orders o ON o.id = b.order_id 
-                            WHERE o.id = Order.id 
-                                    AND b.tipo = 1 
-                                    AND b.data_cancel = '1901-01-01 00:00:00' 
-                                    AND o.data_cancel = '1901-01-01 00:00:00' 
-                        ) as total_balances"
                     ],
                     'limit' => 25,
                     'order' => ['Order.created' => 'asc'],
@@ -1985,58 +1969,42 @@ class CustomersController extends AppController
         $data_orders = $this->Order->find('all', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
-                'Order.fee_saldo',
-                'Order.transfer_fee',
-                'Order.subtotal',
-                'Order.total',
-                'Order.transfer_fee',
-                "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                    FROM order_balances b 
-                        INNER JOIN orders o ON o.id = b.order_id 
-                    WHERE o.id = Order.id 
-                            AND b.tipo = 1 
-                            AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as total_balances"
+                'Order.id',
             ],
             'conditions' => $condition,
             'order' => ['Order.created' => 'asc'],
             'recursive' => -1
         ]);
         
-        $total_fee_economia = 0;
-        $total_vl_economia = 0;
-        $total_repasse_economia = 0;
-        $total_diferenca_repasse = 0;
+        $total_fee_economia         = 0;
+        $total_vl_economia          = 0;
+        $total_repasse_economia     = 0;
+        $total_diferenca_repasse    = 0;
+        $total_bal_ajuste_cred      = 0;
+        $total_bal_ajuste_deb       = 0;
+        $total_bal_inconsistencia   = 0;
+        $total_vlca                 = 0;
         
         if ($data_orders) {
             for ($i = 0; $i < count($data_orders); $i++) {
-                $fee_economia = 0;
-                $vl_economia = $this->priceFormatBeforeSave($data_orders[$i][0]["total_balances"]);
-                $fee_saldo = $this->priceFormatBeforeSave($data_orders[$i]["Order"]["fee_saldo"]);
+                $data_extrato = $this->Order->getExtrato($data_orders[$i]["Order"]["id"]);
 
-                if ($fee_saldo != 0 and $vl_economia != 0) {
-                    $fee_economia = (($fee_saldo / 100) * ($vl_economia));
-                }
-
-                $vl_economia = ($vl_economia - $fee_economia);
-                $total_economia = ($vl_economia + $fee_economia);
-
-                $v_perc_repasse = (($this->priceFormatBeforeSave($data_orders[$i]["Order"]["transfer_fee"]) / $this->priceFormatBeforeSave($data_orders[$i]["Order"]["subtotal"])));
-                
-                $v_repasse_economia = ($v_perc_repasse * $total_economia);
-
-                $v_valor_pedido_compra = ($this->priceFormatBeforeSave($data_orders[$i]["Order"]["total"]) - $total_economia);
-                $v_repasse_pedido_compra = ($v_perc_repasse * $v_valor_pedido_compra);
-
-                $v_diferenca_repasse = ($this->priceFormatBeforeSave($data_orders[$i]["Order"]["transfer_fee"]) - $v_repasse_pedido_compra);
-
-                $total_fee_economia += $fee_economia;
-                $total_vl_economia += $vl_economia;
-                $total_repasse_economia += $v_repasse_economia;
-                $total_diferenca_repasse += $v_diferenca_repasse;
+                $total_fee_economia         += $data_extrato['v_fee_economia'];
+                $total_vl_economia          += $data_extrato['v_vl_economia'];
+                $total_repasse_economia     += $data_extrato['v_repasse_economia'];
+                $total_diferenca_repasse    += $data_extrato['v_diferenca_repasse'];
+                $total_bal_ajuste_cred      += $data_extrato['v_total_bal_ajuste_cred'];
+                $total_bal_ajuste_deb       += $data_extrato['v_total_bal_ajuste_deb'];
+                $total_bal_inconsistencia   += $data_extrato['v_total_bal_inconsistencia'];
+                $total_vlca                 += $data_extrato['v_total_vlca'];
             }
         }
+
+        foreach ($data as &$item) {
+            $item['Order']['extrato'] = $this->Order->getExtrato($item['Order']['id']);
+        }
+
+        unset($item);
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
@@ -2047,20 +2015,7 @@ class CustomersController extends AppController
             'Extrato' => '',
         ];
 
-        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo', 'total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse'));
-    }
-
-    public function priceFormatBeforeSave($price)
-    {
-        if (is_numeric($price)) {
-            return $price;
-        }
-        if ($price == '') {
-            return 0;
-        }
-        $valueFormatado = str_replace('.', '', $price);
-        $valueFormatado = str_replace(',', '.', $valueFormatado);
-
-        return $valueFormatado;
+        $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo'));
+        $this->set(compact('total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse', 'total_bal_ajuste_cred', 'total_bal_ajuste_deb', 'total_bal_inconsistencia', 'total_vlca'));
     }
 }

@@ -503,4 +503,73 @@ class Order extends AppModel
 
         return $date->format('Y-m-d');
     }
+
+    public function getExtrato($id) 
+    {
+        $order = $this->find('first', ['conditions' => ['Order.id' => $id], 'recursive' => -1]);
+
+        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total ELSE 0 END), 0) AS total_bal_economia, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_cred, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_deb, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total ELSE 0 END), 0) AS total_bal_inconsistencia, 
+                            GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
+                        FROM order_balances b 
+                            INNER JOIN orders o ON o.id = b.order_id 
+                        WHERE o.id = :order_id 
+                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                            AND b.tipo IN(1, 2, 3) 
+                    ";
+        $ex_bal = $this->query($sql_bal, ['order_id' => $id]);
+
+        $v_fee_economia     = 0;
+
+        $v_total_bal_economia           = $ex_bal[0][0]['total_bal_economia'];
+        $v_total_bal_ajuste_cred        = $ex_bal[0][0]['total_bal_ajuste_cred'];
+        $v_total_bal_ajuste_deb         = $ex_bal[0][0]['total_bal_ajuste_deb'];
+        $v_total_bal_inconsistencia     = $ex_bal[0][0]['total_bal_inconsistencia'];
+        $v_observacao                   = $ex_bal[0][0]['observacoes'];
+
+        $v_vl_economia      = $v_total_bal_economia;
+        $fee_saldo          = $order["Order"]["fee_saldo_not_formated"];
+        $transfer_fee       = $order["Order"]["transfer_fee_not_formated"];
+        $subtotal           = $order["Order"]["subtotal_not_formated"];
+        $total              = $order["Order"]["total_not_formated"];
+        $desconto           = $order["Order"]["desconto_not_formated"];
+
+        if ($fee_saldo != 0 and $v_vl_economia != 0) {
+            $v_fee_economia   = (($fee_saldo / 100) * $v_vl_economia);
+        }
+
+        $v_vl_economia              = ($v_vl_economia - $v_fee_economia);
+        $v_total_economia           = ($v_vl_economia + $v_fee_economia);
+        $v_perc_repasse             = ($transfer_fee / $subtotal);        
+        $v_repasse_economia         = ($v_perc_repasse * $v_total_economia);
+        $v_valor_pedido_compra      = ($total - $v_total_economia);
+        $v_repasse_pedido_compra    = ($v_perc_repasse * $v_valor_pedido_compra);
+        $v_diferenca_repasse        = ($transfer_fee - $v_repasse_pedido_compra);
+        $v_saldo                    = ($v_total_bal_economia - $desconto);
+
+        $v_total_vlca   = ($v_vl_economia + $v_total_bal_ajuste_cred + $v_total_bal_ajuste_deb + $v_total_bal_inconsistencia);
+
+        $data = [   
+                    'v_fee_economia'                => $v_fee_economia,
+                    'v_total_bal_economia'          => $v_total_bal_economia,
+                    'v_total_bal_ajuste_cred'       => $v_total_bal_ajuste_cred,
+                    'v_total_bal_ajuste_deb'        => $v_total_bal_ajuste_deb,
+                    'v_total_bal_inconsistencia'    => $v_total_bal_inconsistencia,
+                    'v_total_vlca'                  => $v_total_vlca,
+                    'v_vl_economia'                 => $v_vl_economia,
+                    'v_total_economia'              => $v_total_economia,
+                    'v_perc_repasse'                => $v_perc_repasse,
+                    'v_repasse_economia'            => $v_repasse_economia,
+                    'v_valor_pedido_compra'         => $v_valor_pedido_compra,
+                    'v_repasse_pedido_compra'       => $v_repasse_pedido_compra,
+                    'v_diferenca_repasse'           => $v_diferenca_repasse,
+                    'v_saldo'                       => $v_saldo,
+                    'v_observacao'                  => $v_observacao,
+                ];
+
+        return $data;
+    }
 }
