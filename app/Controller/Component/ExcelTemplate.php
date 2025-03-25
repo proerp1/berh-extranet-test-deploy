@@ -1978,7 +1978,9 @@ class ExcelTemplate
         ->setCellValue('CD1', "Calculo repasse pedido compra")
         ->setCellValue('CE1', "Status Operadora")
         ->setCellValue('CF1', "Motivo Processamento")
-        ->setCellValue('CG1', "Matricula Operadora");
+        ->setCellValue('CG1', "Matricula Operadora")
+        ->setCellValue('CH1', "Data Entrega");
+
 
 
 
@@ -2090,7 +2092,9 @@ class ExcelTemplate
                 ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
                 ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
                 ->setCellValue('CF'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
-                ->setCellValue('CG'. $indx, $dados[$i]['CustomerUserItinerary']['matricula']);
+                ->setCellValue('CG'. $indx, $dados[$i]['CustomerUserItinerary']['matricula'])
+                ->setCellValue('CH'. $indx, $dados[$i]['OrderItem']['data_entrega']);
+
 
 
                 
