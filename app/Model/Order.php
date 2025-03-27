@@ -543,7 +543,7 @@ class Order extends AppModel
 
         $v_vl_economia              = ($v_vl_economia - $v_fee_economia);
         $v_total_economia           = ($v_vl_economia + $v_fee_economia);
-        $v_perc_repasse             = ($transfer_fee / $subtotal);        
+        $v_perc_repasse             = (($subtotal != 0) ? ($transfer_fee / $subtotal) : 0);
         $v_repasse_economia         = ($v_perc_repasse * $v_total_economia);
         $v_valor_pedido_compra      = ($total - $v_total_economia);
         $v_repasse_pedido_compra    = ($v_perc_repasse * $v_valor_pedido_compra);
