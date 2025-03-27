@@ -200,7 +200,7 @@
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('Customer', array("id" => "js-form-submit", "action" => "/".$form_action."/", "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+        <?php echo $this->Form->create('Customer', array("id" => "js-form-submit", "action" => "/".$form_action."/", "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false], 'enctype' => 'multipart/form-data')); ?>
             <?php if (isset($id)) { ?>
                 <textarea name="log_old_value" style="display:none"><?php echo json_encode(array('Customer' => $this->request->data['Customer'])); ?></textarea>
             <?php } ?>
@@ -469,6 +469,17 @@
                 <div class="mb-7 col-2">
                     <label class="form-label">Tipos de GE</label>
                     <?php echo $this->Form->input('tipo_ge', array("id" => "tipo_ge", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Pré', '2' => 'Pós', '3' => 'Garantido'), "class" => "form-select mb-3 mb-lg-0",'default' => '2'));  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Logo</label>
+                    <div class="col-sm-5">
+                        <?php echo $this->Form->input('logo', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o logo"));  ?>
+                        <?php if (isset($this->request->data["Customer"])): ?>
+                            <br>
+                            <a download href="<?php echo $this->base.'/files/customer/logo/'.$this->request->data["Customer"]["id"].'/'.$this->request->data["Customer"]["logo"] ?>"><?php echo $this->request->data["Customer"]["logo"] ?></a>
+                        <?php endif ?>
+                    </div>
                 </div>
             </div>
 
