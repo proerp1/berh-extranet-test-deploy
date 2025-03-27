@@ -633,6 +633,18 @@ class OrdersController extends AppController
         $this->Order->id = $id;
         $old_order = $this->Order->read();
 
+    $next_order = $this->Order->find('first', [
+        'conditions' => ['Order.id >' => $id],
+        'order' => ['Order.id' => 'ASC'],
+        'fields' => ['Order.id']
+    ]);
+
+    $prev_order = $this->Order->find('first', [
+        'conditions' => ['Order.id <' => $id],
+        'order' => ['Order.id' => 'DESC'],
+        'fields' => ['Order.id']
+    ]);
+
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
@@ -787,7 +799,7 @@ class OrdersController extends AppController
 
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order'));
 
         $this->render("add");
     }

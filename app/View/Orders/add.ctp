@@ -36,7 +36,16 @@
         width: 60px;
     }
 </style>
+<style>
+    .customer-link {
+        color: #0082d2; 
+        text-decoration: none; 
+    }
 
+    .customer-link:hover {
+        color: #ED0677; 
+    }
+</style>
 <?php echo $this->element("../Orders/_abas"); ?>
 
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
@@ -48,7 +57,11 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <div class="card-title">
-                    <h2><?php echo $order['Customer']['nome_secundario']; ?></h2>
+                    <h2>
+                        <a href="<?php echo Router::url(['controller' => 'Customers', 'action' => 'edit', $order['Customer']['id']]); ?>" class="customer-link">
+                            <?php echo $order['Customer']['nome_secundario']; ?>
+                        </a>
+                    </h2>             
                 </div>
             </div>
             <!--end::Card header-->

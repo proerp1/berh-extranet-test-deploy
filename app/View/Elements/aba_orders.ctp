@@ -26,6 +26,24 @@
                 </li>
             </ul>
         </div>
+
+        <div class="arrow-button left">
+    <?php if (!empty($prev_order['Order']['id'])): ?>
+        <a href="<?php echo $this->base . '/orders/edit/' . $prev_order['Order']['id']; ?>" class="arrow-link">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    <?php endif; ?>
+</div>
+
+<div class="arrow-button right">
+    <?php if (!empty($next_order['Order']['id'])): ?>
+        <a href="<?php echo $this->base . '/orders/edit/' . $next_order['Order']['id']; ?>" class="arrow-link">
+            <i class="fa fa-arrow-right"></i>
+        </a>
+    <?php endif; ?>
+</div>
+
+
     </div>
 </div>
 
@@ -130,6 +148,42 @@
         width: 250%;
         font-size: .75rem;
     }
+
+    .arrow-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent; /* Remove o fundo */
+    color: var(--blue); /* Cor da seta */
+    font-size: 10px; /* Tamanho da seta */
+    padding: 3px; /* Ajuste para a área clicável */
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
+}
+
+.arrow-button i {
+    display: block;
+    font-size: 15px;
+    color: var(--blue); /* Cor da seta */
+}
+
+.arrow-button.left {
+    left: -200px;
+}
+
+.arrow-button.right {
+    right: -200px;
+}
+
+.arrow-button:hover {
+    background-color: #fff; /* Cor de fundo ao passar o mouse */
+    transform: translateY(-50%) rotate(360deg); /* Efeito de rotação */
+}
+
+.arrow-button:hover i {
+    color: #ED0677; /* Cor da seta no hover */
+}
 
     .tracking .progress-0 .color-bar {
         width: 00%;
