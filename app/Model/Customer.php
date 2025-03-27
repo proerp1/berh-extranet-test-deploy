@@ -4,7 +4,6 @@ class Customer extends AppModel
 {
     public $name = 'Customer';
     public $displayField = 'nome_primario';
-    public $actsAs = ['Containable'];
 
     public $belongsTo = [
         'Resale' => [
@@ -15,8 +14,14 @@ class Customer extends AppModel
         'Seller',
         'ActivityArea',
     ];
-    
-    
+
+    public $actsAs = [
+        'Containable',
+        'Upload.Upload' => [
+            'logo',
+        ],
+    ];
+        
     public $hasMany = [
         'Proposal' => [
             'className' => 'Proposal',
@@ -25,7 +30,6 @@ class Customer extends AppModel
 
         ]
     ];
-
 
     public $hasOne = [
         'PlanoAtivo' => [
