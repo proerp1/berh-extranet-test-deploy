@@ -353,4 +353,38 @@
     .tracking .progress-9>ul>li.bullet-5 .txt {
         color: var(--blue);
     }
+
+    /* Responsividade das setas */
+@media (max-width: 768px) {
+    .arrow-button {
+        font-size: 12px; /* Reduz o tamanho das setas em telas menores */
+        padding: 4px; /* Ajuste no padding para o tamanho das setas */
+        top: 40%; /* Sobe as setas em telas menores */
+    }
+
+    .arrow-button.left {
+        left: 5px; /* Ajuste para que a seta esquerda não ultrapasse */
+    }
+
+    .arrow-button.right {
+        right: 5px; /* Ajuste para que a seta direita não ultrapasse */
+    }
+}
+
+@media (max-width: 480px) {
+    .arrow-button {
+        font-size: 10px; /* Reduz o tamanho das setas em telas menores ainda */
+        padding: 3px; /* Ajuste no padding para telas muito pequenas */
+        top: 65%; /* Sobe ainda mais as setas em telas pequenas */
+    }
+
+    .arrow-button.left {
+        left: -25px; /* Ajuste da seta esquerda */
+        
+    }
+
+    .arrow-button.right {
+        right: -25px; /* Ajuste da seta direita */
+    }
+}
 </style>
