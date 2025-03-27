@@ -355,22 +355,38 @@
     }
 
     /* Responsividade das setas */
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
+    .tracking {
+        max-width: 94%;
+    }
+
+    .tracking ul {
+        flex-wrap: wrap;
+    }
+
+    .tracking ul li {
+        flex: none;
+        width: 20%;
+        background-size: 50%; 
+        background-position: center center;
+    }
+    .tracking ul>li .el i {
+            font-size: 1.42rem; 
+            margin-left: 10px;
+        }
     .arrow-button {
-        font-size: 12px; /* Reduz o tamanho das setas em telas menores */
-        padding: 4px; /* Ajuste no padding para o tamanho das setas */
-        top: 40%; /* Sobe as setas em telas menores */
+        font-size: 16px;
+        top: 40%;
     }
 
     .arrow-button.left {
-        left: 5px; /* Ajuste para que a seta esquerda não ultrapasse */
+        left: 5px;
     }
 
     .arrow-button.right {
-        right: 5px; /* Ajuste para que a seta direita não ultrapasse */
+        right: 5px;
     }
 }
-
 @media (max-width: 480px) {
     .arrow-button {
         font-size: 10px; /* Reduz o tamanho das setas em telas menores ainda */
