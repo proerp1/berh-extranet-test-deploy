@@ -160,10 +160,15 @@
     cursor: pointer;
     z-index: 2;
     transition: background-color 0.3s, transform 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; /* Tamanho fixo para as setas */
+    height: 40px;
+    border-radius: 50%;
 }
 
 .arrow-button i {
-    display: block;
     font-size: 15px;
     color: var(--blue); /* Cor da seta */
 }
@@ -185,6 +190,34 @@
     color: #ED0677; /* Cor da seta no hover */
 }
 
+/* Animação de loading da seta */
+.arrow-button.loading {
+    pointer-events: none; /* Desativa a interação durante o carregamento */
+}
+
+.arrow-button.loading i {
+    display: none; /* Esconde a seta */
+}
+
+.arrow-button.loading::after {
+    content: '';
+    border: 3px solid var(--blue);
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite; /* Animação de giro */
+}
+
+/* Animação de rotação do círculo */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
     .tracking .progress-0 .color-bar {
         width: 00%;
     }
@@ -404,3 +437,14 @@
     }
 }
 </style>
+<script>
+    document.querySelectorAll('.arrow-button').forEach(button => {
+    button.addEventListener('click', function() {
+        this.classList.add('loading'); // Adiciona a animação de loading
+        setTimeout(() => {
+            window.location.href = this.querySelector('a').href; // Redireciona após o tempo de carregamento
+        }, 1000); // Ajuste o tempo conforme necessário
+    });
+});
+
+</script>
