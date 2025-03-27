@@ -101,12 +101,11 @@ class LinkBenefitsController extends AppController
                 continue;
             }
 
-            $cpf = $row[0];
-            $code = $row[1];
-            $number = $row[2];
-            $id_operadora = $row[3];
-            $matricula = $row[4];
-
+            $cpf = trim($row[0]);
+            $code = trim($row[1]);
+            $number = trim($row[2]);
+            $id_operadora = trim($row[3]);
+            $matricula = trim($row[4]);
 
             $user = $this->CustomerUser->find('first', [
                 'conditions' => [
