@@ -166,6 +166,16 @@
                                 <span class="menu-title">Liberação técnica</span>
                             </a>
                         </div>
+                        
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'status_pedidos') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'status_pedidos']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Alteração Status Pedido</span>
+                            </a>
+                        </div>
+
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'importar_movimentacao') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'importar_movimentacao']) ?>">
                                 <span class="menu-bullet">

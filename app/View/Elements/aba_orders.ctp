@@ -5,45 +5,47 @@
             <div class="color-bar"></div>
             <ul>
                 <li class="bullet-1">
-                    <div class="el"><i class='fa fa-cog'></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 18px; height: 18px;"></i></div>
                     <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
-                    <div class="el"><i class='fa fa-list'></i></div>
-                    <div class="txt">Aguardando Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 18px; height: 18px;"></i></div>
+                    <div class="txt">Aguardando <br>Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
-                    <div class="el"><i class='fa fa-credit-card'></i></div>
-                    <div class="txt">Pagamento Confirmado <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 18px; height: 18px;"></i></div>
+                    <div class="txt">Pagamento <br>Confirmado <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
                 <li class="bullet-4">
-                    <div class="el"><i class='fa fa-check'></i></div>
-                    <div class="txt">Em Processamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 18px; height: 18px;"></i></div>
+                    <div class="txt">Em <br>Processamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
                 <li class="bullet-5">
-                    <div class="el"><i class='fa fa-check'></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 18px; height: 18px;"></i></div>
+                    <div class="txt">Aguardando <br>Liberação <br>de Crédito</div>
+                </li>
+                <li class="bullet-6">
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 18px; height: 18px;"></i></div>
                     <div class="txt">Finalizado</div>
                 </li>
             </ul>
         </div>
 
         <div class="arrow-button left">
-    <?php if (!empty($prev_order['Order']['id'])): ?>
-        <a href="<?php echo $this->base . '/orders/edit/' . $prev_order['Order']['id']; ?>" class="arrow-link">
-            <i class="fa fa-arrow-left"></i>
-        </a>
-    <?php endif; ?>
-</div>
+            <?php if (!empty($prev_order['Order']['id'])): ?>
+                <a href="<?php echo $this->base . '/orders/edit/' . $prev_order['Order']['id']; ?>" class="arrow-link">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+            <?php endif; ?>
+        </div>
 
-<div class="arrow-button right">
-    <?php if (!empty($next_order['Order']['id'])): ?>
-        <a href="<?php echo $this->base . '/orders/edit/' . $next_order['Order']['id']; ?>" class="arrow-link">
-            <i class="fa fa-arrow-right"></i>
-        </a>
-    <?php endif; ?>
-</div>
-
-
+        <div class="arrow-button right">
+            <?php if (!empty($next_order['Order']['id'])): ?>
+                <a href="<?php echo $this->base . '/orders/edit/' . $next_order['Order']['id']; ?>" class="arrow-link">
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 
@@ -132,7 +134,7 @@
     .tracking ul>li .el i {
         position: absolute;
         bottom: 100%;
-        left: 8%;
+        left: 5%;
         margin: 12px 10px;
         color: #fff;
         font-size: 100%;
@@ -150,64 +152,64 @@
     }
 
     .arrow-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: transparent; /* Remove o fundo */
-    color: var(--blue); /* Cor da seta */
-    font-size: 10px; /* Tamanho da seta */
-    padding: 3px; /* Ajuste para a área clicável */
-    cursor: pointer;
-    z-index: 2;
-    transition: background-color 0.3s, transform 0.2s ease-in-out;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 40px; /* Tamanho fixo para as setas */
-    height: 40px;
-    border-radius: 50%;
-}
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent; /* Remove o fundo */
+        color: var(--blue); /* Cor da seta */
+        font-size: 10px; /* Tamanho da seta */
+        padding: 3px; /* Ajuste para a área clicável */
+        cursor: pointer;
+        z-index: 2;
+        transition: background-color 0.3s, transform 0.2s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px; /* Tamanho fixo para as setas */
+        height: 40px;
+        border-radius: 50%;
+    }
 
-.arrow-button i {
-    font-size: 15px;
-    color: var(--blue); /* Cor da seta */
-}
+    .arrow-button i {
+        font-size: 15px;
+        color: var(--blue); /* Cor da seta */
+    }
 
-.arrow-button.left {
-    left: -200px;
-}
+    .arrow-button.left {
+        left: -200px;
+    }
 
-.arrow-button.right {
-    right: -200px;
-}
+    .arrow-button.right {
+        right: -200px;
+    }
 
-.arrow-button:hover {
-    background-color: #fff; /* Cor de fundo ao passar o mouse */
-    transform: translateY(-50%) rotate(360deg); /* Efeito de rotação */
-}
+    .arrow-button:hover {
+        background-color: #fff; /* Cor de fundo ao passar o mouse */
+        transform: translateY(-50%) rotate(360deg); /* Efeito de rotação */
+    }
 
-.arrow-button:hover i {
-    color: #ED0677; /* Cor da seta no hover */
-}
+    .arrow-button:hover i {
+        color: #ED0677; /* Cor da seta no hover */
+    }
 
-/* Animação de loading da seta */
-.arrow-button.loading {
-    pointer-events: none; /* Desativa a interação durante o carregamento */
-}
+    /* Animação de loading da seta */
+    .arrow-button.loading {
+        pointer-events: none; /* Desativa a interação durante o carregamento */
+    }
 
-.arrow-button.loading i {
-    display: none; /* Esconde a seta */
-}
+    .arrow-button.loading i {
+        display: none; /* Esconde a seta */
+    }
 
-.arrow-button.loading::after {
-    content: '';
-    border: 3px solid var(--blue);
-    border-top: 3px solid transparent;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    animation: spin 1s linear infinite; /* Animação de giro */
-}
+    .arrow-button.loading::after {
+        content: '';
+        border: 3px solid var(--blue);
+        border-top: 3px solid transparent;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 1s linear infinite; /* Animação de giro */
+    }
 
 /* Animação de rotação do círculo */
 @keyframes spin {
@@ -243,11 +245,11 @@
     }
 
     .tracking .progress-6 .color-bar {
-        width: 80%;
+        width: 70%;
     }
 
     .tracking .progress-7 .color-bar {
-        width: 80%;
+        width: 70%;
     }
 
     .tracking .progress-8 .color-bar {
@@ -291,7 +293,6 @@
         background-color: var(--blue);
     }
 
-    .tracking .progress-6>ul>li.bullet-4,
     .tracking .progress-7>ul>li.bullet-4,
     .tracking .progress-8>ul>li.bullet-4,
     .tracking .progress-9>ul>li.bullet-4 {
@@ -303,7 +304,7 @@
         background-color: var(--blue);
     }
 
-    .tracking .progress-9>ul>li.bullet-5 {
+    .tracking .progress-9>ul>li.bullet-6 {
         background-color: var(--green);
     }
 
@@ -343,7 +344,12 @@
         display: block;
     }
 
+    .tracking .progress-8>ul>li.bullet-5 .el i,
     .tracking .progress-9>ul>li.bullet-5 .el i {
+        display: block;
+    }
+
+    .tracking .progress-9>ul>li.bullet-6 .el i {
         display: block;
     }
 
@@ -383,7 +389,12 @@
         color: var(--blue);
     }
 
+    .tracking .progress-8>ul>li.bullet-5 .txt,
     .tracking .progress-9>ul>li.bullet-5 .txt {
+        color: var(--blue);
+    }
+
+    .tracking .progress-9>ul>li.bullet-6 .txt {
         color: var(--blue);
     }
 
@@ -437,14 +448,14 @@
     }
 }
 </style>
+
 <script>
     document.querySelectorAll('.arrow-button').forEach(button => {
-    button.addEventListener('click', function() {
-        this.classList.add('loading'); // Adiciona a animação de loading
-        setTimeout(() => {
-            window.location.href = this.querySelector('a').href; // Redireciona após o tempo de carregamento
-        }, 1000); // Ajuste o tempo conforme necessário
+        button.addEventListener('click', function() {
+            this.classList.add('loading'); // Adiciona a animação de loading
+            setTimeout(() => {
+                window.location.href = this.querySelector('a').href; // Redireciona após o tempo de carregamento
+            }, 1000); // Ajuste o tempo conforme necessário
+        });
     });
-});
-
 </script>

@@ -283,6 +283,7 @@ class Order extends AppModel
                     $bccs['ti@berh.com.br'] = 'BERH';
                 }
 
+                $mensagem = null;
                 if ($data['status_id'] == 83) {
                     $mensagem = 'Seu pedido foi gerado com sucesso em: ' . date('d/m/Y \à\s H:i\h\s', strtotime($old['Order']['created_nao_formatado']));
                 } else if ($data['status_id'] == 84) {
@@ -290,6 +291,8 @@ class Order extends AppModel
                 } else if ($data['status_id'] == 85) {
                     $mensagem = 'Em ' . date('d/m/Y \à\s H:i\h\s') . ' seu pedido foi confirmado pagamento. A partir de agora iniciaremos o processamento do seu pedido junto as Operadoras.';
                 } else if ($data['status_id'] == 86) {
+                    $mensagem = 'Aguarde próxima atualização de Status.';
+                } else if ($data['status_id'] == 104) {
                     $mensagem = 'Aguarde próxima atualização de Status.';
                 } else if ($data['status_id'] == 87) {
                     $mensagem = 'Em ' . date('d/m/Y \à\s H:i\h\s') . ' seu pedido teve o processo concluído nas Operadoras e os Créditos foram disponibilizados conforme programação.';

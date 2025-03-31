@@ -725,6 +725,10 @@ class OrdersController extends AppController
                 $progress = 7;
                 break;
 
+            case 104:
+                $progress = 8;
+                break;
+
             case 87:
                 $progress = 9;
                 break;

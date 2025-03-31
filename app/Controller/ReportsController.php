@@ -1433,4 +1433,195 @@ class ReportsController extends AppController
 
         echo json_encode(['success' => true]);
     }
+
+    public function status_pedidos()
+    {
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(79, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = [
+            'Order' => [
+                'contain' => ['Customer', 'CustomerCreator', 'EconomicGroup', 'Status', 'Creator', 'Income'],
+                'fields' => [
+                    'Order.*',
+                    'Status.id',
+                    'Status.label',
+                    'Status.name',
+                    'Customer.codigo_associado',
+                    'CustomerCreator.name',
+                    'Creator.name',
+                    'EconomicGroup.name',
+                    'Customer.nome_primario',
+                    'Income.data_pagamento',
+                    "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                        FROM order_balances b 
+                            INNER JOIN orders o ON o.id = b.order_id 
+                        WHERE o.id = Order.id 
+                                AND b.tipo = 1 
+                                AND b.data_cancel = '1901-01-01 00:00:00' 
+                                AND o.data_cancel = '1901-01-01 00:00:00' 
+                    ) as total_balances"
+                ],
+                'limit' => 50,
+                'order' => ['Order.id' => 'desc'],
+                'group' => ['Order.id'],
+            ]
+        ];
+
+        if (!in_array(CakeSession::read("Auth.User.Group.name"), array('Administrador', 'Diretoria'))) {
+            $condition = ["and" => ["Customer.id != " => 88357, "Order.status_id" => 86], "or" => []];
+        } else {
+            $condition = ["and" => ["Order.status_id" => 86], "or" => []];
+        }
+
+        $filtersFilled = false;
+
+        if (isset($_GET['q']) && $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'Order.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+            $filtersFilled = true;
+        }
+
+        $get_de = isset($_GET['de']) ? $_GET['de'] : '';
+        $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
+
+        if ($get_de != '' && $get_ate != '') {
+            $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
+            $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
+
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
+            ]);
+            $filtersFilled = true;
+        }
+
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
+        }
+
+        $queryString = http_build_query($_GET);
+
+        if (isset($_GET['exportar'])) {
+            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Order->find('all', [
+                'contain' => [
+                    'Status',
+                    'Customer',
+                    'CustomerCreator',
+                    'EconomicGroup',
+                    'Income.data_pagamento'
+                ],
+                'conditions' => $condition,
+            ]);
+
+            foreach ($data as $k => $pedido) {
+                $suppliersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'joins' => [
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ],
+                    'group' => ['Supplier.id'],
+                    'fields' => ['Supplier.id']
+                ]);
+
+                $usersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'group' => ['OrderItem.customer_user_id'],
+                    'fields' => ['OrderItem.customer_user_id']
+                ]);
+
+                $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
+
+                $data[$k]['Order']['suppliersCount'] = $suppliersCount;
+                $data[$k]['Order']['usersCount'] = $usersCount;
+                $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
+            }
+
+            $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
+        }
+
+        $data = $this->Paginator->paginate('Order', $condition);
+
+        $customers = $this->Customer->find('list', [
+            'conditions' => ['Customer.status_id' => 3],
+            'fields' => ['id', 'nome_primario'],
+            'order' => ['nome_primario' => 'asc']
+        ]);
+
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 18, 'Status.id' => 104], 'order' => 'Status.name']);
+
+        $action = 'Relatório Alteração Status Pedido';
+        $breadcrumb = ['Relatórios' => '', 'Relatório Alteração Status Pedido' => ''];
+
+        $this->set(compact('action', 'breadcrumb', 'status', 'data'));
+    }
+
+    public function alter_status_pedido()
+    {
+        $this->autoRender = false;
+
+        $orderIds = $this->request->data['orderIds'];
+        $status = $this->request->data['v_status_pedido'];
+
+        foreach ($orderIds as $key => $value) {
+            $order = $this->Order->findById($value);
+
+            $dados_log = [
+                "old_value" => $order['Order']['status_id'] ? $order['Order']['status_id'] : ' ',
+                "new_value" => $status,
+                "route" => "reports/status_pedidos",
+                "log_action" => "Alterou",
+                "log_table" => "Order",
+                "primary_key" => $value,
+                "parent_log" => 0,
+                "user_type" => "ADMIN",
+                "user_id" => CakeSession::read("Auth.User.id"),
+                "message" => "O status_id do pedido foi alterado com sucesso",
+                "log_date" => date("Y-m-d H:i:s"),
+                "data_cancel" => "1901-01-01",
+                "usuario_data_cancel" => 0,
+                "ip" => $_SERVER["REMOTE_ADDR"]
+            ];
+
+            $this->Log->create();
+            $this->Log->save($dados_log);
+
+            $this->Order->save([
+                'Order' => [
+                    'id' => $order['Order']['id'],
+                    'status_id' => $status,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+        }
+        
+        echo json_encode(['success' => true]);
+    }
 }

@@ -37,7 +37,7 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
                                     <option value=''></option>
                                     <?php
-                                        $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento',87 => 'Finalizado',18 => 'Cancelado'];
+                                        $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento', 104 => 'Aguardando Liberação de Crédito',87 => 'Finalizado',18 => 'Cancelado'];
 
                                         foreach ($statusOptions as $statusId => $statusName) {
                                             $selected = ($_GET["t"] ?? '') == $statusId ? 'selected' : '';
