@@ -5,27 +5,27 @@
             <div class="color-bar"></div>
             <ul>
                 <li class="bullet-1">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 18px; height: 18px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 25px; height: 25px;"></i></div>
                     <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 18px; height: 18px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 25px; height: 25px;"></i></div>
                     <div class="txt">Aguardando <br>Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 18px; height: 18px;"></i></div>
-                    <div class="txt">Pagamento <br>Confirmado <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 25px; height: 25px;"></i></div>
+                    <div class="txt">Pagamento <br>Confirmado <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
                 <li class="bullet-4">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 18px; height: 18px;"></i></div>
-                    <div class="txt">Em <br>Processamento <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 25px; height: 25px;"></i></div>
+                    <div class="txt">Em <br>Processamento <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
                 <li class="bullet-5">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 18px; height: 18px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 25px; height: 25px;"></i></div>
                     <div class="txt">Aguardando <br>Liberação <br>de Crédito</div>
                 </li>
                 <li class="bullet-6">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 18px; height: 18px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 25px; height: 25px;"></i></div>
                     <div class="txt">Finalizado</div>
                 </li>
             </ul>
@@ -70,7 +70,7 @@
     }
 
     .tracking {
-        width: var(--size);
+        width: 480px;
         max-width: 100%;
         position: relative;
         margin: 0 auto;
