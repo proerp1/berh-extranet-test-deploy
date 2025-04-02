@@ -589,6 +589,8 @@ class OrdersController extends AppController
 
         $orderItemData = [
             'order_id' => $orderId,
+            'status_processamento' => 'INICIO_PROCESSAMENTO',
+            'data_inicio_processamento' => date('Y-m-d'),
             'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
             'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
             'working_days' => $workingDaysUser,
