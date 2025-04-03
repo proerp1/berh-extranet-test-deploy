@@ -812,7 +812,7 @@ class ExcelTemplate
             $sheet->setCellValue('AQ' . ($key + 2), $dado['Modalidade']['name']);
             $sheet->setCellValue('AR' . ($key + 2), $nomeRegiao);
             $sheet->setCellValue('AS' . ($key + 2), $dado['Supplier']['observacao']); $col++;
-            $sheet->setCellValue('AT' . ($key + 2), $dado['Supplier']['realiza_gestao_eficiente']); $col++;
+            $sheet->setCellValue('AT' . ($key + 2), $dado['Supplier']['realiza_gestao_eficiente'] ? 'Sim' : 'Não');
 
 
         }
