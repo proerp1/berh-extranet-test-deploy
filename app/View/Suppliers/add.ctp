@@ -63,6 +63,12 @@ if (isset($id)) {
             </div>
 
             <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Realiza gestão eficiente?</label>
+                <?php 
+                    echo $this->Form->select('realiza_gestao_eficiente', [1 => 'Sim', 0 => 'Não'], ["class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione"]); ?>
+            </div>
+
+            <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Modalidade</label>
                 <?php echo $this->Form->input('Supplier.modalidade_id', ["class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione","options" => $modalidades]); ?>
             </div>
