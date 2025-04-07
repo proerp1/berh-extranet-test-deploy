@@ -269,13 +269,12 @@
                                             <i class="fas fa-download"></i> Resumo
                                         </a>
 
-                                      <!-- Verificação de status para mostrar os botões adicionais -->
-                                        <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
+                                        <!-- Verificação de status para mostrar os botões adicionais -->
+                                        <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
                                             <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
                                                 <i class="fas fa-arrow-right"></i> Pagamento Confirmado
                                             </a>
                                         <?php } ?>
-
 
                                         <?php if ($order['Order']['status_id'] == 83) { ?>
                                             <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
