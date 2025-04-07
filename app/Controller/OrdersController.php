@@ -634,6 +634,8 @@ class OrdersController extends AppController
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+        $user = $this->Auth->user();
+        $this->set('user', $user);
 
     $next_order = $this->Order->find('first', [
         'conditions' => ['Order.id >' => $id],
