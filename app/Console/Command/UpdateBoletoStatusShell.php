@@ -50,7 +50,7 @@ class UpdateBoletoStatusShell extends AppShell
                         $this->Income->save([
                             'Income' => [
                                 'status_id' => 17,
-                                'data_pagamento' => date('Y-m-d H:i:s'),
+                                'data_pagamento' => $this->getNextWeekdayDate(),
                                 'valor_pago' => $dadoBoleto[0]['valor_titulo'],
                             ]
                         ]);
@@ -60,7 +60,7 @@ class UpdateBoletoStatusShell extends AppShell
                             $this->Order->save([
                                 'Order' => [
                                     'status_id' => 85,
-                                    'payment_date' => date('Y-m-d'),
+                                    'payment_date' => $this->getNextWeekdayDate('Y-m-d'),
                                 ]
                             ]);
                         }
@@ -114,5 +114,18 @@ class UpdateBoletoStatusShell extends AppShell
         $dateInterval = $currentDate->diff($targetDateObj);
 
         return $dateInterval->days > 5;
+    }
+
+    private function getNextWeekdayDate($format = 'Y-m-d H:i:s') {
+        $date = new DateTime();
+        $dayOfWeek = $date->format('w'); // 0 = domingo, 6 = sábado
+
+        if ($dayOfWeek == 6) {
+            $date->modify('+2 days'); // Sábado → Segunda
+        } elseif ($dayOfWeek == 0) {
+            $date->modify('+1 day'); // Domingo → Segunda
+        }
+
+        return $date->format($format);
     }
 }
