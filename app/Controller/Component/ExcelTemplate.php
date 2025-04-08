@@ -745,9 +745,6 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Observação");$col++; 
         $sheet->setCellValue($col.'1', "Realiza GE");$col++; 
 
-
-
-
         foreach ($dados_sup as $key => $dado) {
 
             $regioes = [
@@ -793,7 +790,7 @@ class ExcelTemplate
             $sheet->setCellValue('AB' . ($key + 2), $dado['Supplier']['login']); $col++;
             $sheet->setCellValue('AC' . ($key + 2), $dado['Supplier']['senha']); $col++;
             $sheet->setCellValue('AD' . ($key + 2), $dado['BankAccountType']['description']); $col++;
-            $sheet->setCellValue('AE' . ($key + 2), $dado['BankCode']['name'] . ' - ' . $dado['BankCode']['code']);$col++;
+            $sheet->setCellValue('AE' . ($key + 2), $dado['BankCode']['code']." - ".$dado['BankCode']['name']);$col++;
             
             $paymentMethodId = $dado['Supplier']['payment_method'];
             $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
@@ -813,8 +810,6 @@ class ExcelTemplate
             $sheet->setCellValue('AR' . ($key + 2), $nomeRegiao);
             $sheet->setCellValue('AS' . ($key + 2), $dado['Supplier']['observacao']); $col++;
             $sheet->setCellValue('AT' . ($key + 2), $dado['Supplier']['realiza_gestao_eficiente'] ? 'Sim' : 'Não');
-
-
         }
 
         $sheet2 = $objPHPExcel->createSheet();
@@ -841,7 +836,7 @@ class ExcelTemplate
             $sheet2->setCellValue($col.($key + 2), $dado["Customer"]["documento"]); $col++;
             $sheet2->setCellValue($col.($key + 2), $dado["CustomerSupplierLogin"]["url"]); $col++;
             $sheet2->setCellValue($col.($key + 2), $dado["CustomerSupplierLogin"]["login"]); $col++;
-            $sheet2->setCellValue($col.($key + 2), $dado["CustomerSupplierLogin"]["password"]); $col++;
+            $sheet2->setCellValue($col.($key + 2), " ".trim($dado["CustomerSupplierLogin"]["password"])); $col++;
             $sheet2->setCellValue($col.($key + 2), $dado["CustomerSupplierLogin"]["created"]); $col++;
             $sheet2->setCellValue($col.($key + 2), $dado["UserCreated"]["name"]); $col++;
             $sheet2->setCellValue($col.($key + 2), $dado["CustomerSupplierLogin"]["updated"]); $col++;
@@ -2397,7 +2392,7 @@ class ExcelTemplate
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "0050"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["name"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["code"]." - ".$dado["k"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["conta"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["agencia"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
