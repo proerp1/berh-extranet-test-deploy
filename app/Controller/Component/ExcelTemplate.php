@@ -2481,7 +2481,6 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Observação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Beneficiário"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Benefício"); $col++;
-
         
         foreach ($dados as $key => $dado) {
             $tipo = "";
@@ -2491,8 +2490,14 @@ class ExcelTemplate
                 $tipo = 'Credita e Debita';
             } elseif ($dado["OrderBalance"]["tipo"] == '3') {
                 $tipo = 'Somente Credita';
+            } elseif ($dado["OrderBalance"]["tipo"] == '4') {
+                $tipo = 'Saldo';
+            } elseif ($dado["OrderBalance"]["tipo"] == '5') {
+                $tipo = 'Bolsa de Crédito';
+            } elseif ($dado["OrderBalance"]["tipo"] == '6') {
+                $tipo = 'Somente Debita';
             }
-        
+
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["document"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["code"]); $col++;
@@ -2503,7 +2508,6 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderBalance"]["observacao"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"]); $col++;
-
         }
     }
 

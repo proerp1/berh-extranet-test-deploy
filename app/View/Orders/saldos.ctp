@@ -98,6 +98,7 @@
                                     <option value="3" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 3 ? "selected" : "") : "") ?> >Somente Credita</option>
                                     <option value="4" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 4 ? "selected" : "") : "") ?> >Saldo</option>
                                     <option value="5" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 5 ? "selected" : "") : "") ?> >Bolsa de Crédito</option>
+                                    <option value="6" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 6 ? "selected" : "") : "") ?> >Somente Debita</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -153,6 +154,8 @@
                                 $tipo = 'Saldo';
                             } elseif ($data[$i]["OrderBalance"]["tipo"] == '5') {
                                 $tipo = 'Bolsa de Crédito';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '6') {
+                                $tipo = 'Somente Debita';
                             }
                         ?>
                         <tr class="<?php echo $tr_class; ?>">
