@@ -589,6 +589,8 @@ class OrdersController extends AppController
 
         $orderItemData = [
             'order_id' => $orderId,
+            'status_processamento' => 'INICIO_PROCESSAMENTO',
+            'data_inicio_processamento' => date('Y-m-d'),
             'customer_user_itinerary_id' => $itinerary['CustomerUserItinerary']['id'],
             'customer_user_id' => $itinerary['CustomerUserItinerary']['customer_user_id'],
             'working_days' => $workingDaysUser,
@@ -632,6 +634,8 @@ class OrdersController extends AppController
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+        $user = $this->Auth->user();
+        $this->set('user', $user);
 
     $next_order = $this->Order->find('first', [
         'conditions' => ['Order.id >' => $id],
@@ -723,6 +727,10 @@ class OrdersController extends AppController
 
             case 86:
                 $progress = 7;
+                break;
+
+            case 104:
+                $progress = 8;
                 break;
 
             case 87:

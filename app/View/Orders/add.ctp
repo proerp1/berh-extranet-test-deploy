@@ -216,7 +216,7 @@
                             <label class="form-label">Data Finalização</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 " . ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
+                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ". ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
                             </div>
                         </div>
 
@@ -269,12 +269,13 @@
                                             <i class="fas fa-download"></i> Resumo
                                         </a>
 
-                                        <!-- Verificação de status para mostrar os botões adicionais -->
-                                        <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
+                                      <!-- Verificação de status para mostrar os botões adicionais -->
+                                        <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
                                             <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
                                                 <i class="fas fa-arrow-right"></i> Pagamento Confirmado
                                             </a>
                                         <?php } ?>
+
 
                                         <?php if ($order['Order']['status_id'] == 83) { ?>
                                             <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>

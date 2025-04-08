@@ -743,6 +743,8 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Modalidade"); $col++; 
         $sheet->setCellValue($col.'1', "Região");$col++; 
         $sheet->setCellValue($col.'1', "Observação");$col++; 
+        $sheet->setCellValue($col.'1', "Realiza GE");$col++; 
+
 
 
 
@@ -791,8 +793,8 @@ class ExcelTemplate
             $sheet->setCellValue('AB' . ($key + 2), $dado['Supplier']['login']); $col++;
             $sheet->setCellValue('AC' . ($key + 2), $dado['Supplier']['senha']); $col++;
             $sheet->setCellValue('AD' . ($key + 2), $dado['BankAccountType']['description']); $col++;
-            $sheet->setCellValue('AE' . ($key + 2), $dado['BankCode']['name']); $col++;
-
+            $sheet->setCellValue('AE' . ($key + 2), $dado['BankCode']['name'] . ' - ' . $dado['BankCode']['code']);$col++;
+            
             $paymentMethodId = $dado['Supplier']['payment_method'];
             $paymentMethodName = isset($paymentMethods[$paymentMethodId]) ? $paymentMethods[$paymentMethodId] : 'Não informado';
             $sheet->setCellValue('AF' . ($key + 2), $paymentMethodName); $col++;
@@ -810,6 +812,8 @@ class ExcelTemplate
             $sheet->setCellValue('AQ' . ($key + 2), $dado['Modalidade']['name']);
             $sheet->setCellValue('AR' . ($key + 2), $nomeRegiao);
             $sheet->setCellValue('AS' . ($key + 2), $dado['Supplier']['observacao']); $col++;
+            $sheet->setCellValue('AT' . ($key + 2), $dado['Supplier']['realiza_gestao_eficiente'] ? 'Sim' : 'Não');
+
 
         }
 
