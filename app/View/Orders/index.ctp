@@ -238,7 +238,7 @@ function verConfirm_Pedido(locate, str){
 											'<button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>'+
 										'</div>'+
 										'<div class="modal-body">'+
-											'Importante: Esta aÃ§Ã£o nÃ£o poderÃ¡ ser desfeita.'+
+											'Importante: Esta não poderá ser desfeita.'+
 										'</div>'+
 										'<div class="modal-footer">'+
 											'<button class="btn" data-bs-dismiss="modal" aria-hidden="true">N&atilde;o</button>'+
