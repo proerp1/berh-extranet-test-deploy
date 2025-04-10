@@ -252,11 +252,19 @@ class OrderItem extends AppModel {
             INNER JOIN benefits be ON be.id = ci.benefit_id 
             INNER JOIN suppliers su ON su.id = be.supplier_id
         WHERE b.data_cancel = '1901-01-01'
-        AND (
-            (o.order_period_from BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
-            OR
-            (o.order_period_to BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
-            )
+	AND o.status_id = 87
+        AND 
+	(
+		(
+			o.order_period_from <= '".$data."'
+   		)
+  		OR
+    		(
+	            (o.order_period_from BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
+	            OR
+	            (o.order_period_to BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
+	        )
+	 )
         AND i.customer_user_id = ".$customer_user_id."
         GROUP BY b.id, su.id, o.id
         ORDER BY beneficiario, beneficio
