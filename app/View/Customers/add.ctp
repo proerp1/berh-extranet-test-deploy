@@ -472,7 +472,7 @@
                 </div>
 
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Logo</label>
+                    <label class="fw-semibold fs-6 mb-2">Logo (Altura imagem: 60px)</label>
                     <div class="col-sm-5">
                         <?php echo $this->Form->input('logo', array("div" => false, "label" => false, "required" => false, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o logo"));  ?>
                         <?php if (isset($this->request->data["Customer"])): ?>
