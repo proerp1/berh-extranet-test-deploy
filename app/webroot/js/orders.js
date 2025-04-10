@@ -91,7 +91,7 @@ $(document).ready(function() {
         $('#message_wd').val('');
         $('#message_classification').text('').hide();
         $('#message_classification_period').text('').hide();
-
+        $('#message_classification_due').text('').hide();
 
         if ($(".is_partial").val() != 3 && $(".is_partial").val() != 4) {
             if (!creditReleaseDateValue || !periodFromValue || !periodToValue || !dueDateValue) {
@@ -138,16 +138,16 @@ $(document).ready(function() {
                 return;
             }
 
-            const maxPeriodFrom = addWorkingDays(creditReleaseDate, -6);
-            if (periodFromDate < maxPeriodFrom) {
-                $('#message_classification_period').text('Período inicial deve ser pelo menos 6 dias úteis antes do agendamento.').show();
+            const maxDueDate = addWorkingDays(creditReleaseDate, -6); // vencimento até 6 dias úteis antes do agendamento
+            if (dueDate <= maxDueDate) {
+                $('#message_classification_due').text('Data de vencimento deve ser até 6 dias úteis antes do agendamento do crédito.').show();
                 event.preventDefault();
                 return;
             }
 
-            const minDueDate = addWorkingDays(creditReleaseDate, 6);
-            if (dueDate < maxPeriodFrom) {
-                $('#message_classification').text('Data de vencimento deve ser pelo menos 6 dias úteis após o agendamento.').show();
+            const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6); // período até 6 dias úteis após agendamento
+            if (periodFromDate >= maxPeriodFrom) {
+                $('#message_classification_period').text('Período deve iniciar até 6 dias úteis após o agendamento do crédito.').show();
                 event.preventDefault();
                 return;
             }
@@ -155,6 +155,7 @@ $(document).ready(function() {
 
         $('#message_classification').hide();
         $('#message_classification_period').hide();
+        $('#message_classification_due').hide();
     });
 
     $('.clone_order').on('change', function() {
