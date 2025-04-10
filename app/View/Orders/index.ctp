@@ -122,11 +122,12 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Código</th>
-                        <th>Data de criação</th>
                         <th>Número</th>
                         <th>Cliente</th>
+                        <th>Data de criação</th>
                         <th>Data Pagamento</th>
                         <th>Data Finalização</th>
+                        <th>Vencimento</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
                         <th>Taxa</th>
@@ -140,7 +141,6 @@
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
-                        <th>Vencimento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -178,11 +178,12 @@
                                     </span>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo $this->base.'/orders/edit/'.$data[$i]["Order"]["id"]; ?>"><?php echo $data[$i]["Order"]["id"]; ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>     
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>  
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>        
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
@@ -196,7 +197,6 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>     
 
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
