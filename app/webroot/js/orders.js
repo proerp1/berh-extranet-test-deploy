@@ -139,14 +139,14 @@ $(document).ready(function() {
             }
 
             const maxDueDate = addWorkingDays(creditReleaseDate, -6); // vencimento até 6 dias úteis antes do agendamento
-            if (dueDate <= maxDueDate) {
+            if (dueDate < maxDueDate) {
                 $('#message_classification_due').text('Data de vencimento deve ser até 6 dias úteis antes do agendamento do crédito.').show();
                 event.preventDefault();
                 return;
             }
 
             const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6); // período até 6 dias úteis após agendamento
-            if (periodFromDate >= maxPeriodFrom) {
+            if (periodFromDate > maxPeriodFrom) {
                 $('#message_classification_period').text('Período deve iniciar até 6 dias úteis após o agendamento do crédito.').show();
                 event.preventDefault();
                 return;
