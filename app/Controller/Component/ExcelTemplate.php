@@ -662,8 +662,10 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cobrar_taxa_boleto'] ? 'S' : 'N'); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['emitir_nota_fiscal']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['exibir_demanda'] ? 'S' : 'N'); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['flag_gestao_economico'] ? 'S' : 'N'); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $porcentagem_margem_seguranca); $col++;
+            $flagGestao = $dado['Customer']['flag_gestao_economico'];
+            $isElegivel = in_array($flagGestao, [1, '1', true], true) ? 'S' : 'N';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $isElegivel); $col++;
+                        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $porcentagem_margem_seguranca); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não'); $col++;
             $proposal = isset($dado['Proposal'][0]) ? $dado['Proposal'][0] : null;
             if ($proposal) {
