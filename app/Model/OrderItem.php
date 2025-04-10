@@ -256,7 +256,7 @@ class OrderItem extends AppModel {
         AND 
 	(
 		(
-			o.order_period_from <= '".$data."'
+			o.order_period_from > '".$data."'
    		)
   		OR
     		(
