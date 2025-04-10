@@ -1,12 +1,18 @@
 function addWorkingDays(startDate, daysToAdd) {
-    let endDate = startDate;
-    while (daysToAdd > 0) {
-        endDate.setDate(endDate.getDate() + 1); // Move to next day
-        if (endDate.getDay() !== 0 && endDate.getDay() !== 6) { // If it's not a weekend
-            daysToAdd--; // Decrement the days to add
+    let date = new Date(startDate);
+    let count = 0;
+    const increment = daysToAdd > 0 ? 1 : -1;
+
+    while (count < Math.abs(daysToAdd)) {
+        date.setDate(date.getDate() + increment);
+        const day = date.getDay();
+
+        if (day !== 0 && day !== 6) {
+            count++;
         }
     }
-    return endDate;
+
+    return date;
 }
 
 $(document).ready(function() {
@@ -78,60 +84,77 @@ $(document).ready(function() {
         const creditReleaseDateValue = $('#credit_release_date').val();
         const periodFromValue = $('#period_from').val();
         const periodToValue = $('#period_to').val();
+        const dueDateValue = $('#due_date').val();
         const workingDaysValue = $('#working_days').val();
         const cloneOrder = $('.clone_order:checked').val();
 
         $('#message_wd').val('');
-        $('#message_classification').val('');
+        $('#message_classification').text('').hide();
+        $('#message_classification_period').text('').hide();
+
 
         if ($(".is_partial").val() != 3 && $(".is_partial").val() != 4) {
-            // Mostra uma mensagem de erro se algum dos campos estiver vazio
-            if (!creditReleaseDateValue || !periodFromValue || !periodToValue) {
+            if (!creditReleaseDateValue || !periodFromValue || !periodToValue || !dueDateValue) {
                 $('#message_classification').text('Todos os campos de data devem ser preenchidos.').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
             }
 
             if (!cloneOrder && workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
                 $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
             }
 
+            const toDate = str => {
+                const [d, m, y] = str.split('/');
+                return new Date(`${y}-${m}-${d}T00:00:00`);
+            };
+
             let currDate = new Date();
-            currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
+            currDate.setHours(0, 0, 0, 0);
 
-            // Converte os valores de string para objetos Date
-            const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
-            const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
-            const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
+            const creditReleaseDate = toDate(creditReleaseDateValue);
+            const periodFromDate = toDate(periodFromValue);
+            const periodToDate = toDate(periodToValue);
+            const dueDate = toDate(dueDateValue);
 
-            // Verifica se period_to é posterior a data atual
             if (periodFromDate < currDate) {
                 $('#message_classification_period').text('A data "De" não deve ser anterior à data atual.').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
             }
 
-            // Verifica se period_to é posterior a period_from
             if (periodToDate <= periodFromDate) {
-                $('#message_classification_period').text('A data "Até" deve ser anterior à data "De".').show();
+                $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
             }
-            
-            const futureDate = addWorkingDays(currDate, 4);
 
-            // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
-            if (creditReleaseDate < futureDate) {
-                $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 4 dias úteis.').show();
+            const minCreditDate = addWorkingDays(currDate, 4);
+            if (creditReleaseDate < minCreditDate) {
+                $('#message_classification').text('Agendamento deve ser pelo menos 4 dias úteis após hoje.').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
+            }
+
+            const maxPeriodFrom = addWorkingDays(creditReleaseDate, -6);
+            if (periodFromDate < maxPeriodFrom) {
+                $('#message_classification_period').text('Período inicial deve ser pelo menos 6 dias úteis antes do agendamento.').show();
+                event.preventDefault();
+                return;
+            }
+
+            const minDueDate = addWorkingDays(creditReleaseDate, 6);
+            if (dueDate < maxPeriodFrom) {
+                $('#message_classification').text('Data de vencimento deve ser pelo menos 6 dias úteis após o agendamento.').show();
+                event.preventDefault();
+                return;
             }
         }
 
-        // Se todas as validações passarem, esconde a mensagem
         $('#message_classification').hide();
+        $('#message_classification_period').hide();
     });
 
     $('.clone_order').on('change', function() {

@@ -59,6 +59,14 @@
 
                     <div class="row mb-7 js-pedido_parc">
                         <div class="col">
+                            <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 credit_datepicker", 'div' => false, 'label' => false, 'readonly']);  ?>
+                            </div>
+                            <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
+                        </div>
+                        <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Período</label>
                             <div class="input-group">
                                 <div class="input-daterange input-group" id="datepicker">
@@ -68,14 +76,6 @@
                                 </div>
                             </div>
                             <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
-                        </div>
-                        <div class="col">
-                            <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 credit_datepicker", 'div' => false, 'label' => false, 'readonly']);  ?>
-                            </div>
-                            <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
                         <?php
                             $vencTimestamp = strtotime('+30 days');
