@@ -202,7 +202,7 @@
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
-                                    <?php if ($data[$i]["Status"]["id"] == '83' || CakeSession::read('Auth.User.group_id') == 1) { ?>                                    <a href="javascript:" onclick="verConfirm('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                    <?php if ($data[$i]["Status"]["id"] == '83' || CakeSession::read('Auth.User.group_id') == 1) { ?>                                    <a href="javascript:" onclick="verConfirm_Pedido('<?php echo $this->base . '/orders/delete/' . $data[$i]["Order"]["id"]; ?>', 'Deseja excluir o pedido <?php echo $data[$i]["Order"]["id"]; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                             Excluir
                                         </a>
                                     <?php } ?>
@@ -227,5 +227,33 @@
 <script id="template_order" type="text/x-handlebars-template">
     <option value="{{id}}">{{name}}</option>
 </script>
+<script>
+function verConfirm_Pedido(locate, str){
+
+	string =  '<div id="myModal" class="modal fade in" >'+
+							'<div class="modal-dialog">'+
+						    	'<div class="modal-content">'+
+										'<div class="modal-header bg-danger">'+
+											'<h3 id="myModalLabel" class="text-white"><i class="fa fa-trash-o fa-3"></i> '+str+'</h3>'+
+											'<button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>'+
+										'</div>'+
+										'<div class="modal-body">'+
+											'Importante: Esta aÃ§Ã£o nÃ£o poderÃ¡ ser desfeita.'+
+										'</div>'+
+										'<div class="modal-footer">'+
+											'<button class="btn" data-bs-dismiss="modal" aria-hidden="true">N&atilde;o</button>'+
+											'<button class="btn btn-danger" onClick="javascript: window.location ='+ " '" + locate +"' "+'">Sim</button>'+
+										'</div>'+
+									'</div>'+
+								'</div>'+
+						'</div>';
+
+	$(string).modal("show");
+
+
+}
+</script>
 
 <?php echo $this->Html->script('orders'); ?>
+
+
