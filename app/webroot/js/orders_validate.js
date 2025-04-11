@@ -69,7 +69,6 @@ $(document).ready(function() {
     $(".duedate_datepicker").datepicker({
         format: 'dd/mm/yyyy',
         weekStart: 1,
-        startDate: "today",
         orientation: "bottom auto",
         autoclose: true,
         language: "pt-BR",
