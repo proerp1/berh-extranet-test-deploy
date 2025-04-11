@@ -139,14 +139,14 @@ $(document).ready(function() {
 
             const maxDueDate = addWorkingDays(creditReleaseDate, -6);
             if (dueDate <= maxDueDate || dueDate >= creditReleaseDate) {
-                $('#message_classification_due').text('Data de vencimento deve ser até 5 dias úteis antes do agendamento do crédito.').show();
+                $('#message_classification_due').text('Nossos prazos de processamento para recarga são de 5 dias úteis e entrega são de até 10 dias úteis “risco de não cumprimento de prazos”. Dúvidas?  Manter contato com Atendimento BERH.').show();
                 event.preventDefault();
                 return;
             }
 
             const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6);
             if (periodFromDate >= maxPeriodFrom || periodFromDate <= creditReleaseDate) {
-                $('#message_classification_period').text('Período deve iniciar até 5 dias úteis após o agendamento do crédito.').show();
+                $('#message_classification_period').text('Nossos prazos de processamento para recarga são de 5 dias úteis e entrega são de até 10 dias úteis “risco de não cumprimento de prazos”. Dúvidas?  Manter contato com Atendimento BERH.').show();
                 event.preventDefault();
                 return;
             }
