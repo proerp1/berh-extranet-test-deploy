@@ -138,16 +138,16 @@ $(document).ready(function() {
                 return;
             }
 
-            const maxDueDate = addWorkingDays(creditReleaseDate, -6); // vencimento até 6 dias úteis antes do agendamento
-            if (dueDate < maxDueDate) {
-                $('#message_classification_due').text('Data de vencimento deve ser até 6 dias úteis antes do agendamento do crédito.').show();
+            const maxDueDate = addWorkingDays(creditReleaseDate, -6);
+            if (dueDate <= maxDueDate || dueDate >= creditReleaseDate) {
+                $('#message_classification_due').text('Data de vencimento deve ser até 5 dias úteis antes do agendamento do crédito.').show();
                 event.preventDefault();
                 return;
             }
 
-            const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6); // período até 6 dias úteis após agendamento
-            if (periodFromDate > maxPeriodFrom) {
-                $('#message_classification_period').text('Período deve iniciar até 6 dias úteis após o agendamento do crédito.').show();
+            const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6);
+            if (periodFromDate >= maxPeriodFrom || periodFromDate <= creditReleaseDate) {
+                $('#message_classification_period').text('Período deve iniciar até 5 dias úteis após o agendamento do crédito.').show();
                 event.preventDefault();
                 return;
             }
