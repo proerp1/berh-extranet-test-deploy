@@ -89,6 +89,7 @@
                             }
 
                             $venc = date('d/m/Y', $vencTimestamp);
+                            $venc = date('d/m/Y');
                         ?>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Data de vencimento</label>
