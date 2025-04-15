@@ -1,33 +1,10 @@
 <script type="text/javascript">
-    function addWorkingDays(startDate, daysToAdd) {
-        let date = new Date(startDate);
-        let count = 0;
-        const increment = daysToAdd > 0 ? 1 : -1;
-
-        while (count < Math.abs(daysToAdd)) {
-            date.setDate(date.getDate() + increment);
-            const day = date.getDay();
-
-            if (day !== 0 && day !== 6) {
-                count++;
-            }
-        }
-
-        return date;
-    }
-
     $(document).ready(function() {
         $("#OrderLastFareUpdate").datepicker({
             language: "pt-BR",
             format: 'dd/mm/yyyy',
             daysOfWeekDisabled: [0, 6],
             autoclose: true
-        });
-
-        $('#OrderUnitPrice').maskMoney({
-            decimal: ',',
-            thousands: '.',
-            precision: 2
         });
 
         $(".OrderDueDate").datepicker({
@@ -41,31 +18,12 @@
             daysOfWeekDisabled: [0, 6],
             toggleActive: true
         });
-
         $('.OrderDueDate').mask('99/99/9999');
 
-        $('.order_alter_form').on('submit', function(event) {
-            const creditReleaseDateValue = $('#credit_release_date').val();
-            const dueDateValue = $('#OrderDueDate').val();
-
-            $('#message_classification_due').text('').hide();
-
-            const toDate = str => {
-                const [d, m, y] = str.split('/');
-                return new Date(`${y}-${m}-${d}T00:00:00`);
-            };
-
-            const creditReleaseDate = toDate(creditReleaseDateValue);
-            const dueDate = toDate(dueDateValue);
-
-            const maxDueDate = addWorkingDays(creditReleaseDate, -6);
-            if (dueDate <= maxDueDate || dueDate >= creditReleaseDate) {
-                $('#message_classification_due').text('Nossos prazos de processamento para recarga são de 5 dias úteis e entrega são de até 10 dias úteis “risco de não cumprimento de prazos”. Dúvidas?  Manter contato com Atendimento BERH.').show();
-                event.preventDefault();
-                return;
-            }
-
-            $('#message_classification_due').hide();
+        $('#OrderUnitPrice').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
         });
     });
 </script>
@@ -80,17 +38,17 @@
 </style>
 <style>
     .customer-link {
-        color: #0082d2; 
-        text-decoration: none; 
+        color: #0082d2;
+        text-decoration: none;
     }
 
     .customer-link:hover {
-        color: #ED0677; 
+        color: #ED0677;
     }
 </style>
 <?php echo $this->element("../Orders/_abas"); ?>
 
-<?php echo $this->Form->create('Order', ["id" => "js-form-submit", "class" => "order_alter_form", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+<?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
 
 <div class="row">
     <div class="col-sm-12 col-md-4">
@@ -103,7 +61,7 @@
                         <a href="<?php echo Router::url(['controller' => 'Customers', 'action' => 'edit', $order['Customer']['id']]); ?>" class="customer-link">
                             <?php echo $order['Customer']['nome_secundario']; ?>
                         </a>
-                    </h2>             
+                    </h2>
                 </div>
             </div>
             <!--end::Card header-->
@@ -243,6 +201,9 @@
             <!--end::Order details-->
             <div class="card">
                 <div class="card-body">
+
+
+
                     <div class="mb-7 col">
                         <label class="form-label">Observação da Nota Fiscal</label>
                         <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
@@ -251,8 +212,6 @@
                     <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86); ?>
 
                     <div class="row">
-                        <input type="hidden" name="credit_release_date" id="credit_release_date" value="<?php echo $order['Order']['credit_release_date']; ?>">
-
                         <div class="mb-7 col-4">
                             <label class="form-label">Data Finalização</label>
                             <div class="input-group">
@@ -267,13 +226,16 @@
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                 <input type="text" name="data[Order][due_date]" id="OrderDueDate" required class="form-control <?php echo $order['Order']['status_id'] != 83 ? '' : 'OrderDueDate'; ?>" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] != 83 ? 'readonly' : ''; ?>>
                             </div>
-                            <p id="message_classification_due" style="color: red; margin: 0; display:none"></p>
+                            <?php if (strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83) { ?>
+                                <p id="message_classification" style="color: red; margin: 0;">A data de vencimento não pode ser menor que a data de hoje</p>
+                            <?php } ?>
                         </div>
 
                         <div class="mb-7 col-4">
                             <label class="form-label">Desconto</label>
                             <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
                         </div>
+
                     </div>
 
                     <div class="row">
@@ -336,7 +298,8 @@
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn btn-sm btn-success me-3" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
+
+                                <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
                                     Salvar dados
                                 </button>
                             </div>

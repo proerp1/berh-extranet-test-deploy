@@ -1,18 +1,12 @@
 function addWorkingDays(startDate, daysToAdd) {
-    let date = new Date(startDate);
-    let count = 0;
-    const increment = daysToAdd > 0 ? 1 : -1;
-
-    while (count < Math.abs(daysToAdd)) {
-        date.setDate(date.getDate() + increment);
-        const day = date.getDay();
-
-        if (day !== 0 && day !== 6) {
-            count++;
+    let endDate = startDate;
+    while (daysToAdd > 0) {
+        endDate.setDate(endDate.getDate() + 1); // Move to next day
+        if (endDate.getDay() !== 0 && endDate.getDay() !== 6) { // If it's not a weekend
+            daysToAdd--; // Decrement the days to add
         }
     }
-
-    return date;
+    return endDate;
 }
 
 $(document).ready(function() {
@@ -69,6 +63,7 @@ $(document).ready(function() {
     $(".duedate_datepicker").datepicker({
         format: 'dd/mm/yyyy',
         weekStart: 1,
+        startDate: "today",
         orientation: "bottom auto",
         autoclose: true,
         language: "pt-BR",
@@ -83,78 +78,60 @@ $(document).ready(function() {
         const creditReleaseDateValue = $('#credit_release_date').val();
         const periodFromValue = $('#period_from').val();
         const periodToValue = $('#period_to').val();
-        const dueDateValue = $('#due_date').val();
         const workingDaysValue = $('#working_days').val();
         const cloneOrder = $('.clone_order:checked').val();
 
         $('#message_wd').val('');
-        $('#message_classification').text('').hide();
-        $('#message_classification_period').text('').hide();
-        $('#message_classification_due').text('').hide();
+        $('#message_classification').val('');
 
         if ($(".is_partial").val() != 3 && $(".is_partial").val() != 4) {
-            if (!creditReleaseDateValue || !periodFromValue || !periodToValue || !dueDateValue) {
+            // Mostra uma mensagem de erro se algum dos campos estiver vazio
+            if (!creditReleaseDateValue || !periodFromValue || !periodToValue) {
                 $('#message_classification').text('Todos os campos de data devem ser preenchidos.').show();
                 event.preventDefault();
-                return;
+                return; // Evita a execução adicional
             }
 
             if (!cloneOrder && workingDaysValue <= 0 && $('input[name="data[working_days_type]"]:checked').val() == 1) {
                 $('#message_wd').text('Campo Dias Úteis deve ser maior que zero').show();
                 event.preventDefault();
-                return;
+                return; // Evita a execução adicional
             }
 
-            const toDate = str => {
-                const [d, m, y] = str.split('/');
-                return new Date(`${y}-${m}-${d}T00:00:00`);
-            };
-
             let currDate = new Date();
-            currDate.setHours(0, 0, 0, 0);
+            currDate.setHours(0, 0, 0, 0); // reinicia a parte de tempo
 
-            const creditReleaseDate = toDate(creditReleaseDateValue);
-            const periodFromDate = toDate(periodFromValue);
-            const periodToDate = toDate(periodToValue);
-            const dueDate = toDate(dueDateValue);
+            // Converte os valores de string para objetos Date
+            const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
+            const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
+            const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
 
+            // Verifica se period_to é posterior a data atual
             if (periodFromDate < currDate) {
                 $('#message_classification_period').text('A data "De" não deve ser anterior à data atual.').show();
                 event.preventDefault();
-                return;
+                return; // Evita a execução adicional
             }
 
+            // Verifica se period_to é posterior a period_from
             if (periodToDate <= periodFromDate) {
-                $('#message_classification_period').text('A data "Até" deve ser posterior à data "De".').show();
+                $('#message_classification_period').text('A data "Até" deve ser anterior à data "De".').show();
                 event.preventDefault();
-                return;
+                return; // Evita a execução adicional
             }
+            
+            const futureDate = addWorkingDays(currDate, 4);
 
-            const minCreditDate = addWorkingDays(currDate, 4);
-            if (creditReleaseDate < minCreditDate) {
-                $('#message_classification').text('Agendamento deve ser pelo menos 4 dias úteis após hoje.').show();
+            // Verifica se creditReleaseDate é maior que hoje + 5 dias úteis
+            if (creditReleaseDate < futureDate) {
+                $('#message_classification').text('Data do período inicial e agendamento deverá ser maior que hoje e maior que 4 dias úteis.').show();
                 event.preventDefault();
-                return;
-            }
-
-            const maxDueDate = addWorkingDays(creditReleaseDate, -6);
-            if (dueDate <= maxDueDate || dueDate >= creditReleaseDate) {
-                $('#message_classification_due').text('Nossos prazos de processamento para recarga são de 5 dias úteis e entrega são de até 10 dias úteis “risco de não cumprimento de prazos”. Dúvidas?  Manter contato com Atendimento BERH.').show();
-                event.preventDefault();
-                return;
-            }
-
-            const maxPeriodFrom = addWorkingDays(creditReleaseDate, 6);
-            if (periodFromDate >= maxPeriodFrom || periodFromDate <= creditReleaseDate) {
-                $('#message_classification_period').text('Nossos prazos de processamento para recarga são de 5 dias úteis e entrega são de até 10 dias úteis “risco de não cumprimento de prazos”. Dúvidas?  Manter contato com Atendimento BERH.').show();
-                event.preventDefault();
-                return;
+                return; // Evita a execução adicional
             }
         }
 
+        // Se todas as validações passarem, esconde a mensagem
         $('#message_classification').hide();
-        $('#message_classification_period').hide();
-        $('#message_classification_due').hide();
     });
 
     $('.clone_order').on('change', function() {
