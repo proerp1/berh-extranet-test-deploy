@@ -39035,4 +39035,5 @@ body{
     max-height: calc(80vh - 80px);
     overflow-y: auto;
     padding-bottom: 80px;
+    z-index: 10;
 }
