@@ -39032,7 +39032,7 @@ body{
 }
 
 #kt-toolbar-filter {
-    max-height: calc(80vh - 80px);
+    height: 400px;
     overflow-y: auto;
     padding-bottom: 80px;
     z-index: 10;
