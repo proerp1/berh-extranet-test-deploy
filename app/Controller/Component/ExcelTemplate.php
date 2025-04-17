@@ -746,8 +746,8 @@ class ExcelTemplate
         $sheet->setCellValue($col.'1', "Região");$col++; 
         $sheet->setCellValue($col.'1', "Observação");$col++; 
         $sheet->setCellValue($col.'1', "Realiza GE");$col++; 
-        $sheet->setCellValue($col.'1', "Quantidade");$col++; 
-        $sheet->setCellValue($col.'1', "Unidade de Tempo");$col++; 
+        $sheet->setCellValue($col.'1', "Quantidade de Tempo");$col++; 
+       
 
         foreach ($dados_sup as $key => $dado) {
 
@@ -814,8 +814,9 @@ class ExcelTemplate
             $sheet->setCellValue('AR' . ($key + 2), $nomeRegiao);
             $sheet->setCellValue('AS' . ($key + 2), $dado['Supplier']['observacao']); $col++;
             $sheet->setCellValue('AT' . ($key + 2), $dado['Supplier']['realiza_gestao_eficiente'] ? 'Sim' : 'Não');
-            $sheet->setCellValue('AU' . ($key + 2), $dado['Supplier']['valor']);
-            $sheet->setCellValue('AV' . ($key + 2), $dado['Supplier']['unidade_tempo']);
+            $valorConcatenado = $dado['Supplier']['valor'] . ' ' . $dado['Supplier']['unidade_tempo'];
+            $sheet->setCellValue('AU' . ($key + 2), $valorConcatenado);
+            
 
         }
 
