@@ -184,7 +184,29 @@
                                             Gestão Eficiente
                                         </div>
                                     </td>
-                                    <td class="fw-bolder text-end"><?php echo $order['Order']['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                    <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
+                                        <td class="fw-bolder">
+                                            <div class="d-flex justify-content-end gap-4">
+                                                <div class="form-check form-check-custom form-check-solid">
+                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="1" id="pedidoComp1" checked />
+                                                    <label class="form-check-label" for="pedidoComp1">
+                                                        Sim
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check form-check-custom form-check-solid">
+                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="2" id="pedidoComp2" />
+                                                    <label class="form-check-label" for="pedidoComp2">
+                                                        Não
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    <?php } else { ?>
+                                        <td class="fw-bolder text-end">
+                                            Não
+                                        </td>
+                                    <?php } ?>
                                 </tr>
                                 <!--end::Date-->
                             </tbody>
@@ -238,7 +260,7 @@
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled">
+                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" readonly="readonly">
                             </div>
                         </div>
 
