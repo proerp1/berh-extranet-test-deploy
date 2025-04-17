@@ -33,7 +33,8 @@ class OrdersController extends AppController
         'CustomerUserAddress',
         'CustomerUserBankAccount',
         'OrderBalanceFile',
-        'BankAccount'
+        'BankAccount',
+        'OrderDiscount'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -802,12 +803,14 @@ class OrdersController extends AppController
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
+        $orders = $this->Order->find('all', ['conditions' => ['Order.id !=' => $id, 'Order.customer_id' => $order['Order']['customer_id']], 'order' => ['Order.id' => 'DESC'], 'fields' => ['Order.id', 'Order.created', 'Order.subtotal', 'Order.desconto', 'Customer.nome_primario']]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
 
         $this->render("add");
     }
@@ -3360,5 +3363,82 @@ class OrdersController extends AppController
         }
 
         return ['data' => $data];
+    }
+
+    public function aplicar_desconto()
+    {
+        $this->autoRender = false;
+
+        $order_id = $this->request->data['order_id'];
+        $total_desconto = $this->request->data['total_desconto'];
+        $orders_select = $this->request->data['orders_select'];
+
+        foreach ($orders_select as $order_select) {
+            $data = [
+                'order_id' => $order_id,
+                'order_parent_id' => $order_select['order_parent'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_creator_id' => CakeSession::read("Auth.User.id"),
+            ];
+
+            $this->OrderDiscount->create();
+            $this->OrderDiscount->save($data);
+        }
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $order_id,
+                'desconto' => $total_desconto,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function descontos($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Order->id = $id;
+        $old_order = $this->Order->read();
+
+        $this->request->data = $this->Order->read();
+        $order = $this->Order->findById($id);
+
+        $this->Paginator->settings = ['OrderDiscount' => [
+            'limit' => 200,
+            'order' => ['Order.id' => 'desc'],
+            'fields' => ['OrderParent.id', 'OrderParent.created', 'OrderParent.subtotal', 'OrderParent.desconto', 'Customer.nome_primario'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = OrderParent.customer_id'
+                    ]
+                ],
+            ],
+        ]];
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'OrderParent.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+        }
+
+        $orders = $this->Paginator->paginate('OrderDiscount', $condition);
+
+        $action = 'Descontos';
+        $breadcrumb = ['Cadastros' => '', 'Descontos' => '', 'Alterar Descontos' => ''];
+
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'orders'));
     }
 }
