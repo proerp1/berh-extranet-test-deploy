@@ -36,16 +36,26 @@
                 </tr>
             </thead>
             <tbody>
+                <?php $total_desconto = 0; ?>
+                <?php $total_subtotal = 0; ?>
                 <?php if ($orders) { ?>
                     <?php for ($i = 0; $i < count($orders); $i++) { ?>
+                        <?php $total_desconto += $orders[$i]["OrderParent"]["desconto_not_formated"]; ?>
+                        <?php $total_subtotal += $orders[$i]["OrderParent"]["subtotal_not_formated"]; ?>
                         <tr>
                             <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["OrderParent"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Customer"]["nome_primario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["OrderParent"]["created"] ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["OrderParent"]["subtotal"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["OrderParent"]["desconto"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["OrderParent"]["subtotal"]; ?></td>
                         </tr>
                     <?php } ?>
+                    <tr>
+                        <td>Total</td>
+                        <td colspan="2"></td>
+                        <td class="fw-bold fs-7 ps-4 desconto"><?php echo 'R$' . number_format($total_desconto, 2, ',', '.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4 subtotal"><?php echo 'R$' . number_format($total_subtotal, 2, ',', '.'); ?></td>
+                    </tr>
                 <?php } else { ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4" colspan="12">Nenhum registro encontrado</td>

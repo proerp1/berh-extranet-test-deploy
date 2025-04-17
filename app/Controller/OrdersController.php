@@ -807,7 +807,32 @@ class OrdersController extends AppController
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
-        $orders = $this->Order->find('all', ['conditions' => ['Order.id !=' => $id, 'Order.customer_id' => $order['Order']['customer_id']], 'order' => ['Order.id' => 'DESC'], 'fields' => ['Order.id', 'Order.created', 'Order.subtotal', 'Order.desconto', 'Customer.nome_primario']]);
+        $orders = $this->Order->find('all', [
+            'fields' => [
+                            'Order.*',
+                            'OrderDiscount.id',
+                            'Customer.nome_primario'
+                        ],
+            'joins' => [
+                [
+                    'table' => 'order_discounts',
+                    'alias' => 'OrderDiscount',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderDiscount.order_parent_id = Order.id',
+                        'OrderDiscount.data_cancel' => '1901-01-01',
+                    ]
+                ]
+            ],
+            'conditions' => [
+                                'Order.id !=' => $id,
+                                'Order.customer_id' => $order['Order']['customer_id']
+                            ],
+            'order' => [
+                            'Order.id' => 'DESC'
+                        ],
+            ]
+        );
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
@@ -1796,25 +1821,25 @@ class OrdersController extends AppController
                 'Supplier.razao_social',
                 'OrderItem.status_processamento',
                 'sum(OrderItem.subtotal) as subtotal',
-                "(SELECT sum(b.total) as total_saldo 
-                                FROM order_balances b 
-                                INNER JOIN benefits be ON be.id = b.benefit_id 
-                                WHERE be.supplier_id = Supplier.id  
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                "(SELECT sum(b.total) as total_saldo
+                                FROM order_balances b
+                                INNER JOIN benefits be ON be.id = b.benefit_id
+                                WHERE be.supplier_id = Supplier.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo",
-                "(SELECT max(b.pedido_operadora) as pedido_operadora 
-                                FROM order_balances b 
-                                WHERE b.benefit_id = Benefit.id 
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                "(SELECT max(b.pedido_operadora) as pedido_operadora
+                                FROM order_balances b
+                                WHERE b.benefit_id = Benefit.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS pedido_operadora",
-                "(SELECT COUNT(1) 
+                "(SELECT COUNT(1)
                                 FROM outcomes o
-                                WHERE o.order_id = OrderItem.order_id 
-                                        AND o.supplier_id = Supplier.id 
+                                WHERE o.order_id = OrderItem.order_id
+                                        AND o.supplier_id = Supplier.id
                                         AND o.data_cancel = '1901-01-01 00:00:00'
                             ) AS count_outcomes"
             ],
@@ -1920,14 +1945,14 @@ class OrdersController extends AppController
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
-            'fields' => ['Supplier.id', 
+            'fields' => ['Supplier.id',
                             'round(sum(OrderItem.subtotal),2) as subtotal',
-                            "(SELECT round(sum(b.total),2) as total_saldo 
-                                FROM order_balances b 
-                                INNER JOIN benefits be ON be.id = b.benefit_id 
-                                WHERE be.supplier_id = Supplier.id  
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                            "(SELECT round(sum(b.total),2) as total_saldo
+                                FROM order_balances b
+                                INNER JOIN benefits be ON be.id = b.benefit_id
+                                WHERE be.supplier_id = Supplier.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo",
                         ],
@@ -2338,7 +2363,7 @@ class OrdersController extends AppController
 
         /*
         debug($itens);
-        
+
         die;*/
 
         $link = APP . 'webroot';
@@ -2853,7 +2878,7 @@ class OrdersController extends AppController
                 ]
             ]);
         }
-        
+
         echo json_encode(['success' => true]);
     }
 
@@ -2862,7 +2887,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
-        
+
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
         $data_entrega = $this->request->data['v_data_entrega'];
@@ -3145,7 +3170,7 @@ class OrdersController extends AppController
             }
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-            
+
             $idItinerary = 0;
             if (empty($existingItinerary) || $is_variable) {
 
@@ -3229,7 +3254,7 @@ class OrdersController extends AppController
         foreach ($ret['data'] as $item) {
             $keyTp = $item['tipo'].'-'.$item['order_id'];
             $keyOr = $item['order_id'];
-            
+
             if (!isset($groupTpOrder[$keyTp])) {
                 $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
             }
@@ -3301,9 +3326,9 @@ class OrdersController extends AppController
     private function ensureLeadingZeroes($cpf) {
         $cpf = preg_replace('/\D/', '', $cpf);
 
-    
+
         $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
-    
+
         return $cpf;
     }
 
@@ -3339,7 +3364,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);          
+            $cpf = preg_replace('/\D/', '', $row[0]);
 
             $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
 
@@ -3376,6 +3401,16 @@ class OrdersController extends AppController
         $order_id = $this->request->data['order_id'];
         $total_desconto = $this->request->data['total_desconto'];
         $orders_select = $this->request->data['orders_select'];
+
+        $this->OrderDiscount->updateAll(
+            [
+                'OrderDiscount.data_cancel' => 'CURRENT_DATE',
+                'OrderDiscount.usuario_id_cancel' => CakeSession::read("Auth.User.id")
+            ],
+            [
+                'OrderDiscount.order_id' => $order_id
+            ]
+        );
 
         foreach ($orders_select as $order_select) {
             $data = [
@@ -3414,7 +3449,10 @@ class OrdersController extends AppController
         $this->Paginator->settings = ['OrderDiscount' => [
             'limit' => 200,
             'order' => ['Order.id' => 'desc'],
-            'fields' => ['OrderParent.id', 'OrderParent.created', 'OrderParent.subtotal', 'OrderParent.desconto', 'Customer.nome_primario'],
+            'fields' => [
+                            'OrderParent.*',
+                            'Customer.nome_primario'
+                        ],
             'joins' => [
                 [
                     'table' => 'customers',

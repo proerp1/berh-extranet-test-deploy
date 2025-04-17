@@ -18,19 +18,8 @@
             daysOfWeekDisabled: [0, 6],
             toggleActive: true
         });
+
         $('.OrderDueDate').mask('99/99/9999');
-
-        $('#OrderUnitPrice').maskMoney({
-            decimal: ',',
-            thousands: '.',
-            precision: 2
-        });
-
-        $('#total_desconto').maskMoney({
-            decimal: ',',
-            thousands: '.',
-            precision: 2
-        });
     });
 </script>
 
@@ -267,7 +256,7 @@
                         <div class="row">
                             <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
                                 <div class="dropdown">
-                                    <?php if ($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) { ?>
+                                    <?php if ($order['Order']['status_id'] == 83) { ?>
                                         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
                                             Aplicar Desconto
                                         </a>
@@ -1027,7 +1016,7 @@
                     <label class="form-label">Total</label>
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
-                        <input type="text" name="total_desconto" id="total_desconto" class="form-control">
+                        <input type="text" name="total_desconto" id="total_desconto" class="form-control" readonly>
                     </div>
                 </div>
 
@@ -1047,12 +1036,12 @@
                             <?php if ($orders) { ?>
                                 <?php for ($i=0; $i < count($orders); $i++) { ?>
                                     <tr>
-                                        <td class="fw-bold fs-7 ps-4"><input type="checkbox" class="seletor-item"></td>
+                                        <td class="fw-bold fs-7 ps-4"><input type="checkbox" class="seletor-item" data-desconto="<?php echo $orders[$i]["Order"]["desconto_not_formated"]; ?>" <?php echo $orders[$i]["OrderDiscount"]["id"] ? "checked" : ""; ?> ></td>
                                         <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["id"]; ?></td>
                                         <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Customer"]["nome_primario"]; ?></td>
                                         <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["created"] ?></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["subtotal"]; ?></td>
                                         <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["desconto"]; ?></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["subtotal"]; ?></td>
                                     </tr>
                                 <?php } ?>
                             <?php } else { ?>
@@ -1271,22 +1260,25 @@
                 $(".check_individual").prop('checked', false);
             }
         });
-    });
-</script>
 
-<script>
-    $(document).ready(function () {
-        $('.seletor-item-1').on('change', function () {
+        function fnc_calc_total() {
             let total = 0;
 
             $('.seletor-item:checked').each(function () {
-                total += parseFloat($(this).data('valor'));
+                total += parseFloat($(this).data('desconto'));
             });
+
 
             $('#total_desconto').val(total.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
             }).replace("R$", "").trim());
+        }
+
+        fnc_calc_total();
+
+        $('.seletor-item').on('change', function () {
+            fnc_calc_total();
         });
 
         $('#enviar_desconto').on('click', function () {
