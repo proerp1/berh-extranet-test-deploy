@@ -3415,7 +3415,7 @@ class OrdersController extends AppController
                 [
                     'table' => 'customers',
                     'alias' => 'Customer',
-                    'type' => 'INNER',
+                    'type' => 'LEFT',
                     'conditions' => [
                         'Customer.id = OrderParent.customer_id'
                     ]
