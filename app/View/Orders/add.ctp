@@ -1044,7 +1044,7 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 <button id="enviar_desconto" class="btn btn-success">Salvar</button>
             </div>
         </div>
