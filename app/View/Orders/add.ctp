@@ -38,12 +38,12 @@
 </style>
 <style>
     .customer-link {
-        color: #0082d2; 
-        text-decoration: none; 
+        color: #0082d2;
+        text-decoration: none;
     }
 
     .customer-link:hover {
-        color: #ED0677; 
+        color: #ED0677;
     }
 </style>
 <?php echo $this->element("../Orders/_abas"); ?>
@@ -61,7 +61,7 @@
                         <a href="<?php echo Router::url(['controller' => 'Customers', 'action' => 'edit', $order['Customer']['id']]); ?>" class="customer-link">
                             <?php echo $order['Customer']['nome_secundario']; ?>
                         </a>
-                    </h2>             
+                    </h2>
                 </div>
             </div>
             <!--end::Card header-->

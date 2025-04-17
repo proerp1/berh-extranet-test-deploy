@@ -89,6 +89,7 @@
                             }
 
                             $venc = date('d/m/Y', $vencTimestamp);
+                            $venc = date('d/m/Y');
                         ?>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Data de vencimento</label>
@@ -152,7 +153,7 @@
                             <div class="row opcao_tipo_beneficio" style="display:none">
                                 <div class="col mt-5">
                                     <select name="benefit_type" id="tipo_beneficio" class="form-control">
-                                        <?php 
+                                        <?php
                                             foreach ($benefit_types as $benefit_type_id => $benefit_type) {
                                                 echo '<option value="' . $benefit_type_id . '">' . $benefit_type . '</option>';
                                             }

@@ -39030,3 +39030,10 @@ body{
     background-color:#fff;
     border:0
 }
+
+#kt-toolbar-filter {
+    height: 400px;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    z-index: 10;
+}

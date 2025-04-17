@@ -637,17 +637,17 @@ class OrdersController extends AppController
         $user = $this->Auth->user();
         $this->set('user', $user);
 
-    $next_order = $this->Order->find('first', [
-        'conditions' => ['Order.id >' => $id],
-        'order' => ['Order.id' => 'ASC'],
-        'fields' => ['Order.id']
-    ]);
+        $next_order = $this->Order->find('first', [
+            'conditions' => ['Order.id >' => $id],
+            'order' => ['Order.id' => 'ASC'],
+            'fields' => ['Order.id']
+        ]);
 
-    $prev_order = $this->Order->find('first', [
-        'conditions' => ['Order.id <' => $id],
-        'order' => ['Order.id' => 'DESC'],
-        'fields' => ['Order.id']
-    ]);
+        $prev_order = $this->Order->find('first', [
+            'conditions' => ['Order.id <' => $id],
+            'order' => ['Order.id' => 'DESC'],
+            'fields' => ['Order.id']
+        ]);
 
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
@@ -667,7 +667,7 @@ class OrdersController extends AppController
                 $order['Order']['due_date'] = $this->request->data['Order']['due_date'];
             }
 
-            if (($old_order['Order']['status_id'] == 86 || $old_order['Order']['status_id'] == 85) && !empty($this->request->data['Order']['end_date'])) {
+            if (!empty($this->request->data['Order']['end_date'])) {
                 $order['Order']['status_id'] = 87;
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
             }
