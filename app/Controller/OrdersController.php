@@ -660,6 +660,14 @@ class OrdersController extends AppController
                 $order['Order']['pedido_complementar'] = $this->request->data['Order']['pedido_complementar'];
             }
 
+            if (isset($this->request->data['Order']['observation_ge'])) {
+                if (!empty($this->request->data['Order']['observation_ge'])) {
+                    $order['Order']['observation_ge'] = $this->request->data['Order']['observation_ge'];
+                    $order['Order']['updated_ge'] = date('Y-m-d H:i:s');
+                    $order['Order']['user_updated_ge_id'] = CakeSession::read("Auth.User.id");
+                }
+            }
+
             if ($old_order['Order']['status_id'] < 85) {
                 if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) + isset($old_order['Order']['desconto_not_formated']);

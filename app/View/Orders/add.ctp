@@ -223,8 +223,10 @@
                 <!--end::Order details-->
                 <div class="card">
                     <div class="card-body">
-
-
+                        <div class="mb-7 col js_pedido_complementar">
+                            <label class="form-label">Observação GE</label>
+                            <textarea name="data[Order][observation_ge]" id="" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                        </div>
 
                         <div class="mb-7 col">
                             <label class="form-label">Observação da Nota Fiscal</label>
@@ -1319,6 +1321,18 @@
                     alert('Erro ao enviar os dados');
                 }
             });
+        });
+
+        $('.js_pedido_complementar').hide();
+
+        $('.pedido_complementar').on('click', function () {
+            var v_ped_comp = $('.pedido_complementar:checked').val();
+
+            if (v_ped_comp == '1') {
+                $('.js_pedido_complementar').hide();
+            } else if (v_ped_comp == '2') {
+                $('.js_pedido_complementar').show();
+            }
         });
     });
 </script>
