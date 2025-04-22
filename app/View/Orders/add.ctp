@@ -20,6 +20,12 @@
         });
 
         $('.OrderDueDate').mask('99/99/9999');
+
+        $('#OrderUnitPrice').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
     });
 </script>
 
@@ -249,18 +255,18 @@
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" readonly="readonly">
+                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
                                 <div class="dropdown">
-                                    <?php if ($order['Order']['status_id'] == 83) { ?>
+                                    <?php /*if ($order['Order']['status_id'] == 83) { ?>
                                         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
                                             Aplicar Desconto
                                         </a>
-                                    <?php } ?>
+                                    <?php }*/ ?>
 
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                         Relatórios e Ações
