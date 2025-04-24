@@ -163,7 +163,8 @@ class OrdersController extends AppController
                     'Customer',
                     'CustomerCreator',
                     'EconomicGroup',
-                    'Income.data_pagamento'
+                    'Income.data_pagamento',
+                    'UpdatedGe',
                 ],
                 'conditions' => $condition,
             ]);

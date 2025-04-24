@@ -227,6 +227,9 @@ class ExcelConfigurationComponent extends Component {
                     ) AS qtde_pedido',
                     'Order.primeiro_pedido',
                     'Order.pedido_complementar',
+					'Order.updated_ge',
+					'Order.observation_ge',
+					'UpdatedGe.name',
 				],
 				'joins' => [
 					[
@@ -240,6 +243,12 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'OrderStatus',
 						'type' => 'INNER',
 						'conditions' => ['Order.status_id = OrderStatus.id']
+					],
+					[
+						'table' => 'users',
+						'alias' => 'UpdatedGe',
+						'type' => 'LEFT',
+						'conditions' => ['Order.user_updated_ge_id = UpdatedGe.id']
 					],
 					[
 						'table' => 'economic_groups',
