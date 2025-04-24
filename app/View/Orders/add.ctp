@@ -203,6 +203,26 @@
                                         </td>
                                     <?php } ?>
                                 </tr>
+                                <?php if (!empty($order['Order']['updated_ge'])) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Gestão Eficiente - Data Alteração
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['Order']['updated_ge']; ?></td>
+                                    </tr>
+                                <?php } ?>
+                                <?php if (!empty($order['UpdatedGe']['name'])) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Gestão Eficiente - Usuário Alteração
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['UpdatedGe']['name']; ?></td>
+                                    </tr>
+                                <?php } ?>
                                 <!--end::Date-->
                             </tbody>
                             <!--end::Table body-->
@@ -223,10 +243,19 @@
                 <!--end::Order details-->
                 <div class="card">
                     <div class="card-body">
-                        <div class="mb-7 col js_pedido_complementar">
-                            <label class="form-label">Observação GE</label>
-                            <textarea name="data[Order][observation_ge]" id="" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
-                        </div>
+                        <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
+                            <div class="mb-7 col js_pedido_complementar">
+                                <label class="form-label">Observação GE</label>
+                                <textarea name="data[Order][observation_ge]" id="" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                            </div>
+                        <?php } else { ?>
+                            <?php if (!empty($order['Order']['observation_ge'])) { ?>
+                                <div class="mb-7 col">
+                                    <label class="form-label">Observação GE</label>
+                                    <textarea name="observation_ge" id="" class="form-control" style="height: 175px;" disabled="disabled"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
 
                         <div class="mb-7 col">
                             <label class="form-label">Observação da Nota Fiscal</label>
