@@ -2406,11 +2406,11 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["u"]["cpf"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_type"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_id"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["b"]["pix_id"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
         }
