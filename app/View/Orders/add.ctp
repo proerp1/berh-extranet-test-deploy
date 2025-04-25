@@ -352,7 +352,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
+                                    <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] >= 87 or $order['Order']['status_id'] != 104) ? 'disabled="disabled"' : ''; ?>>
                                         Salvar dados
                                     </button>
                                 </div>
