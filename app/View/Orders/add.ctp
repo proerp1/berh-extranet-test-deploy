@@ -262,7 +262,7 @@
                             <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
                         </div>
 
-                        <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86); ?>
+                        <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86 || $order['Order']['status_id'] == 104); ?>
 
                         <div class="row">
                             <div class="mb-7 col-4">
