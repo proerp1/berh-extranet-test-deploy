@@ -18,6 +18,7 @@
             daysOfWeekDisabled: [0, 6],
             toggleActive: true
         });
+
         $('.OrderDueDate').mask('99/99/9999');
 
         $('#OrderUnitPrice').maskMoney({
@@ -35,8 +36,7 @@
     .working_days_input {
         width: 60px;
     }
-</style>
-<style>
+
     .customer-link {
         color: #0082d2;
         text-decoration: none;
@@ -46,276 +46,323 @@
         color: #ED0677;
     }
 </style>
+
 <?php echo $this->element("../Orders/_abas"); ?>
 
 <?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
-
-<div class="row">
-    <div class="col-sm-12 col-md-4">
-        <!--begin::Order details-->
-        <div class="card card-flush py-4 flex-row-fluid">
-            <!--begin::Card header-->
-            <div class="card-header">
-                <div class="card-title">
-                    <h2>
-                        <a href="<?php echo Router::url(['controller' => 'Customers', 'action' => 'edit', $order['Customer']['id']]); ?>" class="customer-link">
-                            <?php echo $order['Customer']['nome_secundario']; ?>
-                        </a>
-                    </h2>
+    <div class="row">
+        <div class="col-sm-12 col-md-4">
+            <!--begin::Order details-->
+            <div class="card card-flush py-4 flex-row-fluid">
+                <!--begin::Card header-->
+                <div class="card-header">
+                    <div class="card-title">
+                        <h2>
+                            <a href="<?php echo Router::url(['controller' => 'Customers', 'action' => 'edit', $order['Customer']['id']]); ?>" class="customer-link">
+                                <?php echo $order['Customer']['nome_secundario']; ?>
+                            </a>
+                        </h2>
+                    </div>
                 </div>
-            </div>
-            <!--end::Card header-->
-            <!--begin::Card body-->
-            <div class="card-body pt-0">
-                <div class="table-responsive">
-                    <!--begin::Table-->
-                    <table class="table align-middle table-row-bordered mb-0 fs-6 gy-5 min-w-300px">
-                        <!--begin::Table body-->
-                        <tbody class="fw-bold text-gray-600">
-                            <!--begin::Date-->
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
-                                        <span class="svg-icon svg-icon-2 me-2">
-
-                                        </span>
-                                        <!--end::Svg Icon-->Dias Úteis
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['working_days']; ?></td>
-                            </tr>
-                            <!--end::Date-->
-                            <!--begin::Payment method-->
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Período
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></td>
-                            </tr>
-                            <!--end::Payment method-->
-                            <!--begin::Date-->
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Liberação do crédito
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['credit_release_date']; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Criado em
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['created']; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Criado por
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        N° Pedido
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['id']; ?></td>
-                            </tr>
-                            <?php if ($order['Order']['economic_group_id'] != null) { ?>
+                <!--end::Card header-->
+                <!--begin::Card body-->
+                <div class="card-body pt-0">
+                    <div class="table-responsive">
+                        <!--begin::Table-->
+                        <table class="table align-middle table-row-bordered mb-0 fs-6 gy-5 min-w-300px">
+                            <!--begin::Table body-->
+                            <tbody class="fw-bold text-gray-600">
+                                <!--begin::Date-->
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
-                                            Grupo Econômico
+                                            <!--begin::Svg Icon | path: icons/duotune/files/fil002.svg-->
+                                            <span class="svg-icon svg-icon-2 me-2">
+
+                                            </span>
+                                            <!--end::Svg Icon-->Dias Úteis
                                         </div>
                                     </td>
-                                    <td class="fw-bolder text-end"><?php echo $order['EconomicGroup']['name']; ?></td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['working_days']; ?></td>
                                 </tr>
-                            <?php } ?>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Tipo Dias Úteis
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['working_days_type'] == 1 ? 'Padrão' : 'Cadastro de Beneficiários'; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Tipo Benefício
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $benefit_type_desc; ?></td>
-                            </tr>
-                            <?php if ($income && $income['Income']['data_pagamento'] != null) { ?>
+                                <!--end::Date-->
+                                <!--begin::Payment method-->
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
-                                            Data de pagamento
+                                            Período
                                         </div>
                                     </td>
-                                    <td class="fw-bolder text-end"><?php echo $income['Income']['data_pagamento']; ?></td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></td>
                                 </tr>
-                            <?php } ?>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Tipo
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $v_is_partial; ?></td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <div class="d-flex align-items-center">
-                                        Gestão Eficiente
-                                    </div>
-                                </td>
-                                <td class="fw-bolder text-end"><?php echo $order['Order']['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
-                            </tr>
-                            <!--end::Date-->
-                        </tbody>
-                        <!--end::Table body-->
-                    </table>
-                    <!--end::Table-->
+                                <!--end::Payment method-->
+                                <!--begin::Date-->
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Liberação do crédito
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['credit_release_date']; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Criado em
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['created']; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Criado por
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Creator']['name'] != '' ? $order['Creator']['name'] : $order['CustomerCreator']['name']; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            N° Pedido
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['id']; ?></td>
+                                </tr>
+                                <?php if ($order['Order']['economic_group_id'] != null) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Grupo Econômico
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['EconomicGroup']['name']; ?></td>
+                                    </tr>
+                                <?php } ?>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Tipo Dias Úteis
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['working_days_type'] == 1 ? 'Padrão' : 'Cadastro de Beneficiários'; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Tipo Benefício
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $benefit_type_desc; ?></td>
+                                </tr>
+                                <?php if ($income && $income['Income']['data_pagamento'] != null) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Data de pagamento
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $income['Income']['data_pagamento']; ?></td>
+                                    </tr>
+                                <?php } ?>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Tipo
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $v_is_partial; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Gestão Eficiente
+                                        </div>
+                                    </td>
+                                    <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
+                                        <td class="fw-bolder">
+                                            <div class="d-flex justify-content-end gap-4">
+                                                <div class="form-check form-check-custom form-check-solid">
+                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="1" id="pedidoComp1" checked />
+                                                    <label class="form-check-label" for="pedidoComp1">
+                                                        Sim
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check form-check-custom form-check-solid">
+                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="2" id="pedidoComp2" />
+                                                    <label class="form-check-label" for="pedidoComp2">
+                                                        Não
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    <?php } else { ?>
+                                        <td class="fw-bolder text-end">
+                                            Não
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                                <?php if (!empty($order['Order']['updated_ge'])) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Gestão Eficiente - Data Alteração
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['Order']['updated_ge']; ?></td>
+                                    </tr>
+                                <?php } ?>
+                                <?php if (!empty($order['UpdatedGe']['name'])) { ?>
+                                    <tr>
+                                        <td class="text-muted">
+                                            <div class="d-flex align-items-center">
+                                                Gestão Eficiente - Usuário Alteração
+                                            </div>
+                                        </td>
+                                        <td class="fw-bolder text-end"><?php echo $order['UpdatedGe']['name']; ?></td>
+                                    </tr>
+                                <?php } ?>
+                                <!--end::Date-->
+                            </tbody>
+                            <!--end::Table body-->
+                        </table>
+                        <!--end::Table-->
+                    </div>
                 </div>
+                <!--end::Card body-->
             </div>
-            <!--end::Card body-->
+
         </div>
 
-    </div>
-
-    <div class="col-sm-12 col-md-8">
-        <div class="card mb-5 mb-xl-8">
-            <div class="card-body pt-0 py-3">
-                <?php echo $this->element("aba_orders"); ?>
-            </div>
-            <!--end::Order details-->
-            <div class="card">
-                <div class="card-body">
-
-
-
-                    <div class="mb-7 col">
-                        <label class="form-label">Observação da Nota Fiscal</label>
-                        <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
-                    </div>
-
-                    <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86); ?>
-
-                    <div class="row">
-                        <div class="mb-7 col-4">
-                            <label class="form-label">Data Finalização</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ". ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
+        <div class="col-sm-12 col-md-8">
+            <div class="card mb-5 mb-xl-8">
+                <div class="card-body pt-0 py-3">
+                    <?php echo $this->element("aba_orders"); ?>
+                </div>
+                <!--end::Order details-->
+                <div class="card">
+                    <div class="card-body">
+                        <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
+                            <div class="mb-7 col js_pedido_complementar">
+                                <label class="form-label">Observação GE</label>
+                                <textarea name="data[Order][observation_ge]" id="" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
                             </div>
-                        </div>
-
-                        <div class="mb-7 col-4">
-                            <label class="form-label">Vencimento</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <input type="text" name="data[Order][due_date]" id="OrderDueDate" required class="form-control <?php echo $order['Order']['status_id'] != 83 ? '' : 'OrderDueDate'; ?>" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] != 83 ? 'readonly' : ''; ?>>
-                            </div>
-                            <?php if (strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83) { ?>
-                                <p id="message_classification" style="color: red; margin: 0;">A data de vencimento não pode ser menor que a data de hoje</p>
-                            <?php } ?>
-                        </div>
-
-                        <div class="mb-7 col-4">
-                            <label class="form-label">Desconto</label>
-                            <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
-
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Relatórios e Ações
-                                </button>
-
-
-                                <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
-                                    <div class="d-flex flex-column justify-content-start">
-
-                                        <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Benefícios
-                                        </a>
-                                        <a href="<?php echo $this->base . '/orders/relatorio_processamento/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Processamento
-                                        </a>
-                                        <a href="<?php echo $this->base . '/orders/processamentopdf/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Processamento PDF
-                                        </a>
-                                        <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Entrega
-                                        </a>
-                                        <a href="<?php echo $this->base . '/orders/cobranca/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Cobrança
-                                        </a>
-                                        <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                            <i class="fas fa-download"></i> Resumo
-                                        </a>
-
-                                      <!-- Verificação de status para mostrar os botões adicionais -->
-                                        <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
-                                            <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
-                                                <i class="fas fa-arrow-right"></i> Pagamento Confirmado
-                                            </a>
-                                        <?php } ?>
-
-
-                                        <?php if ($order['Order']['status_id'] == 83) { ?>
-                                            <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
-                                                <i class="fas fa-arrow-right"></i> Gerar Boleto
-                                            </button>
-                                        <?php } ?>
-
-                                        <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
-                                            <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-2 mb-2">
-                                                <i class="fas fa-download"></i> Baixar Boleto
-                                            </a>
-                                        <?php } ?>
-
-                                        <?php if ($gerarNota && $order["Order"]["status_id"] != 83) { ?>
-                                            <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
-                                                <i class="fas fa-download"></i> Nota de Débito
-                                            </a>
-                                        <?php } ?>
-
-                                    </div>
+                        <?php } else { ?>
+                            <?php if (!empty($order['Order']['observation_ge'])) { ?>
+                                <div class="mb-7 col">
+                                    <label class="form-label">Observação GE</label>
+                                    <textarea name="observation_ge" id="" class="form-control" style="height: 175px;" disabled="disabled"><?php echo $order['Order']['observation_ge']; ?></textarea>
                                 </div>
+                            <?php } ?>
+                        <?php } ?>
 
+                        <div class="mb-7 col">
+                            <label class="form-label">Observação da Nota Fiscal</label>
+                            <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                        </div>
 
-                                <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo $order['Order']['status_id'] >= 87 ? 'disabled="disabled"' : ''; ?>>
-                                    Salvar dados
-                                </button>
+                        <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86 || $order['Order']['status_id'] == 104); ?>
+
+                        <div class="row">
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Data Finalização</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ". ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Vencimento</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <input type="text" name="data[Order][due_date]" id="OrderDueDate" required class="form-control <?php echo $order['Order']['status_id'] != 83 ? '' : 'OrderDueDate'; ?>" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] != 83 ? 'readonly' : ''; ?>>
+                                </div>
+                                <?php if (strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83) { ?>
+                                    <p id="message_classification" style="color: red; margin: 0;">A data de vencimento não pode ser menor que a data de hoje</p>
+                                <?php } ?>
+                            </div>
+
+                            <div class="mb-7 col-4">
+                                <label class="form-label">Desconto</label>
+                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
+                                <div class="dropdown">
+                                    <?php /*if ($order['Order']['status_id'] == 83) { ?>
+                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
+                                            Aplicar Desconto
+                                        </a>
+                                    <?php }*/ ?>
+
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Relatórios e Ações
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
+                                        <div class="d-flex flex-column justify-content-start">
+
+                                            <a href="<?php echo $this->base . '/orders/relatorio_beneficio/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Benefícios
+                                            </a>
+                                            <a href="<?php echo $this->base . '/orders/relatorio_processamento/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Processamento
+                                            </a>
+                                            <a href="<?php echo $this->base . '/orders/processamentopdf/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Processamento PDF
+                                            </a>
+                                            <a href="<?php echo $this->base . '/orders/listagem_entrega/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Entrega
+                                            </a>
+                                            <a href="<?php echo $this->base . '/orders/cobranca/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Cobrança
+                                            </a>
+                                            <a href="<?php echo $this->base . '/orders/resumo/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                <i class="fas fa-download"></i> Resumo
+                                            </a>
+
+                                          <!-- Verificação de status para mostrar os botões adicionais -->
+                                            <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
+                                                <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
+                                                    <i class="fas fa-arrow-right"></i> Pagamento Confirmado
+                                                </a>
+                                            <?php } ?>
+
+                                            <?php if ($order['Order']['status_id'] == 83) { ?>
+                                                <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
+                                                    <i class="fas fa-arrow-right"></i> Gerar Boleto
+                                                </button>
+                                            <?php } ?>
+
+                                            <?php if ($order['Order']['status_id'] == 84 && $income) { ?>
+                                                <a href="<?php echo $this->base . '/incomes/gerar_boleto/' . $income["Income"]["id"] . '/1'; ?>" class="btn btn-sm btn-success me-2 mb-2">
+                                                    <i class="fas fa-download"></i> Baixar Boleto
+                                                </a>
+                                            <?php } ?>
+
+                                            <?php if ($gerarNota && $order["Order"]["status_id"] != 83) { ?>
+                                                <a href="<?php echo $this->base . '/orders/nota_debito/' . $order["Order"]["id"]; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                                    <i class="fas fa-download"></i> Nota de Débito
+                                                </a>
+                                            <?php } ?>
+
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] == 87) ? 'disabled="disabled"' : ''; ?>>
+                                        Salvar dados
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
-
         </div>
     </div>
-
-
-</div>
 </form>
 
 <!--begin::Row-->
@@ -993,6 +1040,65 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_desconto" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal_desconto_label">Selecionar Pedidos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-7 col-4">
+                    <label class="form-label">Total</label>
+                    <div class="input-group">
+                        <span class="input-group-text">R$</span>
+                        <input type="text" name="total_desconto" id="total_desconto" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <?php echo $this->element("table"); ?>
+                        <thead>
+                            <tr class="fw-bolder text-muted bg-light">
+                                <th class="ps-4 w-50px min-w-50px rounded-start"></th>
+                                <th>Número</th>
+                                <th>Cliente</th>
+                                <th>Data de criação</th>
+                                <th>Desconto</th>
+                                <th class="rounded-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($orders) { ?>
+                                <?php for ($i=0; $i < count($orders); $i++) { ?>
+                                    <tr>
+                                        <td class="fw-bold fs-7 ps-4"><input type="checkbox" class="seletor-item" data-desconto="<?php echo $orders[$i]["Order"]["desconto_not_formated"]; ?>" <?php echo $orders[$i]["OrderDiscount"]["id"] ? "checked" : ""; ?> ></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["id"]; ?></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Customer"]["nome_primario"]; ?></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["created"] ?></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["desconto"]; ?></td>
+                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["subtotal"]; ?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <tr>
+                                    <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button id="enviar_desconto" class="btn btn-success">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
 
@@ -1189,6 +1295,72 @@
                 $(".check_individual").prop('checked', true);
             } else {
                 $(".check_individual").prop('checked', false);
+            }
+        });
+
+        function fnc_calc_total() {
+            let total = 0;
+
+            $('.seletor-item:checked').each(function () {
+                total += parseFloat($(this).data('desconto'));
+            });
+
+
+            $('#total_desconto').val(total.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).replace("R$", "").trim());
+        }
+
+        fnc_calc_total();
+
+        $('.seletor-item').on('change', function () {
+            fnc_calc_total();
+        });
+
+        $('#enviar_desconto').on('click', function () {
+            const order_id = <?php echo $id; ?>;
+            let total_desconto = $('#total_desconto').val();
+            let orders_select = [];
+
+            $('.seletor-item:checked').each(function () {
+                let linha = $(this).closest('tr');
+                let order_parent = linha.find('td:eq(1)').text().trim();
+
+                orders_select.push({
+                    order_parent: order_parent,
+                });
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: base_url + '/orders/aplicar_desconto',
+                data: {
+                    order_id,
+                    total_desconto,
+                    orders_select
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    }
+                },
+                error: function (err) {
+                    alert('Erro ao enviar os dados');
+                }
+            });
+        });
+
+        $('.js_pedido_complementar').hide();
+
+        $('.pedido_complementar').on('click', function () {
+            var v_ped_comp = $('.pedido_complementar:checked').val();
+
+            if (v_ped_comp == '1') {
+                $('.js_pedido_complementar').hide();
+            } else if (v_ped_comp == '2') {
+                $('.js_pedido_complementar').show();
             }
         });
     });

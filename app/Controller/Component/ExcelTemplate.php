@@ -877,11 +877,12 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde Beneficiários"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data pagamento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo"); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Vencimento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Disponiblização "); $col++;
-        
-
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Data Alteração"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Observação"); $col++;
         
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
@@ -919,12 +920,12 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['usersCount']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Income']['data_pagamento']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['is_partial'] == 1 ? "Importação" :($dado['Order']['is_partial'] == 2 ? "Automático" :($dado['Order']['is_partial'] == 3 ? "PIX" :($dado['Order']['is_partial'] == 4 ? "Emissão" : "Desconhecido"))));$col++;
-
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['pedido_complementar'] ? 'S' : 'N'); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['due_date']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['credit_release_date']); $col++;
-
-
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['pedido_complementar']  == 1 ? 'S' : 'N'); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['updated_ge']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['UpdatedGe']['name']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['observation_ge']); $col++;
         }
     }
 
@@ -1895,7 +1896,6 @@ class ExcelTemplate
 
     public function getOrder($spreadsheet, $dados)
     {
-        
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         $activeWorksheet->getStyle('D')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
@@ -1904,98 +1904,96 @@ class ExcelTemplate
 
         $activeWorksheet->getStyle('P')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
-        $activeWorksheet
-        ->setCellValue('A1', "CNPJ CLIENTE")
-        ->setCellValue('B1', "Matrícula ")
-        ->setCellValue('C1', "Nome")
-        ->setCellValue('D1', "CPF")
-        ->setCellValue('E1', "RG")
-        ->setCellValue('F1', "Orgão Expeditor")
-        ->setCellValue('G1', "Data De Nascimento")
-        ->setCellValue('H1', "Nome Da Mãe")
-        ->setCellValue('I1', "Departamenrto")
-        ->setCellValue('J1', "Dias Úteis")
-        ->setCellValue('K1', "Tipo Pedido")
-        ->setCellValue('L1', "Tipo de Benefício / Serviço")
-        ->setCellValue('M1', "Id(Código Operadora)")
-        ->setCellValue('N1', "Operadora")
-        ->setCellValue('O1', "Id(Código do Benefício / ítem)")
-        ->setCellValue('P1', "Número do Cartão (Vale Transporte)")
-        ->setCellValue('Q1', "VlUnit")
-        ->setCellValue('R1', "Qtde")
-        ->setCellValue('S1', "Por Pedido / Dia?")
-        ->setCellValue('T1', "Qtde do Benefício por Dia")
-        ->setCellValue('U1', "Var")
-        ->setCellValue('V1', "Total")
-        ->setCellValue('W1', "Número Do Sic Uso Exclusivo De Curitiba-Pr")
-        ->setCellValue('X1', "Faixa Salarial do Colaborador")
-        ->setCellValue('Y1', "Cep Residência Colaborador")
-        ->setCellValue('Z1', "Rua Residência")
-        ->setCellValue('AA1', "Número Residência")
-        ->setCellValue('AB1', "Complemento Residência")
-        ->setCellValue('AC1', "Bairro Residência")
-        ->setCellValue('AD1', "Cidade Residência")
-        ->setCellValue('AE1', "Estado Residência")
-        ->setCellValue('AF1', "Cep Do Trabalho")
-        ->setCellValue('AG1', "Rua Trabalho")
-        ->setCellValue('AH1', "Número Trabalho")
-        ->setCellValue('AI1', "Complemento Trabalho")
-        ->setCellValue('AJ1', "Bairro Trabalho")
-        ->setCellValue('AK1', "Cidade Trabalho")
-        ->setCellValue('AL1', "Estado Trabalho")
-        ->setCellValue('AM1', "Cep De Entrega")
-        ->setCellValue('AN1', "Rua Entrega")
-        ->setCellValue('AO1', "Número De Entrega")
-        ->setCellValue('AP1', "Complemento De Entrega")
-        ->setCellValue('AQ1', "Bairro De Entrega")
-        ->setCellValue('AR1', "Cidade De Entrega")
-        ->setCellValue('AS1', "Estado De Entrega")
-        ->setCellValue('AT1', "Tipo De Conta")
-        ->setCellValue('AU1', "Tipo Chave")
-        ->setCellValue('AV1', "Chave")
-        ->setCellValue('AW1', "Nome do banco")
-        ->setCellValue('AX1', "Cod. Do Banco")
-        ->setCellValue('AY1', "Agencia")
-        ->setCellValue('AZ1', "Digito Da Agencia")
-        ->setCellValue('BA1', "Conta")
-        ->setCellValue('BB1', "Digito Da Conta")
-        ->setCellValue('BC1', "Gênero")
-        ->setCellValue('BD1', "Estado Civil")
-        ->setCellValue('BE1', "E-Mail")
-        ->setCellValue('BF1', "Ddd - Telefone ")
-        ->setCellValue('BG1', "Número Do Telefone ")
-        ->setCellValue('BH1', "Cargo")
-        ->setCellValue('BI1', "Pedido")
-        ->setCellValue('BJ1', "Data Geração Ped")
-        ->setCellValue('BK1', "Status Pedido")
-        ->setCellValue('BL1', "RAZAO SOCIAL CLIENTE")
-        ->setCellValue('BM1', "Repasse")
-        ->setCellValue('BN1', "GE")
-        ->setCellValue('BO1', "GE-CNPJ")
-        ->setCellValue('BP1', "Código")
-        ->setCellValue('BQ1', "Economia")
-        ->setCellValue('BR1', "id")
-        ->setCellValue('BS1', "Liberação do crédito")
-        ->setCellValue('BT1', "Período Inicio")
-        ->setCellValue('BU1', "Período Fim")
-        ->setCellValue('BV1', "Elegível para gestão econômico")
-        ->setCellValue('BW1', "Margem de segurança")
-        ->setCellValue('BX1', "Incluir qtde. mínina diária")
-        ->setCellValue('BY1', "Tipos de GE")
-        ->setCellValue('BZ1', "Compra Operadora")
-        ->setCellValue('CA1', "Primeira Compra")
-        ->setCellValue('CB1', "Pedido GE")
-        ->setCellValue('CC1', "Calculo repasse economia")
-        ->setCellValue('CD1', "Calculo repasse pedido compra")
-        ->setCellValue('CE1', "Status Operadora")
-        ->setCellValue('CF1', "Motivo Processamento")
-        ->setCellValue('CG1', "Matricula Operadora")
-        ->setCellValue('CH1', "Data Entrega");
-
-
-
-
-
+        $col = 'A';
+        $activeWorksheet->setCellValue($col.'1', "CNPJ CLIENTE");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Matrícula ");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Nome");$col++;
+        $activeWorksheet->setCellValue($col.'1', "CPF");$col++;
+        $activeWorksheet->setCellValue($col.'1', "RG");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Orgão Expeditor");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Data De Nascimento");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Nome Da Mãe");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Departamenrto");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Dias Úteis");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipo Pedido");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipo de Benefício / Serviço");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Id(Código Operadora)");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Operadora");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Id(Código do Benefício / ítem)");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número do Cartão (Vale Transporte)");$col++;
+        $activeWorksheet->setCellValue($col.'1', "VlUnit");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Qtde");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Por Pedido / Dia?");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Qtde do Benefício por Dia");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Var");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Total");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número Do Sic Uso Exclusivo De Curitiba-Pr");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Faixa Salarial do Colaborador");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cep Residência Colaborador");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Rua Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Complemento Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Bairro Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cidade Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Estado Residência");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cep Do Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Rua Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Complemento Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Bairro Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cidade Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Estado Trabalho");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cep De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Rua Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Complemento De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Bairro De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cidade De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Estado De Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipo De Conta");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipo Chave");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Chave");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Nome do banco");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cod. Do Banco");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Agencia");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Digito Da Agencia");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Conta");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Digito Da Conta");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Gênero");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Estado Civil");$col++;
+        $activeWorksheet->setCellValue($col.'1', "E-Mail");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Ddd - Telefone ");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Número Do Telefone ");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Cargo");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Pedido");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Data Geração Ped");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Status Pedido");$col++;
+        $activeWorksheet->setCellValue($col.'1', "RAZAO SOCIAL CLIENTE");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Repasse");$col++;
+        $activeWorksheet->setCellValue($col.'1', "GE");$col++;
+        $activeWorksheet->setCellValue($col.'1', "GE-CNPJ");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Código");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Economia");$col++;
+        $activeWorksheet->setCellValue($col.'1', "id");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Liberação do crédito");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Período Inicio");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Período Fim");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Elegível para gestão econômico");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Margem de segurança");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Incluir qtde. mínina diária");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipos de GE");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Compra Operadora");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Primeira Compra");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Calculo repasse economia");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Calculo repasse pedido compra");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Status Operadora");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Motivo Processamento");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Matricula Operadora");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Data Entrega");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Data Alteração");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2018,98 +2016,97 @@ class ExcelTemplate
 
             $indx++;
 
-            $activeWorksheet
-                ->setCellValue('A'. $indx, $dados[$i]["Customer"]["documento"])
-                ->setCellValue('B'. $indx, $dados[$i]["CustomerUser"]["matricula"])
-                ->setCellValue('C'. $indx, $dados[$i]['CustomerUser']['name'])
-                ->setCellValue('D'. $indx, $dados[$i]['CustomerUser']['cpf'])
-                ->setCellValue('E'. $indx, $dados[$i]['CustomerUser']['rg'])
-                ->setCellValue('F'. $indx, $dados[$i]['CustomerUser']['emissor_rg'])
-                ->setCellValue('G'. $indx, $dados[$i]['CustomerUser']['data_nascimento'])
-                ->setCellValue('H'. $indx, $dados[$i]['CustomerUser']['nome_mae'])
-                ->setCellValue('I'. $indx, $dados[$i]['CustomerDepartment']['name'])
-                ->setCellValue('J'. $indx, $dados[$i]['OrderItem']['working_days'])
-                ->setCellValue('K'. $indx, '1')
-                ->setCellValue('L'. $indx, '1')
-                ->setCellValue('M'. $indx, $dados[$i]['Supplier']['id'])
-                ->setCellValue('N'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
-                ->setCellValue('O'. $indx, $dados[$i]['Benefit']['code'])
-                ->setCellValueExplicit('P'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING) 
-                ->setCellValue('Q'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
-                ->setCellValue('R'. $indx, $dados[$i]['OrderItem']['working_days'])
-                ->setCellValue('S'. $indx, 'Dia')
-                ->setCellValue('T'. $indx, $dados[$i]['CustomerUserItinerary']['quantity'])
-                ->setCellValue('U'. $indx, $dados[$i]['OrderItem']['var'])
-                ->setCellValue('V'. $indx, $dados[$i]['OrderItem']['subtotal'])
-                ->setCellValue('W'. $indx, '-')
-                ->setCellValue('X'. $indx, $dados[$i]['SalaryRange']['range'])
-                ->setCellValue('Y'. $indx, $dados[$i][0]['cep'])
-                ->setCellValue('Z'. $indx, $dados[$i][0]['endereco'])
-                ->setCellValue('AA'. $indx, $dados[$i][0]['numero'])
-                ->setCellValue('AB'. $indx, $dados[$i][0]['complemento'])
-                ->setCellValue('AC'. $indx, $dados[$i][0]['bairro'])
-                ->setCellValue('AD'. $indx, $dados[$i][0]['cidade'])
-                ->setCellValue('AE'. $indx, $dados[$i][0]['estado'])
-                ->setCellValue('AF'. $indx, $dados[$i][0]['cep_empresa'])
-                ->setCellValue('AG'. $indx, $dados[$i][0]['endereco_empresa'])
-                ->setCellValue('AH'. $indx, $dados[$i][0]['numero_empresa'])
-                ->setCellValue('AI'. $indx, $dados[$i][0]['complemento_empresa'])
-                ->setCellValue('AJ'. $indx, $dados[$i][0]['bairro_empresa'])
-                ->setCellValue('AK'. $indx, $dados[$i][0]['cidade_empresa'])
-                ->setCellValue('AL'. $indx, $dados[$i][0]['estado_empresa'])
-                ->setCellValue('AM'. $indx, $dados[$i][0]['cep'])
-                ->setCellValue('AN'. $indx, $dados[$i][0]['endereco'])
-                ->setCellValue('AO'. $indx, $dados[$i][0]['numero'])
-                ->setCellValue('AP'. $indx, $dados[$i][0]['complemento'])
-                ->setCellValue('AQ'. $indx, $dados[$i][0]['bairro'])
-                ->setCellValue('AR'. $indx, $dados[$i][0]['cidade'])
-                ->setCellValue('AS'. $indx, $dados[$i][0]['estado'])
-                ->setCellValue('AT'. $indx, $dados[$i][0]['tipo_conta'])
-                ->setCellValue('AU'. $indx, $dados[$i][0]['pix_type'])
-                ->setCellValue('AV'. $indx, $dados[$i][0]['pix_id'])
-                ->setCellValue('AW'. $indx, $dados[$i][0]['nome_banco'])
-                ->setCellValue('AX'. $indx, $dados[$i][0]['codigo_banco'])
-                ->setCellValue('AY'. $indx, $dados[$i][0]['numero_conta'])
-                ->setCellValue('AZ'. $indx, $dados[$i][0]['digito_conta'])
-                ->setCellValue('BA'. $indx, $dados[$i][0]['numero_agencia'])
-                ->setCellValue('BB'. $indx, $dados[$i][0]['digito_agencia'])
-                ->setCellValue('BC'. $indx, $dados[$i]['CustomerUser']['sexo'])
-                ->setCellValue('BD'. $indx, $dados[$i]['MaritalStatus']['status'])
-                ->setCellValue('BE'. $indx, $dados[$i]['CustomerUser']['email'])
-                ->setCellValue('BF'. $indx, $dados[$i]['CustomerUser']['ddd_cel'])
-                ->setCellValue('BG'. $indx, $dados[$i]['CustomerUser']['cel_sem_ddd'])
-                ->setCellValue('BH'. $indx, $dados[$i]['CustomerPosition']['name'])
-                ->setCellValue('BI'. $indx, $dados[$i]['Order']['id'])
-                ->setCellValue('BJ'. $indx, $dados[$i]['Order']['created'])
-                ->setCellValue('BK'. $indx, $dados[$i]['OrderStatus']['name'])
-                ->setCellValue('BL'. $indx, $dados[$i]['Customer']['nome_primario'])
-                ->setCellValue('BM'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
-                ->setCellValue('BN'. $indx, $dados[$i]['EconomicGroups']['razao_social'])
-                ->setCellValue('BO'. $indx, $dados[$i]['EconomicGroups']['document'])
-                ->setCellValue('BP'. $indx, $dados[$i]['Customer']['codigo_associado'])
-                ->setCellValue('BQ'. $indx, $dados[$i]['OrderItem']['saldo'])
-                ->setCellValue('BR'. $indx, $dados[$i]['OrderItem']['id'])
-                ->setCellValue('BS'. $indx, $dados[$i]['Order']['credit_release_date'])
-                ->setCellValue('BT'. $indx, $dados[$i]['Order']['order_period_from'])
-                ->setCellValue('BU'. $indx, $dados[$i]['Order']['order_period_to'])
-                ->setCellValue('BV'. $indx, $dados[$i]['Customer']['flag_gestao_economico'] == 'S' ? 'Sim' : 'Não')
-                ->setCellValue('BW'. $indx, $porcentagem_margem_seguranca)
-                ->setCellValue('BX'. $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não')
-                ->setCellValue('BY'. $indx, $tipo_ge)
-                ->setCellValue('BZ'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
-                ->setCellValue('CA'. $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim")
-                ->setCellValue('CB'. $indx, $dados[$i]['Order']['pedido_complementar'])
-                ->setCellValue('CC'. $indx, $dados[$i]['Order']['saldo_transfer_fee'])
-                ->setCellValue('CD'. $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'))
-                ->setCellValue('CE'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-                ->setCellValue('CF'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
-                ->setCellValue('CG'. $indx, $dados[$i]['CustomerUserItinerary']['matricula'])
-                ->setCellValue('CH'. $indx, $dados[$i]['OrderItem']['data_entrega']);
+            $col = 'A';
 
-
-
-                
-
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["Customer"]["documento"]);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerUser"]["matricula"]);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['cpf']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['rg']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['emissor_rg']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['data_nascimento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['nome_mae']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerDepartment']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['working_days']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, '1');$col++;
+            $activeWorksheet->setCellValue($col . $indx, '1');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Supplier']['id']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Supplier']['nome_fantasia']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['code']);$col++;
+            $activeWorksheet->setCellValueExplicit($col . $indx, $dados[$i]['CustomerUserItinerary']['card_number'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['unit_price']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['working_days']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, 'Dia');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['quantity']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['var']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['subtotal']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, '-');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['SalaryRange']['range']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cep']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['endereco']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['numero']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['complemento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['bairro']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cidade']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['estado']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cep_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['endereco_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['numero_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['complemento_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['bairro_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cidade_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['estado_empresa']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cep']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['endereco']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['numero']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['complemento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['bairro']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cidade']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['estado']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['tipo_conta']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['pix_type']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['pix_id']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['nome_banco']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['codigo_banco']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['numero_conta']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['digito_conta']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['numero_agencia']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['digito_agencia']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['sexo']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['MaritalStatus']['status']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['email']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['ddd_cel']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['cel_sem_ddd']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerPosition']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['id']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['created']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderStatus']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['nome_primario']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['transfer_fee']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['EconomicGroups']['razao_social']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['EconomicGroups']['document']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['codigo_associado']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['saldo']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['id']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['credit_release_date']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['order_period_from']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['order_period_to']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['flag_gestao_economico'] == 'S' ? 'Sim' : 'Não');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $porcentagem_margem_seguranca);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $tipo_ge);$col++;
+            $activeWorksheet->setCellValue($col . $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim");$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['saldo_transfer_fee']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'));$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['status_processamento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['motivo_processamento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['matricula']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['data_entrega']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['pedido_complementar']  == 1 ? 'S' : 'N');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['updated_ge']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['UpdatedGe']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
         }
     }
 
@@ -2406,11 +2403,11 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["u"]["cpf"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_type"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_id"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["b"]["pix_id"], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
         }

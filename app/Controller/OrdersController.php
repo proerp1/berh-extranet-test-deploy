@@ -33,7 +33,8 @@ class OrdersController extends AppController
         'CustomerUserAddress',
         'CustomerUserBankAccount',
         'OrderBalanceFile',
-        'BankAccount'
+        'BankAccount',
+        'OrderDiscount'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -162,7 +163,8 @@ class OrdersController extends AppController
                     'Customer',
                     'CustomerCreator',
                     'EconomicGroup',
-                    'Income.data_pagamento'
+                    'Income.data_pagamento',
+                    'UpdatedGe',
                 ],
                 'conditions' => $condition,
             ]);
@@ -655,6 +657,18 @@ class OrdersController extends AppController
             $order['Order']['observation'] = $this->request->data['Order']['observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
+            if (isset($this->request->data['Order']['pedido_complementar'])) {
+                $order['Order']['pedido_complementar'] = $this->request->data['Order']['pedido_complementar'];
+            }
+
+            if (isset($this->request->data['Order']['observation_ge'])) {
+                if (!empty($this->request->data['Order']['observation_ge'])) {
+                    $order['Order']['observation_ge'] = $this->request->data['Order']['observation_ge'];
+                    $order['Order']['updated_ge'] = date('Y-m-d H:i:s');
+                    $order['Order']['user_updated_ge_id'] = CakeSession::read("Auth.User.id");
+                }
+            }
+
             if ($old_order['Order']['status_id'] < 85) {
                 if ($old_order['Order']['desconto'] > 0 && $this->request->data['Order']['desconto'] == '') {
                     $total = ($old_order['Order']['transfer_fee_not_formated'] + $old_order['Order']['commission_fee_not_formated'] + $old_order['Order']['subtotal_not_formated']) + isset($old_order['Order']['desconto_not_formated']);
@@ -802,12 +816,39 @@ class OrdersController extends AppController
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
+        $orders = $this->Order->find('all', [
+            'fields' => [
+                            'Order.*',
+                            'OrderDiscount.id',
+                            'Customer.nome_primario'
+                        ],
+            'joins' => [
+                [
+                    'table' => 'order_discounts',
+                    'alias' => 'OrderDiscount',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderDiscount.order_parent_id = Order.id',
+                        'OrderDiscount.data_cancel' => '1901-01-01',
+                    ]
+                ]
+            ],
+            'conditions' => [
+                                'Order.id !=' => $id,
+                                'Order.customer_id' => $order['Order']['customer_id']
+                            ],
+            'order' => [
+                            'Order.id' => 'DESC'
+                        ],
+            ]
+        );
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order'));
+        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
 
         $this->render("add");
     }
@@ -847,7 +888,7 @@ class OrdersController extends AppController
         $account = $this->BankAccount->find('first', [
             'conditions' => [
                 'BankAccount.status_id' => 1,
-                'BankAccount.bank_id' => 9, // 1 para itau e 9 para btg
+                'BankAccount.bank_id' => 1, // 1 para itau e 9 para btg
             ]
         ]);
 
@@ -1789,25 +1830,25 @@ class OrdersController extends AppController
                 'Supplier.razao_social',
                 'OrderItem.status_processamento',
                 'sum(OrderItem.subtotal) as subtotal',
-                "(SELECT sum(b.total) as total_saldo 
-                                FROM order_balances b 
-                                INNER JOIN benefits be ON be.id = b.benefit_id 
-                                WHERE be.supplier_id = Supplier.id  
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                "(SELECT sum(b.total) as total_saldo
+                                FROM order_balances b
+                                INNER JOIN benefits be ON be.id = b.benefit_id
+                                WHERE be.supplier_id = Supplier.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo",
-                "(SELECT max(b.pedido_operadora) as pedido_operadora 
-                                FROM order_balances b 
-                                WHERE b.benefit_id = Benefit.id 
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                "(SELECT max(b.pedido_operadora) as pedido_operadora
+                                FROM order_balances b
+                                WHERE b.benefit_id = Benefit.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS pedido_operadora",
-                "(SELECT COUNT(1) 
+                "(SELECT COUNT(1)
                                 FROM outcomes o
-                                WHERE o.order_id = OrderItem.order_id 
-                                        AND o.supplier_id = Supplier.id 
+                                WHERE o.order_id = OrderItem.order_id
+                                        AND o.supplier_id = Supplier.id
                                         AND o.data_cancel = '1901-01-01 00:00:00'
                             ) AS count_outcomes"
             ],
@@ -1913,14 +1954,14 @@ class OrdersController extends AppController
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
-            'fields' => ['Supplier.id', 
+            'fields' => ['Supplier.id',
                             'round(sum(OrderItem.subtotal),2) as subtotal',
-                            "(SELECT round(sum(b.total),2) as total_saldo 
-                                FROM order_balances b 
-                                INNER JOIN benefits be ON be.id = b.benefit_id 
-                                WHERE be.supplier_id = Supplier.id  
-                                        AND b.tipo = 1 
-                                        AND b.order_id = OrderItem.order_id 
+                            "(SELECT round(sum(b.total),2) as total_saldo
+                                FROM order_balances b
+                                INNER JOIN benefits be ON be.id = b.benefit_id
+                                WHERE be.supplier_id = Supplier.id
+                                        AND b.tipo = 1
+                                        AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo",
                         ],
@@ -2331,7 +2372,7 @@ class OrdersController extends AppController
 
         /*
         debug($itens);
-        
+
         die;*/
 
         $link = APP . 'webroot';
@@ -2846,7 +2887,7 @@ class OrdersController extends AppController
                 ]
             ]);
         }
-        
+
         echo json_encode(['success' => true]);
     }
 
@@ -2855,7 +2896,7 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $order_id = $this->request->data['order_id'];
-        
+
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
         $data_entrega = $this->request->data['v_data_entrega'];
@@ -3138,7 +3179,7 @@ class OrdersController extends AppController
             }
 
             $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-            
+
             $idItinerary = 0;
             if (empty($existingItinerary) || $is_variable) {
 
@@ -3222,7 +3263,7 @@ class OrdersController extends AppController
         foreach ($ret['data'] as $item) {
             $keyTp = $item['tipo'].'-'.$item['order_id'];
             $keyOr = $item['order_id'];
-            
+
             if (!isset($groupTpOrder[$keyTp])) {
                 $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
             }
@@ -3294,9 +3335,9 @@ class OrdersController extends AppController
     private function ensureLeadingZeroes($cpf) {
         $cpf = preg_replace('/\D/', '', $cpf);
 
-    
+
         $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
-    
+
         return $cpf;
     }
 
@@ -3332,7 +3373,7 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);          
+            $cpf = preg_replace('/\D/', '', $row[0]);
 
             $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
 
@@ -3360,5 +3401,95 @@ class OrdersController extends AppController
         }
 
         return ['data' => $data];
+    }
+
+    public function aplicar_desconto()
+    {
+        $this->autoRender = false;
+
+        $order_id = $this->request->data['order_id'];
+        $total_desconto = $this->request->data['total_desconto'];
+        $orders_select = $this->request->data['orders_select'];
+
+        $this->OrderDiscount->updateAll(
+            [
+                'OrderDiscount.data_cancel' => 'CURRENT_DATE',
+                'OrderDiscount.usuario_id_cancel' => CakeSession::read("Auth.User.id")
+            ],
+            [
+                'OrderDiscount.order_id' => $order_id
+            ]
+        );
+
+        foreach ($orders_select as $order_select) {
+            $data = [
+                'order_id' => $order_id,
+                'order_parent_id' => $order_select['order_parent'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_creator_id' => CakeSession::read("Auth.User.id"),
+            ];
+
+            $this->OrderDiscount->create();
+            $this->OrderDiscount->save($data);
+        }
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $order_id,
+                'desconto' => $total_desconto,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function descontos($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $this->Order->id = $id;
+        $old_order = $this->Order->read();
+
+        $this->request->data = $this->Order->read();
+        $order = $this->Order->findById($id);
+
+        $this->Paginator->settings = ['OrderDiscount' => [
+            'limit' => 200,
+            'order' => ['Order.id' => 'desc'],
+            'fields' => [
+                            'OrderParent.*',
+                            'Customer.nome_primario'
+                        ],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Customer.id = OrderParent.customer_id'
+                    ]
+                ],
+            ],
+        ]];
+
+        $condition = ["and" => ['Order.id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                'OrderParent.id' => $_GET['q'],
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+        }
+
+        $orders = $this->Paginator->paginate('OrderDiscount', $condition);
+
+        $action = 'Descontos';
+        $breadcrumb = ['Cadastros' => '', 'Descontos' => '', 'Alterar Descontos' => ''];
+
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'orders'));
     }
 }

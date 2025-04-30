@@ -1470,9 +1470,9 @@ class ReportsController extends AppController
         ];
 
         if (!in_array(CakeSession::read("Auth.User.Group.name"), array('Administrador', 'Diretoria'))) {
-            $condition = ["and" => ["Customer.id != " => 88357, "Order.status_id" => 86], "or" => []];
+            $condition = ["and" => ["Customer.id != " => 88357, "Order.status_id" => [85, 86] ], "or" => []];
         } else {
-            $condition = ["and" => ["Order.status_id" => 86], "or" => []];
+            $condition = ["and" => ["Order.status_id" => [85, 86] ], "or" => []];
         }
 
         $filtersFilled = false;

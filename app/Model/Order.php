@@ -30,7 +30,11 @@ class Order extends AppModel
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 18]
         ],
-        'EconomicGroup'
+        'EconomicGroup',
+        'UpdatedGe' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_ge_id'
+        ],
     ];
 
     public $hasOne = [
@@ -172,6 +176,11 @@ class Order extends AppModel
                 $results[$key][$this->alias]['due_date_nao_formatado'] = $val[$this->alias]['due_date'];
                 $results[$key][$this->alias]['due_date'] = date("d/m/Y", strtotime($val[$this->alias]['due_date']));
             }
+
+            if (isset($val[$this->alias]['updated_ge'])) {
+                $results[$key][$this->alias]['updated_ge_nao_formatado'] = $val[$this->alias]['updated_ge'];
+                $results[$key][$this->alias]['updated_ge'] = date("d/m/Y", strtotime($val[$this->alias]['updated_ge']));
+            }
         }
 
         return $results;
@@ -241,6 +250,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['created'])) {
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
+
+        if (!empty($this->data[$this->alias]['updated_ge'])) {
+            $this->data[$this->alias]['updated_ge'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_ge']);
         }
 
         $this->transactionNotifications($this->data[$this->alias]);
