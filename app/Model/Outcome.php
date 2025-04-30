@@ -27,9 +27,7 @@ class Outcome extends AppModel {
 			$this->data['Outcome']['vencimento'] = $this->dateFormatBeforeSave($this->data['Outcome']['vencimento']);
 		}
 
-		if (!empty($this->data[$this->alias]['created'])) {
-            $created_date = date_create_from_format('d/m/Y', $this->data[$this->alias]['created']); 
-        }
+		
 
 		if (!empty($this->data['Outcome']['valor_bruto'])) {
 			$this->data['Outcome']['valor_bruto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_bruto']);
@@ -75,9 +73,7 @@ class Outcome extends AppModel {
 			if (isset($val['Outcome']['vencimento'])) {
 	        	$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
 	      	}
-			  if (isset($val['Outcome']['created'])) {
-	        	$results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
-	      	}
+			
 	      	if (isset($val['Outcome']['data_pagamento'])) {
 	        	$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
 	      	}

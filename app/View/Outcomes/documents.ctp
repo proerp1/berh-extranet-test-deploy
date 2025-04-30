@@ -73,7 +73,7 @@
                         <th>Tipo</th>
                         <th>Documento</th>
                         <th>Criado por</th>
-                        <th>Data</th>
+                        <th>Data de criação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
