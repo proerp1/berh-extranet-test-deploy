@@ -163,12 +163,13 @@ class Order extends AppModel
 
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
-                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+                $results[$key][$this->alias]['created'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['created']));
             }
+            
 
             if (isset($val[$this->alias]['end_date'])) {
                 $results[$key][$this->alias]['end_date_nao_formatado'] = $val[$this->alias]['end_date'];
-                $results[$key][$this->alias]['end_date'] = date("d/m/Y", strtotime($val[$this->alias]['end_date']));
+                $results[$key][$this->alias]['end_date'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['end_date']));
             }
 
             $results[$key][$this->alias]['due_date_nao_formatado'] = null;

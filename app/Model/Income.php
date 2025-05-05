@@ -126,7 +126,7 @@ class Income extends AppModel
             }
             if (isset($val[$this->alias]['data_pagamento'])) {
                 $results[$key][$this->alias]['data_pagamento_nao_formatado'] = $val[$this->alias]['data_pagamento'];
-                $results[$key][$this->alias]['data_pagamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_pagamento']));
+                $results[$key][$this->alias]['data_pagamento'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['data_pagamento']));
             }
             if (isset($val[$this->alias]['data_baixa'])) {
                 $results[$key][$this->alias]['data_baixa_nao_formatado'] = $val[$this->alias]['data_baixa'];
