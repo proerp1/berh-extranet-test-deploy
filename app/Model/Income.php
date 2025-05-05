@@ -113,7 +113,7 @@ class Income extends AppModel
         foreach ($results as $key => $val) {
             if (isset($val[$this->alias]['vencimento'])) {
                 $results[$key][$this->alias]['vencimento_nao_formatado'] = $val[$this->alias]['vencimento'];
-                $results[$key][$this->alias]['vencimento'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['vencimento']));
+                $results[$key][$this->alias]['vencimento'] = date("d/m/Y ", strtotime($val[$this->alias]['vencimento']));
             }
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
