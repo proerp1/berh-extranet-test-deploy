@@ -71,11 +71,11 @@ class Outcome extends AppModel {
 	public function afterFind($results, $primary = false){
 		foreach ($results as $key => $val) {
 			if (isset($val['Outcome']['vencimento'])) {
-	        	$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
+	        	$results[$key]['Outcome']['vencimento'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['vencimento']));
 	      	}
 			
 	      	if (isset($val['Outcome']['data_pagamento'])) {
-	        	$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
+	        	$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['data_pagamento']));
 	      	}
 			if (isset($val['Outcome']['valor_bruto'])) {
 				$results[$key]['Outcome']['valor_bruto'] = number_format($results[$key]['Outcome']['valor_bruto'],2,',','.');

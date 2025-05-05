@@ -229,9 +229,9 @@
                         <th>Status</th>
 			            <th>Vencimento</th>
                         <th>Data de criação</th>
+                        <th>Data pagamento</th>
 						<th>Parcela</th>
                         <th data-priority="1"><?php echo $this->Paginator->sort('Outcome.valor_total', 'Valor a pagar R$'); ?> <?php echo $this->Paginator->sortKey() == 'Outcome.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
-						<th>Data pagamento</th>
 						<th>Valor pago R$</th>
                         <th>Registro Cobrança</th>
                         <th>Observação</th>
@@ -273,9 +273,9 @@
 								</td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Outcome']['created'])); ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["parcela"].'ª'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["parcela"].'ª'; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
-								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["data_pagamento"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["valor"] . ' ' . $data[$i]["Supplier"]["unidade_tempo"]; ?></td>
 
