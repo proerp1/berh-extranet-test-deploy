@@ -193,7 +193,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["created"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date("d/m/Y H:i:s", strtotime($data[$i]['Income']['created_nao_formatado'])); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["parcela"].'ª'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>

@@ -76,7 +76,8 @@ class Outcome extends AppModel {
 	        	$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
 	      	}
 			  if (isset($val['Outcome']['created'])) {
-	        	$results[$key]['Outcome']['created'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['created']));
+				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+	        	$results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
 	      	}
 	      	if (isset($val['Outcome']['data_pagamento'])) {
 	        	$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
