@@ -2192,34 +2192,35 @@ class ExcelTemplate
     $activeWorksheet = $spreadsheet->getActiveSheet();
 
     $headers = [
-        'A1' => "Benefício(Benefício)",
-        'B1' => "Dias Úteis(Benefício)",
-        'C1' => "N° Cartão(Benefício)",
-        'D1' => "Quantidade(Benefício)",
-        'E1' => "Valor Unitario(Benefício)",
-        'F1' => "Valor por dia(Benefício)",
-        'G1' => "Status(beneficiário)",
-        'H1' => "Nome(beneficiário)",
-        'I1' => "Matricula(beneficiário)",
-        'J1' => "Email(beneficiário)",
-        'K1' => "Telefone(beneficiário)",
-        'L1' => "Celular(beneficiário)",
-        'M1' => "CPF(beneficiário)",
-        'N1' => "RG(beneficiário)",
-        'O1' => "Emissor(beneficiário)",
-        'P1' => "Estado Emissor(beneficiário)",
-        'Q1' => "Nome da Mãe(beneficiário)",
-        'R1' => "Sexo(beneficiário)",
-        'S1' => "Data Nascimento(beneficiário)",
-        'T1' => "Departamento(beneficiário)",
-        'U1' => "Cargo(beneficiário)",
-        'V1' => "Centro de Custo(beneficiário)",
-        'W1' => "Salário(beneficiário)",
-        'X1' => "Estado Civil(beneficiário)",
-        'Y1' => "Empresas do Grupo econômico(beneficiário)",
-        //'Z1' => "Observações(beneficiário)",
-        'AA1' => "Nome (Grupo Econômico)",
-        'AB1' => "CNPJ (Grupo Econômico)"
+       
+        'A1' => "Status(beneficiário)",
+        'B1' => "Nome(beneficiário)",
+        'C1' => "Matricula(beneficiário)",
+        'D1' => "Email(beneficiário)",
+        'E1' => "Telefone(beneficiário)",
+        'F1' => "Celular(beneficiário)",
+        'G1' => "CPF(beneficiário)",
+        'H1' => "RG(beneficiário)",
+        'I1' => "Emissor(beneficiário)",
+        'J1' => "Estado Emissor(beneficiário)",
+        'K1' => "Nome da Mãe(beneficiário)",
+        'L1' => "Sexo(beneficiário)",
+        'M1' => "Data Nascimento(beneficiário)",
+        'N1' => "Departamento(beneficiário)",
+        'O1' => "Cargo(beneficiário)",
+        'P1' => "Centro de Custo(beneficiário)",
+        'Q1' => "Salário(beneficiário)",
+        'R1' => "Estado Civil(beneficiário)",
+        'S1' => "Empresas do Grupo econômico(beneficiário)",
+        //'T1' => "Observações(beneficiário)",
+        'U1' => "Nome (Grupo Econômico)",
+        'V1' => "CNPJ (Grupo Econômico)",
+        'W1' => "Benefício(Benefício)",
+        'X1' => "Dias Úteis(Benefício)",
+        'Y1' => "N° Cartão(Benefício)",
+        'Z1' => "Quantidade(Benefício)",
+        'AA1' => "Valor Unitario(Benefício)",
+        'AB1' => "Valor por dia(Benefício)",
     ];
 
     foreach ($headers as $cell => $text) {
@@ -2236,44 +2237,44 @@ class ExcelTemplate
         foreach ($chunk as $data) {
             $indx++;
 
-            if (!empty($data['CustomerUserItinerary'])) {
-                foreach ($data['CustomerUserItinerary'] as $itinerary) {
-                    $activeWorksheet
-                        ->setCellValue('A' . $indx, $itinerary['benefit_code'] ?? '')
-                        ->setCellValue('B' . $indx, $itinerary['working_days'] ?? '')
-                        ->setCellValue('C' . $indx, $itinerary['card_number'] ?? '')
-                        ->setCellValue('D' . $indx, $itinerary['quantity'] ?? '')
-                        ->setCellValue('E' . $indx, $itinerary['unit_price'] ?? '')
-                        ->setCellValue('F' . $indx, $itinerary['price_per_day'] ?? '');
-                }
-            }
-
             $activeWorksheet
-            ->setCellValue('G' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
-            ->setCellValue('H' . $indx, $data['CustomerUser']['name'] ?? '')
-                ->setCellValue('I' . $indx, $data['CustomerUser']['matricula'] ?? '')
-                ->setCellValue('J' . $indx, $data['CustomerUser']['email'] ?? '')
-                ->setCellValue('K' . $indx, $data['CustomerUser']['tel'] ?? '')
-                ->setCellValue('L' . $indx, $data['CustomerUser']['cel'] ?? '')
-                ->setCellValue('M' . $indx, $data['CustomerUser']['cpf'] ?? '')
-                ->setCellValue('N' . $indx, $data['CustomerUser']['rg'] ?? '')
-                ->setCellValue('O' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
-                ->setCellValue('P' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
-                ->setCellValue('Q' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
-                ->setCellValue('R' . $indx, $data['CustomerUser']['sexo'] ?? '')
-                ->setCellValue('S' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
-                ->setCellValue('T' . $indx, $data['CustomerDepartment']['name'] ?? '')
-                ->setCellValue('U' . $indx, $data['CustomerPosition']['name'] ?? '')
-                ->setCellValue('V' . $indx, $data['CostCenter']['name'] ?? '')
-                ->setCellValue('W' . $indx, $data['SalaryRange']['range'] ?? '')
-                ->setCellValue('X' . $indx, $data['MaritalStatus']['status'] ?? '')
-                ->setCellValue('Y' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
-               // ->setCellValue('Z' . $indx, $data['CustomerUser']['observation'] ?? '');
+            ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
+            ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
+                ->setCellValue('C' . $indx, $data['CustomerUser']['matricula'] ?? '')
+                ->setCellValue('D' . $indx, $data['CustomerUser']['email'] ?? '')
+                ->setCellValue('E' . $indx, $data['CustomerUser']['tel'] ?? '')
+                ->setCellValue('F' . $indx, $data['CustomerUser']['cel'] ?? '')
+                ->setCellValue('G' . $indx, $data['CustomerUser']['cpf'] ?? '')
+                ->setCellValue('H' . $indx, $data['CustomerUser']['rg'] ?? '')
+                ->setCellValue('I' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
+                ->setCellValue('J' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
+                ->setCellValue('K' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
+                ->setCellValue('L' . $indx, $data['CustomerUser']['sexo'] ?? '')
+                ->setCellValue('M' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
+                ->setCellValue('N' . $indx, $data['CustomerDepartment']['name'] ?? '')
+                ->setCellValue('O' . $indx, $data['CustomerPosition']['name'] ?? '')
+                ->setCellValue('P' . $indx, $data['CostCenter']['name'] ?? '')
+                ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
+                ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
+                ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
+               // ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
-                    ->setCellValue('AA' . $indx, $data['EconomicGroup']['name'] ?? '')
-                    ->setCellValue('AB' . $indx, $data['EconomicGroup']['document'] ?? '');
+                    ->setCellValue('U' . $indx, $data['EconomicGroup']['name'] ?? '')
+                    ->setCellValue('V' . $indx, $data['EconomicGroup']['document'] ?? '');
+            }
+
+            if (!empty($data['CustomerUserItinerary'])) {
+                foreach ($data['CustomerUserItinerary'] as $itinerary) {
+                    $activeWorksheet
+                        ->setCellValue('W' . $indx, $itinerary['benefit_name'] ?? '')
+                        ->setCellValue('X' . $indx, $itinerary['working_days'] ?? '')
+                        ->setCellValue('Y' . $indx, $itinerary['card_number'] ?? '')
+                        ->setCellValue('Z' . $indx, $itinerary['quantity'] ?? '')
+                        ->setCellValue('AA' . $indx, $itinerary['unit_price'] ?? '')
+                        ->setCellValue('AB' . $indx, $itinerary['price_per_day'] ?? '');
+                }
             }
         }
     }
