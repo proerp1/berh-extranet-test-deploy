@@ -216,6 +216,14 @@ class Order extends AppModel
             $this->data[$this->alias]['desconto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['desconto']);
         }
 
+        if (!empty($this->data[$this->alias]['fee_saldo'])) {
+            $this->data[$this->alias]['fee_saldo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['fee_saldo']);
+        }
+
+        if (!empty($this->data[$this->alias]['saldo_transfer_fee'])) {
+            $this->data[$this->alias]['saldo_transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['saldo_transfer_fee']);
+        }        
+
         if (!empty($this->data[$this->alias]['order_period_from'])) {
             $this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
         }
