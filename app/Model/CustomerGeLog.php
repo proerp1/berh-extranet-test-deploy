@@ -25,5 +25,25 @@ class CustomerGeLog extends AppModel {
         }
         return $results;
     }
+
+    public function beforeSave($options = array())
+    {
+        if (!empty($this->data[$this->alias]['porcentagem_margem_seguranca'])) {
+            $this->data[$this->alias]['porcentagem_margem_seguranca'] = $this->priceFormatBeforeSave($this->data[$this->alias]['porcentagem_margem_seguranca']);
+        }
+
+        return true;
+    }
+
+    public function priceFormatBeforeSave($price)
+    {
+        if (is_numeric($price)) {
+            return $price;
+        }
+        $valueFormatado = str_replace('.', '', $price);
+        $valueFormatado = str_replace(',', '.', $valueFormatado);
+
+        return $valueFormatado;
+    }
 }
 

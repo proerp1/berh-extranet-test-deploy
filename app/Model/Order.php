@@ -222,7 +222,11 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['saldo_transfer_fee'])) {
             $this->data[$this->alias]['saldo_transfer_fee'] = $this->priceFormatBeforeSave($this->data[$this->alias]['saldo_transfer_fee']);
-        }        
+        }
+
+        if (!empty($this->data[$this->alias]['porcentagem_margem_seguranca'])) {
+            $this->data[$this->alias]['porcentagem_margem_seguranca'] = $this->priceFormatBeforeSave($this->data[$this->alias]['porcentagem_margem_seguranca']);
+        }
 
         if (!empty($this->data[$this->alias]['order_period_from'])) {
             $this->data[$this->alias]['order_period_from'] = $this->dateFormatBeforeSave($this->data[$this->alias]['order_period_from']);
