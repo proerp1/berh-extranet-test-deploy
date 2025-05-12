@@ -9,6 +9,11 @@ class Income extends AppModel
             'foreignKey' => 'status_id',
             'conditions' => ['Status.categoria' => 5]
         ],
+        'NfseStatus' => [
+            'className' => 'Status',
+            'foreignKey' => 'nfse_status_id',
+            'conditions' => ['NfseStatus.categoria' => 22]
+        ],
         'UsuarioBaixa' => [
             'className' => 'User',
             'foreignKey' => 'usuario_id_baixa',
