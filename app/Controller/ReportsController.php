@@ -1272,16 +1272,17 @@ class ReportsController extends AppController
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
         $data_entrega = $this->request->data['v_data_entrega'];
+        $motivo = $this->request->data['v_motivo'];
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
-        $de = $this->request->data['curr_de'];
-        $para = $this->request->data['curr_para'];
-        $num = $this->request->data['curr_num'];
-        $sup = $this->request->data['curr_sup'];
-        $st = $this->request->data['curr_st'];
-        $c = $this->request->data['curr_c'];
-        $q = $this->request->data['curr_q'];
+        $de     = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
+        $para   = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
+        $num    = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
+        $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $st     = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
+        $c      = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
+        $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
 
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
         
@@ -1425,6 +1426,7 @@ class ReportsController extends AppController
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
+                    'motivo_processamento' => $motivo,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]

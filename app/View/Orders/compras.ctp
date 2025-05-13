@@ -238,6 +238,15 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="row js_div_motivo" style="margin-top:20px;">
+                    <label class="mb-2">Motivo</label>
+                    <div class="row">
+                        <div class="col">
+                            <textarea name="motivo" id="motivo" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" id="canc_confirm" data-bs-dismiss="modal">Cancelar</button>
@@ -309,6 +318,7 @@
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
                 const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
+                const v_motivo = $('textarea[name="motivo"]').length ? $('textarea[name="motivo"]').val() : null;
 
                 const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
                 const notOrderItemIds = [];
@@ -332,6 +342,7 @@
                         v_status_processamento,
                         v_pedido_operadora,
                         v_data_entrega,
+                        v_motivo,
                         curr_q,
                         curr_sup,
                         curr_stp
@@ -347,6 +358,7 @@
                 const v_status_processamento = $('#status_processamento').val();
                 const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
                 const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
+                const v_motivo = $('textarea[name="motivo"]').length ? $('textarea[name="motivo"]').val() : null;
 
                 const checkboxes = $('input[name="alt_linha"]:checked');
                 const orderItemIds = [];
@@ -363,7 +375,8 @@
                             orderItemIds,
                             v_status_processamento,
                             v_pedido_operadora,
-                            v_data_entrega
+                            v_data_entrega,
+                            v_motivo
                         },
                         dataType: 'json',
                         success: function(response) {
@@ -383,5 +396,22 @@
                 $(".check_individual").prop('checked', false);
             }
         });
+
+        $('#status_processamento').on('change', function() {
+            const v_status = $(this).val();
+            const v_op_status = [
+                'CARTAO_NOVO',
+                'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                'CREDITO_INCONSISTENTE'
+            ];
+
+            if (v_op_status.includes(v_status)) {
+                $('.js_div_motivo').show();
+            } else {
+                $('.js_div_motivo').hide();
+            }
+        });
+
+        $('#status_processamento').trigger('change');
     });
 </script>

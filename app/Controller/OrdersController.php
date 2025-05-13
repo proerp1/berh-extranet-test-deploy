@@ -2854,6 +2854,7 @@ class OrdersController extends AppController
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
         $data_entrega = $this->request->data['v_data_entrega'];
+        $motivo = $this->request->data['v_motivo'];
 
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
@@ -2884,6 +2885,7 @@ class OrdersController extends AppController
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
+                    'motivo_processamento' => $motivo,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]
@@ -2902,12 +2904,13 @@ class OrdersController extends AppController
         $statusProcess = $this->request->data['v_status_processamento'];
         $pedido_operadora = $this->request->data['v_pedido_operadora'];
         $data_entrega = $this->request->data['v_data_entrega'];
+        $motivo = $this->request->data['v_motivo'];
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
-        $q = $this->request->data['curr_q'];
-        $sup = $this->request->data['curr_sup'];
-        $stp = $this->request->data['curr_stp'];
+        $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
+        $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $stp    = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
 
         $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderId], "or" => []];
 
@@ -2976,6 +2979,7 @@ class OrdersController extends AppController
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
+                    'motivo_processamento' => $motivo,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]
