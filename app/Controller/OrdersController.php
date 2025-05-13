@@ -3260,9 +3260,11 @@ class OrdersController extends AppController
         $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
 
         $groupTpOrder = [];
+        $groupOrder = [];
 
         foreach ($ret['data'] as $item) {
             $keyTp = $item['tipo'].'-'.$item['order_id'];
+            $keyOr = $item['order_id'];
 
             if (!isset($groupTpOrder[$keyTp])) {
                 $groupTpOrder[$keyTp] = [
@@ -3270,6 +3272,10 @@ class OrdersController extends AppController
                     'order_id' => $item['order_id'],
                     'order_item_ids' => []
                 ];
+            }
+
+            if (!isset($groupOrder[$keyOr])) {
+                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
             }
 
             $groupTpOrder[$keyTp]['order_item_ids'][] = $item['order_item_id'];
