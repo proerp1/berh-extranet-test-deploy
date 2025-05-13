@@ -113,7 +113,7 @@
                                     <td><?php echo $item['Order']['id']; ?></td>
                                     <td><?php echo $item['Customer']['codigo_associado']; ?></td>
                                     <td><?php if (!empty($order['EconomicGroup']['name'])): ?><?php echo $order['EconomicGroup']['name']; ?><?php else: ?><?php echo $item['Customer']['nome_secundario']; ?><?php endif; ?></td>
-                                        <td><?php if (!empty($order['EconomicGroup']['document'])): ?><?php echo $order['EconomicGroup']['document']; ?><?php else: ?><?php echo $item['Customer']['documento']; ?><?php endif; ?></td>
+                                    <td><?php if (!empty($order['EconomicGroup']['document'])): ?><?php echo $order['EconomicGroup']['document']; ?><?php else: ?><?php echo $item['Customer']['documento']; ?><?php endif; ?></td>
                                     <td><?php echo $item['Status']['name']; ?></td>
                                     <td><?php echo $item['CustomerUser']['name']; ?></td>
                                     <td><?php echo $item['CustomerUser']['matricula']; ?></td>
@@ -132,16 +132,21 @@
                                     <td><?php echo number_format(($item['OrderItem']['subtotal_not_formated'] - $item['OrderItem']['saldo_not_formated']), 2, ',', '.'); ?></td>
                                 </tr>
                             <?php } ?>
+
+                            <?php if ($currentUserId !== null) { ?>
+                            <tr>
+                                <td colspan="21">
+                                    <div class="totals">
+                                        <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
+                                        <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
+                                        <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php } ?>
                             </tbody>
                         </table>
                     </div>
-                    <?php if ($currentUserId !== null) { ?>
-                    <div class="totals">
-                        <span>Total Inicial: R$<?php echo number_format($totalInicial, 2, ',', '.'); ?></span>
-                        <span>Total Desconto: R$<?php echo number_format($totalDesconto, 2, ',', '.'); ?></span>
-                        <span>Total Disponibilizado: R$<?php echo number_format($totalDisponibilizado, 2, ',', '.'); ?></span>
-                    </div>
-                    <?php } ?>
                     <div class="footer text-center mt-4">
                         <p>BERH © 2024 Todos os direitos reservados.</p>
                     </div>
