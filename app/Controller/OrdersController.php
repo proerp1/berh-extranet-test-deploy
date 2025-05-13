@@ -1198,15 +1198,17 @@ class OrdersController extends AppController
 
         $ret = $this->parseCSVSaldo($customerId, $orderId, $this->request->data['file']['tmp_name']);
 
-        $groupTipo = [];
+        $groupTipoItens = [];
 
         foreach ($ret['data'] as $data) {
-            $groupTipo[$data['tipo']] = $data['tipo'];
+            $groupTipoItens[$data['tipo']][] = $data['order_item_id'];
         }
 
-        foreach ($groupTipo as $tipo) {
+        foreach ($groupTipoItens as $tipo => $itens) {
             if ($tipo) {
-                $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"));
+                foreach ($itens as $itemId) {
+                    $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"), $itemId);
+                }
             }
         }
 
@@ -3258,24 +3260,26 @@ class OrdersController extends AppController
         $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
 
         $groupTpOrder = [];
-        $groupOrder = [];
 
         foreach ($ret['data'] as $item) {
             $keyTp = $item['tipo'].'-'.$item['order_id'];
-            $keyOr = $item['order_id'];
 
             if (!isset($groupTpOrder[$keyTp])) {
-                $groupTpOrder[$keyTp] = ['tipo' => $item['tipo'], 'order_id' => $item['order_id']];
+                $groupTpOrder[$keyTp] = [
+                    'tipo' => $item['tipo'],
+                    'order_id' => $item['order_id'],
+                    'order_item_ids' => []
+                ];
             }
 
-            if (!isset($groupOrder[$keyOr])) {
-                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
-            }
+            $groupTpOrder[$keyTp]['order_item_ids'][] = $item['order_item_id'];
         }
 
         foreach ($groupTpOrder as $item) {
             if ($item['order_id']) {
-                $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"));
+                foreach ($item['order_item_ids'] as $itemId) {                    
+                    $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"), $itemId);
+                }
             }
         }
 

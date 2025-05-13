@@ -157,12 +157,13 @@ public $belongsTo = array(
         return true;
     }
 
-    public function update_cancel_balances($orderID, $tipo, $userID) {
+    public function update_cancel_balances($orderID, $tipo, $userID, $itemId) {
         $sql = "UPDATE order_balances 
                     SET usuario_id_cancel = ".$userID.", 
                         data_cancel = '".date("Y-m-d H:i:s")."' 
                     WHERE order_id = ".$orderID." 
                             AND tipo = ".$tipo." 
+                            AND order_item_id = ".$itemId." 
                             AND data_cancel = '1901-01-01 00:00:00' ";
 
         $this->query($sql);
