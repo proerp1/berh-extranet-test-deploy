@@ -8,11 +8,46 @@
                     <img alt="Icone" src="<?php echo $this->base."/img/basketball.svg" ?>" style="height: 2.5rem !important; width: 2.5rem !important;" />
                 </div>
 
+                <?php
+                $total_economia = 0;
+                $fee_economia = 0;
+                $vl_economia = $order_balances_total[0][0]['total'];
+
+                if ($order['Order']['fee_saldo_not_formated'] != 0 and $vl_economia != 0) {
+                    $fee_economia = (($order['Order']['fee_saldo_not_formated'] / 100) * ($vl_economia));
+                }
+
+                $vl_economia = ($vl_economia - $fee_economia);
+                $total_economia = ($vl_economia + $fee_economia);
+                ?>
+
                 <div class="d-flex flex-column my-7">
-                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$ <?php echo number_format($order_balances_total[0][0]['total'],2,',','.') ?></span>
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo number_format($vl_economia, 2, ',', '.'); ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
                     <div class="m-0">
-                        <span class="fw-bold fs-6 text-gray-400">Total Economia</span>
+                        <span class="fw-bold fs-6 text-gray-400">Cliente</span>
                     </div>
+                    <!--end::Follower-->
+                    <br>
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo number_format($fee_economia, 2, ',', '.'); ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Fee Economia</span>
+                    </div>
+                    <!--end::Follower-->
+                    <br>
+                    <!--begin::Number-->
+                    <span class="fw-bold fs-2x text-gray-800 lh-1 ls-n2">R$<?php echo number_format($total_economia, 2, ',', '.'); ?></span>
+                    <!--end::Number-->
+                    <!--begin::Follower-->
+                    <div class="m-0">
+                        <span class="fw-bold fs-6 text-gray-400">Economia</span>
+                    </div>
+                    <!--end::Follower-->
                 </div>
             </div>
         </div>
