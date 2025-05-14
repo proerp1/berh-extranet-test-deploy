@@ -1,4 +1,8 @@
 <?php
+
+use CloudDfe\SdkPHP\Nfse;
+use CloudDfe\SdkPHP\Webhook;
+
 App::uses('BoletoItau', 'Lib');
 App::uses('ApiItau', 'Lib');
 App::uses('ApiBtgPactual', 'Lib');
@@ -30,7 +34,7 @@ class IncomesController extends AppController
     {
         parent::beforeFilter();
 
-        $this->Auth->allow('gerar_boleto');
+        $this->Auth->allow(['gerar_boleto', 'atualiza_status_nfse']);
     }
 
     public function index()
@@ -721,5 +725,204 @@ class IncomesController extends AppController
         }
 
         $this->redirect($this->referer());
+    }
+
+    /*******************
+    NOTA FISCAL DE SERVIÇO
+     ********************/
+
+    private function connect_nfse_sdk() {
+        $token = Configure::read('Nfe.TokenEmitente');
+        $env = Configure::read('Nfe.Env');
+
+        if (!$token) {
+            throw new Exception('Token não configurado.');
+        }
+
+        $params = [
+            "token" => $token,
+            "ambiente" => $env,
+            "options" => [
+                "debug" => false,
+                "timeout" => 60,
+                "port" => 443,
+                "http_version" => CURL_HTTP_VERSION_NONE
+            ]
+        ];
+
+        return new Nfse($params);
+    }
+
+    public function nfse($id)
+    {
+        $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $this->Income->id = $id;
+        $income = $this->Income->read();
+
+        $action = 'Contas a receber';
+        $breadcrumb = ['Nota Fiscal de Serviço' => ''];
+        $this->set(compact('income', 'id', 'action', 'breadcrumb'));
+    }
+
+    public function cria_nfse($id) {
+        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
+
+        try {
+            $nfse = $this->connect_nfse_sdk();
+
+            $obs = $income['Order']['observation'] ?: $income['Income']['observation'];
+
+            if (!$obs) {
+                $this->Flash->set(__('O campo Observações é obrigatório para a criação de NFS-e'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect($this->referer());
+            }
+
+            $today = new DateTime();
+            $payload = [
+                "numero" => $income['Income']['id'],
+                "serie" => "1",
+                "data_emissao" => $today->format('Y-m-d\TH:i:sP'),
+                "servico" => [
+                    "itens" => [
+                        [
+                            "codigo" => "6298",
+                            "discriminacao" => $obs,
+                            "valor_servicos" => (float) $income['Income']['valor_total']
+                        ]
+                    ]
+                ],
+                "tomador" => [
+                    "cnpj" => preg_replace('/\D/', '', $income['Customer']['documento']),
+                    "razao_social" => $income['Customer']['nome_primario'],
+                    "email" => $income['Customer']['email']
+                ]
+            ];
+
+            $response = $nfse->cria($payload);
+
+            if (!$response->sucesso) {
+                $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
+                $this->redirect($this->referer());
+            }
+
+            $this->Income->id = $id;
+            $this->Income->save([
+                'nfse_chave' => $response->chave,
+                'nfse_status_id' => 106
+            ]);
+
+            $this->Flash->set(__('A nota fiscal foi emitida com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        } catch (\Exception $e) {
+            dd($e);
+            $this->Flash->set(__('Não foi possível emitir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+        $this->redirect($this->referer());
+    }
+
+    public function cancela_nfse($id) {
+        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
+
+        if ($income['Income']['nfse_status_id'] !== 107) {
+            $this->Flash->set(__('Só é possível cancelar uma nota fiscal emitida.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
+        try {
+            $nfse = $this->connect_nfse_sdk();
+
+            $payload = [
+                "chave" => $income['Income']['nfse_chave']
+            ];
+
+            $nfse->cancela($payload);
+
+            $this->Income->id = $id;
+            $this->Income->save([
+                'nfse_status_id' => 108
+            ]);
+
+            $this->Flash->set(__('A nota fiscal foi cancelada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        } catch (\Exception $e) {
+            dd($e);
+            $this->Flash->set(__('Não foi possível cancelar a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+        $this->redirect($this->referer());
+    }
+
+    public function imprime_nfse($id) {
+        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
+
+        if ($income['Income']['nfse_status_id'] !== 107 && $income['Income']['nfse_status_id'] !== 108) {
+            $this->Flash->set(__('Só é possível imprimir uma nota fiscal emitida ou cancelada.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
+        try {
+            $nfse = $this->connect_nfse_sdk();
+
+            $payload = [
+                "chave" => $income['Income']['nfse_chave'],
+            ];
+
+            $response = $nfse->pdf($payload);
+
+            if (!$response->sucesso) {
+                throw new \Exception('PDF não encontrado.');
+            }
+
+            $pdf = base64_decode($response->pdf);
+
+            $this->printPdf($pdf);
+        } catch (\Exception $e) {
+            $this->Flash->set(__('Não foi possível imprimir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+    }
+
+    public function atualiza_status_nfse() {
+        $this->autoRender = false;
+        $this->layout = 'ajax';
+
+        try {
+            $body = file_get_contents("php://input");
+
+            $token = Configure::read('Nfe.TokenSoftHouse');
+
+            if (!$token) {
+                throw new Exception('Token não configurado.');
+            }
+
+            Webhook::isValid($token, $body);
+
+            $data = json_decode($body);
+
+            $success = $data->sucesso;
+            $chave_nfse = $data->chave;
+
+            $income = $this->Income->find('first', ['conditions' => ['Income.nfse_chave' => $chave_nfse]]);
+
+            if (!$income) {
+                return 'Chave NFS-e não encontrada.';
+            } else if ($income['Income']['nfse_status_id'] !== 106) {
+                return 'Só é possível atualizar o status de notas fiscais "Em Processamento"';
+            }
+
+            $this->Income->id = $income['Income']['id'];
+            $this->Income->save([
+                'nfse_status_id' => $success ? 107 : 108
+            ]);
+
+            return 'Status atualizado com sucesso.';
+        } catch (\Exception $e) {
+            return 'Assinatura inválida!';
+        }
     }
 }
