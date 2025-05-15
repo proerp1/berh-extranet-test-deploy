@@ -1269,10 +1269,10 @@ class ReportsController extends AppController
     {
         $this->autoRender = false;
 
-        $statusProcess = $this->request->data['v_status_processamento'];
-        $pedido_operadora = $this->request->data['v_pedido_operadora'];
-        $data_entrega = $this->request->data['v_data_entrega'];
-        $motivo = $this->request->data['v_motivo'];
+        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
+        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
+        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
+        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
@@ -1420,17 +1420,22 @@ class ReportsController extends AppController
             $this->Log->create();
             $this->Log->save($dados_log);
 
-            $this->OrderItem->save([
+            $data = [
                 'OrderItem' => [
                     'id' => $item['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
-                    'motivo_processamento' => $motivo,
                     'updated_user_id' => CakeSession::read("Auth.User.id"),
                     'updated' => date('Y-m-d H:i:s'),
                 ]
-            ]);
+            ];
+
+            if ($motivo) {
+                $data['OrderItem']['motivo_processamento'] = $motivo;
+            }
+
+            $this->OrderItem->save($data);
         }
 
         echo json_encode(['success' => true]);
