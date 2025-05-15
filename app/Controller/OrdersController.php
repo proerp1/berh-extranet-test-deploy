@@ -3223,6 +3223,13 @@ class OrdersController extends AppController
                 $idItinerary = $this->CustomerUserItinerary->id;
             } else {
                 $idItinerary = $existingItinerary['CustomerUserItinerary']['id'];
+
+                $this->CustomerUserItinerary->id = $idItinerary;
+                $this->CustomerUserItinerary->save([
+                    'CustomerUserItinerary' => [
+                        'card_number' => $numeroCartao
+                    ]
+                ]);
             }
 
             if ($chavePix != '') {
@@ -3249,8 +3256,6 @@ class OrdersController extends AppController
                     ]);
                 }
             }
-
-
 
             // Map the unit price data for the user
             $unitPriceMapping[$customerUserId][] = [
