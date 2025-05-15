@@ -26,12 +26,12 @@
             </span>
         </div>
         <div class="col">
-            <?php if ($income['Income']['nfse_status_id'] === 105){ ?>
+            <?php if ($income['Income']['nfse_status_id'] == 105){ ?>
                 <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
-            <?php } else if ($income['Income']['nfse_status_id'] === 107){ ?>
+            <?php } else if ($income['Income']['nfse_status_id'] == 107){ ?>
                 <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
             <?php } ?>
-            <?php if ($income['Income']['nfse_status_id'] === 107 || $income['Income']['nfse_status_id'] === 108){ ?>
+            <?php if ($income['Income']['nfse_status_id'] == 107 || $income['Income']['nfse_status_id'] == 108){ ?>
                 <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$id ?>" class="btn btn-secondary" data-loading-text="Aguarde...">Imprimir</a>
             <?php } ?>
         </div>
