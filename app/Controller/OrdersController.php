@@ -2881,7 +2881,7 @@ class OrdersController extends AppController
 
             $data = [
                 'OrderItem' => [
-                    'id' => $item['OrderItem']['id'],
+                    'id' => $orderItem['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
