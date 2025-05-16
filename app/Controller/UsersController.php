@@ -32,14 +32,22 @@ class UsersController extends AppController
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+        if (isset($_GET["g"]) and $_GET["g"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Group.id' => $_GET["g"]]);
+        }
+        
 
         $data = $this->Paginator->paginate('User', $condition);
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
+        $grupos = $this->User->Group->find('all', [
+            'fields' => ['Group.id', 'Group.name'],
+            'order' => ['Group.name ASC']
+        ]);
 
         $action = 'Usuários';
         $breadcrumb = ['Configurações' => '', 'Usuários' => ''];
-        $this->set(compact('status', 'data', 'action', 'breadcrumb'));
+        $this->set(compact('status', 'data', 'action', 'breadcrumb', 'grupos'));
     }
 
     public function add()
