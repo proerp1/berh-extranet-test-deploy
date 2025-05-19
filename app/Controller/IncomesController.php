@@ -10,7 +10,7 @@ class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Boleto', 'HtmltoPdf', 'ExcelGenerator', 'GerarCaixaNossoNumero', 'Email'];
-    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order'];
+    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order', 'OrderBalance'];
 
     public $paginate = [
         'Income' => [
@@ -683,6 +683,9 @@ class IncomesController extends AppController
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
+        $this->Income->id = $id;
+        $this->request->data = $this->Income->read();
+
         $condition = ["and" => ["ChargesHistory.income_id" => $id], "or" => []];
 
         $data = $this->Paginator->paginate('ChargesHistory', $condition);
@@ -753,17 +756,94 @@ class IncomesController extends AppController
         return new Nfse($params);
     }
 
+    private function get_nfse_type_data($income) {
+        [$fee_economia, $_] = $this->get_nfse_order_fee_economia($income);
+
+        $data = $this->get_tpp_data($income);
+        if ($fee_economia > 0) {
+            $data = $this->get_gestao_eficiente_data($income);
+        }
+
+        if ($income['Order']['observation']) {
+            $data['obs'] .= "\n\n{$income['Order']['observation']}";
+        }
+
+        return $data;
+    }
+
+    private function get_gestao_eficiente_data($income) {
+        [$fee_economia, $vl_economia] = $this->get_nfse_order_fee_economia($income);
+        $fee_economia_formatted = number_format($fee_economia, 2, ',', '.');
+        $vl_economia_formatted = number_format($vl_economia, 2, ',', '.');
+        $obs = "Gestão Eficiente - Pedido Nº {$income['Order']['id']}
+
+        Item                                    R$ {$income['Order']['subtotal']}
+        Repasse Operadora                       R$ {$income['Order']['transfer_fee']}
+        Economia                                R$ {$vl_economia_formatted}
+
+        Informações Adicionais
+
+        Gestão Eficiente                        R$ {$fee_economia_formatted}";
+
+        return [
+            "obs" => $obs,
+            "valor" => $fee_economia,
+        ];
+    }
+
+    private function get_tpp_data($income) {
+        $total = $income['Order']['commission_fee_not_formated'] + $income['Order']['tpp_fee'];
+        $total_formatted = number_format($total, 2, ',', '.');
+        $tpp_fee_formatted = number_format($income['Order']['tpp_fee'], 2, ',', '.');
+        $obs = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos
+        
+        Pedido Nº {$income['Order']['id']}
+        
+        Item                                    R$ {$income['Order']['total']}
+        Repasse Operadora                       R$ {$income['Order']['transfer_fee']}
+        
+        Informações Adicionais
+        
+        Taxa Administrativa                     R$ {$income['Order']['commission_fee']}
+        Taxa Processamento de Pedidos           R$ {$tpp_fee_formatted}
+        Total---------------------------------  R$ {$total_formatted}";
+
+        if ($income['Order']['observation']) {
+
+        }
+        return [
+            "obs" => $obs,
+            "valor" => $total,
+        ];
+    }
+
+    private function get_nfse_order_fee_economia($income) {
+        if (!$income['Order']['id']) return null;
+
+        $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $income['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
+        $vl_economia = $order_balances_total[0][0]['total'];
+
+        $fee_economia = 0;
+        if ($income['Order']['fee_saldo_not_formated'] != 0 and $vl_economia != 0) {
+            $fee_economia = (($income['Order']['fee_saldo_not_formated'] / 100) * ($vl_economia));
+        }
+
+        return [$fee_economia, $vl_economia];
+    }
+
     public function nfse($id)
     {
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $this->Income->id = $id;
-        $income = $this->Income->read();
+        $this->request->data = $this->Income->read();
+
+        $preview_data = $this->get_nfse_type_data($this->request->data);
 
         $action = 'Contas a receber';
         $breadcrumb = ['Nota Fiscal de Serviço' => ''];
-        $this->set(compact('income', 'id', 'action', 'breadcrumb'));
+        $this->set(compact( 'id', 'action', 'breadcrumb', 'preview_data'));
     }
 
     public function cria_nfse($id) {
@@ -774,12 +854,7 @@ class IncomesController extends AppController
         try {
             $nfse = $this->connect_nfse_sdk();
 
-            $obs = $income['Order']['observation'] ?: $income['Income']['observation'];
-
-            if (!$obs) {
-                $this->Flash->set(__('O campo Observações é obrigatório para a criação de NFS-e'), ['params' => ['class' => "alert alert-danger"]]);
-                $this->redirect($this->referer());
-            }
+            $data = $this->get_nfse_type_data($income);
 
             $today = new DateTime();
             $payload = [
@@ -790,8 +865,8 @@ class IncomesController extends AppController
                     "itens" => [
                         [
                             "codigo" => "6298",
-                            "discriminacao" => $obs,
-                            "valor_servicos" => (float) $income['Income']['valor_total']
+                            "discriminacao" => $data['obs'],
+                            "valor_servicos" => $data['valor']
                         ]
                     ]
                 ],
@@ -817,7 +892,6 @@ class IncomesController extends AppController
 
             $this->Flash->set(__('A nota fiscal foi emitida com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         } catch (\Exception $e) {
-            dd($e);
             $this->Flash->set(__('Não foi possível emitir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
         }
         $this->redirect($this->referer());
@@ -849,7 +923,6 @@ class IncomesController extends AppController
 
             $this->Flash->set(__('A nota fiscal foi cancelada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         } catch (\Exception $e) {
-            dd($e);
             $this->Flash->set(__('Não foi possível cancelar a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
         }
         $this->redirect($this->referer());
@@ -872,7 +945,7 @@ class IncomesController extends AppController
                 "chave" => $income['Income']['nfse_chave'],
             ];
 
-            $response = $nfse->pdf($payload);
+            $response = $nfse->consulta($payload);
 
             if (!$response->sucesso) {
                 throw new \Exception('PDF não encontrado.');

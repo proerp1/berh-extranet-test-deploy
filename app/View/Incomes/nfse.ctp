@@ -21,17 +21,22 @@
 	<div class="card-body">
         <div class="mb-7 col">
             <label class="fw-semibold fs-6 mb-2">Status da NFS-e</label><br>
-            <span class='badge <?php echo $income["NfseStatus"]["label"] ?>'>
-                <?php echo $income["NfseStatus"]["name"] ?>
+            <span class='badge <?php echo $this->request->data["NfseStatus"]["label"] ?>'>
+                <?php echo $this->request->data["NfseStatus"]["name"] ?>
             </span>
         </div>
         <div class="col">
-            <?php if ($income['Income']['nfse_status_id'] == 105){ ?>
+            <h4>Prévia da NFS-e</h4>
+            <?php echo nl2br($preview_data['obs']) ?>
+        </div>
+        <hr>
+        <div class="col">
+            <?php if ($this->request->data['Income']['nfse_status_id'] == 105){ ?>
                 <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
-            <?php } else if ($income['Income']['nfse_status_id'] == 107){ ?>
+            <?php } else if ($this->request->data['Income']['nfse_status_id'] == 107){ ?>
                 <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
             <?php } ?>
-            <?php if ($income['Income']['nfse_status_id'] == 107 || $income['Income']['nfse_status_id'] == 108){ ?>
+            <?php if ($this->request->data['Income']['nfse_status_id'] == 107 || $this->request->data['Income']['nfse_status_id'] == 108){ ?>
                 <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$id ?>" class="btn btn-secondary" data-loading-text="Aguarde...">Imprimir</a>
             <?php } ?>
         </div>
