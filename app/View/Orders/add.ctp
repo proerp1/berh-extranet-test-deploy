@@ -246,13 +246,13 @@
                         <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
                             <div class="mb-7 col js_pedido_complementar">
                                 <label class="form-label">Observação GE</label>
-                                <textarea name="data[Order][observation_ge]" id="" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                                <textarea name="data[Order][observation_ge]" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
                             </div>
                         <?php } else { ?>
                             <?php if (!empty($order['Order']['observation_ge'])) { ?>
                                 <div class="mb-7 col">
                                     <label class="form-label">Observação GE</label>
-                                    <textarea name="observation_ge" id="" class="form-control" style="height: 175px;" disabled="disabled"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                                    <textarea name="observation_ge" class="form-control" style="height: 175px;" disabled="disabled"><?php echo $order['Order']['observation_ge']; ?></textarea>
                                 </div>
                             <?php } ?>
                         <?php } ?>
@@ -1359,8 +1359,10 @@
 
             if (v_ped_comp == '1') {
                 $('.js_pedido_complementar').hide();
+                $('.js_pedido_complementar textarea').prop('required', false);
             } else if (v_ped_comp == '2') {
                 $('.js_pedido_complementar').show();
+                $('.js_pedido_complementar textarea').prop('required', true);
             }
         });
     });
