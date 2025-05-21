@@ -46,7 +46,7 @@ class AppController extends Controller {
 
 	public function beforeFilter() {
 		$pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
-		$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100]]);
+		$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100, 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales')]]);
 
 		$this->set(compact('pendentes', 'pendente_arquivo'));
 	}

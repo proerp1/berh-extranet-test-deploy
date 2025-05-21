@@ -1668,8 +1668,10 @@ class CustomersController extends AppController
             ARQUIVOS
      **********************/
     public function customers_files()
-    { ini_set('pcre.backtrack_limit', '15000000');
+    { 
+        ini_set('pcre.backtrack_limit', '15000000');
         ini_set('memory_limit', '-1');
+        
         $this->Paginator->settings = ['CustomerFile' => [
             'limit' => 100,
             'order' => ['CustomerFile.created' => 'desc'],
