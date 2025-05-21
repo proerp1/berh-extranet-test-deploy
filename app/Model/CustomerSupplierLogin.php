@@ -7,6 +7,7 @@ class CustomerSupplierLogin extends AppModel {
     public $belongsTo = array(
         'Customer',
         'Supplier',
+        'EconomicGroup',
         'UserCreated' => [
             'className' => 'User',
             'foreignKey' => 'user_created_id',
@@ -21,6 +22,15 @@ class CustomerSupplierLogin extends AppModel {
             'conditions' => ['Status.categoria' => 1],
         ]
     );
+
+    public $validate = [
+        'status_id' => [
+            'required' => [
+                'rule' => ['notBlank'],
+                'message' => 'Campo obrigatório',
+            ],
+        ],
+    ];
 
     public function beforeFind($queryData) {
 		$queryData['conditions'][] = array('CustomerSupplierLogin.data_cancel' => '1901-01-01 00:00:00');

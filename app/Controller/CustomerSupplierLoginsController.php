@@ -2,7 +2,7 @@
 class CustomerSupplierLoginsController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission','Email'];
-	public $uses = ['Customer', 'Supplier', 'CustomerSupplierLogin', 'Log','Status'];
+	public $uses = ['Customer', 'Supplier', 'CustomerSupplierLogin', 'Log', 'Status', 'EconomicGroup'];
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -62,7 +62,10 @@ class CustomerSupplierLoginsController extends AppController {
 
 		if ($tipo == 1) {
 			$customers = false;
+
 			$suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']);
+
+			$economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $id]]);
 
 			$this->Customer->id = $id;
 			$cliente = $this->Customer->read();
@@ -73,7 +76,10 @@ class CustomerSupplierLoginsController extends AppController {
 	        ];
 		} else {
 			$suppliers = false;
+
 			$customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
+
+			$economicGroups = false;
 
 			$this->Supplier->id = $id;
 			$supplier = $this->Supplier->read();
@@ -83,7 +89,7 @@ class CustomerSupplierLoginsController extends AppController {
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
 		$this->set("form_action", "../customer_supplier_logins/add/".$tipo."/".$id);
-		$this->set(compact('statuses','action', 'id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
+		$this->set(compact('statuses','action', 'id', 'breadcrumb', 'suppliers', 'customers', 'tipo', 'economicGroups'));
 	}
 
 	public function edit($tipo, $id, $cust_supp_id = null) {
@@ -130,7 +136,10 @@ class CustomerSupplierLoginsController extends AppController {
 
 		if ($tipo == 1) {
 			$customers = false;
+
 			$suppliers = $this->Supplier->find('list', ['fields' => ['id', 'nome_fantasia'], 'order' => 'Supplier.nome_fantasia']);
+
+			$economicGroups = $this->EconomicGroup->find("list", ["conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $id]]);
 
 			$this->Customer->id = $id;
 			$cliente = $this->Customer->read();
@@ -141,17 +150,21 @@ class CustomerSupplierLoginsController extends AppController {
 	        ];
 		} else {
 			$suppliers = false;
+
 			$customers = $this->Customer->find('list', ['order' => ['Customer.nome_primario']]);
+
+			$economicGroups = false;
 
 			$this->Supplier->id = $id;
 			$supplier = $this->Supplier->read();
 
         	$breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Logins' => '', 'Novo Login' => ''];
 		}
+		
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
 
 		$this->set("form_action", "../customer_supplier_logins/edit/".$tipo."/".$id);
-		$this->set(compact('statuses','action', 'id', 'cust_supp_id', 'breadcrumb', 'suppliers', 'customers', 'tipo'));
+		$this->set(compact('statuses','action', 'id', 'cust_supp_id', 'breadcrumb', 'suppliers', 'customers', 'tipo', 'economicGroups'));
 		
 		$this->render("add");
 	}

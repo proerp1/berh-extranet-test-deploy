@@ -32,14 +32,15 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                    <th>Status</th>
+                        <th class="ps-4 rounded-start">Status</th>
                         <?php if ($tipo == 1) { ?>
-                            <th class="ps-4 w-500px min-w-500px rounded-start">Fornecedor</th>
+                            <th class="w-400px min-w-400px">Fornecedor</th>
                         <?php } else { ?>
-                            <th class="ps-4 w-150px min-w-150px rounded-start">ID Cliente</th>
+                            <th class="w-150px min-w-150px">ID Cliente</th>
                             <th>Razão Social</th>
                             <th>CNPJ</th>
                         <?php } ?>
+                        <th>Grupo Econômico</th>
                         <th>URL</th>
                         <th>Login</th>
                         <th>Senha</th>
@@ -63,6 +64,7 @@
                                     <td><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
                                     <td><?php echo $data[$i]["Customer"]["documento"]; ?></td>
                                 <?php } ?>
+                                <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["EconomicGroup"]["name"]) ? $data[$i]["EconomicGroup"]["name"] : "Todos"; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?>" target="_blank" rel="noopener noreferrer">
                                         <?php echo $data[$i]["CustomerSupplierLogin"]["url"]; ?>

@@ -4,14 +4,14 @@
     <?php echo $this->element("abas_suppliers", ['id' => $id]); ?>
 <?php } ?>
 
-            <div class="card mb-5 mb-xl-8">
-                <div class="card-body pt-7 py-3">
-                    <?php echo $this->Form->create('CustomerSupplierLogin', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
-                        <?php if (isset($id)) { ?>
-                            <textarea name="log_old_value" style="display:none"><?php echo json_encode(['CustomerSupplierLogin' => $this->request->data['CustomerSupplierLogin']]); ?></textarea>
-                        <?php } ?>
+<div class="card mb-5 mb-xl-8">
+    <div class="card-body pt-7 py-3">
+        <?php echo $this->Form->create('CustomerSupplierLogin', array("id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+            <?php if (isset($id)) { ?>
+                <textarea name="log_old_value" style="display:none"><?php echo json_encode(['CustomerSupplierLogin' => $this->request->data['CustomerSupplierLogin']]); ?></textarea>
+            <?php } ?>
 
-                        <div class="row">
+            <div class="row">
                 <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2 required">Status</label>
                     <?php echo $this->Form->input('status_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Selecione']); ?>
@@ -34,6 +34,11 @@
                 <?php } ?>
 
                 <div class="mb-7 col-md-4">
+                    <label class="fw-semibold fs-6 mb-2">Grupo Econômico</label>
+                    <?php echo $this->Form->input('economic_group_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Todos']); ?>
+                </div>
+
+                <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2">URL</label>
                     <?php echo $this->Form->input('url', array("id" => "url", "placeholder" => "URL", "class" => "form-control mb-3 mb-lg-0")); ?>
                 </div>
@@ -53,7 +58,6 @@
                     <?php echo $this->Form->input('observation', array("type" => "text", "id" => "observation", "placeholder" => "Observação", "class" => "form-control mb-3 mb-lg-0")); ?>
                 </div>
             </div>
-
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
