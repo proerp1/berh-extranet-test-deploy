@@ -2895,6 +2895,25 @@ class OrdersController extends AppController
             }
 
             $this->OrderItem->save($data);
+
+            if ($statusProcess == 'CREDITO_INCONSISTENTE') {
+                $orderBalanceData = [
+                    'order_id' => $orderItem['Order']['id'],
+                    'order_item_id' => $orderItem['OrderItem']['id'],
+                    'customer_user_id' => $orderItem['CustomerUser']['id'],
+                    'benefit_id' => $orderItem['CustomerUserItinerary']['benefit_id'],
+                    'document' => $orderItem['CustomerUser']['cpf'],
+                    'total' => $orderItem['OrderItem']['subtotal'],
+                    'pedido_operadora' => $pedido_operadora,
+                    'observacao' => $motivo,
+                    'tipo' => 3,
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
+            }
         }
 
         echo json_encode(['success' => true]);
@@ -2934,7 +2953,7 @@ class OrdersController extends AppController
         }
 
         $items = $this->OrderItem->find('all', [
-            'fields' => ['OrderItem.id', 'OrderItem.status_processamento'],
+            'fields' => ['OrderItem.id'],
             'conditions' => $condition,
             'joins' => [
                 [
@@ -2958,8 +2977,10 @@ class OrdersController extends AppController
         ]);
 
         foreach ($items as $item) {
+            $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
+
             $dados_log = [
-                "old_value" => $item['OrderItem']['status_processamento'] ? $item['OrderItem']['status_processamento'] : ' ',
+                "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',
                 "new_value" => $statusProcess,
                 "route" => "orders/compras",
                 "log_action" => "Alterou",
@@ -2980,7 +3001,7 @@ class OrdersController extends AppController
 
             $data = [
                 'OrderItem' => [
-                    'id' => $item['OrderItem']['id'],
+                    'id' => $orderItem['OrderItem']['id'],
                     'status_processamento' => $statusProcess,
                     'pedido_operadora' => $pedido_operadora,
                     'data_entrega' => $data_entrega,
@@ -2994,6 +3015,25 @@ class OrdersController extends AppController
             }
 
             $this->OrderItem->save($data);
+
+            if ($statusProcess == 'CREDITO_INCONSISTENTE') {
+                $orderBalanceData = [
+                    'order_id' => $orderItem['Order']['id'],
+                    'order_item_id' => $orderItem['OrderItem']['id'],
+                    'customer_user_id' => $orderItem['CustomerUser']['id'],
+                    'benefit_id' => $orderItem['CustomerUserItinerary']['benefit_id'],
+                    'document' => $orderItem['CustomerUser']['cpf'],
+                    'total' => $orderItem['OrderItem']['subtotal'],
+                    'pedido_operadora' => $pedido_operadora,
+                    'observacao' => $motivo,
+                    'tipo' => 3,
+                    'created' => date('Y-m-d H:i:s'),
+                    'user_created_id' => CakeSession::read("Auth.User.id")
+                ];
+
+                $this->OrderBalance->create();
+                $this->OrderBalance->save($orderBalanceData);
+            }
         }
 
         echo json_encode(['success' => true]);
