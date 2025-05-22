@@ -402,7 +402,8 @@
             const v_op_status = [
                 'CARTAO_NOVO',
                 'CARTAO_NOVO_CREDITO_INCONSISTENTE',
-                'CREDITO_INCONSISTENTE'
+                'CREDITO_INCONSISTENTE',
+                'PAGAMENTO_REALIZADO'
             ];
 
             if (v_op_status.includes(v_status)) {
