@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Client;
 use CloudDfe\SdkPHP\Nfse;
 use CloudDfe\SdkPHP\Webhook;
 
@@ -831,6 +832,48 @@ class IncomesController extends AppController
         return [$fee_economia, $vl_economia];
     }
 
+    private function get_municipio_id($uf, $municipio) {
+        $client = new Client();
+        $response = $client->request(
+            'GET',
+            "https://servicodados.ibge.gov.br/api/v1/localidades/estados/{$uf}/municipios?view=nivelado"
+        );
+
+        $data = collect(json_decode($response->getBody()->getContents(), true));
+
+        $igbe_municipio = $data->first(function ($item) use ($municipio) {
+            return strtolower($item['municipio-nome']) === strtolower($municipio);
+        });
+
+        return $igbe_municipio ? $igbe_municipio['municipio-id'] : null;
+    }
+
+    private function get_nfse_tomador($income) {
+        $tomador = $income['Customer'];
+        $razao_social = $tomador['nome_primario'];
+        $cnpj = $tomador['documento'];
+        if ($income['Order']['EconomicGroup']) {
+            $tomador = $income['Order']['EconomicGroup'];
+            $razao_social = $tomador['razao_social'];
+            $cnpj = $tomador['document'];
+        }
+
+        return [
+            "cnpj" => preg_replace('/\D/', '', $cnpj),
+            "razao_social" => $razao_social,
+            "email" => $tomador['email'],
+            "endereco" => [
+                "logradouro" => $tomador['endereco'],
+                "numero" => $tomador['numero'],
+                "complemento" => $tomador['complemento'],
+                "bairro" => $tomador['bairro'],
+                "codigo_municipio" => $this->get_municipio_id($tomador['estado'], $tomador['cidade']),
+                "uf" => $tomador['estado'],
+                "cep" => $tomador['cep'],
+            ]
+        ];
+    }
+
     public function nfse($id)
     {
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
@@ -849,6 +892,7 @@ class IncomesController extends AppController
     public function cria_nfse($id) {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
 
+        $this->Income->recursive = 2;
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
 
         try {
@@ -857,6 +901,7 @@ class IncomesController extends AppController
             $data = $this->get_nfse_type_data($income);
 
             $today = new DateTime();
+
             $payload = [
                 "numero" => $income['Income']['id'],
                 "serie" => "1",
@@ -870,11 +915,7 @@ class IncomesController extends AppController
                         ]
                     ]
                 ],
-                "tomador" => [
-                    "cnpj" => preg_replace('/\D/', '', $income['Customer']['documento']),
-                    "razao_social" => $income['Customer']['nome_primario'],
-                    "email" => $income['Customer']['email']
-                ]
+                "tomador" => $this->get_nfse_tomador($income)
             ];
 
             $response = $nfse->cria($payload);
