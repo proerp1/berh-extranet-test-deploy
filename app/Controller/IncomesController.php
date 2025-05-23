@@ -1018,6 +1018,10 @@ class IncomesController extends AppController
 
             $data = json_decode($body);
 
+            if ($data->origem === 'TESTE') {
+                return 'Teste realizado com sucesso!';
+            }
+
             $success = $data->sucesso;
             $chave_nfse = $data->chave;
 
