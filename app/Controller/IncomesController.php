@@ -943,7 +943,7 @@ class IncomesController extends AppController
 
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
 
-        if ($income['Income']['nfse_status_id'] !== 107) {
+        if ($income['Income']['nfse_status_id'] != 107) {
             $this->Flash->set(__('Só é possível cancelar uma nota fiscal emitida.'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
         }
@@ -974,7 +974,7 @@ class IncomesController extends AppController
 
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
 
-        if ($income['Income']['nfse_status_id'] !== 107 && $income['Income']['nfse_status_id'] !== 108) {
+        if ($income['Income']['nfse_status_id'] != 107 && $income['Income']['nfse_status_id'] != 108) {
             $this->Flash->set(__('Só é possível imprimir uma nota fiscal emitida ou cancelada.'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
         }
@@ -1029,7 +1029,7 @@ class IncomesController extends AppController
 
             if (!$income) {
                 return 'Chave NFS-e não encontrada.';
-            } else if ($income['Income']['nfse_status_id'] !== 106) {
+            } else if ($income['Income']['nfse_status_id'] != 106) {
                 return 'Só é possível atualizar o status de notas fiscais "Em Processamento"';
             }
 
