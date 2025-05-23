@@ -884,9 +884,22 @@ class IncomesController extends AppController
 
         $preview_data = $this->get_nfse_type_data($this->request->data);
 
+        $pdf_link = null;
+        if ($this->request->data['Income']['nfse_chave'] && ($this->request->data['Income']['nfse_status_id'] == 107 || $this->request->data['Income']['nfse_status_id'] == 108)) {
+            $nfse = $this->connect_nfse_sdk();
+
+            $payload = [
+                "chave" => $this->request->data['Income']['nfse_chave'],
+            ];
+
+            $response = $nfse->consulta($payload);
+
+            $pdf_link = $response->link_pdf;
+        }
+
         $action = 'Contas a receber';
         $breadcrumb = ['Nota Fiscal de Serviço' => ''];
-        $this->set(compact( 'id', 'action', 'breadcrumb', 'preview_data'));
+        $this->set(compact( 'id', 'action', 'breadcrumb', 'preview_data', 'pdf_link'));
     }
 
     public function cria_nfse($id) {
@@ -969,7 +982,7 @@ class IncomesController extends AppController
         $this->redirect($this->referer());
     }
 
-    public function imprime_nfse($id) {
+    public function imprime_danfse($id) {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);

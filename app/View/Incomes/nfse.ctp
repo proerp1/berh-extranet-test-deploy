@@ -36,8 +36,8 @@
             <?php } else if ($this->request->data['Income']['nfse_status_id'] == 107){ ?>
                 <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
             <?php } ?>
-            <?php if ($this->request->data['Income']['nfse_status_id'] == 107 || $this->request->data['Income']['nfse_status_id'] == 108){ ?>
-                <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$id ?>" class="btn btn-secondary" data-loading-text="Aguarde...">Imprimir</a>
+            <?php if ($pdf_link){ ?>
+                <a href="<?php echo $pdf_link ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
             <?php } ?>
         </div>
     </div>
