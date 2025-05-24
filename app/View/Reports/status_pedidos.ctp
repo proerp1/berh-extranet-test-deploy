@@ -1,3 +1,5 @@
+<?php echo $this->element("../Orders/_totais_index"); ?>
+
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "reports", "action" => "status_pedidos")); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
@@ -17,6 +19,11 @@
                         <i class="fas fa-filter"></i>
                         Filtro
                     </button>
+
+                    <a href="<?php echo $this->base.'/reports/status_pedidos/?exportar=true&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        Exportar
+                    </a>
 
                     <a href="#" id="alterar_sel" class="btn btn-primary me-3">
                         <i class="fas fa-edit"></i>
@@ -45,6 +52,20 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
                                     <option value="">Selecione</option>
                                 </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tipo[]" id="tipo" multiple>
+                                    <option value=''></option>
+                                    <option value="2" <?php echo isset($_GET['tipo']) && in_array('2', $_GET['tipo']) ? 'selected' : ''; ?>>Automático</option>
+                                    <option value="4" <?php echo isset($_GET['tipo']) && in_array('4', $_GET['tipo']) ? 'selected' : ''; ?>>Emissão</option>
+                                    <option value="1" <?php echo isset($_GET['tipo']) && in_array('1', $_GET['tipo']) ? 'selected' : ''; ?>>Importação</option>
+                                    <option value="3" <?php echo isset($_GET['tipo']) && in_array('3', $_GET['tipo']) ? 'selected' : ''; ?>>PIX</option>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Número(s) de Pedido:</label>
+                                <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula" value="<?php echo isset($_GET['num']) ? $_GET['num'] : ''; ?>">
                             </div>
                             <div id="selectedNumbers"></div>
 

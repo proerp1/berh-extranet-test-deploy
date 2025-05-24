@@ -1498,9 +1498,9 @@ class ReportsController extends AppController
         ];
 
         if (!in_array(CakeSession::read("Auth.User.Group.name"), array('Administrador', 'Diretoria'))) {
-            $condition = ["and" => ["Customer.id != " => 88357, "Order.status_id" => [85, 86] ], "or" => []];
+            $condition = ["and" => ["Customer.id != " => 88357, "Order.status_id" => [85, 86], "Order.pedido_complementar" => 1 ], "or" => []];
         } else {
-            $condition = ["and" => ["Order.status_id" => [85, 86] ], "or" => []];
+            $condition = ["and" => ["Order.status_id" => [85, 86], "Order.pedido_complementar" => 1 ], "or" => []];
         }
 
         $filtersFilled = false;
@@ -1535,6 +1535,27 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         }
 
+        if (isset($_GET['num']) && $_GET['num'] != '') {
+            // Dividindo a entrada em uma matriz de números
+            $selectedNumbers = preg_split("/[\s,]+/", $_GET['num']);
+            
+            // Removendo valores em branco da matriz
+            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
+
+            // Adicionando a condição para cada número selecionado
+            $orConditions = [];
+            foreach ($selectedNumbers as $number) {
+                $orConditions[] = ['Order.id' => $number];
+            }
+
+            // Unindo as condições com OR
+            $condition['and'][] = ['or' => $orConditions];
+        }
+
+        if (!empty($_GET['tipo'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.is_partial' => $_GET['tipo']]);
+        }
+
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {
@@ -1546,7 +1567,8 @@ class ReportsController extends AppController
                     'Customer',
                     'CustomerCreator',
                     'EconomicGroup',
-                    'Income.data_pagamento'
+                    'Income.data_pagamento',
+                    'UpdatedGe',
                 ],
                 'conditions' => $condition,
             ]);
@@ -1596,6 +1618,19 @@ class ReportsController extends AppController
 
         $data = $this->Paginator->paginate('Order', $condition);
 
+        $totalOrders = $this->Order->find('first', [
+            'contain' => ['Customer', 'EconomicGroup', 'Income'],
+            'fields' => [
+                'sum(Order.subtotal) as subtotal',
+                'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.commission_fee) as commission_fee',
+                'sum(Order.desconto) as desconto',
+                'sum(Order.total) as total',
+            ],
+            'conditions' => $condition,
+            'recursive' => -1
+        ]);
+
         $customers = $this->Customer->find('list', [
             'conditions' => ['Customer.status_id' => 3],
             'fields' => ['id', 'nome_primario'],
@@ -1607,7 +1642,7 @@ class ReportsController extends AppController
         $action = 'Relatório Alteração Status Pedido';
         $breadcrumb = ['Relatórios' => '', 'Relatório Alteração Status Pedido' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'status', 'data'));
+        $this->set(compact('action', 'breadcrumb', 'status', 'data', 'totalOrders'));
     }
 
     public function alter_status_pedido()
