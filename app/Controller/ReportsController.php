@@ -219,7 +219,7 @@ class ReportsController extends AppController
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
         if (isset($_GET['excel'])) {
-            $nome = 'PedidoCompras.xlsx';
+            $nome = 'relatorio_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $this->ExcelGenerator->gerarExcelOrders($nome, $data);
             $this->redirect('/files/excel/' . $nome);
@@ -1559,7 +1559,7 @@ class ReportsController extends AppController
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {
-            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+            $nome = 'relatorio_status_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->Order->find('all', [
                 'contain' => [
