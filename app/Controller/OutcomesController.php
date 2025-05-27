@@ -572,13 +572,13 @@ public function edit_document($id, $document_id = null)
 		$arq_file = false;
 
 		if ($status == 11) {
-			$zip_name = "arquivos_programado.zip";
+			$zip_name = "arquivos_programado_" . date('d_m_Y_H_i_s') . ".zip";
 		} elseif ($status == 12) {
-			$zip_name = "arquivos_aprovado.zip";
+			$zip_name = "arquivos_aprovado_" . date('d_m_Y_H_i_s') . ".zip";
 		} elseif ($status == 13) {
-			$zip_name = "arquivos_pago.zip";
+			$zip_name = "arquivos_pago_" . date('d_m_Y_H_i_s') . ".zip";
 		} else {
-			$zip_name = "arquivos_pendente.zip";			
+			$zip_name = "arquivos_pendente_" . date('d_m_Y_H_i_s') . ".zip";			
 		}
 	    
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
@@ -625,7 +625,7 @@ public function edit_document($id, $document_id = null)
 		$docOutcomeIds = $this->request->data['docOutcomeIds'];
 		$arq_file = false;
 
-		$zip_name = "documentos.zip";
+		$zip_name = "documentos_" . date('d_m_Y_H_i_s') . ".zip";
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
 
 	    if (file_exists($zip_file)) {
