@@ -268,6 +268,32 @@ class Order extends AppModel
             $this->data[$this->alias]['updated_ge'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_ge']);
         }
 
+        if (isset($this->data[$this->alias]['status_id'])) {
+            $novo_status_id = $this->data[$this->alias]['status_id'];
+
+            // Se status "Pagamento Confirmado" e GE = "não", status = "Aguardando Liberação de Crédito"
+            if ($novo_status_id == 85) {
+                if (!empty($this->data[$this->alias]['id'])) {
+                    if (!isset($this->data[$this->alias]['pedido_complementar'])) {
+                        $registroAtual = $this->find('first', [
+                            'conditions' => ['id' => $this->data[$this->alias]['id']],
+                            'fields' => ['pedido_complementar'],
+                            'recursive' => -1
+                            ]
+                        );
+
+                        $ge = isset($registroAtual[$this->alias]['pedido_complementar']) ? $registroAtual[$this->alias]['pedido_complementar'] : null;
+                    } else {
+                        $ge = $this->data[$this->alias]['pedido_complementar'];
+                    }
+                    
+                    if ($ge == 2) {
+                        $this->data[$this->alias]['status_id'] = 104;
+                    }
+                }
+            }
+        }
+
         $this->transactionNotifications($this->data[$this->alias]);
 
         return true;
