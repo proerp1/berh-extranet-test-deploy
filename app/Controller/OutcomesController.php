@@ -30,14 +30,16 @@ class OutcomesController extends AppController {
 		parent::beforeFilter(); 
 	}
 
-	public function index() {
+	public function index() 
+	{
 		$this->Permission->check(15, "leitura") ? "" : $this->redirect("/not_allowed");
+
 		$limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+
         $this->paginate['Outcome']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
 
-		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
-		
+		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];		
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
 			$condition['or'] = array_merge($condition['or'], ['Outcome.observation LIKE' => "%".$_GET['q']."%",'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
@@ -55,7 +57,6 @@ class OutcomesController extends AppController {
 			$condition['and'] = array_merge($condition['and'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['supplier_nome']."%"]);
 		}
 		
-
 		$get_de = isset($_GET["de"]) ? $_GET["de"] : '';
 		$get_ate = isset($_GET["ate"]) ? $_GET["ate"] : '';
 		
@@ -93,36 +94,37 @@ class OutcomesController extends AppController {
                 'Outcome.data_pagamento <=' => $pagamento_ate
             ]);
 		}
+
 		if (isset($_GET['exportar'])) {
-			$nome = 'contas_pagar.xlsx';
+			$nome = 'contas_pagar_' . date('d_m_Y_H_i_s') . '.xlsx';
 
-			$data = $this->Outcome->find('all', ['conditions' => $condition, 'joins' => [[
-				'table' => 'bank_codes',
-				'alias' => 'BankCode',
-				'type' => 'LEFT',
-				'conditions' => ['BankCode.id = Supplier.bank_code_id']
-
-			],
-		
-			[
-				'table' => 'bank_account_types',
-				'alias' => 'BankAccountType',
-				'type' => 'LEFT',
-				'conditions' => ['BankAccountType.id = Supplier.account_type_id'],
-			]
-		
-		
-		
-		],'fields' => [
+			$data = $this->Outcome->find('all', [
+				'conditions' => $condition, 
+				'joins' => [
+					[
+						'table' => 'bank_codes',
+						'alias' => 'BankCode',
+						'type' => 'LEFT',
+						'conditions' => ['BankCode.id = Supplier.bank_code_id']
+					],				
+					[
+						'table' => 'bank_account_types',
+						'alias' => 'BankAccountType',
+						'type' => 'LEFT',
+						'conditions' => ['BankAccountType.id = Supplier.account_type_id'],
+					]
+				],
+				'fields' => [
                         'BankCode.name',
                         'BankCode.code',
 						'Supplier.*',
 						'Status.name',
 						'BankAccountType.description',
 						'Outcome.*',
-						'BankAccount.*' ]]);
-
-			//debug($data);die;
+						'BankAccount.*' 
+					]
+				]
+			);
 
 			$this->ExcelGenerator->gerarExcelOutcome($nome, $data);
 
@@ -164,10 +166,12 @@ class OutcomesController extends AppController {
 		$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
 
 		$this->Paginator->settings['order'] = ['Outcome.created' => 'DESC'];
+		
 		$data = $this->Paginator->paginate('Outcome', $condition);
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
 
 		$action = 'Contas a pagar';
+		
 		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
 	}
 	

@@ -41,7 +41,9 @@ class IncomesController extends AppController
     public function index()
     {
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+
         $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+
         $this->paginate['Income']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
 
@@ -118,19 +120,15 @@ class IncomesController extends AppController
             ]);
         }
         
-        
-
         if ($this->request->is('get')) {
-
             if (isset($_GET['exportar'])) {
                 $data = $this->Income->find('all', ['conditions' => $condition, 'order' => ['Income.vencimento' => 'desc'], 'group' => 'Income.id']);
 
-                $nome = 'contas_receber_'.date('d_m_Y').".xlsx";
+                $nome = 'contas_receber_' . date('d_m_Y_H_i_s') . '.xlsx';
                 
                 $this->ExcelGenerator->gerarExcelContasReceber($nome, $data);
                 $this->redirect("/files/excel/".$nome);
             } else {
-
                 $this->Income->recursive = -1;
                 $this->Income->unbindModel(['belongsTo' => ['Customer', 'BankAccount', 'Status']], false);
                 
@@ -184,16 +182,15 @@ class IncomesController extends AppController
                         ],
                         'fields' => ['sum(Income.valor_total) as total_income']
                     ]);
-
             }
-        }
-
-                
+        }                
 
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 5]]);
         $statusCliente = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
+        
         $action = 'Contas a Receber';
+        
         $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
     }
     
