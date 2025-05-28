@@ -1058,7 +1058,7 @@ class ReportsController extends AppController
         }
 
         if (isset($_GET['excel'])) {
-            $nome = 'relatorio_compras.xlsx';
+            $nome = 'relatorio_compras_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->OrderItem->find('all', [
                 'fields' => [
