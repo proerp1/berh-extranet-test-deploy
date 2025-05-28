@@ -2135,16 +2135,16 @@ class ExcelTemplate
         ->setCellValue('R1', "Subtotal")
         ->setCellValue('S1', "Repasse")
         ->setCellValue('T1', "Taxa ADM")
-        ->setCellValue('U1', "Status Operadora")
-        ->setCellValue('V1', "Economia")
-        ->setCellValue('W1', "Compra Operadora")
-        ->setCellValue('X1', "Departamento")
-        ->setCellValue('Y1', "Centro de Custo")
-        ->setCellValue('Z1', " CNPJ Grupo Economico")
-        ->setCellValue('AA1', "Nome Grupo Economicoo")
-        ->setCellValue('AB1', "Compra Operadora");
-
-
+        ->setCellValue('U1', "Economia")
+        ->setCellValue('V1', "Compra Operadora")
+        ->setCellValue('w1', "Departamento")
+        ->setCellValue('X1', "Centro de Custo")
+        ->setCellValue('Y1', " CNPJ Grupo Economico")
+        ->setCellValue('Z1', "Nome Grupo Economicoo")
+        ->setCellValue('AA1', "Compra Operadora")
+        ->setCellValue('AB1', "Status Processamento")
+        ->setCellValue('AC1', "Motivo Processamento");
+        
         $indx = 1;
         $total = 0;
         for ($i = 0; $i < count($dados); $i++) {
@@ -2173,15 +2173,15 @@ class ExcelTemplate
                 ->setCellValue('R'. $indx, $dados[$i]['OrderItem']['subtotal'])
                 ->setCellValue('S'. $indx, $dados[$i]['OrderItem']['transfer_fee'])
                 ->setCellValue('T'. $indx, $dados[$i]['OrderItem']['commission_fee'])
-                ->setCellValue('U'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-                ->setCellValue('V'. $indx, $dados[$i]['OrderItem']['saldo'])
-                ->setCellValue('W'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
-                ->setCellValue('X'. $indx, $dados[$i]['CustomerDepartments']['name'])
-                ->setCellValue('Y'. $indx, $dados[$i]['CostCenter']['name'])
-                ->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['document'])
-                ->setCellValue('AA'. $indx, $dados[$i]['EconomicGroups']['name'])
-                ->setCellValue('AB'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));
-
+                ->setCellValue('U'. $indx, $dados[$i]['OrderItem']['saldo'])
+                ->setCellValue('V'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
+                ->setCellValue('W'. $indx, $dados[$i]['CustomerDepartments']['name'])
+                ->setCellValue('X'. $indx, $dados[$i]['CostCenter']['name'])
+                ->setCellValue('Y'. $indx, $dados[$i]['EconomicGroups']['document'])
+                ->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name'])
+                ->setCellValue('AA'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
+                ->setCellValue('AB'. $indx, $dados[$i]['OrderItem']['status_processamento'])
+                ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
         }
     }
 
