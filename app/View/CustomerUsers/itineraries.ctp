@@ -112,7 +112,7 @@
                         <?php } ?>
                         <?php if($total > 0) { ?>
                             <tr>
-                                <td colspan="5" class="fs-7 ps-4" style="text-align:right">Total</td>
+                                <td colspan="7" class="fs-7 ps-4" style="text-align:right">Total</td>
                                 <td class="fw-bold fs-7 ps-4">R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                             </tr>
                         <?php } ?>

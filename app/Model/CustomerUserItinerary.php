@@ -23,6 +23,15 @@ class CustomerUserItinerary extends AppModel
         ]
     );
 
+    public $validate = [
+        'matricula' => [
+            'isUnique' => [
+                'rule' => 'isUnique',
+                'message' => 'A matricula fornecida já foi cadastrada',
+            ],
+        ],
+    ];
+
     public function beforeFind($queryData)
     {
         $queryData['conditions'][] = array('CustomerUserItinerary.data_cancel' => '1901-01-01 00:00:00');
