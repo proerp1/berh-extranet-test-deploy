@@ -655,6 +655,7 @@ class OrdersController extends AppController
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
             $order['Order']['observation'] = $this->request->data['Order']['observation'];
+            $order['Order']['nfse_observation'] = $this->request->data['Order']['nfse_observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if (isset($this->request->data['Order']['pedido_complementar'])) {

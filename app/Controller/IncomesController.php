@@ -762,8 +762,8 @@ class IncomesController extends AppController
             $data = $this->get_gestao_eficiente_data($income);
         }
 
-        if ($income['Order']['observation']) {
-            $data['obs'] .= "\n\n{$income['Order']['observation']}";
+        if ($income['Order']['nfse_observation']) {
+            $data['obs'] .= "\n\n{$income['Order']['nfse_observation']}";
         }
 
         return $data;
@@ -775,13 +775,14 @@ class IncomesController extends AppController
         $vl_economia_formatted = number_format($vl_economia, 2, ',', '.');
         $obs = "Gestão Eficiente - Pedido Nº {$income['Order']['id']}
 
-        Item                                    R$ {$income['Order']['subtotal']}
-        Repasse Operadora                       R$ {$income['Order']['transfer_fee']}
-        Economia                                R$ {$vl_economia_formatted}
+        Item R$ {$income['Order']['subtotal']}
+        Repasse Operadora R$ {$income['Order']['transfer_fee']}
+        Economia R$ {$vl_economia_formatted}
+        Desconto R$ {$income['Order']['desconto']}
 
         Informações Adicionais
 
-        Gestão Eficiente                        R$ {$fee_economia_formatted}";
+        Gestão Eficiente R$ {$fee_economia_formatted}";
 
         return [
             "obs" => $obs,
@@ -797,18 +798,16 @@ class IncomesController extends AppController
         
         Pedido Nº {$income['Order']['id']}
         
-        Item                                    R$ {$income['Order']['total']}
-        Repasse Operadora                       R$ {$income['Order']['transfer_fee']}
+        Item R$ {$income['Order']['subtotal']}
+        Repasse Operadora R$ {$income['Order']['transfer_fee']}
+        Desconto R$ {$income['Order']['desconto']}
         
         Informações Adicionais
         
-        Taxa Administrativa                     R$ {$income['Order']['commission_fee']}
-        Taxa Processamento de Pedidos           R$ {$tpp_fee_formatted}
+        Taxa Administrativa R$ {$income['Order']['commission_fee']}
+        Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
         Total---------------------------------  R$ {$total_formatted}";
 
-        if ($income['Order']['observation']) {
-
-        }
         return [
             "obs" => $obs,
             "valor" => $total,
@@ -945,7 +944,7 @@ class IncomesController extends AppController
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível emitir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
         }
-        $this->redirect($this->referer());
+        $this->redirect(['action'=> 'nfse', $id]);
     }
 
     public function cancela_nfse($id) {
@@ -955,7 +954,7 @@ class IncomesController extends AppController
 
         if ($income['Income']['nfse_status_id'] != 107) {
             $this->Flash->set(__('Só é possível cancelar uma nota fiscal emitida.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['action'=> 'nfse', $id]);
         }
 
         try {
@@ -976,7 +975,7 @@ class IncomesController extends AppController
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível cancelar a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
         }
-        $this->redirect($this->referer());
+        $this->redirect(['action'=> 'nfse', $id]);
     }
 
     public function imprime_danfse($id) {
@@ -986,7 +985,7 @@ class IncomesController extends AppController
 
         if ($income['Income']['nfse_status_id'] != 107 && $income['Income']['nfse_status_id'] != 108) {
             $this->Flash->set(__('Só é possível imprimir uma nota fiscal emitida ou cancelada.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['action'=> 'nfse', $id]);
         }
 
         try {
@@ -1007,7 +1006,7 @@ class IncomesController extends AppController
             $this->printPdf($pdf);
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível imprimir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect($this->referer());
+            $this->redirect(['action'=> 'nfse', $id]);
         }
     }
 

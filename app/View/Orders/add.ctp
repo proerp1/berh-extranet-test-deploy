@@ -257,9 +257,16 @@
                             <?php } ?>
                         <?php } ?>
 
-                        <div class="mb-7 col">
-                            <label class="form-label">Observação da Nota Fiscal</label>
-                            <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                        <div class="row mb-7">
+                            <div class="col-6">
+                                <label class="form-label">Observação do Pedido</label>
+                                <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                            </div>
+
+                            <div class="col-6">
+                                <label class="form-label">Observação da Nota Fiscal</label>
+                                <textarea name="data[Order][nfse_observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['nfse_observation']; ?></textarea>
+                            </div>
                         </div>
 
                         <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86 || $order['Order']['status_id'] == 104); ?>
