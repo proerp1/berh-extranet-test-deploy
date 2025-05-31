@@ -179,29 +179,23 @@
                                             Gestão Eficiente
                                         </div>
                                     </td>
-                                    <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
-                                        <td class="fw-bolder">
-                                            <div class="d-flex justify-content-end gap-4">
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="1" id="pedidoComp1" checked />
-                                                    <label class="form-check-label" for="pedidoComp1">
-                                                        Sim
-                                                    </label>
-                                                </div>
-
-                                                <div class="form-check form-check-custom form-check-solid">
-                                                    <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="2" id="pedidoComp2" />
-                                                    <label class="form-check-label" for="pedidoComp2">
-                                                        Não
-                                                    </label>
-                                                </div>
+                                    <td class="fw-bolder">
+                                        <div class="d-flex justify-content-end gap-4">
+                                            <div class="form-check form-check-custom form-check-solid">
+                                                <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="1" id="pedidoComp1" <?php echo (isset($order['Order']) ? ($order['Order']['pedido_complementar'] == 1 ? 'checked' : '') : '') ?> />
+                                                <label class="form-check-label" for="pedidoComp1">
+                                                    Sim
+                                                </label>
                                             </div>
-                                        </td>
-                                    <?php } else { ?>
-                                        <td class="fw-bolder text-end">
-                                            Não
-                                        </td>
-                                    <?php } ?>
+
+                                            <div class="form-check form-check-custom form-check-solid">
+                                                <input class="form-check-input pedido_complementar" type="radio" name="data[Order][pedido_complementar]" value="2" id="pedidoComp2" <?php echo (isset($order['Order']) ? ($order['Order']['pedido_complementar'] == 2 ? 'checked' : '') : '') ?> />
+                                                <label class="form-check-label" for="pedidoComp2">
+                                                    Não
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <?php if (!empty($order['Order']['updated_ge'])) { ?>
                                     <tr>
@@ -243,19 +237,10 @@
                 <!--end::Order details-->
                 <div class="card">
                     <div class="card-body">
-                        <?php if ($order['Order']['pedido_complementar'] == 1) { ?>
-                            <div class="mb-7 col js_pedido_complementar">
-                                <label class="form-label">Observação GE</label>
-                                <textarea name="data[Order][observation_ge]" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
-                            </div>
-                        <?php } else { ?>
-                            <?php if (!empty($order['Order']['observation_ge'])) { ?>
-                                <div class="mb-7 col">
-                                    <label class="form-label">Observação GE</label>
-                                    <textarea name="observation_ge" class="form-control" style="height: 175px;" disabled="disabled"><?php echo $order['Order']['observation_ge']; ?></textarea>
-                                </div>
-                            <?php } ?>
-                        <?php } ?>
+                        <div class="mb-7 col js_pedido_complementar">
+                            <label class="form-label">Observação GE</label>
+                            <textarea name="data[Order][observation_ge]" class="form-control" style="height: 175px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                        </div>
 
                         <div class="row mb-7">
                             <div class="col-6">
@@ -1359,18 +1344,8 @@
             });
         });
 
-        $('.js_pedido_complementar').hide();
-
         $('.pedido_complementar').on('click', function () {
-            var v_ped_comp = $('.pedido_complementar:checked').val();
-
-            if (v_ped_comp == '1') {
-                $('.js_pedido_complementar').hide();
-                $('.js_pedido_complementar textarea').prop('required', false);
-            } else if (v_ped_comp == '2') {
-                $('.js_pedido_complementar').show();
-                $('.js_pedido_complementar textarea').prop('required', true);
-            }
+            $('.js_pedido_complementar textarea').prop('required', true);
         });
     });
 </script>
