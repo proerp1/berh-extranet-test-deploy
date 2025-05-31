@@ -246,7 +246,9 @@ class OrdersController extends AppController
     public function createOrder()
     {
         $this->autoRender = false;
+        ini_set('max_execution_time', '-1');
 
+        ini_set('memory_limit', '-1');
         if ($this->request->is('post')) {
             $customerId = $this->request->data['customer_id'];
             $workingDays = $this->request->data['working_days'];
