@@ -237,10 +237,12 @@
                     <a href="<?php echo $this->base.'/outcomes/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
                     <?php if (isset($id)){ ?>
                         <?php if ($this->request->data['Status']['id'] != 13){ ?>
-                                <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
-                            <?php } ?>
-                            <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 103])): ?>
-                                <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
+                            <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
+                        <?php } else { ?>
+                            <a href="<?php echo $this->base.'/outcomes/reabrir_conta/'.$id.'/11/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Reabrir conta</a>
+                        <?php } ?>
+                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 103])): ?>
+                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
                             <?php if ($cancelarConta) { ?>
                                 <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/15/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
                             <?php } ?>

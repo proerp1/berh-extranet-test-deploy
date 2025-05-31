@@ -28,7 +28,7 @@ class Outcome extends AppModel {
 		}
 
 		if (!empty($this->data[$this->alias]['created'])) {
-            $created_date = date_create_from_format('d/m/Y', $this->data[$this->alias]['created']); 
+            $this->data['Outcome']['created'] = $this->dateFormatBeforeSave($this->data['Outcome']['created']);
         }
 
 		if (!empty($this->data['Outcome']['valor_bruto'])) {

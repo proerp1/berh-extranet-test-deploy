@@ -360,6 +360,42 @@ class OutcomesController extends AppController {
 		}
 	}
 
+	public function reabrir_conta($id, $status)
+	{
+		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+		
+		$this->Outcome->id = $id;
+		$log_old_value = $this->Outcome->read();
+		
+		$data = ['Outcome' => ['status_id' => $status, 'valor_pago' => null, 'data_pagamento' => null, 'usuario_id_pagamento' => null]];
+
+		if ($this->Outcome->save($data)) {
+			$new_value = $this->Outcome->read();
+
+			$dados_log = [
+				"old_value" => json_encode($log_old_value),
+				"new_value" => json_encode($new_value),
+				"route" => "outcomes/reabrir_conta",
+				"log_action" => "reabrir_conta",
+				"log_table" => "Outcome",
+				"primary_key" => $id,
+				"parent_log" => 0,
+				"user_type" => "ADMIN",
+				"user_id" => CakeSession::read("Auth.User.id"),
+				"message" => "A conta a pagar foi alterada com sucesso",
+				"log_date" => date("Y-m-d H:i:s"),
+				"data_cancel" => "1901-01-01",
+				"usuario_data_cancel" => 0,
+				"ip" => $_SERVER["REMOTE_ADDR"]
+			];
+
+			$this->Log->save($dados_log);
+
+			$this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+			$this->redirect(array('action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')));
+		}
+	}
+
 	public function change_status_lote()
 	{
         $this->autoRender = false;
