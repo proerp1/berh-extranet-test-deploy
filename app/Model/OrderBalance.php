@@ -148,9 +148,11 @@ public $belongsTo = array(
                 $total_saldo = $result[$i][0]['total_saldo'];
                 $fee_saldo = $result[$i][0]['fee_saldo'];
 
-                $this->query("UPDATE orders 
-                                SET saldo_transfer_fee = ".$saldo_transfer_fee.", saldo = ".$saldo.", total_saldo = ".$total_saldo.", fee_saldo = ".$fee_saldo.", updated = now() 
-                                WHERE id = ".$orderID);
+                if ($orderID) {
+                    $this->query("UPDATE orders 
+                                    SET saldo_transfer_fee = ".$saldo_transfer_fee.", saldo = ".$saldo.", total_saldo = ".$total_saldo.", fee_saldo = ".$fee_saldo.", updated = now() 
+                                    WHERE id = ".$orderID);
+                }
             }
         }
 
