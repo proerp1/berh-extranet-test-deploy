@@ -351,7 +351,7 @@ class OrdersController extends AppController
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
                 'due_date' => $this->request->data['due_date'],
-                'observation' => $obs_notafiscal,
+                'nfse_observation' => $obs_notafiscal,
                 'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
                 'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
                 'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
