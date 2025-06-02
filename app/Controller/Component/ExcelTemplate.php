@@ -2215,12 +2215,13 @@ class ExcelTemplate
         //'T1' => "Observações(beneficiário)",
         'U1' => "Nome (Grupo Econômico)",
         'V1' => "CNPJ (Grupo Econômico)",
-        'W1' => "Benefício(Benefício)",
-        'X1' => "Dias Úteis(Benefício)",
-        'Y1' => "N° Cartão(Benefício)",
-        'Z1' => "Quantidade(Benefício)",
-        'AA1' => "Valor Unitario(Benefício)",
-        'AB1' => "Valor por dia(Benefício)",
+        'W1' => "Codigo Benefício",
+        'X1' => "Benefício(Benefício)",
+        'Y1' => "Dias Úteis(Benefício)",
+        'Z1' => "N° Cartão(Benefício)",
+        'AA1' => "Quantidade(Benefício)",
+        'AB1' => "Valor Unitario(Benefício)",
+        'AC1' => "Valor por dia(Benefício)",
     ];
 
     foreach ($headers as $cell => $text) {
@@ -2268,12 +2269,13 @@ class ExcelTemplate
             if (!empty($data['CustomerUserItinerary'])) {
                 foreach ($data['CustomerUserItinerary'] as $itinerary) {
                     $activeWorksheet
-                        ->setCellValue('W' . $indx, $itinerary['benefit_name'] ?? '')
-                        ->setCellValue('X' . $indx, $itinerary['working_days'] ?? '')
-                        ->setCellValue('Y' . $indx, $itinerary['card_number'] ?? '')
-                        ->setCellValue('Z' . $indx, $itinerary['quantity'] ?? '')
-                        ->setCellValue('AA' . $indx, $itinerary['unit_price'] ?? '')
-                        ->setCellValue('AB' . $indx, $itinerary['price_per_day'] ?? '');
+                        ->setCellValue('W' . $indx, $itinerary['benefit_code'] ?? '')
+                        ->setCellValue('X' . $indx, $itinerary['benefit_name'] ?? '')
+                        ->setCellValue('Y' . $indx, $itinerary['working_days'] ?? '')
+                        ->setCellValue('Z' . $indx, $itinerary['card_number'] ?? '')
+                        ->setCellValue('AA' . $indx, $itinerary['quantity'] ?? '')
+                        ->setCellValue('AB' . $indx, $itinerary['unit_price'] ?? '')
+                        ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
                 }
             }
         }
