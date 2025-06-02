@@ -2215,7 +2215,7 @@ class ExcelTemplate
         //'T1' => "Observações(beneficiário)",
         'U1' => "Nome (Grupo Econômico)",
         'V1' => "CNPJ (Grupo Econômico)",
-        'W1' => "Codigo Benefício",
+        'W1' => "COD Benefício",
         'X1' => "Benefício(Benefício)",
         'Y1' => "Dias Úteis(Benefício)",
         'Z1' => "N° Cartão(Benefício)",
