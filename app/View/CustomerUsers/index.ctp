@@ -180,7 +180,7 @@ echo $this->element("abas_customers", array('id' => $id));
                     <th>Status</th>
                     <th>Nome</th>
                     <th>E-mail</th>
-                    <th>CPF</th>
+                    <th>CP</th>
                     <th>Departamento</th>
                     <th>Centro de Custo</th>
                     <th>Grupo Economico</th>
