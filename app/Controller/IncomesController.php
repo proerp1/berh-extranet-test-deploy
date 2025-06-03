@@ -865,7 +865,7 @@ class IncomesController extends AppController
                 "bairro" => $tomador['bairro'],
                 "codigo_municipio" => $this->get_municipio_id($tomador['estado'], $tomador['cidade']),
                 "uf" => $tomador['estado'],
-                "cep" => $tomador['cep'],
+                "cep" => str_replace('-', '', $tomador['cep']),
             ]
         ];
     }
