@@ -471,7 +471,7 @@ class OrdersController extends AppController
                 foreach ($manualPricing[$currentUserId] as $manualEntry) {
                     $parsedManualRow = $this->parseManualRow($itinerary, $manualEntry);
 
-                    if(isset($manualEntry['idItinerary']) && $manualEntry['idItinerary'] != $itinerary['CustomerUserItinerary']['id']) {
+                    if (isset($manualEntry['idItinerary']) && $manualEntry['idItinerary'] != $itinerary['CustomerUserItinerary']['id']) {
                         continue;
                     }
 
@@ -819,30 +819,32 @@ class OrdersController extends AppController
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
-        $orders = $this->Order->find('all', [
-            'fields' => [
-                            'Order.*',
-                            'OrderDiscount.id',
-                            'Customer.nome_primario'
-                        ],
-            'joins' => [
-                [
-                    'table' => 'order_discounts',
-                    'alias' => 'OrderDiscount',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'OrderDiscount.order_parent_id = Order.id',
-                        'OrderDiscount.data_cancel' => '1901-01-01',
+        $orders = $this->Order->find(
+            'all',
+            [
+                'fields' => [
+                    'Order.*',
+                    'OrderDiscount.id',
+                    'Customer.nome_primario'
+                ],
+                'joins' => [
+                    [
+                        'table' => 'order_discounts',
+                        'alias' => 'OrderDiscount',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'OrderDiscount.order_parent_id = Order.id',
+                            'OrderDiscount.data_cancel' => '1901-01-01',
+                        ]
                     ]
-                ]
-            ],
-            'conditions' => [
-                                'Order.id !=' => $id,
-                                'Order.customer_id' => $order['Order']['customer_id']
-                            ],
-            'order' => [
-                            'Order.id' => 'DESC'
-                        ],
+                ],
+                'conditions' => [
+                    'Order.id !=' => $id,
+                    'Order.customer_id' => $order['Order']['customer_id']
+                ],
+                'order' => [
+                    'Order.id' => 'DESC'
+                ],
             ]
         );
 
@@ -1164,7 +1166,7 @@ class OrdersController extends AppController
         }
 
         if (isset($ret['error'])) {
-            $this->Flash->set($ret['error'], ['params' => ['class' => "alert alert-danger"]]);
+            $this->Flash->error($ret['error'], ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
         }
 
@@ -1275,6 +1277,12 @@ class OrdersController extends AppController
                 continue;
             }
 
+            $cpfToValidate = $row[0];
+
+            if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
+                return ['success' => false, 'error' => 'CPF inválido na linha ' . ($line + 1) . '.'];
+            }
+
             if (count($row) > 5) {
                 return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
@@ -1356,14 +1364,14 @@ class OrdersController extends AppController
 
             // desabilita temporariamente a verificação de benefício
             // if ((int)$benefit['Benefit']['is_variable'] === 1) {
-                $unitPrice = $row[1];
-                // convert brl string to float
-                $unitPrice = str_replace(".", "", $unitPrice);
-                $unitPrice = (float)str_replace(",", ".", $unitPrice);
-                $workingDays = $row[2];
-                $benefitId = $row[3];
-                $quantity = $row[4];
-                $unitPriceMapping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
+            $unitPrice = $row[1];
+            // convert brl string to float
+            $unitPrice = str_replace(".", "", $unitPrice);
+            $unitPrice = (float)str_replace(",", ".", $unitPrice);
+            $workingDays = $row[2];
+            $benefitId = $row[3];
+            $quantity = $row[4];
+            $unitPriceMapping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
             // }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
@@ -1959,9 +1967,10 @@ class OrdersController extends AppController
 
         $suppliersAll = $this->OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
-            'fields' => ['Supplier.id',
-                            'round(sum(OrderItem.subtotal),2) as subtotal',
-                            "(SELECT round(sum(b.total),2) as total_saldo
+            'fields' => [
+                'Supplier.id',
+                'round(sum(OrderItem.subtotal),2) as subtotal',
+                "(SELECT round(sum(b.total),2) as total_saldo
                                 FROM order_balances b
                                 INNER JOIN benefits be ON be.id = b.benefit_id
                                 WHERE be.supplier_id = Supplier.id
@@ -1969,7 +1978,7 @@ class OrdersController extends AppController
                                         AND b.order_id = OrderItem.order_id
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                             ) AS total_saldo",
-                        ],
+            ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -2064,7 +2073,7 @@ class OrdersController extends AppController
         }
 
         if (isset($_GET['exportar'])) {
-            $nome = 'movimentacoes_'.date('d_m_Y_H_i_s').'.xlsx';
+            $nome = 'movimentacoes_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->OrderBalance->find('all', [
                 'conditions' => $condition,
@@ -3047,6 +3056,12 @@ class OrdersController extends AppController
     */
     private function parseNewCsv($customerId, $tmpFile)
     {
+        // COLUMNS:
+        // CNPJ CLIENTE;NOME;CPF;RG;DATA NASCIMENTO;NOME DA MÃE;DIAS UTEIS;
+        // CODIGO OPERADORA;CODIGO BENEFICIO;NUMERO CARTAO;VALOR_UNIT;QUANTIDADE;
+        // FAIXA SALARIAL;TIPO CHAVE (CNPJ-CPF-E_MAIL-CELULAR-ALEATORIA);CHAVE PIX;
+        // MATRICULA;CODIGO BANCO;AGENCIA;CONTA;CENTRO DE CUSTO;DEPARTAMENTO;GRUPO ECONOMICO
+
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
         $csv->setDelimiter(';');
@@ -3059,6 +3074,11 @@ class OrdersController extends AppController
 
         $has_valor_unitario_invalido = false;
         $line = 0;
+        $invalidCpfLines = [];
+        $missingMatriculaLines = [];
+        $duplicateMatriculaLines = [];
+        $invalidUnitPriceLines = [];
+
         foreach ($csv->getRecords() as $row) {
             if ($line == 0 || empty($row[0])) {
                 $line++;
@@ -3069,9 +3089,34 @@ class OrdersController extends AppController
                 return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
+            $cpfToValidate = $row[2];
+
+            if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
+                $invalidCpfLines[] = $line + 1;
+            }
+
             $codigoOperadora = $row[7];
             $codigoBeneficio = $row[8];
             $dataNascimento = $row[4];
+            $matricula = $row[15];
+
+            if (empty($matricula)) {
+                $missingMatriculaLines[] = $line + 1;
+            } else {
+                $matriculaExists = $this->CustomerUser->find('first', [
+                    'conditions' => [
+                        'CustomerUser.matricula' => $matricula,
+                        'CustomerUser.customer_id' => $customerId,
+                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                        'NOT' => [
+                            "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => preg_replace('/\D/', '', $row[2])
+                        ]
+                    ]
+                ]);
+                if (!empty($matriculaExists)) {
+                    $duplicateMatriculaLines[] = $line + 1;
+                }
+            }
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
@@ -3090,17 +3135,34 @@ class OrdersController extends AppController
             $unitPrice = $row[10];
             $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
 
-            if (empty($unitPrice) && $is_variable) {
-                $has_valor_unitario_invalido = true;
-                break;
-            }
+            $unitPriceRaw = $unitPrice;
             $unitPrice = str_replace(".", "", $unitPrice);
             $unitPrice = (float)str_replace(",", ".", $unitPrice);
 
-            if ($unitPrice <= 0 && $is_variable) {
-                $has_valor_unitario_invalido = true;
-                break;
+            if (($is_variable && (empty($unitPriceRaw) || $unitPrice <= 0))) {
+                $invalidUnitPriceLines[] = $line + 1;
             }
+
+            $line++;
+        }
+
+        // After the foreach, return a summary if any errors were found
+        $errorSummary = [];
+        if (!empty($invalidCpfLines)) {
+            $errorSummary[] = 'CPF inválido nas linhas: ' . implode(', ', $invalidCpfLines);
+        }
+        if (!empty($missingMatriculaLines)) {
+            $errorSummary[] = 'Matrícula não informada nas linhas: ' . implode(', ', $missingMatriculaLines);
+        }
+        if (!empty($duplicateMatriculaLines)) {
+            $errorSummary[] = 'Matrícula já cadastrada para este cliente nas linhas: ' . implode(', ', $duplicateMatriculaLines);
+        }
+        if (!empty($invalidUnitPriceLines)) {
+            $errorSummary[] = 'Favor verificar os valores unitários do arquivo nas linhas: ' . implode(', ', $invalidUnitPriceLines);
+        }
+
+        if (!empty($errorSummary)) {
+            return ['success' => false, 'error' => implode('<br>', $errorSummary)];
         }
 
         if ($has_valor_unitario_invalido) {
@@ -3134,6 +3196,12 @@ class OrdersController extends AppController
             $tipoChavePix = $row[13];                         // TIPO CHAVE PIX
             $chavePix = isset($row[14]) ? $row[14] : '';      // CHAVE PIX
             $matricula = isset($row[15]) ? $row[15] : '';     // MATRICULA
+            $codigoBanco = isset($row[16]) ? $row[16] : '';   // CODIGO BANCO
+            $agencia = isset($row[17]) ? $row[17] : '';       // AGENCIA
+            $conta = isset($row[18]) ? $row[18] : '';         // CONTA
+            $centroCusto = isset($row[19]) ? $row[19] : '';   // CENTRO DE CUSTO
+            $departamento = isset($row[20]) ? $row[20] : ''; // DEPARTAMENTO
+            $grupoEconomico = isset($row[21]) ? $row[21] : ''; // GRUPO ECONOMICO
 
             // Find the benefit ID using the supplier_id (codigoOperadora) and code (codigoBeneficio)
             $benefit = $this->Benefit->find('first', [
@@ -3149,6 +3217,15 @@ class OrdersController extends AppController
                 $line++;
                 continue; // Skip if no benefit is found
             }
+
+            // Pega o ID baseado nos textos de centro de custo, departamento e grupo econômico da planilha
+            $extra_ids = $this->getExtraIds($customerId, $centroCusto, $departamento, $grupoEconomico);
+
+            // save to
+            // centroCusto = CustomerUser.customer_cost_center_id
+            // departamento = CustomerUser.customer_departments_id
+            // grupoEconomico = EconomicGroup.EconomicGroup (customer_user_id, economic_group_id)
+
 
             $benefitId = $benefit['Benefit']['id'];
             $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
@@ -3176,7 +3253,12 @@ class OrdersController extends AppController
                         'status_id' => 1,
                         'created' => date('Y-m-d H:i:s'),
                         'data_cancel' => '1901-01-01 00:00:00',
-                        'matricula' => $matricula
+                        'matricula' => $matricula,
+                        'customer_cost_center_id' => $extra_ids['cost_center_id'],
+                        'customer_departments_id' => $extra_ids['customer_department_id'],
+                    ],
+                    'EconomicGroup' => [
+                        'EconomicGroup' => $extra_ids['economic_group_id']
                     ]
                 ]);
                 $customerUserId = $this->CustomerUser->id;
@@ -3285,16 +3367,22 @@ class OrdersController extends AppController
                 ]);
 
                 if (empty($existingBankAccount)) {
+                    if (empty($codigoBanco)) {
+                        $codigoBanco = 11;
+                    }
                     $this->CustomerUserBankAccount->create();
                     $this->CustomerUserBankAccount->save([
                         'CustomerUserBankAccount' => [
                             'customer_id' => $customerId,
                             'customer_user_id' => $customerUserId,
                             'account_type_id' => 1,
-                            'bank_code_id' => 11,
+                            'bank_code_id' => $codigoBanco,
                             'pix_type' => $tipoChavePix,
                             'pix_id' => $chavePix,
-                            'data_cancel' => '1901-01-01 00:00:00' // Active status
+                            'data_cancel' => '1901-01-01 00:00:00', // Active status
+                            'branch_number' => $agencia,
+                            'acc_number' => $conta,
+
                         ]
                     ]);
                 }
@@ -3325,7 +3413,7 @@ class OrdersController extends AppController
         $groupOrder = [];
 
         foreach ($ret['data'] as $item) {
-            $keyTp = $item['tipo'].'-'.$item['order_id'];
+            $keyTp = $item['tipo'] . '-' . $item['order_id'];
             $keyOr = $item['order_id'];
 
             if (!isset($groupTpOrder[$keyTp])) {
@@ -3345,7 +3433,7 @@ class OrdersController extends AppController
 
         foreach ($groupTpOrder as $item) {
             if ($item['order_id']) {
-                foreach ($item['order_item_ids'] as $itemId) {                    
+                foreach ($item['order_item_ids'] as $itemId) {
                     $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"), $itemId);
                 }
             }
@@ -3387,7 +3475,7 @@ class OrdersController extends AppController
         }
 
         $file = new File($this->request->data['file']['name']);
-        $dir = new Folder(APP."webroot/files/order_balances_all/", true);
+        $dir = new Folder(APP . "webroot/files/order_balances_all/", true);
 
         $file = $this->Uploader->up($this->request->data['file'], $dir->path);
 
@@ -3404,7 +3492,8 @@ class OrdersController extends AppController
         $this->redirect('/reports/importar_movimentacao');
     }
 
-    private function ensureLeadingZeroes($cpf) {
+    private function ensureLeadingZeroes($cpf)
+    {
         $cpf = preg_replace('/\D/', '', $cpf);
 
 
@@ -3427,7 +3516,7 @@ class OrdersController extends AppController
 
         $rec = iterator_to_array($csv->getRecords());
 
-        usort($rec, function($a, $b) {
+        usort($rec, function ($a, $b) {
             if ($a[7] != 'PEDIDO_CLIENTE') {
                 return strcmp($a[7], $b[7]);
             }
@@ -3531,9 +3620,9 @@ class OrdersController extends AppController
             'limit' => 200,
             'order' => ['Order.id' => 'desc'],
             'fields' => [
-                            'OrderParent.*',
-                            'Customer.nome_primario'
-                        ],
+                'OrderParent.*',
+                'Customer.nome_primario'
+            ],
             'joins' => [
                 [
                     'table' => 'customers',
@@ -3563,5 +3652,101 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Descontos' => '', 'Alterar Descontos' => ''];
 
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'orders'));
+    }
+
+    public function isValidCPF($cpf)
+    {
+        $cpf = preg_replace('/\D/', '', $cpf);
+
+        if (strlen($cpf) != 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+            return false;
+        }
+
+        for ($t = 9; $t < 11; $t++) {
+            $d = 0;
+            for ($c = 0; $c < $t; $c++) {
+                $d += $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+            if ($cpf[$c] != $d) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // find extra ids for CostCenter, CustomerDepartment, EconomicGroup
+    // return array with ids
+    // if not found, create for costCenter and department, not for economicGroup
+    private function getExtraIds($customerId, $centroCusto, $departamento, $grupoEconomico)
+    {
+        $extra_ids = [];
+
+        if (!$this->loadModel('CostCenter')) {
+            $this->loadModel('CostCenter');
+        }
+        if (!$this->loadModel('CustomerDepartment')) {
+            $this->loadModel('CustomerDepartment');
+        }
+        if (!$this->loadModel('EconomicGroup')) {
+            $this->loadModel('EconomicGroup');
+        }
+
+        if ($centroCusto) {
+            $costCenter = $this->CostCenter->find('first', [
+                'conditions' => [
+                    'CostCenter.name' => $centroCusto,
+                    'CostCenter.customer_id' => $customerId,
+                    'CostCenter.data_cancel' => '1901-01-01 00:00:00'
+                ]
+            ]);
+
+            if (empty($costCenter)) {
+                $this->CostCenter->create();
+                $this->CostCenter->save(['name' => $centroCusto, 'customer_id' => $customerId, 'data_cancel' => '1901-01-01 00:00:00']);
+                $extra_ids['cost_center_id'] = $this->CostCenter->id;
+            } else {
+                $extra_ids['cost_center_id'] = $costCenter['CostCenter']['id'];
+            }
+        }
+
+        if ($departamento) {
+            $customerDepartment = $this->CustomerDepartment->find('first', [
+                'conditions' => [
+                    'CustomerDepartment.name' => $departamento,
+                    'CustomerDepartment.customer_id' => $customerId,
+                    'CustomerDepartment.data_cancel' => '1901-01-01 00:00:00'
+                ]
+            ]);
+
+            if (empty($customerDepartment)) {
+                $this->CustomerDepartment->create();
+                $this->CustomerDepartment->save([
+                    'name' => $departamento,
+                    'customer_id' => $customerId,
+                    'data_cancel' => '1901-01-01 00:00:00'
+                ]);
+                $extra_ids['customer_department_id'] = $this->CustomerDepartment->id;
+            } else {
+                $extra_ids['customer_department_id'] = $customerDepartment['CustomerDepartment']['id'];
+            }
+        }
+
+        if ($grupoEconomico) {
+            $economicGroup = $this->EconomicGroup->find('first', [
+                'conditions' => [
+                    "REPLACE(REPLACE(REPLACE(EconomicGroup.document, '.', ''), '-', ''), '/', '')" => preg_replace('/\D/', '', $grupoEconomico),
+                    'EconomicGroup.customer_id' => $customerId,
+                    'EconomicGroup.data_cancel' => '1901-01-01 00:00:00'
+                ]
+            ]);
+
+            $extra_ids['economic_group_id'] = null;
+            if (!empty($economicGroup)) {
+                $extra_ids['economic_group_id'] = $economicGroup['EconomicGroup']['id'];
+            }
+        }
+
+        return $extra_ids;
     }
 }
