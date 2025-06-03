@@ -3100,9 +3100,7 @@ class OrdersController extends AppController
             $dataNascimento = $row[4];
             $matricula = $row[15];
 
-            if (empty($matricula)) {
-                $missingMatriculaLines[] = $line + 1;
-            } else {
+            if (!empty($matricula)) {
                 $matriculaExists = $this->CustomerUser->find('first', [
                     'conditions' => [
                         'CustomerUser.matricula' => $matricula,
