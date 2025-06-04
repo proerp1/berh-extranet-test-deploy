@@ -72,21 +72,24 @@
 
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status Pedido:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="st" id="st">
-                                    <option value="">Selecione</option>
+                                <select class="form-select form-select-solid fw-bolder"
+                                        data-kt-select2="true"
+                                        data-placeholder="Selecione"
+                                        data-allow-clear="true"
+                                        name="st[]"
+                                        id="st"
+                                        multiple>
                                     <?php
+                                    $selectedStatus = isset($_GET["st"]) && is_array($_GET["st"]) ? $_GET["st"] : [];
+
                                     foreach ($statuses as $keySt => $status) {
-                                        $selected = "";
-                                        if (isset($_GET["st"])) {
-                                            if ($keySt == $_GET["st"]) {
-                                                $selected = "selected";
-                                            }
-                                        }
+                                        $selected = in_array($keySt, $selectedStatus) ? "selected" : "";
                                         echo '<option value="' . $keySt . '" ' . $selected . '>' . $status . '</option>';
                                     }
                                     ?>
                                 </select>
                             </div>
+
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
