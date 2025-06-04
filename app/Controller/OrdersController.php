@@ -3355,34 +3355,46 @@ class OrdersController extends AppController
                 ]);
             }
 
-            if ($chavePix != '') {
+            // Check if at least one pair is provided
+            $hasBankPair = !empty($agencia) && !empty($conta);
+            $hasPixPair  = !empty($tipoChavePix) && !empty($chavePix);
+
+            if ($hasBankPair || $hasPixPair) {
+                // Prefer to search by conta if available, otherwise by chavePix
+                $searchConditions = [
+                    'CustomerUserBankAccount.customer_user_id' => $customerUserId,
+                    'CustomerUserBankAccount.data_cancel' => '1901-01-01 00:00:00' // Only active accounts
+                ];
+
+                if ($hasBankPair) {
+                    $searchConditions['CustomerUserBankAccount.acc_number'] = $conta;
+                } elseif ($hasPixPair) {
+                    $searchConditions['CustomerUserBankAccount.pix_id'] = $chavePix;
+                }
+
                 $existingBankAccount = $this->CustomerUserBankAccount->find('first', [
-                    'conditions' => [
-                        'CustomerUserBankAccount.customer_user_id' => $customerUserId,
-                        'CustomerUserBankAccount.pix_id' => $chavePix,
-                        'CustomerUserBankAccount.data_cancel' => '1901-01-01 00:00:00' // Only active accounts
-                    ]
+                    'conditions' => $searchConditions
                 ]);
 
                 if (empty($existingBankAccount)) {
                     if (empty($codigoBanco)) {
                         $codigoBanco = 11;
                     }
-                    $this->CustomerUserBankAccount->create();
-                    $this->CustomerUserBankAccount->save([
-                        'CustomerUserBankAccount' => [
-                            'customer_id' => $customerId,
-                            'customer_user_id' => $customerUserId,
-                            'account_type_id' => 1,
-                            'bank_code_id' => $codigoBanco,
-                            'pix_type' => $tipoChavePix,
-                            'pix_id' => $chavePix,
-                            'data_cancel' => '1901-01-01 00:00:00', // Active status
-                            'branch_number' => $agencia,
-                            'acc_number' => $conta,
 
-                        ]
-                    ]);
+                    $data = [
+                        'customer_id'       => $customerId,
+                        'customer_user_id'  => $customerUserId,
+                        'account_type_id'   => 1,
+                        'bank_code_id'      => $codigoBanco,
+                        'data_cancel'       => '1901-01-01 00:00:00', // Active status
+                        'branch_number'     => $agencia,
+                        'acc_number'        => $conta,
+                        'pix_type'          => $tipoChavePix,
+                        'pix_id'            => $chavePix
+                    ];
+
+                    $this->CustomerUserBankAccount->create();
+                    $this->CustomerUserBankAccount->save(['CustomerUserBankAccount' => $data]);
                 }
             }
 
