@@ -282,18 +282,7 @@ class CustomReportsComponent extends Component
                             'type' => 'INNER',
                             'conditions' => ['CustomerUser.id = OrderItem.customer_user_id'],
                         ],
-                       /* [
-                            'table' => 'customer_departments',
-                            'alias' => 'CustomerDepartment',
-                            'type' => 'LEFT',
-                            'conditions' => ['CustomerDepartment.id = CustomerUser.customer_departments_id'],
-                        ],
-                        [
-                            'table' => 'cost_center',
-                            'alias' => 'CostCenter',
-                            'type' => 'LEFT',
-                            'conditions' => ['CostCenter.id = CustomerUser.customer_departments_id'],
-                        ],*/
+                       
                         [
                             'table' => 'customer_user_itineraries',
                             'alias' => 'CustomerUserItinerary',
