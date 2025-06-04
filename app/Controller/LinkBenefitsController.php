@@ -207,8 +207,28 @@ class LinkBenefitsController extends AppController
 
         $this->LinkBenefitLog->saveMany($log);
 
+        $log = [];
         if (!empty($update)) {
-            $this->CustomerUserItinerary->saveMany($update);
+            foreach ($update as $item) {
+                $saved = $this->CustomerUserItinerary->save($item, ['validate' => true, 'atomic' => false]);
+
+                if (!$saved) {
+                    $matriculaErro = isset($item['CustomerUserItinerary']['matricula']) ? $item['CustomerUserItinerary']['matricula'] : 'N/A';
+
+                    foreach ($this->CustomerUserItinerary->validationErrors as $field => $errors) {
+                        foreach ((array)$errors as $error) {
+                            $log[] = [
+                                'link_benefit_id' => $this->LinkBenefit->id,
+                                'description' => "Campo {$field}: {$error} - Matrícula {$matriculaErro}"
+                            ];
+                        }
+                    }
+                }
+            }
+
+            if (!empty($log)) {
+                $this->LinkBenefitLog->saveMany($log);
+            }
         }
 
         return ['success' => true];
