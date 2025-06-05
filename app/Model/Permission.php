@@ -18,7 +18,7 @@ class Permission extends AppModel {
 	public function is_permitted($user_id, $area, $permission){
 		$result = $this->query("SELECT *
 															FROM users u
-															INNER JOIN groups g ON g.id = u.group_id
+															INNER JOIN `groups` g ON g.id = u.group_id
 															left join permissions p on p.group_id = g.id
 															WHERE u.id = ".$user_id." and p.page_id = ".$area." and p.".$permission." = 1");
 

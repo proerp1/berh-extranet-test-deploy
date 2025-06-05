@@ -1,5 +1,6 @@
 <script type="text/javascript">
     $(document).ready(function() {
+        let 
         $('#confirm_cancel_nfse').on('click', function(e) {
             $('#modal-confirm').modal('show');
         });
@@ -16,6 +17,8 @@
 
 <?php
 	echo $this->element("abas_incomes", ['id' => $id]);
+
+    $nfse_type_title = ['ge' => 'Gestão Eficiente', 'tpp' => 'TPP'];
 ?>
 <div class="card mb-5 mb-xl-8">
 	<div class="card-body">
@@ -25,19 +28,23 @@
                 <?php echo $this->request->data["NfseStatus"]["name"] ?>
             </span>
         </div>
-        <div class="col">
-            <h4>Prévia da NFS-e</h4>
-            <?php echo nl2br($preview_data['obs']) ?>
-        </div>
-        <hr>
-        <div class="col">
-            <?php if ($this->request->data['Income']['nfse_status_id'] == 105){ ?>
-                <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
-            <?php } else if ($this->request->data['Income']['nfse_status_id'] == 107){ ?>
-                <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
-            <?php } ?>
-            <?php if ($pdf_link){ ?>
-                <a href="<?php echo $pdf_link ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
+        <div class="row">
+            <?php for ($i = 0; $i < count($nfses); $i++) { ?>
+                <?php $nfse = $nfses[$i] ?>
+                <div class="col-6">
+                    <h4>Prévia da NFS-e <?php echo $nfse_type_title[$nfse['tipo']] ?></h4>
+                    <?php echo nl2br($nfse['preview']) ?>
+                    <div class="mt-5">
+                        <?php if (!isset($nfse['status_id'])){ ?>
+                            <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
+                        <?php } else if ($nfse['status_id'] == 107){ ?>
+                            <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
+                        <?php } ?>
+                        <?php if ($nfse['pdf_link']){ ?>
+                            <a href="<?php echo $nfse['pdf_link'] ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
+                        <?php } ?>
+                    </div>
+                </div>
             <?php } ?>
         </div>
     </div>
