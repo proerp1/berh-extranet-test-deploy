@@ -956,6 +956,12 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Motivo Processamento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido Operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Compra operadora"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número do cartão"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matrícula operadora"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
+
 
 
         
@@ -984,6 +990,12 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["motivo_processamento"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["pedido_operadora"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["cpf"] ); $col++;
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+
 
         }
     }
