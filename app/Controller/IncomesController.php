@@ -876,7 +876,6 @@ class IncomesController extends AppController
     }
 
     private function get_nfse_pdf_link($nfse) {
-        return 'https://google.com';
         if (!isset($nfse['chave'])) return null;
 
         $nfse_sdk = $this->connect_nfse_sdk();
@@ -887,6 +886,10 @@ class IncomesController extends AppController
 
         $response = $nfse_sdk->consulta($payload);
 
+        if (!$response->sucesso) {
+            return null;
+        }
+
         return $response->link_pdf;
     }
 
@@ -896,6 +899,7 @@ class IncomesController extends AppController
         $this->Paginator->settings = $this->paginate;
 
         $this->Income->id = $id;
+        $this->Income->recursive = 2;
         $this->request->data = $this->Income->read();
 
         $income_nfses = collect($this->request->data['IncomeNfse']);
@@ -905,7 +909,13 @@ class IncomesController extends AppController
         $nfse_types->each(function ($type) use ($income_nfses, &$nfses) {
             $nfse = $income_nfses->first(function ($nfse) use ($type, &$nfses) {
                 return $nfse['tipo'] === $type;
-            }) ?: ['tipo' => $type];
+            }) ?: [
+                'tipo' => $type,
+                'Status' => [
+                    'label' => 'badge-secondary',
+                    'name' => 'Não enviado'
+                ]
+            ];
 
             $nfse['pdf_link'] = $this->get_nfse_pdf_link($nfse);
             $data = $this->get_nfse_type_data($this->request->data, $type);
@@ -918,11 +928,11 @@ class IncomesController extends AppController
         $this->set(compact( 'id', 'action', 'breadcrumb', 'nfses'));
     }
 
-    public function cria_nfse($id, $type) {
+    public function cria_nfse($income_id, $type) {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $this->Income->recursive = 2;
-        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $id]]);
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
 
         try {
             $nfse_sdk = $this->connect_nfse_sdk();
@@ -950,74 +960,75 @@ class IncomesController extends AppController
 
             if (!$response->sucesso) {
                 $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
-                $this->redirect($this->referer());
+                $this->redirect(['action'=> 'nfse', $income_id]);
             }
 
             $this->IncomeNfse->save([
                 'tipo' => $type,
-                'chave' => bin2hex(random_bytes(10)),
+                'chave' => $response->chave,
                 'status_id' => 106,
-                'income_id' => $income_id
+                'income_id' => $income['Income']['id']
             ]);
 
             $this->Flash->set(__('A nota fiscal foi emitida com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível emitir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
         }
-        $this->redirect(['action'=> 'nfse', $id]);
+        $this->redirect(['action'=> 'nfse', $income_id]);
     }
 
-    public function cancela_nfse($id) {
+    public function cancela_nfse($nfse_id) {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        $income_nfses = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $id]]);
-        for ($i=0; $i < count($income_nfses); $i++) {
-            $income_nfse = $income_nfses[$i];
-            if ($income_nfses['IncomeNfse']['status_id'] != 107) {
-                $this->Flash->set(__('Só é possível cancelar uma nota fiscal emitida.'), ['params' => ['class' => "alert alert-danger"]]);
-            }
+        $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
+        $income_id = $income_nfse['IncomeNfse']['income_id'];
 
-            try {
-                $nfse = $this->connect_nfse_sdk();
-
-                $payload = [
-                    "chave" => $income_nfse['IncomeNfse']['chave']
-                ];
-
-                $nfse->cancela($payload);
-
-                $this->IncomeNfse->id = $id;
-                $this->IncomeNfse->save([
-                    'nfse_status_id' => 108
-                ]);
-
-                $this->Flash->set(__('A nota fiscal foi cancelada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
-            } catch (\Exception $e) {
-                $this->Flash->set(__('Não foi possível cancelar a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
-            }
-        }
-
-        $this->redirect(['action'=> 'nfse', $id]);
-    }
-
-    public function imprime_danfse($id) {
-        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
-
-        $income = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $id]]);
-
-        if ($income['IncomeNfse']['nfse_status_id'] != 107 && $income['IncomeNfse']['nfse_status_id'] != 108) {
-            $this->Flash->set(__('Só é possível imprimir uma nota fiscal emitida ou cancelada.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect(['action'=> 'nfse', $id]);
+        if ($income_nfse['IncomeNfse']['status_id'] != 107) {
+            $this->Flash->set(__('Só é possível cancelar uma nota fiscal emitida.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'nfse', $income_id]);
         }
 
         try {
-            $nfse = $this->connect_nfse_sdk();
+            $nfse_sdk = $this->connect_nfse_sdk();
 
             $payload = [
-                "chave" => $income['IncomeNfse']['nfse_chave'],
+                "chave" => $income_nfse['IncomeNfse']['chave']
             ];
 
-            $response = $nfse->consulta($payload);
+            $nfse_sdk->cancela($payload);
+
+            $this->IncomeNfse->id = $nfse_id;
+            $this->IncomeNfse->save([
+                'status_id' => 108
+            ]);
+
+            $this->Flash->set(__('A nota fiscal foi cancelada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        } catch (\Exception $e) {
+            $this->Flash->set(__('Não foi possível cancelar a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+
+        $this->redirect(['action'=> 'nfse', $income_id]);
+    }
+
+    public function imprime_danfse($nfse_id) {
+        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
+        $income_id = $income_nfse['IncomeNfse']['income_id'];
+
+        if ($income_nfse['IncomeNfse']['status_id'] != 107 && $income_nfse['IncomeNfse']['status_id'] != 108) {
+            $this->Flash->set(__('Só é possível imprimir uma nota fiscal emitida ou cancelada.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'nfse', $income_id]);
+        }
+
+        try {
+            $nfse_sdk = $this->connect_nfse_sdk();
+
+            $payload = [
+                "chave" => $income_nfse['IncomeNfse']['chave'],
+            ];
+
+            $response = $nfse_sdk->consulta($payload);
 
             if (!$response->sucesso) {
                 throw new \Exception('PDF não encontrado.');
@@ -1028,7 +1039,7 @@ class IncomesController extends AppController
             $this->printPdf($pdf);
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível imprimir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect(['action'=> 'nfse', $id]);
+            $this->redirect(['action'=> 'nfse', $income_id]);
         }
     }
 
@@ -1056,17 +1067,17 @@ class IncomesController extends AppController
             $success = $data->sucesso;
             $chave_nfse = $data->chave;
 
-            $income = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.nfse_chave' => $chave_nfse]]);
+            $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.chave' => $chave_nfse]]);
 
-            if (!$income) {
+            if (!$income_nfse) {
                 return 'Chave NFS-e não encontrada.';
-            } else if ($income['IncomeNfse']['nfse_status_id'] != 106) {
+            } else if ($income_nfse['IncomeNfse']['status_id'] != 106) {
                 return 'Só é possível atualizar o status de notas fiscais "Em Processamento"';
             }
 
-            $this->IncomeNfse->id = $income['IncomeNfse']['id'];
+            $this->IncomeNfse->id = $income_nfse['IncomeNfse']['id'];
             $this->IncomeNfse->save([
-                'nfse_status_id' => $success ? 107 : 108
+                'status_id' => $success ? 107 : 108
             ]);
 
             return 'Status atualizado com sucesso.';

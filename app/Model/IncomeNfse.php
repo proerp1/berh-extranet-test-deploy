@@ -7,8 +7,8 @@ class IncomeNfse extends AppModel
     public $belongsTo = [
         'Status' => [
             'className' => 'Status',
-            'foreignKey' => 'nfse_status_id',
-            'conditions' => ['NfseStatus.categoria' => 22]
+            'foreignKey' => 'status_id',
+            'conditions' => ['Status.categoria' => 22]
         ],
         'Income',
     ];
