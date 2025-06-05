@@ -3060,7 +3060,7 @@ class OrdersController extends AppController
         // CNPJ CLIENTE;NOME;CPF;RG;DATA NASCIMENTO;NOME DA MÃE;DIAS UTEIS;
         // CODIGO OPERADORA;CODIGO BENEFICIO;NUMERO CARTAO;VALOR_UNIT;QUANTIDADE;
         // FAIXA SALARIAL;TIPO CHAVE (CNPJ-CPF-E_MAIL-CELULAR-ALEATORIA);CHAVE PIX;
-        // MATRICULA;CODIGO BANCO;AGENCIA;CONTA;CENTRO DE CUSTO;DEPARTAMENTO;GRUPO ECONOMICO
+        // MATRICULA;CODIGO BANCO;AGENCIA;CONTA;DIGITO DA CONTA;CENTRO DE CUSTO;DEPARTAMENTO;GRUPO ECONOMICO
 
         $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
         $csv = Reader::createFromString($file);
@@ -3197,9 +3197,10 @@ class OrdersController extends AppController
             $codigoBanco = isset($row[16]) ? $row[16] : '';   // CODIGO BANCO
             $agencia = isset($row[17]) ? $row[17] : '';       // AGENCIA
             $conta = isset($row[18]) ? $row[18] : '';         // CONTA
-            $centroCusto = isset($row[19]) ? $row[19] : '';   // CENTRO DE CUSTO
-            $departamento = isset($row[20]) ? $row[20] : ''; // DEPARTAMENTO
-            $grupoEconomico = isset($row[21]) ? $row[21] : ''; // GRUPO ECONOMICO
+            $digitoConta = isset($row[19]) ? $row[19] : '';   // DIGITO DA CONTA
+            $centroCusto = isset($row[20]) ? $row[20] : '';   // CENTRO DE CUSTO
+            $departamento = isset($row[21]) ? $row[21] : ''; // DEPARTAMENTO
+            $grupoEconomico = isset($row[22]) ? $row[22] : ''; // GRUPO ECONOMICO
 
             // Find the benefit ID using the supplier_id (codigoOperadora) and code (codigoBeneficio)
             $benefit = $this->Benefit->find('first', [
@@ -3389,6 +3390,7 @@ class OrdersController extends AppController
                         'data_cancel'       => '1901-01-01 00:00:00', // Active status
                         'branch_number'     => $agencia,
                         'acc_number'        => $conta,
+                        'acc_digit'         => $digitoConta,
                         'pix_type'          => $tipoChavePix,
                         'pix_id'            => $chavePix
                     ];
