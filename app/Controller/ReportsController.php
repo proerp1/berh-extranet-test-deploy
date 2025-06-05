@@ -1064,6 +1064,7 @@ class ReportsController extends AppController
                 'fields' => [
                     'OrderItem.*',
                     'Order.id',
+                    'Order.pedido_complementar',
                     'Order.working_days',
                     'Order.created',
                     'Status.label',
@@ -1072,8 +1073,11 @@ class ReportsController extends AppController
                     'Customer.nome_primario',
                     'Supplier.nome_fantasia',
                     'CustomerUser.name',
+                    'CustomerUser.cpf',
                     'Benefit.name',
                     'CustomerUserItinerary.quantity',
+                    'CustomerUserItinerary.*',
+
                 ],
                 'joins' => [
                     [
