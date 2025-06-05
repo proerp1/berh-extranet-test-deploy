@@ -320,7 +320,7 @@ $(document).ready(function() {
     });
 
     let today = new Date();
-    let minDate = addBusinessDays(today, 4);
+    let minDate = addBusinessDays(today, 5);
 
     $(".credit_datepicker").datepicker({
         format: 'dd/mm/yyyy',
