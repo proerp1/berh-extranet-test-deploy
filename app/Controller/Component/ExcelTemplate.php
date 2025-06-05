@@ -991,10 +991,12 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["pedido_operadora"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["cpf"] ); $col++;
+            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUserItinerary"][""] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUserItinerary"]["card_number"] ); $col++;
-            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
-            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
-            //$objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_entrega"] ); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUserItinerary"]["data_entrega"] ); $col++;
+            $valor = $dado["Order"]["pedido_complementar"] == 1 ? 'Sim' : 'Não';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $valor);
+            $col++;
 
 
         }
