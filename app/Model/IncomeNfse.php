@@ -1,97 +1,23 @@
 <?php
-class Income extends AppModel
+class IncomeNfse extends AppModel
 {
-    public $name = 'Income';
+    public $name = 'IncomeNfse';
+    public $useTable = 'income_nfse';
 
     public $belongsTo = [
         'Status' => [
             'className' => 'Status',
             'foreignKey' => 'status_id',
-            'conditions' => ['Status.categoria' => 5]
+            'conditions' => ['Status.categoria' => 22]
         ],
-        'NfseStatus' => [
-            'className' => 'Status',
-            'foreignKey' => 'nfse_status_id',
-            'conditions' => ['NfseStatus.categoria' => 22]
-        ],
-        'UsuarioBaixa' => [
-            'className' => 'User',
-            'foreignKey' => 'usuario_id_baixa',
-        ],
-        'UsuarioCancelamento' => [
-            'className' => 'User',
-            'foreignKey' => 'usuario_id_cancelamento',
-        ],
-        'BankAccount',
-        'Revenue',
-        'CostCenter',
-        'Customer' => [
-            'order' => ['Customer.nome_secundario' => 'asc']
-        ],
-        'Order',
-        'UserCreated' => [
-            'className' => 'User',
-            'foreignKey' => 'user_creator_id',
-        ],
-    ];
-
-    public $hasOne = [
-        'CnabItem' => [
-            'order' => ['CnabItem.id' => 'desc']
-        ]
-    ];
-
-    public $hasMany = [
-        'IncomeNfse'
+        'Income',
     ];
 
     public function beforeFind($queryData)
     {
-        $queryData['conditions'][] = ['Income.data_cancel' => '1901-01-01 00:00:00'];
+        $queryData['conditions'][] = ['IncomeNfse.data_cancel' => '1901-01-01 00:00:00'];
     
         return $queryData;
-    }
-
-    public function beforeSave($options = [])
-    {
-        if (!empty($this->data[$this->alias]['vencimento'])) {
-            $this->data[$this->alias]['vencimento'] = $this->dateFormatBeforeSave($this->data[$this->alias]['vencimento']);
-        }
- 
-        if (!empty($this->data[$this->alias]['data_competencia'])) {
-            $this->data[$this->alias]['data_competencia'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_competencia']);
-        }
-
-        if (!empty($this->data[$this->alias]['valor_bruto'])) {
-            $this->data[$this->alias]['valor_bruto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_bruto']);
-        }
-
-        if (!empty($this->data[$this->alias]['valor_multa'])) {
-            $this->data[$this->alias]['valor_multa'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_multa']);
-        }
-
-        if (!empty($this->data[$this->alias]['valor_desconto'])) {
-            $this->data[$this->alias]['valor_desconto'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_desconto']);
-        }
-
-        if (!empty($this->data[$this->alias]['valor_total'])) {
-            $this->data[$this->alias]['valor_total'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_total']);
-        }
-
-        if (!empty($this->data[$this->alias]['nosso_numero'])) {
-            $this->data[$this->alias]['nosso_numero'] = str_replace(['-','/','.'], '', $this->data[$this->alias]['nosso_numero']);
-        }
-    
-        return true;
-    }
-
-    public function afterSave($created, $options = [])
-    {
-        if ($created) {
-            $nosso_numero = $this->gerarNossoNumero($this->data[$this->alias]['id']);
-      
-            $this->query("UPDATE incomes i set i.nosso_numero = '$nosso_numero', i.doc_num = '$nosso_numero' WHERE i.id = ".$this->data[$this->alias]['id']);
-        }
     }
 
     public function priceFormatBeforeSave($price)
@@ -113,57 +39,17 @@ class Income extends AppModel
         if ($_date != null && preg_match($format, $_date, $partes)) {
             return $partes[3].'-'.$partes[2].'-'.$partes[1];
         }
-    
+
         return false;
     }
 
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {
-            if (isset($val[$this->alias]['vencimento'])) {
-                $results[$key][$this->alias]['vencimento_nao_formatado'] = $val[$this->alias]['vencimento'];
-                $results[$key][$this->alias]['vencimento'] = date("d/m/Y", strtotime($val[$this->alias]['vencimento']));
-            }
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
                 $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
             }
-
-            if (isset($val[$this->alias]['data_competencia'])) {
-                $results[$key][$this->alias]['data_competencia_nao_formatado'] = $val[$this->alias]['data_competencia'];
-                $results[$key][$this->alias]['data_competencia'] = date("d/m/Y", strtotime($val[$this->alias]['data_competencia']));
-            }
-            if (isset($val[$this->alias]['data_pagamento'])) {
-                $results[$key][$this->alias]['data_pagamento_nao_formatado'] = $val[$this->alias]['data_pagamento'];
-                $results[$key][$this->alias]['data_pagamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_pagamento']));
-            }
-            if (isset($val[$this->alias]['data_baixa'])) {
-                $results[$key][$this->alias]['data_baixa_nao_formatado'] = $val[$this->alias]['data_baixa'];
-                $results[$key][$this->alias]['data_baixa'] = date("d/m/Y", strtotime($val[$this->alias]['data_baixa']));
-            }
-            if (isset($val[$this->alias]['valor_bruto'])) {
-                $results[$key][$this->alias]['valor_bruto_nao_formatado'] = $results[$key][$this->alias]['valor_bruto'];
-                $results[$key][$this->alias]['valor_bruto'] = number_format($results[$key][$this->alias]['valor_bruto'], 2, ',', '.');
-            }
-
-            if (isset($val[$this->alias]['valor_multa'])) {
-                $results[$key][$this->alias]['valor_multa_nao_formatado'] = $results[$key][$this->alias]['valor_multa'];
-                $results[$key][$this->alias]['valor_multa'] = number_format($results[$key][$this->alias]['valor_multa'], 2, ',', '.');
-            }
-
-            if (isset($val[$this->alias]['valor_desconto'])) {
-                $results[$key][$this->alias]['valor_desconto_nao_formatado'] = $results[$key][$this->alias]['valor_desconto'];
-                $results[$key][$this->alias]['valor_desconto'] = number_format($results[$key][$this->alias]['valor_desconto'], 2, ',', '.');
-            }
-            if (isset($val[$this->alias]['valor_total'])) {
-                $results[$key][$this->alias]['valor_total_nao_formatado'] = $results[$key][$this->alias]['valor_total'];
-                $results[$key][$this->alias]['valor_total'] = number_format($results[$key][$this->alias]['valor_total'], 2, ',', '.');
-            }
-            if (isset($val[$this->alias]['valor_pago'])) {
-                $results[$key][$this->alias]['valor_pago_nao_formatado'] = $results[$key][$this->alias]['valor_pago'];
-                $results[$key][$this->alias]['valor_pago'] = number_format($results[$key][$this->alias]['valor_pago'], 2, ',', '.');
-            }
-           
         }
 
         return $results;
@@ -188,61 +74,19 @@ class Income extends AppModel
                 'message' => 'Campo obrigatório'
             ]
         ],
-        'valor_total' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'bank_account_id' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'status_id' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'cost_center_id' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'vencimento' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'data_competencia' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ],
-        'expense_id' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Campo obrigatório'
-            ]
-        ]
     ];
 
     public function getDadosBoleto($id, $type = 'first')
     {
         return $this->find($type, [
             'conditions' => ['Income.id in ('.$id.')'],
-            'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'], 
+            'order' => ['Income.vencimento' => 'asc', 'Customer.nome_primario' => 'asc'],
             "fields" => [
-                "Income.*", 
-                'Customer.*', 
-                'BankAccount.*', 
-                'Resale.id', 
-                'Resale.razao_social', 
+                "Income.*",
+                'Customer.*',
+                'BankAccount.*',
+                'Resale.id',
+                'Resale.razao_social',
                 'Resale.cnpj',
                 'Resale.cep',
                 'Resale.endereco',
