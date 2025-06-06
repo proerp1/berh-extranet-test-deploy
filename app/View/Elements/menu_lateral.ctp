@@ -542,14 +542,21 @@
                             </a>
                         </div>
                         
-                        
-                        
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(in_array($this->request->params['controller'], ['users', 'user_resales']) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'users', 'action' => 'index']) ?>">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Usuários</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.((in_array($this->request->params['controller'], ['banco_padrao'])) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'banco_padrao', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Banco padrão</span>
                             </a>
                         </div>
 
