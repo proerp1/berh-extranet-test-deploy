@@ -44,10 +44,18 @@ class AppController extends Controller {
 
 	public $uses = ['Atendimento', 'CustomerFile'];
 
-	public function beforeFilter() {
-		$pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
-		$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100, 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales')]]);
+	public function beforeFilter() 
+	{
+		if ($this->Auth->user('id')) {
+			$pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
+			
+			if (!$this->Permission->check(80, "leitura")) {
+				$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100, 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales'), 'Customer.seller_id' => CakeSession::read('Auth.User.id')]]);
+			} else {
+				$pendente_arquivo = $this->CustomerFile->find('count', ['conditions' => ['CustomerFile.status_id' => 100, 'Customer.cod_franquia' => CakeSession::read('Auth.User.resales')]]);
+			}
 
-		$this->set(compact('pendentes', 'pendente_arquivo'));
+			$this->set(compact('pendentes', 'pendente_arquivo'));
+		}
 	}
 }

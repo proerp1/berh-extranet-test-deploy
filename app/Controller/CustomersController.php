@@ -50,7 +50,11 @@ class CustomersController extends AppController
         $this->Permission->check(3, "leitura") ? "" : $this->redirect("/not_allowed");
 
         $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
-
+        
+        if (!$this->Permission->check(80, "leitura")) {
+            $condition['and'] = array_merge($condition['and'], ['Customer.seller_id' => CakeSession::read('Auth.User.id')]);
+        }
+        
         if (!empty($_GET['c'])) {
             $condition['and'] = array_merge($condition['and'], ["EXISTS (SELECT 1 FROM customer_users u WHERE u.customer_id = Customer.id AND u.data_cancel = '1901-01-01 00:00:00' AND (u.name LIKE '%".$_GET['c']."%' OR u.cpf LIKE '%".$_GET['c']."%' ))"]);
         }
@@ -937,7 +941,9 @@ class CustomersController extends AppController
     public function edit_document($id, $document_id = null)
     {
         $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
+
         $this->Document->id = $document_id;
+
         if ($this->request->is(['post', 'put'])) {
             $this->Document->validates();
             if ($this->request->data['Document']['file']['name'] == '') {
@@ -955,6 +961,8 @@ class CustomersController extends AppController
         $temp_errors = $this->Document->validationErrors;
         $this->request->data = $this->Document->read();
         $this->Document->validationErrors = $temp_errors;
+
+        $cliente = $this->Customer->findById($id);
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 1]]);
         $breadcrumb = [
@@ -1680,6 +1688,10 @@ class CustomersController extends AppController
         ];
 
         $condition = ['and' => ['Customer.cod_franquia' => CakeSession::read('Auth.User.resales')], 'or' => []];
+        
+        if (!$this->Permission->check(80, "leitura")) {
+            $condition['and'] = array_merge($condition['and'], ['Customer.seller_id' => CakeSession::read('Auth.User.id')]);
+        }
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerFile.file LIKE' => "%" . $_GET['q'] . "%"]);
