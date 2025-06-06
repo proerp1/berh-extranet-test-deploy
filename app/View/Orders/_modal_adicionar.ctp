@@ -13,7 +13,7 @@
                     <div class="row mb-7">
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
-                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => true, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
+                            <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
                     </div>
 
@@ -59,10 +59,21 @@
 
                     <div class="row mb-7 js-pedido_parc">
                         <div class="col">
+                            <label class="fw-semibold fs-6 mb-2 required">Período</label>
+                            <div class="input-group">
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input class="form-control" id="period_from" role="presentation" autocomplete="off" name="period_from">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="period_to" role="presentation" autocomplete="off" name="period_to">
+                                </div>
+                            </div>
+                            <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
+                        </div>
+                        <div class="col">
                             <label class="fw-semibold fs-6 mb-2">Agendamento do crédito previsto</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 credit_datepicker", 'div' => false, 'label' => false]);  ?>
+                                <?php echo $this->Form->input('credit_release_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 credit_datepicker", 'div' => false, 'label' => false, 'readonly']);  ?>
                             </div>
                             <p id="message_classification" style="color: red; margin: 0; display:none">Data do período inicial e agendamento deverá ser maior que hoje e maior que 5 dias úteis</p>
                         </div>
@@ -78,29 +89,18 @@
                             }
 
                             $venc = date('d/m/Y', $vencTimestamp);
+                            $venc = date('d/m/Y');
                         ?>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Data de vencimento</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false]);  ?>
+                                <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => $venc]);  ?>
                             </div>
-                            <p id="message_classification_due" style="color: red; margin: 0; display:none"></p>
-                        </div>
-                        <div class="col">
-                            <label class="fw-semibold fs-6 mb-2 required">Período</label>
-                            <div class="input-group">
-                                <div class="input-daterange input-group" id="datepicker">
-                                    <input class="form-control" id="period_from" role="presentation" autocomplete="off" name="period_from">
-                                    <span class="input-group-text" style="padding: 5px;"> até </span>
-                                    <input class="form-control" id="period_to" role="presentation" autocomplete="off" name="period_to">
-                                </div>
-                            </div>
-                            <p id="message_classification_period" style="color: red; margin: 0; display:none"></p>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>
-                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", "required" => true, 'div' => false, 'label' => false]); ?>
+                            <?php echo $this->Form->input('working_days', ["class" => "form-control mb-3 mb-lg-0 working_days", 'required' => true, 'div' => false, 'label' => false]); ?>
                             <p id="message_wd" style="color: red; margin: 0; display:none"></p>
                         </div>
                     </div>
@@ -153,7 +153,7 @@
                             <div class="row opcao_tipo_beneficio" style="display:none">
                                 <div class="col mt-5">
                                     <select name="benefit_type" id="tipo_beneficio" class="form-control">
-                                        <?php 
+                                        <?php
                                             foreach ($benefit_types as $benefit_type_id => $benefit_type) {
                                                 echo '<option value="' . $benefit_type_id . '">' . $benefit_type . '</option>';
                                             }
@@ -191,7 +191,7 @@
 
                         <div class="col d-none">
                             <label class="fw-semibold fs-6 mb-2 required">Pedido</label>
-                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
+                            <?php echo $this->Form->input('clone_order_id', ["id" => "clone_order_select", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true"]); ?>
                         </div>
                     </div>
 

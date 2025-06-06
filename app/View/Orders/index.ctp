@@ -254,6 +254,6 @@ function verConfirm_Pedido(locate, str){
 }
 </script>
 
-<?php echo $this->Html->script('order_validate'); ?>
+<?php echo $this->Html->script('orders'); ?>
 
 
