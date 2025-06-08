@@ -31,6 +31,7 @@ class OrdersController extends AppController
         'Log',
         'Supplier',
         'CustomerUserAddress',
+        'BancoPadrao',
         'CustomerUserBankAccount',
         'OrderBalanceFile',
         'BankAccount',
@@ -902,10 +903,12 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
 
+        $bancoEmissao = $this->BancoPadrao->find('first');
+
         $account = $this->BankAccount->find('first', [
             'conditions' => [
                 'BankAccount.status_id' => 1,
-                'BankAccount.bank_id' => 9, // 1 para itau e 9 para btg
+                'BankAccount.bank_id' => $bancoEmissao['BancoPadrao']['bank_id'], // 1 para itau e 9 para btg
             ]
         ]);
 

@@ -1,43 +1,54 @@
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#confirm_cancel_nfse').on('click', function(e) {
+        let nfseId = null
+        $('.confirm_cancel_nfse').on('click', function(e) {
+            nfseId = e.target.dataset.id
             $('#modal-confirm').modal('show');
         });
 
         $('#exit').on('click', function(e) {
+            nfseId = null
             $('#modal-confirm').modal('hide');
         });
 
         $('#cancel_nfse').on('click', function(e) {
-            window.location = "<?php echo $this->base.'/incomes/cancela_nfse/'.$id ?>";
+            nfseId = null
+            window.location = "<?php echo $this->base.'/incomes/cancela_nfse/' ?>"+nfseId;
         });
     })
 </script>
 
 <?php
 	echo $this->element("abas_incomes", ['id' => $id]);
+
+    $nfse_type_title = ['ge' => 'Gestão Eficiente', 'tpp' => 'TPP'];
 ?>
 <div class="card mb-5 mb-xl-8">
 	<div class="card-body">
-        <div class="mb-7 col">
-            <label class="fw-semibold fs-6 mb-2">Status da NFS-e</label><br>
-            <span class='badge <?php echo $this->request->data["NfseStatus"]["label"] ?>'>
-                <?php echo $this->request->data["NfseStatus"]["name"] ?>
-            </span>
-        </div>
-        <div class="col">
-            <h4>Prévia da NFS-e</h4>
-            <?php echo nl2br($preview_data['obs']) ?>
-        </div>
-        <hr>
-        <div class="col">
-            <?php if ($this->request->data['Income']['nfse_status_id'] == 105){ ?>
-                <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
-            <?php } else if ($this->request->data['Income']['nfse_status_id'] == 107){ ?>
-                <button id="confirm_cancel_nfse" type="submit" class="btn btn-danger">Cancelar</button>
-            <?php } ?>
-            <?php if ($pdf_link){ ?>
-                <a href="<?php echo $pdf_link ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
+        <div class="row">
+            <?php for ($i = 0; $i < count($nfses); $i++) { ?>
+                <?php $nfse = $nfses[$i] ?>
+                <div class="col-6">
+                    <h2><?php echo $nfse_type_title[$nfse['tipo']] ?></h2>
+                    <div>
+                        <label class="fw-bold fs-6 mb-2 d-block">Status da NFS-e</label>
+                        <span class='badge <?php echo $nfse["Status"]["label"] ?>'>
+                            <?php echo $nfse["Status"]["name"] ?>
+                        </span>
+                    </div>
+                    <div class="mt-5">
+                        <label class="fw-bold fs-6 mb-2 d-block">Prévia da NFS-e</label>
+                        <p><?php echo nl2br($nfse['preview']) ?></p>
+                        <?php if (!isset($nfse['status_id'])){ ?>
+                            <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id.'/'.$nfse['tipo'] ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
+                        <?php } else if ($nfse['status_id'] == 107){ ?>
+                            <button data-id="<?php echo $nfse['id'] ?>" type="submit" class="btn btn-danger confirm_cancel_nfse">Cancelar</button>
+                        <?php } ?>
+                        <?php if (isset($nfse['pdf_link'])){ ?>
+                            <a href="<?php echo $nfse['pdf_link'] ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
+                        <?php } ?>
+                    </div>
+                </div>
             <?php } ?>
         </div>
     </div>

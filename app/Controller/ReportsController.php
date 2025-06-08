@@ -1056,6 +1056,11 @@ class ReportsController extends AppController
 
             ]);
         }
+                if (isset($_GET['stp']) and $_GET['stp'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
+        }
 
         if (isset($_GET['excel'])) {
             $nome = 'relatorio_compras_' . date('d_m_Y_H_i_s') . '.xlsx';
