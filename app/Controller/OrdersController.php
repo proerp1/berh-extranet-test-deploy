@@ -314,6 +314,8 @@ class OrdersController extends AppController
                     'CustomerUser.id is not null',
                     'CustomerUser.status_id' => 1,
                     'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+                    'Benefit.status_id' => 1,
+                    'Supplier.status_id' => 1,
                 ];
 
                 if ($benefit_type != '') {
@@ -322,6 +324,16 @@ class OrdersController extends AppController
 
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
                     'conditions' => $condNotPartial,
+                    'joins' => [
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ]
                 ]);
 
                 if (empty($customerItineraries)) {
@@ -1104,7 +1116,12 @@ class OrdersController extends AppController
         $workingDays = $this->request->data['working_days'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUserId, 'CustomerUserItinerary.status_id' => 1];
+        $cond = [
+            'CustomerUserItinerary.customer_user_id' => $customerUserId, 
+            'CustomerUserItinerary.status_id' => 1,
+            'Benefit.status_id' => 1,
+            'Supplier.status_id' => 1,
+        ];
 
         $proposal = $this->Proposal->find('first', [
             'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
@@ -1131,6 +1148,16 @@ class OrdersController extends AppController
 
         $customerItineraries = $this->CustomerUserItinerary->find('all', [
             'conditions' => $cond,
+            'joins' => [
+            [
+                'table' => 'suppliers',
+                'alias' => 'Supplier',
+                'type' => 'INNER',
+                'conditions' => [
+                'Supplier.id = Benefit.supplier_id'
+                ]
+            ]
+            ]
         ]);
 
         $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
@@ -1174,7 +1201,12 @@ class OrdersController extends AppController
         $manualPricing = $ret['unitPriceMapping'];
 
         $order = $this->Order->findById($orderId);
-        $cond = ['CustomerUserItinerary.customer_user_id' => $customerUsersIds, 'CustomerUserItinerary.status_id' => 1];
+        $cond = [
+            'CustomerUserItinerary.customer_user_id' => $customerUsersIds, 
+            'CustomerUserItinerary.status_id' => 1,
+            'Benefit.status_id' => 1,
+            'Supplier.status_id' => 1,
+        ];
 
         if ($order['Order']['benefit_type'] != 0) {
             $benefit_type = $order['Order']['benefit_type'];
@@ -1184,6 +1216,16 @@ class OrdersController extends AppController
 
         $customerItineraries = $this->CustomerUserItinerary->find('all', [
             'conditions' => $cond,
+            'joins' => [
+            [
+                'table' => 'suppliers',
+                'alias' => 'Supplier',
+                'type' => 'INNER',
+                'conditions' => [
+                'Supplier.id = Benefit.supplier_id'
+                ]
+            ]
+            ]
         ]);
 
         $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type'], $proposal, $manualPricing);
@@ -1579,7 +1621,21 @@ class OrdersController extends AppController
             $order = $this->Order->findById($orderId);
 
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
-                'conditions' => ['CustomerUserItinerary.id' => $idLastInserted],
+                'conditions' => [
+                    'CustomerUserItinerary.id' => $idLastInserted,
+                    'Benefit.status_id' => 1,
+                    'Supplier.status_id' => 1,
+                ],
+                'joins' => [
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ]
             ]);
 
             $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
@@ -1677,7 +1733,9 @@ class OrdersController extends AppController
                 'CustomerUserItinerary.status_id' => 1,
                 'CustomerUser.status_id' => 1,
                 'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                'CustomerUser.id' => $user_list
+                'CustomerUser.id' => $user_list,
+                'Benefit.status_id' => 1,
+                'Supplier.status_id' => 1,
             ];
 
             if ($benefit_type != '') {
@@ -1687,6 +1745,16 @@ class OrdersController extends AppController
             if ($is_partial == 2) {
                 $customerItineraries = $this->CustomerUserItinerary->find('all', [
                     'conditions' => $cond2,
+                    'joins' => [
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ]
                 ]);
 
                 if (empty($customerItineraries)) {
@@ -3207,14 +3275,16 @@ class OrdersController extends AppController
                 'conditions' => [
                     'Benefit.supplier_id' => $codigoOperadora,
                     'Benefit.code' => $codigoBeneficio,
-                    'Benefit.data_cancel' => '1901-01-01 00:00:00' // Only active benefits
+                    'Benefit.status_id' => 1,
+                    'Supplier.status_id' => 1,
+                    'Benefit.data_cancel' => '1901-01-01 00:00:00'
                 ],
                 'fields' => ['Benefit.id', 'Benefit.is_variable', 'Benefit.unit_price']
             ]);
 
             if (empty($benefit) || empty($dataNascimento)) {
                 $line++;
-                continue; // Skip if no benefit is found
+                continue;
             }
 
             // Pega o ID baseado nos textos de centro de custo, departamento e grupo econômico da planilha
