@@ -4,7 +4,7 @@ App::uses('AppController', 'Controller');
 
 class EconomicGroupsController extends AppController
 {
-    public $components = ['Paginator'];
+    public $components = ['Paginator', 'Permission'];
     public $uses = ['EconomicGroup', 'Status', 'Customer'];
 
     public function index($id)
