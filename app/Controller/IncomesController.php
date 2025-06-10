@@ -902,7 +902,9 @@ class IncomesController extends AppController
         $this->Income->recursive = 2;
         $this->request->data = $this->Income->read();
 
-        $income_nfses = collect($this->request->data['IncomeNfse']);
+        $income_nfses = collect($this->request->data['IncomeNfse'])->filter(function ($nfse) {
+            return $nfse['data_cancel'] === '1901-01-01 00:00:00';
+        });
 
         $nfse_types = collect(['ge', 'tpp']);
         $nfses = [];
@@ -947,7 +949,7 @@ class IncomesController extends AppController
                 "servico" => [
                     "itens" => [
                         [
-                            "codigo" => "8299",
+                            "codigo" => "3205",
                             "discriminacao" => $data['obs'],
                             "valor_servicos" => $data['valor']
                         ]
