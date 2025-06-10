@@ -4,7 +4,14 @@ App::uses('AuthComponent', 'Controller/Component');
 class CustomerUser extends AppModel
 {
     public $name = 'CustomerUser';
-    public $actsAs = ['Containable'];
+    public $actsAs = [
+        'Containable',
+        'Upload.Upload' => [
+            'img_profile' => [
+                'rootDir' => ROOT_SITE.'/app/'
+            ]
+        ],
+    ];
 
     public $hasMany = [
         'CustomerUserItinerary' => [
