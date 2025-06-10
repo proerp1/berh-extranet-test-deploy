@@ -890,7 +890,30 @@ class IncomesController extends AppController
             return null;
         }
 
-        return $response->link_pdf;
+        $link_pdf = $response->link_pdf.'&imprimir=1';
+
+        return str_replace('notaprint', 'notaprintimg', $link_pdf);
+    }
+
+    private function get_nfse_data($income, $type) {
+        $data = $this->get_nfse_type_data($income, $type);
+        $today = new DateTime();
+
+        return [
+            "numero" => $income['Income']['id'],
+            "serie" => "1",
+            "data_emissao" => $today->format('Y-m-d\TH:i:sP'),
+            "servico" => [
+                "itens" => [
+                    [
+                        "codigo" => "3205",
+                        "discriminacao" => $data['obs'],
+                        "valor_servicos" => $data['valor']
+                    ]
+                ]
+            ],
+            "tomador" => $this->get_nfse_tomador($income)
+        ];
     }
 
     public function nfse($id)
@@ -933,32 +956,15 @@ class IncomesController extends AppController
     public function cria_nfse($income_id, $type) {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        $this->Income->recursive = 2;
+        $this->Income->recursive = 3;
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
 
         try {
             $nfse_sdk = $this->connect_nfse_sdk();
-            $data = $this->get_nfse_type_data($income, $type);
 
-            $today = new DateTime();
+            $nfse_data = $this->get_nfse_data($income, $type);
 
-            $payload = [
-                "numero" => $income['Income']['id'],
-                "serie" => "1",
-                "data_emissao" => $today->format('Y-m-d\TH:i:sP'),
-                "servico" => [
-                    "itens" => [
-                        [
-                            "codigo" => "3205",
-                            "discriminacao" => $data['obs'],
-                            "valor_servicos" => $data['valor']
-                        ]
-                    ]
-                ],
-                "tomador" => $this->get_nfse_tomador($income)
-            ];
-
-            $response = $nfse_sdk->cria($payload);
+            $response = $nfse_sdk->cria($nfse_data);
 
             if (!$response->sucesso) {
                 $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
@@ -1010,6 +1016,51 @@ class IncomesController extends AppController
         }
 
         $this->redirect(['action'=> 'nfse', $income_id]);
+    }
+
+    public function imprime_nfse($nfse_id) {
+        $this->autoRender = false;
+        $this->layout = 'ajax';
+
+        $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        $this->IncomeNfse->recursive = 2;
+        $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
+
+        if (!$income_nfse) {
+            $this->Flash->set(__('Nota fiscal não encontrada. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
+        $income_id = $income_nfse['IncomeNfse']['income_id'];
+
+        $this->Income->recursive = 2;
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
+
+        try {
+            $pdf_link = $this->get_nfse_pdf_link($income_nfse['IncomeNfse']);
+
+            $imageData = file_get_contents($pdf_link);
+
+            $base64 = base64_encode($imageData);
+
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->buffer($imageData);
+
+            $dataUri = "data:$mimeType;base64,$base64";
+
+            $nfse_data = $this->get_nfse_data($income, $income_nfse['IncomeNfse']['tipo']);
+            $nf_number = $income['Order']['id'];
+            $nome = $income['Customer']['nome_secundario'];
+            $valor = number_format($nfse_data['servico']['itens'][0]['valor_servicos'], 2, ',', '.');
+
+            $imgName = "NF {$nf_number} - BERH X {$nome} - R$ {$valor}";
+
+            $this->HtmltoPdf->convert("<img src='{$dataUri}' />", $imgName, 'download');
+        } catch (\Exception $e) {
+            $this->Flash->set(__('Não foi possível imprimir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'nfse', $income_id]);
+        }
     }
 
     public function imprime_danfse($nfse_id) {

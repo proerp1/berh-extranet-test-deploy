@@ -45,7 +45,7 @@
                             <button data-id="<?php echo $nfse['id'] ?>" type="submit" class="btn btn-danger confirm_cancel_nfse">Cancelar</button>
                         <?php } ?>
                         <?php if (isset($nfse['pdf_link'])){ ?>
-                            <a href="<?php echo $nfse['pdf_link'] ?>" target="_blank" class="btn btn-secondary">Imprimir</a>
+                            <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$nfse['id'] ?>" class="btn btn-secondary">Imprimir</a>
                         <?php } ?>
                     </div>
                 </div>
