@@ -109,6 +109,13 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 		</div>
 	</div>
 
+	<!-- form para upload da imagem de perfil -->
+	<div style="display: none;">
+		<form action="<?= $this->Html->url(['action' => 'upload_profile_picture', 'controller' => 'users']); ?>" id="upload-profile-form" method="POST" enctype="multipart/form-data">
+			<input type="file" name="data[User][img_profile]" id="upload-profile-input">
+		</form>
+	</div>
+
 	<?php
 	echo $this->Html->script('plugins.bundle');
 	echo "\n\t";
@@ -265,6 +272,21 @@ $cakeDescription = __d('cake_dev', 'BeRH');
 				}
 			});
 		}
+
+		$(function() {
+			var icon = $('.upload-profile-image');
+			var form = $('#upload-profile-form');
+			var input = $('#upload-profile-input');
+
+			icon.click(function(e) {
+				e.preventDefault();
+				input.click();
+			});
+
+			input.change(function() {
+				form.submit();
+			});
+		});
 	</script>
 
     <link rel="stylesheet" href="<?php echo $this->base."/js/widget_frame/widget.css" ?>">

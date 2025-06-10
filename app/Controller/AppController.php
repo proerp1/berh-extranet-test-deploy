@@ -39,7 +39,7 @@ class AppController extends Controller {
 			'logoutRedirect' => array('controller' => 'users', 'action' => 'login'),
 			'authenticate' => array('Form' => array( 'scope' => array('User.status_id' => 1)))
 		),
-		'Flash'
+		'Flash', 'Permission'
 	);
 
 	public $uses = ['Atendimento', 'CustomerFile'];

@@ -267,4 +267,46 @@ class UsersController extends AppController
             }
         }
     }
+
+    public function upload_profile_picture() {
+        $this->autoRender = false;
+        $this->layout = false;
+
+        $this->User->id = CakeSession::read("Auth.User.id");
+
+        if ($_FILES['data']['error']['User']['img_profile'] !== UPLOAD_ERR_OK) {
+            $this->Session->setFlash(__('Sua imagem de perfil não pode ser atualizada, por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+            $error = true;
+        }
+
+        $info = getimagesize($_FILES['data']['tmp_name']['User']['img_profile']);
+        if ($info === FALSE) {
+            $this->Session->setFlash(__('Sua imagem de perfil não pode ser atualizada, por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+            $error = true;
+        }
+
+        if (($info[2] !== IMAGETYPE_GIF) && ($info[2] !== IMAGETYPE_JPEG) && ($info[2] !== IMAGETYPE_PNG)) {
+            $this->Session->setFlash(__('A imagem deve ser um JPG, GIF ou PNG.'), 'default', array('class' => "alert alert-danger"));
+            $error = true;
+        }
+
+        if (isset($error)) {
+            $this->redirect($this->referer());
+        }
+
+        if ($this->request->is('post')) {
+            if ($this->User->save($this->request->data)) {
+
+                $user = $this->User->read();
+
+                CakeSession::write("Auth.User.img_profile", $user['User']['img_profile']);
+
+                $this->Session->setFlash(__('Sua imagem de perfil foi atualizada!'), 'default', array('class' => "alert alert-success"));
+            } else {
+                $this->Session->setFlash(__('Sua imagem de perfil não pode ser atualizada, por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
+            }
+        }
+
+        $this->redirect($this->referer());
+    }
 }
