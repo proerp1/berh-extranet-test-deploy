@@ -947,7 +947,7 @@ class IncomesController extends AppController
                 "servico" => [
                     "itens" => [
                         [
-                            "codigo" => "82997",
+                            "codigo" => "8299",
                             "discriminacao" => $data['obs'],
                             "valor_servicos" => $data['valor']
                         ]
