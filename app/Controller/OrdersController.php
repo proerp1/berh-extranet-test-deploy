@@ -3171,21 +3171,21 @@ class OrdersController extends AppController
             $dataNascimento = $row[4];
             $matricula = $row[15];
 
-            if (!empty($matricula)) {
-                $matriculaExists = $this->CustomerUser->find('first', [
-                    'conditions' => [
-                        'CustomerUser.matricula' => $matricula,
-                        'CustomerUser.customer_id' => $customerId,
-                        'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
-                        'NOT' => [
-                            "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => preg_replace('/\D/', '', $row[2])
-                        ]
-                    ]
-                ]);
-                if (!empty($matriculaExists)) {
-                    $duplicateMatriculaLines[] = $line + 1;
-                }
-            }
+            // if (!empty($matricula)) {
+            //     $matriculaExists = $this->CustomerUser->find('first', [
+            //         'conditions' => [
+            //             'CustomerUser.matricula' => $matricula,
+            //             'CustomerUser.customer_id' => $customerId,
+            //             'CustomerUser.data_cancel' => '1901-01-01 00:00:00',
+            //             'NOT' => [
+            //                 "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => preg_replace('/\D/', '', $row[2])
+            //             ]
+            //         ]
+            //     ]);
+            //     if (!empty($matriculaExists)) {
+            //         $duplicateMatriculaLines[] = $line + 1;
+            //     }
+            // }
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
