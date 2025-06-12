@@ -11,7 +11,7 @@ class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Boleto', 'HtmltoPdf', 'ExcelGenerator', 'GerarCaixaNossoNumero', 'Email'];
-    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order', 'OrderBalance', 'IncomeNfse'];
+    public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order', 'OrderBalance', 'IncomeNfse', 'OrderDocument'];
 
     public $paginate = [
         'Income' => [
@@ -916,6 +916,35 @@ class IncomesController extends AppController
         ];
     }
 
+    private function generate_nfse_pdf($nfse, $type) {
+        $pdf_link = $this->get_nfse_pdf_link($nfse['IncomeNfse']);
+
+        $imageData = file_get_contents($pdf_link);
+
+        $base64 = base64_encode($imageData);
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->buffer($imageData);
+
+        $dataUri = "data:$mimeType;base64,$base64";
+
+        $imgName = $this->get_nfse_pdf_name($nfse);
+
+        return $this->HtmltoPdf->convert("<img src='{$dataUri}' />", $imgName, $type);
+    }
+
+    private function get_nfse_pdf_name($nfse) {
+        $this->Income->recursive = 2;
+        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $nfse['IncomeNfse']['income_id']]]);
+
+        $nfse_data = $this->get_nfse_data($income, $nfse['IncomeNfse']['tipo']);
+        $nf_number = $income['Order']['id'];
+        $nome = $income['Customer']['nome_secundario'];
+        $valor = number_format($nfse_data['servico']['itens'][0]['valor_servicos'], 2, ',', '.');
+
+        return "NF {$nf_number} - BERH X {$nome} - R$ {$valor}";
+    }
+
     public function nfse($id)
     {
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
@@ -943,6 +972,7 @@ class IncomesController extends AppController
             ];
 
             $nfse['pdf_link'] = $this->get_nfse_pdf_link($nfse);
+
             $data = $this->get_nfse_type_data($this->request->data, $type);
             $nfse['preview'] = $data['obs'];
             $nfses[] = $nfse;
@@ -1024,7 +1054,6 @@ class IncomesController extends AppController
 
         $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
 
-        $this->IncomeNfse->recursive = 2;
         $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
 
         if (!$income_nfse) {
@@ -1032,34 +1061,11 @@ class IncomesController extends AppController
             $this->redirect($this->referer());
         }
 
-        $income_id = $income_nfse['IncomeNfse']['income_id'];
-
-        $this->Income->recursive = 2;
-        $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
-
         try {
-            $pdf_link = $this->get_nfse_pdf_link($income_nfse['IncomeNfse']);
-
-            $imageData = file_get_contents($pdf_link);
-
-            $base64 = base64_encode($imageData);
-
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $mimeType = $finfo->buffer($imageData);
-
-            $dataUri = "data:$mimeType;base64,$base64";
-
-            $nfse_data = $this->get_nfse_data($income, $income_nfse['IncomeNfse']['tipo']);
-            $nf_number = $income['Order']['id'];
-            $nome = $income['Customer']['nome_secundario'];
-            $valor = number_format($nfse_data['servico']['itens'][0]['valor_servicos'], 2, ',', '.');
-
-            $imgName = "NF {$nf_number} - BERH X {$nome} - R$ {$valor}";
-
-            $this->HtmltoPdf->convert("<img src='{$dataUri}' />", $imgName, 'download');
+            $this->generate_nfse_pdf($income_nfse, 'download');
         } catch (\Exception $e) {
             $this->Flash->set(__('Não foi possível imprimir a nota fiscal. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect(['action'=> 'nfse', $income_id]);
+            $this->redirect(['action'=> 'nfse', $income_nfse['IncomeNfse']['income_id']]);
         }
     }
 
@@ -1133,9 +1139,75 @@ class IncomesController extends AppController
                 'status_id' => $success ? 107 : 108
             ]);
 
+            if ($success) {
+                $this->salva_nfse_no_pedido($income_nfse['IncomeNfse']['id']);
+            }
+
             return 'Status atualizado com sucesso.';
         } catch (\Exception $e) {
+            debug($e);
             return 'Assinatura inválida!';
         }
+    }
+
+    private function salva_nfse_no_pedido($nfse_id) {
+        $this->autoRender = false;
+        $this->layout = 'ajax';
+
+        $nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
+
+        $pdf = $this->generate_nfse_pdf($nfse, 'string');
+        $pdf_name = $this->get_nfse_pdf_name($nfse);
+        $file_name = $pdf_name.'.pdf';
+
+        $tmpFile = tempnam(sys_get_temp_dir(), 'upload_');
+        file_put_contents($tmpFile, $pdf);
+
+        $fileData = array(
+            'name' => $file_name,
+            'type' => 'application/pdf',
+            'tmp_name' => $tmpFile,
+            'error' => 0,
+            'size' => filesize($tmpFile)
+        );
+
+        $this->OrderDocument->save(['OrderDocument' => [
+            'name' => $file_name,
+            'file_name' => $fileData,
+            'order_id' => $nfse['Income']['order_id'],
+            'status_id' => 1,
+        ]]);
+
+        if (file_exists($tmpFile)) {
+            unlink($tmpFile);
+        }
+
+        $this->send_order_document_mail($nfse['Income']['order_id']);
+    }
+
+    private function send_order_document_mail($order_id) {
+        $order = $this->Order->find('first', [
+            'contain' => ['Customer'],
+            'conditions' => ['Order.id' => $order_id],
+        ]);
+
+        $users[$order['Customer']['email']] = $order['Customer']['nome_primario'];
+
+        if ($order['Customer']['email1'] != '') {
+            $users[$order['Customer']['email1']] = $order['Customer']['nome_primario'];
+        }
+
+        $dados = [
+            'viewVars' => [
+                'tos' => $users,
+                'pedido' => $order_id,
+                'link' => Configure::read('Areadoassociado.link').'orders/edit/'.$order_id,
+            ],
+            'template' => 'nota_fiscal_criada',
+            'subject' => 'BeRH - Nota Fiscal',
+            'config' => 'default',
+        ];
+
+        $this->Email->send($dados, true);
     }
 }
