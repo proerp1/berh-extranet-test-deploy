@@ -510,7 +510,8 @@ class Order extends AppModel
                     'OrderItem.customer_user_id' => $customerUserId,
                     'Itinerary.benefit_id' => $benefitId,
                     'OrderItem.order_id <>' => $orderId,
-                    'Order.status_id NOT IN(83,18)'
+                    'Order.status_id NOT IN(83,18)',
+                    'Order.is_partial <>' => 3
                 ],
                 'fields' => ['MIN(OrderItem.id) AS first_order_item_id'],
             ]);
