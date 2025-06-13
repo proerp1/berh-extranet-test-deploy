@@ -3162,9 +3162,9 @@ class OrdersController extends AppController
 
             $cpfToValidate = $row[2];
 
-            if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
-                $invalidCpfLines[] = $line + 1;
-            }
+            // if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
+            //     $invalidCpfLines[] = $line + 1;
+            // }
 
             $codigoOperadora = $row[7];
             $codigoBeneficio = $row[8];
