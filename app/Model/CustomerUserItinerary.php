@@ -23,14 +23,14 @@ class CustomerUserItinerary extends AppModel
         ]
     );
 
-    public $validate = [
-        'matricula' => [
-            'isUnique' => [
-                'rule' => 'isUnique',
-                'message' => 'A matricula fornecida já foi cadastrada',
-            ],
-        ],
-    ];
+    // public $validate = [
+    //     'matricula' => [
+    //         'isUnique' => [
+    //             'rule' => 'isUnique',
+    //             'message' => 'A matricula fornecida já foi cadastrada',
+    //         ],
+    //     ],
+    // ];
 
     public function beforeFind($queryData)
     {
