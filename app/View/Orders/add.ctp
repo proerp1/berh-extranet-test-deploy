@@ -243,14 +243,22 @@
                         </div>
 
                         <div class="row mb-7">
-                            <div class="col-6">
+                            <div class="col-12 col-md-6 mb-5">
                                 <label class="form-label">Observação do Pedido</label>
-                                <textarea name="data[Order][observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['observation']; ?></textarea>
+                                <textarea 
+                                    name="data[Order][observation]" 
+                                    class="form-control auto-expand" 
+                                    <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>
+                                ><?php echo $order['Order']['observation']; ?></textarea>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-12 col-md-6 mb-5">
                                 <label class="form-label">Observação da Nota Fiscal</label>
-                                <textarea name="data[Order][nfse_observation]" id="" class="form-control" style="height: 175px;" <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>><?php echo $order['Order']['nfse_observation']; ?></textarea>
+                                <textarea 
+                                    name="data[Order][nfse_observation]" 
+                                    class="form-control auto-expand" 
+                                    <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>
+                                ><?php echo $order['Order']['nfse_observation']; ?></textarea>
                             </div>
                         </div>
 
@@ -1346,6 +1354,24 @@
 
         $('.pedido_complementar').on('click', function () {
             $('.js_pedido_complementar textarea').prop('required', true);
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textareas = document.querySelectorAll('.auto-expand');
+
+        textareas.forEach(textarea => {
+            // inicializa com altura ajustada
+            textarea.style.height = 'auto';
+            textarea.style.overflowY = 'hidden';
+            textarea.style.height = textarea.scrollHeight + 'px';
+
+            // atualiza ao digitar
+            textarea.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
         });
     });
 </script>
