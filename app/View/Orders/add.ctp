@@ -239,8 +239,13 @@
                     <div class="card-body">
                         <div class="mb-7 col js_pedido_complementar">
                             <label class="form-label">Observação GE</label>
-                            <textarea name="data[Order][observation_ge]" class="form-control" style="height: 155px;"><?php echo $order['Order']['observation_ge']; ?></textarea>
+                            <textarea 
+                                name="data[Order][observation_ge]" 
+                                class="form-control auto-expand" 
+                                style="height: 155px;"
+                            ><?php echo $order['Order']['observation_ge']; ?></textarea>
                         </div>
+
 
                         <div class="row mb-7">
                             <div class="col-12 col-md-6 mb-5">
