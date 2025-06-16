@@ -965,6 +965,21 @@ class OrdersController extends AppController
         $dados = [
             'viewVars' => [
                 'nome' => 'Financeiro',
+                'email' => 'rodolfo.note@gmail.com',
+                'pedido' => $order['Order']['id'],
+            ],
+            'template' => 'nota_fiscal_antecipada',
+            'subject' => 'BeRH - Nota Fiscal',
+            'config' => 'default',
+        ];
+
+        if (!$this->Email->send($dados)) {
+            $this->Flash->set(__('Email não pôde ser enviado com sucesso'), ['params' => ['class' => 'alert alert-danger']]);
+        }
+
+        $dados = [
+            'viewVars' => [
+                'nome' => 'Financeiro',
                 'email' => 'financeiro@berh.com.br',
                 'pedido' => $order['Order']['id'],
             ],
