@@ -181,6 +181,7 @@ class ExcelTemplate
             ->setCellValue('P1', "Observações")
             ->setCellValue('Q1', "Data Pagamento")
             ->setCellValue('R1', "Pedido");
+            ->setCellValue('S1', "Pedido");
 
 
 
@@ -201,7 +202,7 @@ class ExcelTemplate
                 ->setCellValue('J' . $indx, $dados[$i]['BankAccount']['name'])
                 ->setCellValue('K' . $indx, $dados[$i]['Income']['data_competencia'])
                 ->setCellValue('L' . $indx, $dados[$i]['Income']['vencimento'])
-                ->setCellValue('M' . $indx, $dados[$i]['Income']['created'])
+                ->setCellValue('M' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['Income']['created_nao_formatado'])))
                 ->setCellValue('N' . $indx, $dados[$i]['Revenue']['name'])
                 ->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
                 ->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
