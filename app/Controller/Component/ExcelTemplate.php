@@ -889,6 +889,7 @@ class ExcelTemplate
             $fee_economia = 0;
             $total_economia = 0;
             $period = $dado["Order"]["order_period_from"] . " a " . $dado["Order"]["order_period_to"];
+            $dataHora = date('d/m/Y H:i:s', strtotime($dado["Order"]["created_nao_formatado"]));
             $vl_economia = $dado["Order"]["total_balances"];
             $fee_saldo = $dado["Order"]["fee_saldo_not_formated"];
     
@@ -904,7 +905,7 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["codigo_associado"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["id"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["nome_primario"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["created"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $dataHora);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $period);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["subtotal"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["transfer_fee"]); $col++;
