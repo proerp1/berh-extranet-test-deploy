@@ -662,7 +662,7 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cobrar_taxa_boleto'] ? 'S' : 'N'); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['emitir_nota_fiscal']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['exibir_demanda'] ? 'S' : 'N'); $col++;
-            $isGestao = !empty($dado['Customer']['flag_gestao_economico']) && $dado['Customer']['flag_gestao_economico'] !== '0' ? 'S' : 'N';
+            $isGestao = var_dump($dado['Customer']['flag_gestao_economico'], [1, '1', true], true) ? 'S' : 'N';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $isGestao); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $porcentagem_margem_seguranca); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não'); $col++;
