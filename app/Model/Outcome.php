@@ -27,9 +27,9 @@ class Outcome extends AppModel {
 			$this->data['Outcome']['vencimento'] = $this->dateFormatBeforeSave($this->data['Outcome']['vencimento']);
 		}
 
-		if (!empty($this->data[$this->alias]['created'])) {
-            $this->data['Outcome']['created'] = $this->dateFormatBeforeSave($this->data['Outcome']['created']);
-        }
+		if (empty($this->data['Outcome']['id']) && empty($this->data['Outcome']['created'])) {
+		$this->data['Outcome']['created'] = date('Y-m-d H:i:s');
+	}
 
 		if (!empty($this->data['Outcome']['valor_bruto'])) {
 			$this->data['Outcome']['valor_bruto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_bruto']);
