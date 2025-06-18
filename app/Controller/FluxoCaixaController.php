@@ -19,27 +19,31 @@ class FluxoCaixaController extends AppController
 
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-        $t = isset($_GET['t']) ? $_GET['t'] : null;
+        $t = isset($_GET['t']) ? $_GET['t'] : [];
+
+        // Força ser array, mesmo que só 1 valor
+        if (!is_array($t)) {
+            $t = [$t];
+        }
 
         $data = [];
         $conta = [];
         $exportar = false;
         $saldo = 0;
 
-        // ✅ Validação de segurança: permite vazio, 'todos' ou número
-        if (!is_null($t) && $t !== 'todos' && !is_numeric($t)) {
-            $this->redirect('/not_allowed');
-        }
-
         if (!empty($t) && $get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
-            if ($t !== 'todos') {
-                $this->BankAccount->id = $t;
+            // Filtra apenas IDs válidos
+            $ids_validos = array_filter($t, 'is_numeric');
+
+            // Busca saldo inicial da primeira conta (ou múltiplas se quiser customizar depois)
+            if (count($ids_validos) === 1) {
                 $conta = $this->BankAccount->find('first', [
-                    'conditions' => ['BankAccount.start_date <=' => $de]
+                    'conditions' => ['BankAccount.id' => $ids_validos[0], 'BankAccount.start_date <=' => $de]
                 ]);
+                $saldo = $conta['BankAccount']['initial_balance_not_formated'];
             }
 
             $de_anterior = date('Y-m-d', strtotime('-1 month ' . $de));
@@ -48,7 +52,8 @@ class FluxoCaixaController extends AppController
             $buscaValorPagoDe = $this->Outcome->find('all', [
                 'conditions' => [
                     "Outcome.data_pagamento BETWEEN '{$de_anterior}' AND '{$ate_anterior}'",
-                    'Outcome.status_id' => 13
+                    'Outcome.status_id' => 13,
+                    !empty($ids_validos) ? ['Outcome.bank_account_id' => $ids_validos] : []
                 ],
                 'fields' => 'SUM(valor_pago) as valor_pago'
             ]);
@@ -56,16 +61,23 @@ class FluxoCaixaController extends AppController
             $buscaValorRecebidoDe = $this->Income->find('all', [
                 'conditions' => [
                     "Income.data_pagamento BETWEEN '{$de_anterior}' AND '{$ate_anterior}'",
-                    'Income.status_id' => 17
+                    'Income.status_id' => 17,
+                    !empty($ids_validos) ? ['Income.bank_account_id' => $ids_validos] : []
                 ],
                 'fields' => 'SUM(valor_pago) as valor_recebido'
             ]);
 
-            $saldo = (!empty($conta) ? $conta['BankAccount']['initial_balance_not_formated'] : 0) +
-                     ($buscaValorRecebidoDe[0][0]['valor_recebido'] - $buscaValorPagoDe[0][0]['valor_pago']);
+            $saldo += ($buscaValorRecebidoDe[0][0]['valor_recebido'] - $buscaValorPagoDe[0][0]['valor_pago']);
 
-            $filtroOutcome = ($t !== 'todos') ? "o.bank_account_id = " . (int)$t . " AND " : "";
-            $filtroIncome  = ($t !== 'todos') ? "i.bank_account_id = " . (int)$t . " AND " : "";
+            // SQL filtros
+            $filtroOutcome = '';
+            $filtroIncome = '';
+
+            if (!empty($ids_validos)) {
+                $ids_str = implode(',', array_map('intval', $ids_validos));
+                $filtroOutcome = "o.bank_account_id IN ({$ids_str}) AND ";
+                $filtroIncome = "i.bank_account_id IN ({$ids_str}) AND ";
+            }
 
             $data = $this->Outcome->query("
                 SELECT 
@@ -125,7 +137,7 @@ class FluxoCaixaController extends AppController
         ]);
 
         if (isset($_GET['exportar'])) {
-            $nome = 'fluxo_caixa_' . $de . '_' . $ate . '.xlsx';
+            $nome = 'fluxo_caixa_' . date('Ymd_His') . '.xlsx';
             $this->ExcelGenerator->gerarExcelFluxo($nome, $data, $conta);
             $this->redirect('/files/excel/' . $nome);
         }
