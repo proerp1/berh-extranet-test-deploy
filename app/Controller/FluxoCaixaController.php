@@ -16,68 +16,50 @@ class FluxoCaixaController extends AppController
     public function index()
     {
         $this->Permission->check(30, 'leitura') ? '' : $this->redirect('/not_allowed');
-
+    
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-        $t = isset($_GET['t']) ? $_GET['t'] : [];
-
-        // Força ser array, mesmo que só 1 valor
-        if (!is_array($t)) {
-            $t = [$t];
-        }
+        $ids = isset($_GET['t']) ? (array)$_GET['t'] : []; // força ser array
 
         $data = [];
         $conta = [];
         $exportar = false;
         $saldo = 0;
 
-        if (!empty($t) && $get_de != '' && $get_ate != '') {
+        if (!empty($ids) && $get_de != '' && $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
 
-            // Filtra apenas IDs válidos
-            $ids_validos = array_filter($t, 'is_numeric');
-
-            // Busca saldo inicial da primeira conta (ou múltiplas se quiser customizar depois)
-            if (count($ids_validos) === 1) {
-                $conta = $this->BankAccount->find('first', [
-                    'conditions' => ['BankAccount.id' => $ids_validos[0], 'BankAccount.start_date <=' => $de]
-                ]);
-                $saldo = $conta['BankAccount']['initial_balance_not_formated'];
-            }
+            // Usa apenas a primeira conta para calcular saldo inicial (mantido o comportamento original)
+            $this->BankAccount->id = $ids[0];
+            $conta = $this->BankAccount->find('first', [
+                'conditions' => ['BankAccount.start_date <=' => $de]
+            ]);
 
             $de_anterior = date('Y-m-d', strtotime('-1 month ' . $de));
             $ate_anterior = date('Y-m-t', strtotime('-1 month ' . $ate));
 
             $buscaValorPagoDe = $this->Outcome->find('all', [
                 'conditions' => [
-                    "Outcome.data_pagamento BETWEEN '{$de_anterior}' AND '{$ate_anterior}'",
-                    'Outcome.status_id' => 13,
-                    !empty($ids_validos) ? ['Outcome.bank_account_id' => $ids_validos] : []
+                    "Outcome.data_pagamento between '{$de_anterior}' and '{$ate_anterior}'",
+                    'Outcome.status_id' => 13
                 ],
                 'fields' => 'SUM(valor_pago) as valor_pago'
             ]);
 
             $buscaValorRecebidoDe = $this->Income->find('all', [
                 'conditions' => [
-                    "Income.data_pagamento BETWEEN '{$de_anterior}' AND '{$ate_anterior}'",
-                    'Income.status_id' => 17,
-                    !empty($ids_validos) ? ['Income.bank_account_id' => $ids_validos] : []
+                    "Income.data_pagamento between '{$de_anterior}' and '{$ate_anterior}'",
+                    'Income.status_id' => 17
                 ],
                 'fields' => 'SUM(valor_pago) as valor_recebido'
             ]);
 
-            $saldo += ($buscaValorRecebidoDe[0][0]['valor_recebido'] - $buscaValorPagoDe[0][0]['valor_pago']);
+            $saldo = (!empty($conta) ? $conta['BankAccount']['initial_balance_not_formated'] : 0)
+                + ($buscaValorRecebidoDe[0][0]['valor_recebido'] - $buscaValorPagoDe[0][0]['valor_pago']);
 
-            // SQL filtros
-            $filtroOutcome = '';
-            $filtroIncome = '';
-
-            if (!empty($ids_validos)) {
-                $ids_str = implode(',', array_map('intval', $ids_validos));
-                $filtroOutcome = "o.bank_account_id IN ({$ids_str}) AND ";
-                $filtroIncome = "i.bank_account_id IN ({$ids_str}) AND ";
-            }
+            // Gera lista de contas para IN(...)
+            $ids_str = implode(',', array_map('intval', $ids));
 
             $data = $this->Outcome->query("
                 SELECT 
@@ -98,7 +80,7 @@ class FluxoCaixaController extends AppController
                 INNER JOIN statuses s ON s.id = o.status_id
                 INNER JOIN bank_accounts b ON b.id = o.bank_account_id
                 WHERE 
-                    {$filtroOutcome}
+                    o.bank_account_id IN ({$ids_str}) AND 
                     o.data_pagamento BETWEEN '{$de}' AND '{$ate}' AND 
                     o.data_cancel = '1901-01-01' AND 
                     o.status_id = 13
@@ -121,7 +103,7 @@ class FluxoCaixaController extends AppController
                 INNER JOIN statuses s ON s.id = i.status_id
                 INNER JOIN bank_accounts b ON b.id = i.bank_account_id
                 WHERE 
-                    {$filtroIncome}
+                    i.bank_account_id IN ({$ids_str}) AND 
                     i.data_pagamento BETWEEN '{$de}' AND '{$ate}' AND 
                     i.status_id = 17 AND 
                     i.data_cancel = '1901-01-01'
@@ -137,7 +119,7 @@ class FluxoCaixaController extends AppController
         ]);
 
         if (isset($_GET['exportar'])) {
-            $nome = 'fluxo_caixa_' . date('Ymd_His') . '.xlsx';
+            $nome = 'fluxo_caixa_' . $de . '_' . $ate . '.xlsx';
             $this->ExcelGenerator->gerarExcelFluxo($nome, $data, $conta);
             $this->redirect('/files/excel/' . $nome);
         }
