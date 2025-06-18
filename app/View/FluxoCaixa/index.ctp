@@ -34,20 +34,22 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Conta bancária:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option></option>
-                                    <?php
-                                        for($a = 0; $a < count($conta_bancaria); $a++){
-                                            $selected = "";
-                                            if (isset($_GET["t"])) {
-                                                if($conta_bancaria[$a]['BankAccount']['id'] == $_GET["t"]){
-                                                    $selected = "selected";
-                                                }
+                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                <option></option>
+                                <option value="todos" <?php echo (isset($_GET["t"]) && $_GET["t"] === "todos") ? "selected" : ""; ?>>Todas as contas</option>
+                                <?php
+                                    for($a = 0; $a < count($conta_bancaria); $a++){
+                                        $selected = "";
+                                        if (isset($_GET["t"])) {
+                                            if($conta_bancaria[$a]['BankAccount']['id'] == $_GET["t"]){
+                                                $selected = "selected";
                                             }
-                                            echo '<option value="'.$conta_bancaria[$a]['BankAccount']['id'].'" '.$selected.'>'.$conta_bancaria[$a]['BankAccount']['name'].'</option>';
                                         }
-                                    ?>
-                                </select>
+                                        echo '<option value="'.$conta_bancaria[$a]['BankAccount']['id'].'" '.$selected.'>'.$conta_bancaria[$a]['BankAccount']['name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+
                             </div>
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>
