@@ -1171,7 +1171,7 @@ class IncomesController extends AppController
             'size' => filesize($tmpFile)
         );
 
-        $this->OrderDocument->save(['OrderDocument' => [
+        $result = $this->OrderDocument->save(['OrderDocument' => [
             'name' => $file_name,
             'file_name' => $fileData,
             'order_id' => $nfse['Income']['order_id'],
@@ -1180,6 +1180,14 @@ class IncomesController extends AppController
 
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
+        }
+
+        $recordId = $result['OrderDocument']['id'];
+        if ($result && !empty($result['OrderDocument']['file_name'])) {
+            $finalPath = WWW_ROOT . 'files' . DS . 'order_document' . DS . 'file_name' . DS . $recordId . DS . $result['OrderDocument']['file_name'];
+            if (file_exists($finalPath)) {
+                chmod($finalPath, 0644);
+            }
         }
 
         $this->send_order_document_mail($nfse['Income']['order_id']);
