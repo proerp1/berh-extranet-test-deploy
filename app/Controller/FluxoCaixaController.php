@@ -28,13 +28,8 @@ class FluxoCaixaController extends AppController
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
     
-           $conta = [];
-
-            if ($_GET['t'] !== 'todos') {
-                $this->BankAccount->id = $_GET['t'];
-                $conta = $this->BankAccount->find('first', ['conditions' => ['BankAccount.start_date <=' => $de]]);
-            }
-
+            $this->BankAccount->id = $_GET['t'];
+            $conta = $this->BankAccount->find('first', ['conditions' => ['BankAccount.start_date <=' => $de]]);
     
             $de_anterior = date('Y-m-d', strtotime('-1 month ' . $de));
             $ate_anterior = date('Y-m-t', strtotime('-1 month ' . $ate));
