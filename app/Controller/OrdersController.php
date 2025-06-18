@@ -939,6 +939,10 @@ class OrdersController extends AppController
         $this->Income->save($income);
 
         if ($this->emitirBoleto($this->Income->id)) {
+            if ($order['Customer']['emitir_nota_fiscal'] == 'A') {
+                $this->notificaNotaAntecipada($order);
+            }
+
             $this->Order->save([
                 'Order' => [
                     'id' => $id,
@@ -947,10 +951,6 @@ class OrdersController extends AppController
                     'validation_date' => date('Y-m-d'),
                 ]
             ]);
-
-            if ($order['Customer']['emitir_nota_fiscal'] == 'A') {
-                $this->notificaNotaAntecipada($order);
-            }
 
             $this->Flash->set(__('O Pedido enviado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } else {
