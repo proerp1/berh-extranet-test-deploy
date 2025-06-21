@@ -862,7 +862,7 @@ class IncomesController extends AppController
         return [
             "cnpj" => preg_replace('/\D/', '', $cnpj),
             "razao_social" => $razao_social,
-            "email" => $tomador['email'],
+            "email" => $income['Customer']['email'],
             "endereco" => [
                 "logradouro" => $tomador['endereco'],
                 "numero" => $tomador['numero'],
