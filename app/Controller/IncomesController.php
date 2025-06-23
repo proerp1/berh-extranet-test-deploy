@@ -907,7 +907,7 @@ class IncomesController extends AppController
                 "itens" => [
                     [
                         "codigo" => "3205",
-                        "discriminacao" => mb_substr($data['obs'], 0, 200, "UTF-8"),
+                        "discriminacao" => mb_substr($data['obs'], 0, 2000, "UTF-8"),
                         "valor_servicos" => $data['valor']
                     ]
                 ]
