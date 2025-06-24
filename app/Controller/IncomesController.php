@@ -843,7 +843,7 @@ class IncomesController extends AppController
         $data = collect(json_decode($response->getBody()->getContents(), true));
 
         $igbe_municipio = $data->first(function ($item) use ($municipio) {
-            return strtolower($item['municipio-nome']) === strtolower($municipio);
+            return iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($item['municipio-nome'])) === iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($municipio));
         });
 
         return $igbe_municipio ? $igbe_municipio['municipio-id'] : null;
