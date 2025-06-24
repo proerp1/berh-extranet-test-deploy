@@ -897,11 +897,12 @@ class IncomesController extends AppController
 
     private function get_nfse_data($income, $type) {
         $data = $this->get_nfse_type_data($income, $type);
+        $serie = $type === 'tpp' ? "1" : "2";
         $today = new DateTime();
 
         return [
             "numero" => mb_substr($income['Income']['id'], 0, 9, "UTF-8"),
-            "serie" => "1",
+            "serie" => $serie,
             "data_emissao" => $today->format('Y-m-d\TH:i:sP'),
             "servico" => [
                 "itens" => [
