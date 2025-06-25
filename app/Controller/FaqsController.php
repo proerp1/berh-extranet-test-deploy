@@ -16,7 +16,7 @@ class FaqsController extends AppController
 
     public function index()
 {
-    $this->Permission->check(2, "leitura") ? "" : $this->redirect("/not_allowed");
+    $this->Permission->check(81, "leitura") ? "" : $this->redirect("/not_allowed");
 
     $this->Paginator->settings = [
         'Faq' => [
@@ -60,7 +60,7 @@ class FaqsController extends AppController
 
     public function add()
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(81, "escrita") ? "" : $this->redirect("/not_allowed");
 
         if ($this->request->is(['post', 'put'])) {
             $this->Faq->create();
@@ -89,7 +89,7 @@ class FaqsController extends AppController
 
     public function edit($id = null)
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(81, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $this->Faq->id = $id;
 
@@ -122,7 +122,7 @@ class FaqsController extends AppController
 
     public function delete($id = null)
     {
-        $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(81, "excluir") ? "" : $this->redirect("/not_allowed");
 
         $this->Faq->id = $id;
         if ($this->Faq->delete()) {
