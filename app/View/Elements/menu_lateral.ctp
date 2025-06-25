@@ -541,6 +541,15 @@
                                 <span class="menu-title">Informativos</span>
                             </a>
                         </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'faqs') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'faqs', 'action' => 'index']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">FAQS</span>
+                            </a>
+                        </div>
                         
                         <div class="menu-item">
                             <a class="menu-link <?php echo $class.(in_array($this->request->params['controller'], ['users', 'user_resales']) ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'users', 'action' => 'index']) ?>">

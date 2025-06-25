@@ -4,24 +4,47 @@ class DashboardController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
+    public $uses = ['Faq', 'CategoriaFaq'];
 
     public function beforeFilter()
     {
         parent::beforeFilter();
     }
 
-    public function index()
-    {
-        $this->Permission->check(4, 'leitura') ? '' : $this->redirect('/not_allowed');
-        $breadcrumb = ['Dashboard' => '/'];
-        $action = 'Principal';
-        /*
-        if (CakeSession::read('Auth.User.is_seller')) {
-            $this->redirect('/dashboard/comercial');
-        }*/
+public function index()
+{
+    $this->Permission->check(4, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-        $this->set(compact('breadcrumb', 'action'));
+    $breadcrumb = ['Dashboard' => '/'];
+    $action = 'Principal';
+
+    $categorias = $this->CategoriaFaq->find('all', [
+        'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
+        'order' => ['CategoriaFaq.nome' => 'ASC']
+    ]);
+
+    foreach ($categorias as $key => &$categoria) {
+        $faqs = $this->Faq->find('all', [
+            'fields' => ['Faq.id', 'Faq.pergunta', 'Faq.resposta'],
+            'conditions' => [
+                'Faq.categoria_faq_id' => $categoria['CategoriaFaq']['id'],
+                'Faq.sistema_destino IN' => ['sig', 'todos'] // ✅ filtro necessário
+            ],
+            'order' => ['Faq.id' => 'DESC']
+        ]);
+
+        // Remove categoria se não tiver perguntas
+        if (empty($faqs)) {
+            unset($categorias[$key]);
+        } else {
+            $categoria['Faqs'] = $faqs;
+        }
     }
+
+    $this->set(compact('breadcrumb', 'action', 'categorias'));
+}
+
+
 
     public function oportunidade()
     {

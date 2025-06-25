@@ -24,6 +24,12 @@
                             <span class="menu-arrow d-lg-none"></span>
                         </span>
                     </a>
+                    <a href="<?php echo $this->Html->url(['controller' => 'dashboard', 'action' => 'index']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">FAQS</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
                 </div>
             </div>
             <div class="d-flex align-items-stretch flex-shrink-0">
