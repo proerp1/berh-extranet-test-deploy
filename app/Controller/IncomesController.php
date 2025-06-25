@@ -843,7 +843,7 @@ class IncomesController extends AppController
         $data = collect(json_decode($response->getBody()->getContents(), true));
 
         $igbe_municipio = $data->first(function ($item) use ($municipio) {
-            return strtolower($item['municipio-nome']) === strtolower($municipio);
+            return iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($item['municipio-nome'])) === iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($municipio));
         });
 
         return $igbe_municipio ? $igbe_municipio['municipio-id'] : null;
@@ -861,15 +861,15 @@ class IncomesController extends AppController
 
         return [
             "cnpj" => preg_replace('/\D/', '', $cnpj),
-            "razao_social" => $razao_social,
-            "email" => $tomador['email'],
+            "razao_social" => mb_substr($razao_social, 0, 75, "UTF-8"),
+            "email" => mb_substr($income['Customer']['email'], 0, 60, "UTF-8"),
             "endereco" => [
-                "logradouro" => $tomador['endereco'],
-                "numero" => $tomador['numero'],
-                "complemento" => $tomador['complemento'],
-                "bairro" => $tomador['bairro'],
+                "logradouro" => mb_substr($tomador['endereco'], 0, 50, "UTF-8"),
+                "numero" => mb_substr($tomador['numero'], 0, 10, "UTF-8"),
+                "complemento" => mb_substr($tomador['complemento'], 0, 30, "UTF-8"),
+                "bairro" => mb_substr($tomador['bairro'], 0, 30, "UTF-8"),
                 "codigo_municipio" => $this->get_municipio_id($tomador['estado'], $tomador['cidade']),
-                "uf" => $tomador['estado'],
+                "uf" => mb_substr($tomador['estado'], 0, 2, "UTF-8"),
                 "cep" => str_replace('-', '', $tomador['cep']),
             ]
         ];
@@ -897,17 +897,18 @@ class IncomesController extends AppController
 
     private function get_nfse_data($income, $type) {
         $data = $this->get_nfse_type_data($income, $type);
+        $serie = $type === 'tpp' ? "1" : "2";
         $today = new DateTime();
 
         return [
-            "numero" => $income['Income']['id'],
-            "serie" => "1",
+            "numero" => mb_substr($income['Income']['id'], 0, 9, "UTF-8"),
+            "serie" => $serie,
             "data_emissao" => $today->format('Y-m-d\TH:i:sP'),
             "servico" => [
                 "itens" => [
                     [
                         "codigo" => "3205",
-                        "discriminacao" => $data['obs'],
+                        "discriminacao" => mb_substr($data['obs'], 0, 2000, "UTF-8"),
                         "valor_servicos" => $data['valor']
                     ]
                 ]

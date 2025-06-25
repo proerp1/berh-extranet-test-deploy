@@ -275,10 +275,12 @@ class Order extends AppModel
             if ($novo_status_id == 85) {
                 if (!empty($this->data[$this->alias]['id'])) {
                     if (!isset($this->data[$this->alias]['pedido_complementar'])) {
-                        $registroAtual = $this->find('first', [
-                            'conditions' => ['id' => $this->data[$this->alias]['id']],
-                            'fields' => ['pedido_complementar'],
-                            'recursive' => -1
+                        $registroAtual = $this->find(
+                            'first',
+                            [
+                                'conditions' => ['id' => $this->data[$this->alias]['id']],
+                                'fields' => ['pedido_complementar'],
+                                'recursive' => -1
                             ]
                         );
 
@@ -286,7 +288,7 @@ class Order extends AppModel
                     } else {
                         $ge = $this->data[$this->alias]['pedido_complementar'];
                     }
-                    
+
                     if ($ge == 2) {
                         $this->data[$this->alias]['status_id'] = 104;
                     }
@@ -479,36 +481,63 @@ class Order extends AppModel
 
         $orderItems = $OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $orderId],
-            'fields' => ['OrderItem.id', 'OrderItem.customer_user_id', 'OrderItem.customer_user_itinerary_id'],
-            'recursive' => -1
+            'fields' => [
+                'OrderItem.id',
+                'OrderItem.customer_user_id',
+                'OrderItem.customer_user_itinerary_id',
+                'Order.customer_id',
+                'CustomerUser.cpf'
+            ],
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUser.id = OrderItem.customer_user_id']
+                ]
+            ],
+            'contain' => ['Order'],
         ]);
 
         foreach ($orderItems as $orderItem) {
-            $customerUserId = $orderItem['OrderItem']['customer_user_id'];
+            $cpf = str_pad($orderItem['CustomerUser']['cpf'], 11, '0', STR_PAD_LEFT);
             $itineraryId = $orderItem['OrderItem']['customer_user_itinerary_id'];
+            $customerId = $orderItem['Order']['customer_id'];
 
             $itinerary = $CustomerUserItinerary->find('first', [
                 'conditions' => ['CustomerUserItinerary.id' => $itineraryId],
-                'fields' => ['CustomerUserItinerary.benefit_id'],
-                'recursive' => -1
+                'fields' => ['Benefit.supplier_id'],
             ]);
 
-            $benefitId = isset($itinerary['CustomerUserItinerary']) ? $itinerary['CustomerUserItinerary']['benefit_id'] : null;
+            $supplierId = $itinerary['Benefit']['supplier_id'];
 
             // Pedido deve ser diferente do atual e status todos menos inicio e cancelado
             $firstOrder = $OrderItem->find('first', [
                 'joins' => [
                     [
+                        'table' => 'customer_users',
+                        'alias' => 'CustomerUser',
+                        'type' => 'INNER',
+                        'conditions' => ['CustomerUser.id = OrderItem.customer_user_id']
+                    ],
+                    [
                         'table' => 'customer_user_itineraries',
                         'alias' => 'Itinerary',
                         'type' => 'INNER',
                         'conditions' => ['Itinerary.id = OrderItem.customer_user_itinerary_id']
+                    ],
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => ['Benefit.id = Itinerary.benefit_id']
                     ]
                 ],
                 'contain' => ['Order'],
                 'conditions' => [
-                    'OrderItem.customer_user_id' => $customerUserId,
-                    'Itinerary.benefit_id' => $benefitId,
+                    'Order.customer_id' => $customerId,
+                    'CustomerUser.cpf' => $cpf,
+                    'Benefit.supplier_id' => $supplierId,
                     'OrderItem.order_id <>' => $orderId,
                     'Order.status_id NOT IN(83,18)',
                     'Order.is_partial <>' => 3
@@ -518,7 +547,7 @@ class Order extends AppModel
 
             $firstOrder = $firstOrder[0]['first_order_item_id'];
 
-            if(empty($firstOrder)) {
+            if (empty($firstOrder)) {
                 $this->OrderItem->bindModel(
                     ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
                 );
@@ -559,7 +588,7 @@ class Order extends AppModel
         return $date->format('Y-m-d');
     }
 
-    public function getExtrato($id) 
+    public function getExtrato($id)
     {
         $order = $this->find('first', ['conditions' => ['Order.id' => $id], 'recursive' => -1]);
 
@@ -607,23 +636,23 @@ class Order extends AppModel
 
         $v_total_vlca   = ($v_vl_economia + $v_total_bal_ajuste_cred + $v_total_bal_ajuste_deb + $v_total_bal_inconsistencia);
 
-        $data = [   
-                    'v_fee_economia'                => $v_fee_economia,
-                    'v_total_bal_economia'          => $v_total_bal_economia,
-                    'v_total_bal_ajuste_cred'       => $v_total_bal_ajuste_cred,
-                    'v_total_bal_ajuste_deb'        => $v_total_bal_ajuste_deb,
-                    'v_total_bal_inconsistencia'    => $v_total_bal_inconsistencia,
-                    'v_total_vlca'                  => $v_total_vlca,
-                    'v_vl_economia'                 => $v_vl_economia,
-                    'v_total_economia'              => $v_total_economia,
-                    'v_perc_repasse'                => $v_perc_repasse,
-                    'v_repasse_economia'            => $v_repasse_economia,
-                    'v_valor_pedido_compra'         => $v_valor_pedido_compra,
-                    'v_repasse_pedido_compra'       => $v_repasse_pedido_compra,
-                    'v_diferenca_repasse'           => $v_diferenca_repasse,
-                    'v_saldo'                       => $v_saldo,
-                    'v_observacao'                  => $v_observacao,
-                ];
+        $data = [
+            'v_fee_economia'                => $v_fee_economia,
+            'v_total_bal_economia'          => $v_total_bal_economia,
+            'v_total_bal_ajuste_cred'       => $v_total_bal_ajuste_cred,
+            'v_total_bal_ajuste_deb'        => $v_total_bal_ajuste_deb,
+            'v_total_bal_inconsistencia'    => $v_total_bal_inconsistencia,
+            'v_total_vlca'                  => $v_total_vlca,
+            'v_vl_economia'                 => $v_vl_economia,
+            'v_total_economia'              => $v_total_economia,
+            'v_perc_repasse'                => $v_perc_repasse,
+            'v_repasse_economia'            => $v_repasse_economia,
+            'v_valor_pedido_compra'         => $v_valor_pedido_compra,
+            'v_repasse_pedido_compra'       => $v_repasse_pedido_compra,
+            'v_diferenca_repasse'           => $v_diferenca_repasse,
+            'v_saldo'                       => $v_saldo,
+            'v_observacao'                  => $v_observacao,
+        ];
 
         return $data;
     }
