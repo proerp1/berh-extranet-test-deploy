@@ -1,8 +1,10 @@
 <?php
+App::uses('ApiBtgPactual', 'Lib');
+
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['Customer', 'TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode', 'OutcomeOrder'];
+	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode','OutcomeOrder','Customer', 'OrderItem','CustomerUser'];
 
 	public $paginate = [
         'Outcome' => [
@@ -877,8 +879,108 @@ public function edit_document($id, $document_id = null)
 
 		$this->set(compact('status', 'tiposDocumentos', 'data', 'action'));
 	}
+	
+	public function payments($id) {
+        $this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Outcome->id = $id;
+        $this->request->data = $this->Outcome->read();
+        $order_id = $this->request->data['Outcome']['order_id'];
+        $order = $this->Order->find('first', ['conditions' => ['Order.id' => $order_id]]);
 
+        $this->Paginator->settings = ['OrderItem' => [
+            'limit' => 100,
+            'order' => ['CustomerUser.name' => 'asc'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'PixStatus.*'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ]
+            ]
+        ]];
 
+        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
 
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);
+        }
 
+        $items = $this->Paginator->paginate('OrderItem', $condition);
+
+        $outcome = $this->Outcome->read(null, $id);
+        $pendingPix = $this->get_pix_pendentes($outcome);
+
+        $action = 'Contas a pagar';
+        $breadcrumb = ['Pagamentos' => ''];
+        $this->set(compact('breadcrumb', 'action', 'id', 'order', 'items', 'pendingPix'));
+    }
+
+    private function get_pix_pendentes($outcome) {
+        $data = $this->CustomerUser->find_pedido_beneficiarios_info($outcome['Outcome']['order_id']);
+
+        $pix_pendentes = [];
+        for ($i=0; $i < count($data); $i++) {
+            $orderItem = $data[$i];
+
+            if ($orderItem['i']['pix_status_id'] != "109") continue;
+
+            $pix_pendentes[] = $orderItem;
+        }
+
+        return $pix_pendentes;
+    }
+
+    public function enviar_btg($id) {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $outcome = $this->Outcome->read(null, $id);
+        $data = $this->get_pix_pendentes($outcome);
+
+        if (!count($data)) {
+            $this->Flash->set(__('Não há pagamentos pendentes.'), ['params' => ['class' => "alert alert-warning"]]);
+            $this->redirect(['action'=> 'payments', $id]);
+        }
+
+        $hasError = false;
+        for ($i=0; $i < count($data); $i++) {
+            $orderItem = $data[$i];
+
+            $ApiBtgPactual = new ApiBtgPactual();
+            $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento']);
+
+            if (!$success) {
+                $hasError = true;
+            }
+
+            $pix_status_id = $success ? 111 : 110;
+            $this->OrderItem->id = $orderItem['i']['id'];
+            $this->OrderItem->save([
+                'pix_status_id' => $pix_status_id
+            ]);
+            $this->OrderItem->clear();
+        }
+        if ($hasError) {
+            $this->Flash->set(__('Não foi possível enviar todos os pedidos. Por favor, verifique os dados e tente novamente.'), ['params' => ['class' => "alert alert-warning"]]);
+        } else {
+            $this->Flash->set(__('Itens enviados com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        }
+        $this->redirect(['action'=> 'payments', $id]);
+    }
+
+    public function marcar_pix_pago($id) {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $this->OrderItem->id = $id;
+        $this->OrderItem->save([
+            'pix_status_id' => 112,
+        ]);
+
+        $this->redirect($this->referer());
+    }
 }

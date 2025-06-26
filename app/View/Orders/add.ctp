@@ -691,10 +691,10 @@
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
             <div class="row">
-                <div class="col-6">
+                <div class="col-3">
                     <h3>Itens</h3>
                 </div>
-                <div class="col-6">
+                <div class="col-9">
                     <?php if ($order['Order']['status_id'] == 83) { ?>
                         <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
                             <i class="fas fa-arrow-up"></i>
@@ -702,6 +702,10 @@
                         </a>
                     <?php } ?>
                     <?php if ($order['Order']['is_partial'] == 3) { ?>
+                        <a href="<?php echo $this->base . '/orders/gerar_remessa_pix/' . $id; ?>" class="btn btn-sm btn-warning me-3" style="float:right">
+                            <i class="fas fa-dollar-sign"></i>
+                            Criar remessa Contas a Pagar
+                        </a>
                         <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
                             <i class="fas fa-file-excel"></i>
                             Baixar lista de Beneficiários - PIX
@@ -901,6 +905,26 @@
 
                 <?php echo $this->element("pagination"); ?>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_criar_remessa_pix" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/modal_criar_remessa_pix/' . $id; ?>" class="form-horizontal" method="post">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja gerar o boleto?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success js-salvar">Sim</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

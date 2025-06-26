@@ -1034,13 +1034,17 @@ class OrdersController extends AppController
             ]
         );
 
+        $outcome = $this->Outcome->find('first', ['conditions' => ['Outcome.order_id' => $id]]);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'v_is_partial', 'v_cond_pagamento'));
-        $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
-        $this->set(compact('progress', 'hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento'));
+
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
+        $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
+        $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento'));
+
 
         $this->render("add");
     }
@@ -3117,6 +3121,50 @@ class OrdersController extends AppController
         $this->ExcelGenerator->gerarExcelPedidosBeneficiariosPIX($nome, $data);
 
         $this->redirect("/files/excel/" . $nome);
+    }
+
+    public function gerar_remessa_pix($id) {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $outcome = $this->Outcome->find('first', ['conditions' => ['Outcome.order_id' => $id]]);
+
+        if ($outcome) {
+            $this->Flash->set(__('Já existe uma remessa com esse pedido.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'edit', $id]);
+        }
+
+        try {
+            $order = $this->Order->findById($id);
+
+            $this->Outcome->save(['Outcome' => [
+                'status_id' => 11,
+                'doc_num' => $order['Order']['id'],
+                'order_id' => $order['Order']['id'],
+                'bank_account_id' => 4,
+                'payment_method' => 11,
+                'resale_id' => 1,
+                'plano_contas_id' => 1,
+                'expense_id' => 1,
+                'parcela' => 1,
+                'supplier_id' => 1,
+                'cost_center_id' => 116,
+                'recorrencia' => 2,
+                'name' => 'PIX',
+                'valor_multa' => 0,
+                'valor_bruto' => $order['Order']['subtotal'],
+                'valor_total' => $order['Order']['total'],
+                'vencimento' => $order['Order']['due_date'],
+                'created' => date('Y-m-d H:i:s'),
+                'user_creator_id' => CakeSession::read("Auth.User.id"),
+            ]]);
+        } catch (Exception $e) {
+            $this->Flash->set(__('Não foi possível gerar a remessa. Verifique os dados e tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'edit', $id]);
+        }
+
+        $this->Flash->set(__('Remessa gerada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action'=> 'edit', $id]);
     }
 
     public function compras($id)

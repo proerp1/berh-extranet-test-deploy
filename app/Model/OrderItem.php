@@ -20,7 +20,12 @@ class OrderItem extends AppModel {
         'CustomerUser' => array(
             'className' => 'CustomerUser',
             'foreignKey' => 'customer_user_id'
-        )
+        ),
+        'PixStatus' => array(
+            'className' => 'Status',
+            'foreignKey' => 'pix_status_id',
+            'conditions' => ['PixStatus.categoria' => 23]
+        ),
     );
     
     public $virtualFields = [
