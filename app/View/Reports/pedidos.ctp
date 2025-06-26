@@ -110,7 +110,7 @@
     </form>
 
     <div class="card-body pt-0 py-3">
-        <?php echo $this->element("pagination"); ?>
+        <?php echo $data ? $this->element("pagination") : '' ?>
         <br>
         <div class="table-responsive">
             <?php echo $this->element("table"); ?>
@@ -167,7 +167,7 @@
             </tbody>
             </table>
         </div>
-        <?php echo $this->element("pagination"); ?>
+        <?php echo $data ? $this->element("pagination") : '' ?>
     </div>
 </div>
 

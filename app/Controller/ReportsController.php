@@ -214,7 +214,10 @@ class ReportsController extends AppController
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
 
-        $data = $this->Paginator->paginate('OrderItem', $condition['condition']);
+        $data = [];
+        if (!empty($_GET)) {
+            $data = $this->Paginator->paginate('OrderItem', $condition['condition']);
+        }
 
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 

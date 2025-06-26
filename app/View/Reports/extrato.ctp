@@ -205,8 +205,7 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status:</label>
-                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
-                                    <option value=''></option>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t[]" id="t" multiple>
                                     <?php
                                     $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento', 104 => 'Aguardando Liberação de Crédito',87 => 'Finalizado',18 => 'Cancelado'];
 
