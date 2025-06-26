@@ -122,6 +122,7 @@
                     <th>Data de criação</th>
                     <th>N° Pedido</th>
                     <th>Status Pedido</th>
+                    <th>Status Processamento</th>
                     <th>Nome</th>
                     <th>CPF</th>
                     <th>Primeira Compra</th>
@@ -146,6 +147,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["created"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["status_processamento"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["first_order"] == 0 ? "Não" : "Sim"; ?></td>
