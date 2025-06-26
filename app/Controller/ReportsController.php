@@ -618,88 +618,90 @@ class ReportsController extends AppController
                     $saldo = $cliente['Customer']['economia_inicial_not_formated'];
                 }
             }
-        }
-
-        $first_order = $this->Order->find('first', ['conditions' => ['Order.customer_id' => $id], 'fields' => 'MIN(Order.created) as data_criacao']);
-
-        $totalOrders = $this->Order->find('first', [
-            'contain' => ['Customer', 'EconomicGroup', 'Income'],
-            'fields' => [
-                'count(1) as qtde_pedidos',
-                "IFNULL(
-                    (SELECT COUNT(1)
-                        FROM (
-                            SELECT COUNT(1), o.customer_id 
-                                FROM orders o 
-                                    INNER JOIN order_items i ON i.order_id = o.id 
-                                    INNER JOIN customer_users c ON c.id = i.customer_user_id 
-                                WHERE i.data_cancel = '1901-01-01 00:00:00' 
-                                        AND o.data_cancel = '1901-01-01 00:00:00' 
-                                GROUP BY c.cpf, o.customer_id 
-                        ) rw 
-                        WHERE rw.customer_id = Customer.id 
-                    ), 
-                0) as qtde_order_customers",
-                'sum(Order.subtotal) as subtotal',
-                'sum(Order.transfer_fee) as transfer_fee',
-                'sum(Order.commission_fee) as commission_fee',
-                'sum(Order.desconto) as desconto',
-                'sum(Order.saldo) as saldo',
-                'sum(Order.total) as total',
-                'sum(Order.total_saldo) as total_saldo',
-                "(SELECT coalesce(sum(b.total), 0) as total_balances 
-                    FROM order_balances b 
-                        INNER JOIN orders o ON o.id = b.order_id 
-                    WHERE o.customer_id = Customer.id 
-                            AND b.tipo = 1 
-                            AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as total_balances",
-                'sum(Order.tpp_fee) as vl_tpp',
-            ],
-            'conditions' => $condition,
-            'recursive' => -1
-        ]);
-
-        $data_orders = $this->Order->find('all', [
-            'contain' => ['Customer', 'EconomicGroup', 'Income'],
-            'fields' => [
-                'Order.id',
-            ],
-            'conditions' => $condition,
-            'order' => ['Order.created' => 'asc'],
-            'recursive' => -1
-        ]);
         
-        $total_fee_economia         = 0;
-        $total_vl_economia          = 0;
-        $total_repasse_economia     = 0;
-        $total_diferenca_repasse    = 0;
-        $total_bal_ajuste_cred      = 0;
-        $total_bal_ajuste_deb       = 0;
-        $total_bal_inconsistencia   = 0;
-        $total_vlca                 = 0;
-        
-        if ($data_orders) {
-            for ($i = 0; $i < count($data_orders); $i++) {
-                $data_extrato = $this->Order->getExtrato($data_orders[$i]["Order"]["id"]);
 
-                $total_fee_economia         += $data_extrato['v_fee_economia'];
-                $total_vl_economia          += $data_extrato['v_vl_economia'];
-                $total_repasse_economia     += $data_extrato['v_repasse_economia'];
-                $total_diferenca_repasse    += $data_extrato['v_diferenca_repasse'];
-                $total_bal_ajuste_cred      += $data_extrato['v_total_bal_ajuste_cred'];
-                $total_bal_ajuste_deb       += $data_extrato['v_total_bal_ajuste_deb'];
-                $total_bal_inconsistencia   += $data_extrato['v_total_bal_inconsistencia'];
-                $total_vlca                 += $data_extrato['v_total_vlca'];
+            $first_order = $this->Order->find('first', ['conditions' => ['Order.customer_id' => $id], 'fields' => 'MIN(Order.created) as data_criacao']);
+
+            $totalOrders = $this->Order->find('first', [
+                'contain' => ['Customer', 'EconomicGroup', 'Income'],
+                'fields' => [
+                    'count(1) as qtde_pedidos',
+                    "IFNULL(
+                        (SELECT COUNT(1)
+                            FROM (
+                                SELECT COUNT(1), o.customer_id 
+                                    FROM orders o 
+                                        INNER JOIN order_items i ON i.order_id = o.id 
+                                        INNER JOIN customer_users c ON c.id = i.customer_user_id 
+                                    WHERE i.data_cancel = '1901-01-01 00:00:00' 
+                                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                                    GROUP BY c.cpf, o.customer_id 
+                            ) rw 
+                            WHERE rw.customer_id = Customer.id 
+                        ), 
+                    0) as qtde_order_customers",
+                    'sum(Order.subtotal) as subtotal',
+                    'sum(Order.transfer_fee) as transfer_fee',
+                    'sum(Order.commission_fee) as commission_fee',
+                    'sum(Order.desconto) as desconto',
+                    'sum(Order.saldo) as saldo',
+                    'sum(Order.total) as total',
+                    'sum(Order.total_saldo) as total_saldo',
+                    "(SELECT coalesce(sum(b.total), 0) as total_balances 
+                        FROM order_balances b 
+                            INNER JOIN orders o ON o.id = b.order_id 
+                        WHERE o.customer_id = Customer.id 
+                                AND b.tipo = 1 
+                                AND b.data_cancel = '1901-01-01 00:00:00' 
+                                AND o.data_cancel = '1901-01-01 00:00:00' 
+                    ) as total_balances",
+                    'sum(Order.tpp_fee) as vl_tpp',
+                ],
+                'conditions' => $condition,
+                'recursive' => -1
+            ]);
+
+            $data_orders = $this->Order->find('all', [
+                'contain' => ['Customer', 'EconomicGroup', 'Income'],
+                'fields' => [
+                    'Order.id',
+                ],
+                'conditions' => $condition,
+                'order' => ['Order.created' => 'asc'],
+                'recursive' => -1
+            ]);
+            
+            $total_fee_economia         = 0;
+            $total_vl_economia          = 0;
+            $total_repasse_economia     = 0;
+            $total_diferenca_repasse    = 0;
+            $total_bal_ajuste_cred      = 0;
+            $total_bal_ajuste_deb       = 0;
+            $total_bal_inconsistencia   = 0;
+            $total_vlca                 = 0;
+            
+            if ($data_orders) {
+                for ($i = 0; $i < count($data_orders); $i++) {
+                    $data_extrato = $this->Order->getExtrato($data_orders[$i]["Order"]["id"]);
+
+                    $total_fee_economia         += $data_extrato['v_fee_economia'];
+                    $total_vl_economia          += $data_extrato['v_vl_economia'];
+                    $total_repasse_economia     += $data_extrato['v_repasse_economia'];
+                    $total_diferenca_repasse    += $data_extrato['v_diferenca_repasse'];
+                    $total_bal_ajuste_cred      += $data_extrato['v_total_bal_ajuste_cred'];
+                    $total_bal_ajuste_deb       += $data_extrato['v_total_bal_ajuste_deb'];
+                    $total_bal_inconsistencia   += $data_extrato['v_total_bal_inconsistencia'];
+                    $total_vlca                 += $data_extrato['v_total_vlca'];
+                }
             }
-        }
 
-        foreach ($data as &$item) {
-            $item['Order']['extrato'] = $this->Order->getExtrato($item['Order']['id']);
-        }
+            foreach ($data as &$item) {
+                $item['Order']['extrato'] = $this->Order->getExtrato($item['Order']['id']);
+            }
 
-        unset($item);
+            unset($item);
+
+        }
         
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
