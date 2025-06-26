@@ -69,32 +69,6 @@
                             </div>
                             <div id="selectedNumbers"></div>
 
-                            <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
-                                <select class="form-select form-select-solid fw-bolder"
-                                        data-kt-select2="true"
-                                        data-placeholder="Selecione"
-                                        data-allow-clear="true"
-                                        name="sp[]"
-                                        id="sp"
-                                        multiple>
-                                    <?php
-                                    $selectedProcessamento = isset($_GET["sp"]) && is_array($_GET["sp"]) ? $_GET["sp"] : [];
-                                    $processamentoOptions = [
-                                        'Pendente' => 'Pendente',
-                                        'Processando' => 'Processando',
-                                        'Concluído' => 'Concluído',
-                                        'Erro' => 'Erro'
-                                        // ou use: $this->OrderItem->schema()['status_processamento']['length'] se for enum
-                                    ];
-
-                                    foreach ($processamentoOptions as $keySp => $labelSp) {
-                                        $selected = in_array($keySp, $selectedProcessamento) ? "selected" : "";
-                                        echo '<option value="' . $keySp . '" ' . $selected . '>' . $labelSp . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
 
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status Pedido:</label>
@@ -148,7 +122,6 @@
                     <th>Data de criação</th>
                     <th>N° Pedido</th>
                     <th>Status Pedido</th>
-                    <th>Status Processamento</th>
                     <th>Nome</th>
                     <th>CPF</th>
                     <th>Primeira Compra</th>
@@ -173,7 +146,6 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["created"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["status_processamento"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["first_order"] == 0 ? "Não" : "Sim"; ?></td>
