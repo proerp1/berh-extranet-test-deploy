@@ -71,6 +71,9 @@ class ReportsController extends AppController
                 'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
             ]);
         }
+        if (!empty($_GET['sp']) && is_array($_GET['sp'])) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['sp']]);
+        }
 
         if (isset($_GET['excel'])) {
             $pag = $this->ExcelConfiguration->getConfiguration('OrderItem');
