@@ -241,17 +241,17 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="text-muted">
-                                        <div class="d-flex align-items-center">
-                                            Endereço Entrega
-                                        </div>
-                                    </td>
-                                    <td class="fw-bolder text-end">
-                                        <?php echo $order['CustomerAddress']['address']; ?> <br>
-                                        <?php echo $order['CustomerAddress']['city_data']; ?>
-                                    </td>
-                                </tr>
+<!--                                <tr>-->
+<!--                                    <td class="text-muted">-->
+<!--                                        <div class="d-flex align-items-center">-->
+<!--                                            Endereço Entrega-->
+<!--                                        </div>-->
+<!--                                    </td>-->
+<!--                                    <td class="fw-bolder text-end">-->
+<!--                                        --><?php //echo $order['CustomerAddress']['address']; ?><!-- <br>-->
+<!--                                        --><?php //echo $order['CustomerAddress']['city_data']; ?>
+<!--                                    </td>-->
+<!--                                </tr>-->
                                 <!--end::Date-->
                             </tbody>
                             <!--end::Table body-->

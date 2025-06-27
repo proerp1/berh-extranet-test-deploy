@@ -11,17 +11,17 @@
                 <div class="modal-body">
 
                     <div class="row mb-7">
-                        <div class="col-6">
+                        <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
                             <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
                         </div>
 
-                        <div class="col-6">
-                            <label class="mb-2">Endereço de Entrega</label>
-                            <select name="data[customer_address_id]" id="customer_address_id" required data-control="select2" class="form-select form-select-solid fw-bolder" data-select2-id="select2-data-customer_address_id" tabindex="-1" aria-hidden="true">
-                                <option value="" disabled hidden selected>Selecione um Cliente!</option>
-                            </select>
-                        </div>
+<!--                        <div class="col">-->
+<!--                            <label class="mb-2">Endereço de Entrega</label>-->
+<!--                            <select name="data[customer_address_id]" id="customer_address_id" required data-control="select2" class="form-select form-select-solid fw-bolder" data-select2-id="select2-data-customer_address_id" tabindex="-1" aria-hidden="true">-->
+<!--                                <option value="" disabled hidden selected>Selecione um Cliente!</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
                     </div>
 
                     <div class="row mb-7 div-new-order">
