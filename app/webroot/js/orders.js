@@ -220,7 +220,7 @@ $(document).ready(function() {
                 if (Array.isArray(data) && !data.length) {
                     console.log('empty')
                     $('#customer_address_id').html('<option value="" disabled hidden selected>Este cliente não tem endereços cadastrados!</option>');
-                    $('#gerar-pedido-btn').attr('disabled', true);
+                    //$('#gerar-pedido-btn').attr('disabled', true);
                 } else {
                     let options = ''
                     for (const [id, name] of Object.entries(data)) {
@@ -228,7 +228,7 @@ $(document).ready(function() {
                     }
                     console.log(options)
                     $('#customer_address_id').html(options);
-                    $('#gerar-pedido-btn').attr('disabled', false);
+                    //$('#gerar-pedido-btn').attr('disabled', false);
                 }
 
                 $('#customer_address_id').select2();
