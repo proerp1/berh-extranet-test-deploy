@@ -955,6 +955,14 @@ class IncomesController extends AppController
         $this->Income->recursive = 2;
         $this->request->data = $this->Income->read();
 
+        if (!$this->request->data['Income']['order_id']) {
+            $this->Flash->set(__('É necessário que a conta a receber esteja vinculada à um pedido para gerar nota. Por favor, verifique os dados e tente novamente'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        } elseif ($this->request->data['Income']['order_id'] && !$this->request->data['Order']['gera_nfse']) {
+            $this->Flash->set(__('O pedido vinculado à conta a receber não gera nota. Por favor, verifique os dados e tente novamente'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
+
         $income_nfses = collect($this->request->data['IncomeNfse'])->filter(function ($nfse) {
             return $nfse['data_cancel'] === '1901-01-01 00:00:00';
         });
@@ -989,6 +997,14 @@ class IncomesController extends AppController
 
         $this->Income->recursive = 3;
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
+
+        if (!$income['Income']['order_id']) {
+            $this->Flash->set(__('É necessário que a conta a receber esteja vinculada à um pedido para gerar nota. Por favor, verifique os dados e tente novamente'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        } elseif ($income['Income']['order_id'] && !$income['Order']['gera_nfse']) {
+            $this->Flash->set(__('O pedido vinculado à conta a receber não gera nota. Por favor, verifique os dados e tente novamente'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect($this->referer());
+        }
 
         try {
             $nfse_sdk = $this->connect_nfse_sdk();

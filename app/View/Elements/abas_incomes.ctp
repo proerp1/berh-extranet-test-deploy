@@ -5,7 +5,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['action'] == 'historico' ? 'active' : '' ?>" href="<?php echo $this->base.'/incomes/historico/'.$id; ?>">Histórico de cobrança</a>
 	</li>
-    <?php if ($this->request->data['Order']['id']) { ?>
+    <?php if ($this->request->data['Income']['order_id'] && $this->request->data['Order']['gera_nfse'] == 1) { ?>
         <li class="nav-item">
             <a class="nav-link <?php echo $this->request->params['action'] == 'nfse' ? 'active' : '' ?>" href="<?php echo $this->base.'/incomes/nfse/'.$id; ?>">Nota Fiscal de Serviço</a>
         </li>

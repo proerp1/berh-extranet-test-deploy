@@ -11,9 +11,16 @@
                 <div class="modal-body">
 
                     <div class="row mb-7">
-                        <div class="col">
+                        <div class="col-6">
                             <label class="fw-semibold fs-6 mb-2 required">Cliente</label>
                             <?php echo $this->Form->input('customer_id', array("id" => "customer_id", "required" => false, 'label' => false, "class" => "form-select form-select-solid fw-bolder", "data-control" => "select2", "data-placeholder" => "Selecione", "data-allow-clear" => "true", "empty" => "Selecione", "options" => $customers)); ?>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="mb-2">Endereço de Entrega</label>
+                            <select name="data[customer_address_id]" id="customer_address_id" required data-control="select2" class="form-select form-select-solid fw-bolder" data-select2-id="select2-data-customer_address_id" tabindex="-1" aria-hidden="true">
+                                <option value="" disabled hidden selected>Selecione um Cliente!</option>
+                            </select>
                         </div>
                     </div>
 
@@ -53,6 +60,30 @@
                                     <option value="1">Importação</option>
                                     <option value="3">PIX</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-7 div-new-order">
+                        <div class="col-6">
+                            <label class="mb-2">Gera Nota Fiscal?</label>
+                            <div class="row" style=" margin-top: 10px; margin-bottom: 10px; ">
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="radio" name="data[gera_nfse]" value="1" id="gera_nfse_sim" checked="checked" />
+                                        <label class="form-check-label" for="gera_nfse_sim">
+                                            Sim
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check form-check-custom form-check-solid">
+                                        <input class="form-check-input" type="radio" name="data[gera_nfse]" value="0" id="gera_nfse_nao" />
+                                        <label class="form-check-label" for="gera_nfse_nao">
+                                            Não
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -249,7 +280,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Gerar</button>
+                    <button type="submit" class="btn btn-success" id="gerar-pedido-btn">Gerar</button>
                 </div>
             </form>
         </div>

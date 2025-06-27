@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal','CustomerGeLog'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal','CustomerGeLog', 'CustomerAddress'];
 
     public $paginate = [
         'Customer' => [

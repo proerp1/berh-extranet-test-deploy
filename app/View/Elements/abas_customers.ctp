@@ -35,4 +35,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customer_supplier_logins']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_supplier_logins/index/1/'.$id; ?>">Logins e Senhas</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customer_address']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_address/index/'.$id; ?>">Endereços</a>
+	</li>
 </ul>

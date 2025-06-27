@@ -26,9 +26,9 @@ class Customer extends AppModel
         'Proposal' => [
             'className' => 'Proposal',
             'foreignKey' => 'customer_id',
-            'conditions' => ['Proposal.status_id' => 99], 
-
-        ]
+            'conditions' => ['Proposal.status_id' => 99],
+        ],
+        'CustomerAddress'
     ];
 
     public $hasOne = [

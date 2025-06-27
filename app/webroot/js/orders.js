@@ -211,6 +211,29 @@ $(document).ready(function() {
                 });
             }
         });
+
+        $.ajax({
+            url: base_url + "/customer_address/list/" + customerId,
+            type: "post",
+            dataType: "json",
+            success: function(data){
+                if (Array.isArray(data) && !data.length) {
+                    console.log('empty')
+                    $('#customer_address_id').html('<option value="" disabled hidden selected>Este cliente não tem endereços cadastrados!</option>');
+                    $('#gerar-pedido-btn').attr('disabled', true);
+                } else {
+                    let options = ''
+                    for (const [id, name] of Object.entries(data)) {
+                        options += `<option value="${id}">${name}</option>`
+                    }
+                    console.log(options)
+                    $('#customer_address_id').html(options);
+                    $('#gerar-pedido-btn').attr('disabled', false);
+                }
+
+                $('#customer_address_id').select2();
+            }
+        });
     });
 
     $("#customer_id").on("change", function() {

@@ -217,6 +217,41 @@
                                         <td class="fw-bolder text-end"><?php echo $order['UpdatedGe']['name']; ?></td>
                                     </tr>
                                 <?php } ?>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Gera Nota Fiscal
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder">
+                                        <div class="d-flex justify-content-end gap-4">
+                                            <div class="form-check form-check-custom form-check-solid">
+                                                <input class="form-check-input gera_nfse" type="radio" name="data[Order][gera_nfse]" value="1" id="geraNfse1" <?php echo (isset($order['Order']) ? ($order['Order']['gera_nfse'] == 1 ? 'checked' : '') : '') ?> />
+                                                <label class="form-check-label" for="geraNfse1">
+                                                    Sim
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check form-check-custom form-check-solid">
+                                                <input class="form-check-input gera_nfse" type="radio" name="data[Order][gera_nfse]" value="2" id="geraNfse2" <?php echo (isset($order['Order']) ? ($order['Order']['gera_nfse'] == 0 ? 'checked' : '') : '') ?> />
+                                                <label class="form-check-label" for="geraNfse2">
+                                                    Não
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
+                                            Endereço Entrega
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end">
+                                        <?php echo $order['CustomerAddress']['address']; ?> <br>
+                                        <?php echo $order['CustomerAddress']['city_data']; ?>
+                                    </td>
+                                </tr>
                                 <!--end::Date-->
                             </tbody>
                             <!--end::Table body-->

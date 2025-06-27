@@ -35,6 +35,7 @@ class Order extends AppModel
             'className' => 'User',
             'foreignKey' => 'user_updated_ge_id'
         ],
+        'CustomerAddress'
     ];
 
     public $hasOne = [
