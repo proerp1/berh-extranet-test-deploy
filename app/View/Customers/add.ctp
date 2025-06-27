@@ -229,7 +229,7 @@
 
             <div class="row">
                 <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2 required">Revenda</label>
+                    <label class="fw-semibold fs-6 mb-2 required">Parceiro</label>
                     <?php echo $this->Form->input('cod_franquia', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
                 </div>
 

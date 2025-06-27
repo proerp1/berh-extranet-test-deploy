@@ -5,7 +5,7 @@
         <div class="card-header d-block border-0 pt-6 pb-6">
             <div class="row">
                 <div class="col-3 mb-10">
-                    <label class="form-label fs-5 fw-bold mb-3">Franquias:</label>
+                    <label class="form-label fs-5 fw-bold mb-3">Parceiros:</label>
                     <?php echo $this->Form->input('resale_id', ["required" => true, "placeholder" => "", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "options" => $resaleIds]);  ?>
                 </div>
                 <div class="col-12 mb-7">
@@ -24,7 +24,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 rounded-start">Franquia</th>
+                        <th class="ps-4 rounded-start">Parceiro</th>
                         <th class="w-150px min-w-150px rounded-end">Ações</th>
                     </tr>
                 </thead>
