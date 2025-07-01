@@ -104,8 +104,7 @@ class ReportsController extends AppController
         if (!isset($_GET['de']) && !isset($_GET['para'])) {
             $dates = $this->getCurrentDates();
 
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $dates['from']]);
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $dates['to'] . ' 23:59:59']);
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.created between ? and ?' => [$dates['from'], $dates['to'] . ' 23:59:59']]);
 
             $de = $dates['from'];
             $para = $dates['to'];
@@ -123,6 +122,10 @@ class ReportsController extends AppController
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
+        }
+
+        if (!empty($_GET['stp'])) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
         }
 
         if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
