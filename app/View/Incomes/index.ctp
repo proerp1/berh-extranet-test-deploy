@@ -61,6 +61,11 @@
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
+                                <input type="text" class="form-control" name="c" id="c" value="<?php echo isset($_GET['c']) ? $_GET['c'] : ''; ?>" placeholder="Digite o nome do cliente">
+                            </div>
+
+                            <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Status Cliente:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="sc" id="sc">
                                     <option></option>
@@ -238,6 +243,8 @@
             $("#pagamento_ate").val(null);
             $("#created_de").val(null);
             $("#created_ate").val(null);
+            $("#c").val(null);
+
 
             $("#busca").submit();
         });

@@ -55,9 +55,14 @@ class IncomesController extends AppController
             $condition['or'] = array_merge($condition['or'], ['Income.name LIKE' => "%".$_GET['q']."%", 'Income.doc_num' => $_GET['q'], 'BankAccount.name LIKE' => "%".$_GET['q']."%", 'Customer.nome_primario LIKE' => "%".$_GET['q']."%", 'Customer.nome_secundario LIKE' => "%".$_GET['q']."%", 'Customer.codigo_associado' => $_GET['q']]);
         }
 
+        if (isset($_GET['c']) and $_GET['c'] != "") {
+            $condition['or'] = array_merge($condition['or'], [ 'Customer.nome_primario LIKE' => "%".$_GET['c']."%", 'Customer.nome_secundario LIKE' => "%".$_GET['c']."%"]);
+        }
+
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
         }
+        
 
         if (isset($_GET["sc"]) and $_GET["sc"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Customer.status_id' => $_GET['sc']]);
