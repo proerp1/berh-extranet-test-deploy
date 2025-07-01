@@ -233,9 +233,35 @@ class CustomersController extends AppController
                 'user_creator_id' => CakeSession::read('Auth.User.id'),
             ];
 
+            $customer_old = $this->Customer->find('first', [
+                'conditions' => ['Customer.id' => $id],
+                'fields' => [
+                    'Customer.flag_gestao_economico',
+                    'Customer.porcentagem_margem_seguranca',
+                    'Customer.qtde_minina_diaria',
+                    'Customer.tipo_ge'
+                ]
+            ]);
+
+            $fields_ge = ['flag_gestao_economico', 'porcentagem_margem_seguranca', 'qtde_minina_diaria', 'tipo_ge'];
+            $alter_ge = false;
+
+            foreach ($fields_ge as $field) {
+                $val_old = $customer_old['Customer'][$field];
+                $val_new = $this->request->data['Customer'][$field];
+                if ((string)$val_old !== (string)$val_new) {
+                    $alter_ge = true;
+                    break;
+                }
+            }
+
             if ($this->Customer->save($this->request->data)) {
                 $this->Log->save($dados_log);
-                $this->CustomerGeLog->save($dados_ge_log);
+
+                if ($alter_ge) {
+                    $this->CustomerGeLog->save($dados_ge_log);
+                }
+                                
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
 
                 $this->redirect("/customers/edit/" . $id);
