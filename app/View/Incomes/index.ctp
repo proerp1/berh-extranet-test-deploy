@@ -26,6 +26,17 @@
 </div>
 
 <div class="card mb-5 mb-xl-8">
+    <?php
+$clientes = [];
+foreach ($data as $item) {
+    $id = $item["Customer"]["id"];
+    $nome = $item["Customer"]["nome_secundario"];
+    if (!isset($clientes[$id])) {
+        $clientes[$id] = $nome;
+    }
+}
+?>
+
     <form action="<?php echo $this->Html->url(array( "controller" => "incomes", "action" => "index")); ?>/" role="form" id="busca" autocomplete="off">
         <input type="hidden" name="t" value="<?php echo isset($_GET["t"]) ? $_GET["t"] : ""; ?>">
         <div class="card-header border-0 pt-6 mb-3">
@@ -62,7 +73,17 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
-                                <input type="text" class="form-control" name="c" id="c" value="<?php echo isset($_GET['c']) ? $_GET['c'] : ''; ?>" placeholder="Digite o nome do cliente">
+                                    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" multiple name="c[]" id="c" data-placeholder="Selecione o(s) cliente(s)">
+                                        <?php
+                                            foreach ($clientes as $id => $nome_secundario) {
+                                                $selected = '';
+                                                if (isset($_GET['c']) && is_array($_GET['c']) && in_array($id, $_GET['c'])) {
+                                                    $selected = 'selected';
+                                                }
+                                                echo '<option value="'.$id.'" '.$selected.'>'.$nome_secundario.'</option>';
+                                            }
+                                        ?>
+                                    </select>
                             </div>
 
                             <div class="mb-10">
