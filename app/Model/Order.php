@@ -268,36 +268,48 @@ class Order extends AppModel
         if (!empty($this->data[$this->alias]['updated_ge'])) {
             $this->data[$this->alias]['updated_ge'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_ge']);
         }
-
-        if (isset($this->data[$this->alias]['status_id'])) {
-            $novo_status_id = $this->data[$this->alias]['status_id'];
-
-            // Se status "Pagamento Confirmado" e GE = "não", status = "Aguardando Liberação de Crédito"
-            if ($novo_status_id == 85) {
-                if (!empty($this->data[$this->alias]['id'])) {
-                    if (!isset($this->data[$this->alias]['pedido_complementar'])) {
-                        $registroAtual = $this->find(
-                            'first',
-                            [
-                                'conditions' => ['id' => $this->data[$this->alias]['id']],
-                                'fields' => ['pedido_complementar'],
-                                'recursive' => -1
-                            ]
-                        );
-
-                        $ge = isset($registroAtual[$this->alias]['pedido_complementar']) ? $registroAtual[$this->alias]['pedido_complementar'] : null;
-                    } else {
-                        $ge = $this->data[$this->alias]['pedido_complementar'];
-                    }
-
-                    if ($ge == 2) {
-                        $this->data[$this->alias]['status_id'] = 104;
-                    }
-                }
-            }
-        }
+        
+        $this->_ajustaStatusPorGE();
 
         $this->transactionNotifications($this->data[$this->alias]);
+
+        return true;
+    }
+
+    private function _ajustaStatusPorGE() 
+    { 
+        if (!empty($this->data[$this->alias]['id'])) {
+            $registroAtual = $this->find('first', [
+                'conditions' => ['id' => $this->data[$this->alias]['id']],
+                'fields' => ['status_id', 'pedido_complementar'],
+                'recursive' => -1
+            ]);
+
+            $statusAtual = $registroAtual[$this->alias]['status_id'];
+            $geAntigo = $registroAtual[$this->alias]['pedido_complementar'];
+
+            $geNovo = isset($this->data[$this->alias]['pedido_complementar']) 
+                        ? $this->data[$this->alias]['pedido_complementar'] 
+                        : $geAntigo;
+
+            $statusNovo = isset($this->data[$this->alias]['status_id']) 
+                            ? $this->data[$this->alias]['status_id'] 
+                            : $statusAtual;
+
+            // ====================
+            // Regra 1: Pagamento Confirmado (85) -> GE de 1 para 2 -> muda para 104
+            // ====================
+            if ($statusNovo == 85 && $geAntigo == 1 && $geNovo == 2) {
+                $this->data[$this->alias]['status_id'] = 104;
+            }
+
+            // ====================
+            // Regra 2: Aguardando Liberação de Crédito (104) -> GE de 2 para 1 -> muda para 85
+            // ====================
+            if ($statusAtual == 104 && $geAntigo == 2 && $geNovo == 1) {
+                $this->data[$this->alias]['status_id'] = 85;
+            }
+        }
 
         return true;
     }
