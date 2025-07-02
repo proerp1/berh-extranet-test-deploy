@@ -3312,14 +3312,43 @@ class OrdersController extends AppController
             // Pega o ID baseado nos textos de centro de custo, departamento e grupo econômico da planilha
             $extra_ids = $this->getExtraIds($customerId, $centroCusto, $departamento, $grupoEconomico);
 
+            $benefitId = $benefit['Benefit']['id'];
+            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
+
             // save to
             // centroCusto = CustomerUser.customer_cost_center_id
             // departamento = CustomerUser.customer_departments_id
             // grupoEconomico = EconomicGroup.EconomicGroup (customer_user_id, economic_group_id)
 
-
-            $benefitId = $benefit['Benefit']['id'];
-            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
+            if(empty($numeroCartao)){
+                // Bypass beforeFind by using query=false
+                $lastItinerary = $this->CustomerUserItinerary->find('first', [
+                    'conditions' => [
+                        "REPLACE(REPLACE(CustomerUser.cpf, '-', ''), '.', '')" => $cpf,
+                        'CustomerUserItinerary.card_number !=' => '',
+                        'CustomerUserItinerary.card_number IS NOT NULL',
+                        'CustomerUserItinerary.customer_id' => $customerId,
+                        'CustomerUserItinerary.benefit_id' => $benefitId
+                    ],
+                    'joins' => [
+                        [
+                            'table' => 'customer_users',
+                            'alias' => 'CustomerUser',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'CustomerUser.id = CustomerUserItinerary.customer_user_id',
+                            ]
+                        ]
+                    ],
+                    'order' => ['CustomerUserItinerary.created' => 'DESC'],
+                    'limit' => 1,
+                    'recursive' => -1,
+                    'callbacks' => false // desabilita beforeFind para buscar todo tipo de cartao
+                ]);
+                if (!empty($lastItinerary) && !empty($lastItinerary['CustomerUserItinerary']['card_number'])) {
+                    $numeroCartao = $lastItinerary['CustomerUserItinerary']['card_number'];
+                }
+            }
 
             // Find or create the CustomerUser
             $existingUser = $this->CustomerUser->find('first', [
