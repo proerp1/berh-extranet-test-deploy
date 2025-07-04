@@ -11,6 +11,17 @@ class Faq extends AppModel
         ]
     ];
 
+public $actsAs = array(
+    'Upload.Upload' => array(
+        'file' => array(
+            'fields' => array(
+                'dir' => 'file_dir'
+            )
+        )
+    )
+);
+
+
     // Validações
     public $validate = [
         'categoria_faq_id' => [

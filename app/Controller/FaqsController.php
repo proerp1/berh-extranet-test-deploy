@@ -1,7 +1,7 @@
 <?php
 class FaqsController extends AppController
 {
-    public $helpers = ['Html', 'Form'];
+    public $helpers = ['Html', 'Form', 'Text'];
     public $components = ['Paginator', 'Permission'];
     public $uses = ['Faq', 'CategoriaFaq'];
 

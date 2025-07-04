@@ -79,6 +79,8 @@
         <div class="faq-list">
             <?php foreach ($categoria['Faqs'] as $index => $faq): 
                 $uid = $categoria['CategoriaFaq']['id'] . '-' . $index;
+                $file = isset($faq['Faq']['file']) ? $faq['Faq']['file'] : null;
+                $faqId = isset($faq['Faq']['id']) ? $faq['Faq']['id'] : null;
             ?>
                 <div class="faq-item">
                     <div class="faq-question" onclick="toggleFaq('<?php echo $uid; ?>')">
@@ -87,6 +89,16 @@
                     </div>
                     <div id="faq-<?php echo $uid; ?>" class="faq-answer">
                         <p><?php echo nl2br(h($faq['Faq']['resposta'])); ?></p>
+
+                        <?php if (!empty($file) && !empty($faqId)): ?>
+                            <div style="margin-top: 10px;">
+                                <a download 
+                                   href="<?php echo $this->webroot . 'files/faq/file/' . $faqId . '/' . $file; ?>"
+                                   style="color: #ED0677; font-weight: 500; display: inline-flex; align-items: center;">
+                                    📎 Ver anexo: <?php echo h($file); ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
