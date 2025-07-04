@@ -423,14 +423,14 @@
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Emitir nota fiscal?</label>
-                    <?php echo $this->Form->input('emitir_nota_fiscal', array('options' => array('N' => 'Não', 'S' => 'Sim', 'A' => 'Antecipada'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0",'default' => 'S'));  ?>
+                    <?php echo $this->Form->input('emitir_nota_fiscal', array('options' => array('N' => 'Não', 'S' => 'Automático', 'A' => 'Antecipada', 'M' => 'Manual'), "data-control" => "select2", 'empty' => 'Selecione', "class" => "form-select mb-3 mb-lg-0",'default' => 'S'));  ?>
                 </div>
             </div>
 
             <?php if ($is_admin) { ?>
                 <div class="row">
                     <div class="mb-7 col-2">
-                        <label class="form-label">SAldo Inicial</label>
+                        <label class="form-label">Saldo Inicial</label>
                         <div class="input-group">
                             <span class="input-group-text">R$</span>
                             <?php echo $this->Form->input('economia_inicial', ['type' => 'text', 'placeholder' => 'Economia inicial', 'class' => 'form-control money_exchange mb-3 mb-lg-0']); ?>

@@ -52,6 +52,7 @@ class OrdersController extends AppController
                 'Status.label',
                 'Status.name',
                 'Customer.codigo_associado',
+                'Customer.emitir_nota_fiscal',
                 'CustomerCreator.name',
                 'Creator.name',
                 'EconomicGroup.name',
@@ -114,6 +115,12 @@ class OrdersController extends AppController
 
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
+            $filtersFilled = true;
+        }
+
+        if (!empty($_GET['antecipada'])) {
+            $comparator = $_GET['antecipada'] == 'S' ? '=' : '!=';
+            $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
             $filtersFilled = true;
         }
 
@@ -673,6 +680,7 @@ class OrdersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $order = ['Order' => []];
             $order['Order']['id'] = $id;
+            $order['Order']['gera_nfse'] = $this->request->data['Order']['gera_nfse'];
             $order['Order']['observation'] = $this->request->data['Order']['observation'];
             $order['Order']['nfse_observation'] = $this->request->data['Order']['nfse_observation'];
             $order['Order']['user_updated_id'] = CakeSession::read("Auth.User.id");
@@ -836,6 +844,7 @@ class OrdersController extends AppController
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
+        $this->Order->recursive = 0;
         $orders = $this->Order->find(
             'all',
             [

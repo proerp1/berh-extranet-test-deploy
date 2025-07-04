@@ -57,6 +57,7 @@ if (isset($customer_id)) {
                 <th>Cidade</th>
                 <th>Estado</th>
                 <th>CEP</th>
+                <th>Usuário/Beneficiário</th>
                 <th class="w-200px min-w-200px rounded-end">Ações</th>
             </tr>
             </thead>
@@ -74,6 +75,7 @@ if (isset($customer_id)) {
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerAddress"]["city"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerAddress"]["state"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerAddress"]["zip_code"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">
                             <a href="<?php echo $this->base; ?>/customer_address/edit/<?php echo $data[$i]["Customer"]["id"]; ?>/<?php echo $data[$i]["CustomerAddress"]["id"]; ?>" class="btn btn-info btn-sm">
                                 Editar

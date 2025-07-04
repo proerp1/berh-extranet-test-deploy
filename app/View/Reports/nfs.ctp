@@ -63,6 +63,14 @@
                                     <input class="form-control" id="ate_pagamento" name="ate_pagamento" value="<?php echo isset($_GET["ate_pagamento"]) ? $_GET["ate_pagamento"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">NFSe Antecipada:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="antecipada" id="antecipada">
+                                    <option value=''>Selecione</option>
+                                    <option value='S' <?php echo isset($_GET["antecipada"]) && $_GET["antecipada"] == 'S' ? 'selected' : ""; ?>>Sim</option>
+                                    <option value='N' <?php echo isset($_GET["antecipada"]) && $_GET["antecipada"] == 'N' ? 'selected' : ""; ?>>Não</option>
+                                </select>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 
@@ -100,6 +108,9 @@
                         <th>Total</th>
                         <th>Nome Documento</th>
                         <th>Arquivo</th>
+                        <th>NFSe Antecipada</th>
+                        <th>Cobrança Cancelada</th>
+                        <th>Pedido Cancelado</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -144,6 +155,9 @@
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/files/order_document/file_name/'.$data[$i]['OrderDocument']['id'].'/'.$data[$i]['OrderDocument']['file_name']; ?>" target="_blank"><?php echo $data[$i]['OrderDocument']['file_name']; ?></a>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Customer']['emitir_nota_fiscal'] == 'A' ? "Sim" : "Não"; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Income']['status_id'] == 18 ? "Sim" : "Não"; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['status_id'] == 94 ? "Sim" : "Não"; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/order_documents/edit/'.$data[$i]["Order"]["id"].'/'.$data[$i]["OrderDocument"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

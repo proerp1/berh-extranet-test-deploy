@@ -770,11 +770,13 @@ class ReportsController extends AppController
                         'Status.label',
                         'Status.name',
                         'Customer.codigo_associado',
+                        'Customer.emitir_nota_fiscal',
                         'CustomerCreator.name',
                         'Creator.name',
                         'EconomicGroup.name',
                         'Customer.nome_primario',
                         'Income.data_pagamento',
+                        'Income.status_id',
                         "(SELECT coalesce(sum(b.total), 0) as total_balances 
                             FROM order_balances b 
                                 INNER JOIN orders o ON o.id = b.order_id 
@@ -818,6 +820,12 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
             $filtersFilled = true;
         }
+
+        if (!empty($_GET['antecipada'])) {
+            $comparator = $_GET['antecipada'] == 'S' ? '=' : '!=';
+            $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
+            $filtersFilled = true;
+        }
     
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
@@ -859,11 +867,13 @@ class ReportsController extends AppController
                     'Status.label',
                     'Status.name',
                     'Customer.codigo_associado',
+                    'Customer.emitir_nota_fiscal',
                     'CustomerCreator.name',
                     'Creator.name',
                     'EconomicGroup.name',
                     'Customer.nome_primario',
                     'Income.data_pagamento',
+                    'Income.status_id',
                     "(SELECT coalesce(sum(b.total), 0) as total_balances 
                         FROM order_balances b 
                             INNER JOIN orders o ON o.id = b.order_id 

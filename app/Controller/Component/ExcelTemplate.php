@@ -883,7 +883,8 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Data Alteração"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Observação"); $col++;
-        
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Antecipada"); $col++;
+
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
             $total_economia = 0;
@@ -928,6 +929,7 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['updated_ge']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['UpdatedGe']['name']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['observation_ge']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'); $col++;
         }
     }
 
@@ -2453,7 +2455,10 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome Documento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Arquivo"); $col++;
-        
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Antecipado"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cobrança Cancelada"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido Cancelado"); $col++;
+
         foreach ($dados as $key => $dado) {     
             $fee_economia = 0;  // Inicializa com valor padrão
             $vl_economia = isset($dado["Order"]["total_balances"]) ? $dado["Order"]["total_balances"] : 0;
@@ -2485,6 +2490,9 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Order"]["total"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderDocument"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderDocument"]["file_name"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['emitir_nota_fiscal'] == 'A' ? "Sim" : "Não"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Income']['status_id'] == 18 ? "Sim" : "Não"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['status_id'] == 94 ? "Sim" : "Não"); $col++;
         }
     }
 
