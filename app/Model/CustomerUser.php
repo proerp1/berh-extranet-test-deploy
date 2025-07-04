@@ -67,6 +67,12 @@ class CustomerUser extends AppModel
         ],
     ];
 
+    public $hasOne = [
+        'CustomerAddress' => [
+            'conditions' => ['CustomerAddress.data_cancel' => '1901-01-01 00:00:00']
+        ],
+    ];
+
     public $validate = [
         'email' => [
             // 'email' => [

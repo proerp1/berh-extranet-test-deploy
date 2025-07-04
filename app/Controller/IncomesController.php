@@ -80,6 +80,16 @@ class IncomesController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Income.vencimento <' => date("Y-m-d")]);
         }
 
+        if (isset($_GET["nfse"])) {
+            $comparator = $_GET["nfse"] == 'S' ? 'in' : 'not in';
+            $condition['and'] = array_merge($condition['and'], ["Income.id $comparator (select distinct income_id from income_nfse)"]);
+        }
+
+        if (!empty($_GET['nfse_antecipada'])) {
+            $comparator = $_GET['nfse_antecipada'] == 'S' ? '=' : '!=';
+            $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
+        }
+
         $get_de = isset($_GET["de"]) ? $_GET["de"] : '';
         $get_ate = isset($_GET["ate"]) ? $_GET["ate"] : '';
         
@@ -141,7 +151,7 @@ class IncomesController extends AppController
                 $this->Income->unbindModel(['belongsTo' => ['Customer', 'BankAccount', 'Status']], false);
                 
                 $joins = [
-                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*'],
+                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*', '(select group_concat(nfse.tipo) from income_nfse nfse where nfse.income_id = Income.id group by nfse.income_id) as nfses'],
                     'joins' => [['table' => 'customers',
                         'alias' => 'Customer',
                         'type' => 'INNER',
@@ -161,6 +171,11 @@ class IncomesController extends AppController
                         'alias' => 'Order',
                         'type' => 'LEFT',
                         'conditions' => ['Income.order_id = Order.id']
+                ],
+                    ['table' => 'income_nfse',
+                        'alias' => 'IncomeNfse',
+                        'type' => 'LEFT',
+                        'conditions' => ['IncomeNfse.income_id = Income.id']
                 ]
                     ]
                 ];
@@ -198,7 +213,7 @@ class IncomesController extends AppController
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
         
         $action = 'Contas a Receber';
-        
+
         $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
     }
     

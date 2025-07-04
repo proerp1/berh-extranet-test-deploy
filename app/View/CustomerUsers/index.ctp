@@ -184,6 +184,7 @@ echo $this->element("abas_customers", array('id' => $id));
                     <th>Departamento</th>
                     <th>Centro de Custo</th>
                     <th>Grupo Economico</th>
+                    <th>Endereço de Entrega</th>
 
                     <th class="w-200px min-w-200px rounded-end">Ações</th>
                 </tr>
@@ -208,6 +209,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerDepartment"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CostCenter"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["EconomicGroup"][0]["name"]) ? $data[$i]["EconomicGroup"][0]["name"] : ''; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["CustomerAddress"]["address"]) ? $data[$i]["CustomerAddress"]["address"] : ''; ?></td>
 
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customer_users/' . $urlEdit . '/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">

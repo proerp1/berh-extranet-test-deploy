@@ -100,6 +100,14 @@
                                     <option value="2" <?php echo isset($_GET['ge']) && $_GET['ge'] == '2' ? 'selected' : ''; ?>>Não</option>
                                 </select>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">NFSe Antecipada:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="antecipada" id="antecipada">
+                                    <option value=''></option>
+                                    <option value="S" <?php echo isset($_GET['antecipada']) && $_GET['antecipada'] == 'S' ? 'selected' : ''; ?>>Sim</option>
+                                    <option value="N" <?php echo isset($_GET['antecipada']) && $_GET['antecipada'] == 'N' ? 'selected' : ''; ?>>Não</option>
+                                </select>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
@@ -141,6 +149,7 @@
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
+                        <th>NFSe Antecipada</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -197,6 +206,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'; ?></td>
 
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">

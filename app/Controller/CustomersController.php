@@ -303,6 +303,15 @@ class CustomersController extends AppController
         $this->render("add");
     }
 
+    public function get($customer_id) {
+        $this->autoRender = false;
+        $this->layout = 'ajax';
+
+        $cliente = $this->Customer->find('first', ['conditions' => ['Customer.id' => $customer_id]]);
+
+        echo json_encode($cliente);
+    }
+
     public function delete($id)
     {
         $this->Permission->check(3, 'excluir') ? '' : $this->redirect('/not_allowed');

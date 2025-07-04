@@ -234,6 +234,19 @@ $(document).ready(function() {
                 $('#customer_address_id').select2();
             }
         });
+
+        $.ajax({
+            url: base_url + "/customers/get/" + customerId,
+            type: "post",
+            dataType: "json",
+            success: function(data){
+                if (data['Customer']['emitir_nota_fiscal'] === 'N') {
+                    $('#gera_nfse_nao').click();
+                } else {
+                    $('#gera_nfse_sim').click();
+                }
+            }
+        });
     });
 
     $("#customer_id").on("change", function() {
