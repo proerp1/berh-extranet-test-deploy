@@ -3658,14 +3658,17 @@ class OrdersController extends AppController
 
         $rec = iterator_to_array($csv->getRecords());
 
+        $header = array_shift($rec);
+
         usort($rec, function ($a, $b) {
-            if ($a[7] != 'PEDIDO_CLIENTE') {
-                return strcmp($a[7], $b[7]);
-            }
+            return strcmp($a[7], $b[7]);
         });
+
+        array_unshift($rec, $header);
 
         $line = 0;
         $data = [];
+
         foreach ($rec as $row) {
             $saldo = 0;
 
