@@ -49,7 +49,7 @@
 
 <?php echo $this->element("../Orders/_abas"); ?>
 
-<?php echo $this->Form->create('Order', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+<?php echo $this->Form->create('Order', ["id" => "js-form-submit", 'class' => 'order-form', "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
     <div class="row">
         <div class="col-sm-12 col-md-4">
             <!--begin::Order details-->
@@ -233,7 +233,7 @@
                                             </div>
 
                                             <div class="form-check form-check-custom form-check-solid">
-                                                <input class="form-check-input gera_nfse" type="radio" name="data[Order][gera_nfse]" value="2" id="geraNfse2" <?php echo (isset($order['Order']) ? ($order['Order']['gera_nfse'] == 0 ? 'checked' : '') : '') ?> />
+                                                <input class="form-check-input gera_nfse" type="radio" name="data[Order][gera_nfse]" value="0" id="geraNfse2" <?php echo (isset($order['Order']) ? ($order['Order']['gera_nfse'] == 0 ? 'checked' : '') : '') ?> />
                                                 <label class="form-check-label" for="geraNfse2">
                                                     Não
                                                 </label>
@@ -392,7 +392,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] == 87) ? 'disabled="disabled"' : ''; ?>>
+                                    <button type="submit" id="update-order" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] == 87) ? 'disabled="disabled"' : ''; ?>>
                                         Salvar dados
                                     </button>
                                 </div>
@@ -1159,6 +1159,16 @@
         $('#benefit_id').select2({
             dropdownParent: $('#modal_add_itinerario')
         });
+
+        $("#js-form-submit.order-form").submit(function (event) {
+            const gera_nfse = $('[name="data[Order][gera_nfse]"]:checked').val();
+            const nfse_obs = $('[name="data[Order][nfse_observation]"]').val().trim();
+
+            if (gera_nfse === '0' && nfse_obs === '') {
+                event.preventDefault();
+                alert('Preencha o campo "Observações da Nota fiscal" para atualizar o pedido.')
+            }
+        })
 
         $('.working_days_input').on('change', function() {
             const newValue = $(this).val();

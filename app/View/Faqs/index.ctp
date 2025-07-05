@@ -74,6 +74,7 @@
                         <th>Pergunta</th>
                         <th>Resposta</th>
                         <th>Categoria</th>
+                        <th>Anexo</th>
                         <th>Destino</th>
                         <th class="w-200px min-w-200px">Ações</th>
                     </tr>
@@ -85,6 +86,17 @@
                                 <td class="fw-bold fs-7"><?php echo h($faq["Faq"]["pergunta"]); ?></td>
                                 <td class="fw-bold fs-7"><?php echo h($faq["Faq"]["resposta"]); ?></td>
                                 <td class="fw-bold fs-7"><?php echo h($faq["CategoriaFaq"]["nome"]); ?></td>
+                                <td class="fw-bold fs-7">
+    <?php if (!empty($faq["Faq"]["file"])): ?>
+        <a download href="<?php echo $this->webroot . 'files/faq/file/' . $faq["Faq"]["id"] . '/' . h($faq["Faq"]["file"]); ?>"
+           style="color: #ED0677; font-weight: 500;">
+           📎 <?php echo h($faq["Faq"]["file"]); ?>
+        </a>
+    <?php else: ?>
+        —
+    <?php endif; ?>
+</td>
+
                                 <td class="fw-bold fs-7">
                                     <?php
                                         switch ($faq["Faq"]["sistema_destino"]) {

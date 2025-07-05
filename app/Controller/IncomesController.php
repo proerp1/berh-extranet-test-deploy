@@ -55,9 +55,12 @@ class IncomesController extends AppController
             $condition['or'] = array_merge($condition['or'], ['Income.name LIKE' => "%".$_GET['q']."%", 'Income.doc_num' => $_GET['q'], 'BankAccount.name LIKE' => "%".$_GET['q']."%", 'Customer.nome_primario LIKE' => "%".$_GET['q']."%", 'Customer.nome_secundario LIKE' => "%".$_GET['q']."%", 'Customer.codigo_associado' => $_GET['q']]);
         }
 
-        if (isset($_GET['c']) and $_GET['c'] != "") {
-            $condition['or'] = array_merge($condition['or'], [ 'Customer.nome_primario LIKE' => "%".$_GET['c']."%", 'Customer.nome_secundario LIKE' => "%".$_GET['c']."%"]);
+            if (!empty($_GET['c'])) {
+            if (is_array($_GET['c'])) {
+                $condition['Income.customer_id'] = $_GET['c'];
+            }
         }
+
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
@@ -75,6 +78,16 @@ class IncomesController extends AppController
         if (isset($_GET["atraso"]) and $_GET["atraso"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id IN (15,16) ']);
             $condition['and'] = array_merge($condition['and'], ['Income.vencimento <' => date("Y-m-d")]);
+        }
+
+        if (isset($_GET["nfse"])) {
+            $comparator = $_GET["nfse"] == 'S' ? 'in' : 'not in';
+            $condition['and'] = array_merge($condition['and'], ["Income.id $comparator (select distinct income_id from income_nfse)"]);
+        }
+
+        if (!empty($_GET['nfse_antecipada'])) {
+            $comparator = $_GET['nfse_antecipada'] == 'S' ? '=' : '!=';
+            $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
         }
 
         $get_de = isset($_GET["de"]) ? $_GET["de"] : '';
@@ -138,7 +151,7 @@ class IncomesController extends AppController
                 $this->Income->unbindModel(['belongsTo' => ['Customer', 'BankAccount', 'Status']], false);
                 
                 $joins = [
-                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*'],
+                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*', '(select group_concat(nfse.tipo) from income_nfse nfse where nfse.income_id = Income.id group by nfse.income_id) as nfses'],
                     'joins' => [['table' => 'customers',
                         'alias' => 'Customer',
                         'type' => 'INNER',
@@ -158,6 +171,11 @@ class IncomesController extends AppController
                         'alias' => 'Order',
                         'type' => 'LEFT',
                         'conditions' => ['Income.order_id = Order.id']
+                ],
+                    ['table' => 'income_nfse',
+                        'alias' => 'IncomeNfse',
+                        'type' => 'LEFT',
+                        'conditions' => ['IncomeNfse.income_id = Income.id']
                 ]
                     ]
                 ];
@@ -195,7 +213,7 @@ class IncomesController extends AppController
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
         
         $action = 'Contas a Receber';
-        
+
         $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
     }
     

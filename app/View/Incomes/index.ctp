@@ -26,6 +26,17 @@
 </div>
 
 <div class="card mb-5 mb-xl-8">
+    <?php
+$clientes = [];
+foreach ($data as $item) {
+    $id = $item["Customer"]["id"];
+    $nome = $item["Customer"]["nome_secundario"];
+    if (!isset($clientes[$id])) {
+        $clientes[$id] = $nome;
+    }
+}
+?>
+
     <form action="<?php echo $this->Html->url(array( "controller" => "incomes", "action" => "index")); ?>/" role="form" id="busca" autocomplete="off">
         <input type="hidden" name="t" value="<?php echo isset($_GET["t"]) ? $_GET["t"] : ""; ?>">
         <div class="card-header border-0 pt-6 mb-3">
@@ -62,7 +73,17 @@
                         <div class="px-7 py-5">
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
-                                <input type="text" class="form-control" name="c" id="c" value="<?php echo isset($_GET['c']) ? $_GET['c'] : ''; ?>" placeholder="Digite o nome do cliente">
+                                    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" multiple name="c[]" id="c" data-placeholder="Selecione o(s) cliente(s)">
+                                        <?php
+                                            foreach ($clientes as $id => $nome_secundario) {
+                                                $selected = '';
+                                                if (isset($_GET['c']) && is_array($_GET['c']) && in_array($id, $_GET['c'])) {
+                                                    $selected = 'selected';
+                                                }
+                                                echo '<option value="'.$id.'" '.$selected.'>'.$nome_secundario.'</option>';
+                                            }
+                                        ?>
+                                    </select>
                             </div>
 
                             <div class="mb-10">
@@ -149,6 +170,22 @@
                                     <input class="form-control" id="pagamento_ate" name="pagamento_ate" value="<?php echo isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">NFSe Emitida:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="nfse" id="nfse">
+                                    <option></option>
+                                    <option value="S" <?php echo isset($_GET['nfse']) && $_GET['nfse'] == 'S' ? 'selected' : '' ?>>Sim</option>
+                                    <option value="N" <?php echo isset($_GET['nfse']) && $_GET['nfse'] == 'N' ? 'selected' : '' ?>>Não</option>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">NFSe Antecipada:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="nfse_antecipada" id="nfse_antecipada">
+                                    <option></option>
+                                    <option value="S" <?php echo isset($_GET['nfse_antecipada']) && $_GET['nfse_antecipada'] == 'S' ? 'selected' : '' ?>>Sim</option>
+                                    <option value="N" <?php echo isset($_GET['nfse_antecipada']) && $_GET['nfse_antecipada'] == 'N' ? 'selected' : '' ?>>Não</option>
+                                </select>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
@@ -176,6 +213,8 @@
                         <th>Conta bancária</th>
                         <th>Data pagamento</th>
                         <th>Data de criação</th>
+                        <th>Nota Fiscal</th>
+                        <th>Antecipada?</th>
                         <th>Vencimento</th>
                         <th>Parcela</th>
                         <th data-priority="1"><?php echo $this->Paginator->sort('Income.valor_total', 'Valor a receber R$'); ?> <?php echo $this->Paginator->sortKey() == 'Income.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
@@ -186,6 +225,18 @@
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
+                            <?php
+                                $row = $data[$i];
+
+                                $nfses = '-';
+                                if ($data[$i][0]['nfses']) {
+                                    $nfses = collect(explode(',', $data[$i][0]['nfses']))->map(function ($nfse_type) use ($row) {
+                                        $order_id = $row['Order']['id'];
+                                        $type = $nfse_type == 'tpp' ? "1" : "2";
+                                        return "$order_id-$type";
+                                    })->join(', ');
+                                }
+                            ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
@@ -199,6 +250,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["BankAccount"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo date("d/m/Y H:i:s", strtotime($data[$i]['Income']['created_nao_formatado'])); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $nfses; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Customer']['emitir_nota_fiscal'] == 'A' ? "Sim" : "Não"; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["parcela"].'ª'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>

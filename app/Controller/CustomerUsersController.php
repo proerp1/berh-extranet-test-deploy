@@ -11,7 +11,8 @@ class CustomerUsersController extends AppController
     public $uses = ['CustomerUser', 'Customer', 'Status', 'CustomerUserAddress', 'CustomerUserVacation', 
                     'CepbrEstado', 'AddressType', 'CustomerDepartment', 'CustomerPosition', 
                     'CustomerUserBankAccount', 'BankAccountType', 'CustomerUserItinerary', 'Benefit',
-                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem', 'BankCode', 'EconomicGroup','Group'];
+                    'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem',
+                    'BankCode', 'EconomicGroup','Group','CustomerAddress'];
 
                     public $paginate = [
                         'CustomerUserAddress' => [

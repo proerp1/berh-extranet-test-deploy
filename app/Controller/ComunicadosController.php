@@ -236,7 +236,7 @@ class ComunicadosController extends AppController
     {
         $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
 
-        $comunicado_clientes = $this->ComunicadoCliente->find('all', ['conditions' => ['ComunicadoCliente.comunicado_id' => $id, 'ComunicadoCliente.sent' => null]]);
+        $comunicado_clientes = $this->ComunicadoCliente->find('all', ['conditions' => ['ComunicadoCliente.comunicado_id' => $id]]);
         
         foreach ($comunicado_clientes as $cliente) {
             if ($cliente['Customer']['status_id'] == 3) {

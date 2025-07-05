@@ -26,6 +26,14 @@ class CustomerAddress extends AppModel {
 	  return $queryData;
 	}
 
+    public function beforeSave($options = array())
+    {
+        if (isset($this->data[$this->alias]['zip_code'])) {
+            $this->data[$this->alias]['zip_code'] = preg_replace('/\D/', '', $this->data[$this->alias]['zip_code']);
+        }
+        return true;
+    }
+
     public function afterFind($results, $primary = false)
     {
         foreach ($results as $key => $val) {

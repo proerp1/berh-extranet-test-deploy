@@ -23,23 +23,23 @@ public function index()
         'order' => ['CategoriaFaq.nome' => 'ASC']
     ]);
 
-    foreach ($categorias as $key => &$categoria) {
-        $faqs = $this->Faq->find('all', [
-            'fields' => ['Faq.id', 'Faq.pergunta', 'Faq.resposta'],
-            'conditions' => [
-                'Faq.categoria_faq_id' => $categoria['CategoriaFaq']['id'],
-                'Faq.sistema_destino IN' => ['sig', 'todos'] // ✅ filtro necessário
-            ],
-            'order' => ['Faq.id' => 'DESC']
-        ]);
+foreach ($categorias as $key => &$categoria) {
+    $faqs = $this->Faq->find('all', [
+        'fields' => ['Faq.id', 'Faq.pergunta', 'Faq.resposta', 'Faq.file', 'Faq.categoria_faq_id'],
+        'conditions' => [
+            'Faq.categoria_faq_id' => $categoria['CategoriaFaq']['id'],
+            'Faq.sistema_destino IN' => ['sig', 'todos']
+        ],
+        'order' => ['Faq.id' => 'DESC']
+    ]);
 
-        // Remove categoria se não tiver perguntas
-        if (empty($faqs)) {
-            unset($categorias[$key]);
-        } else {
-            $categoria['Faqs'] = $faqs;
-        }
+    if (empty($faqs)) {
+        unset($categorias[$key]);
+    } else {
+        $categoria['Faqs'] = $faqs;
     }
+}
+
 
     $this->set(compact('breadcrumb', 'action', 'categorias'));
 }

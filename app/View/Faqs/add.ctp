@@ -74,6 +74,28 @@
             </div>
         </div>
 
+        <!-- Upload de Documentação -->
+<div class="row" id="documentacao-wrapper" style="display: none;">
+    <div class="mb-7 col-md-12">
+        <label for="file" class="fw-semibold fs-6 mb-2">Documento ou Imagem</label>
+        <?php echo $this->Form->input('file', [
+            'type' => 'file',
+            'label' => false,
+            'div' => false,
+            'class' => 'form-control form-control-solid',
+            'accept' => 'image/*,.pdf'
+        ]); ?>
+
+        <?php if (!empty($this->request->data['Faq']['file'])): ?>
+            <br>
+            <a download href="<?php echo $this->webroot . 'files/faq/file/' . $this->request->data['Faq']['id'] . '/' . $this->request->data['Faq']['file']; ?>">
+                📎 <?php echo h($this->request->data['Faq']['file']); ?>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+
+
         <!-- Botões -->
         <div class="d-flex justify-content-end">
             <a href="<?php echo $this->base.'/faqs'; ?>" class="btn btn-light-dark me-3">Voltar</a>
@@ -98,5 +120,22 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = this.scrollHeight + 'px';
         });
     });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectCategoria = document.getElementById('FaqCategoriaFaqId');
+    const docWrapper = document.getElementById('documentacao-wrapper');
+
+    function toggleUpload() {
+        if (selectCategoria.value === '3') {
+            docWrapper.style.display = 'block';
+        } else {
+            docWrapper.style.display = 'none';
+        }
+    }
+
+    toggleUpload(); // executa ao carregar
+    selectCategoria.addEventListener('change', toggleUpload);
 });
 </script>
