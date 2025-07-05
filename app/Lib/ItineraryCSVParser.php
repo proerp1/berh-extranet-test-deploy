@@ -166,7 +166,7 @@ class ItineraryCSVParser extends Controller
 
     private function processUser($row, $customerId, $shouldDeleteItinerary)
     {
-        $cpf = preg_replace('/\D/', '', $row[3]);
+        $cpf = trim(preg_replace('/\D/', '', $row[3]));
 
         $existingUser = $this->CustomerUser->find('first', [
             'conditions' => [
@@ -194,7 +194,7 @@ class ItineraryCSVParser extends Controller
             'email' => $row[53],
             'tel' => '(' . $row[54] . ') ' . $row[55],
             'name' => $row[2],
-            'rg' => $row[4],
+            'rg' => trim($row[4]),
             'emissor_rg' => $row[5],
             'customer_id' => $customerId,
             'status_id' => 1,
@@ -240,7 +240,7 @@ class ItineraryCSVParser extends Controller
             $this->CustomerUser->create();
             $this->CustomerUser->save($userData);
             if(isset($this->CustomerUser->validationErrors['email'])){
-                return ['success' => false, 'message' => $this->CustomerUser->validationErrors['email'][0], 'userId' => 0, 'cpf' => $cpf, 'benefit_code' => $row[13]];
+                return ['success' => false, 'message' => $this->CustomerUser->validationErrors['email'][0], 'userId' => 0, 'cpf' => $cpf, 'benefit_code' => trim($row[13])];
             }
             $userId = $this->CustomerUser->id;
         } else {
@@ -434,12 +434,12 @@ class ItineraryCSVParser extends Controller
                 continue;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);
+            $cpf = preg_replace('/\D/', '', trim($row[0]));
             $working_days = $row[1];
             $benefitCode = null;
             $benefitID = null;
             if(isset($row[2])){
-                $benefitCode = $row[2];
+                $benefitCode = trim($row[2]);
 
                 $benefit = $this->Benefit->find('first', [
                     'conditions' => [

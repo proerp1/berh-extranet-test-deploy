@@ -3179,14 +3179,14 @@ class OrdersController extends AppController
                 return ['success' => false, 'error' => 'Arquivo inválido.'];
             }
 
-            $cpfToValidate = $row[2];
+            $cpfToValidate = trim($row[2]);
 
             // if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
             //     $invalidCpfLines[] = $line + 1;
             // }
 
-            $codigoOperadora = $row[7];
-            $codigoBeneficio = $row[8];
+            $codigoOperadora = trim($row[7]);
+            $codigoBeneficio = trim($row[8]);
             $dataNascimento = $row[4];
             $matricula = $row[15];
 
@@ -3270,13 +3270,13 @@ class OrdersController extends AppController
             // Map all CSV fields to variables
             $cnpjCliente = $row[0];                           // CNPJ CLIENTE
             $name = $row[1];                                  // NOME
-            $cpf = $this->ensureLeadingZeroes($row[2]);       // CPF
-            $rg = $row[3];                                    // RG
+            $cpf = $this->ensureLeadingZeroes(trim($row[2])); // CPF
+            $rg = trim($row[3]);                                    // RG
             $dataNascimento = $row[4];                        // DATA NASCIMENTO
             $nomeMae = $row[5];                               // NOME DA MÃE
             $workingDays = (int)$row[6];                      // DIAS UTEIS
-            $codigoOperadora = $row[7];                       // CODIGO OPERADORA
-            $codigoBeneficio = $row[8];                       // CODIGO BENEFICIO
+            $codigoOperadora = trim($row[7]);                 // CODIGO OPERADORA
+            $codigoBeneficio = trim($row[8]);                 // CODIGO BENEFICIO
             $numeroCartao = $row[9];                          // NUMERO CARTAO
             $unitPrice = $row[10];                            // VALOR_UNIT
             $quantity = (int)$row[11];                        // QUANTIDADE

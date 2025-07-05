@@ -1051,7 +1051,7 @@ class CustomerUsersController extends AppController
             $benefit_id = null;
             $benefitCode = null;
             if(isset($row[2])){
-                $benefitCode = $row[2];
+                $benefitCode = trim($row[2]);
 
                 $benefit = $this->Benefit->find('first', [
                     'conditions' => [
@@ -1062,7 +1062,7 @@ class CustomerUsersController extends AppController
                 $benefit_id = $benefit ? $benefit['Benefit']['id'] : null;
             }
 
-            $cpf = preg_replace('/\D/', '', $row[0]);            
+            $cpf = preg_replace('/\D/', '', trim($row[0]));            
 
             $existingUser = $this->CustomerUser->find('first', [
                 'conditions' => [
