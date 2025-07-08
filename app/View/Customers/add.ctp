@@ -160,6 +160,7 @@
         }).trigger('focusout');
     });
 
+    
     function tipo_cliente(){
         if($("#tipo_pessoa").val() == 1){
             $("#documento").parent().find("label").text("CPF");
@@ -185,11 +186,52 @@
             $("#ie").parent().show();
         }
     }
+
+    // Card de ajuda no topo direito (ícone de informação)
+const infoBtn = document.getElementById('info-btn');
+const infoBox = document.getElementById('info-box');
+
+if (infoBtn && infoBox) {
+  infoBtn.addEventListener('click', function () {
+    const isVisible = infoBox.style.display === 'block';
+    infoBox.style.display = isVisible ? 'none' : 'block';
+  });
+
+  // Fecha ao clicar fora
+  window.addEventListener('click', function (e) {
+    if (!infoBox.contains(e.target) && !infoBtn.contains(e.target)) {
+      infoBox.style.display = 'none';
+    }
+  });
+}
+
 </script>
 
 <script id="template_cidade" type="text/x-handlebars-template">
     <option value="{{id}}">{{name}}</option>
 </script>
+
+<script type="text/javascript">
+  document.addEventListener('DOMContentLoaded', function () {
+    const infoBtn = document.getElementById('info-btn');
+    const infoBox = document.getElementById('info-box');
+
+    if (infoBtn && infoBox) {
+      infoBtn.addEventListener('click', function (e) {
+        e.stopPropagation(); // previne conflito com o window click
+        infoBox.style.display = (infoBox.style.display === 'block') ? 'none' : 'block';
+      });
+
+      // Fecha o box ao clicar fora
+      window.addEventListener('click', function (e) {
+        if (!infoBox.contains(e.target) && !infoBtn.contains(e.target)) {
+          infoBox.style.display = 'none';
+        }
+      });
+    }
+  });
+</script>
+
 
 <?php
     if (isset($id)) {
@@ -197,6 +239,20 @@
         echo $this->element("abas_customers", array('id' => $id, 'url' => $url));
     }
 ?>
+<div style="display: flex; justify-content: flex-end; position: relative; margin-bottom: 1rem;">
+<span id="info-btn" style="cursor: pointer;">
+  <i class="fas fa-info-circle" style="font-size: 22px; color: #dc3545;"></i>
+</span>
+
+
+  <div id="info-box" style="display: none; position: absolute; top: 30px; right: 0; background: #fff; border: 1px solid #ccc; padding: 15px; border-radius: 6px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); max-width: 420px; z-index: 999; font-size: 0.9rem;">
+    <strong>Pedidos:</strong><br>
+    - Se a flag <b>"Gera Nota Fiscal"</b> estiver marcada como <b>“Não”</b>, a aba <b>Nota Fiscal de Serviço</b> em Contas a Receber <u>não é exibida</u>.<br><br>
+    - Ao alterar essa flag para <b>“Não”</b>, o preenchimento do campo <b>"Observações da Nota Fiscal"</b> se torna obrigatório.<br><br>
+    - Se no cadastro do cliente o campo <b>"Emitir nota fiscal?"</b> estiver como <b>“Não”</b>, a flag <b>"Gera Nota Fiscal"</b> será marcada como “Não” automaticamente.
+  </div>
+</div>
+
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
