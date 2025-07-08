@@ -29,6 +29,15 @@ class Supplier extends AppModel
         ]
     ];
 
+    public $hasMany = [
+    'FaqRelacionamento' => [
+        'className' => 'FaqRelacionamento',
+        'foreignKey' => 'supplier_id',
+        'dependent' => true
+    ]
+];
+
+
     public function beforeFind($queryData)
     {
         $queryData['conditions'][] = ['Supplier.data_cancel' => '1901-01-01 00:00:00'];

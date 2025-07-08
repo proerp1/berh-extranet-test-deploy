@@ -11,46 +11,67 @@ class DashboardController extends AppController
         parent::beforeFilter();
     }
 
-public function index()
-{
-    $this->Permission->check(4, 'leitura') ? '' : $this->redirect('/not_allowed');
+    public function index()
+    {
+        $this->Permission->check(4, 'leitura') ? '' : $this->redirect('/not_allowed');
 
-    $breadcrumb = ['Dashboard' => '/'];
-    $action = 'Principal';
+        $breadcrumb = ['Dashboard' => '/'];
+        $action = 'Principal';
 
-    $categorias = $this->CategoriaFaq->find('all', [
-        'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
-        'order' => ['CategoriaFaq.nome' => 'ASC']
-    ]);
+        // Busca todas as categorias
+        $categorias = $this->CategoriaFaq->find('all', [
+            'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
+            'order' => ['CategoriaFaq.nome' => 'ASC']
+        ]);
 
-foreach ($categorias as $key => &$categoria) {
-    $faqs = $this->Faq->find('all', [
-        'fields' => ['Faq.id', 'Faq.pergunta', 'Faq.resposta', 'Faq.file', 'Faq.categoria_faq_id'],
-        'conditions' => [
-            'Faq.categoria_faq_id' => $categoria['CategoriaFaq']['id'],
-            'Faq.sistema_destino IN' => ['sig', 'todos']
-        ],
-        'order' => ['Faq.id' => 'DESC']
-    ]);
+        // Para cada categoria, busca suas FAQs
+        foreach ($categorias as $key => &$categoria) {
+            $faqs = $this->Faq->find('all', [
+                'fields' => ['Faq.id', 'Faq.pergunta', 'Faq.resposta', 'Faq.file'],
+                'conditions' => [
+                    'Faq.categoria_faq_id' => $categoria['CategoriaFaq']['id'],
+                    'Faq.sistema_destino IN' => ['sig', 'todos']
+                ],
+                'order' => ['Faq.id' => 'DESC'],
+                'contain' => [
+                    'FaqRelacionamento' => [
+                        'fields' => ['FaqRelacionamento.id', 'FaqRelacionamento.faq_id', 'FaqRelacionamento.supplier_id'],
+                        'Supplier' => [
+                            'fields' => ['Supplier.id', 'Supplier.nome_fantasia']
+                        ]
+                    ]
+                ]
+            ]);
 
-    if (empty($faqs)) {
-        unset($categorias[$key]);
-    } else {
-        $categoria['Faqs'] = $faqs;
+            if (empty($faqs)) {
+                unset($categorias[$key]); // Remove categoria se não tiver FAQs
+            } else {
+                $categoria['Faqs'] = $faqs;
+            }
+        }
+
+        $this->set(compact('breadcrumb', 'action', 'categorias'));
     }
+public function testeRelacionamentoFaq()
+{
+    $this->loadModel('FaqRelacionamento');
+    $this->FaqRelacionamento->Behaviors->load('Containable');
+
+    $relacionamentos = $this->FaqRelacionamento->find('all', [
+        'contain' => ['Supplier'],
+        'limit' => 5
+    ]);
+
+    debug($relacionamentos);
+    exit;
 }
 
-
-    $this->set(compact('breadcrumb', 'action', 'categorias'));
-}
-
-
+    
 
     public function oportunidade()
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Oportunidades';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -58,7 +79,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Outros';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -66,7 +86,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Resumo';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -74,7 +93,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Compras' => '/'];
         $action = 'Compras';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -82,7 +100,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Fornecedores' => '/'];
         $action = 'Fornecedores';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -90,7 +107,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Expedição' => '/'];
         $action = 'Expedição';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -98,7 +114,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Cliente';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -106,7 +121,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Orçamentos';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 
@@ -114,7 +128,6 @@ foreach ($categorias as $key => &$categoria) {
     {
         $breadcrumb = ['Dashboard' => '/'];
         $action = 'Produto';
-
         $this->set(compact('breadcrumb', 'action'));
     }
 }

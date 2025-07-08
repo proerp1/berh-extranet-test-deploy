@@ -3,10 +3,14 @@ class FaqsController extends AppController
 {
     public $helpers = ['Html', 'Form', 'Text'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Faq', 'CategoriaFaq'];
+    public $uses = ['Faq', 'CategoriaFaq', 'FaqRelacionamento', 'Supplier'];
 
     public $paginate = [
-        'Faq' => ['limit' => 100, 'order' => ['Faq.id' => 'desc']]
+        'Faq' => [
+            'limit' => 100,
+            'order' => ['Faq.id' => 'desc'],
+            'contain' => ['CategoriaFaq', 'FaqRelacionamento' => ['Supplier']]
+        ]
     ];
 
     public function beforeFilter()
@@ -15,48 +19,35 @@ class FaqsController extends AppController
     }
 
     public function index()
-{
-    $this->Permission->check(81, "leitura") ? "" : $this->redirect("/not_allowed");
+    {
+        $this->Permission->check(81, "leitura") ? "" : $this->redirect("/not_allowed");
 
-    $this->Paginator->settings = [
-        'Faq' => [
-            'limit' => 100,
-            'order' => ['Faq.id' => 'desc'],
-            'contain' => ['CategoriaFaq']
-        ]
-    ];
+        $condition = ["and" => [], "or" => []];
 
-    $condition = ["and" => [], "or" => []];
+        if (!empty($_GET['q'])) {
+            $condition['or'][] = ['Faq.pergunta LIKE' => '%' . $_GET['q'] . '%'];
+        }
 
-    // Filtro de busca por pergunta
-    if (!empty($_GET['q'])) {
-        $condition['or'][] = ['Faq.pergunta LIKE' => '%' . $_GET['q'] . '%'];
+        if (!empty($_GET['categoria']) && is_numeric($_GET['categoria'])) {
+            $condition['and'][] = ['Faq.categoria_faq_id' => $_GET['categoria']];
+        }
+
+        if (!empty($_GET['sistema']) && in_array($_GET['sistema'], ['sig', 'cliente', 'todos'])) {
+            $condition['and'][] = ['Faq.sistema_destino' => $_GET['sistema']];
+        }
+
+        $data = $this->Paginator->paginate('Faq', $condition);
+
+        $categoriasFaq = $this->CategoriaFaq->find('list', [
+            'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
+            'order' => ['CategoriaFaq.nome' => 'ASC']
+        ]);
+
+        $action = 'FAQ';
+        $breadcrumb = ['Configurações' => '', 'FAQ' => ''];
+
+        $this->set(compact('data', 'action', 'breadcrumb', 'categoriasFaq'));
     }
-
-    // Filtro por categoria
-    if (!empty($_GET['categoria']) && is_numeric($_GET['categoria'])) {
-        $condition['and'][] = ['Faq.categoria_faq_id' => $_GET['categoria']];
-    }
-
-    // Filtro por sistema_destino
-    if (!empty($_GET['sistema']) && in_array($_GET['sistema'], ['sig', 'cliente', 'todos'])) {
-        $condition['and'][] = ['Faq.sistema_destino' => $_GET['sistema']];
-    }
-
-    $data = $this->Paginator->paginate('Faq', $condition);
-
-    // Buscar lista de categorias para o filtro
-    $categoriasFaq = $this->CategoriaFaq->find('list', [
-        'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
-        'order' => ['CategoriaFaq.nome' => 'ASC']
-    ]);
-
-    $action = 'FAQ';
-    $breadcrumb = ['Configurações' => '', 'FAQ' => ''];
-
-    $this->set(compact('data', 'action', 'breadcrumb', 'categoriasFaq'));
-}
-
 
     public function add()
     {
@@ -67,6 +58,32 @@ class FaqsController extends AppController
             $this->request->data['Faq']['user_creator_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->Faq->save($this->request->data)) {
+                $faqId = $this->Faq->id;
+
+                if (!empty($this->request->data['FaqRelacionamento']['supplier_id'])) {
+                    $selecionados = (array)$this->request->data['FaqRelacionamento']['supplier_id'];
+                    $this->FaqRelacionamento->deleteAll(['faq_id' => $faqId], false);
+
+                    if (in_array('0', $selecionados)) {
+                        $this->FaqRelacionamento->create();
+                        $this->FaqRelacionamento->save([
+                            'faq_id' => $faqId,
+                            'supplier_id' => 0
+                        ]);
+                    } else {
+                        foreach ($selecionados as $supplierId) {
+                            $supplierId = (int)$supplierId;
+                            if ($supplierId >= 0) {
+                                $this->FaqRelacionamento->create();
+                                $this->FaqRelacionamento->save([
+                                    'faq_id' => $faqId,
+                                    'supplier_id' => $supplierId
+                                ]);
+                            }
+                        }
+                    }
+                }
+
                 $this->Flash->set(__('A FAQ foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 return $this->redirect(['controller' => 'faqs', 'action' => 'index']);
             } else {
@@ -74,16 +91,7 @@ class FaqsController extends AppController
             }
         }
 
-        $categoriasFaq = $this->CategoriaFaq->find('list', [
-            'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
-            'order' => ['CategoriaFaq.nome' => 'asc']
-        ]);
-
-        $destinos = ['todos' => 'SIG e Cliente', 'sig' => 'Apenas SIG (Extranet)', 'cliente' => 'Apenas Cliente'];
-
-        $action = 'FAQ';
-        $breadcrumb = ['Configurações' => '', 'FAQ' => '', 'Nova FAQ' => ''];
-        $this->set(compact('action', 'breadcrumb', 'categoriasFaq', 'destinos'));
+        $this->prepareFormData();
         $this->set("form_action", "add");
     }
 
@@ -95,6 +103,31 @@ class FaqsController extends AppController
 
         if ($this->request->is(['post', 'put'])) {
             if ($this->Faq->save($this->request->data)) {
+                $this->FaqRelacionamento->deleteAll(['faq_id' => $id], false);
+
+                if (!empty($this->request->data['FaqRelacionamento']['supplier_id'])) {
+                    $selecionados = (array)$this->request->data['FaqRelacionamento']['supplier_id'];
+
+                    if (in_array('0', $selecionados)) {
+                        $this->FaqRelacionamento->create();
+                        $this->FaqRelacionamento->save([
+                            'faq_id' => $id,
+                            'supplier_id' => 0
+                        ]);
+                    } else {
+                        foreach ($selecionados as $supplierId) {
+                            $supplierId = (int)$supplierId;
+                            if ($supplierId >= 0) {
+                                $this->FaqRelacionamento->create();
+                                $this->FaqRelacionamento->save([
+                                    'faq_id' => $id,
+                                    'supplier_id' => $supplierId
+                                ]);
+                            }
+                        }
+                    }
+                }
+
                 $this->Flash->set(__('A FAQ foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 return $this->redirect(['controller' => 'faqs', 'action' => 'index']);
             } else {
@@ -106,17 +139,16 @@ class FaqsController extends AppController
         $this->request->data = $this->Faq->read();
         $this->Faq->validationErrors = $temp_errors;
 
-        $categoriasFaq = $this->CategoriaFaq->find('list', [
-            'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
-            'order' => ['CategoriaFaq.nome' => 'asc']
+        $relacionamentos = $this->FaqRelacionamento->find('list', [
+            'fields' => ['FaqRelacionamento.supplier_id'],
+            'conditions' => ['faq_id' => $id]
         ]);
 
-        $destinos = ['todos' => 'SIG e Cliente', 'sig' => 'Apenas SIG (Extranet)', 'cliente' => 'Apenas Cliente'];
+        $this->request->data['FaqRelacionamento']['supplier_id'] = array_values($relacionamentos);
 
-        $action = 'FAQ';
-        $breadcrumb = ['Configurações' => '', 'FAQ' => '', 'Editar FAQ' => ''];
+        $this->prepareFormData();
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'categoriasFaq', 'destinos'));
+        $this->set(compact('id'));
         $this->render("add");
     }
 
@@ -125,6 +157,8 @@ class FaqsController extends AppController
         $this->Permission->check(81, "excluir") ? "" : $this->redirect("/not_allowed");
 
         $this->Faq->id = $id;
+        $this->FaqRelacionamento->deleteAll(['faq_id' => $id], false);
+
         if ($this->Faq->delete()) {
             $this->Flash->set(__('A FAQ foi excluída com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } else {
@@ -132,5 +166,27 @@ class FaqsController extends AppController
         }
 
         return $this->redirect(['controller' => 'faqs', 'action' => 'index']);
+    }
+
+    private function prepareFormData()
+    {
+        $categoriasFaq = $this->CategoriaFaq->find('list', [
+            'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
+            'order' => ['CategoriaFaq.nome' => 'asc']
+        ]);
+
+        $destinos = ['todos' => 'SIG e Cliente', 'sig' => 'Apenas SIG (Extranet)', 'cliente' => 'Apenas Cliente'];
+
+        $fornecedores = $this->Supplier->find('list', [
+            'fields' => ['Supplier.id', 'Supplier.nome_fantasia'],
+            'order' => ['Supplier.nome_fantasia' => 'ASC']
+        ]);
+
+        $fornecedores = [0 => 'Todos os fornecedores'] + $fornecedores;
+
+        $action = 'FAQ';
+        $breadcrumb = ['Configurações' => '', 'FAQ' => ''];
+
+        $this->set(compact('categoriasFaq', 'destinos', 'fornecedores', 'action', 'breadcrumb'));
     }
 }

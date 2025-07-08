@@ -87,15 +87,15 @@
                                 <td class="fw-bold fs-7"><?php echo h($faq["Faq"]["resposta"]); ?></td>
                                 <td class="fw-bold fs-7"><?php echo h($faq["CategoriaFaq"]["nome"]); ?></td>
                                 <td class="fw-bold fs-7">
-    <?php if (!empty($faq["Faq"]["file"])): ?>
-        <a download href="<?php echo $this->webroot . 'files/faq/file/' . $faq["Faq"]["id"] . '/' . h($faq["Faq"]["file"]); ?>"
-           style="color: #ED0677; font-weight: 500;">
-           📎 <?php echo h($faq["Faq"]["file"]); ?>
-        </a>
-    <?php else: ?>
-        —
-    <?php endif; ?>
-</td>
+                                <?php if (!empty($faq["Faq"]["file"])): ?>
+                                    <a download href="<?php echo $this->webroot . 'files/faq/file/' . $faq["Faq"]["id"] . '/' . h($faq["Faq"]["file"]); ?>"
+                                    style="color: #ED0677; font-weight: 500;">
+                                    📎 <?php echo h($faq["Faq"]["file"]); ?>
+                                    </a>
+                                <?php else: ?>
+                                    —
+                                <?php endif; ?>
+                            </td>
 
                                 <td class="fw-bold fs-7">
                                     <?php

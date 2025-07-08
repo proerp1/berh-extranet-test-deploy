@@ -1,3 +1,6 @@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Faq', [
@@ -41,6 +44,27 @@
                 ?>
             </div>
         </div>
+
+<!-- Linha para Atribuir a um ou mais Fornecedores -->
+<div class="row">
+    <div class="mb-7 col-md-12">
+        <label for="supplier_id" class="fw-semibold fs-6 mb-2">Atribuir a Fornecedores</label>
+        <?php
+            $fornecedores = [0 => 'Todos os fornecedores'] + $fornecedores;
+
+          echo $this->Form->input('FaqRelacionamento.supplier_id', [
+    'type' => 'select',
+    'multiple' => true,
+    'options' => $fornecedores,
+    'label' => false,
+    'class' => 'form-select form-select-solid',
+    'id' => 'select-suppliers'
+]);
+
+        ?>
+    </div>
+</div>
+
 
         <!-- Linha para Pergunta -->
         <div class="row">
@@ -137,5 +161,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     toggleUpload(); // executa ao carregar
     selectCategoria.addEventListener('change', toggleUpload);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#select-suppliers').select2({
+        placeholder: "Selecione os fornecedores",
+        width: '100%'
+    });
+
+    const supplierSelect = document.getElementById('select-suppliers');
+
+    function handleSupplierSelection() {
+        const selected = Array.from(supplierSelect.selectedOptions).map(opt => opt.value);
+        const isAllSelected = selected.includes("0");
+
+        for (const option of supplierSelect.options) {
+            if (option.value !== "0") {
+                option.disabled = isAllSelected;
+            }
+        }
+    }
+
+    supplierSelect.addEventListener('change', handleSupplierSelection);
+    handleSupplierSelection();
 });
 </script>

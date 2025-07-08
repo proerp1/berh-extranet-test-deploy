@@ -3,6 +3,17 @@ class Faq extends AppModel
 {
     public $name = 'Faq';
 
+    public $actsAs = [
+        'Containable', // ✅ necessário para funcionar o 'contain' no controller
+        'Upload.Upload' => [
+            'file' => [
+                'fields' => [
+                    'dir' => 'file_dir'
+                ]
+            ]
+        ]
+    ];
+
     // Relacionamento com a categoria
     public $belongsTo = [
         'CategoriaFaq' => [
@@ -11,16 +22,14 @@ class Faq extends AppModel
         ]
     ];
 
-public $actsAs = array(
-    'Upload.Upload' => array(
-        'file' => array(
-            'fields' => array(
-                'dir' => 'file_dir'
-            )
-        )
-    )
-);
-
+    // Relacionamento com os fornecedores
+    public $hasMany = [
+        'FaqRelacionamento' => [
+            'className' => 'FaqRelacionamento',
+            'foreignKey' => 'faq_id',
+            'dependent' => true
+        ]
+    ];
 
     // Validações
     public $validate = [
