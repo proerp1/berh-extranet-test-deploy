@@ -2173,7 +2173,10 @@ class ExcelTemplate
         ->setCellValue('Z1', "Nome Grupo Economicoo")
         ->setCellValue('AA1', "Compra Operadora")
         ->setCellValue('AB1', "Status Processamento")
-        ->setCellValue('AC1', "Motivo Processamento");
+        ->setCellValue('AC1', "Motivo Processamento")
+        ->setCellValue('AC1', "Tipo Pedido")
+        ->setCellValue('AC1', "Tipo de Benefício / Serviço");
+
         
         $indx = 1;
         $total = 0;
@@ -2181,6 +2184,18 @@ class ExcelTemplate
             $total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
             $valor_unit = ($dados[$i]['OrderItem']['manual_quantity'] > 0 ? $dados[$i]['OrderItem']['price_per_day_not_formated'] / $dados[$i]['OrderItem']['manual_quantity'] : $dados[$i]['OrderItem']['price_per_day']);
             $indx++;
+
+            $tipo_pedido = "";
+            if ($dados[$i]['Order']['is_partial'] == '1') {
+                $tipo_pedido = 'Automático';
+            } elseif ($dados[$i]['Order']['is_partial'] == '2') {
+                $tipo_pedido = 'Emissão';
+            } elseif ($dados[$i]['Order']['is_partial'] == '3') {
+                $tipo_pedido = 'Importação';
+            }
+             elseif ($dados[$i]['Order']['is_partial'] == '4') {
+                $tipo_pedido = 'PIX';
+            }
 
             $activeWorksheet
                 ->setCellValue('A'. $indx, $dados[$i]['Order']['created'])
@@ -2211,7 +2226,9 @@ class ExcelTemplate
                 ->setCellValue('Z'. $indx, $dados[$i]['EconomicGroups']['name'])
                 ->setCellValue('AA'. $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'))
                 ->setCellValue('AB'. $indx, $dados[$i]['OrderItem']['status_processamento'])
-                ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento']);
+                ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
+                ->setCellValue('AD' . $indx, $tipo_pedido)
+                ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name']);
         }
     }
 
