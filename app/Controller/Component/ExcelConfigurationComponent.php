@@ -173,6 +173,7 @@ class ExcelConfigurationComponent extends Component {
 					'CustomerUserItinerary.*',
 					'OrderItem.*',
 					'Benefit.code',
+					'BenefitType.name',
 					'Supplier.id',
 					'EconomicGroups.razao_social',
 					'EconomicGroups.document',
@@ -213,6 +214,7 @@ class ExcelConfigurationComponent extends Component {
 					'Order.order_period_to',
 					'Order.created',
 					'Order.transfer_fee',
+					'Order.is_partial',
 
 					'OrderStatus.name',
                     'Customer.flag_gestao_economico',
@@ -244,6 +246,7 @@ class ExcelConfigurationComponent extends Component {
 						'type' => 'INNER',
 						'conditions' => ['Order.status_id = OrderStatus.id']
 					],
+				
 					[
 						'table' => 'users',
 						'alias' => 'UpdatedGe',
@@ -291,6 +294,12 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'Benefit',
 						'type' => 'INNER',
 						'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id']
+					],
+					[
+						'table' => 'benefit_types',
+						'alias' => 'BenefitType',
+						'type' => 'INNER',
+						'conditions' => ['BenefitType.id = Benefit.benefit_type_id']
 					],
 					[
 						'table' => 'suppliers',

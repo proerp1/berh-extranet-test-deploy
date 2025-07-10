@@ -2027,6 +2027,18 @@ class ExcelTemplate
                 $tipo_ge = 'GE garantido';
             }
 
+      $tipo_pedido = "";
+            if ($dados[$i]['Order']['is_partial'] == '1') {
+                $tipo_pedido = 'Automático';
+            } elseif ($dados[$i]['Order']['is_partial'] == '2') {
+                $tipo_pedido = 'Emissão';
+            } elseif ($dados[$i]['Order']['is_partial'] == '3') {
+                $tipo_pedido = 'Importação';
+            }
+             elseif ($dados[$i]['Order']['is_partial'] == '4') {
+                $tipo_pedido = 'PIX';
+            }
+
             $porcentagem_margem_seguranca = $dados[$i]['Customer']['porcentagem_margem_seguranca'];
             if (empty($porcentagem_margem_seguranca)) {
                 $porcentagem_margem_seguranca = "0";
@@ -2046,8 +2058,8 @@ class ExcelTemplate
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUser']['nome_mae']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerDepartment']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['working_days']);$col++;
-            $activeWorksheet->setCellValue($col . $indx, '1');$col++;
-            $activeWorksheet->setCellValue($col . $indx, '1');$col++;
+            $activeWorksheet->setCellValue($col . $indx, $tipo_pedido);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Supplier']['id']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Supplier']['nome_fantasia']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['code']);$col++;
