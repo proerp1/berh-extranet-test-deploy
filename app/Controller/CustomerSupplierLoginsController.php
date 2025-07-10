@@ -93,11 +93,13 @@ class CustomerSupplierLoginsController extends AppController {
 	}
 
 	public function edit($tipo, $id, $cust_supp_id = null) {
-		$this->Permission->check(77, "escrita") ? "" : $this->redirect("/not_allowed");
+		$this->Permission->check(77, "leitura") ? "" : $this->redirect("/not_allowed");
 
 		$this->CustomerSupplierLogin->id = $cust_supp_id;
 
 		if ($this->request->is(['post', 'put'])) {
+			
+			$this->Permission->check(77, "escrita") ? "" : $this->redirect("/not_allowed");
 			$this->request->data['CustomerSupplierLogin']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
 			$log_old_value = $this->request->data["log_old_value"];
