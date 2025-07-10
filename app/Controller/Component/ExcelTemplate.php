@@ -2174,8 +2174,8 @@ class ExcelTemplate
         ->setCellValue('AA1', "Compra Operadora")
         ->setCellValue('AB1', "Status Processamento")
         ->setCellValue('AC1', "Motivo Processamento")
-        ->setCellValue('AC1', "Tipo Pedido")
-        ->setCellValue('AC1', "Tipo de Benefício / Serviço");
+        ->setCellValue('AD1', "Tipo Pedido")
+        ->setCellValue('AE1', "Tipo de Benefício / Serviço");
 
         
         $indx = 1;
