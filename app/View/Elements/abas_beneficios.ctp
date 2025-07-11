@@ -7,6 +7,7 @@
     <li class="nav-item">
 		<a class="nav-link <?php echo $this->request->params['controller'] == 'benefits' && $this->request->params['action'] == 'log_status' ? 'active' : '' ?>" href="<?php echo $this->base.'/benefits/log_status/'.$id; ?>">Log</a>
 	</li>
-
-    
+    <li class="nav-item">
+		<a class="nav-link <?php echo $this->request->params['controller'] == 'benefit_customers' ? 'active' : '' ?>" href="<?php echo $this->base.'/benefit_customers/index/'.$id; ?>">Clientes</a>
+	</li>
 </ul>
