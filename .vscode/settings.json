@@ -1,0 +1,14 @@
+{
+  "i18n-ally.localesPaths": [
+    "app/Controller/Component/PHPExcel/locale",
+    "app/Controller/Component/PHPExcel/PHPExcel/locale",
+    "app/webroot/plugins/bower_components/datatables-plugins/i18n",
+    "app/webroot/plugins/bower_components/jquery-asColorPicker-master/i18n",
+    "app/webroot/plugins/bower_components/summernote/lang",
+    "app/webroot/plugins/bower_components/tinymce/langs",
+    "app/webroot/plugins/bower_components/bootstrap-table/src/locale",
+    "app/webroot/plugins/bower_components/jsgrid/src/i18n",
+    "app/webroot/plugins/bower_components/moment/src/locale",
+    "app/webroot/plugins/bower_components/moment/src/lib/locale"
+  ]
+}
