@@ -14,37 +14,37 @@ class CustomerUsersController extends AppController
                     'CSVImport', 'CSVImportLine', 'CostCenter', 'SalaryRange', 'MaritalStatus', 'OrderItem',
                     'BankCode', 'EconomicGroup','Group','CustomerAddress'];
 
-                    public $paginate = [
-                        'CustomerUserAddress' => [
-                            'limit' => 10, 
-                            'order' => ['CustomerUserAddress.id' => 'asc']
-                        ],
-                        'CustomerUser' => [
-                            'limit' => 20,
-                            'order' => ['CustomerUser.name' => 'asc'],
-                            'conditions' => []
-                        ],
-                        'OrderItem' => [
-                            'limit' => 100, 
-                            'order' => ['OrderItem.id' => 'asc'],
-                            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*'],
-                            'joins' => [
-                                [
-                                    'table' => 'benefits',
-                                    'alias' => 'Benefit',
-                                    'type' => 'INNER',
-                                    'conditions' => [
-                                        'Benefit.id = CustomerUserItinerary.benefit_id'
-                                    ]
-                                ]
-                            ]
-                        ],
-                        'CustomerUserBankAccount' => [
-                            'limit' => 10,
-                            'order' => ['CustomerUserBankAccount.id' => 'asc'],
-                            'contain' => ['Status', 'BankCode', 'BankAccountType'] // Incluir a associação Status
-                        ]
-                    ];
+    public $paginate = [
+        'CustomerUserAddress' => [
+            'limit' => 10, 
+            'order' => ['CustomerUserAddress.id' => 'asc']
+        ],
+        'CustomerUser' => [
+            'limit' => 20,
+            'order' => ['CustomerUser.name' => 'asc'],
+            'conditions' => []
+        ],
+        'OrderItem' => [
+            'limit' => 100, 
+            'order' => ['OrderItem.id' => 'asc'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ]
+            ]
+        ],
+        'CustomerUserBankAccount' => [
+            'limit' => 10,
+            'order' => ['CustomerUserBankAccount.id' => 'asc'],
+            'contain' => ['Status', 'BankCode', 'BankAccountType'] // Incluir a associação Status
+        ]
+    ];
                     
 
     public function beforeFilter()

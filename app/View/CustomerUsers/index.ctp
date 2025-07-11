@@ -60,32 +60,32 @@ echo $this->element("abas_customers", array('id' => $id));
 
                         <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton" style="width: 300px;">
                             <div class="d-flex flex-column justify-content-start gap-3">
-                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_grupo_economico">
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_grupo_economico">
                                     <i class="fas fa-arrow-up"></i>
                                     Atualizar Grupo Econômico
-                                </a>
+                                </button>
 
-                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_dias_uteis">
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_dias_uteis">
                                     <i class="fas fa-arrow-up"></i>
                                     Atualizar Dias Úteis
-                                </a>
+                                </button>
 
-                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans">
                                     <i class="fas fa-arrow-up"></i>
                                     Importar
-                                </a>
+                                </button>
 
-                                <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modal_ativar_inativar">
                                     <i class="fas fa-arrow-up"></i>
                                     Ativar/Inativar (csv)
-                                </a>
+                                </button>
 
-                                <a href="#" id="excluir_sel" class="btn btn-secondary">
+                                <button type="button" id="excluir_sel" class="btn btn-secondary">
                                     <i class="fas fa-thumbs-down"></i>
                                     Excluir em Lote
-                                </a>
+                                </button>
 
-                                <a href="#" onclick="confirm('Você realmente deseja excluir todos os registros da lista?', '<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "exclui_todos", $id)); ?>');" class="btn btn-danger">
+                                <a href="javascript:;" onclick="confirm('Você realmente deseja excluir todos os registros da lista?', '<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "exclui_todos", $id)); ?>');" class="btn btn-danger">
                                     <i class="fas fa-trash"></i>
                                     Excluir Todos
                                 </a>
@@ -477,7 +477,7 @@ echo $this->element("abas_customers", array('id' => $id));
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            location.reload();
+                            window.location.href = base_url+'/customer_users/index/'+customerId
                         }
                     }
                 });
