@@ -821,7 +821,7 @@ class ReportsController extends AppController
             $filtersFilled = true;
         }
 
-        if (!empty($_GET['antecipada'])) {
+        if (!empty($_GET['antecipada']) && $_GET['antecipada'] != '') {
             $comparator = $_GET['antecipada'] == 'S' ? '=' : '!=';
             $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
             $filtersFilled = true;
