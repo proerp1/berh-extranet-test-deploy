@@ -80,12 +80,12 @@ class IncomesController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Income.vencimento <' => date("Y-m-d")]);
         }
 
-        if (isset($_GET["nfse"])) {
+        if (isset($_GET["nfse"]) && $_GET["nfse"] != '') {
             $comparator = $_GET["nfse"] == 'S' ? 'in' : 'not in';
             $condition['and'] = array_merge($condition['and'], ["Income.id $comparator (select distinct income_id from income_nfse)"]);
         }
 
-        if (!empty($_GET['nfse_antecipada'])) {
+        if (!empty($_GET['nfse_antecipada']) && $_GET['nfse_antecipada'] != '') {
             $comparator = $_GET['nfse_antecipada'] == 'S' ? '=' : '!=';
             $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
         }
