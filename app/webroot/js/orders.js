@@ -132,9 +132,7 @@ $(document).ready(function() {
             }
             
             const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
-
-            // vencimento deve ser DEPOIS de (crédito previsto - 5 dias úteis)
-            // e no MÁXIMO igual ao crédito previsto
+            
             if (dueDateToDate >= maxInvalidDate) {
                 $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
                 event.preventDefault();
