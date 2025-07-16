@@ -426,24 +426,24 @@ if (isset($id)) {
                 const tech_id = $(this).val()
                 console.log(tech_id);
 
-                $.ajax({
-                    url: '/tecnologia_versao/get/'+tech_id,
-                    type: "get",
-                    dataType: "json",
-                    success: function(data) {
-                        for (const tipo of Object.keys(data)) {
-                            const options = data[tipo]
-                            let optionsHtml = '<option>Selecione</option>'
-                            for (const optionId of Object.keys(options)) {
-                                const option = options[optionId]
-                                optionsHtml += `<option value="${optionId}">${option}</option>`
+                if (tech_id) {
+                    $.ajax({
+                        url: '/tecnologia_versao/get/'+tech_id,
+                        type: "get",
+                        dataType: "json",
+                        success: function(data) {
+                            for (const tipo of Object.keys(data)) {
+                                const options = data[tipo]
+                                let optionsHtml = '<option>Selecione</option>'
+                                for (const optionId of Object.keys(options)) {
+                                    const option = options[optionId]
+                                    optionsHtml += `<option value="${optionId}">${option}</option>`
+                                }
+                                $("#"+tipo).html(optionsHtml);
                             }
-                            console.log(tipo);
-                            console.log(optionsHtml);
-                            $("#"+tipo).html(optionsHtml);
-                        }
-                    },
-                });
+                        },
+                    });
+                }
             })
 
         $("#cep").change(function() {
