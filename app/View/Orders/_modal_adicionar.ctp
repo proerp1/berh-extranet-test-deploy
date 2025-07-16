@@ -274,7 +274,11 @@
                         Data de vencimento: considere a data em que deseja a disponibilização dos créditos e informe a data que pretende pagar. Os processos iniciam após a identificação do pagamento via compensação bancária.<br>
                         Utilizar dias úteis: se optar por padrão informe no campo Dias úteis.<br>  
                         Utilizar dias úteis: se optar por cadastro de beneficiário realize primeiro a manutenção dos dias no cadastro antes de iniciar a geração do pedido.<br>
-
+                        <br>
+                        <strong>Pedidos</strong><br>
+                        Lógica para flag "Gera Nota Fiscal" - se marcado não, a aba "Nota Fiscal de Serviço" em Contas a Receber não é exibida.
+                        Quando muda a flag "Gera Nota Fiscal" para não, obriga o usuário a preencher o campo "Observações da Nota Fiscal"
+                        Se no cadastro do cliente, o campo "Emitir nota fiscal?" estiver marcado como não, a flag "Gera Nota Fiscal" vem marcado "Não" no formulário
                     </div>
                 </div>
 
