@@ -128,6 +128,7 @@
                                 <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                 <?php echo $this->Form->input('due_date', ["type" => "text", "class" => "form-control mb-3 mb-lg-0 duedate_datepicker", 'div' => false, 'label' => false, "required" => true, 'default' => $venc]);  ?>
                             </div>
+                            <p id="message_classification_due_date" style="color: red; margin: 0; display:none"></p>
                         </div>
                         <div class="col">
                             <label class="fw-semibold fs-6 mb-2 required">Dias Úteis</label>

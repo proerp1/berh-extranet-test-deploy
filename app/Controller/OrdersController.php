@@ -259,7 +259,7 @@ class OrdersController extends AppController
         ini_set('memory_limit', '-1');
         if ($this->request->is('post')) {
             $customerId = $this->request->data['customer_id'];
-            $customerAddressId = $this->request->data['customer_address_id'];
+            $customerAddressId = isset($this->request->data['customer_address_id']) ? $this->request->data['customer_address_id'] : null;
             $geraNfse = $this->request->data['gera_nfse'];
             $workingDays = $this->request->data['working_days'];
             $period_from = $this->request->data['period_from'];

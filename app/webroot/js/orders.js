@@ -78,6 +78,7 @@ $(document).ready(function() {
         const creditReleaseDateValue = $('#credit_release_date').val();
         const periodFromValue = $('#period_from').val();
         const periodToValue = $('#period_to').val();
+        const dueDateToValue = $('#due_date').val();
         const workingDaysValue = $('#working_days').val();
         const cloneOrder = $('.clone_order:checked').val();
 
@@ -105,7 +106,8 @@ $(document).ready(function() {
             const creditReleaseDate = new Date(creditReleaseDateValue.split('/').reverse().join('-') + 'T00:00:00');
             const periodFromDate = new Date(periodFromValue.split('/').reverse().join('-') + 'T00:00:00');
             const periodToDate = new Date(periodToValue.split('/').reverse().join('-') + 'T00:00:00');
-
+            const dueDateToDate = new Date(dueDateToValue.split('/').reverse().join('-') + 'T00:00:00');
+            
             // Verifica se period_to é posterior a data atual
             if (periodFromDate < currDate) {
                 $('#message_classification_period').text('A data "De" não deve ser anterior à data atual.').show();
@@ -128,10 +130,21 @@ $(document).ready(function() {
                 event.preventDefault();
                 return; // Evita a execução adicional
             }
+            
+            /*
+            const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
+            
+            if (dueDateToDate >= maxInvalidDate) {
+                $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
+                event.preventDefault();
+                return;
+            }*/
         }
 
         // Se todas as validações passarem, esconde a mensagem
         $('#message_classification').hide();
+        $('#message_classification_period').hide();
+        $('#message_classification_due_date').hide();
     });
 
     $('.clone_order').on('change', function() {
@@ -360,4 +373,19 @@ $(document).ready(function() {
         }
         return date;
     }
+
+    function subtractWorkingDays(startDate, days) {
+        let date = new Date(startDate);
+        let removed = 0;
+
+        while (removed < days) {
+            date.setDate(date.getDate() - 1);
+            if (date.getDay() !== 0 && date.getDay() !== 6) {
+                removed++;
+            }
+        }
+
+        return date;
+    }
+
 });
