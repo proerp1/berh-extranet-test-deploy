@@ -79,13 +79,13 @@ if (isset($id)) {
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
-                <?php echo $this->Form->input('tipo_pessoa', ["id" => "tipo_pessoa", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['2' => 'Jurídica', '1' => 'Física']]); ?>
+                <label class="fw-semibold fs-6 mb-2">Versão Crédito</label>
+                <?php echo $this->Form->input('Supplier.versao_credito_id', ["id" => "credito", "class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione","options" => $versao_creditos]); ?>
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Região</label>
-                <?php echo $this->Form->input('regioes', ["id" => "regioes", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Norte', '2' => 'Nordeste', '3' => 'Centro-Oeste', '4' => 'Sudeste', '5' => 'Sul']]); ?>
+                <label class="fw-semibold fs-6 mb-2">Versão Cadastro</label>
+                <?php echo $this->Form->input('Supplier.versao_cadastro_id', ["id" => "cadastro", "class" => "form-select mb-3 mb-lg-0","data-control" => "select2","empty" => "Selecione","options" => $versao_cadastros]); ?>
             </div>
 
 
@@ -95,14 +95,15 @@ if (isset($id)) {
 
 
         <div class="row">
+
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Razão social</label>
-                <?php echo $this->Form->input('razao_social', ["id" => "nome_secundario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                <label class="fw-semibold fs-6 mb-2">Tipo de pessoa</label>
+                <?php echo $this->Form->input('tipo_pessoa', ["id" => "tipo_pessoa", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['2' => 'Jurídica', '1' => 'Física']]); ?>
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Nome fantasia</label>
-                <?php echo $this->Form->input('nome_fantasia', ["id" => "nome_primario", "placeholder" => "Nome fantasia", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                <label class="fw-semibold fs-6 mb-2">Região</label>
+                <?php echo $this->Form->input('regioes', ["id" => "regioes", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'options' => ['1' => 'Norte', '2' => 'Nordeste', '3' => 'Centro-Oeste', '4' => 'Sudeste', '5' => 'Sul']]); ?>
             </div>
 
             <div class="mb-7 col-2">
@@ -113,6 +114,19 @@ if (isset($id)) {
             <div class="mb-7 col-2">
                 <label class="fw-semibold fs-6 mb-2">Repasse</label>
                 <?php echo $this->Form->input('transfer_fee_percentage', ["placeholder" => "Repasse", "class" => "form-control mb-3 mb-lg-0 money_exchange", "type" => "text"]); ?>
+            </div>
+
+            <div class="row">
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Razão social</label>
+                    <?php echo $this->Form->input('razao_social', ["id" => "nome_secundario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+
+                <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Nome fantasia</label>
+                    <?php echo $this->Form->input('nome_fantasia', ["id" => "nome_primario", "placeholder" => "Nome fantasia", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
             </div>
 
 
@@ -407,6 +421,30 @@ if (isset($id)) {
                 ['help', [ 'help' ]],
             ]
         });
+
+            $("[name='data[Supplier][tecnologia_id]']").on('change', function () {
+                const tech_id = $(this).val()
+                console.log(tech_id);
+
+                $.ajax({
+                    url: '/tecnologia_versao/get/'+tech_id,
+                    type: "get",
+                    dataType: "json",
+                    success: function(data) {
+                        for (const tipo of Object.keys(data)) {
+                            const options = data[tipo]
+                            let optionsHtml = '<option>Selecione</option>'
+                            for (const optionId of Object.keys(options)) {
+                                const option = options[optionId]
+                                optionsHtml += `<option value="${optionId}">${option}</option>`
+                            }
+                            console.log(tipo);
+                            console.log(optionsHtml);
+                            $("#"+tipo).html(optionsHtml);
+                        }
+                    },
+                });
+            })
 
         $("#cep").change(function() {
     var $el = $(this);

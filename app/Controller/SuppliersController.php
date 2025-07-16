@@ -4,7 +4,7 @@ class SuppliersController extends AppController
 {    
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia', 'TecnologiaVersao'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -97,11 +97,13 @@ class SuppliersController extends AppController
         $banks = $this->BankCode->find('list');         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
         $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
+        $versao_creditos = [];
+        $versao_cadastros = [];
     
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Novo fornecedor' => ''];
         
-        $this->set(compact('statuses', 'action', 'breadcrumb', 'banks', 'bank_account_type', 'modalidades', 'tecnologias'));
+        $this->set(compact('statuses', 'action', 'breadcrumb', 'banks', 'bank_account_type', 'modalidades', 'tecnologias', 'versao_cadastros', 'versao_creditos'));
         $this->set("form_action", "add");
     }
     
@@ -131,11 +133,17 @@ class SuppliersController extends AppController
         $banks = $this->BankCode->find('list'); 
         $modalidades = $this->Modalidade->find('list', ['fields' => ['id', 'name']]);
         $tecnologias = $this->Tecnologia->find('list', ['fields' => ['id', 'name']]);
+
+        $versao_conditions = ['TecnologiaVersao.tecnologia_id' => $this->request->data['Supplier']['tecnologia_id']];
+        $fields = ['TecnologiaVersao.id', 'TecnologiaVersao.nome'];
+        $versao_creditos = $this->TecnologiaVersao->find('list', ['fields' => $fields, 'conditions' => array_merge($versao_conditions, ['TecnologiaVersao.tipo' => 'credito'])]);
+        $versao_cadastros = $this->TecnologiaVersao->find('list', ['fields' => $fields, 'conditions' => array_merge($versao_conditions, ['TecnologiaVersao.tipo' => 'cadastro'])]);
+
         $bank_account_type = $this->BankAccountType->find('list', ['fields' => ['id', 'description']]);
         $action = 'Fornecedores';
         $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '', 'Alterar fornecedor' => ''];
         $this->set("form_action", "edit");
-        $this->set(compact('statuses', 'id', 'action', 'breadcrumb','banks','bank_account_type', 'modalidades', 'tecnologias'));
+        $this->set(compact('statuses', 'id', 'action', 'breadcrumb','banks','bank_account_type', 'modalidades', 'tecnologias', 'versao_cadastros', 'versao_creditos'));
         
         $this->render("add");
     }

@@ -102,4 +102,19 @@ class TecnologiaVersaoController extends AppController
             $this->redirect(['action' => 'index']);
         }
     }
+
+    public function get($tecnologia_id) {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        $conditions = ['TecnologiaVersao.tecnologia_id' => $tecnologia_id];
+        $fields = ['TecnologiaVersao.id', 'TecnologiaVersao.nome'];
+
+        $versoes = [
+            'cadastro' => $this->TecnologiaVersao->find('list', ['fields' => $fields, 'conditions' => array_merge($conditions, ['TecnologiaVersao.tipo' => 'cadastro'])]),
+            'credito' => $this->TecnologiaVersao->find('list', ['fields' => $fields, 'conditions' => array_merge($conditions, ['TecnologiaVersao.tipo' => 'credito'])]),
+        ];
+
+        echo json_encode($versoes);
+    }
 }
