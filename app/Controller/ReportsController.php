@@ -1265,7 +1265,7 @@ class ReportsController extends AppController
     {
         ini_set('memory_limit', '-1');
 
-        $this->Permission->check(76, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(76, "leitura") ? "" : $this->redirect("/not_allowed");
 
         $this->Paginator->settings = ['OrderBalanceFile' => [
             'limit' => 200,
