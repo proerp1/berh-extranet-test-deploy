@@ -131,12 +131,14 @@ $(document).ready(function() {
                 return; // Evita a execução adicional
             }
             
-            const futureDueDate = addWorkingDays(creditReleaseDate, 5);
+            const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
 
-            if (dueDateToDate < futureDueDate) {
-                $('#message_classification_due_date').text('Data do vencimento deverá ser maior que data do agendamento do crédito previsto + 5 dias úteis.').show();
+            // vencimento deve ser DEPOIS de (crédito previsto - 5 dias úteis)
+            // e no MÁXIMO igual ao crédito previsto
+            if (dueDateToDate >= maxInvalidDate) {
+                $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
                 event.preventDefault();
-                return; // Evita a execução adicional
+                return;
             }
         }
 
@@ -372,4 +374,19 @@ $(document).ready(function() {
         }
         return date;
     }
+
+    function subtractWorkingDays(startDate, days) {
+        let date = new Date(startDate);
+        let removed = 0;
+
+        while (removed < days) {
+            date.setDate(date.getDate() - 1);
+            if (date.getDay() !== 0 && date.getDay() !== 6) {
+                removed++;
+            }
+        }
+
+        return date;
+    }
+
 });
