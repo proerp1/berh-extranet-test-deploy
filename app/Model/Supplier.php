@@ -26,6 +26,16 @@ class Supplier extends AppModel
         'BankCode' => [
             'className' => 'BankCode',
             'foreignKey' => 'bank_code_id'
+        ],
+        'VersaoCadastro' => [
+            'className' => 'TecnologiaVersao',
+            'foreignKey' => 'versao_cadastro_id',
+            'conditions' => ['VersaoCadastro.tipo' => 'cadastro'],
+        ],
+        'VersaoCredito' => [
+            'className' => 'TecnologiaVersao',
+            'foreignKey' => 'versao_credito_id',
+            'conditions' => ['VersaoCredito.tipo' => 'credito'],
         ]
     ];
 

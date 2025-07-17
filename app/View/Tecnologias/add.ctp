@@ -1,3 +1,7 @@
+<?php
+    echo $this->element("abas_tecnologia", ['id' => $id]);
+?>
+
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Tecnologia', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
