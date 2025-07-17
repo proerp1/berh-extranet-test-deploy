@@ -95,6 +95,8 @@
                         <th>Prazo Cartão Novo</th>
                         <th>Fornecedor</th>
                         <th>CNPJ</th>
+                        <th>Observação</th>
+
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -121,6 +123,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["time_card"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["documento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["observation"]; ?></td>
+
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/benefits/edit/'.$data[$i]["Benefit"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar
