@@ -173,6 +173,7 @@ class CustomerUsersController extends AppController
                 'CustomerUser.cel', 
                 'CustomerUser.cpf', 
                 'CustomerUser.rg', 
+                'CustomerUser.observation', 
                 'CustomerUser.emissor_rg', 
                 'CustomerUser.emissor_estado', 
                 'CustomerUser.nome_mae', 

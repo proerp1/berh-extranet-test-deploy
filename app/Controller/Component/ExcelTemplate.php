@@ -2259,7 +2259,7 @@ class ExcelTemplate
         'Q1' => "Salário(beneficiário)",
         'R1' => "Estado Civil(beneficiário)",
         'S1' => "Empresas do Grupo econômico(beneficiário)",
-        //'T1' => "Observações(beneficiário)",
+        'T1' => "Observações(beneficiário)",
         'U1' => "Nome (Grupo Econômico)",
         'V1' => "CNPJ (Grupo Econômico)",
         'W1' => "COD Benefício",
@@ -2304,8 +2304,8 @@ class ExcelTemplate
                 ->setCellValue('P' . $indx, $data['CostCenter']['name'] ?? '')
                 ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
                 ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
-                ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '');
-               // ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
+                ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
+               ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
