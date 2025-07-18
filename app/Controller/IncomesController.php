@@ -75,6 +75,11 @@ class IncomesController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.cod_franquia' => $_GET['f']]);
         }
 
+        if (!empty($_GET["payment_method"])) {
+    $condition['and']['Income.payment_method'] = $_GET["payment_method"];
+}
+
+
         if (isset($_GET["atraso"]) and $_GET["atraso"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id IN (15,16) ']);
             $condition['and'] = array_merge($condition['and'], ['Income.vencimento <' => date("Y-m-d")]);
@@ -208,13 +213,16 @@ class IncomesController extends AppController
             }
         }                
 
+        $payment_method = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transfêrencia','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
+
+
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 5]]);
         $statusCliente = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
         $codFranquias = $this->Resale->find('all', ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], ['order' => 'Resale.nome_fantasia']]);
         
         $action = 'Contas a Receber';
 
-        $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action'));
+        $this->set(compact('status', 'limit', 'statusCliente', 'data', 'codFranquias', 'total_income', 'action', 'payment_method'));
     }
     
     public function add()

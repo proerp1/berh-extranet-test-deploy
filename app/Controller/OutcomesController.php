@@ -49,6 +49,10 @@ class OutcomesController extends AppController {
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
 
+		if (!empty($_GET["payment_method"])) {
+			$condition['and']['Outcome.payment_method'] = $_GET["payment_method"];
+		}
+
 		if(isset($_GET['supplier_id']) && $_GET['supplier_id'] != "") {
 			$condition['and'] = array_merge($condition['and'], ['Outcome.supplier_id' => $_GET['supplier_id']]);
 		}
@@ -161,6 +165,8 @@ class OutcomesController extends AppController {
 			]
 		]);
 		
+		$payment_method = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transfêrencia','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
+		
 		$aba_pago_id = 13;
 		$aba_atual_id = isset($_GET['t']) ? $_GET['t'] : null;
 		$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
@@ -172,7 +178,7 @@ class OutcomesController extends AppController {
 
 		$action = 'Contas a pagar';
 		
-		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id'));
+		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id', 'payment_method'));
 	}
 	
 	public function add() {

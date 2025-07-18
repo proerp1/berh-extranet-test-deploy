@@ -164,6 +164,32 @@
                                     ?>
                                 </select>
                             </div>
+                             <div class="mb-10">
+                                    <label class="form-label fs-5 fw-bold mb-3">Forma de pagamento:</label>
+                                    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="payment_method" id="payment_method">
+                                        <option></option>
+                                        <?php
+                                            $payment_method = [
+                                                '1' => 'Boleto',
+                                                '3' => 'Cartão de crédito',
+                                                '6' => 'Crédito em conta corrente',
+                                                '5' => 'Cheque',
+                                                '4' => 'Depósito',
+                                                '7' => 'Débito em conta',
+                                                '8' => 'Dinheiro',
+                                                '2' => 'Transfêrencia',
+                                                '9' => 'Desconto',
+                                                '11' => 'Pix',
+                                                '10' => 'Outros'
+                                            ];
+                                            foreach ($payment_method as $key => $label) {
+                                                $selected = (isset($_GET['payment_method']) && $_GET['payment_method'] == $key) ? 'selected' : '';
+                                                echo "<option value=\"$key\" $selected>$label</option>";
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>
                                 <div class="input-group input-daterange" id="datepicker">
@@ -233,6 +259,7 @@
 						<th>Parcela</th>
                         <th data-priority="1"><?php echo $this->Paginator->sort('Outcome.valor_total', 'Valor a pagar R$'); ?> <?php echo $this->Paginator->sortKey() == 'Outcome.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
 						<th>Valor pago R$</th>
+                        <th>Forma de pagamento</th>
                         <th>Registro Cobrança</th>
                         <th>Observação</th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
@@ -277,6 +304,10 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["parcela"].'ª'; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_total"]; ?></td>
 								<td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["valor_pago"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php echo isset($payment_method[$data[$i]['Outcome']['payment_method']]) ? $payment_method[$data[$i]['Outcome']['payment_method']] : '-'; ?>
+                                </td>
+
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["valor"] . ' ' . $data[$i]["Supplier"]["unidade_tempo"]; ?></td>
 
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
@@ -411,6 +442,8 @@
             $("#t").val(null).trigger('change');
             $("#de").val(null);
             $("#ate").val(null);
+            $("#payment_method").val(null).trigger('change');
+
 
             $("#busca").submit();
         });

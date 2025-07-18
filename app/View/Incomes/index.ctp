@@ -121,6 +121,33 @@ foreach ($data as $item) {
                                     </select>
                                 </div>
                             
+                                <div class="mb-10">
+                                    <label class="form-label fs-5 fw-bold mb-3">Forma de pagamento:</label>
+                                    <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="payment_method" id="payment_method">
+                                        <option></option>
+                                        <?php
+                                            $payment_method = [
+                                                '1' => 'Boleto',
+                                                '3' => 'Cartão de crédito',
+                                                '6' => 'Crédito em conta corrente',
+                                                '5' => 'Cheque',
+                                                '4' => 'Depósito',
+                                                '7' => 'Débito em conta',
+                                                '8' => 'Dinheiro',
+                                                '2' => 'Transfêrencia',
+                                                '9' => 'Desconto',
+                                                '11' => 'Pix',
+                                                '10' => 'Outros'
+                                            ];
+                                            foreach ($payment_method as $key => $label) {
+                                                $selected = (isset($_GET['payment_method']) && $_GET['payment_method'] == $key) ? 'selected' : '';
+                                                echo "<option value=\"$key\" $selected>$label</option>";
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+
+
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Franquias:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="f" id="f">
@@ -257,6 +284,9 @@ foreach ($data as $item) {
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_pago"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
+                                <?php echo isset($payment_method[$data[$i]['Income']['payment_method']]) ? $payment_method[$data[$i]['Income']['payment_method']] : '-'; ?></td>
+
+                                <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
@@ -297,6 +327,8 @@ foreach ($data as $item) {
             $("#created_de").val(null);
             $("#created_ate").val(null);
             $("#c").val(null);
+            $("#payment_method").val(null).trigger('change');
+
 
 
             $("#busca").submit();
