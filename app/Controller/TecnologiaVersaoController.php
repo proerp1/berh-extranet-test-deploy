@@ -3,7 +3,7 @@ class TecnologiaVersaoController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Tecnologia', 'TecnologiaVersao'];
+    public $uses = ['Tecnologia', 'TecnologiaVersao', 'CustomerUser', 'CustomerUserItinerary', 'OrderItem', 'Benefit', 'Supplier'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['TecnologiaVersao.name' => 'asc']
@@ -34,7 +34,28 @@ class TecnologiaVersaoController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Tecnologia' => '', 'Versões' => ''];
         $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
-    
+
+    private function get_version_fields() {
+        $fields = [
+            'CustomerUser' => $this->CustomerUser->schema(),
+            'CustomerUserItinerary' => $this->CustomerUserItinerary->schema(),
+            'OrderItem' => $this->OrderItem->schema(),
+            'Benefit' => $this->Benefit->schema(),
+            'Supplier' => $this->Supplier->schema(),
+        ];
+
+        $allFields = [];
+
+        collect($fields)->each(function ($modelFields, $model) use (&$allFields) {
+            collect($modelFields)->each(function ($fieldData, $field) use (&$allFields, $model) {
+                $fullFieldName = "$model.$field";
+                $fieldType = $fieldData['type'];
+                $allFields[$fullFieldName] = "$fullFieldName - $fieldType";
+            });
+        });
+
+        return $allFields;
+    }
     
     public function add($tecnologia_id)
     {
@@ -55,10 +76,12 @@ class TecnologiaVersaoController extends AppController
             }
         }
 
+        $fields = $this->get_version_fields();
+
         $action = 'TecnologiaVersao';
         $breadcrumb = ['Cadastros' => '', 'Tecnologia Versao' => '', 'Nova Versao' => ''];
         $this->set("form_action", "../tecnologia_versao/add/".$tecnologia_id);
-        $this->set(compact('action', 'breadcrumb', 'tecnologia_id'));
+        $this->set(compact('action', 'breadcrumb', 'tecnologia_id', 'fields'));
     }
 
     public function edit($tecnologia_id, $id = null)
@@ -80,10 +103,12 @@ class TecnologiaVersaoController extends AppController
         $this->request->data = $this->TecnologiaVersao->read();
         $this->TecnologiaVersao->validationErrors = $temp_errors;
 
+        $fields = $this->get_version_fields();
+
         $action = 'TecnologiaVersao';
         $breadcrumb = ['Cadastros' => '', 'Tecnologia' => '', 'Alterar Versao' => ''];
         $this->set("form_action", "../tecnologia_versao/edit/".$tecnologia_id);
-        $this->set(compact( 'id', 'action', 'breadcrumb', 'tecnologia_id'));
+        $this->set(compact( 'id', 'action', 'breadcrumb', 'tecnologia_id', 'fields'));
         
         $this->render("add");
     }

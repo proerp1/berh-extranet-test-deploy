@@ -36,7 +36,7 @@ echo $this->element("abas_tecnologia", ['id' => $tecnologia_id]);
             <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Campos Disponíveis</label>
-                    <?php echo $this->Form->input('select_campo', ["id" => "select_campo", "placeholder" => "Nome", 'empty' => 'Selecione para adicionar ao campo ao lado', "class" => "form-control select2 mb-3 mb-lg-0", 'options' => ['CustomerUser.name','CustomerUser.cpf','CustomerDepartment.name','Supplier.code','Benefit.code','CustomerUserItinerary.unit_price','CustomerUserItinerary.quantity','OrderItem.working_days','OrderItem.var','OrderItem.subtotal']]);  ?>
+                    <?php echo $this->Form->input('select_campo', ["id" => "select_campo", "placeholder" => "Nome", 'empty' => 'Selecione para adicionar ao campo ao lado', "class" => "form-control select2 mb-3 mb-lg-0", 'options' => $fields]);  ?>
                 </div>
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Campos</label>
@@ -57,7 +57,7 @@ echo $this->element("abas_tecnologia", ['id' => $tecnologia_id]);
 <script>
     $(document).ready(function () {
         $("#select_campo").on('change', function () {
-            const novo_campo = $("#select_campo option:selected").text()
+            const novo_campo = $(this).val();
             let campos_val = $('#campos').val();
             campos_val += `${novo_campo};`
             $("#campos").val(campos_val);
