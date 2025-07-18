@@ -269,7 +269,7 @@
                                 <a href="<?php echo $this->base.'/boletos/alterar_boleto/'.$this->request->data["CnabItem"]["id_web"]; ?>" class="btn btn-primary">Alterar boleto</a>
                             <?php } ?>
                         <?php } ?>
-                        <?php if (in_array($this->request->data['Status']['id'], [15, 16, 19, 51])){ ?>
+                        <?php if (in_array($this->request->data['Status']['id'], [15, 16, 19])){ ?>
                             <a href="#" data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-success">Baixar conta</a>
                         <?php } ?>
                         <?php if (($this->request->data['Status']['id'] == 16 || $this->request->data['Status']['id'] == 19) && $cancelarConta) { ?>
@@ -277,6 +277,9 @@
                         <?php } ?>
                         <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [16])): ?>
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/51/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-warning">Marcar como Divergente</a>
+                        <?php endif ?>
+                         <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [51])): ?>
+                            <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/16/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Conta Confirmada</a>
                         <?php endif ?>
                         <?php if (!$cancelarConta && $this->request->data['Status']['id'] != 58) { ?>
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/58'; ?>" class="btn btn-danger">Solicitar Cancelamento</a>
