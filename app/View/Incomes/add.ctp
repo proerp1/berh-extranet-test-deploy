@@ -275,6 +275,9 @@
                         <?php if (($this->request->data['Status']['id'] == 16 || $this->request->data['Status']['id'] == 19) && $cancelarConta) { ?>
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/18/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
                         <?php } ?>
+                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [16])): ?>
+                            <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/51/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-warning">Marcar como Divergente</a>
+                        <?php endif ?>
                         <?php if (!$cancelarConta && $this->request->data['Status']['id'] != 58) { ?>
                             <a href="<?php echo $this->base.'/incomes/change_status/'.$id.'/58'; ?>" class="btn btn-danger">Solicitar Cancelamento</a>
                         <?php } else if ($cancelarConta && $this->request->data['Status']['id'] == 58) { ?>
@@ -299,6 +302,7 @@
                 <h4 class="modal-title" id="myModalLabel">Baixar conta</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            
             <?php echo $this->Form->create('Income', array("id" => "js-form-submit", "class" => "form-horizontal", "action" => '../incomes/baixar_titulo/', "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
                 <input type="hidden" name="data[Income][status_id]" value="17">
                 <div class="modal-body">
