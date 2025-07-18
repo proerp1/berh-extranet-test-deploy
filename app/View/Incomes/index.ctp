@@ -246,6 +246,7 @@ foreach ($data as $item) {
                         <th>Parcela</th>
                         <th data-priority="1"><?php echo $this->Paginator->sort('Income.valor_total', 'Valor a receber R$'); ?> <?php echo $this->Paginator->sortKey() == 'Income.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
                         <th>Valor pago R$</th>
+                        <th>Forma de pagamento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
