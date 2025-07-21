@@ -238,6 +238,7 @@ class CustomReportsComponent extends Component
                         //'CustomerDepartment.name',
                         'CustomerUserItinerary.unit_price',
                         'CustomerUserItinerary.quantity',
+                        'CustomerUserItinerary.benefit_id',
                         'OrderItem.*',
                         'Benefit.code',
                         'Benefit.name',
