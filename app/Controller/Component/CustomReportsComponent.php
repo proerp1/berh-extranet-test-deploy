@@ -310,13 +310,13 @@ class CustomReportsComponent extends Component
                             'type' => 'INNER',
                             'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
                         ],
-                                                [
-    'table' => 'benefit_types',
-    'alias' => 'BenefitType',
-    'type' => 'LEFT',
-    'conditions' => ['BenefitType.id = Benefit.benefit_type_id'],
-],
                         [
+                        'table' => 'benefit_types',
+                        'alias' => 'BenefitType',
+                        'type' => 'LEFT',
+                        'conditions' => ['BenefitType.id = Benefit.benefit_type_id'],
+                    ],
+                                            [
                             'table' => 'suppliers',
                             'alias' => 'Supplier',
                             'type' => 'INNER',
