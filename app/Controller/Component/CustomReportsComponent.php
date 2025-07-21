@@ -242,6 +242,7 @@ class CustomReportsComponent extends Component
                         'OrderItem.*',
                         'Benefit.code',
                         'Benefit.name',
+                        'BenefitType.name',
                         'Supplier.nome_fantasia',
                         'Supplier.id',
                         'Order.id',
@@ -283,6 +284,8 @@ class CustomReportsComponent extends Component
                             'type' => 'INNER',
                             'conditions' => ['CustomerUser.id = OrderItem.customer_user_id'],
                         ],
+
+
                        /* [
                             'table' => 'customer_departments',
                             'alias' => 'CustomerDepartment',
@@ -307,6 +310,12 @@ class CustomReportsComponent extends Component
                             'type' => 'INNER',
                             'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
                         ],
+                                                [
+    'table' => 'benefit_types',
+    'alias' => 'BenefitType',
+    'type' => 'LEFT',
+    'conditions' => ['BenefitType.id = Benefit.benefit_type_id'],
+],
                         [
                             'table' => 'suppliers',
                             'alias' => 'Supplier',
