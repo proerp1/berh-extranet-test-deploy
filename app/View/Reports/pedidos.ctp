@@ -167,7 +167,7 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4"><?php $benefitId = $data[$i]["Order"]["benefit_type"]; echo isset($benefitTypes[$benefitId]) ? $benefitTypes[$benefitId] : 'Não especificado';?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php $benefitId = $data[$i]["Order"]["benefit_type"]; echo isset($benefitTypes[$benefitId]) ? $benefitTypes[$benefitId] : 'Todos';?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["first_order"] == 0 ? "Não" : "Sim"; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["nome_fantasia"]; ?></td>
