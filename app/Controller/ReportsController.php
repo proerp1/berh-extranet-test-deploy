@@ -185,9 +185,6 @@ class ReportsController extends AppController
 	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
 
-// Mapeamento dos IDs para nomes de benefícios
-$benefitTypes = [1 => 'Cartão',2 => 'Papel',3 => 'Passe Comum',4 => 'PAT',5 => 'Beneflex',6 => 'Saúde',7 => 'Cultura',8 => 'Combustível',9 => 'Frota',10 => 'Premiação',];
-
         $paginationConfig = $this->CustomReports->configPagination('pedidos');
         $this->Paginator->settings = $paginationConfig;
 
@@ -218,6 +215,11 @@ $benefitTypes = [1 => 'Cartão',2 => 'Papel',3 => 'Passe Comum',4 => 'PAT',5 => 
 
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
+        $benefitTypes = $this->BenefitType->find('list', [
+    'fields' => ['id', 'name'],
+    'order' => ['name' => 'asc'],
+    'recursive' => -1
+]);
 
         $data = [];
         if (!empty($_GET)) {
@@ -240,7 +242,7 @@ $benefitTypes = [1 => 'Cartão',2 => 'Papel',3 => 'Passe Comum',4 => 'PAT',5 => 
 
         $action = 'Pedidos';
         $breadcrumb = ['Relatórios' => '', 'Pedidos' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses', 'benefitTypes'));
     }
 
     public function relatorio_processamento()

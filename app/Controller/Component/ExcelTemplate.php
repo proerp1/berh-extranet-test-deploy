@@ -2012,6 +2012,7 @@ class ExcelTemplate
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Data Alteração");$col++;
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração");$col++;
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2137,6 +2138,8 @@ class ExcelTemplate
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['updated_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['UpdatedGe']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
+
         }
     }
 

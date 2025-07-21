@@ -109,6 +109,27 @@
                                 </select>
                             </div>
 
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo de Benefício:</label>
+                                <select class="form-select form-select-solid fw-bolder"
+                                        data-kt-select2="true"
+                                        data-placeholder="Selecione"
+                                        data-allow-clear="true"
+                                        name="bt[]"
+                                        id="bt"
+                                        multiple>
+                                    <?php
+                                    $selectedBt = isset($_GET["bt"]) && is_array($_GET["bt"]) ? $_GET["bt"] : [];
+
+                                    foreach ($benefitTypes as $keyBt => $benefitType) {
+                                        $selected = in_array($keyBt, $selectedBt) ? "selected" : "";
+                                        echo '<option value="' . $keyBt . '" ' . $selected . '>' . $benefitType . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary filter" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -167,13 +188,8 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $statuses[$data[$i]["Order"]["status_id"]]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["name"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["cpf"]; ?></td>
-<td class="fw-bold fs-7 ps-4">
-    <?php
-    echo isset($data[$i]["BenefitType"]["name"]) && !empty($data[$i]["BenefitType"]["name"])
-        ? $data[$i]["BenefitType"]["name"]
-        : 'Não especificado';
-    ?>
-</td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["BenefitType"]["name"]) && !empty($data[$i]["BenefitType"]["name"]) ? $data[$i]["BenefitType"]["name"]: 'Não especificado';?>
+                        </td>
                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["first_order"] == 0 ? "Não" : "Sim"; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["nome_fantasia"]; ?></td>
@@ -286,6 +302,7 @@
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
             $("#q").val(null);
+            $("#bt").val(null).trigger('change');
 
             $("#busca").submit();
         });
