@@ -185,7 +185,9 @@ class ReportsController extends AppController
 	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
 
-	    
+// Mapeamento dos IDs para nomes de benefícios
+$benefitTypes = [1 => 'Cartão',2 => 'Papel',3 => 'Passe Comum',4 => 'PAT',5 => 'Beneflex',6 => 'Saúde',7 => 'Cultura',8 => 'Combustível',9 => 'Frota',10 => 'Premiação',];
+
         $paginationConfig = $this->CustomReports->configPagination('pedidos');
         $this->Paginator->settings = $paginationConfig;
 
