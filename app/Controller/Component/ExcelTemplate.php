@@ -965,6 +965,7 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número do cartão"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matrícula operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Beneficio"); $col++;
 
 
 
@@ -1001,6 +1002,7 @@ class ExcelTemplate
             $valor = $dado["Order"]["pedido_complementar"] == 1 ? 'Sim' : 'Não';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $valor);
             $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["BenefitType"]["name"] ); $col++;
 
 
         }

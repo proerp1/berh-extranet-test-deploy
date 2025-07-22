@@ -957,6 +957,7 @@ class ReportsController extends AppController
                 'Supplier.nome_fantasia',
                 'CustomerUser.name',
                 'Benefit.name',
+                'BenefitType.name',
                 'CustomerUserItinerary.quantity',
             ],
             'joins' => [
@@ -968,6 +969,15 @@ class ReportsController extends AppController
                         'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
                     ]
                 ],
+                [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
+                ],
+
                 [
                     'table' => 'suppliers',
                     'alias' => 'Supplier',
@@ -1063,6 +1073,12 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         }
 
+        if (isset($_GET['bt']) && is_array($_GET['bt']) && count($_GET['bt']) > 0) {
+            $buscar = true;
+            $condition['and'][] = ['BenefitType.id' => $_GET['bt']];
+        }
+
+
         if (!empty($_GET['q'])) {
             $buscar = true;
 
@@ -1102,6 +1118,7 @@ class ReportsController extends AppController
                     'CustomerUser.name',
                     'CustomerUser.cpf',
                     'Benefit.name',
+                    'BenefitType.name',
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
 
@@ -1115,6 +1132,15 @@ class ReportsController extends AppController
                             'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
                         ]
                     ],
+                    [
+                        'table' => 'benefit_types',
+                        'alias' => 'BenefitType',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'BenefitType.id = Benefit.benefit_type_id'
+                        ]
+                    ],
+
                     [
                         'table' => 'suppliers',
                         'alias' => 'Supplier',
@@ -1194,11 +1220,15 @@ class ReportsController extends AppController
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+        $benefitTypes = $this->BenefitType->find('list', [
+            'order' => ['BenefitType.name' => 'ASC']
+        ]);
+        
 
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes'));
     }
 
     public function getSupplierAndCustomer()

@@ -101,6 +101,19 @@
                                             </select>
                                         </div>
 
+                                        <div class="mb-10">
+                                            <label class="form-label fs-5 fw-bold mb-3">Tipo de Benefício:</label>
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="bt[]" id="bt" multiple>
+                                                <option value="">Selecione</option>
+                                                <?php foreach ($benefitTypes as $id => $name): ?>
+                                                    <option value="<?php echo $id; ?>" <?php echo (isset($_GET['bt']) && in_array($id, $_GET['bt'])) ? 'selected' : ''; ?>>
+                                                        <?php echo $name; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -130,6 +143,7 @@
                     <th>Fornecedor</th>
                     <th>Beneficiário</th>
                     <th>Benefício</th>
+                    <th>Tipo Benefício</th>
                     <th width="90px">Dias Úteis</th>
                     <th width="120px">Quantidade por dia</th>
                     <th>Valor por dia</th>
@@ -189,6 +203,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Supplier"]["nome_fantasia"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["BenefitType"]["name"]; ?></td>
+
                             <td class="fw-bold fs-7 ps-4">
                                 <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
                             </td>
