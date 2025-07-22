@@ -96,13 +96,17 @@ class OrderItem extends AppModel {
             }
 
             if (isset($val[$this->alias]['data_inicio_processamento'])) {
-                $results[$key][$this->alias]['data_inicio_processamento_nao_formatado'] = $val[$this->alias]['data_inicio_processamento'];
-                $results[$key][$this->alias]['data_inicio_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_inicio_processamento']));
+                $data = $val[$this->alias]['data_inicio_processamento'];
+
+                $results[$key][$this->alias]['data_inicio_processamento_nao_formatado'] = $data;
+                $results[$key][$this->alias]['data_inicio_processamento'] = ($data === '0000-00-00 00:00:00' || empty($data)) ? '' : date("d/m/Y", strtotime($data));
             }
 
             if (isset($val[$this->alias]['data_fim_processamento'])) {
-                $results[$key][$this->alias]['data_fim_processamento_nao_formatado'] = $val[$this->alias]['data_fim_processamento'];
-                $results[$key][$this->alias]['data_fim_processamento'] = date("d/m/Y", strtotime($val[$this->alias]['data_fim_processamento']));
+                $data = $val[$this->alias]['data_fim_processamento'];
+
+                $results[$key][$this->alias]['data_fim_processamento_nao_formatado'] = $data;
+                $results[$key][$this->alias]['data_fim_processamento'] = ($data === '0000-00-00 00:00:00' || empty($data)) ? '' : date("d/m/Y", strtotime($data));
             }
 
             if (isset($val[$this->alias]['data_entrega'])) {
