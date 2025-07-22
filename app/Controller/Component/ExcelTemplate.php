@@ -213,6 +213,55 @@ class ExcelTemplate
         }
     }
 
+      public function getNiboContasReceber($objPHPExcel, $dados)
+    {
+
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', "Tipo Transação")
+            ->setCellValue('B1', "Nome do contato ")
+            ->setCellValue('C1', "Descrição")        
+            ->setCellValue('D1', "Categoria")
+            ->setCellValue('E1', "Valor")
+            ->setCellValue('F1', "Vencimento")
+            ->setCellValue('G1', "previsto")
+            ->setCellValue('H1', "competência")
+            ->setCellValue('I1', "centro de custo ")
+            ->setCellValue('J1', "favorito")
+            ->setCellValue('K1', "tipo de contato")
+            ->setCellValue('L1', "referencia")
+            ->setCellValue('M1', "conta")
+            ->setCellValue('N1', "data pagamento ")
+            ->setCellValue('O1', "anotações");
+
+
+
+        $indx = 1;
+        for ($i = 0; $i < count($dados); $i++) {
+
+            $indx++;
+            $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A' . $indx, 'Lançamento')
+                ->setCellValue('B' . $indx, $dados[$i]['Income']['valor_total'])
+                ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
+                ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
+                ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total'])
+                ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
+                ->setCellValue('G' . $indx, $dados[$i]['Income']['vencimento'])
+                ->setCellValue('H' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['Income']['created_nao_formatado'])))
+                ->setCellValue('I' . $indx, $dados[$i]['Income']['cost_center_id'])
+                ->setCellValue('J' . $indx, $dados[$i]['Income']['cost_center_id'])
+                ->setCellValue('K' . $indx, ($dados[$i]["Customer"]["codigo_associado"] ?? '') . ' - ' . ($dados[$i]["Customer"]["nome_secundario"] ?? ''))
+                ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
+                ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
+                ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
+                ->setCellValue('O' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'");
+
+
+
+        }
+    }
+
+
     public function getOutcome($objPHPExcel, $dados)
     {
         $paymentMethods = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transferência','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];

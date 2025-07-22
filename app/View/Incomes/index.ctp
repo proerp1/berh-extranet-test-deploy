@@ -1,5 +1,6 @@
 <?php $url_novo = $this->base."/incomes/add/?".(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>
 <?php $url_exportar = $this->base."/incomes/?exportar=true&".(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>
+<?php $url_exportarnibo = $this->base."/incomes/?exportarnibo=true&".(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>
 <?php echo $this->element("abas_contas_receber"); ?>
 
 <div class="row gy-5 g-xl-10">
@@ -60,6 +61,11 @@ foreach ($data as $item) {
                     <a href="<?php echo $url_exportar; ?>" class="btn btn-light-primary me-3">
                         <i class="fas fa-file-excel"></i>
                         Exportar
+                    </a>
+
+                     <a href="<?php echo $url_exportarnibo; ?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        NIBO
                     </a>
 
                     <a type="button" class="btn btn-primary" href="<?php echo $url_novo;?>">Novo</a>
