@@ -1912,7 +1912,7 @@ class ExcelTemplate
                 ->setCellValue('M'. $indx, $dados[$i]['Supplier']['code'])
                 ->setCellValue('N'. $indx, $dados[$i]['Benefit']['code'])
                 ->setCellValue('O'. $indx, $dados[$i]['CustomerUserItinerary']['card_number'])
-                ->setCellValue('P'. $indx, $dados[$i]['CustomerUserItinerary']['unit_price'])
+                ->setCellValue('P'. $indx, $dados[$i]['OrderItem']['valor_unit'])
                 ->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['working_days'])
                 ->setCellValue('R'. $indx, 'Dia')
                 ->setCellValue('S'. $indx, $quantity)
@@ -2115,10 +2115,10 @@ class ExcelTemplate
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Supplier']['nome_fantasia']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['code']);$col++;
             $activeWorksheet->setCellValueExplicit($col . $indx, $dados[$i]['CustomerUserItinerary']['card_number'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);$col++;
-            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['unit_price']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['valor_unit']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['working_days']);$col++;
             $activeWorksheet->setCellValue($col . $indx, 'Dia');$col++;
-            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['quantity']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['manual_quantity'] != 0 ? $dados[$i]['OrderItem']['manual_quantity'] : $dados[$i]['CustomerUserItinerary']['quantity']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['var']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['total']);$col++;
             $activeWorksheet->setCellValue($col . $indx, '-');$col++;
@@ -2235,7 +2235,6 @@ class ExcelTemplate
         $total = 0;
         for ($i = 0; $i < count($dados); $i++) {
             $total += $dados[$i]["OrderItem"]["subtotal_not_formated"];
-            $valor_unit = ($dados[$i]['OrderItem']['manual_quantity'] > 0 ? $dados[$i]['OrderItem']['price_per_day_not_formated'] / $dados[$i]['OrderItem']['manual_quantity'] : $dados[$i]['OrderItem']['price_per_day']);
             $indx++;
 
             $tipo_pedido = "";
@@ -2266,7 +2265,7 @@ class ExcelTemplate
                 ->setCellValue('M'. $indx, $dados[$i]['Supplier']['nome_fantasia'])
                 ->setCellValue('N'. $indx, $dados[$i]['Benefit']['code'].'/'.$dados[$i]['Benefit']['name'])
                 ->setCellValue('O'. $indx, $dados[$i]['OrderItem']['price_per_day'])
-                ->setCellValue('P'. $indx, $valor_unit)
+                ->setCellValue('P'. $indx, $dados[$i]['OrderItem']['valor_unit'])
                 ->setCellValue('Q'. $indx, $dados[$i]['OrderItem']['manual_quantity'])
                 ->setCellValue('R'. $indx, $dados[$i]['OrderItem']['subtotal'])
                 ->setCellValue('S'. $indx, $dados[$i]['OrderItem']['transfer_fee'])

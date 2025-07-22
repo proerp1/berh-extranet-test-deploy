@@ -310,6 +310,7 @@ class ReportsController extends AppController
                     'fields' => [
                         'Order.created',
                         'OrderItem.subtotal',
+                        'OrderItem.valor_unit',
                         'Customer.documento',
                         'Customer.nome_secundario',
                         'CustomerUser.name as nome',
