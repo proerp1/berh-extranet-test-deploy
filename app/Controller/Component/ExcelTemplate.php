@@ -2072,7 +2072,7 @@ class ExcelTemplate
             $activeWorksheet->setCellValue($col . $indx, 'Dia');$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['CustomerUserItinerary']['quantity']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['var']);$col++;
-            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['subtotal']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['total']);$col++;
             $activeWorksheet->setCellValue($col . $indx, '-');$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['SalaryRange']['range']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['cep']);$col++;
