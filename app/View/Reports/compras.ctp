@@ -408,6 +408,8 @@
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
             $("#q").val(null);
+            $("#bt").val(null).trigger('change');
+
 
             $("#busca").submit();
         });

@@ -1073,10 +1073,11 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         }
 
-        if (isset($_GET['bt']) && is_array($_GET['bt']) && count($_GET['bt']) > 0) {
+            if (!empty($_GET['bt'])) {
             $buscar = true;
-            $condition['and'][] = ['BenefitType.id' => $_GET['bt']];
+            $condition['and'][] = ['Benefit.benefit_type_id' => $_GET['bt']];
         }
+
 
 
         if (!empty($_GET['q'])) {
