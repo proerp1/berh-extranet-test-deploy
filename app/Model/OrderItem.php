@@ -22,6 +22,13 @@ class OrderItem extends AppModel {
             'foreignKey' => 'customer_user_id'
         )
     );
+    
+    public $virtualFields = [
+        'valor_unit' => 
+            'CASE WHEN OrderItem.manual_quantity > 0 ' .
+            'THEN OrderItem.price_per_day / OrderItem.manual_quantity ' .
+            'ELSE OrderItem.price_per_day END'
+    ];
 
     public function beforeFind($queryData)
     {
@@ -101,6 +108,14 @@ class OrderItem extends AppModel {
             if (isset($val[$this->alias]['data_entrega'])) {
                 $results[$key][$this->alias]['data_entrega_nao_formatado'] = $val[$this->alias]['data_entrega'];
                 $results[$key][$this->alias]['data_entrega'] = date("d/m/Y", strtotime($val[$this->alias]['data_entrega']));
+            }
+
+            if (isset($val[$this->alias]['valor_unit'])) {
+                $results[$key][$this->alias]['valor_unit_not_formated'] = $val[$this->alias]['valor_unit'];
+                $results[$key][$this->alias]['valor_unit'] = number_format($val[$this->alias]['valor_unit'], 2, ',', '.');
+            } else {
+                $results[$key][$this->alias]['valor_unit_not_formated'] = 0;
+                $results[$key][$this->alias]['valor_unit'] = '0,00';
             }
         }
 
