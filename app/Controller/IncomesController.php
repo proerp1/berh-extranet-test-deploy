@@ -259,7 +259,7 @@ class IncomesController extends AppController
                         'conditions' => ['Income.revenue_id = Revenue.id']
                     ],
                     [
-                        'table' => 'cost_centers',
+                        'table' => 'cost_center',
                         'alias' => 'CostCenter',
                         'type' => 'LEFT',
                         'conditions' => ['Income.cost_center_id = CostCenter.id']
