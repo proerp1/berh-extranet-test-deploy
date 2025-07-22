@@ -269,6 +269,18 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
+        public function gerarExcelNibo($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getNibo($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
     public function gerarExcelLogBeneficios($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();

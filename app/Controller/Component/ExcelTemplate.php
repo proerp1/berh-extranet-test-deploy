@@ -281,6 +281,54 @@ class ExcelTemplate
             
     }
 
+
+    public function getNibo($objPHPExcel, $dados)
+    {
+
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', "Tipo Transação")
+            ->setCellValue('B1', "Nome do contato ")
+            ->setCellValue('C1', "Descrição")        
+            ->setCellValue('D1', "Categoria")
+            ->setCellValue('E1', "Valor")
+            ->setCellValue('F1', "Vencimento")
+            ->setCellValue('G1', "previsto")
+            ->setCellValue('H1', "competência")
+            ->setCellValue('I1', "centro de custo ")
+            ->setCellValue('J1', "favorito")
+            ->setCellValue('K1', "tipo de contato")
+            ->setCellValue('L1', "referencia")
+            ->setCellValue('M1', "conta")
+            ->setCellValue('N1', "data pagamento ")
+            ->setCellValue('O1', "anotações");
+            
+            
+          
+
+            $indx = 1;
+            for ($i = 0; $i < count($dados); $i++) {
+                $indx++;
+                $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A' . $indx, 'Lançamento')
+                    ->setCellValue('B' . $indx, $dados[$i]["Supplier"]["nome_fantasia"] ?? '')
+                    ->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"] ?? '')
+                    ->setCellValue('D' . $indx, $dados[$i]["Outcome"]["expense_id"] ?? '')
+                    ->setCellValue('E' . $indx, $dados[$i]['Outcome']['valor_total'] ?? '')
+                    ->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
+                    ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
+                    ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"] ?? '')
+                    ->setCellValue('I' . $indx, ($dados[$i]["Outcome"]["cost_center_id"] ?? '') . 'ª')
+                    ->setCellValue('J' . $indx, $dados[$i]["Outcome"]["cost_center_id"] ?? '')
+                    ->setCellValue('K' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                    ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["doc_num"] ?? '')
+                    ->setCellValue('M' . $indx, $dados[$i]["BankAccount"]["name"] ?? '')
+                    ->setCellValue('N' . $indx, $dados[$i]['Outcome']['data_pagamento'] ?? '')
+                    ->setCellValue('O' . $indx, $dados[$i]['Outcome']['observation'] ?? '');
+            
+            }
+            
+    }
+
     public function getFluxo($objPHPExcel, $dados, $conta)
 {
     $objPHPExcel->setActiveSheetIndex(0)
