@@ -50,6 +50,10 @@ class CustomerUser extends AppModel
             'className' => 'CostCenter',
             'foreignKey' => 'customer_cost_center_id',
         ],
+        'UserUpdated' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_id',
+        ],
     ];
 
     public $hasAndBelongsToMany = [
