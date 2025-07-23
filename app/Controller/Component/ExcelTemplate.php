@@ -241,7 +241,7 @@ class ExcelTemplate
             $indx++;
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A' . $indx, 'Lançamento')
-                ->setCellValue('B' . $indx, $dados[$i]['Income']['valor_total'])
+                ->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
                 ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
                 ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
                 ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total'])
