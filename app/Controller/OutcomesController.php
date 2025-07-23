@@ -142,10 +142,12 @@ class OutcomesController extends AppController {
 			'conditions' => $condition, 
 			
 				'fields' => [
-						'Supplier.*',
-						'Outcome.*',
-						'BankAccount.*' 
-					]
+					'Outcome.*',
+					'Supplier.*',
+					'BankAccount.*',
+					'Expense.name',
+					'CostCenter.name'
+				]
 			]);
 
 			$this->ExcelGenerator->gerarExcelNibo($nome, $dataNibo);
