@@ -341,15 +341,15 @@ class ExcelTemplate
             ->setCellValue('D1', "Categoria")
             ->setCellValue('E1', "Valor")
             ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "previsto")
-            ->setCellValue('H1', "competência")
-            ->setCellValue('I1', "centro de custo ")
-            ->setCellValue('J1', "favorito")
-            ->setCellValue('K1', "tipo de contato")
-            ->setCellValue('L1', "referencia")
-            ->setCellValue('M1', "conta")
-            ->setCellValue('N1', "data pagamento ")
-            ->setCellValue('O1', "anotações");
+            ->setCellValue('G1', "Previsto")
+            ->setCellValue('H1', "Competência")
+            ->setCellValue('I1', "Centro de custo ")
+            ->setCellValue('J1', "Favorito")
+            ->setCellValue('K1', "Tipo de contato")
+            ->setCellValue('L1', "Referencia")
+            ->setCellValue('M1', "Conta")
+            ->setCellValue('N1', "Data pagamento ")
+            ->setCellValue('O1', "Anotações");
             
             
           
