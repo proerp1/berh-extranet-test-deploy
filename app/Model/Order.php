@@ -489,86 +489,23 @@ class Order extends AppModel
     public function reprocessFirstOrder($orderId)
     {
         $OrderItem = ClassRegistry::init('OrderItem');
-        $CustomerUserItinerary = ClassRegistry::init('CustomerUserItinerary');
-
 
         $orderItems = $OrderItem->find('all', [
             'conditions' => ['OrderItem.order_id' => $orderId],
-            'fields' => [
-                'OrderItem.id',
-                'OrderItem.customer_user_id',
-                'OrderItem.customer_user_itinerary_id',
-                'Order.customer_id',
-                'CustomerUser.cpf'
-            ],
-            'joins' => [
-                [
-                    'table' => 'customer_users',
-                    'alias' => 'CustomerUser',
-                    'type' => 'INNER',
-                    'conditions' => ['CustomerUser.id = OrderItem.customer_user_id']
-                ]
-            ],
-            'contain' => ['Order'],
+            'fields' => ['OrderItem.id', 'OrderItem.customer_user_id', 'OrderItem.customer_user_itinerary_id'],
+            'recursive' => -1
         ]);
 
         foreach ($orderItems as $orderItem) {
-            $cpf = str_pad($orderItem['CustomerUser']['cpf'], 11, '0', STR_PAD_LEFT);
-            $itineraryId = $orderItem['OrderItem']['customer_user_itinerary_id'];
-            $customerId = $orderItem['Order']['customer_id'];
-
-            $itinerary = $CustomerUserItinerary->find('first', [
-                'conditions' => ['CustomerUserItinerary.id' => $itineraryId],
-                'fields' => ['Benefit.supplier_id'],
-            ]);
-
-            $supplierId = $itinerary['Benefit']['supplier_id'];
-
-            // Pedido deve ser diferente do atual e status todos menos inicio e cancelado
-            $firstOrder = $OrderItem->find('first', [
-                'joins' => [
-                    [
-                        'table' => 'customer_users',
-                        'alias' => 'CustomerUser',
-                        'type' => 'INNER',
-                        'conditions' => ['CustomerUser.id = OrderItem.customer_user_id']
-                    ],
-                    [
-                        'table' => 'customer_user_itineraries',
-                        'alias' => 'Itinerary',
-                        'type' => 'INNER',
-                        'conditions' => ['Itinerary.id = OrderItem.customer_user_itinerary_id']
-                    ],
-                    [
-                        'table' => 'benefits',
-                        'alias' => 'Benefit',
-                        'type' => 'INNER',
-                        'conditions' => ['Benefit.id = Itinerary.benefit_id']
-                    ]
-                ],
-                'contain' => ['Order'],
-                'conditions' => [
-                    'Order.customer_id' => $customerId,
-                    'CustomerUser.cpf' => $cpf,
-                    'Benefit.supplier_id' => $supplierId,
-                    'OrderItem.order_id <>' => $orderId,
-                    'Order.status_id NOT IN(83,18)',
-                    'Order.is_partial <>' => 3
-                ],
-                'fields' => ['MIN(OrderItem.id) AS first_order_item_id'],
-            ]);
-
-            $firstOrder = $firstOrder[0]['first_order_item_id'];
-
-            if (empty($firstOrder)) {
-                $this->OrderItem->bindModel(
-                    ['belongsTo' => ['Order', 'CustomerUserItinerary', 'CustomerUser']]
-                );
-                $OrderItem->updateAll(
-                    ['OrderItem.first_order' => 1],
-                    ['OrderItem.id' => $orderItem['OrderItem']['id']]
-                );
-            }
+            // Set the data for calculateFirstOrder to work with
+            $OrderItem->data = ['OrderItem' => $orderItem['OrderItem']];
+            
+            $firstOrderValue = $OrderItem->calculateFirstOrder();
+            
+            $OrderItem->updateAll(
+                ['OrderItem.first_order' => $firstOrderValue],
+                ['OrderItem.id' => $orderItem['OrderItem']['id']]
+            );
         }
 
         return true;

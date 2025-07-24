@@ -185,6 +185,7 @@ echo $this->element("abas_customers", array('id' => $id));
                     <th>Centro de Custo</th>
                     <th>Grupo Economico</th>
                     <th>Endereço de Entrega</th>
+                    <th>Usuário Alterado</th>
                     <th>Observação</th>
 
 
@@ -212,6 +213,7 @@ echo $this->element("abas_customers", array('id' => $id));
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CostCenter"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["EconomicGroup"][0]["name"]) ? $data[$i]["EconomicGroup"][0]["name"] : ''; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["CustomerAddress"]["address"]) ? $data[$i]["CustomerAddress"]["address"] : ''; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserUpdated"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerUser"]["observation"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
                                 <a href="<?php echo $this->base . '/customer_users/' . $urlEdit . '/' . $id . '/' . $data[$i]["CustomerUser"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">

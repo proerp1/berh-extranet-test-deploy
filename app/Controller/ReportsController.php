@@ -310,6 +310,7 @@ class ReportsController extends AppController
                     'fields' => [
                         'Order.created',
                         'OrderItem.subtotal',
+                        'OrderItem.valor_unit',
                         'Customer.documento',
                         'Customer.nome_secundario',
                         'CustomerUser.name as nome',
@@ -957,6 +958,7 @@ class ReportsController extends AppController
                 'Supplier.nome_fantasia',
                 'CustomerUser.name',
                 'Benefit.name',
+                'BenefitType.name',
                 'CustomerUserItinerary.quantity',
             ],
             'joins' => [
@@ -968,6 +970,15 @@ class ReportsController extends AppController
                         'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
                     ]
                 ],
+                [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
+                ],
+
                 [
                     'table' => 'suppliers',
                     'alias' => 'Supplier',
@@ -1063,6 +1074,13 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         }
 
+            if (!empty($_GET['bt'])) {
+            $buscar = true;
+            $condition['and'][] = ['Benefit.benefit_type_id' => $_GET['bt']];
+        }
+
+
+
         if (!empty($_GET['q'])) {
             $buscar = true;
 
@@ -1084,6 +1102,16 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
         }
 
+        if (isset($_GET['first_order']) and $_GET['first_order'] != '') {
+            $buscar = true;
+            
+            if ($_GET['first_order'] == 'sim') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 1]);
+            } elseif ($_GET['first_order'] == 'nao') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
+            }
+        }
+
         if (isset($_GET['excel'])) {
             $nome = 'relatorio_compras_' . date('d_m_Y_H_i_s') . '.xlsx';
 
@@ -1102,6 +1130,7 @@ class ReportsController extends AppController
                     'CustomerUser.name',
                     'CustomerUser.cpf',
                     'Benefit.name',
+                    'BenefitType.name',
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
 
@@ -1115,6 +1144,15 @@ class ReportsController extends AppController
                             'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
                         ]
                     ],
+                    [
+                        'table' => 'benefit_types',
+                        'alias' => 'BenefitType',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'BenefitType.id = Benefit.benefit_type_id'
+                        ]
+                    ],
+
                     [
                         'table' => 'suppliers',
                         'alias' => 'Supplier',
@@ -1194,11 +1232,15 @@ class ReportsController extends AppController
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+        $benefitTypes = $this->BenefitType->find('list', [
+            'order' => ['BenefitType.name' => 'ASC']
+        ]);
+        
 
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes'));
     }
 
     public function getSupplierAndCustomer()

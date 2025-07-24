@@ -177,7 +177,7 @@
             <tbody>
                 <?php $total = 0; ?>
                 <?php for ($i = 0; $i < count($data); $i++) {
-                    $total += $data[$i]["OrderItem"]["subtotal_not_formated"];
+                    $total += $data[$i]["OrderItem"]["total_not_formated"];
                 ?>
                     <tr>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
@@ -193,7 +193,7 @@
                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["first_order"] == 0 ? "Não" : "Sim"; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["working_days"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Supplier']["nome_fantasia"]; ?></td>
-                        <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["CustomerUserItinerary"]["unit_price"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["valor_unit"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["manual_quantity"] != 0 ? $data[$i]["OrderItem"]["manual_quantity"] : $data[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["transfer_fee"]; ?></td>
@@ -202,7 +202,7 @@
                     </tr>
                 <?php } ?>
                 <tr>
-                    <td colspan="12"></td>
+                    <td colspan="15"></td>
                     <td>Total</td>
                     <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                 </tr>

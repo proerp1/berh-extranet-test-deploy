@@ -172,6 +172,18 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
+        public function gerarExcelFaq ($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getFaq($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
     public function gerarExcelPedidoscustomer($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
@@ -256,12 +268,36 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+    
+    public function gerarExcelNiboContasReceber($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getNiboContasReceber($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
 
     public function gerarExcelOutcome($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
 
         $this->templates_list->getOutcome($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
+        public function gerarExcelNibo($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getNibo($spreadsheet, $dados);
 
         $local_salva = APP.'webroot/files/excel/'.$nome;
 
@@ -288,6 +324,18 @@ class ExcelGeneratorComponent extends Component
         $this->templates_list->getModeloImportacaoBeneficiarios($spreadsheet, $dados);
 
         $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
+    public function gerarExcelClienteDeParaBeneficios($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getClienteDeParaBeneficios($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome.'.xlsx';
 
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);

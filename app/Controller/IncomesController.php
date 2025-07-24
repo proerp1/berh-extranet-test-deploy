@@ -211,7 +211,78 @@ class IncomesController extends AppController
                         'fields' => ['sum(Income.valor_total) as total_income']
                     ]);
             }
-        }                
+        }           
+        
+        if ($this->request->is('get') && isset($_GET['exportarnibo'])) {
+               $data = $this->Income->find('all', [
+                'conditions' => $condition,
+                'order' => ['Income.vencimento' => 'desc'],
+                'group' => 'Income.id',
+                'joins' => [
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Income.customer_id = Customer.id',
+                            'Customer.data_cancel' => '1901-01-01 00:00:00'
+                        ]
+                    ],
+                    [
+                        'table' => 'bank_accounts',
+                        'alias' => 'BankAccount',
+                        'type' => 'INNER',
+                        'conditions' => ['Income.bank_account_id = BankAccount.id']
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => ['Income.status_id = Status.id']
+                    ],
+                    [
+                        'table' => 'orders',
+                        'alias' => 'Order',
+                        'type' => 'LEFT',
+                        'conditions' => ['Income.order_id = Order.id']
+                    ],
+                    [
+                        'table' => 'income_nfse',
+                        'alias' => 'IncomeNfse',
+                        'type' => 'LEFT',
+                        'conditions' => ['IncomeNfse.income_id = Income.id']
+                    ],
+                    [
+                        'table' => 'revenues',
+                        'alias' => 'Revenue',
+                        'type' => 'LEFT',
+                        'conditions' => ['Income.revenue_id = Revenue.id']
+                    ],
+                    [
+                        'table' => 'cost_center',
+                        'alias' => 'CostCenter',
+                        'type' => 'LEFT',
+                        'conditions' => ['Income.cost_center_id = CostCenter.id']
+                    ]
+                ],
+                'fields' => [
+                    'Income.*',
+                    'Customer.*',
+                    'BankAccount.*',
+                    'Status.*',
+                    'Order.*',
+                    'Revenue.name',
+                    'CostCenter.name',
+                    '(SELECT GROUP_CONCAT(nfse.tipo) FROM income_nfse nfse WHERE nfse.income_id = Income.id GROUP BY nfse.income_id) as nfses'
+                ]
+            ]);
+
+
+                $nome = 'nibo_contas_receber_' . date('d_m_Y_H_i_s') . '.xlsx';
+                $this->ExcelGenerator->gerarExcelNiboContasReceber($nome, $data);
+                $this->redirect("/files/excel/" . $nome);
+            }
+
 
         $payment_method = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transfêrencia','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
 

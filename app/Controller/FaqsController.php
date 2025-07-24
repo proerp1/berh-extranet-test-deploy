@@ -2,7 +2,8 @@
 class FaqsController extends AppController
 {
     public $helpers = ['Html', 'Form', 'Text'];
-    public $components = ['Paginator', 'Permission'];
+    public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
+    
     public $uses = ['Faq', 'CategoriaFaq', 'FaqRelacionamento', 'Supplier'];
 
     public $paginate = [
@@ -35,14 +36,80 @@ class FaqsController extends AppController
         if (!empty($_GET['sistema']) && in_array($_GET['sistema'], ['sig', 'cliente', 'todos'])) {
             $condition['and'][] = ['Faq.sistema_destino' => $_GET['sistema']];
         }
+        if (!empty($_GET['fornecedores_relacionados'])) {
+            $idsSelecionados = array_filter((array)$_GET['fornecedores_relacionados'], 'is_numeric');
+
+            if (!empty($idsSelecionados)) {
+                $faqIdsRelacionados = $this->FaqRelacionamento->find('all', [
+            'fields' => ['faq_id'],
+            'conditions' => ['supplier_id' => $idsSelecionados],
+            'group' => ['faq_id'],
+            'recursive' => -1
+        ]);
+
+        $faqIds = Hash::extract($faqIdsRelacionados, '{n}.FaqRelacionamento.faq_id');
+
+        if (!empty($faqIds)) {
+            $condition['and'][] = ['Faq.id' => $faqIds];
+        }
+
+            }
+        }
+
 
         $data = $this->Paginator->paginate('Faq', $condition);
+
+        // Carrega nomes dos fornecedores manualmente
+        foreach ($data as &$faq) {
+            if (!empty($faq['FaqRelacionamento'])) {
+                foreach ($faq['FaqRelacionamento'] as &$rel) {
+                    if ((int)$rel['supplier_id'] !== 0) {
+                        $supplier = $this->Supplier->find('first', [
+                            'fields' => ['Supplier.nome_fantasia'],
+                            'conditions' => ['Supplier.id' => $rel['supplier_id']],
+                            'recursive' => -1
+                        ]);
+                        $rel['Supplier']['nome_fantasia'] = $supplier['Supplier']['nome_fantasia'] ?? null;
+                    }
+                }
+            }
+        }
+
+           if (isset($_GET['exportar'])) {
+                $nome = 'FAQs_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+                // Mesmo filtro usado no paginate
+                $data = $this->Faq->find('all', [
+                    'conditions' => $condition,
+                    'contain' => ['CategoriaFaq', 'FaqRelacionamento' => ['Supplier']],
+                    'order' => ['Faq.id' => 'desc']
+                ]);
+
+                // Carregar os nomes dos fornecedores se necessário
+                foreach ($data as &$faq) {
+                    if (!empty($faq['FaqRelacionamento'])) {
+                        foreach ($faq['FaqRelacionamento'] as &$rel) {
+                            if ((int)$rel['supplier_id'] !== 0) {
+                                $supplier = $this->Supplier->find('first', [
+                                    'fields' => ['Supplier.nome_fantasia'],
+                                    'conditions' => ['Supplier.id' => $rel['supplier_id']],
+                                    'recursive' => -1
+                                ]);
+                                $rel['Supplier']['nome_fantasia'] = $supplier['Supplier']['nome_fantasia'] ?? null;
+                            }
+                        }
+                    }
+                }
+
+                $this->ExcelGenerator->gerarExcelFaq($nome, $data);
+                return $this->redirect("/files/excel/" . $nome);
+            }
 
         $categoriasFaq = $this->CategoriaFaq->find('list', [
             'fields' => ['CategoriaFaq.id', 'CategoriaFaq.nome'],
             'order' => ['CategoriaFaq.nome' => 'ASC']
         ]);
-
+        $this->prepareFormData();
         $action = 'FAQ';
         $breadcrumb = ['Configurações' => '', 'FAQ' => ''];
 

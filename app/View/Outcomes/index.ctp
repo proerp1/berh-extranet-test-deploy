@@ -138,6 +138,11 @@
                         Exportar
                     </a>
 
+                    <a href="<?php echo $this->here.'?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '').'&exportarnibo' ;?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        NIBO
+                    </a>
+
                     <a type="button" class="btn btn-primary" href="<?php echo $url_novo;?>">Novo</a>
                     
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">

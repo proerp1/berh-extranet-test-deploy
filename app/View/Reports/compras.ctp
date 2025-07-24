@@ -101,6 +101,28 @@
                                             </select>
                                         </div>
 
+                                        <div class="mb-10">
+                                            <label class="form-label fs-5 fw-bold mb-3">Tipo de Benefício:</label>
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="bt[]" id="bt" multiple>
+                                                <option value="">Selecione</option>
+                                                <?php foreach ($benefitTypes as $id => $name): ?>
+                                                    <option value="<?php echo $id; ?>" <?php echo (isset($_GET['bt']) && in_array($id, $_GET['bt'])) ? 'selected' : ''; ?>>
+                                                        <?php echo $name; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-10">
+                                            <label class="form-label fs-5 fw-bold mb-3">Primeiro Pedido:</label>
+                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="first_order" id="first_order">
+                                                <option value="">Todos</option>
+                                                <option value="sim" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'sim' ? 'selected' : ''; ?>>Sim</option>
+                                                <option value="nao" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'nao' ? 'selected' : ''; ?>>Não</option>
+                                            </select>
+                                        </div>
+
+
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -130,6 +152,8 @@
                     <th>Fornecedor</th>
                     <th>Beneficiário</th>
                     <th>Benefício</th>
+                    <th>Tipo Benefício</th>
+                    <th>Primeira Compra</th>
                     <th width="90px">Dias Úteis</th>
                     <th width="120px">Quantidade por dia</th>
                     <th>Valor por dia</th>
@@ -151,7 +175,7 @@
                 <?php if (isset($items_total[0])) { ?>
                     <tr>
                         <td>Total</td>
-                        <td colspan="11"></td>
+                        <td colspan="12"></td>
                         <td class="subtotal_sum">R$<?php echo number_format($items_total[0][0]['subtotal'], 2, ',', '.'); ?></td>
                         <td class="transfer_fee_sum">R$<?php echo number_format($items_total[0][0]['transfer_fee'], 2, ',', '.'); ?></td>
                         <td class="commission_fee_sum">R$<?php echo number_format($items_total[0][0]['commission_fee'], 2, ',', '.'); ?></td>
@@ -189,6 +213,9 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Supplier"]["nome_fantasia"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["BenefitType"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não'; ?></td>
+
                             <td class="fw-bold fs-7 ps-4">
                                 <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
                             </td>
@@ -210,7 +237,7 @@
                     <?php } ?>
                     <tr>
                         <td>Total</td>
-                        <td colspan="11"></td>
+                        <td colspan="12"></td>
                         <td class="subtotal_sum">R$<?php echo number_format($v_subtotal, 2, ',', '.'); ?></td>
                         <td class="transfer_fee_sum">R$<?php echo number_format($v_transfer_fee, 2, ',', '.'); ?></td>
                         <td class="commission_fee_sum">R$<?php echo number_format($v_commission_fee, 2, ',', '.'); ?></td>
@@ -392,6 +419,8 @@
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
             $("#t").val(null).trigger('change');
             $("#q").val(null);
+            $("#bt").val(null).trigger('change');
+
 
             $("#busca").submit();
         });

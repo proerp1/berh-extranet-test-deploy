@@ -38,15 +38,17 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
                                     <option></option>
                                     <?php
-                                        for($a = 0; $a < count($status); $a++){
+                                    if (isset($status) && count($status)) {
+                                        for ($a = 0; $a < count($status); $a++) {
                                             $selected = "";
                                             if (isset($_GET["t"])) {
-                                                if($status[$a]['Status']['id'] == $_GET["t"]){
+                                                if ($status[$a]['Status']['id'] == $_GET["t"]) {
                                                     $selected = "selected";
                                                 }
                                             }
-                                            echo '<option value="'.$status[$a]['Status']['id'].'" '.$selected.'>'.$status[$a]['Status']['name'].'</option>';
+                                            echo '<option value="' . $status[$a]['Status']['id'] . '" ' . $selected . '>' . $status[$a]['Status']['name'] . '</option>';
                                         }
+                                    }
                                     ?>
                                 </select>
                             </div>
@@ -74,6 +76,7 @@
                         <th>Valor por dia</th>
                         <th>N° Cartão</th>
                         <th>Total</th>
+                        <th>Usuário Alterado</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -95,6 +98,7 @@
                                 <td>R$<?php echo $value['CustomerUserItinerary']['price_per_day']; ?></td>
                                 <td><?php echo $value['CustomerUserItinerary']['card_number']; ?></td>
                                 <td>R$<?php echo $value['CustomerUserItinerary']['total']; ?></td>
+                                <td><?php echo $value['UserUpdated']['name'] ?: '-'; ?></td>
                                 <td>
                                     <a href="<?php echo $this->base . '/customer_users/edit_itinerary/' . $id . '/' . $user_id . '/' . $value["CustomerUserItinerary"]["id"] . '/?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar

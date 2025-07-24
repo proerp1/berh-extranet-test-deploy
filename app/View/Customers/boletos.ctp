@@ -26,8 +26,10 @@
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                     <th>Período</th>
+                    <th>Nº do pedido</th>
                     <th>Vencimento</th>
                     <th>Subtotal</th>
+                    <th>Desconto</th>
                     <th>Repasse</th>
                     <th>Taxa</th>
                     <th>Total</th>
@@ -44,8 +46,10 @@
                                 </span>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"].' - '.$data[$i]["Order"]["order_period_to"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["vencimento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>

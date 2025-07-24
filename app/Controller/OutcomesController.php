@@ -135,6 +135,27 @@ class OutcomesController extends AppController {
 			$this->redirect("/files/excel/".$nome);
 		}
 
+		if (isset($_GET['exportarnibo'])) {
+			$nome = 'nibo' . date('d_m_Y_H_i_s') . '.xlsx';
+
+			$dataNibo = $this->Outcome->find('all', [
+			'conditions' => $condition, 
+			
+				'fields' => [
+					'Outcome.*',
+					'Supplier.*',
+					'BankAccount.*',
+					'Expense.name',
+					'CostCenter.name'
+				]
+			]);
+
+			$this->ExcelGenerator->gerarExcelNibo($nome, $dataNibo);
+
+			$this->redirect("/files/excel/".$nome);
+		}
+
+
 		$saldo = 0;
 
 		if (!empty($data) && is_array($data)) {
