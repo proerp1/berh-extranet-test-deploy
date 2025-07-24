@@ -788,6 +788,53 @@ class ExcelTemplate
         }
     }
 
+public function getFaq($objPHPExcel, $dados)
+{
+    $col = 'A';
+
+    // Cabeçalhos
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pergunta"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Resposta"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Categoria"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Sistema Destino"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedores"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Criação"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Última Modificação");
+
+    foreach ($dados as $key => $dado) {
+        $col = 'A';
+
+        $faq = $dado['Faq'];
+        $categoria = $dado['CategoriaFaq']['nome'] ?? '';
+        $sistema = $faq['sistema_destino'];
+
+        $fornecedores = [];
+
+        if (!empty($dado['FaqRelacionamento'])) {
+            foreach ($dado['FaqRelacionamento'] as $rel) {
+                if ((int)$rel['supplier_id'] === 0) {
+                    $fornecedores[] = 'Todos os fornecedores';
+                } elseif (!empty($rel['Supplier']['nome_fantasia'])) {
+                    $fornecedores[] = $rel['Supplier']['nome_fantasia'];
+                }
+            }
+        }
+
+        $fornecedoresTexto = implode(', ', $fornecedores);
+
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['id']); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['pergunta']); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), strip_tags($faq['resposta'])); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $categoria); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $sistema); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $fornecedoresTexto); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['created']))); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['modified'])));
+    }
+}
+
+
     public function getFornecedoresRelatorio($objPHPExcel, $dados_sup, $dados_log)
     {
         $sheet = $objPHPExcel->getActiveSheet();
