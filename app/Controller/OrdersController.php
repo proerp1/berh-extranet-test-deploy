@@ -1,6 +1,7 @@
 <?php
 App::uses('ApiItau', 'Lib');
 App::uses('ApiBtgPactual', 'Lib');
+App::uses('RepaymentCalculator', 'Lib');
 
 use League\Csv\Reader;
 
@@ -35,7 +36,8 @@ class OrdersController extends AppController
         'CustomerUserBankAccount',
         'OrderBalanceFile',
         'BankAccount',
-        'OrderDiscount'
+        'OrderDiscount',
+        'SupplierVolumeTier'
     ];
     public $groupBenefitType = [
         -1 => [1, 2],
@@ -596,16 +598,13 @@ class OrdersController extends AppController
 
         $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
-        $transferFeePercentage = isset($benefit['Supplier']['transfer_fee_percentage_nao_formatado'])
-            ? $benefit['Supplier']['transfer_fee_percentage_nao_formatado']
-            : 0;
-
-        // 1 = 'Valor', 2 = 'Percentual'
-        if ($benefit['Supplier']['transfer_fee_type'] == 2) {
-            $transferFee = $subtotal * ($transferFeePercentage / 100);
-        } else {
-            $transferFee = $transferFeePercentage;
-        }
+        
+        // Calcular quantidade baseada no working days para este item específico
+        $quantity = $workingDaysUser;
+        
+        // Usar o novo método para calcular o repasse
+        $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $subtotal, $quantity);
+        $transferFee = $transferFeeResult['transfer_fee'];
 
         $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
 
@@ -1540,13 +1539,12 @@ class OrdersController extends AppController
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
 
-        $transferFeePercentage = $benefit['Supplier']['transfer_fee_percentage_nao_formatado'];
-        // 1 = 'Valor', 2 = 'Percentual'
-        if ($benefit['Supplier']['transfer_fee_type'] == 2) {
-            $transferFee = $orderItem['OrderItem']['subtotal'] * ($transferFeePercentage / 100);
-        } else {
-            $transferFee = $transferFeePercentage;
-        }
+        // Calcular quantidade baseada no working days do item
+        $quantity = isset($orderItem['OrderItem']['working_days']) ? $orderItem['OrderItem']['working_days'] : 1;
+        
+        // Usar o novo método para calcular o repasse
+        $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $orderItem['OrderItem']['subtotal'], $quantity);
+        $transferFee = $transferFeeResult['transfer_fee'];
 
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
 
@@ -3893,5 +3891,127 @@ class OrdersController extends AppController
         }
 
         return $extra_ids;
+    }
+
+    /**
+     * Calcula a taxa de repasse do fornecedor baseado no tipo configurado
+     * 
+     * @param array $benefit Dados do benefício com informações do supplier
+     * @param float $subtotal Valor base para cálculo
+     * @param int $quantity Quantidade para cálculo (usado apenas para tipo Tabela)
+     * @param array $orderData Dados do pedido (opcional, para contexto adicional)
+     * @return array Array com informações do cálculo
+     */
+    private function calculateSupplierTransferFee($benefit, $subtotal, $quantity = 1, $orderData = [])
+    {
+        // Validar dados de entrada
+        if (empty($benefit['Supplier'])) {
+            throw new InvalidArgumentException('Dados do fornecedor não encontrados no benefício');
+        }
+
+        $supplier = $benefit['Supplier'];
+        $transferFeeType = isset($supplier['transfer_fee_type']) ? $supplier['transfer_fee_type'] : 1;
+        $transferFeePercentage = isset($supplier['transfer_fee_percentage_nao_formatado']) 
+            ? $supplier['transfer_fee_percentage_nao_formatado'] 
+            : 0;
+
+        $result = [
+            'supplier_id' => $supplier['id'],
+            'transfer_fee_type' => $transferFeeType,
+            'subtotal' => $subtotal,
+            'quantity' => $quantity,
+            'transfer_fee' => 0,
+            'calculation_method' => '',
+            'tier_info' => null,
+            'percentage_applied' => 0
+        ];
+
+        try {
+            switch ($transferFeeType) {
+                case 1: // Valor Fixo
+                    $result['transfer_fee'] = $transferFeePercentage;
+                    $result['calculation_method'] = 'fixed_value';
+                    $result['percentage_applied'] = 0;
+                    break;
+
+                case 2: // Percentual Fixo
+                    $result['transfer_fee'] = $subtotal * ($transferFeePercentage / 100);
+                    $result['calculation_method'] = 'fixed_percentage';
+                    $result['percentage_applied'] = $transferFeePercentage;
+                    break;
+
+                case 3: // Tabela de Volume
+                    $calculationResult = RepaymentCalculator::calculateRepayment(
+                        $supplier['id'], 
+                        $quantity, 
+                        $subtotal
+                    );
+                    
+                    $result['transfer_fee'] = $calculationResult['repayment_value'];
+                    $result['calculation_method'] = 'volume_tier';
+                    $result['percentage_applied'] = $calculationResult['repayment_percentage'];
+                    $result['tier_info'] = $calculationResult['tier_used'];
+                    break;
+
+                default:
+                    // Fallback para valor fixo
+                    $result['transfer_fee'] = $transferFeePercentage;
+                    $result['calculation_method'] = 'fixed_value_fallback';
+                    $result['percentage_applied'] = 0;
+                    break;
+            }
+
+            // Garantir que o valor não seja negativo
+            $result['transfer_fee'] = max(0, $result['transfer_fee']);
+
+        } catch (Exception $e) {
+            // Log do erro mas não interrompe o processamento
+            CakeLog::error('Erro no cálculo de repasse do fornecedor: ' . $e->getMessage());
+            
+            // Fallback para valor/percentual fixo baseado no tipo
+            if ($transferFeeType == 2) {
+                $result['transfer_fee'] = $subtotal * ($transferFeePercentage / 100);
+                $result['calculation_method'] = 'fixed_percentage_fallback';
+            } else {
+                $result['transfer_fee'] = $transferFeePercentage;
+                $result['calculation_method'] = 'fixed_value_fallback';
+            }
+            
+            $result['error'] = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Determina a quantidade consolidada baseada no tipo de cobrança do fornecedor
+     * 
+     * @param array $supplier Dados do fornecedor
+     * @param array $orderItems Array de itens do pedido
+     * @param string $cpf CPF do beneficiário (opcional)
+     * @return int Quantidade consolidada
+     */
+    private function getConsolidatedQuantity($supplier, $orderItems, $cpf = null)
+    {
+        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
+        
+        if ($tipoCobranca == 'cpf' && !empty($cpf)) {
+            // Consolidar por CPF - somar apenas itens do mesmo CPF
+            $quantity = 0;
+            foreach ($orderItems as $item) {
+                // Assumindo que os itens têm informação do CPF do beneficiário
+                if (isset($item['customer_user_cpf']) && $item['customer_user_cpf'] == $cpf) {
+                    $quantity += isset($item['quantity']) ? $item['quantity'] : 1;
+                }
+            }
+            return $quantity;
+        } else {
+            // Consolidar por pedido - somar todos os itens
+            $quantity = 0;
+            foreach ($orderItems as $item) {
+                $quantity += isset($item['quantity']) ? $item['quantity'] : 1;
+            }
+            return $quantity;
+        }
     }
 }

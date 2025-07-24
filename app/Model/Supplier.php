@@ -40,12 +40,19 @@ class Supplier extends AppModel
     ];
 
     public $hasMany = [
-    'FaqRelacionamento' => [
-        'className' => 'FaqRelacionamento',
-        'foreignKey' => 'supplier_id',
-        'dependent' => true
-    ]
-];
+        'FaqRelacionamento' => [
+            'className' => 'FaqRelacionamento',
+            'foreignKey' => 'supplier_id',
+            'dependent' => true
+        ],
+        'SupplierVolumeTier' => [
+            'className' => 'SupplierVolumeTier',
+            'foreignKey' => 'supplier_id',
+            'dependent' => true,
+            'conditions' => ['SupplierVolumeTier.data_cancel' => '1901-01-01 00:00:00'],
+            'order' => ['SupplierVolumeTier.de_qtd' => 'ASC']
+        ]
+    ];
 
 
     public function beforeFind($queryData)
@@ -114,6 +121,18 @@ class Supplier extends AppModel
         $valueFormatado = str_replace(',', '.', $valueFormatado);
 
         return $valueFormatado;
+    }
+
+    public function requiredForTableType($check)
+    {
+        // Se o tipo de repasse for 3 (Tabela), o tipo de cobrança é obrigatório
+        if (isset($this->data[$this->alias]['transfer_fee_type']) && $this->data[$this->alias]['transfer_fee_type'] == 3) {
+            $tipo_cobranca = array_values($check)[0];
+            // Retorna falso apenas se estiver vazio ou for string vazia
+            return !empty($tipo_cobranca) && $tipo_cobranca !== '';
+        }
+        
+        return true; // Se não for tipo tabela, não é obrigatório
     }
 
     public $validate = [
@@ -190,6 +209,12 @@ class Supplier extends AppModel
                 'rule' => ['notBlank'],
                 'message' => 'O estado é obrigatório'
             ],
+        ],
+        'tipo_cobranca' => [
+            'requiredForTableType' => [
+                'rule' => ['requiredForTableType'],
+                'message' => 'Tipo de cobrança é obrigatório quando tipo de repasse for "Tabela"'
+            ]
         ]
     ];
 }
