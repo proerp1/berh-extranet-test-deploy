@@ -16,7 +16,7 @@ if (isset($id)) {
     </div>
 
     <div class="card-body pt-7 py-3">
-        <?php echo $this->Form->create('SupplierVolumeTier', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+        <?php echo $this->Form->create('SupplierVolumeTier', ["id" => "js-form-submit", "url" => "/suppliers/" . $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
         
         <div class="row">
             <div class="mb-7 col-md-4">
@@ -70,10 +70,11 @@ if (isset($id)) {
         // Aplicar máscara de percentual
         $('.money_exchange').maskMoney({
             decimal: ',',
-            thousands: '.',
+            thousands: '',
             precision: 2,
             suffix: '',
-            allowZero: true
+            allowZero: true,
+            allowNegative: false
         });
 
         // Validação básica no frontend

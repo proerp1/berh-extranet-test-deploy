@@ -120,8 +120,12 @@ if (isset($id)) {
                 <label class="fw-semibold fs-6 mb-2">Tipo de Cobrança</label>
                 <?php echo $this->Form->input('tipo_cobranca', ["id" => "tipo_cobranca", "options" => ['pedido' => 'Por Pedido', 'cpf' => 'Por CPF'], "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "type" => "select", "required" => false]); ?>
             </div>
+        </div>
 
-            <div class="row">
+        <!-- Volume Tiers Section - Hidden placeholder for JavaScript functionality -->
+        <div id="volume_tiers_section" style="display: none;"></div>
+
+        <div class="row">
 
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Razão social</label>

@@ -12,8 +12,8 @@ if (isset($id)) {
             <span class="text-muted mt-1 fw-bold fs-7">Modalidade de repasse por tabela</span>
         </h3>
         <div class="card-toolbar">
-            <a href="<?php echo $this->base . '/suppliers/add_volume_tier/' . $id; ?>" class="btn btn-sm btn-light-primary">
-                <i class="ki-duotone ki-plus fs-2"></i>
+            <a href="<?php echo $this->base . '/suppliers/add_volume_tier/' . $id; ?>" class="btn btn-primary">
+                <i class="fa fa-file"></i>
                 Nova Faixa
             </a>
         </div>
@@ -58,24 +58,15 @@ if (isset($id)) {
                                 <td>
                                     <div class="d-flex justify-content-end flex-shrink-0">
                                         <a href="<?php echo $this->base . '/suppliers/edit_volume_tier/' . $id . '/' . $row['SupplierVolumeTier']['id']; ?>" 
-                                           class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" 
+                                           class="btn btn-sm btn-warning me-1" 
                                            title="Editar">
-                                            <i class="ki-duotone ki-pencil fs-2">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
+                                            <i class="fas fa-edit"></i>
                                         </a>
                                         <a href="<?php echo $this->base . '/suppliers/delete_volume_tier/' . $id . '/' . $row['SupplierVolumeTier']['id']; ?>" 
-                                           class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" 
+                                           class="btn btn-sm btn-danger" 
                                            onclick="return confirm('Tem certeza que deseja excluir esta faixa?')"
                                            title="Excluir">
-                                            <i class="ki-duotone ki-trash fs-2">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                                <span class="path3"></span>
-                                                <span class="path4"></span>
-                                                <span class="path5"></span>
-                                            </i>
+                                            <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -85,18 +76,5 @@ if (isset($id)) {
                 </table>
             </div>
         <?php endif; ?>
-    </div>
-</div>
-
-<div class="card mb-5 mb-xl-8">
-    <div class="card-body">
-        <h5>Como Funciona</h5>
-        <p class="text-muted">
-            As faixas de volume determinam o percentual de repasse baseado na quantidade consolidada 
-            <?php echo ($supplier['Supplier']['tipo_cobranca'] == 'pedido') ? 'por pedido' : 'por CPF'; ?>.
-        </p>
-        <div class="alert alert-warning">
-            <strong>Importante:</strong> As faixas não podem se sobrepor. Certifique-se de que não há gaps ou overlaps entre as faixas.
-        </div>
     </div>
 </div>

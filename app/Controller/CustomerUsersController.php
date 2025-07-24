@@ -658,10 +658,10 @@ class CustomerUsersController extends AppController
 
         $data = $this->Paginator->paginate('CustomerUserItinerary', $condition);
         $user = $this->Auth->user();
-        $action = 'Dados Bancários';
+        $action = 'Benefícios';
         $breadcrumb = [
             'Beneficiários' => ['controller' => 'customer_users', 'action' => 'index', $this->request->params['pass'][0]],
-            'Dados Bancários' => ''
+            'Benefícios' => ''
         ];
         $this->set(compact('data', 'action', 'breadcrumb', 'id', 'user_id','user'));
     }

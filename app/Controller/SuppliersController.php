@@ -338,6 +338,14 @@ class SuppliersController extends AppController
             $this->SupplierVolumeTier->create();
             $this->request->data['SupplierVolumeTier']['supplier_id'] = $id;
             
+            // Format data before validation (like other models)
+            if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
+                $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
+            }
+            
+            // Set data for validation
+            $this->SupplierVolumeTier->set($this->request->data);
+            
             // Validar se não há sobreposição
             $deQtd = $this->request->data['SupplierVolumeTier']['de_qtd'];
             $ateQtd = $this->request->data['SupplierVolumeTier']['ate_qtd'];
@@ -378,6 +386,14 @@ class SuppliersController extends AppController
         }
 
         if ($this->request->is(['post', 'put'])) {
+            // Format data before validation (like other models)
+            if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
+                $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
+            }
+            
+            // Set data for validation
+            $this->SupplierVolumeTier->set($this->request->data);
+            
             $deQtd = $this->request->data['SupplierVolumeTier']['de_qtd'];
             $ateQtd = $this->request->data['SupplierVolumeTier']['ate_qtd'];
             
@@ -398,9 +414,10 @@ class SuppliersController extends AppController
             }
         }
 
-        $temp_errors = $this->SupplierVolumeTier->validationErrors;
-        $this->request->data = $this->SupplierVolumeTier->read();
-        $this->SupplierVolumeTier->validationErrors = $temp_errors;
+        // Only read the database data when NOT processing a POST request
+        if (!$this->request->is(['post', 'put'])) {
+            $this->request->data = $this->SupplierVolumeTier->read();
+        }
 
         $this->Supplier->id = $id;
         $supplier = $this->Supplier->read();

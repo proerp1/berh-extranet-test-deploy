@@ -602,6 +602,11 @@ class OrdersController extends AppController
         // Calcular quantidade baseada no working days para este item específico
         $quantity = $workingDaysUser;
         
+        // Para tipo de repasse "Tabela", usar contagem de customer users com benefícios do fornecedor
+        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
+            $quantity = $this->countCustomerUsersForSupplier($benefit['Supplier']['id'], $orderData['Order']['id']);
+        }
+        
         // Usar o novo método para calcular o repasse
         $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $subtotal, $quantity);
         $transferFee = $transferFeeResult['transfer_fee'];
@@ -1541,6 +1546,11 @@ class OrdersController extends AppController
 
         // Calcular quantidade baseada no working days do item
         $quantity = isset($orderItem['OrderItem']['working_days']) ? $orderItem['OrderItem']['working_days'] : 1;
+        
+        // Para tipo de repasse "Tabela", usar contagem de customer users com benefícios do fornecedor
+        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
+            $quantity = $this->countCustomerUsersForSupplier($benefit['Supplier']['id'], $orderItem['OrderItem']['order_id']);
+        }
         
         // Usar o novo método para calcular o repasse
         $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $orderItem['OrderItem']['subtotal'], $quantity);
@@ -4013,5 +4023,47 @@ class OrdersController extends AppController
             }
             return $quantity;
         }
+    }
+
+    /**
+     * Conta quantos customer users distintos têm benefícios de um fornecedor específico em um pedido
+     * 
+     * @param int $supplierId ID do fornecedor
+     * @param int $orderId ID do pedido
+     * @return int Quantidade de customer users
+     */
+    private function countCustomerUsersForSupplier($supplierId, $orderId)
+    {
+        $count = $this->OrderItem->find('count', [
+            'joins' => [
+                [
+                    'table' => 'customer_user_itineraries',
+                    'alias' => 'CustomerUserItinerary',
+                    'type' => 'INNER',
+                    'conditions' => ['OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id']
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id']
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => ['Benefit.supplier_id = Supplier.id']
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $orderId,
+                'Supplier.id' => $supplierId,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ],
+            'fields' => ['COUNT(DISTINCT OrderItem.customer_user_id) as count'],
+            'group' => false
+        ]);
+
+        return $count > 0 ? $count : 1; // Fallback para 1 se não encontrar nenhum
     }
 }
