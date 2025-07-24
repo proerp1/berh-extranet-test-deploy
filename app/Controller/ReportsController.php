@@ -1102,6 +1102,16 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
         }
 
+        if (isset($_GET['first_order']) and $_GET['first_order'] != '') {
+            $buscar = true;
+            
+            if ($_GET['first_order'] == 'sim') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 1]);
+            } elseif ($_GET['first_order'] == 'nao') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
+            }
+        }
+
         if (isset($_GET['excel'])) {
             $nome = 'relatorio_compras_' . date('d_m_Y_H_i_s') . '.xlsx';
 

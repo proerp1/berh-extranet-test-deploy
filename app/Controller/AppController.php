@@ -46,6 +46,7 @@ class AppController extends Controller {
 
 	public function beforeFilter() 
 	{
+		$_SERVER['QUERY_STRING'] = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
 		if ($this->Auth->user('id')) {
 			$pendentes = $this->Atendimento->find('count', ['conditions' => ['Atendimento.status_id' => 34]]);
 			
