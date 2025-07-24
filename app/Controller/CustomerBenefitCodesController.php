@@ -1,4 +1,7 @@
 <?php
+
+use League\Csv\Reader;
+
 class CustomerBenefitCodesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
@@ -106,5 +109,43 @@ class CustomerBenefitCodesController extends AppController
             $this->Flash->set(__('O Benefício foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
             $this->redirect(['action' => 'index/'.$customer_id]);
         }
+    }
+
+    public function upload($customerId)
+    {
+        $file = file_get_contents($this->request->data['file']['tmp_name'], FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $line = 0;
+        foreach ($csv->getRecords() as $row) {
+
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $this->CustomerBenefitCode->create();
+            $this->CustomerBenefitCode->save([
+                'CustomerBenefitCode' => [
+                    'customer_id' => $customerId,
+                    'code_be' => $row[0],
+                    'code_customer' => $row[1],
+                ],
+            ]);
+
+            $line++;
+        }
+
+        $this->Flash->set(__('Códigos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'index/' . $customerId]);
     }
 }
