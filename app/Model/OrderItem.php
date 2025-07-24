@@ -313,7 +313,8 @@ class OrderItem extends AppModel {
                 'EconomicGroups.document',
                 'EconomicGroups.razao_social',
                 'CustomerDepartments.*',
-                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs'
+                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs',
+                'BenefitType.name'
             ],
             'conditions' => $conditions,
             'joins' => [
@@ -371,6 +372,14 @@ class OrderItem extends AppModel {
                     'type' => 'LEFT',
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
+                    ]
+                ],
+                [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
                     ]
                 ],
                 [
