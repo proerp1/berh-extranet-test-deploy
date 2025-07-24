@@ -20,7 +20,11 @@ class CustomerUserItinerary extends AppModel
             'conditions' => '',
             'fields' => '',
             'order' => ''
-        ]
+        ],
+        'UserUpdated' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_id',
+        ],
     );
 
     // public $validate = [

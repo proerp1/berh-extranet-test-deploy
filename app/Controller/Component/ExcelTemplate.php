@@ -2869,4 +2869,25 @@ public function getFaq($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ''); $col++;
         }
     }
+    public function getClienteDeParaBeneficios($spreadsheet, $dados)
+    {
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        $col = 'A';
+        $activeWorksheet->setCellValue($col.'1', "Código Benefício BE"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Código Benefício Cliente"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Data da Criação"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Usuário da Criação"); $col++;
+
+        $indx = 1;
+        for ($i = 0; $i < count($dados); $i++) {
+            $col = 'A';
+
+            $indx++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_be"]); $col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_customer"]); $col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["created"]); $col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["UserCreated"]["name"]); $col++;
+        }
+    }
 }
