@@ -7,6 +7,7 @@
 !/app/webroot/files/ModeloImportacaoMovimentacao.csv
 !/app/webroot/files/ModeloImportacaoMovimentacaoAll.csv
 !/app/webroot/files/ModeloCompletoImportacaoBeneficiariosLote.csv
+!/app/webroot/files/ModeloImportacaoDeParaBeneficioClientes.csv
 !/app/webroot/files/ModeloAssociarCartao.csv
 /vendor/
 /composer.phar
