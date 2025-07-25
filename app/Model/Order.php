@@ -299,7 +299,8 @@ class Order extends AppModel
             // ====================
             // Regra 1: Pagamento Confirmado (85) -> GE de 1 para 2 -> muda para 104
             // ====================
-            if ($statusNovo == 85 && $geAntigo == 1 && $geNovo == 2) {
+            //if ($statusNovo == 85 && $geAntigo == 1 && $geNovo == 2) {
+            if ($statusNovo == 85 && $geNovo == 2) {
                 $this->data[$this->alias]['status_id'] = 104;
             }
 
