@@ -606,4 +606,45 @@ class Order extends AppModel
 
         return $data;
     }
+
+    public function atualizarStatusPagamento($id)
+    {
+        if (empty($id)) {
+            return false;
+        }
+
+        $order = $this->find('first', [
+            'conditions' => ['Order.id' => $id],
+            'fields' => ['Order.pedido_complementar'],
+            'recursive' => -1
+        ]);
+
+        if (empty($order)) {
+            return false;
+        }
+
+        $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
+
+        $this->id = $id;
+        
+        return $this->save([
+            'Order' => [
+                'status_id' => $statusId,
+                'payment_date' => $this->getNextWeekdayDate('Y-m-d'),
+            ]
+        ]);
+    }
+
+    private function getNextWeekdayDate($format = 'Y-m-d H:i:s') {
+        $date = new DateTime();
+        $dayOfWeek = $date->format('w'); // 0 = domingo, 6 = sábado
+
+        if ($dayOfWeek == 6) {
+            $date->modify('+2 days'); // Sábado → Segunda
+        } elseif ($dayOfWeek == 0) {
+            $date->modify('+1 day'); // Domingo → Segunda
+        }
+
+        return $date->format($format);
+    }
 }
