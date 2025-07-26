@@ -2039,22 +2039,12 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $this->Order->recursive = -1;
-        $order = $this->Order->findById($id);
-
-        $this->Order->save([
-            'Order' => [
-                'id' => $id,
-                'status_id' => 85,
-                'user_updated_id' => CakeSession::read("Auth.User.id"),
-                'validation_date' => date('Y-m-d'),
-            ]
-        ]);
+        $this->Order->atualizarStatusPagamento($id);
 
         $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 
         $this->redirect(['action' => 'edit/' . $id]);
     }
-
 
     public function gerar_pagamento()
     {

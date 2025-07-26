@@ -1247,6 +1247,11 @@ class ReportsController extends AppController
         $this->autoRender = false;
 
         $cond = [];
+        $order_id = isset($this->request->data['order_id']) ? (int)$this->request->data['order_id'] : null;
+
+        if ($order_id) {
+            $cond = ['OrderItem.order_id' => $order_id];
+        }
 
         $suppliers = $this->OrderItem->find('all',
             [
