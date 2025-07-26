@@ -1133,7 +1133,6 @@ class ReportsController extends AppController
                     'BenefitType.name',
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
-
                 ],
                 'joins' => [
                     [

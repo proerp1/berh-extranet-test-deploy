@@ -3894,4 +3894,50 @@ class OrdersController extends AppController
 
         return $extra_ids;
     }
+
+    public function tempRecalculateFirstOrder($orderId = null, $customerUserId = null)
+    {
+        if (empty($orderId) || empty($customerUserId)) {
+            echo "Missing parameters. Usage: orderId and customerUserId are required.\n";
+            return;
+        }
+
+        // Find all order items for this specific order and customer user
+        $orderItems = $this->OrderItem->find('all', [
+            'conditions' => [
+                'OrderItem.order_id' => $orderId,
+                'OrderItem.customer_user_id' => $customerUserId
+            ],
+            'recursive' => -1
+        ]);
+
+        if (empty($orderItems)) {
+            echo "No order items found for Order ID: {$orderId} and Customer User ID: {$customerUserId}\n";
+            return;
+        }
+
+        echo "Found " . count($orderItems) . " order items to process.\n\n";
+
+        foreach ($orderItems as $orderItem) {
+            $orderItemId = $orderItem['OrderItem']['id'];
+            
+            // Set the data for the OrderItem model
+            $this->OrderItem->data = $orderItem;
+            
+            // Calculate first order
+            $firstOrderValue = $this->OrderItem->calculateFirstOrder();
+            
+            // Update the order item with the new first_order value
+            $this->OrderItem->id = $orderItemId;
+            $updateResult = $this->OrderItem->saveField('first_order', $firstOrderValue);
+            
+            if ($updateResult) {
+                echo "Order Item ID: {$orderItemId} - First Order: {$firstOrderValue} - Updated successfully\n";
+            } else {
+                echo "Order Item ID: {$orderItemId} - First Order: {$firstOrderValue} - Failed to update\n";
+            }
+        }
+
+        echo "\nProcessing completed.\n";
+    }
 }
