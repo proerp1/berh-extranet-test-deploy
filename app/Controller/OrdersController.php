@@ -3929,5 +3929,7 @@ class OrdersController extends AppController
         }
 
         echo "\nProcessing completed.\n";
+
+        die;
     }
 }
