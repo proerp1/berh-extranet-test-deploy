@@ -438,7 +438,9 @@ class OrderItem extends AppModel {
             'CustomerUser.cpf' => $cpf,
             'Benefit.supplier_id' => $supplierId,
             'Order.status_id NOT IN(83,94)',
-            'Order.is_partial <>' => 3
+            'Order.is_partial <>' => 3,
+            'OrderItem.data_cancel' => '1901-01-01 00:00:00',
+            'Order.data_cancel' => '1901-01-01 00:00:00',
         ];
 
         if ($currentOrderItemId) {
