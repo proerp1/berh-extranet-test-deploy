@@ -132,6 +132,17 @@
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
+                            <?php
+                                    $mapaNotaFiscal = [
+                                        'N' => 'Não',
+                                        'S' => 'Automático',
+                                        'A' => 'Antecipada',
+                                        'M' => 'Manual'
+                                    ];
+
+                                    $valorEmitirNota = $data[$i]["Customer"]["emitir_nota_fiscal"];
+                                    $descricaoNota = $mapaNotaFiscal[$valorEmitirNota] ?? '-';
+                                ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
@@ -148,7 +159,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["name"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["emitir_nota_fiscal"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $descricaoNota; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["flag_gestao_economico"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php if (!empty($data[$i]["Customer"]["observacao"])): ?><a href="<?php echo $this->base; ?>/customers/edit/<?php echo $data[$i]["Customer"]["id"]; ?>#observacao" title="Ver observação"><i class="fas fa-sticky-note text-warning fs-5"></i></a><?php else: ?><i class="fas fa-minus text-muted fs-6"></i><?php endif; ?></td>
 
