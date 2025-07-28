@@ -162,6 +162,8 @@ class OrderItem extends AppModel {
         if (!empty($this->data[$this->alias]['data_entrega'])) {
             $this->data[$this->alias]['data_entrega'] = $this->dateFormatBeforeSave($this->data[$this->alias]['data_entrega']);
         }
+
+        $this->data[$this->alias]['first_order'] = $this->calculateFirstOrder();
 		
 		return true;
 	}
@@ -311,7 +313,8 @@ class OrderItem extends AppModel {
                 'EconomicGroups.document',
                 'EconomicGroups.razao_social',
                 'CustomerDepartments.*',
-                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs'
+                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs',
+                'BenefitType.name'
             ],
             'conditions' => $conditions,
             'joins' => [
@@ -372,6 +375,14 @@ class OrderItem extends AppModel {
                     ]
                 ],
                 [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
+                ],
+                [
                     'table' => 'order_balances',
                     'alias' => 'OrderBalance',
                     'type' => 'LEFT',
@@ -383,5 +394,86 @@ class OrderItem extends AppModel {
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']
         ]);
+    }
+
+    public function calculateFirstOrder()
+    {
+        if (empty($this->data[$this->alias]['customer_user_id']) || 
+            empty($this->data[$this->alias]['customer_user_itinerary_id'])) {
+            return 0;
+        }
+
+        $customerUserId = $this->data[$this->alias]['customer_user_id'];
+        $itineraryId = $this->data[$this->alias]['customer_user_itinerary_id'];
+        $currentOrderItemId = isset($this->data[$this->alias]['id']) ? $this->data[$this->alias]['id'] : null;
+
+        $CustomerUser = ClassRegistry::init('CustomerUser');
+        $CustomerUserItinerary = ClassRegistry::init('CustomerUserItinerary');
+
+        $customerUser = $CustomerUser->find('first', [
+            'conditions' => ['CustomerUser.id' => $customerUserId],
+            'fields' => ['CustomerUser.cpf'],
+            'recursive' => -1
+        ]);
+
+        if (empty($customerUser)) {
+            return 0;
+        }
+
+        $cpf = str_pad($customerUser['CustomerUser']['cpf'], 11, '0', STR_PAD_LEFT);
+
+        $itinerary = $CustomerUserItinerary->find('first', [
+            'conditions' => ['CustomerUserItinerary.id' => $itineraryId],
+            'fields' => ['Benefit.supplier_id'],
+            'contain' => ['Benefit']
+        ]);
+
+        if (empty($itinerary)) {
+            return 0;
+        }
+
+        $supplierId = $itinerary['Benefit']['supplier_id'];
+
+        $conditions = [
+            'CustomerUser.cpf' => $cpf,
+            'Benefit.supplier_id' => $supplierId,
+            'Order.status_id NOT IN(83,94)',
+            'Order.is_partial <>' => 3,
+            'OrderItem.data_cancel' => '1901-01-01 00:00:00',
+            'Order.data_cancel' => '1901-01-01 00:00:00',
+        ];
+
+        if ($currentOrderItemId) {
+            $conditions['OrderItem.id <>'] = $currentOrderItemId;
+        }
+
+        $existingOrder = $this->find('first', [
+            'joins' => [
+                [
+                    'table' => 'customer_users',
+                    'alias' => 'CustomerUser',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUser.id = OrderItem.customer_user_id']
+                ],
+                [
+                    'table' => 'customer_user_itineraries',
+                    'alias' => 'Itinerary',
+                    'type' => 'INNER',
+                    'conditions' => ['Itinerary.id = OrderItem.customer_user_itinerary_id']
+                ],
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => ['Benefit.id = Itinerary.benefit_id']
+                ]
+            ],
+            'contain' => ['Order'],
+            'conditions' => $conditions,
+            'fields' => ['OrderItem.id'],
+            'limit' => 1
+        ]);
+
+        return empty($existingOrder) ? 1 : 0;
     }
 }

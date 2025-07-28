@@ -1110,6 +1110,7 @@ public function getFaq($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matrícula operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Beneficio"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeiro Pedido"); $col++;
 
 
 
@@ -1147,6 +1148,8 @@ public function getFaq($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $valor);
             $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["BenefitType"]["name"] ); $col++;
+            $primeiro_pedido = $dado["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $primeiro_pedido); $col++;
 
 
         }
@@ -2273,7 +2276,7 @@ public function getFaq($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não');$col++;
             $activeWorksheet->setCellValue($col . $indx, $tipo_ge);$col++;
             $activeWorksheet->setCellValue($col . $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));$col++;
-            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim");$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['saldo_transfer_fee']);$col++;
             $activeWorksheet->setCellValue($col . $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'));$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['status_processamento']);$col++;
@@ -2324,7 +2327,8 @@ public function getFaq($objPHPExcel, $dados)
         ->setCellValue('AB1', "Status Processamento")
         ->setCellValue('AC1', "Motivo Processamento")
         ->setCellValue('AD1', "Tipo Pedido")
-        ->setCellValue('AE1', "Tipo de Benefício / Serviço");
+        ->setCellValue('AE1', "Tipo de Benefício / Serviço")
+        ->setCellValue('AF1', "Primeiro Pedido");
 
         
         $indx = 1;
@@ -2376,7 +2380,8 @@ public function getFaq($objPHPExcel, $dados)
                 ->setCellValue('AB'. $indx, $dados[$i]['OrderItem']['status_processamento'])
                 ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
                 ->setCellValue('AD' . $indx, $tipo_pedido)
-                ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name']);
+                ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
+                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');
         }
     }
 

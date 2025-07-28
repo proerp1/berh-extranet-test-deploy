@@ -21,6 +21,11 @@
                         <i class="fas fa-file-excel"></i>
                         Exportar
                     </a>
+
+                    <a href="#" class="btn btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
+                        <i class="fas fa-arrow-up"></i>
+                        Importar (CSV)
+                    </a>
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                 </div>
             </div>
@@ -62,6 +67,30 @@
             </table>
         </div>
         <?php echo $this->element("pagination"); ?>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_importar_saldo" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <form action="<?php echo $this->base . '/customer_benefit_codes/upload/' . $id; ?>" class="form-horizontal" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <p>CSV com os códigos de De/Para</p>
+                    <?php echo $this->Form->input('file', array("div" => false, "label" => false, "required" => true, "notEmpty" => true, "data-ui-file-upload" => true, "class" => "btn-primary", 'type' => 'file', "title" => "Escolha o documento"));  ?>
+                </div>
+
+                <div class="modal-footer">
+                    <a class="btn btn-info mr-auto" href="<?php echo $this->base; ?>/files/ModeloImportacaoDeParaBeneficioClientes.csv" targe="_blank" download>Baixar Modelo</a>
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Sim</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
