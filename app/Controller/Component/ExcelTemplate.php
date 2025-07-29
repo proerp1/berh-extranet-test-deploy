@@ -217,21 +217,21 @@ class ExcelTemplate
     {
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', "Tipo Transação")
-            ->setCellValue('B1', "Nome do contato ")
+            ->setCellValue('A1', "Tipo de transação")
+            ->setCellValue('B1', "Nome do contato")
             ->setCellValue('C1', "Descrição")        
             ->setCellValue('D1', "Categoria")
             ->setCellValue('E1', "Valor")
             ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "previsto")
-            ->setCellValue('H1', "competência")
-            ->setCellValue('I1', "centro de custo ")
-            ->setCellValue('J1', "favorito")
-            ->setCellValue('K1', "tipo de contato")
-            ->setCellValue('L1', "referencia")
-            ->setCellValue('M1', "conta")
-            ->setCellValue('N1', "data pagamento ")
-            ->setCellValue('O1', "anotações");
+            ->setCellValue('G1', "Previsto para")
+            ->setCellValue('H1', "Competência")
+            ->setCellValue('I1', "Centro de custo")
+            ->setCellValue('J1', "Favorito")
+            ->setCellValue('K1', "Tipo de contato")
+            ->setCellValue('L1', "Referência")
+            ->setCellValue('M1', "Conta")
+            ->setCellValue('N1', "Data pag/rec/transferência ")
+            ->setCellValue('O1', "Anotação");
 
 
 
@@ -247,10 +247,10 @@ class ExcelTemplate
                 ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total'])
                 ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
                 ->setCellValue('G' . $indx, $dados[$i]['Income']['vencimento'])
-                ->setCellValue('H' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['Income']['created_nao_formatado'])))
+                ->setCellValue('H' . $indx, date('d/m/Y', strtotime($dados[$i]['Income']['created_nao_formatado'])))
                 ->setCellValue('I' . $indx, $dados[$i]['CostCenter']['name'])
-                ->setCellValue('J' . $indx, $dados[$i]['CostCenter']['name'])
-                ->setCellValue('K' . $indx, ($dados[$i]["Customer"]["codigo_associado"] ?? '') . ' - ' . ($dados[$i]["Customer"]["nome_secundario"] ?? ''))
+                ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                ->setCellValue('K' . $indx, $dados[$i]["CostCenter"]["name"] ?? '')
                 ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
                 ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
                 ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
@@ -335,21 +335,21 @@ class ExcelTemplate
     {
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', "Tipo Transação")
-            ->setCellValue('B1', "Nome do contato ")
+            ->setCellValue('A1', "Tipo de transação")
+            ->setCellValue('B1', "Nome do contato")
             ->setCellValue('C1', "Descrição")        
             ->setCellValue('D1', "Categoria")
             ->setCellValue('E1', "Valor")
             ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "Previsto")
+            ->setCellValue('G1', "Previsto para")
             ->setCellValue('H1', "Competência")
-            ->setCellValue('I1', "Centro de custo ")
+            ->setCellValue('I1', "Centro de custo")
             ->setCellValue('J1', "Favorito")
             ->setCellValue('K1', "Tipo de contato")
-            ->setCellValue('L1', "Referencia")
+            ->setCellValue('L1', "Referência")
             ->setCellValue('M1', "Conta")
-            ->setCellValue('N1', "Data pagamento ")
-            ->setCellValue('O1', "Anotações");
+            ->setCellValue('N1', "Data pag/rec/transferência ")
+            ->setCellValue('O1', "Anotação");
             
             
           
@@ -362,13 +362,13 @@ class ExcelTemplate
                     ->setCellValue('B' . $indx, $dados[$i]["Supplier"]["nome_fantasia"] ?? '')
                     ->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"] ?? '')
                     ->setCellValue('D' . $indx, $dados[$i]["Expense"]["name"] ?? '')
-                    ->setCellValue('E' . $indx, $dados[$i]['Outcome']['valor_total'] ?? '')
+                    ->setCellValue('E' . $indx, '-' . ($dados[$i]['Outcome']['valor_total'] ?? ''))
                     ->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
                     ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
                     ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"] ?? '')
                     ->setCellValue('I' . $indx, ($dados[$i]["CostCenter"]["name"] ?? ''))
-                    ->setCellValue('J' . $indx, $dados[$i]["CostCenter"]["name"] ?? '')
-                    ->setCellValue('K' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                    ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                    ->setCellValue('K' . $indx, $dados[$i]["CostCenter"]["name"] ?? '')
                     ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["doc_num"] ?? '')
                     ->setCellValue('M' . $indx, $dados[$i]["BankAccount"]["name"] ?? '')
                     ->setCellValue('N' . $indx, $dados[$i]['Outcome']['data_pagamento'] ?? '')
