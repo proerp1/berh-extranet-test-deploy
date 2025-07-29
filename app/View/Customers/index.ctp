@@ -152,7 +152,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["responsavel"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["telefone1"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["email"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>

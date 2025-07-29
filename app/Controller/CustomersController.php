@@ -24,6 +24,7 @@ class CustomersController extends AppController
                 'Customer.telefone1',
                 'Customer.email',
                 'Customer.observacao',
+                'Customer.responsavel',
                 'Customer.emitir_nota_fiscal',
                 'Customer.flag_gestao_economico',
                 'Status.*',
