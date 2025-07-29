@@ -365,7 +365,7 @@ class ExcelTemplate
                     ->setCellValue('E' . $indx, '-' . ($dados[$i]['Outcome']['valor_total'] ?? ''))
                     ->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
                     ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
-                    ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"] ?? '')
+                    ->setCellValue('H' . $indx, $dados[$i][""][""] ?? '')
                     ->setCellValue('I' . $indx, ($dados[$i]["CostCenter"]["name"] ?? ''))
                     ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
                     ->setCellValue('K' . $indx, $dados[$i]["CostCenter"]["name"] ?? '')
