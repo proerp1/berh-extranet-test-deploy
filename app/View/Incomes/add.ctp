@@ -329,6 +329,8 @@
                         <label class="fw-semibold fs-6 mb-2">Forma de pagamento</label>
                         <?php echo $this->Form->input('payment_method_baixa', array("required" => true, "data-control" => "select2", "class" => "form-select mb-3 mb-lg-0", "empty" => "Selecione", 'options' => $payment_method));  ?>
                     </div>
+                    <div class="mb-7"><label class="fw-semibold fs-6 mb-2">Banco</label><?php echo $this->Form->input('bank_account_id', array("required" => true,"data-control" => "select2","class" => "form-select mb-3 mb-lg-0","empty" => "Selecione"));?></div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
