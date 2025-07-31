@@ -241,6 +241,7 @@ class OrdersController extends AppController
             'fields' => [
                 'sum(Order.subtotal) as subtotal',
                 'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.tpp_fee) as total_tpp',
                 'sum(Order.commission_fee) as commission_fee',
                 'sum(Order.desconto) as desconto',
                 'sum(Order.total) as total',
@@ -248,6 +249,20 @@ class OrdersController extends AppController
             'conditions' => $condition,
             'recursive' => -1
         ]);
+
+        $order_ids = $this->Order->find('list', [
+            'fields' => ['Order.id'],
+            'conditions' => $condition,
+            'recursive' => -1
+        ]);
+
+        $total_economia = 0;
+        foreach ($order_ids as $order_id) {
+            $extrato = $this->Order->getExtrato($order_id);
+            $total_economia += $extrato['v_total_economia'];
+        }
+
+        $totalOrders[0]['total_economia'] = $total_economia;
 
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
 
@@ -257,7 +272,6 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
         $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
     }
-
 
     public function createOrder()
     {
