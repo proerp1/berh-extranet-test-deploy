@@ -113,6 +113,15 @@ class OrdersController extends AppController
             $filtersFilled = true;
         }
 
+        if (!empty($_GET['cliente'])) {
+            $condition['and'] = array_merge(
+                $condition['and'], 
+                ['Order.customer_id' => $_GET['cliente']]
+            );
+            $filtersFilled = true;
+        }
+
+
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
             $filtersFilled = true;
