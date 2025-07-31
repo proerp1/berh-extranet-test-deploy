@@ -121,7 +121,6 @@ class OrdersController extends AppController
             $filtersFilled = true;
         }
 
-
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['t']]);
             $filtersFilled = true;
