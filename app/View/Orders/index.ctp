@@ -66,24 +66,18 @@
                                     ?>
                                 </select>
                             </div>
-                                                    <div class="mb-10">
-                            <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
-                            <select class="form-select form-select-solid fw-bolder" 
-                                    data-kt-select2="true" 
-                                    data-placeholder="Selecione" 
-                                    data-allow-clear="true" 
-                                    name="cliente[]" 
-                                    id="cliente" 
-                                    multiple="multiple">
-                                <option value=""></option>
-                                <?php foreach ($customers as $id => $nome): ?>
-                                    <option value="<?= $id ?>" 
-                                        <?= isset($_GET['cliente']) && in_array($id, (array)$_GET['cliente']) ? 'selected' : '' ?>>
-                                        <?= h($nome) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cliente[]" id="cliente" multiple="multiple">
+                                    <option value=""></option>
+                                    <?php foreach ($customers as $id => $nome): ?>
+                                        <option value="<?= $id ?>" 
+                                            <?= isset($_GET['cliente']) && in_array($id, (array)$_GET['cliente']) ? 'selected' : '' ?>>
+                                            <?= h($nome) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                            
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>
