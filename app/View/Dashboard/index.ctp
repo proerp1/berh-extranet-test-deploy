@@ -1,3 +1,50 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
+
+<form method="GET" action="">
+<div class="card-toolbar mb-4">
+    <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+        <!-- BOTÃO FILTRO -->
+        <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+            <i class="fas fa-filter"></i> Filtro
+        </button>
+
+        <!-- DROPDOWN DE FILTRO -->
+        <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
+            <div class="px-7 py-5">
+                <div class="fs-4 text-dark fw-bolder">Opções de Filtro</div>
+            </div>
+            <div class="separator border-gray-200"></div>
+            <div class="px-7 py-5">
+
+
+                <!-- FILTRO FORNECEDOR RELACIONADO -->
+            <div class="mb-10">
+                <label class="form-label fs-5 fw-bold mb-3">Fornecedor relacionado:</label>
+                <select class="form-select form-select-solid fw-bolder" name="fornecedores_relacionados[]" id="fornecedores_relacionados" multiple data-kt-select2="true" data-placeholder="Selecione um ou mais">
+                    <?php foreach ($fornecedores as $id => $nome): ?>
+                        <option value="<?php echo $id; ?>" <?php echo (!empty($_GET['fornecedores_relacionados']) && in_array($id, (array)$_GET['fornecedores_relacionados'])) ? 'selected' : ''; ?>>
+                            <?php echo h($nome); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+
+                <!-- BOTÕES -->
+                <div class="d-flex justify-content-end">
+                    <button type="reset" class="btn btn-light btn-active-light-primary me-2" onclick="window.location='?'">Limpar</button>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .faq-list {
         display: flex;
@@ -58,37 +105,29 @@
         font-weight: 500;
         border-radius: 20px;
         margin: 0.2rem 0.2rem 0.6rem 0;
-        background-color: #f1f1f1;
-        color: #333;
+        background-color: #3b3b64;
+        color: white;
         border: 1px solid #ccc;
         transition: 0.3s;
     }
-
-    .badge-fornecedor:nth-child(odd) {
-        background-color: #3b3b64;
-        color: white;
-    }
-
-    .badge-fornecedor:nth-child(even) {
-        background-color: #3b3b64 ;
-        color: #f1f1f1;
-    }
 </style>
 
+<!-- LINKS RÁPIDOS -->
 <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
-    <a href="<?php echo $this->base; ?>/dashboard/compras">Compras</a>
-    <a href="<?php echo $this->base; ?>/dashboard/comercial">Comercial</a>
-    <a href="<?php echo $this->base; ?>/financeiro_report">Financeiro</a>
-    <a href="<?php echo $this->base; ?>/dashboard/cliente">Cliente</a>
-    <a href="<?php echo $this->base; ?>/dashboard/outros">Outros</a>
-    <a href="<?php echo $this->base; ?>/dashboard/expedicao">Expedição</a>
-    <a href="<?php echo $this->base; ?>/dashboard/fornecedores">Fornecedores</a>
-    <a href="<?php echo $this->base; ?>/dashboard/oportunidade">Oportunidades</a>
-    <a href="<?php echo $this->base; ?>/dashboard/orcamentos">Orçamentos</a>
-    <a href="<?php echo $this->base; ?>/dashboard/produto">Produto</a>
-    <a href="<?php echo $this->base; ?>/dashboard/resumo">Resumo</a>
+    <a href="<?= $this->base; ?>/dashboard/compras">Compras</a>
+    <a href="<?= $this->base; ?>/dashboard/comercial">Comercial</a>
+    <a href="<?= $this->base; ?>/financeiro_report">Financeiro</a>
+    <a href="<?= $this->base; ?>/dashboard/cliente">Cliente</a>
+    <a href="<?= $this->base; ?>/dashboard/outros">Outros</a>
+    <a href="<?= $this->base; ?>/dashboard/expedicao">Expedição</a>
+    <a href="<?= $this->base; ?>/dashboard/fornecedores">Fornecedores</a>
+    <a href="<?= $this->base; ?>/dashboard/oportunidade">Oportunidades</a>
+    <a href="<?= $this->base; ?>/dashboard/orcamentos">Orçamentos</a>
+    <a href="<?= $this->base; ?>/dashboard/produto">Produto</a>
+    <a href="<?= $this->base; ?>/dashboard/resumo">Resumo</a>
 </div>
 
+<!-- LISTAGEM DE FAQ -->
 <?php foreach ($categorias as $categoria): ?>
     <div style="margin-top: 3rem;">
         <h2 style="font-size: 1.5rem; color: #000;"><?php echo h($categoria['CategoriaFaq']['nome']); ?></h2>
@@ -140,6 +179,7 @@
         </div>
     </div>
 <?php endforeach; ?>
+</form>
 
 <script>
     let lastOpen = null;
