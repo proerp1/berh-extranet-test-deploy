@@ -180,8 +180,8 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-	    ini_set('memory_limit', '-1');
 
+	    ini_set('memory_limit', '-1');
 	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
 
@@ -215,11 +215,12 @@ class ReportsController extends AppController
 
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
+        
         $benefitTypes = $this->BenefitType->find('list', [
-    'fields' => ['id', 'name'],
-    'order' => ['name' => 'asc'],
-    'recursive' => -1
-]);
+            'fields' => ['id', 'name'],
+            'order' => ['name' => 'asc'],
+            'recursive' => -1
+        ]);
 
         $data = [];
         if (!empty($_GET)) {
