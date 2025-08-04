@@ -3440,21 +3440,19 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if (!empty($existingItinerary) && $is_variable) {
-                // Set the existing itinerary as excluded
-                $this->CustomerUserItinerary->id = $existingItinerary['CustomerUserItinerary']['id'];
-                $this->CustomerUserItinerary->saveField('data_cancel', date('Y-m-d H:i:s'));
+            // Determine price based on is_variable flag
+            if ($is_variable) {
+                // Variable benefits use price from spreadsheet
+                $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
+            } else {
+                // Fixed benefits use default price from benefit table
+                $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
+                $unitPrice = $benefit['Benefit']['unit_price'];
             }
 
-            $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-
             $idItinerary = 0;
-            if (empty($existingItinerary) || $is_variable) {
-
-                if (empty($existingItinerary) && !$is_variable) {
-                    $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
-                    $unitPrice = $benefit['Benefit']['unit_price'];
-                }
+            if (empty($existingItinerary)) {
+                // Only create new itinerary if none exists
 
                 $this->CustomerUserItinerary->create();
                 $this->CustomerUserItinerary->save([
