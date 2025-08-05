@@ -181,6 +181,14 @@ class CustomerUsersController extends AppController
                         'MaritalStatus.id = CustomerUser.marital_status_id'
                     ]
                 ],
+                [
+                    'table' => 'customer_addresses',
+                    'alias' => 'CustomerAddress',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerAddress.customer_user_id = CustomerUser.id'
+                    ]
+                ],
                 // Add other joins as necessary
             ],
             'fields' => [
@@ -212,6 +220,8 @@ class CustomerUsersController extends AppController
                 'CostCenter.name',
                 'SalaryRange.range',
                 'MaritalStatus.status',
+                'CustomerAddress.address',
+
             ],
             'group' => ['CustomerUser.id', 'EconomicGroup.id']
         ]);
