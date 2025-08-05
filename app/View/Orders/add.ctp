@@ -735,6 +735,7 @@
                         </th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
+                        <th>Tipo Benefício</th>
                         <th width="90px">Dias Úteis</th>
                         <!--<th width="120px">Desconto</th>-->
                         <th width="120px">Quantidade por dia</th>
@@ -793,6 +794,9 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php echo h($items[$i]['BenefitType']['name'] ?? ''); ?>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <?php if ($order['Order']['status_id'] == 83) { ?>
                                         <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">

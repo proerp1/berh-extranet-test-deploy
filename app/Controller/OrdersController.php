@@ -742,7 +742,14 @@ class OrdersController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 100,
             'order' => ['CustomerUser.name' => 'asc'],
-            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
+            'fields' => [
+                'OrderItem.*',
+                'CustomerUserItinerary.*',
+                'Benefit.*',
+                'BenefitType.name',  // <-- Puxar o nome do tipo
+                'Order.*',
+                'CustomerUser.*'
+            ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -751,9 +758,18 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Benefit.id = CustomerUserItinerary.benefit_id'
                     ]
+                ],
+                [
+                    'table' => 'benefit_types',  // Nome da tabela
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
                 ]
             ]
         ]];
+
 
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
