@@ -265,7 +265,7 @@ class ApiBtgPactual extends Controller
         }
 
         try {
-            $result = $this->makeRequest('POST', '/48503984000150/banking/payments', [
+            $result = $this->makeRequest('POST', '/48503984000150/banking/payment-link', [
                 'body' => json_encode($body),
             ]);
 
