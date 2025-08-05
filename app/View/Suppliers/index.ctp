@@ -97,6 +97,7 @@
                         <th>Tecnologia</th>
                         <th>Telefone</th>
                         <th>Região</th>
+                        <th>Logins</th>
                         <th>Observação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -122,6 +123,12 @@
                                     echo ''; 
                                 }
                                 ?>
+                            </td>
+                            <td class="text-center">
+                               <a href="<?php echo $this->base.'/customer_supplier_logins/index/2/'.$data[$i]["Supplier"]["id"]; ?>" title="Logins e Senhas">
+                                    <i class="fas fa-user-lock fs-4 text-primary"></i>
+                                </a>
+
                             </td>
 
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["observacao"]; ?></td>
