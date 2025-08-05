@@ -230,7 +230,7 @@ class ExcelTemplate
             ->setCellValue('K1', "Tipo de contato")
             ->setCellValue('L1', "Referência")
             ->setCellValue('M1', "Conta")
-            ->setCellValue('N1', "Data pag/rec/transferência ")
+            ->setCellValue('N1', "Data pag/rec/transferência")
             ->setCellValue('O1', "Anotação");
 
 
@@ -348,7 +348,7 @@ class ExcelTemplate
             ->setCellValue('K1', "Tipo de contato")
             ->setCellValue('L1', "Referência")
             ->setCellValue('M1', "Conta")
-            ->setCellValue('N1', "Data pag/rec/transferência ")
+            ->setCellValue('N1', "Data pag/rec/transferência")
             ->setCellValue('O1', "Anotação");
             
             
