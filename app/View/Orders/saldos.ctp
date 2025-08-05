@@ -204,7 +204,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["OrderBalance"]["updated"]) ? date('d/m/Y H:i', strtotime($data[$i]["OrderBalance"]["updated"])) : '-'; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["UserUpdated"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["user_updated_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["observacao"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
                         </tr>
