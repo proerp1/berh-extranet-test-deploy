@@ -5,7 +5,22 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile', 'Log', 'OrderBalance', 'BenefitType'];
+    public $uses = [
+        'Income', 
+        'Customer', 
+        'CustomerUser', 
+        'OrderItem', 
+        'CostCenter', 
+        'CustomerDepartment', 
+        'Outcome', 
+        'Order', 
+        'Status', 
+        'OrderBalanceFile', 
+        'Log', 
+        'OrderBalance', 
+        'BenefitType', 
+        'LogOrderItemsProcessamento'
+    ];
 
     public function beforeFilter()
     {
@@ -180,8 +195,8 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-	    ini_set('memory_limit', '-1');
 
+	    ini_set('memory_limit', '-1');
 	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
 
@@ -215,11 +230,12 @@ class ReportsController extends AppController
 
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
+        
         $benefitTypes = $this->BenefitType->find('list', [
-    'fields' => ['id', 'name'],
-    'order' => ['name' => 'asc'],
-    'recursive' => -1
-]);
+            'fields' => ['id', 'name'],
+            'order' => ['name' => 'asc'],
+            'recursive' => -1
+        ]);
 
         $data = [];
         if (!empty($_GET)) {
@@ -978,7 +994,6 @@ class ReportsController extends AppController
                         'BenefitType.id = Benefit.benefit_type_id'
                     ]
                 ],
-
                 [
                     'table' => 'suppliers',
                     'alias' => 'Supplier',
@@ -1353,25 +1368,30 @@ class ReportsController extends AppController
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
-        $de     = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
-        $para   = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
-        $num    = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
-        $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
-        $st     = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
-        $c      = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
-        $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-
-        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
-        
         $buscar = false;
         $de = null;
         $para = null;
+
+        $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
+        $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
+        $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
+        $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $st             = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
+        $stp            = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
+        $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
+        $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
+        $bt             = isset($this->request->data['curr_bt']) ? $this->request->data['curr_bt'] : false;
+        $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
+
+        $condition      = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
+        
         if (isset($de) and $de != '') {
             $buscar = true;
 
             $deRaw = $de;
             $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
             $de = $dateObjectDe->format('Y-m-d');
+
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
         }
 
@@ -1381,6 +1401,7 @@ class ReportsController extends AppController
             $paraRaw = $para;
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
+            
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
@@ -1415,10 +1436,32 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
         }
 
+        if (isset($stp) and $stp != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
+        }
+
         if (isset($c) and $c != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        }
+
+        if (isset($bt) and $bt != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Benefit.benefit_type_id' => $bt]);
+        }
+        
+        if (isset($first_order) and $first_order != '') {
+            $buscar = true;
+            
+            if ($first_order == 'sim') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 1]);
+            } elseif ($first_order == 'nao') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
+            }
         }
 
         if (!empty($q)) {
@@ -1433,7 +1476,6 @@ class ReportsController extends AppController
                 'Order.id LIKE' => '%' . $q . '%',
                 'Customer.id LIKE' => '%' . $q . '%',
                 'Customer.codigo_associado LIKE' => "%" . $q . "%",
-
             ]);
         }
 
@@ -1478,6 +1520,8 @@ class ReportsController extends AppController
 
         foreach ($items as $item) {
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
+
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
 
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',

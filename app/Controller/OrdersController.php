@@ -35,8 +35,10 @@ class OrdersController extends AppController
         'CustomerUserBankAccount',
         'OrderBalanceFile',
         'BankAccount',
-        'OrderDiscount'
+        'OrderDiscount',
+        'LogOrderItemsProcessamento'
     ];
+    
     public $groupBenefitType = [
         -1 => [1, 2],
         4 => [4, 5],
@@ -2968,6 +2970,8 @@ class OrdersController extends AppController
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
 
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
+                        
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',
                 "new_value" => $statusProcess,
@@ -3081,12 +3085,13 @@ class OrdersController extends AppController
                         'Supplier.id = Benefit.supplier_id'
                     ]
                 ]
-
             ]
         ]);
 
         foreach ($items as $item) {
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
+
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
 
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',

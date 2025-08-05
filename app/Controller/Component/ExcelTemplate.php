@@ -2177,7 +2177,7 @@ public function getFaq($objPHPExcel, $dados)
                 $tipo_ge = 'GE garantido';
             }
 
-      $tipo_pedido = "";
+            $tipo_pedido = "";
             if ($dados[$i]['Order']['is_partial'] == '1') {
                 $tipo_pedido = 'Automático';
             } elseif ($dados[$i]['Order']['is_partial'] == '2') {

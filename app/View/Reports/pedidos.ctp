@@ -282,10 +282,9 @@
             var diff = (dataFinal - dataInicial);
             var diffDays = (diff / (1000 * 60 * 60 * 24));
 
-            if (diffDays > 365 || diffDays < 0) {
-                alert('A data final deve ser no máximo 1 ano após a data inicial.');
+            if (diffDays > 31 || diffDays < 0) {
+                alert('O intervalo máximo permitido é de 31 dias.');
                 $('.filter').attr('disabled', true);
-
                 return false;
             }
         } else {

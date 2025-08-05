@@ -256,7 +256,6 @@
     </div>
 </div>
 
-
 <script>
     function trigger_change() {
         const queryString = window.location.search;
