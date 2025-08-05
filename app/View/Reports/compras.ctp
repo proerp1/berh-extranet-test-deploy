@@ -481,9 +481,16 @@
                 const curr_de = urlParams.get('de');
                 const curr_para = urlParams.get('para');
                 const curr_num = urlParams.get('num');
+                const curr_first_order = urlParams.get('first_order');
 
                 const statusElements = document.querySelectorAll('#kt-toolbar-filter #st option:checked');
                 const curr_st = Array.from(statusElements).map(el => el.value);
+
+                const statusProcElements = document.querySelectorAll('#kt-toolbar-filter #stp option:checked');
+                const curr_stp = Array.from(statusProcElements).map(el => el.value);
+
+                const btElements = document.querySelectorAll('#kt-toolbar-filter #bt option:checked');
+                const curr_bt = Array.from(btElements).map(el => el.value);
 
                 $.ajax({
                     type: 'POST',
@@ -497,10 +504,13 @@
                         curr_q,
                         curr_sup,
                         curr_st,
+                        curr_stp,
                         curr_c,
                         curr_de,
                         curr_para,
-                        curr_num
+                        curr_num,
+                        curr_bt,
+                        curr_first_order
                     },
                     dataType: 'json',
                     success: function(response) {
