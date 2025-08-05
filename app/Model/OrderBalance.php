@@ -19,6 +19,11 @@ public $belongsTo = array(
         'className' => 'OrderItem',
         'foreignKey' => 'order_item_id'
     ),
+        'UserUpdated' => array(  
+        'className' => 'User',
+        'foreignKey' => 'user_updated_id'
+        ),
+
 );
 
     public $actsAs = ['Containable'];
