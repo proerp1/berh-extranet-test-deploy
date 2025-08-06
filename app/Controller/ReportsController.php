@@ -199,14 +199,14 @@ class ReportsController extends AppController
 	    ini_set('memory_limit', '-1');
         ini_set('max_execution_time', -1); 
 
-        $paginationConfig = $this->CustomReports->configPagination('pedidos');
-        $this->Paginator->settings = $paginationConfig;
-
         $condition = $this->pedidosConditions();
 
         if (isset($_GET['excel'])) {
-            $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
-            $this->Paginator->settings = ['OrderItem' => $pag];
+            $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
+            $this->Paginator->settings = ['OrderItem' => $paginationConfig];
+        } else {
+            $paginationConfig = $this->CustomReports->configPagination('pedidos');
+            $this->Paginator->settings = $paginationConfig;
         }
 
         if (isset($_GET['o'])) {

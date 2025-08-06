@@ -137,12 +137,10 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
+                    <a href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos', '?' => array_merge($_GET, ['exportar' => 'true'])]); ?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
                         Exportar
-                    </button>
-
-                    
+                    </a>                    
                 </div>
             </div>
         </div>
