@@ -201,7 +201,7 @@ class ReportsController extends AppController
 
         $condition = $this->pedidosConditions();
 
-        if (isset($_GET['excel'])) {
+        if (isset($_GET['exportar'])) {
             $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
             $this->Paginator->settings = ['OrderItem' => $paginationConfig];
         } else {
@@ -243,7 +243,7 @@ class ReportsController extends AppController
 
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
-        if (isset($_GET['excel'])) {
+        if (isset($_GET['exportar'])) {
             $nome = 'relatorio_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $this->ExcelGenerator->gerarExcelOrders($nome, $data);
