@@ -197,17 +197,16 @@ class ReportsController extends AppController
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
 
 	    ini_set('memory_limit', '-1');
-	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
-
-        $paginationConfig = $this->CustomReports->configPagination('pedidos');
-        $this->Paginator->settings = $paginationConfig;
 
         $condition = $this->pedidosConditions();
 
-        if (isset($_GET['excel'])) {
-            $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
-            $this->Paginator->settings = ['OrderItem' => $pag];
+        if (isset($_GET['exportar'])) {
+            $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
+            $this->Paginator->settings = ['OrderItem' => $paginationConfig];
+        } else {
+            $paginationConfig = $this->CustomReports->configPagination('pedidos');
+            $this->Paginator->settings = $paginationConfig;
         }
 
         if (isset($_GET['o'])) {
@@ -244,7 +243,7 @@ class ReportsController extends AppController
 
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
-        if (isset($_GET['excel'])) {
+        if (isset($_GET['exportar'])) {
             $nome = 'relatorio_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $this->ExcelGenerator->gerarExcelOrders($nome, $data);

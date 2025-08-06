@@ -2,7 +2,7 @@
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode'];
+	public $uses = ['Customer', 'TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode', 'OutcomeOrder'];
 
 	public $paginate = [
         'Outcome' => [
@@ -18,19 +18,24 @@ class OutcomesController extends AppController {
                     WHERE o.id = Outcome.order_id  
                             AND c.data_cancel = '1901-01-01 00:00:00' 
                             AND o.data_cancel = '1901-01-01 00:00:00' 
-                ) as nome_primario"
+                ) as nome_primario",
+              "(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
+                from outcome_orders
+                     inner join orders on outcome_orders.order_id = orders.id
+                     inner join customers c on orders.customer_id = c.id
+                   where Outcome.id = outcome_orders.outcome_id) as orders"
             ],
-            'limit' => 175, 
+            'limit' => 175,
             'order' => ['Status.id' => 'asc', 'Outcome.vencimento' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc'],
-            'paramType' => 'querystring'
+            'paramType' => 'querystring',
         ]
 	];
 
-	public function beforeFilter() { 
-		parent::beforeFilter(); 
+	public function beforeFilter() {
+		parent::beforeFilter();
 	}
 
-	public function index() 
+	public function index()
 	{
 		$this->Permission->check(15, "leitura") ? "" : $this->redirect("/not_allowed");
 
@@ -39,12 +44,12 @@ class OutcomesController extends AppController {
         $this->paginate['Outcome']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
 
-		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];		
+		$condition = ["and" => ['Outcome.resale_id' => CakeSession::read("Auth.User.resales")], "or" => []];
 
 		if(isset($_GET['q']) and $_GET['q'] != ""){
 			$condition['or'] = array_merge($condition['or'], ['Outcome.observation LIKE' => "%".$_GET['q']."%",'Supplier.nome_fantasia LIKE' => "%".$_GET['q']."%", 'Outcome.doc_num LIKE' => "%".$_GET['q']."%", 'Outcome.name LIKE' => "%".$_GET['q']."%", 'BankAccount.name LIKE' => "%".$_GET['q']."%"]);
 		}
-		
+
 		if(isset($_GET["t"]) and $_GET["t"] != ""){
 			$condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
 		}
@@ -56,14 +61,19 @@ class OutcomesController extends AppController {
 		if(isset($_GET['supplier_id']) && $_GET['supplier_id'] != "") {
 			$condition['and'] = array_merge($condition['and'], ['Outcome.supplier_id' => $_GET['supplier_id']]);
 		}
-		
+
 		if(isset($_GET['supplier_nome']) && $_GET['supplier_nome'] != "") {
 			$condition['and'] = array_merge($condition['and'], ['Supplier.nome_fantasia LIKE' => "%".$_GET['supplier_nome']."%"]);
 		}
-		
+
+		if(isset($_GET['order']) && $_GET['order'] != "") {
+      $orderId = $_GET['order'];
+			$condition['and'] = array_merge($condition['and'], ["Outcome.id in (select outcome_id from outcome_orders where order_id = $orderId)"]);
+		}
+
 		$get_de = isset($_GET["de"]) ? $_GET["de"] : '';
 		$get_ate = isset($_GET["ate"]) ? $_GET["ate"] : '';
-		
+
 		if($get_de != "" and $get_ate != ""){
 			$de = date('Y-m-d', strtotime(str_replace('/', '-', $_GET['de'])));
 			$ate = date('Y-m-d', strtotime(str_replace('/', '-', $_GET['ate'])));
@@ -77,21 +87,21 @@ class OutcomesController extends AppController {
 
 		$get_created_de = isset($_GET["created_de"]) ? $_GET["created_de"] : '';
         $get_created_ate = isset($_GET["created_ate"]) ? $_GET["created_ate"] : '';
-        
+
         if ($get_created_de != "" && $get_created_ate != "") {
             $created_de = date('Y-m-d 00:00:00', strtotime(str_replace('/', '-', $_GET['created_de'])));
             $created_ate = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $_GET['created_ate'])));
-        
+
             $condition['and'] = array_merge($condition['and'], ['Outcome.created >=' => $created_de, 'Outcome.created <=' => $created_ate]);
         }
 
 		$get_pagamento_de = isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : '';
         $get_pagamento_ate = isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : '';
-        
+
         if ($get_pagamento_de != "" && $get_pagamento_ate != "") {
             $pagamento_de = date('Y-m-d 00:00:00', strtotime(str_replace('/', '-', $_GET['pagamento_de'])));
             $pagamento_ate = date('Y-m-d 23:59:59', strtotime(str_replace('/', '-', $_GET['pagamento_ate'])));
-        
+
             // Alterar a condição para filtrar pela coluna 'data_pagamento'
             $condition['and'] = array_merge($condition['and'], [
                 'Outcome.data_pagamento >=' => $pagamento_de,
@@ -103,14 +113,14 @@ class OutcomesController extends AppController {
 			$nome = 'contas_pagar_' . date('d_m_Y_H_i_s') . '.xlsx';
 
 			$data = $this->Outcome->find('all', [
-				'conditions' => $condition, 
+				'conditions' => $condition,
 				'joins' => [
 					[
 						'table' => 'bank_codes',
 						'alias' => 'BankCode',
 						'type' => 'LEFT',
 						'conditions' => ['BankCode.id = Supplier.bank_code_id']
-					],				
+					],
 					[
 						'table' => 'bank_account_types',
 						'alias' => 'BankAccountType',
@@ -125,7 +135,7 @@ class OutcomesController extends AppController {
 						'Status.name',
 						'BankAccountType.description',
 						'Outcome.*',
-						'BankAccount.*' 
+						'BankAccount.*'
 					]
 				]
 			);
@@ -139,8 +149,8 @@ class OutcomesController extends AppController {
 			$nome = 'nibo' . date('d_m_Y_H_i_s') . '.xlsx';
 
 			$dataNibo = $this->Outcome->find('all', [
-			'conditions' => $condition, 
-			
+			'conditions' => $condition,
+
 				'fields' => [
 					'Outcome.*',
 					'Supplier.*',
@@ -171,37 +181,48 @@ class OutcomesController extends AppController {
 		//echo "Saldo: " . $saldo;
 		$total_outcome = 0;
 		$pago_outcome = 0;
-		
+
 		$total_outcome = $this->Outcome->find('first', [
 			'conditions' => $condition,
 			'fields' => [
-				'sum(Outcome.valor_total) as total_outcome',	
+				'sum(Outcome.valor_total) as total_outcome',
 			]
 		]);
-		
+
 		$pago_outcome = $this->Outcome->find('first', [
 			'conditions' => $condition,
 			'fields' => [
-				'sum(Outcome.valor_pago) as pago_outcome',	
+				'sum(Outcome.valor_pago) as pago_outcome',
 			]
 		]);
-		
+
 		$payment_method = ['1' => 'Boleto','3' => 'Cartão de crédito','6' => 'Crédito em conta corrente','5' => 'Cheque','4' => 'Depósito','7' => 'Débito em conta','8' => 'Dinheiro','2' => 'Transfêrencia','9' => 'Desconto','11' => 'Pix','10' => 'Outros'];
-		
+
 		$aba_pago_id = 13;
 		$aba_atual_id = isset($_GET['t']) ? $_GET['t'] : null;
 		$exibir_segundo_card = $aba_atual_id == $aba_pago_id;
 
 		$this->Paginator->settings['order'] = ['Outcome.created' => 'DESC'];
-		
+
 		$data = $this->Paginator->paginate('Outcome', $condition);
 		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
+    $customers = $this->Customer->find('list', ['fields' => ['Customer.id', 'Customer.nome_primario']]);
+
+    $orderArr = $this->Order->find('all', [
+      'fields' => ['Order.id', 'Customer.nome_primario'],
+      'contain' => ['Customer'],
+      'order' => 'Order.id'
+    ]);
+    $orders = [];
+    foreach ($orderArr as $order) {
+      $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+    }
 
 		$action = 'Contas a pagar';
-		
-		$this->set(compact('status', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id', 'payment_method'));
+
+		$this->set(compact('status', 'customers', 'limit', 'data', 'action', 'total_outcome', 'pago_outcome', 'exibir_segundo_card', 'aba_atual_id', 'aba_pago_id', 'payment_method', 'orders'));
 	}
-	
+
 	public function add() {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 		if ($this->request->is('post')) {
@@ -214,27 +235,36 @@ class OutcomesController extends AppController {
 					$id_origem = $this->Outcome->id;
 					if ($this->request->data['Outcome']['recorrencia'] == 1) {
 						for ($i=0; $i < $this->request->data['Outcome']['quantidade']; $i++) {
-	
+
 							$year = substr($this->request->data['Outcome']['vencimento'],6,4);
 							$month = substr($this->request->data['Outcome']['vencimento'],3,2);
 							$date = substr($this->request->data['Outcome']['vencimento'],0,2);
 							$data = $year."-".$month."-".$date;
-	
+
 							$cont = $i+1;
 							$meses = $cont*$this->request->data['Outcome']["periodicidade"];
-	
+
 							$effectiveDate = date('d/m/Y', strtotime("+".$meses." months", strtotime($data)));
-	
+
 							$data_save = $this->request->data;
 							$data_save['Outcome']['vencimento'] = $effectiveDate;
 							$data_save['Outcome']['parcela'] = $cont+1;
 							$data_save['Outcome']['conta_origem_id'] = $id_origem;
-	
+
 							$this->Outcome->create();
 							$this->Outcome->save($data_save);
 						}
 					}
-	
+
+          for ($i = 0; $i <= count($this->request->data['Outcome']['order_ids']); $i++) {
+            $orderId = $this->request->data['Outcome']['order_ids'][$i];
+            $this->OutcomeOrder->create();
+            $this->OutcomeOrder->save([
+              'order_id' => $orderId,
+              'outcome_id' => $id_origem,
+            ]);
+          }
+
 					$this->Session->setFlash(__('A conta a pagar foi salva com sucesso'), 'default', array('class' => "alert alert-success"));
 					$this->redirect(array('action' => 'edit', $id_origem)); // Redireciona para a ação de edição com o ID criado
 				} else {
@@ -244,7 +274,7 @@ class OutcomesController extends AppController {
 				$this->Session->setFlash(__('A conta a pagar não pode ser salva, Por favor tente de novo.'), 'default', array('class' => "alert alert-danger"));
 			}
 		}
-	
+
 		$statuses = $this->Status->find('list', array('conditions' => array('Status.categoria' => 4)));
 		$expenses = $this->Expense->find('list', ['conditions' => ['Expense.status_id' => 1], 'order' => 'Expense.name']);
 		$bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
@@ -252,9 +282,9 @@ class OutcomesController extends AppController {
 		$suppliers = $this->Supplier->find('list', ['conditions' => ['Supplier.status_id' => 1], 'order' => 'Supplier.nome_fantasia']);
 		$planoContas = $this->PlanoConta->find('list', ['conditions' => ['PlanoConta.status_id' => 1], 'order' => ['PlanoConta.name' => 'asc']]);
 		$resales = $this->Resale->find("list", ['conditions' => ['Resale.status_id' => 1, 'Resale.id' => CakeSession::read("Auth.User.resales")], 'order' => ['Resale.nome_fantasia' => 'asc']]);
-	
+
 		$cancelarConta = $this->Permission->check(57, "escrita");
-	
+
 		$orderArr = $this->Order->find('all', [
             'fields' => ['Order.id', 'Customer.nome_primario'],
             'contain' => ['Customer'],
@@ -264,14 +294,14 @@ class OutcomesController extends AppController {
         foreach ($orderArr as $order) {
             $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
         }
-	
+
 
 		$action = 'Contas a pagar';
 		$breadcrumb = ['Nova conta' => ''];
 		$this->set("form_action", "add");
 		$this->set(compact('statuses', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'orders'));
 	}
-	
+
 
 	public function edit($id = null) {
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
@@ -281,7 +311,7 @@ class OutcomesController extends AppController {
 			$this->request->data['Outcome']['user_updated_id'] = CakeSession::read("Auth.User.id");
 			$log_old_value = $this->request->data["log_old_value"];
 			unset($this->request->data["log_old_value"]);
-			
+
 			$dados_log = [
 				"old_value" => $log_old_value,
 				"new_value" => json_encode($this->request->data),
@@ -325,6 +355,20 @@ class OutcomesController extends AppController {
 					}
 				}
 
+        $order_ids = $this->request->data['Outcome']['order_ids'];
+
+        $this->OutcomeOrder->deleteAll([
+          'OutcomeOrder.outcome_id' => $id,
+        ]);
+        for ($i = 0; $i < count($order_ids); $i++) {
+          $orderId = $order_ids[$i];
+          $this->OutcomeOrder->create();
+          $this->OutcomeOrder->save([
+            'order_id' => $orderId,
+            'outcome_id' => $id,
+          ]);
+        }
+
 				$this->Session->setFlash(__('A conta a pagar foi alterada com sucesso'), 'default', array('class' => "alert alert-success"));
 				$this->redirect(array('action' => 'index/?'.$this->request->data['query_string']));
 			} else {
@@ -335,7 +379,11 @@ class OutcomesController extends AppController {
 		$temp_errors = $this->Outcome->validationErrors;
 		$this->request->data = $this->Outcome->read();
 		$this->Outcome->validationErrors = $temp_errors;
-		
+
+    $this->request->data['Outcome']['order_ids'] = collect($this->request->data['OutcomeOrder'])->map(function ($outcomeOrder) {
+      return $outcomeOrder['order_id'];
+    })->toArray();
+
 		$statuses = $this->Status->find('list', array('conditions' => array('Status.categoria' => 4)));
 		$expenses = $this->Expense->find('list', ['conditions' => ['Expense.status_id' => 1], 'order' => 'Expense.name']);
 		$bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => 'BankAccount.name']);
@@ -358,7 +406,7 @@ class OutcomesController extends AppController {
 		$breadcrumb = ['Alterar conta' => ''];
 		$this->set("form_action", "edit");
 		$this->set(compact('statuses', 'id', 'expenses', 'bankAccounts', 'costCenters', 'suppliers', 'planoContas', 'cancelarConta', 'resales', 'action', 'breadcrumb', 'orders'));
-		
+
 		$this->render("add");
 
 	}
@@ -366,7 +414,7 @@ class OutcomesController extends AppController {
 	public function delete($id){
 		$this->Permission->check(15, "excluir") ? "" : $this->redirect("/not_allowed");
 		$this->Outcome->id = $id;
-		
+
 		$data = ['Outcome' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
 
 		if ($this->Outcome->save($data)) {
@@ -390,10 +438,10 @@ class OutcomesController extends AppController {
 	public function reabrir_conta($id, $status)
 	{
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
-		
+
 		$this->Outcome->id = $id;
 		$log_old_value = $this->Outcome->read();
-		
+
 		$data = ['Outcome' => ['status_id' => $status, 'valor_pago' => null, 'data_pagamento' => null, 'usuario_id_pagamento' => null]];
 
 		if ($this->Outcome->save($data)) {
@@ -555,18 +603,18 @@ class OutcomesController extends AppController {
     $this->set(compact('statuses', 'tiposDocumentos', 'action', 'id'));
 }
 
-	
+
 public function edit_document($id, $document_id = null)
 {
     $this->Permission->check(15, 'escrita') ? '' : $this->redirect('/not_allowed');
-    
+
     // Define o ID do documento
     $this->Docoutcome->id = $document_id;
-    
+
     // Verifica se a requisição é do tipo post ou put
     if ($this->request->is(['post', 'put'])) {
         $this->Docoutcome->validates();
-        
+
         // Se o campo de arquivo estiver vazio, remove-o dos dados
         if (empty($this->request->data['Docoutcome']['file']['name'])) {
             unset($this->request->data['Docoutcome']['file']);
@@ -645,15 +693,15 @@ public function edit_document($id, $document_id = null)
 		} elseif ($status == 13) {
 			$zip_name = "arquivos_pago_" . date('d_m_Y_H_i_s') . ".zip";
 		} else {
-			$zip_name = "arquivos_pendente_" . date('d_m_Y_H_i_s') . ".zip";			
+			$zip_name = "arquivos_pendente_" . date('d_m_Y_H_i_s') . ".zip";
 		}
-	    
+
 	    $zip_file = APP."webroot/files/docoutcome/file/".$zip_name;
 
 	    if (file_exists($zip_file)) {
 	    	unlink($zip_file);
 	    }
-	    
+
 	    $zip = new ZipArchive();
 	    $zip->open($zip_file, ZIPARCHIVE::CREATE);
 
@@ -698,7 +746,7 @@ public function edit_document($id, $document_id = null)
 	    if (file_exists($zip_file)) {
 	    	unlink($zip_file);
 	    }
-	    
+
 	    $zip = new ZipArchive();
 	    $zip->open($zip_file, ZIPARCHIVE::CREATE);
 
@@ -732,7 +780,7 @@ public function edit_document($id, $document_id = null)
 	public function all_documents()
 	{
 		$this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
-	
+
 		$this->Paginator->settings = [
 			'Docoutcome' => [
 				'limit' => 50,
@@ -755,11 +803,11 @@ public function edit_document($id, $document_id = null)
 					]
 				],
 				'fields' => [
-					'Docoutcome.*', 
-					'Outcome.*', 
+					'Docoutcome.*',
+					'Outcome.*',
 					'TipoDocumento.*',
-					'Supplier.nome_fantasia', 
-					'Status.*', 
+					'Supplier.nome_fantasia',
+					'Status.*',
 					'OutcomeStatus.*',
 					"(SELECT c.nome_primario
 						FROM orders o 
@@ -771,61 +819,61 @@ public function edit_document($id, $document_id = null)
 				]
 			]
 		];
-	
+
 		$condition = ['and' => [], 'or' => []];
-	
+
 		// Filtro de busca
 		if (isset($_GET['q']) && $_GET['q'] != "") {
 			$condition['or'] = array_merge($condition['or'], ['Docoutcome.name LIKE' => "%" . $_GET['q'] . "%"]);
 		}
-	
+
 	    // Filtro de Status
         if (isset($_GET['t']) && $_GET['t'] != '') {
             $statusId = $_GET['t'];
-            
+
             // Verifica se o filtro de 't' corresponde ao status em 'outcomes'
             $condition['and'] = array_merge(
-                $condition['and'], 
+                $condition['and'],
                 ['OR' => [
                     'Status.id' => $statusId,
                     'Outcome.status_id' => $statusId // Adiciona o filtro para outcomes
                 ]]
             );
         }
-	
+
 		// Filtro de vencimento
 		if (isset($_GET['vencimento_de']) && $_GET['vencimento_de'] != '') {
 			$condition['and'][] = ['Outcome.vencimento >=' => $_GET['vencimento_de']];
 		}
-	
+
 		if (isset($_GET['vencimento_ate']) && $_GET['vencimento_ate'] != '') {
 			$condition['and'][] = ['Outcome.vencimento <=' => $_GET['vencimento_ate']];
 		}
-	
+
 		// Filtro de data de pagamento
 		if (isset($_GET['data_pagamento_de']) && $_GET['data_pagamento_de'] != '') {
 			$condition['and'][] = ['Outcome.data_pagamento >=' => $_GET['data_pagamento_de']];
 		}
-	
+
 		if (isset($_GET['data_pagamento_ate']) && $_GET['data_pagamento_ate'] != '') {
 			$condition['and'][] = ['Outcome.data_pagamento <=' => $_GET['data_pagamento_ate']];
 		}
-	
+
 		// Filtro por Tipo de Documento
 		if (isset($_GET['tipo_documento']) && $_GET['tipo_documento'] != '') {
 			$condition['and'][] = ['TipoDocumento.id' => $_GET['tipo_documento']];
 		}
-	
+
 		$action = 'Documentos';
-	
+
 		$data = $this->Paginator->paginate('Docoutcome', $condition);
 		$status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 4]]);
 		$tiposDocumentos = $this->TipoDocumento->find('all'); // Busca os tipos de documento
-	
+
 		$this->set(compact('status', 'tiposDocumentos', 'data', 'action'));
 	}
-	
-	
 
-	
+
+
+
 }

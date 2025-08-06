@@ -227,6 +227,18 @@
             <label class="form-label fs-5 fw-bold mb-3">Fornecedor (Nome Fantasia):</label>
             <input class="form-control" id="supplier_nome" name="supplier_nome" value="<?php echo isset($_GET['supplier_nome']) ? $_GET['supplier_nome'] : ''; ?>">
         </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Pedido:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="order" id="order">
+                                    <option></option>
+                                  <?php
+                                  foreach ($orders as $key => $order) {
+                                    $selected = (isset($_GET['order']) && $_GET['order'] == $key) ? 'selected' : '';
+                                    echo "<option value=\"$key\" $selected>$order</option>";
+                                  }
+                                  ?>
+                                </select>
+                            </div>
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -266,7 +278,7 @@
 						<th>Valor pago R$</th>
                         <th>Forma de pagamento</th>
                         <th>Registro Cobrança</th>
-                        <th>Observação</th>
+                        <th>Pedidos</th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -315,7 +327,7 @@
 
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["valor"] . ' ' . $data[$i]["Supplier"]["unidade_tempo"]; ?></td>
 
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Outcome"]["observation"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4" style="min-width: 240px"><?php echo $data[$i][0]["orders"]; ?></td>
 
 								<td class="fw-bold fs-7 ps-4">
 
