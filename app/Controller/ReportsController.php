@@ -202,6 +202,7 @@ class ReportsController extends AppController
         $condition = $this->pedidosConditions();
 
         if (isset($_GET['exportar'])) {
+            die;
             $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
             $this->Paginator->settings = ['OrderItem' => $paginationConfig];
         } else {
