@@ -798,39 +798,69 @@ public function getFaq($objPHPExcel, $dados)
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Resposta"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Categoria"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Sistema Destino"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedores"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedor"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Criação"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Última Modificação");
 
-    foreach ($dados as $key => $dado) {
-        $col = 'A';
+    $linha = 2;
 
+    foreach ($dados as $dado) {
         $faq = $dado['Faq'];
         $categoria = $dado['CategoriaFaq']['nome'] ?? '';
         $sistema = $faq['sistema_destino'];
+        $created = date('d/m/Y H:i', strtotime($faq['created']));
+        $modified = date('d/m/Y H:i', strtotime($faq['modified']));
+        $pergunta = $faq['pergunta'];
+        $resposta = strip_tags($faq['resposta']);
+        $faqId = $faq['id'];
 
-        $fornecedores = [];
+        $relacionamentos = $dado['FaqRelacionamento'] ?? [];
 
-        if (!empty($dado['FaqRelacionamento'])) {
-            foreach ($dado['FaqRelacionamento'] as $rel) {
-                if ((int)$rel['supplier_id'] === 0) {
-                    $fornecedores[] = 'Todos os fornecedores';
-                } elseif (!empty($rel['Supplier']['nome_fantasia'])) {
-                    $fornecedores[] = $rel['Supplier']['nome_fantasia'];
-                }
+        if (empty($relacionamentos)) {
+            continue;
+        }
+
+        $temTodos = false;
+
+        foreach ($relacionamentos as $rel) {
+            if ((int)$rel['supplier_id'] === 0) {
+                $temTodos = true;
+                break;
             }
         }
 
-        $fornecedoresTexto = implode(', ', $fornecedores);
+        if ($temTodos) {
+            // Apenas uma linha para "Todos os fornecedores"
+            $col = 'A';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $faqId); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $pergunta); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $resposta); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $categoria); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $sistema); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, 'Todos os fornecedores'); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $created); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $modified);
+            $linha++;
+        } else {
+            // Uma linha por fornecedor específico
+            foreach ($relacionamentos as $rel) {
+                if (empty($rel['Supplier']['nome_fantasia'])) {
+                    continue;
+                }
 
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['id']); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['pergunta']); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), strip_tags($faq['resposta'])); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $categoria); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $sistema); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $fornecedoresTexto); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['created']))); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['modified'])));
+                $fornecedor = $rel['Supplier']['nome_fantasia'];
+                $col = 'A';
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $faqId); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $pergunta); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $resposta); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $categoria); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $sistema); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $fornecedor); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $created); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $modified);
+                $linha++;
+            }
+        }
     }
 }
 
