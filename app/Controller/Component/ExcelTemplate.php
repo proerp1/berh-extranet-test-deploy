@@ -248,7 +248,7 @@ class ExcelTemplate
                 ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
                 ->setCellValue('G' . $indx, $dados[$i][''][''])
                 ->setCellValue('H' . $indx, date('d/m/Y', strtotime($dados[$i]['Income']['created_nao_formatado'])))
-                ->setCellValue('I' . $indx, $dados[$i]['CostCenter']['name'])
+                ->setCellValue('K' . $indx, 'Cliente')
                 ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
                 ->setCellValue('K' . $indx, 'Cliente')
                 ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
