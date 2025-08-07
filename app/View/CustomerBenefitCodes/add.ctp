@@ -13,7 +13,7 @@
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Cod Beneficio BE</label>
-                <?php echo $this->Form->input('code_be', ["placeholder" => "Código", "required" => true, "class" => "form-control mb-3 mb-lg-0"]);  ?>
+              <?php echo $this->Form->input('benefit_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
             </div>
 
             <div class="mb-7 col">

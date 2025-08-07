@@ -6,7 +6,7 @@ class CustomerBenefitCodesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['CustomerBenefitCode', 'Customer'];
+    public $uses = ['CustomerBenefitCode', 'Customer', 'Benefit'];
 
     public function beforeFilter()
     {
@@ -64,10 +64,13 @@ class CustomerBenefitCodesController extends AppController
             }
         }
 
+        $this->Benefit->virtualFields = ['code_name' => "CONCAT(Benefit.code, ' - ', Benefit.name)"];
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.id', 'Benefit.code_name']]);
+
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Nova Exceção' => ''];
         $this->set("form_action", "add/$customer_id");
-        $this->set(compact('customer_id', 'action', 'breadcrumb'));
+        $this->set(compact('customer_id', 'action', 'breadcrumb', 'benefits'));
     }
 
     public function edit($customer_id, $id = null)
@@ -90,10 +93,13 @@ class CustomerBenefitCodesController extends AppController
         $this->request->data = $this->CustomerBenefitCode->read();
         $this->CustomerBenefitCode->validationErrors = $temp_errors;
 
+        $this->Benefit->virtualFields = ['code_name' => "CONCAT(Benefit.code, ' - ', Benefit.name)"];
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.id', 'Benefit.code_name']]);
+
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Alterar Benefício' => ''];
         $this->set("form_action", "edit/$customer_id");
-        $this->set(compact('customer_id', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('customer_id', 'id', 'action', 'breadcrumb', 'benefits'));
         
         $this->render("add");
     }
@@ -123,9 +129,10 @@ class CustomerBenefitCodesController extends AppController
             return ['success' => false, 'error' => 'Arquivo inválido.'];
         }
 
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.code', 'Benefit.id']]);
+
         $line = 0;
         foreach ($csv->getRecords() as $row) {
-
             if ($line == 0 || empty($row[0])) {
                 if ($line == 0) {
                     $line++;
@@ -133,11 +140,14 @@ class CustomerBenefitCodesController extends AppController
                 continue;
             }
 
+            $benefitId = $benefits[$row[0]] ?: null;
+
             $this->CustomerBenefitCode->create();
             $this->CustomerBenefitCode->save([
                 'CustomerBenefitCode' => [
                     'customer_id' => $customerId,
                     'code_be' => $row[0],
+                    'benefit_id' => $benefitId,
                     'code_customer' => $row[1],
                 ],
             ]);
