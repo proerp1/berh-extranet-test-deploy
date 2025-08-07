@@ -2452,7 +2452,6 @@ public function getFaq($objPHPExcel, $dados)
         'AA1' => "Quantidade(Benefício)",
         'AB1' => "Valor Unitario(Benefício)",
         'AC1' => "Valor por dia(Benefício)",
-        'AD1' => "Endereço de entrega",
 
     ];
 
@@ -2509,10 +2508,6 @@ public function getFaq($objPHPExcel, $dados)
                         ->setCellValue('AB' . $indx, $itinerary['unit_price'] ?? '')
                         ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
                 }
-            }
-                   if (!empty($data['CustomerAddress'])) {
-                $activeWorksheet
-                    ->setCellValue('AD' . $indx, $data['CustomerAddress']['address'] ?? '');
             }
         }
     }
