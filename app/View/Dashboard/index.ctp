@@ -96,19 +96,6 @@
     }
 </style>
 
-<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
-    <a href="<?php echo $this->base; ?>/dashboard/compras">Compras</a>
-    <a href="<?php echo $this->base; ?>/dashboard/comercial">Comercial</a>
-    <a href="<?php echo $this->base; ?>/financeiro_report">Financeiro</a>
-    <a href="<?php echo $this->base; ?>/dashboard/cliente">Cliente</a>
-    <a href="<?php echo $this->base; ?>/dashboard/outros">Outros</a>
-    <a href="<?php echo $this->base; ?>/dashboard/expedicao">Expedição</a>
-    <a href="<?php echo $this->base; ?>/dashboard/fornecedores">Fornecedores</a>
-    <a href="<?php echo $this->base; ?>/dashboard/oportunidade">Oportunidades</a>
-    <a href="<?php echo $this->base; ?>/dashboard/orcamentos">Orçamentos</a>
-    <a href="<?php echo $this->base; ?>/dashboard/produto">Produto</a>
-    <a href="<?php echo $this->base; ?>/dashboard/resumo">Resumo</a>
-</div>
 <?php $urlBase = $this->Html->url(['controller' => 'dashboard', 'action' => 'index']); ?>
 
 <div class="card mb-5 mb-xl-8">
@@ -182,12 +169,25 @@
                     </p>
                     <div style="margin-bottom: 10px; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <?php foreach ($faq['FaqRelacionamento'] as $rel): ?>
-                            <?php if ($rel['supplier_id'] == 0): ?>
-                                <span class="badge-fornecedor">Todos os fornecedores</span>
-                            <?php elseif (!empty($rel['Supplier']['nome_fantasia'])): ?>
-                                <span class="badge-fornecedor"><?php echo h($rel['Supplier']['nome_fantasia']); ?></span>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
+                        <?php
+                            $mostrar = false;
+
+                            if (empty($supplierFilter)) {
+                                $mostrar = true; // Sem filtro: mostra tudo
+                            } elseif ($rel['supplier_id'] == 0 || $rel['supplier_id'] == $supplierFilter) {
+                                $mostrar = true; // Com filtro: mostra apenas o matching ou 'todos'
+                            }
+                        ?>
+
+                        <?php if ($mostrar): ?>
+                            <span class="badge-fornecedor">
+                                <?php echo ($rel['supplier_id'] == 0)
+                                    ? 'Todos os fornecedores'
+                                    : h($rel['Supplier']['nome_fantasia']); ?>
+                            </span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+
                     </div>
                 <?php endif; ?>
 
