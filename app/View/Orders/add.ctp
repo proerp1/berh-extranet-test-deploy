@@ -293,7 +293,7 @@
                             </div>
 
                             <div class="col-12 col-md-6 mb-5">
-                                <label class="form-label">Observação da Nota Fiscal</label>
+                                <label class="form-label">Complemento da Nota Fiscal</label>
                                 <textarea 
                                     name="data[Order][nfse_observation]" 
                                     class="form-control auto-expand" 
@@ -1163,16 +1163,6 @@
         $('#benefit_id').select2({
             dropdownParent: $('#modal_add_itinerario')
         });
-
-        $("#js-form-submit.order-form").submit(function (event) {
-            const gera_nfse = $('[name="data[Order][gera_nfse]"]:checked').val();
-            const nfse_obs = $('[name="data[Order][nfse_observation]"]').val().trim();
-
-            if (gera_nfse === '0' && nfse_obs === '') {
-                event.preventDefault();
-                alert('Preencha o campo "Observações da Nota fiscal" para atualizar o pedido.')
-            }
-        })
 
         $('.working_days_input').on('change', function() {
             const newValue = $(this).val();
