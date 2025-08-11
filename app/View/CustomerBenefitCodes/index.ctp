@@ -1,4 +1,5 @@
 <?php
+    $isAdmin = CakeSession::read('Auth.User.group_id') == 1;
     echo $this->element("abas_customers", array('id' => $id));
 ?>
 
@@ -17,6 +18,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                    <?php if ($isAdmin) { ?>
+                        <button type="button" class="btn btn-danger me-3" id="delete_all" disabled>Apagar Selecionados</button>
+                    <?php } ?>
+
                     <a href="<?php echo $this->base.'/customer_benefit_codes/index/'.$id.'/?excel&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
                         <i class="fas fa-file-excel"></i>
                         Exportar
@@ -37,6 +42,12 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <?php if ($isAdmin) { ?>
+                            <th class="w-80px min-w-80px ps-4">
+                                <input type="checkbox" class="delete_id delete_id_all" name="delete_id" value="all">
+                            </th>
+                        <?php } ?>
+                        <th class="ps-4 rounded-start">Benefício BE</th>
                         <th class="ps-4 rounded-start">Código Beneficio BE</th>
                         <th>Código Beneficio Cliente</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -46,6 +57,12 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
+                                <?php if ($isAdmin) { ?>
+                                    <td class="fw-bold fs-7 ps-4">
+                                        <input type="checkbox" class="delete_id delete_id_<?php echo $data[$i]["CustomerBenefitCode"]["id"] ?>" name="delete_id" value="<?php echo $data[$i]["CustomerBenefitCode"]["id"] ?>">
+                                    </td>
+                                <?php } ?>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerBenefitCode"]["code_be"] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["CustomerBenefitCode"]["code_customer"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
@@ -95,6 +112,17 @@
 </div>
 
 <script>
+    const allIds = JSON.parse('<?= json_encode(array_values($allIds)) ?>')
+    let deleteIds = getCookie('customerBenefitCodesDeleteIds').split(',')
+    let isAllIds = JSON.parse(getCookie('checkedAllIds'))
+
+    $('.delete_id_all').prop('checked', isAllIds)
+
+    $('#delete_all').attr('disabled', !deleteIds.length)
+    for (const deleteId of deleteIds) {
+        $(`.delete_id_${deleteId}`).prop('checked', true)
+    }
+
     $( document ).ready(function() {
         $('[data-kt-customer-table-filter="reset"]').on('click', function () {
             $("#t").val(null).trigger('change');
@@ -106,5 +134,63 @@
         $('#q').on('change', function () {
             $("#busca").submit();
         });
+
+        $('.delete_id').on('change', function () {
+            const isChecked = $(this).is(':checked')
+            let deleteId = $(this).val()
+
+            if (deleteId === 'all') {
+                $('.delete_id').prop('checked', isChecked)
+                setCookie('checkedAllIds', isChecked)
+                deleteId = allIds
+            }
+
+            updateDeleteIds(deleteId, isChecked)
+        })
+
+        <?php if ($isAdmin) { ?>
+            $('#delete_all').on('click', function () {
+                verConfirm('/customer_benefit_codes/delete_all/<?= $id ?>?ids='+deleteIds.toString())
+            })
+        <?php } ?>
     });
+
+    function updateDeleteIds(id, add) {
+        if (add) {
+            if (Array.isArray(id)) {
+                deleteIds = id
+            } else {
+                deleteIds.push(id)
+            }
+        } else {
+            if (Array.isArray(id)) {
+                deleteIds = []
+            } else {
+                deleteIds = deleteIds.filter(deleteId => deleteId !== id)
+            }
+        }
+
+        $('#delete_all').attr('disabled', !deleteIds.length)
+
+        setCookie('customerBenefitCodesDeleteIds', deleteIds)
+    }
+
+    function setCookie(name, valor) {
+        let data = new Date();
+        data.setTime(data.getTime() + (60 * 60 * 1000)); // milissegundos
+        let expires = "expires=" + data.toUTCString();
+        document.cookie = `${name}=${valor}; ${expires}; path=/`;
+    }
+
+    function getCookie(name) {
+        let nomeBusca = name + "=";
+        let cookies = document.cookie.split(';');
+        for (let c of cookies) {
+            c = c.trim();
+            if (c.indexOf(nomeBusca) === 0) {
+                return c.substring(nomeBusca.length);
+            }
+        }
+        return null;
+    }
 </script>
