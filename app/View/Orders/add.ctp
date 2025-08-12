@@ -1181,7 +1181,7 @@
         </div>
       </div>
     </div>
-<?php endif; ?>
+
 
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
