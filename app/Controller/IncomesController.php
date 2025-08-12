@@ -939,7 +939,7 @@ class IncomesController extends AppController
         $data = collect(json_decode($response->getBody()->getContents(), true));
 
         $igbe_municipio = $data->first(function ($item) use ($municipio) {
-            return iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($item['municipio-nome'])) === iconv('UTF-8', 'ASCII//TRANSLIT', strtolower($municipio));
+            return iconv('UTF-8', 'ASCII//TRANSLIT', strtolower(trim($item['municipio-nome']))) === iconv('UTF-8', 'ASCII//TRANSLIT', strtolower(trim($municipio)));
         });
 
         return $igbe_municipio ? $igbe_municipio['municipio-id'] : null;
@@ -1106,7 +1106,7 @@ class IncomesController extends AppController
             $nfse_sdk = $this->connect_nfse_sdk();
 
             $nfse_data = $this->get_nfse_data($income, $type);
-
+dd($nfse_data);
             $response = $nfse_sdk->cria($nfse_data);
 
             if (!$response->sucesso) {
