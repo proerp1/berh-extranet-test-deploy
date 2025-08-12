@@ -379,6 +379,16 @@
                                                 </a>
                                             <?php } ?>
 
+                                            <?php if (isset($this->request->data['Status']['id']) && in_array($this->request->data['Status']['id'], [83, 84])): ?>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger me-2 mb-2"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal_cancelar_pedido">
+                                                    Cancelar Pedido
+                                                </button>
+                                            <?php endif; ?>
+
+
                                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                                 <button type="button" class="btn btn-sm btn-success me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_sptrans" <?php echo strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83 ? 'disabled' : '' ?>>
                                                     <i class="fas fa-arrow-right"></i> Gerar Boleto
@@ -1150,6 +1160,47 @@
         </div>
     </div>
 </div>
+
+<?php
+// Permissão de exibição: somente usuário id=1 e status 83/84
+$temStatusOk = (isset($order['Order']['status_id']) && in_array($order['Order']['status_id'], [83, 84]))
+    || (isset($this->request->data['Status']['id']) && in_array($this->request->data['Status']['id'], [83, 84]));
+
+$ehAdminId1 = isset($user['User']['id']) && (int)$user['User']['id'] === 1;
+
+if ($temStatusOk && $ehAdminId1):
+    $pedidoId = isset($order['Order']['id']) ? $order['Order']['id'] : $id;
+    $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+    $confirmUrl = $this->base . '/Orders/change_status/' . $pedidoId . '/94/?' . $qs;
+?>
+    <!-- Botão: abre modal -->
+    <button type="button"
+            class="btn btn-sm btn-danger me-2 mb-2"
+            data-bs-toggle="modal"
+            data-bs-target="#modal_cancelar_pedido">
+        Cancelar Pedido
+    </button>
+
+    <!-- Modal de confirmação -->
+    <div class="modal fade" id="modal_cancelar_pedido" tabindex="-1" aria-labelledby="modalCancelarPedidoLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCancelarPedidoLabel">Confirmar cancelamento</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            Deseja mesmo cancelar o pedido <strong>#<?php echo h($pedidoId); ?></strong>?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>
+            <a href="<?php echo $confirmUrl; ?>" class="btn btn-danger">Sim, cancelar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+<?php endif; ?>
+
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>

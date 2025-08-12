@@ -1018,6 +1018,44 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $id]);
     }
 
+    public function change_status($id = null, $status = null)
+{
+if (!$this->Permission->check(64, 'escrita') || (int)$this->Auth->user('id') !== 1) {
+    $this->Flash->set(__('Você não tem permissão'), ['params' => ['class' => 'alert alert-danger']]);
+    return $this->redirect('/not_allowed');
+}
+
+
+    $id = (int)$id;
+    $status = (int)$status;
+
+    if (!$id || !$status) {
+        $this->Flash->set(__('Parâmetros inválidos'), ['params' => ['class' => 'alert alert-danger']]);
+        return $this->redirect($this->referer());
+    }
+
+    $this->Order->id = $id;
+
+    if (!$this->Order->exists()) {
+        $this->Flash->set(__('Pedido não encontrado'), ['params' => ['class' => 'alert alert-danger']]);
+        return $this->redirect($this->referer());
+    }
+
+    $old_status = $this->Order->read();
+
+    $data = ['Order' => ['status_id' => $status]];
+
+    if ($this->Order->save($data, ['validate' => false])) {
+        $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+    } else {
+        $this->Flash->set(__('Não foi possível alterar o status'), ['params' => ['class' => 'alert alert-danger']]);
+    }
+
+    $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+    return $this->redirect(['action' => 'index/?' . $qs]);
+}
+
+
     public function notificaNotaAntecipada($order)
     {
         $dados = [
