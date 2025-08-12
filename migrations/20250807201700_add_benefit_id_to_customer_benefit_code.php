@@ -23,7 +23,7 @@ final class AddBenefitIdToCustomerBenefitCode extends AbstractMigration
             ->update();
 
         if ($this->isMigratingUp()) {
-          $this->query('update customer_benefit_codes cbc set benefit_id = (select id from benefits where code = cbc.code_be)');
+          $this->query('update customer_benefit_codes cbc set benefit_id = (select id from benefits where code = cbc.code_be limit 1)');
         }
     }
 }
