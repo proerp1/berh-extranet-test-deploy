@@ -176,14 +176,6 @@
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
-                                            Condição de pagamento
-                                        </div>
-                                    </td>
-                                    <td class="fw-bolder text-end"><?php echo $v_cond_pagamento; ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-muted">
-                                        <div class="d-flex align-items-center">
                                             Gestão Eficiente
                                         </div>
                                     </td>

@@ -118,7 +118,6 @@
                         <th>Responsável</th>
                         <th>Telefone</th>
                         <th>Email</th>
-                        <th>Condição de pagamento</th>
                         <th>Cidade</th>
                         <th>UF</th>
                         <th>Revenda</th>
@@ -162,7 +161,6 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["responsavel"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["telefone1"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["email"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $condicao_pagamento; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>

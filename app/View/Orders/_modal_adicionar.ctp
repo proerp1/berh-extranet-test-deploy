@@ -86,16 +86,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mb-3 col">
-                            <label class="fw-semibold fs-6 mb-2">Condição de pagamento</label>
-                            <?php echo $this->Form->input('condicao_pagamento', array('options' => array(1 => 'Pré pago', 2 => 'Faturado'), "data-control" => "select2", "class" => "form-select mb-3 mb-lg-0", "id" => "condicao_pagamento", 'label' => false));  ?>
-                        </div>
-
-                        <div class="mb-3 col js-prazo" style="display:none;">
-                            <label class="fw-semibold fs-6 mb-2">Prazo</label>
-                            <?php echo $this->Form->input('prazo', array("placeholder" => "Prazo", "type" => "number", "class" => "form-control mb-3 mb-lg-0", "id" => "prazo", 'label' => false));  ?>
-                        </div>
                     </div>
 
                     <div class="row mb-7 js-pedido_parc">

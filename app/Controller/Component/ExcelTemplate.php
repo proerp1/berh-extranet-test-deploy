@@ -696,7 +696,6 @@ class ExcelTemplate
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Telefone 2"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "E-mail Principal"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "E-mail"); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Celular"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Juros e multa?"); $col++;
@@ -759,7 +758,6 @@ class ExcelTemplate
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['telefone2']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['email']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['email1']); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $condicao_pagamento); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['operadora']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['celular']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cobrar_juros']); $col++;
@@ -1070,7 +1068,6 @@ public function getFaq($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Observação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Antecipada"); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
 
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
@@ -1124,7 +1121,6 @@ public function getFaq($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['UpdatedGe']['name']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['observation_ge']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $v_cond_pagamento); $col++;
         }
     }
 
@@ -2213,7 +2209,6 @@ public function getFaq($objPHPExcel, $dados)
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração");$col++;
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
         $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
-        $activeWorksheet->setCellValue($col.'1', "Condição de pagamento"); $col++;
 
         $indx = 1;
         $total = 0;
@@ -2347,7 +2342,6 @@ public function getFaq($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['UpdatedGe']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
-            $activeWorksheet->setCellValue($col . $indx, $v_cond_pagamento);$col++;
         }
     }
 
@@ -2387,8 +2381,7 @@ public function getFaq($objPHPExcel, $dados)
         ->setCellValue('AC1', "Motivo Processamento")
         ->setCellValue('AD1', "Tipo Pedido")
         ->setCellValue('AE1', "Tipo de Benefício / Serviço")
-        ->setCellValue('AF1', "Primeiro Pedido")
-        ->setCellValue('AG1', "Condição de pagamento");
+        ->setCellValue('AF1', "Primeiro Pedido");
 
         $indx = 1;
         $total = 0;
@@ -2447,8 +2440,7 @@ public function getFaq($objPHPExcel, $dados)
                 ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
                 ->setCellValue('AD' . $indx, $tipo_pedido)
                 ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
-                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não')
-                ->setCellValue('AG'. $indx, $v_cond_pagamento);
+                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');
         }
     }
 
