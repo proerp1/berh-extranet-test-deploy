@@ -800,8 +800,9 @@ public function getFaq($objPHPExcel, $dados)
 {
     $col = 'A';
 
-    // Cabeçalhos
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID"); $col++;
+    // Cabeçalhos (ordem fixa)
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID FAQs"); $col++;
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Fornecedor"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pergunta"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Resposta"); $col++;
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Categoria"); $col++;
@@ -813,64 +814,67 @@ public function getFaq($objPHPExcel, $dados)
     $linha = 2;
 
     foreach ($dados as $dado) {
-        $faq = $dado['Faq'];
+        $faq       = $dado['Faq'];
         $categoria = $dado['CategoriaFaq']['nome'] ?? '';
-        $sistema = $faq['sistema_destino'];
-        $created = date('d/m/Y H:i', strtotime($faq['created']));
-        $modified = date('d/m/Y H:i', strtotime($faq['modified']));
-        $pergunta = $faq['pergunta'];
-        $resposta = strip_tags($faq['resposta']);
-        $faqId = $faq['id'];
+        $sistema   = $faq['sistema_destino'];
+        $created   = date('d/m/Y H:i', strtotime($faq['created']));
+        $modified  = date('d/m/Y H:i', strtotime($faq['modified']));
+        $pergunta  = $faq['pergunta'];
+        $resposta  = strip_tags($faq['resposta']);
+        $faqId     = $faq['id'];
 
         $relacionamentos = $dado['FaqRelacionamento'] ?? [];
-
         if (empty($relacionamentos)) {
             continue;
         }
 
         $temTodos = false;
-
         foreach ($relacionamentos as $rel) {
-            if ((int)$rel['supplier_id'] === 0) {
+            if ((int)($rel['supplier_id'] ?? 0) === 0) {
                 $temTodos = true;
                 break;
             }
         }
 
         if ($temTodos) {
-            // Apenas uma linha para "Todos os fornecedores"
+            // Única linha indicando "Todos os fornecedores" e ID Fornecedor em branco
             $col = 'A';
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $faqId); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $pergunta); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $resposta); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $categoria); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $sistema); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, 'Todos os fornecedores'); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $created); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $modified);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $faqId); $col++;           // ID FAQs
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, ''); $col++;               // ID Fornecedor (em branco)
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $pergunta); $col++;        // Pergunta
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $resposta); $col++;        // Resposta
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $categoria); $col++;       // Categoria
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $sistema); $col++;         // Sistema Destino
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, 'Todos os fornecedores'); $col++; // Fornecedor (texto)
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $created); $col++;         // Data de Criação
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $modified);                // Última Modificação
             $linha++;
         } else {
             // Uma linha por fornecedor específico
             foreach ($relacionamentos as $rel) {
-                if (empty($rel['Supplier']['nome_fantasia'])) {
+                $supplierId = $rel['supplier_id'] ?? null;
+                $fornecedor = $rel['Supplier']['nome_fantasia'] ?? '';
+
+                if (empty($supplierId) || empty($fornecedor)) {
                     continue;
                 }
 
-                $fornecedor = $rel['Supplier']['nome_fantasia'];
                 $col = 'A';
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $faqId); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $pergunta); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $resposta); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $categoria); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $sistema); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $fornecedor); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $created); $col++;
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . $linha, $modified);
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $faqId); $col++;        // ID FAQs
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $supplierId); $col++;   // ID Fornecedor
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $pergunta); $col++;     // Pergunta
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $resposta); $col++;     // Resposta
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $categoria); $col++;    // Categoria
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $sistema); $col++;      // Sistema Destino
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $fornecedor); $col++;   // Fornecedor
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $created); $col++;      // Data de Criação
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $modified);             // Última Modificação
                 $linha++;
             }
         }
     }
 }
+
 
 
     public function getFornecedoresRelatorio($objPHPExcel, $dados_sup, $dados_log)
