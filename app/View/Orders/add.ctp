@@ -762,7 +762,7 @@
                 <tbody>
                     <tr>
                         <td>Total</td>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
@@ -771,7 +771,7 @@
                         <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                         <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                         <td class="repasse_compra_sum">R$<?php echo number_format(($order["Order"]["transfer_fee_not_formated"] - $order["Order"]["saldo_transfer_fee_not_formated"]), 2, ',', '.'); ?></td>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <td>&nbsp;</td>
                         <?php } ?>
@@ -841,7 +841,7 @@
                         <?php } ?>
                         <tr>
                             <td>Total</td>
-                            <td colspan="5"></td>
+                            <td colspan="6"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                             <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
@@ -850,7 +850,7 @@
                             <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                             <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                             <td class="repasse_compra_sum">R$<?php echo number_format(($order["Order"]["transfer_fee_not_formated"] - $order["Order"]["saldo_transfer_fee_not_formated"]), 2, ',', '.'); ?></td>
-                            <td colspan="5"></td>
+                            <td colspan="6"></td>
                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                 <td>&nbsp;</td>
                             <?php } ?>
