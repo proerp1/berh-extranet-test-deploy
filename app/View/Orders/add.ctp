@@ -385,7 +385,7 @@
                                                 </a>
                                             <?php } ?>
 
-                                               <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
+                                               <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84 && $user['Group']['id'] == 1) { ?>
                                                 <a href="#" class="btn btn-sm btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_cancelar_pedido">
                                                     <i class="fas fa-arrow-right"></i> Cancelar Pedido
                                                 </a>
@@ -1162,25 +1162,31 @@
         </div>
     </div>
 </div>
-
-    <!-- Modal de confirmação -->
-    <div class="modal fade" id="modal_cancelar_pedido" tabindex="-1" aria-labelledby="modalCancelarPedidoLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalCancelarPedidoLabel">Confirmar cancelamento</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-          </div>
-          <div class="modal-body">
-            Deseja mesmo cancelar o pedido <strong>#<?php echo h($pedidoId); ?></strong>?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Não</button>
-            <a href="<?php echo $confirmUrl; ?>" class="btn btn-danger">Sim, cancelar</a>
-          </div>
-        </div>
+<?php
+$statusCancelado = 94; // ID do status "Cancelado"
+?>
+<div class="modal fade" id="modal_cancelar_pedido" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cancelar Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Deseja realmente cancelar o pedido <strong>#<?php echo h($order['Order']['id']); ?></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+        <a href="<?php echo $this->Html->url([
+            'controller' => 'orders',
+            'action' => 'change_status',
+            $order['Order']['id'],
+            $statusCancelado
+        ]); ?>" class="btn btn-danger">Sim, cancelar</a>
       </div>
     </div>
+  </div>
+</div>
 
 
 
