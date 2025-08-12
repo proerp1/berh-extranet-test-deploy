@@ -49,7 +49,6 @@
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
                         </div>
                         <div class="separator border-gray-200"></div>
-
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
@@ -57,7 +56,7 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t[]" id="t" multiple>
                                     <option value=''></option>
                                     <?php
-                                        $statusOptions = [83 => "Início", 84 => "Aguardando Pagamento", 85 => "Pagamento Confirmado", 86 => "Em Processamento", 104 => "Aguardando Liberação de Crédito", 87 => "Finalizado", 94 => "Cancelado"];
+                                        $statusOptions = [83 => "Início", 84 => "Liberado para processamento", 85 => "Pagamento Confirmado", 86 => "Em Processamento", 104 => "Aguardando Liberação de Crédito", 87 => "Finalizado", 94 => "Cancelado"];
 
                                         foreach ($statusOptions as $statusId => $statusName) {
                                             $selected = ($_GET["t"] ?? '') && in_array($statusId, $_GET["t"]) ? 'selected' : '';

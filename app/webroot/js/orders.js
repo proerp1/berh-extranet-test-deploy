@@ -258,6 +258,16 @@ $(document).ready(function() {
                 } else {
                     $('#gera_nfse_sim').click();
                 }
+
+                if (data['Customer']['condicao_pagamento'] == 2) {
+                    $('#prazo').val(data['Customer']['prazo']);
+                } else {
+                    $('#prazo').val('');
+                }
+
+                $('#condicao_pagamento').val(data['Customer']['condicao_pagamento']);
+
+                togglePrazo();
             }
         });
     });
@@ -386,6 +396,22 @@ $(document).ready(function() {
         }
 
         return date;
+    }
+
+    $('#prazo').on('input', function () {
+        this.value = this.value.replace(/\D+/g, '');
+    });
+
+    $('#condicao_pagamento').on('change', togglePrazo);
+
+    togglePrazo();
+
+    function togglePrazo() {
+        if ($('#condicao_pagamento').val() == '2') {
+            $('.js-prazo').show();
+        } else {
+            $('.js-prazo').hide();
+        }
     }
 
 });

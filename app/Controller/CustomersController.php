@@ -27,6 +27,8 @@ class CustomersController extends AppController
                 'Customer.responsavel',
                 'Customer.emitir_nota_fiscal',
                 'Customer.flag_gestao_economico',
+                'Customer.condicao_pagamento',
+                'Customer.prazo',
                 'Status.*',
                 'Resale.nome_fantasia',
                 'Seller.name',

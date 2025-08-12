@@ -9,8 +9,8 @@
                     <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 25px; height: 25px;"></i></div>
-                    <div class="txt">Aguardando <br>Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Liberado para processamento" style="width: 25px; height: 25px;"></i></div>
+                    <div class="txt">Liberado para <br>Processamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
                     <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 25px; height: 25px;"></i></div>

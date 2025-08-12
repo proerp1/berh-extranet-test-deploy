@@ -195,6 +195,7 @@ class ExcelConfigurationComponent extends Component {
                     'Order.pedido_complementar',
 					'Order.updated_ge',
 					'Order.observation_ge',
+					'Order.condicao_pagamento',
 
 					'OrderStatus.name',
 
