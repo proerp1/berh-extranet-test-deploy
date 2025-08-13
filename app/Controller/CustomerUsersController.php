@@ -139,58 +139,85 @@ class CustomerUsersController extends AppController
         ini_set('max_execution_time', '-1');
 
         $data = $this->CustomerUser->find('all', [
-    'conditions' => ['CustomerUser.customer_id' => $id],
-    'joins' => [
-        // ... (seus joins atuais)
+            'conditions' => ['CustomerUser.customer_id' => $id],
+            'joins' => [
+                [
+                    'table' => 'customer_users_economic_groups',
+                    'alias' => 'CustomerUserEconomicGroup',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUser.id = CustomerUserEconomicGroup.customer_user_id'
+                    ]
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroup',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'EconomicGroup.id = CustomerUserEconomicGroup.economic_group_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_positions',
+                    'alias' => 'CustomerPosition',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerPosition.id = CustomerUser.customer_positions_id'
+                    ]
+                ],
+                [
+                    'table' => 'salary_ranges',
+                    'alias' => 'SalaryRange',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'SalaryRange.id = CustomerUser.customer_salary_id'
+                    ]
+                ],
+                [
+                    'table' => 'marital_statuses',
+                    'alias' => 'MaritalStatus',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'MaritalStatus.id = CustomerUser.marital_status_id'
+                    ]
+                ],
 
-        // Endereço de entrega do beneficiário
-        [
-            'table' => 'customer_user_addresses',
-            'alias' => 'CustomerUserAddress',
-            'type'  => 'LEFT',
-            'conditions' => [
-                'CustomerUserAddress.customer_user_id = CustomerUser.id',
-                // Se existir um flag para endereço de entrega principal, descomente:
-                // 'CustomerUserAddress.is_delivery' => 1
-            ]
-        ],
-    ],
-    'fields' => [
-        'CustomerDepartment.name',
-        'CustomerPosition.name',
-        'CustomerUser.customer_id',
-        'CustomerUser.name',
-        'CustomerUser.matricula',
-        'CustomerUser.email',
-        'CustomerUser.tel',
-        'CustomerUser.cel',
-        'CustomerUser.cpf',
-        'CustomerUser.rg',
-        'CustomerUser.observation',
-        'CustomerUser.emissor_rg',
-        'CustomerUser.emissor_estado',
-        'CustomerUser.nome_mae',
-        'CustomerUser.status_id',
-        'CustomerUser.sexo',
-        'CustomerUser.data_nascimento',
-        'CustomerUser.customer_departments_id',
-        'CustomerUser.customer_positions_id',
-        'CustomerUser.customer_cost_center_id',
-        'CustomerUser.customer_salary_id',
-        'CustomerUser.marital_status_id',
-        'CustomerUser.economic_group_id',
-        'EconomicGroup.name',
-        'EconomicGroup.document',
-        'CostCenter.name',
-        'SalaryRange.range',
-        'MaritalStatus.status',
+                // Add other joins as necessary
+            ],
+            'fields' => [
+                'CustomerDepartment.name',
+                'CustomerPosition.name',
+                'CustomerUser.customer_id',
+                'CustomerUser.name',
+                'CustomerUser.matricula',
+                'CustomerUser.email',
+                'CustomerUser.tel',
+                'CustomerUser.cel',
+                'CustomerUser.cpf',
+                'CustomerUser.rg',
+                'CustomerUser.observation',
+                'CustomerUser.emissor_rg',
+                'CustomerUser.emissor_estado',
+                'CustomerUser.nome_mae',
+                'CustomerUser.status_id',
+                'CustomerUser.sexo',
+                'CustomerUser.data_nascimento',
+                'CustomerUser.customer_departments_id',
+                'CustomerUser.customer_positions_id',
+                'CustomerUser.customer_cost_center_id',
+                'CustomerUser.customer_salary_id',
+                'CustomerUser.marital_status_id',
+                'CustomerUser.economic_group_id',
+                'EconomicGroup.name',
+                'EconomicGroup.document',
+                'CostCenter.name',
+                'SalaryRange.range',
+                'MaritalStatus.status',
+                
 
-        // Campo necessário para a coluna AD:
-        'CustomerUserAddress.address_line',
-    ],
-    'group' => ['CustomerUser.id', 'EconomicGroup.id'] // mantenha como já está
-]);
-
+            ],
+            'group' => ['CustomerUser.id', 'EconomicGroup.id']
+        ]);
         //debug($data);die;
         $this->ExcelGenerator->gerarExcelBeneficiario('RelatorioBeneficiario', $data);
 

@@ -2445,12 +2445,11 @@ class ExcelTemplate
         }
     }
 
-    public function getBeneficiario($spreadsheet, $dados)
-    {
+public function getBeneficiario($spreadsheet, $dados)
+{
     $activeWorksheet = $spreadsheet->getActiveSheet();
 
     $headers = [
-       
         'A1' => "Status(beneficiário)",
         'B1' => "Nome(beneficiário)",
         'C1' => "Matricula(beneficiário)",
@@ -2481,7 +2480,6 @@ class ExcelTemplate
         'AB1' => "Valor Unitario(Benefício)",
         'AC1' => "Valor por dia(Benefício)",
         'AD1' => "Endereço de entrega",
-
     ];
 
     foreach ($headers as $cell => $text) {
@@ -2489,7 +2487,7 @@ class ExcelTemplate
     }
 
     $indx = 1;
-    $chunkSize = 100; // Tamanho do lote
+    $chunkSize = 100;
     $totalRows = count($dados);
 
     for ($i = 0; $i < $totalRows; $i += $chunkSize) {
@@ -2499,8 +2497,8 @@ class ExcelTemplate
             $indx++;
 
             $activeWorksheet
-            ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
-            ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
+                ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
+                ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
                 ->setCellValue('C' . $indx, $data['CustomerUser']['matricula'] ?? '')
                 ->setCellValue('D' . $indx, $data['CustomerUser']['email'] ?? '')
                 ->setCellValue('E' . $indx, $data['CustomerUser']['tel'] ?? '')
@@ -2518,12 +2516,7 @@ class ExcelTemplate
                 ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
                 ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
                 ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
-               ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
-
-              
-                $activeWorksheet
-                ->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
-
+                ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
@@ -2543,9 +2536,25 @@ class ExcelTemplate
                         ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
                 }
             }
+
+           
+            if (!empty($data['CustomerUserAddress']) && is_array($data['CustomerUserAddress'])) {
+                
+                $activeWorksheet->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
+            } elseif (!empty($data['CustomerUserAddresses']) && is_array($data['CustomerUserAddresses'])) {
+                
+                foreach ($data['CustomerUserAddresses'] as $address) {
+                    $activeWorksheet->setCellValue('AD' . $indx, $address['address_line'] ?? '');
+                    
+                }
+            } else {
+              
+                $activeWorksheet->setCellValue('AD' . $indx, '');
+            }
         }
     }
 }
+
 
     
 
