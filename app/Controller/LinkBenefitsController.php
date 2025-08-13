@@ -199,6 +199,7 @@ class LinkBenefitsController extends AppController
                         'CustomerUserItinerary' => [
                             'id' => $itineraries['CustomerUserItinerary']['id'],
                             'card_number' => $number,
+                            'matricula' => $matricula
                         ]
                     ];
                 }
