@@ -2480,6 +2480,7 @@ class ExcelTemplate
         'AA1' => "Quantidade(Benefício)",
         'AB1' => "Valor Unitario(Benefício)",
         'AC1' => "Valor por dia(Benefício)",
+        'AD1' => "Endereço de entrega",
 
     ];
 
@@ -2518,6 +2519,11 @@ class ExcelTemplate
                 ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
                 ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
                ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
+
+              
+                $activeWorksheet
+                ->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
+
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
