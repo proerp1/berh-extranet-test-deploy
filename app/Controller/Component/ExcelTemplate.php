@@ -213,53 +213,50 @@ class ExcelTemplate
         }
     }
 
-      public function getNiboContasReceber($objPHPExcel, $dados)
-    {
+public function getNiboContasReceber($objPHPExcel, $dados)
+{
+    $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A1', "Tipo de transação")
+        ->setCellValue('B1', "Nome do contato")
+        ->setCellValue('C1', "Descrição")        
+        ->setCellValue('D1', "Categoria")
+        ->setCellValue('E1', "Valor")
+        ->setCellValue('F1', "Vencimento")
+        ->setCellValue('G1', "Previsto para")
+        ->setCellValue('H1', "Competência")
+        ->setCellValue('I1', "Centro de custo")
+        ->setCellValue('J1', "Favorito")
+        ->setCellValue('K1', "Tipo de contato")
+        ->setCellValue('L1', "Referência")
+        ->setCellValue('M1', "Conta")
+        ->setCellValue('N1', "Data pag/rec/transferência")
+        ->setCellValue('O1', "Anotação");
 
+    // aplica formato TEXTO na coluna E (toda a coluna)
+    $activeWorksheet = $objPHPExcel->getActiveSheet();
+    $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
+    $indx = 1;
+    for ($i = 0; $i < count($dados); $i++) {
+        $indx++;
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', "Tipo de transação")
-            ->setCellValue('B1', "Nome do contato")
-            ->setCellValue('C1', "Descrição")        
-            ->setCellValue('D1', "Categoria")
-            ->setCellValue('E1', "Valor")
-            ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "Previsto para")
-            ->setCellValue('H1', "Competência")
-            ->setCellValue('I1', "Centro de custo")
-            ->setCellValue('J1', "Favorito")
-            ->setCellValue('K1', "Tipo de contato")
-            ->setCellValue('L1', "Referência")
-            ->setCellValue('M1', "Conta")
-            ->setCellValue('N1', "Data pag/rec/transferência")
-            ->setCellValue('O1', "Anotação");
-
-
-
-        $indx = 1;
-        for ($i = 0; $i < count($dados); $i++) {
-
-            $indx++;
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A' . $indx, 'Lançamento')
-                ->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
-                ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
-                ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
-                ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total'])
-                ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
-                ->setCellValue('G' . $indx, $dados[$i][''][''])
-                ->setCellValue('H' . $indx, date('d/m/Y', strtotime($dados[$i]['Income']['created_nao_formatado'])))
-                ->setCellValue('I' . $indx, 'Cliente')
-                ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
-                ->setCellValue('K' . $indx, 'Cliente')
-                ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
-                ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
-                ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
-                ->setCellValue('O' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'");
-
-
-
-        }
+            ->setCellValue('A' . $indx, 'Lançamento')
+            ->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
+            ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
+            ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
+            ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total']) 
+            ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
+            ->setCellValue('G' . $indx, $dados[$i][''][''])
+            ->setCellValue('H' . $indx, date('d/m/Y', strtotime($dados[$i]['Income']['created_nao_formatado'])))
+            ->setCellValue('I' . $indx, 'Cliente')
+            ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+            ->setCellValue('K' . $indx, 'Cliente')
+            ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
+            ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
+            ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
+            ->setCellValue('O' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'");
     }
+}
 
 
     public function getOutcome($objPHPExcel, $dados)
