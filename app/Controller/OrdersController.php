@@ -285,6 +285,16 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
+            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : null;
+            $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
+
+            if ($condicao_pagamento == 2) {
+                $order_status_id = 84;
+            } else {
+                $prazo = null;
+                $order_status_id = 83;
+            }
+
             if ($this->request->data['clone_order'] == 1) {
                 $this->cloneOrder();
             }
@@ -377,7 +387,7 @@ class OrdersController extends AppController
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
                 'order_period_from' => $period_from,
                 'order_period_to' => $period_to,
-                'status_id' => 83,
+                'status_id' => $order_status_id,
                 'is_partial' => $is_partial,
                 'pedido_complementar' => $pedido_complementar,
                 'credit_release_date' => $credit_release_date,
@@ -391,6 +401,8 @@ class OrdersController extends AppController
                 'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
                 'tipo_ge' => $customer['Customer']['tipo_ge'],
                 'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
+                'condicao_pagamento' => $condicao_pagamento,
+                'prazo' => $prazo,
             ];
 
             $this->Order->create();
