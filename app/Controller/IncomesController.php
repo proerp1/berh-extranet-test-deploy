@@ -1106,7 +1106,7 @@ class IncomesController extends AppController
             $nfse_sdk = $this->connect_nfse_sdk();
 
             $nfse_data = $this->get_nfse_data($income, $type);
-dd($nfse_data);
+
             $response = $nfse_sdk->cria($nfse_data);
 
             if (!$response->sucesso) {
