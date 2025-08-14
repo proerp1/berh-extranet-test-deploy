@@ -371,12 +371,6 @@
                                                 </a>
                                             <?php } ?>
 
-                                              <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
-                                                <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
-                                                    <i class="fas fa-arrow-right"></i> Pagamento Confirmado
-                                                </a>
-                                            <?php } ?>
-
                                                <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84 ) && $user['Group']['id'] == 1) { ?>
                                                 <a href="#" class="btn btn-sm btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_cancelar_pedido">
                                                     <i class="fas fa-arrow-right"></i> Cancelar Pedido
