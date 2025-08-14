@@ -232,7 +232,6 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('N1', "Data pag/rec/transferência")
         ->setCellValue('O1', "Anotação");
 
-    // aplica formato TEXTO na coluna E (toda a coluna)
     $activeWorksheet = $objPHPExcel->getActiveSheet();
     $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
 
@@ -350,6 +349,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             
             
           
+    $activeWorksheet = $objPHPExcel->getActiveSheet();
+    $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
 
             $indx = 1;
             for ($i = 0; $i < count($dados); $i++) {
