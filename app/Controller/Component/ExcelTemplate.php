@@ -2778,6 +2778,8 @@ public function getBeneficiario($spreadsheet, $dados)
                 $tipo = 'Bolsa de Crédito';
             } elseif ($dado["OrderBalance"]["tipo"] == '6') {
                 $tipo = 'Somente Debita';
+            } elseif ($dado["OrderBalance"]["tipo"] == '7') {
+                $tipo = 'Receita Derivada - Somente Credita';
             }
 
             $col = 'A';
