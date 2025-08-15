@@ -21,34 +21,44 @@
 <?php
 	echo $this->element("abas_incomes", ['id' => $id]);
 
-    $nfse_type_title = ['ge' => 'Gestão Eficiente', 'tpp' => 'TPP'];
+    $hasMergedNfse = !!array_filter($nfses, function ($nfse) {
+        return $nfse['tipo'] === 'ge-tpp' && isset($nfse['id']);
+    });
+
+    $hasSingleNfse = !!array_filter($nfses, function ($nfse) {
+        return $nfse['tipo'] !== 'ge-tpp' && isset($nfse['id']);
+    });
+
+    $nfse_type_title = ['ge' => 'Gestão Eficiente', 'tpp' => 'ADM', 'ge-tpp' => 'GE e ADM'];
 ?>
 <div class="card mb-5 mb-xl-8">
 	<div class="card-body">
         <div class="row">
             <?php for ($i = 0; $i < count($nfses); $i++) { ?>
                 <?php $nfse = $nfses[$i] ?>
-                <div class="col-6">
-                    <h2><?php echo $nfse_type_title[$nfse['tipo']] ?></h2>
-                    <div>
-                        <label class="fw-bold fs-6 mb-2 d-block">Status da NFS-e</label>
-                        <span class='badge <?php echo $nfse["Status"]["label"] ?>'>
-                            <?php echo $nfse["Status"]["name"] ?>
-                        </span>
+                <?php if (($nfse['tipo'] === 'ge-tpp' && !$hasSingleNfse) || ($nfse['tipo'] !== 'ge-tpp' && !$hasMergedNfse)) { ?>
+                    <div class="<?= $hasMergedNfse ? 'col-12' : ($hasSingleNfse ? 'col-6' : 'col-4') ?>">
+                        <h2><?php echo $nfse_type_title[$nfse['tipo']] ?></h2>
+                        <div>
+                            <label class="fw-bold fs-6 mb-2 d-block">Status da NFS-e</label>
+                            <span class='badge <?php echo $nfse["Status"]["label"] ?>'>
+                                <?php echo $nfse["Status"]["name"] ?>
+                            </span>
+                        </div>
+                        <div class="mt-5">
+                            <label class="fw-bold fs-6 mb-2 d-block">Prévia da NFS-e</label>
+                            <p><?php echo nl2br($nfse['preview']) ?></p>
+                                <?php if (!isset($nfse['status_id'])){ ?>
+                                  <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id.'/'.$nfse['tipo'] ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
+                                <?php } else if ($nfse['status_id'] == 107){ ?>
+                                  <button data-id="<?php echo $nfse['id'] ?>" type="submit" class="btn btn-danger confirm_cancel_nfse">Cancelar</button>
+                                <?php } ?>
+                                <?php if (isset($nfse['pdf_link'])){ ?>
+                                  <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$nfse['id'] ?>" class="btn btn-secondary">Imprimir</a>
+                                <?php } ?>
+                        </div>
                     </div>
-                    <div class="mt-5">
-                        <label class="fw-bold fs-6 mb-2 d-block">Prévia da NFS-e</label>
-                        <p><?php echo nl2br($nfse['preview']) ?></p>
-                        <?php if (!isset($nfse['status_id'])){ ?>
-                            <a href="<?php echo $this->base.'/incomes/cria_nfse/'.$id.'/'.$nfse['tipo'] ?>" class="btn btn-success" data-loading-text="Aguarde...">Enviar</a>
-                        <?php } else if ($nfse['status_id'] == 107){ ?>
-                            <button data-id="<?php echo $nfse['id'] ?>" type="submit" class="btn btn-danger confirm_cancel_nfse">Cancelar</button>
-                        <?php } ?>
-                        <?php if (isset($nfse['pdf_link'])){ ?>
-                            <a href="<?php echo $this->base.'/incomes/imprime_nfse/'.$nfse['id'] ?>" class="btn btn-secondary">Imprimir</a>
-                        <?php } ?>
-                    </div>
-                </div>
+                <?php } ?>
             <?php } ?>
         </div>
     </div>
