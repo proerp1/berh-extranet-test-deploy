@@ -1093,8 +1093,6 @@ class ReportsController extends AppController
             $condition['and'][] = ['Benefit.benefit_type_id' => $_GET['bt']];
         }
 
-
-
         if (!empty($_GET['q'])) {
             $buscar = true;
 
@@ -1110,7 +1108,8 @@ class ReportsController extends AppController
 
             ]);
         }
-                if (isset($_GET['stp']) and $_GET['stp'] != '') {
+        
+        if (isset($_GET['stp']) and $_GET['stp'] != '') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
@@ -1124,6 +1123,75 @@ class ReportsController extends AppController
             } elseif ($_GET['first_order'] == 'nao') {
                 $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
             }
+        }
+
+        if (isset($_GET['excel_pedidos'])) {
+            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Order->find('all', [
+                'contain' => [
+                    'Status',
+                    'Customer',
+                    'CustomerCreator',
+                    'EconomicGroup',
+                    'Income.data_pagamento',
+                    'UpdatedGe',
+                ],
+                'joins' => [
+                    [
+                        'table' => 'order_items',
+                        'alias' => 'OrderItem',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Order.id = OrderItem.order_id'
+                        ]
+                    ],
+                ],
+                'group' => ['Order.id'],
+                'conditions' => $condition,
+            ]);
+
+            foreach ($data as $k => $pedido) {
+                $suppliersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'joins' => [
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ],
+                    'group' => ['Supplier.id'],
+                    'fields' => ['Supplier.id']
+                ]);
+
+                $usersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'group' => ['OrderItem.customer_user_id'],
+                    'fields' => ['OrderItem.customer_user_id']
+                ]);
+
+                $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
+
+                $data[$k]['Order']['suppliersCount'] = $suppliersCount;
+                $data[$k]['Order']['usersCount'] = $usersCount;
+                $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
+            }
+
+            $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         if (isset($_GET['excel'])) {
