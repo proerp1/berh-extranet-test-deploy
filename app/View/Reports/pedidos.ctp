@@ -128,8 +128,7 @@
                                     ?>
                                 </select>
                             </div>
-
-
+                            
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary filter" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -137,12 +136,10 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
+                    <a href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'pedidos', '?' => array_merge($_GET, ['exportar' => 'true'])]); ?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
                         Exportar
-                    </button>
-
-                    
+                    </a>                    
                 </div>
             </div>
         </div>
@@ -282,10 +279,9 @@
             var diff = (dataFinal - dataInicial);
             var diffDays = (diff / (1000 * 60 * 60 * 24));
 
-            if (diffDays > 365 || diffDays < 0) {
-                alert('A data final deve ser no máximo 1 ano após a data inicial.');
+            if (diffDays > 31 || diffDays < 0) {
+                alert('O intervalo máximo permitido é de 31 dias.');
                 $('.filter').attr('disabled', true);
-
                 return false;
             }
         } else {

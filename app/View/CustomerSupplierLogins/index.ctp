@@ -20,6 +20,9 @@
                 </div>
             </div>
             <div class="card-toolbar">
+                 <a type="button" class="btn btn-light me-3" href="<?php echo $this->base.'/suppliers/index'; ?>">
+                        Voltar
+                    </a>  
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">                    
                     <a type="button" class="btn btn-primary me-3" href="<?php echo $url_novo;?>">Novo</a>
                 </div>

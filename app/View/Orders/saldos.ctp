@@ -134,6 +134,7 @@
                                     <option value="4" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 4 ? "selected" : "") : "") ?> >Saldo</option>
                                     <option value="5" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 5 ? "selected" : "") : "") ?> >Bolsa de Crédito</option>
                                     <option value="6" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 6 ? "selected" : "") : "") ?> >Somente Debita</option>
+                                    <option value="7" <?php echo (isset($_GET['t']) ? ($_GET['t'] == 7 ? "selected" : "") : "") ?> >Receita Derivada - Somente Credita</option>
                                 </select>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -162,6 +163,8 @@
                     <th>Benefício</th>
                     <th>Pedido Operadora</th>
                     <th>Tipo</th>
+                    <th>Data da Alteração</th>
+                    <th>Alterado por</th>
                     <th>Observação</th>
                     <th class="w-150px min-w-150px rounded-end">Total</th>
                 </tr>
@@ -191,6 +194,8 @@
                                 $tipo = 'Bolsa de Crédito';
                             } elseif ($data[$i]["OrderBalance"]["tipo"] == '6') {
                                 $tipo = 'Somente Debita';
+                            } elseif ($data[$i]["OrderBalance"]["tipo"] == '7') {
+                                $tipo = 'Receita Derivada - Somente Credita';
                             }
                         ?>
                         <tr class="<?php echo $tr_class; ?>">
@@ -201,6 +206,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo !empty($data[$i]["OrderBalance"]["updated"]) ? date('d/m/Y H:i', strtotime($data[$i]["OrderBalance"]["updated"])) : '-'; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["user_updated_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderBalance"]["observacao"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderBalance"]["total"]; ?></td>
                         </tr>

@@ -79,15 +79,28 @@
                 }
             });
         });
-
-
-
         
         tipo_cliente();
 
         $("#tipo_pessoa").change(function(){
             tipo_cliente();
         });
+
+        $('#prazo').on('input', function () {
+            this.value = this.value.replace(/\D+/g, '');
+        });
+
+        $('#condicao_pagamento').on('change', togglePrazo);
+
+        togglePrazo();
+
+        function togglePrazo() {
+            if ($('#condicao_pagamento').val() == '2') {
+                $('.js-prazo').show();
+            } else {
+                $('.js-prazo').hide();
+            }
+        }
 
         <?php if ($form_action == 'edit'): ?>
             $(".situacao").on("change", function(){
@@ -159,7 +172,6 @@
             }
         }).trigger('focusout');
     });
-
     
     function tipo_cliente(){
         if($("#tipo_pessoa").val() == 1){
@@ -188,23 +200,22 @@
     }
 
     // Card de ajuda no topo direito (ícone de informação)
-const infoBtn = document.getElementById('info-btn');
-const infoBox = document.getElementById('info-box');
+    const infoBtn = document.getElementById('info-btn');
+    const infoBox = document.getElementById('info-box');
 
-if (infoBtn && infoBox) {
-  infoBtn.addEventListener('click', function () {
-    const isVisible = infoBox.style.display === 'block';
-    infoBox.style.display = isVisible ? 'none' : 'block';
-  });
+    if (infoBtn && infoBox) {
+        infoBtn.addEventListener('click', function () {
+            const isVisible = infoBox.style.display === 'block';
+            infoBox.style.display = isVisible ? 'none' : 'block';
+        });
 
-  // Fecha ao clicar fora
-  window.addEventListener('click', function (e) {
-    if (!infoBox.contains(e.target) && !infoBtn.contains(e.target)) {
-      infoBox.style.display = 'none';
+        // Fecha ao clicar fora
+        window.addEventListener('click', function (e) {
+            if (!infoBox.contains(e.target) && !infoBtn.contains(e.target)) {
+            infoBox.style.display = 'none';
+            }
+        });
     }
-  });
-}
-
 </script>
 
 <script id="template_cidade" type="text/x-handlebars-template">
@@ -546,13 +557,19 @@ if (infoBtn && infoBox) {
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" id="observacao">
                 <div class="mb-7 col-12">
                     <label class="fw-semibold fs-6 mb-2">Observações</label>
-                    <?php echo $this->Form->input('observacao', array("placeholder" => "Observações", "id" => "summernote" , "class" => "form-control mb-3 mb-lg-0"));  ?>
+                    <?php
+                        echo $this->Form->input('observacao', [
+                            'type' => 'textarea',
+                            'id' => 'summernote',
+                            'class' => 'form-control mb-3 mb-lg-0',
+                            'placeholder' => 'Observações'
+                        ]);
+                    ?>
                 </div>
             </div>
-
 
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">

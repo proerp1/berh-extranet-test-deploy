@@ -13,6 +13,12 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+                    <a href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
+                        <i class="fas fa-table"></i>
+                        Exportar Relatório Pedidos
+                    </a>
+
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -481,9 +487,16 @@
                 const curr_de = urlParams.get('de');
                 const curr_para = urlParams.get('para');
                 const curr_num = urlParams.get('num');
+                const curr_first_order = urlParams.get('first_order');
 
                 const statusElements = document.querySelectorAll('#kt-toolbar-filter #st option:checked');
                 const curr_st = Array.from(statusElements).map(el => el.value);
+
+                const statusProcElements = document.querySelectorAll('#kt-toolbar-filter #stp option:checked');
+                const curr_stp = Array.from(statusProcElements).map(el => el.value);
+
+                const btElements = document.querySelectorAll('#kt-toolbar-filter #bt option:checked');
+                const curr_bt = Array.from(btElements).map(el => el.value);
 
                 $.ajax({
                     type: 'POST',
@@ -497,10 +510,13 @@
                         curr_q,
                         curr_sup,
                         curr_st,
+                        curr_stp,
                         curr_c,
                         curr_de,
                         curr_para,
-                        curr_num
+                        curr_num,
+                        curr_bt,
+                        curr_first_order
                     },
                     dataType: 'json',
                     success: function(response) {

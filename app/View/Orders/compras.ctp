@@ -256,7 +256,6 @@
     </div>
 </div>
 
-
 <script>
     function trigger_change() {
         const queryString = window.location.search;
@@ -266,7 +265,9 @@
         $.ajax({
             url: '<?php echo $this->Html->url(array("controller" => "reports", "action" => "getSupplierAndCustomer")); ?>',
             type: 'POST',
-            data: { },
+            data: { 
+                order_id: <?php echo $id ?>
+            },
             success: function(data) {
 
                 var obj = JSON.parse(data);

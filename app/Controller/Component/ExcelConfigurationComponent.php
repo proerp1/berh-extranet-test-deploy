@@ -173,12 +173,40 @@ class ExcelConfigurationComponent extends Component {
 					'CustomerUserItinerary.*',
 					'OrderItem.*',
 					'Benefit.code',
+					'Benefit.name',
 					'BenefitType.name',
 					'Supplier.id',
 					'EconomicGroups.razao_social',
 					'EconomicGroups.document',
 					'Supplier.nome_fantasia',
 					'Customer.codigo_associado',
+
+					'CustomerPosition.name',
+					'SalaryRange.range',
+					'MaritalStatus.status',
+
+					'Order.id',
+					'Order.credit_release_date',
+					'Order.order_period_from',
+					'Order.order_period_to',
+					'Order.created',
+					'Order.transfer_fee',
+					'Order.is_partial',
+                    'Order.primeiro_pedido',
+                    'Order.pedido_complementar',
+					'Order.updated_ge',
+					'Order.observation_ge',
+					'Order.condicao_pagamento',
+
+					'OrderStatus.name',
+
+					'UpdatedGe.name',
+
+                    'Customer.flag_gestao_economico',
+                    'Customer.porcentagem_margem_seguranca',
+                    'Customer.qtde_minina_diaria',
+                    'Customer.tipo_ge',
+
 					'MAX(CustomerUserAddress.zip_code) as cep',
 					'MAX(CustomerUserAddress.address_line) as endereco',
 					'MAX(CustomerUserAddress.address_number) as numero',
@@ -193,10 +221,9 @@ class ExcelConfigurationComponent extends Component {
 					'MAX(CustomerAddress.neighborhood) as bairro_empresa',
 					'MAX(CustomerAddress.city) as cidade_empresa',
 					'MAX(CustomerAddress.state) as estado_empresa',
-
-					'MAX(CustomerUserBankAccount.account_type_id) as tipo_conta',
 					'MAX(BankCode.name) as nome_banco',
 					'MAX(BankCode.code) as codigo_banco',
+					'MAX(CustomerUserBankAccount.account_type_id) as tipo_conta',
 					'MAX(CustomerUserBankAccount.pix_type) as pix_type',
 					'MAX(CustomerUserBankAccount.pix_id) as pix_id',
 					'MAX(CustomerUserBankAccount.acc_number) as numero_conta',
@@ -204,34 +231,12 @@ class ExcelConfigurationComponent extends Component {
 					'MAX(CustomerUserBankAccount.branch_number) as numero_agencia',
 					'MAX(CustomerUserBankAccount.branch_digit) as digito_agencia',
 
-					'CustomerPosition.name',
-					'SalaryRange.range',
-					'MaritalStatus.status',
-
-					'Order.id',
-					'Order.credit_release_date',
-					'Order.order_period_from',
-					'Order.order_period_to',
-					'Order.created',
-					'Order.transfer_fee',
-					'Order.is_partial',
-
-					'OrderStatus.name',
-                    'Customer.flag_gestao_economico',
-                    'Customer.porcentagem_margem_seguranca',
-                    'Customer.qtde_minina_diaria',
-                    'Customer.tipo_ge',
                     '(SELECT COUNT(1) 
                         FROM orders o
                             INNER JOIN order_items i ON i.order_id = o.id
                         WHERE i.customer_user_id = OrderItem.customer_user_id
                                 AND o.id != Order.id
                     ) AS qtde_pedido',
-                    'Order.primeiro_pedido',
-                    'Order.pedido_complementar',
-					'Order.updated_ge',
-					'Order.observation_ge',
-					'UpdatedGe.name',
 				],
 				'joins' => [
 					[

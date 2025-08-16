@@ -293,7 +293,7 @@
                             </div>
 
                             <div class="col-12 col-md-6 mb-5">
-                                <label class="form-label">Observação da Nota Fiscal</label>
+                                <label class="form-label">Complemento da Nota Fiscal</label>
                                 <textarea 
                                     name="data[Order][nfse_observation]" 
                                     class="form-control auto-expand" 
@@ -368,6 +368,12 @@
                                             <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
                                                 <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
                                                     <i class="fas fa-arrow-right"></i> Pagamento Confirmado
+                                                </a>
+                                            <?php } ?>
+
+                                               <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84 ) && $user['Group']['id'] == 1) { ?>
+                                                <a href="#" class="btn btn-sm btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_cancelar_pedido">
+                                                    <i class="fas fa-arrow-right"></i> Cancelar Pedido
                                                 </a>
                                             <?php } ?>
 
@@ -735,6 +741,7 @@
                         </th>
                         <th>Beneficiário</th>
                         <th>Benefício</th>
+                        <th>Tipo Benefício</th>
                         <th width="90px">Dias Úteis</th>
                         <!--<th width="120px">Desconto</th>-->
                         <th width="120px">Quantidade por dia</th>
@@ -761,7 +768,7 @@
                 <tbody>
                     <tr>
                         <td>Total</td>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                         <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                         <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
@@ -770,7 +777,7 @@
                         <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                         <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                         <td class="repasse_compra_sum">R$<?php echo number_format(($order["Order"]["transfer_fee_not_formated"] - $order["Order"]["saldo_transfer_fee_not_formated"]), 2, ',', '.'); ?></td>
-                        <td colspan="5"></td>
+                        <td colspan="6"></td>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <td>&nbsp;</td>
                         <?php } ?>
@@ -793,6 +800,9 @@
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php echo h($items[$i]['BenefitType']['name'] ?? ''); ?>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <?php if ($order['Order']['status_id'] == 83) { ?>
                                         <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
@@ -837,7 +847,7 @@
                         <?php } ?>
                         <tr>
                             <td>Total</td>
-                            <td colspan="5"></td>
+                            <td colspan="6"></td>
                             <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
                             <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
                             <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
@@ -846,7 +856,7 @@
                             <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
                             <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
                             <td class="repasse_compra_sum">R$<?php echo number_format(($order["Order"]["transfer_fee_not_formated"] - $order["Order"]["saldo_transfer_fee_not_formated"]), 2, ',', '.'); ?></td>
-                            <td colspan="5"></td>
+                            <td colspan="6"></td>
                             <?php if ($order['Order']['status_id'] == 83) { ?>
                                 <td>&nbsp;</td>
                             <?php } ?>
@@ -1138,6 +1148,33 @@
         </div>
     </div>
 </div>
+<?php
+$statusCancelado = 94; // ID do status "Cancelado"
+?>
+<div class="modal fade" id="modal_cancelar_pedido" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cancelar Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Deseja realmente cancelar o pedido <strong>#<?php echo h($order['Order']['id']); ?></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+        <a href="<?php echo $this->Html->url([
+            'controller' => 'orders',
+            'action' => 'change_status',
+            $order['Order']['id'],
+            $statusCancelado
+        ]); ?>" class="btn btn-danger">Sim, cancelar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
 <?php echo $this->Html->script('itinerary'); ?>
@@ -1159,16 +1196,6 @@
         $('#benefit_id').select2({
             dropdownParent: $('#modal_add_itinerario')
         });
-
-        $("#js-form-submit.order-form").submit(function (event) {
-            const gera_nfse = $('[name="data[Order][gera_nfse]"]:checked').val();
-            const nfse_obs = $('[name="data[Order][nfse_observation]"]').val().trim();
-
-            if (gera_nfse === '0' && nfse_obs === '') {
-                event.preventDefault();
-                alert('Preencha o campo "Observações da Nota fiscal" para atualizar o pedido.')
-            }
-        })
 
         $('.working_days_input').on('change', function() {
             const newValue = $(this).val();

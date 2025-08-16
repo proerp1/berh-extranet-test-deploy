@@ -213,53 +213,49 @@ class ExcelTemplate
         }
     }
 
-      public function getNiboContasReceber($objPHPExcel, $dados)
-    {
+public function getNiboContasReceber($objPHPExcel, $dados)
+{
+    $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A1', "Tipo de transação")
+        ->setCellValue('B1', "Nome do contato")
+        ->setCellValue('C1', "Descrição")        
+        ->setCellValue('D1', "Categoria")
+        ->setCellValue('E1', "Valor")
+        ->setCellValue('F1', "Vencimento")
+        ->setCellValue('G1', "Previsto para")
+        ->setCellValue('H1', "Competência")
+        ->setCellValue('I1', "Centro de custo")
+        ->setCellValue('J1', "Favorito")
+        ->setCellValue('K1', "Tipo de contato")
+        ->setCellValue('L1', "Referência")
+        ->setCellValue('M1', "Conta")
+        ->setCellValue('N1', "Data pag/rec/transferência")
+        ->setCellValue('O1', "Anotação");
 
+    $activeWorksheet = $objPHPExcel->getActiveSheet();
+    $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
+    $indx = 1;
+    for ($i = 0; $i < count($dados); $i++) {
+        $indx++;
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', "Tipo Transação")
-            ->setCellValue('B1', "Nome do contato ")
-            ->setCellValue('C1', "Descrição")        
-            ->setCellValue('D1', "Categoria")
-            ->setCellValue('E1', "Valor")
-            ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "previsto")
-            ->setCellValue('H1', "competência")
-            ->setCellValue('I1', "centro de custo ")
-            ->setCellValue('J1', "favorito")
-            ->setCellValue('K1', "tipo de contato")
-            ->setCellValue('L1', "referencia")
-            ->setCellValue('M1', "conta")
-            ->setCellValue('N1', "data pagamento ")
-            ->setCellValue('O1', "anotações");
-
-
-
-        $indx = 1;
-        for ($i = 0; $i < count($dados); $i++) {
-
-            $indx++;
-            $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue('A' . $indx, 'Lançamento')
-                ->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
-                ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
-                ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
-                ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total'])
-                ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
-                ->setCellValue('G' . $indx, $dados[$i]['Income']['vencimento'])
-                ->setCellValue('H' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['Income']['created_nao_formatado'])))
-                ->setCellValue('I' . $indx, $dados[$i]['CostCenter']['name'])
-                ->setCellValue('J' . $indx, $dados[$i]['CostCenter']['name'])
-                ->setCellValue('K' . $indx, ($dados[$i]["Customer"]["codigo_associado"] ?? '') . ' - ' . ($dados[$i]["Customer"]["nome_secundario"] ?? ''))
-                ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
-                ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
-                ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
-                ->setCellValue('O' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'");
-
-
-
-        }
+            ->setCellValue('A' . $indx, 'Lançamento')
+            ->setCellValue('B' . $indx, $dados[$i]['Customer']['nome_secundario'])
+            ->setCellValue('C' . $indx, $dados[$i]['Income']['name'])
+            ->setCellValue('D' . $indx, $dados[$i]['Revenue']['name'])
+            ->setCellValue('E' . $indx, $dados[$i]['Income']['valor_total']) 
+            ->setCellValue('F' . $indx, $dados[$i]['Income']['vencimento'])
+            ->setCellValue('G' . $indx, $dados[$i][''][''])
+            ->setCellValue('H' . $indx, $dados[$i][''][''] ?? '')
+            ->setCellValue('I' . $indx, 'Cliente')
+            ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+            ->setCellValue('K' . $indx, 'Cliente')
+            ->setCellValue('L' . $indx, $dados[$i]['Order']['id'])
+            ->setCellValue('M' . $indx, $dados[$i]['BankAccount']['name'])
+            ->setCellValue('N' . $indx, $dados[$i]['Income']['data_pagamento'])
+            ->setCellValue('O' . $indx, "'" . $dados[$i]['Income']['doc_num'] . "'");
     }
+}
 
 
     public function getOutcome($objPHPExcel, $dados)
@@ -335,24 +331,27 @@ class ExcelTemplate
     {
 
         $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', "Tipo Transação")
-            ->setCellValue('B1', "Nome do contato ")
+            ->setCellValue('A1', "Tipo de transação")
+            ->setCellValue('B1', "Nome do contato")
             ->setCellValue('C1', "Descrição")        
             ->setCellValue('D1', "Categoria")
             ->setCellValue('E1', "Valor")
             ->setCellValue('F1', "Vencimento")
-            ->setCellValue('G1', "Previsto")
+            ->setCellValue('G1', "Previsto para")
             ->setCellValue('H1', "Competência")
-            ->setCellValue('I1', "Centro de custo ")
+            ->setCellValue('I1', "Centro de custo")
             ->setCellValue('J1', "Favorito")
             ->setCellValue('K1', "Tipo de contato")
-            ->setCellValue('L1', "Referencia")
+            ->setCellValue('L1', "Referência")
             ->setCellValue('M1', "Conta")
-            ->setCellValue('N1', "Data pagamento ")
-            ->setCellValue('O1', "Anotações");
+            ->setCellValue('N1', "Data pag/rec/transferência")
+            ->setCellValue('O1', "Anotação");
             
             
           
+    $activeWorksheet = $objPHPExcel->getActiveSheet();
+    $activeWorksheet->getStyle('E')->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+
 
             $indx = 1;
             for ($i = 0; $i < count($dados); $i++) {
@@ -362,13 +361,13 @@ class ExcelTemplate
                     ->setCellValue('B' . $indx, $dados[$i]["Supplier"]["nome_fantasia"] ?? '')
                     ->setCellValue('C' . $indx, $dados[$i]["Outcome"]["name"] ?? '')
                     ->setCellValue('D' . $indx, $dados[$i]["Expense"]["name"] ?? '')
-                    ->setCellValue('E' . $indx, $dados[$i]['Outcome']['valor_total'] ?? '')
+                    ->setCellValue('E' . $indx, '-' . ($dados[$i]['Outcome']['valor_total'] ?? ''))
                     ->setCellValue('F' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
                     ->setCellValue('G' . $indx, $dados[$i]["Outcome"]["vencimento"] ?? '')
-                    ->setCellValue('H' . $indx, $dados[$i]["Outcome"]["created"] ?? '')
+                    ->setCellValue('H' . $indx, $dados[$i][''][''] ?? '')
                     ->setCellValue('I' . $indx, ($dados[$i]["CostCenter"]["name"] ?? ''))
-                    ->setCellValue('J' . $indx, $dados[$i]["CostCenter"]["name"] ?? '')
-                    ->setCellValue('K' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                    ->setCellValue('J' . $indx, ($dados[$i]["Outcome"]["supplier_id"] ?? '') . ' - ' . ($dados[$i]["Supplier"]["nome_fantasia"] ?? ''))
+                    ->setCellValue('K' . $indx, 'Fornecedor')
                     ->setCellValue('L' . $indx, $dados[$i]["Outcome"]["doc_num"] ?? '')
                     ->setCellValue('M' . $indx, $dados[$i]["BankAccount"]["name"] ?? '')
                     ->setCellValue('N' . $indx, $dados[$i]['Outcome']['data_pagamento'] ?? '')
@@ -725,6 +724,12 @@ class ExcelTemplate
             if (empty($porcentagem_margem_seguranca)) {
                 $porcentagem_margem_seguranca = "0";
             }
+                                
+            if ($dado['Customer']['condicao_pagamento'] == 1) {
+                $condicao_pagamento = "Pré pago";
+            } else {
+                $condicao_pagamento = "Faturado";
+            }            
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['codigo_associado']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
@@ -788,51 +793,86 @@ class ExcelTemplate
         }
     }
 
-public function getFaq($objPHPExcel, $dados)
-{
-    $col = 'A';
-
-    // Cabeçalhos
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pergunta"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Resposta"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Categoria"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Sistema Destino"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedores"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Criação"); $col++;
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Última Modificação");
-
-    foreach ($dados as $key => $dado) {
+    public function getFaq($objPHPExcel, $dados)
+    {
         $col = 'A';
 
-        $faq = $dado['Faq'];
-        $categoria = $dado['CategoriaFaq']['nome'] ?? '';
-        $sistema = $faq['sistema_destino'];
+        // Cabeçalhos (ordem fixa)
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Fornecedor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Criação"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Última Modificação"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID FAQs"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pergunta"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Resposta"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Categoria"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Sistema Destino");
 
-        $fornecedores = [];
+        $linha = 2;
 
-        if (!empty($dado['FaqRelacionamento'])) {
-            foreach ($dado['FaqRelacionamento'] as $rel) {
-                if ((int)$rel['supplier_id'] === 0) {
-                    $fornecedores[] = 'Todos os fornecedores';
-                } elseif (!empty($rel['Supplier']['nome_fantasia'])) {
-                    $fornecedores[] = $rel['Supplier']['nome_fantasia'];
+        foreach ($dados as $dado) {
+            $faq       = $dado['Faq'];
+            $categoria = $dado['CategoriaFaq']['nome'] ?? '';
+            $sistema   = $faq['sistema_destino'];
+            $created   = date('d/m/Y H:i', strtotime($faq['created']));
+            $modified  = date('d/m/Y H:i', strtotime($faq['modified']));
+            $pergunta  = $faq['pergunta'];
+            $resposta  = strip_tags($faq['resposta']);
+            $faqId     = $faq['id'];
+
+            $relacionamentos = $dado['FaqRelacionamento'] ?? [];
+            if (empty($relacionamentos)) {
+                continue;
+            }
+
+            $temTodos = false;
+            foreach ($relacionamentos as $rel) {
+                if ((int)($rel['supplier_id'] ?? 0) === 0) {
+                    $temTodos = true;
+                    break;
+                }
+            }
+
+            if ($temTodos) {
+                // Única linha indicando "Todos os fornecedores" com ID Fornecedor em branco
+                $col = 'A';
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, ''); $col++;                  // ID Fornecedor
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, 'Todos os fornecedores'); $col++; // Fornecedor
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $created); $col++;            // Data de Criação
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $modified); $col++;           // Última Modificação
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $faqId); $col++;              // ID FAQs
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $pergunta); $col++;           // Pergunta
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $resposta); $col++;           // Resposta
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $categoria); $col++;          // Categoria
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $sistema);                    // Sistema Destino
+                $linha++;
+            } else {
+                // Uma linha por fornecedor específico
+                foreach ($relacionamentos as $rel) {
+                    $supplierId = $rel['supplier_id'] ?? null;
+                    $fornecedor = $rel['Supplier']['nome_fantasia'] ?? '';
+
+                    if (empty($supplierId) || empty($fornecedor)) {
+                        continue;
+                    }
+
+                    $col = 'A';
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $supplierId); $col++;     // ID Fornecedor
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $fornecedor); $col++;     // Fornecedor
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $created); $col++;        // Data de Criação
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $modified); $col++;       // Última Modificação
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $faqId); $col++;          // ID FAQs
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $pergunta); $col++;       // Pergunta
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $resposta); $col++;       // Resposta
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $categoria); $col++;      // Categoria
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$linha, $sistema);                // Sistema Destino
+                    $linha++;
                 }
             }
         }
-
-        $fornecedoresTexto = implode(', ', $fornecedores);
-
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['id']); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $faq['pergunta']); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), strip_tags($faq['resposta'])); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $categoria); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $sistema); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $fornecedoresTexto); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['created']))); $col++;
-        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), date('d/m/Y H:i', strtotime($faq['modified'])));
     }
-}
+
+
 
 
     public function getFornecedoresRelatorio($objPHPExcel, $dados_sup, $dados_log)
@@ -1043,6 +1083,13 @@ public function getFaq($objPHPExcel, $dados)
 
             $vl_economia = ($vl_economia - $fee_economia);
             $total_economia = ($vl_economia + $fee_economia);
+            
+            $v_cond_pagamento = "";
+            if ($dado['Order']['condicao_pagamento'] == 1) {
+                $v_cond_pagamento = "Pré pago";
+            } elseif ($dado['Order']['condicao_pagamento'] == 2) {
+                $v_cond_pagamento = "Faturado";
+            }
         
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
@@ -1110,6 +1157,7 @@ public function getFaq($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matrícula operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Beneficio"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeiro Pedido"); $col++;
 
 
 
@@ -1147,6 +1195,8 @@ public function getFaq($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $valor);
             $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["BenefitType"]["name"] ); $col++;
+            $primeiro_pedido = $dado["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $primeiro_pedido); $col++;
 
 
         }
@@ -2159,6 +2209,7 @@ public function getFaq($objPHPExcel, $dados)
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração");$col++;
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
         $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Descrição Beneficio");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2174,7 +2225,7 @@ public function getFaq($objPHPExcel, $dados)
                 $tipo_ge = 'GE garantido';
             }
 
-      $tipo_pedido = "";
+            $tipo_pedido = "";
             if ($dados[$i]['Order']['is_partial'] == '1') {
                 $tipo_pedido = 'Automático';
             } elseif ($dados[$i]['Order']['is_partial'] == '2') {
@@ -2184,6 +2235,13 @@ public function getFaq($objPHPExcel, $dados)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
+            }
+
+            $v_cond_pagamento = "";
+            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
+                $v_cond_pagamento = "Pré pago";
+            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
+                $v_cond_pagamento = "Faturado";
             }
 
             $porcentagem_margem_seguranca = $dados[$i]['Customer']['porcentagem_margem_seguranca'];
@@ -2273,7 +2331,7 @@ public function getFaq($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Customer']['qtde_minina_diaria'] == 2 ? 'Sim' : 'Não');$col++;
             $activeWorksheet->setCellValue($col . $indx, $tipo_ge);$col++;
             $activeWorksheet->setCellValue($col . $indx, number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'));$col++;
-            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']["primeiro_pedido"] == "N" ? "Não" : "Sim");$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['saldo_transfer_fee']);$col++;
             $activeWorksheet->setCellValue($col . $indx, number_format($dados[$i]['OrderItem']['transfer_fee_not_formated'] - $dados[$i]['Order']['saldo_transfer_fee_not_formated'], 2, ',', '.'));$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['status_processamento']);$col++;
@@ -2285,7 +2343,7 @@ public function getFaq($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['UpdatedGe']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
-
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['name']);$col++;
         }
     }
 
@@ -2324,9 +2382,9 @@ public function getFaq($objPHPExcel, $dados)
         ->setCellValue('AB1', "Status Processamento")
         ->setCellValue('AC1', "Motivo Processamento")
         ->setCellValue('AD1', "Tipo Pedido")
-        ->setCellValue('AE1', "Tipo de Benefício / Serviço");
+        ->setCellValue('AE1', "Tipo de Benefício / Serviço")
+        ->setCellValue('AF1', "Primeiro Pedido");
 
-        
         $indx = 1;
         $total = 0;
         for ($i = 0; $i < count($dados); $i++) {
@@ -2343,6 +2401,13 @@ public function getFaq($objPHPExcel, $dados)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
+            }
+
+            $v_cond_pagamento = "";
+            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
+                $v_cond_pagamento = "Pré pago";
+            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
+                $v_cond_pagamento = "Faturado";
             }
 
             $activeWorksheet
@@ -2376,18 +2441,16 @@ public function getFaq($objPHPExcel, $dados)
                 ->setCellValue('AB'. $indx, $dados[$i]['OrderItem']['status_processamento'])
                 ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
                 ->setCellValue('AD' . $indx, $tipo_pedido)
-                ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name']);
+                ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
+                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');
         }
     }
 
-    public function getBeneficiario($spreadsheet, $dados)
+public function getBeneficiario($spreadsheet, $dados)
 {
-   
-
     $activeWorksheet = $spreadsheet->getActiveSheet();
 
     $headers = [
-       
         'A1' => "Status(beneficiário)",
         'B1' => "Nome(beneficiário)",
         'C1' => "Matricula(beneficiário)",
@@ -2417,6 +2480,7 @@ public function getFaq($objPHPExcel, $dados)
         'AA1' => "Quantidade(Benefício)",
         'AB1' => "Valor Unitario(Benefício)",
         'AC1' => "Valor por dia(Benefício)",
+        'AD1' => "Endereço de entrega",
     ];
 
     foreach ($headers as $cell => $text) {
@@ -2424,7 +2488,7 @@ public function getFaq($objPHPExcel, $dados)
     }
 
     $indx = 1;
-    $chunkSize = 100; // Tamanho do lote
+    $chunkSize = 100;
     $totalRows = count($dados);
 
     for ($i = 0; $i < $totalRows; $i += $chunkSize) {
@@ -2434,8 +2498,8 @@ public function getFaq($objPHPExcel, $dados)
             $indx++;
 
             $activeWorksheet
-            ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
-            ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
+                ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
+                ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
                 ->setCellValue('C' . $indx, $data['CustomerUser']['matricula'] ?? '')
                 ->setCellValue('D' . $indx, $data['CustomerUser']['email'] ?? '')
                 ->setCellValue('E' . $indx, $data['CustomerUser']['tel'] ?? '')
@@ -2453,7 +2517,7 @@ public function getFaq($objPHPExcel, $dados)
                 ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
                 ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
                 ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
-               ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
+                ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
 
             if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
@@ -2473,9 +2537,25 @@ public function getFaq($objPHPExcel, $dados)
                         ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
                 }
             }
+
+           
+            if (!empty($data['CustomerUserAddress']) && is_array($data['CustomerUserAddress'])) {
+                
+                $activeWorksheet->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
+            } elseif (!empty($data['CustomerUserAddresses']) && is_array($data['CustomerUserAddresses'])) {
+                
+                foreach ($data['CustomerUserAddresses'] as $address) {
+                    $activeWorksheet->setCellValue('AD' . $indx, $address['address_line'] ?? '');
+                    
+                }
+            } else {
+              
+                $activeWorksheet->setCellValue('AD' . $indx, '');
+            }
         }
     }
 }
+
 
     
 
@@ -2700,6 +2780,8 @@ public function getFaq($objPHPExcel, $dados)
                 $tipo = 'Bolsa de Crédito';
             } elseif ($dado["OrderBalance"]["tipo"] == '6') {
                 $tipo = 'Somente Debita';
+            } elseif ($dado["OrderBalance"]["tipo"] == '7') {
+                $tipo = 'Receita Derivada - Somente Credita';
             }
 
             $col = 'A';

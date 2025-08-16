@@ -111,33 +111,64 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 w-150px min-w-150px rounded-start">Código</th>
+                        <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                        <th>Código</th>
                         <th>Nome fantasia</th>
                         <th>CNPJ</th>
+                        <th>Responsável</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
                         <th>Cidade</th>
                         <th>UF</th>
                         <th>Revenda</th>
                         <th>Executivo</th>
-                        <th>Status</th>
+                        <th>Emite Nf</th>
+                        <th>Elegivel GE</th>
+                        <th>Observação</th>
+
                         <th class="w-150px min-w-150px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
+                            <?php
+                                $mapaNotaFiscal = [
+                                    'N' => 'Não',
+                                    'S' => 'Automático',
+                                    'A' => 'Antecipada',
+                                    'M' => 'Manual'
+                                ];
+
+                                $valorEmitirNota = $data[$i]["Customer"]["emitir_nota_fiscal"];
+                                $descricaoNota = $mapaNotaFiscal[$valorEmitirNota] ?? '-';
+                                
+                                if ($data[$i]["Customer"]["condicao_pagamento"] == 1) {
+                                    $condicao_pagamento = "Pré pago";
+                                } else {
+                                    $condicao_pagamento = "Faturado";
+                                }
+                            ?>
                             <tr>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["codigo_associado"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_secundario"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["documento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["responsavel"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["telefone1"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["email"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Seller"]["name"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $descricaoNota; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["flag_gestao_economico"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php if (!empty($data[$i]["Customer"]["observacao"])): ?><a href="<?php echo $this->base; ?>/customers/edit/<?php echo $data[$i]["Customer"]["id"]; ?>#observacao" title="Ver observação"><i class="fas fa-sticky-note text-warning fs-5"></i></a><?php else: ?><i class="fas fa-minus text-muted fs-6"></i><?php endif; ?></td>
+
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base; ?>/customers/edit/<?php echo $data[$i]["Customer"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

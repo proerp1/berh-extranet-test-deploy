@@ -5,7 +5,22 @@ class ReportsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration', 'CustomReports', 'HtmltoPdf'];
-    public $uses = ['Income', 'Customer', 'CustomerUser', 'OrderItem', 'CostCenter', 'CustomerDepartment', 'Outcome', 'Order', 'Status', 'OrderBalanceFile', 'Log', 'OrderBalance', 'BenefitType'];
+    public $uses = [
+        'Income', 
+        'Customer', 
+        'CustomerUser', 
+        'OrderItem', 
+        'CostCenter', 
+        'CustomerDepartment', 
+        'Outcome', 
+        'Order', 
+        'Status', 
+        'OrderBalanceFile', 
+        'Log', 
+        'OrderBalance', 
+        'BenefitType', 
+        'LogOrderItemsProcessamento'
+    ];
 
     public function beforeFilter()
     {
@@ -180,19 +195,18 @@ class ReportsController extends AppController
     public function pedidos()
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
+
 	    ini_set('memory_limit', '-1');
-
-	    set_time_limit(90);
         ini_set('max_execution_time', -1); 
-
-        $paginationConfig = $this->CustomReports->configPagination('pedidos');
-        $this->Paginator->settings = $paginationConfig;
 
         $condition = $this->pedidosConditions();
 
-        if (isset($_GET['excel'])) {
-            $pag = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
-            $this->Paginator->settings = ['OrderItem' => $pag];
+        if (isset($_GET['exportar'])) {
+            $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
+            $this->Paginator->settings = ['OrderItem' => $paginationConfig];
+        } else {
+            $paginationConfig = $this->CustomReports->configPagination('pedidos');
+            $this->Paginator->settings = $paginationConfig;
         }
 
         if (isset($_GET['o'])) {
@@ -215,11 +229,12 @@ class ReportsController extends AppController
 
             $this->Paginator->settings['OrderItem']['order'] = $order . ' ' . $direction;
         }
+        
         $benefitTypes = $this->BenefitType->find('list', [
-    'fields' => ['id', 'name'],
-    'order' => ['name' => 'asc'],
-    'recursive' => -1
-]);
+            'fields' => ['id', 'name'],
+            'order' => ['name' => 'asc'],
+            'recursive' => -1
+        ]);
 
         $data = [];
         if (!empty($_GET)) {
@@ -228,7 +243,7 @@ class ReportsController extends AppController
 
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
 
-        if (isset($_GET['excel'])) {
+        if (isset($_GET['exportar'])) {
             $nome = 'relatorio_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $this->ExcelGenerator->gerarExcelOrders($nome, $data);
@@ -978,7 +993,6 @@ class ReportsController extends AppController
                         'BenefitType.id = Benefit.benefit_type_id'
                     ]
                 ],
-
                 [
                     'table' => 'suppliers',
                     'alias' => 'Supplier',
@@ -1079,8 +1093,6 @@ class ReportsController extends AppController
             $condition['and'][] = ['Benefit.benefit_type_id' => $_GET['bt']];
         }
 
-
-
         if (!empty($_GET['q'])) {
             $buscar = true;
 
@@ -1096,7 +1108,8 @@ class ReportsController extends AppController
 
             ]);
         }
-                if (isset($_GET['stp']) and $_GET['stp'] != '') {
+        
+        if (isset($_GET['stp']) and $_GET['stp'] != '') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
@@ -1110,6 +1123,75 @@ class ReportsController extends AppController
             } elseif ($_GET['first_order'] == 'nao') {
                 $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
             }
+        }
+
+        if (isset($_GET['excel_pedidos'])) {
+            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->Order->find('all', [
+                'contain' => [
+                    'Status',
+                    'Customer',
+                    'CustomerCreator',
+                    'EconomicGroup',
+                    'Income.data_pagamento',
+                    'UpdatedGe',
+                ],
+                'joins' => [
+                    [
+                        'table' => 'order_items',
+                        'alias' => 'OrderItem',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Order.id = OrderItem.order_id'
+                        ]
+                    ],
+                ],
+                'group' => ['Order.id'],
+                'conditions' => $condition,
+            ]);
+
+            foreach ($data as $k => $pedido) {
+                $suppliersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'joins' => [
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ],
+                    'group' => ['Supplier.id'],
+                    'fields' => ['Supplier.id']
+                ]);
+
+                $usersCount = $this->OrderItem->find('count', [
+                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
+                    'group' => ['OrderItem.customer_user_id'],
+                    'fields' => ['OrderItem.customer_user_id']
+                ]);
+
+                $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
+
+                $data[$k]['Order']['suppliersCount'] = $suppliersCount;
+                $data[$k]['Order']['usersCount'] = $usersCount;
+                $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
+            }
+
+            $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
+
+            $this->redirect("/files/excel/" . $nome);
         }
 
         if (isset($_GET['excel'])) {
@@ -1133,7 +1215,6 @@ class ReportsController extends AppController
                     'BenefitType.name',
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
-
                 ],
                 'joins' => [
                     [
@@ -1248,6 +1329,11 @@ class ReportsController extends AppController
         $this->autoRender = false;
 
         $cond = [];
+        $order_id = isset($this->request->data['order_id']) ? (int)$this->request->data['order_id'] : null;
+
+        if ($order_id) {
+            $cond = ['OrderItem.order_id' => $order_id];
+        }
 
         $suppliers = $this->OrderItem->find('all',
             [
@@ -1349,25 +1435,30 @@ class ReportsController extends AppController
 
         $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
-        $de     = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
-        $para   = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
-        $num    = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
-        $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
-        $st     = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
-        $c      = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
-        $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-
-        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
-        
         $buscar = false;
         $de = null;
         $para = null;
+
+        $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
+        $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
+        $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
+        $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $st             = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
+        $stp            = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
+        $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
+        $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
+        $bt             = isset($this->request->data['curr_bt']) ? $this->request->data['curr_bt'] : false;
+        $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
+
+        $condition      = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
+        
         if (isset($de) and $de != '') {
             $buscar = true;
 
             $deRaw = $de;
             $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
             $de = $dateObjectDe->format('Y-m-d');
+
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
         }
 
@@ -1377,6 +1468,7 @@ class ReportsController extends AppController
             $paraRaw = $para;
             $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
             $para = $dateObjectPara->format('Y-m-d');
+            
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
@@ -1411,10 +1503,32 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
         }
 
+        if (isset($stp) and $stp != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
+        }
+
         if (isset($c) and $c != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        }
+
+        if (isset($bt) and $bt != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Benefit.benefit_type_id' => $bt]);
+        }
+        
+        if (isset($first_order) and $first_order != '') {
+            $buscar = true;
+            
+            if ($first_order == 'sim') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 1]);
+            } elseif ($first_order == 'nao') {
+                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
+            }
         }
 
         if (!empty($q)) {
@@ -1429,7 +1543,6 @@ class ReportsController extends AppController
                 'Order.id LIKE' => '%' . $q . '%',
                 'Customer.id LIKE' => '%' . $q . '%',
                 'Customer.codigo_associado LIKE' => "%" . $q . "%",
-
             ]);
         }
 
@@ -1474,6 +1587,8 @@ class ReportsController extends AppController
 
         foreach ($items as $item) {
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
+
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
 
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',

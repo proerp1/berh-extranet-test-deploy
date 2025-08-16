@@ -56,13 +56,25 @@
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t[]" id="t" multiple>
                                     <option value=''></option>
                                     <?php
-                                        $statusOptions = [ 83 => 'Inicio',84 => 'Aguardando Pagamento',85 => 'Pagamento Confirmado',86 => 'Em Processamento', 104 => 'Aguardando Liberação de Crédito',87 => 'Finalizado',18 => 'Cancelado'];
+                                        $statusOptions = [83 => "Início", 84 => "Aguardando Pagamento", 85 => "Pagamento Confirmado", 86 => "Em Processamento", 104 => "Aguardando Liberação de Crédito", 87 => "Finalizado", 94 => "Cancelado"];
 
                                         foreach ($statusOptions as $statusId => $statusName) {
                                             $selected = ($_GET["t"] ?? '') && in_array($statusId, $_GET["t"]) ? 'selected' : '';
                                             echo '<option value="'.$statusId.'" '.$selected.'>'.$statusName.'</option>';
                                         }
                                     ?>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Cliente:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cliente[]" id="cliente" multiple="multiple">
+                                    <option value=""></option>
+                                    <?php foreach ($customers as $id => $nome): ?>
+                                        <option value="<?= $id ?>" 
+                                            <?= isset($_GET['cliente']) && in_array($id, (array)$_GET['cliente']) ? 'selected' : '' ?>>
+                                            <?= h($nome) ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                            

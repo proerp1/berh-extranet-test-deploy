@@ -313,7 +313,8 @@ class OrderItem extends AppModel {
                 'EconomicGroups.document',
                 'EconomicGroups.razao_social',
                 'CustomerDepartments.*',
-                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs'
+                'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs',
+                'BenefitType.name'
             ],
             'conditions' => $conditions,
             'joins' => [
@@ -374,6 +375,14 @@ class OrderItem extends AppModel {
                     ]
                 ],
                 [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
+                ],
+                [
                     'table' => 'order_balances',
                     'alias' => 'OrderBalance',
                     'type' => 'LEFT',
@@ -429,7 +438,9 @@ class OrderItem extends AppModel {
             'CustomerUser.cpf' => $cpf,
             'Benefit.supplier_id' => $supplierId,
             'Order.status_id NOT IN(83,94)',
-            'Order.is_partial <>' => 3
+            'Order.is_partial <>' => 3,
+            'OrderItem.data_cancel' => '1901-01-01 00:00:00',
+            'Order.data_cancel' => '1901-01-01 00:00:00',
         ];
 
         if ($currentOrderItemId) {

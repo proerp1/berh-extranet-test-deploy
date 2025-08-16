@@ -15,6 +15,7 @@ $(document).ready(function() {
     $('[data-kt-customer-table-filter="reset"]').on('click', function() {
         $("#t").val(null).trigger('change');
         $("#f").val(null).trigger('change');
+        $("#cliente").val(null).trigger('change');
         $("#de").val(null);
         $("#ate").val(null);
         $("#de_pagamento").val(null);
@@ -130,15 +131,14 @@ $(document).ready(function() {
                 event.preventDefault();
                 return; // Evita a execução adicional
             }
-            
-            /*
+                        
             const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
             
             if (dueDateToDate >= maxInvalidDate) {
                 $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
                 event.preventDefault();
                 return;
-            }*/
+            }
         }
 
         // Se todas as validações passarem, esconde a mensagem
@@ -258,6 +258,16 @@ $(document).ready(function() {
                 } else {
                     $('#gera_nfse_sim').click();
                 }
+
+                if (data['Customer']['condicao_pagamento'] == 2) {
+                    $('#prazo').val(data['Customer']['prazo']);
+                } else {
+                    $('#prazo').val('');
+                }
+
+                $('#condicao_pagamento').val(data['Customer']['condicao_pagamento']);
+
+                togglePrazo();
             }
         });
     });
@@ -386,6 +396,22 @@ $(document).ready(function() {
         }
 
         return date;
+    }
+
+    $('#prazo').on('input', function () {
+        this.value = this.value.replace(/\D+/g, '');
+    });
+
+    $('#condicao_pagamento').on('change', togglePrazo);
+
+    togglePrazo();
+
+    function togglePrazo() {
+        if ($('#condicao_pagamento').val() == '2') {
+            $('.js-prazo').show();
+        } else {
+            $('.js-prazo').hide();
+        }
     }
 
 });

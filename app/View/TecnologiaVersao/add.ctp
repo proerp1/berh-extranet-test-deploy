@@ -34,10 +34,23 @@ echo $this->element("abas_tecnologia", ['id' => $tecnologia_id]);
                 </div>
             </div>
             <div class="row">
-                <div class="mb-7 col">
+                <div class="mb-7 col-3">
+                    <label class="fw-semibold fs-6 mb-2">Tamanho</label>
+                    <?php echo $this->Form->input('campo_tamanho', ["id" => "campo_tamanho", "placeholder" => "Tamanho", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+                <div class="mb-7 col-3">
+                    <label class="fw-semibold fs-6 mb-2">Formato</label>
+                    <?php echo $this->Form->input('campo_formato', ["id" => "campo_formato", "placeholder" => "Formato", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+                </div>
+                <div class="mb-7 col-4">
                     <label class="fw-semibold fs-6 mb-2">Campos Disponíveis</label>
                     <?php echo $this->Form->input('select_campo', ["id" => "select_campo", "placeholder" => "Nome", 'empty' => 'Selecione para adicionar ao campo ao lado', "class" => "form-control select2 mb-3 mb-lg-0", 'options' => $fields]);  ?>
                 </div>
+                <div class="mb-7 col-2">
+                    <button type="button" class="btn btn-info w-100 js-add-campo mt-8">Adicionar Campo</button>
+                </div>
+            </div>
+            <div class="row">
                 <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Campos</label>
                     <?php echo $this->Form->input('campos', ["id" => "campos", "placeholder" => "Campos", "class" => "form-control mb-3 mb-lg-0"]);  ?>
@@ -56,13 +69,20 @@ echo $this->element("abas_tecnologia", ['id' => $tecnologia_id]);
 
 <script>
     $(document).ready(function () {
-        $("#select_campo").on('change', function () {
-            const novo_campo = $(this).val();
+        $(".js-add-campo").on('click', function () {
+            const novo_campo = $('#select_campo').val();
+            const novo_campo_tamanho = $('#campo_tamanho').val();
+            const novo_campo_formato = $('#campo_formato').val();
+
+            if (!novo_campo) return
+
             let campos_val = $('#campos').val();
-            campos_val += `${novo_campo};`
+            campos_val += `${novo_campo}|${novo_campo_tamanho}|${novo_campo_formato};`
             $("#campos").val(campos_val);
 
-            $(this).val('');
+            $('#select_campo').val('');
+            $('#campo_tamanho').val('');
+            $('#campo_formato').val('');
         })
     })
 </script>

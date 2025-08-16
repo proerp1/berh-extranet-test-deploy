@@ -1,17 +1,18 @@
 <?php
+
+use League\Csv\Reader;
+
 class CustomerBenefitCodesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['CustomerBenefitCode', 'Customer'];
+    public $uses = ['CustomerBenefitCode', 'Customer', 'Benefit'];
 
-    public function beforeFilter()
-    {
+    public function beforeFilter() {
         parent::beforeFilter();
     }
 
-    public function index($id)
-    {
+    public function index($id) {
         $this->Permission->check(71, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
@@ -36,13 +37,14 @@ class CustomerBenefitCodesController extends AppController
 
         $data = $this->Paginator->paginate('CustomerBenefitCode', $condition);
 
+        $allIds = $this->CustomerBenefitCode->find('list', ['condition' => $condition, 'fields' => ['CustomerBenefitCode.id']]);
+
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Clientes' => ''];
         $this->set('url_novo', "/customer_benefit_codes/add/$id");
-        $this->set(compact('data', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('data', 'id', 'action', 'breadcrumb', 'allIds'));
     }
     
-    public function add($customer_id)
-    {
+    public function add($customer_id) {
         $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerBenefitCode->create();
@@ -61,14 +63,16 @@ class CustomerBenefitCodesController extends AppController
             }
         }
 
+        $this->Benefit->virtualFields = ['code_name' => "CONCAT(Benefit.code, ' - ', Benefit.name)"];
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.id', 'Benefit.code_name']]);
+
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Nova Exceção' => ''];
         $this->set("form_action", "add/$customer_id");
-        $this->set(compact('customer_id', 'action', 'breadcrumb'));
+        $this->set(compact('customer_id', 'action', 'breadcrumb', 'benefits'));
     }
 
-    public function edit($customer_id, $id = null)
-    {
+    public function edit($customer_id, $id = null) {
         $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->CustomerBenefitCode->id = $id;
 
@@ -87,16 +91,18 @@ class CustomerBenefitCodesController extends AppController
         $this->request->data = $this->CustomerBenefitCode->read();
         $this->CustomerBenefitCode->validationErrors = $temp_errors;
 
+        $this->Benefit->virtualFields = ['code_name' => "CONCAT(Benefit.code, ' - ', Benefit.name)"];
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.id', 'Benefit.code_name']]);
+
         $action = 'Benefício';
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Alterar Benefício' => ''];
         $this->set("form_action", "edit/$customer_id");
-        $this->set(compact('customer_id', 'id', 'action', 'breadcrumb'));
+        $this->set(compact('customer_id', 'id', 'action', 'breadcrumb', 'benefits'));
         
         $this->render("add");
     }
 
-    public function delete($customer_id, $id)
-    {
+    public function delete($customer_id, $id) {
         $this->Permission->check(71, 'excluir') ? '' : $this->redirect('/not_allowed');
         $this->CustomerBenefitCode->id = $id;
 
@@ -106,5 +112,63 @@ class CustomerBenefitCodesController extends AppController
             $this->Flash->set(__('O Benefício foi excluido com sucesso'), ['params' => ['class' => 'alert alert-success']]);
             $this->redirect(['action' => 'index/'.$customer_id]);
         }
+    }
+
+    public function delete_all($customer_id) {
+        CakeSession::read('Auth.User.group_id') == 1 ? '' : $this->redirect('/not_allowed');
+        if (!isset($_GET['ids']) || !$_GET['ids']) $this->redirect($this->referer());
+
+        $benefitIds = explode(',', $_GET['ids']);
+
+        foreach ($benefitIds as $benefitId) {
+            $this->CustomerBenefitCode->id = $benefitId;
+
+            $data = ['CustomerBenefitCode' => ['data_cancel' => date('Y-m-d H:i:s'), 'usuario_id_cancel' => CakeSession::read('Auth.User.id')]];
+            $this->CustomerBenefitCode->save($data);
+        }
+
+        $this->Flash->set(__('Benefícios excluidos com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+        $this->redirect(['action' => 'index/'.$customer_id]);
+    }
+
+    public function upload($customerId) {
+        $file = file_get_contents($this->request->data['file']['tmp_name'], FILE_IGNORE_NEW_LINES);
+        $csv = Reader::createFromString($file);
+        $csv->setDelimiter(';');
+
+        $numLines = substr_count($file, "\n");
+
+        if ($numLines < 1) {
+            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        }
+
+        $benefits = $this->Benefit->find('list', ['fields' => ['Benefit.code', 'Benefit.id']]);
+
+        $line = 0;
+        foreach ($csv->getRecords() as $row) {
+            if ($line == 0 || empty($row[0])) {
+                if ($line == 0) {
+                    $line++;
+                }
+                continue;
+            }
+
+            $benefitId = $benefits[$row[0]] ?? null;
+
+            $this->CustomerBenefitCode->create();
+            $this->CustomerBenefitCode->save([
+                'CustomerBenefitCode' => [
+                    'customer_id' => $customerId,
+                    'code_be' => $row[0],
+                    'benefit_id' => $benefitId,
+                    'code_customer' => $row[1],
+                ],
+            ]);
+
+            $line++;
+        }
+
+        $this->Flash->set(__('Códigos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        $this->redirect(['action' => 'index/' . $customerId]);
     }
 }

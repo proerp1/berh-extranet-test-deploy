@@ -37,8 +37,10 @@ class OrdersController extends AppController
         'OrderBalanceFile',
         'BankAccount',
         'OrderDiscount',
+        'LogOrderItemsProcessamento',
         'SupplierVolumeTier'
     ];
+    
     public $groupBenefitType = [
         -1 => [1, 2],
         4 => [4, 5],
@@ -112,6 +114,14 @@ class OrdersController extends AppController
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
+            $filtersFilled = true;
+        }
+
+        if (!empty($_GET['cliente'])) {
+            $condition['and'] = array_merge(
+                $condition['and'], 
+                ['Order.customer_id' => $_GET['cliente']]
+            );
             $filtersFilled = true;
         }
 
@@ -277,6 +287,16 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
+            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : null;
+            $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
+
+            if ($condicao_pagamento == 2) {
+                $order_status_id = 84;
+            } else {
+                $prazo = null;
+                $order_status_id = 83;
+            }
+
             if ($this->request->data['clone_order'] == 1) {
                 $this->cloneOrder();
             }
@@ -369,7 +389,7 @@ class OrdersController extends AppController
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
                 'order_period_from' => $period_from,
                 'order_period_to' => $period_to,
-                'status_id' => 83,
+                'status_id' => $order_status_id,
                 'is_partial' => $is_partial,
                 'pedido_complementar' => $pedido_complementar,
                 'credit_release_date' => $credit_release_date,
@@ -383,6 +403,8 @@ class OrdersController extends AppController
                 'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
                 'tipo_ge' => $customer['Customer']['tipo_ge'],
                 'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
+                'condicao_pagamento' => $condicao_pagamento,
+                'prazo' => $prazo,
             ];
 
             $this->Order->create();
@@ -736,7 +758,14 @@ class OrdersController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 100,
             'order' => ['CustomerUser.name' => 'asc'],
-            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*'],
+            'fields' => [
+                'OrderItem.*',
+                'CustomerUserItinerary.*',
+                'Benefit.*',
+                'BenefitType.name',  // <-- Puxar o nome do tipo
+                'Order.*',
+                'CustomerUser.*'
+            ],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -745,9 +774,18 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Benefit.id = CustomerUserItinerary.benefit_id'
                     ]
+                ],
+                [
+                    'table' => 'benefit_types',  // Nome da tabela
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
                 ]
             ]
         ]];
+
 
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
@@ -846,6 +884,13 @@ class OrdersController extends AppController
             $v_is_partial = "Emissão";
         }
 
+        $v_cond_pagamento = "";
+        if ($order['Order']['condicao_pagamento'] == 1) {
+            $v_cond_pagamento = "Pré pago";
+        } elseif ($order['Order']['condicao_pagamento'] == 2) {
+            $v_cond_pagamento = "Faturado";
+        }
+
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $this->Order->recursive = 0;
@@ -882,7 +927,7 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
         $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
 
         $this->render("add");
@@ -976,6 +1021,41 @@ class OrdersController extends AppController
 
         $this->redirect(['action' => 'edit/' . $id]);
     }
+
+    public function change_status($id = null, $status = null)
+{
+    $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+
+    $id = (int)$id;
+    $status = (int)$status;
+
+    if (!$id || !$status) {
+        $this->Flash->set(__('Parâmetros inválidos'), ['params' => ['class' => 'alert alert-danger']]);
+        return $this->redirect($this->referer());
+    }
+
+    
+    $this->Order->id = $id;
+
+    if (!$this->Order->exists()) {
+        $this->Flash->set(__('Pedido não encontrado'), ['params' => ['class' => 'alert alert-danger']]);
+        return $this->redirect($this->referer());
+    }
+
+    $old_status = $this->Order->read();
+
+    $data = ['Order' => ['status_id' => $status]];
+
+    if ($this->Order->save($data, ['validate' => false])) {
+        $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+    } else {
+        $this->Flash->set(__('Não foi possível alterar o status'), ['params' => ['class' => 'alert alert-danger']]);
+    }
+
+    $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+    return $this->redirect(['action' => 'index/?' . $qs]);
+}
+
 
     public function notificaNotaAntecipada($order)
     {
@@ -2047,22 +2127,12 @@ class OrdersController extends AppController
         $this->autoRender = false;
 
         $this->Order->recursive = -1;
-        $order = $this->Order->findById($id);
-
-        $this->Order->save([
-            'Order' => [
-                'id' => $id,
-                'status_id' => 85,
-                'user_updated_id' => CakeSession::read("Auth.User.id"),
-                'validation_date' => date('Y-m-d'),
-            ]
-        ]);
+        $this->Order->atualizarStatusPagamento($id);
 
         $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 
         $this->redirect(['action' => 'edit/' . $id]);
     }
-
 
     public function gerar_pagamento()
     {
@@ -2978,6 +3048,8 @@ class OrdersController extends AppController
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
 
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
+                        
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',
                 "new_value" => $statusProcess,
@@ -3091,12 +3163,13 @@ class OrdersController extends AppController
                         'Supplier.id = Benefit.supplier_id'
                     ]
                 ]
-
             ]
         ]);
 
         foreach ($items as $item) {
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
+
+            $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
 
             $dados_log = [
                 "old_value" => $orderItem['OrderItem']['status_processamento'] ? $orderItem['OrderItem']['status_processamento'] : ' ',
@@ -3450,21 +3523,19 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            if (!empty($existingItinerary) && $is_variable) {
-                // Set the existing itinerary as excluded
-                $this->CustomerUserItinerary->id = $existingItinerary['CustomerUserItinerary']['id'];
-                $this->CustomerUserItinerary->saveField('data_cancel', date('Y-m-d H:i:s'));
+            // Determine price based on is_variable flag
+            if ($is_variable) {
+                // Variable benefits use price from spreadsheet
+                $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
+            } else {
+                // Fixed benefits use default price from benefit table
+                $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
+                $unitPrice = $benefit['Benefit']['unit_price'];
             }
 
-            $unitPriceForm = $this->priceFormatBeforeSave($unitPrice);
-
             $idItinerary = 0;
-            if (empty($existingItinerary) || $is_variable) {
-
-                if (empty($existingItinerary) && !$is_variable) {
-                    $unitPriceForm = $benefit['Benefit']['unit_price_not_formated'];
-                    $unitPrice = $benefit['Benefit']['unit_price'];
-                }
+            if (empty($existingItinerary)) {
+                // Only create new itinerary if none exists
 
                 $this->CustomerUserItinerary->create();
                 $this->CustomerUserItinerary->save([

@@ -56,13 +56,7 @@ class UpdateBoletoStatusShell extends AppShell
                         ]);
 
                         if ($item['Income']['order_id'] != null) {
-                            $this->Order->id = $item['Income']['order_id'];
-                            $this->Order->save([
-                                'Order' => [
-                                    'status_id' => 85,
-                                    'payment_date' => $this->getNextWeekdayDate('Y-m-d'),
-                                ]
-                            ]);
+                            $this->Order->atualizarStatusPagamento($item['Income']['order_id']);
                         }
 
                         $this->out("Boleto {$item['CnabItem']['income_id']} {$dadoBoleto[0]['situacao_geral_boleto']}");

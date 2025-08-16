@@ -8,6 +8,7 @@ class CustomerBenefitCode extends AppModel
             'className' => 'User',
             'foreignKey' => 'user_creator_id',
         ],
+        'Benefit'
     ];
 
     public $validate = [
