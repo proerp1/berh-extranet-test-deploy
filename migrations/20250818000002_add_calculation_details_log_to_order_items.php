@@ -6,7 +6,7 @@ class AddCalculationDetailsLogToOrderItems extends AbstractMigration
 {
     public function up()
     {
-        $this->execute("ALTER TABLE order_items ADD COLUMN calculation_details_log JSON NULL");
+        $this->execute("ALTER TABLE order_items ADD COLUMN calculation_details_log TEXT NULL");
     }
 
     public function down()
