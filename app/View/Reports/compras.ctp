@@ -573,6 +573,7 @@
             const v_op_status = [
                 'CARTAO_NOVO',
                 'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                'CADASTRO_INCONSISTENTE',
                 'CREDITO_INCONSISTENTE',
                 'PAGAMENTO_REALIZADO'
             ];
