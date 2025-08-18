@@ -10,6 +10,12 @@ if (isset($id)) {
         <h3 class="card-title align-items-start flex-column">
             <span class="card-label fw-bolder fs-3 mb-1">Faixas de Volume - <?php echo h($supplier['Supplier']['nome_fantasia']); ?></span>
             <span class="text-muted mt-1 fw-bold fs-7">Modalidade de repasse por tabela</span>
+            <?php if (!empty($supplier['Supplier']['tipo_cobranca'])): ?>
+                <span class="badge badge-light-primary mt-2">
+                    <i class="fas fa-calculator me-1"></i>
+                    Tipo de Cobrança: <?php echo $supplier['Supplier']['tipo_cobranca'] == 'pedido' ? 'Por Pedido' : 'Por CPF'; ?>
+                </span>
+            <?php endif; ?>
         </h3>
         <div class="card-toolbar">
             <a href="<?php echo $this->base . '/suppliers/add_volume_tier/' . $id; ?>" class="btn btn-primary">

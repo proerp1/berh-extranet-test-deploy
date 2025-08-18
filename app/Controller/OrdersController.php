@@ -570,6 +570,9 @@ class OrdersController extends AppController
                 );
             }
         }
+        
+        // Após criar todos os itens, recalcular volume tier fees
+        $this->recalculateOrderTransferFees($orderId);
     }
 
     private function parseManualRow($itinerary, $row)
@@ -621,17 +624,36 @@ class OrdersController extends AppController
         $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
         
-        // Calcular quantidade baseada no working days para este item específico
-        $quantity = $workingDaysUser;
+        // Para tipos 1 e 2 (valor fixo e percentual), calcular normalmente
+        // Para tipo 3 (volume tier), será calculado posteriormente no nível do pedido
+        $transferFee = 0;
+        $calculationLog = null;
         
-        // Para tipo de repasse "Tabela", usar contagem de customer users com benefícios do fornecedor
-        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
-            $quantity = $this->countCustomerUsersForSupplier($benefit['Supplier']['id'], $orderData['Order']['id']);
+        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] != 3) {
+            // Calcular quantidade baseada no working days para este item específico
+            $quantity = $workingDaysUser;
+            
+            // Usar o método existente para cálculos fixos
+            $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $subtotal, $quantity);
+            $transferFee = $transferFeeResult['transfer_fee'];
+            
+            // Prepare calculation log for fixed calculations
+            switch ($benefit['Supplier']['transfer_fee_type']) {
+                case 1: // Fixed value
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_value',
+                        'value' => $benefit['Supplier']['transfer_fee_percentage']
+                    ]);
+                    break;
+                case 2: // Fixed percentage
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_percentage',
+                        'percentage' => $benefit['Supplier']['transfer_fee_percentage'],
+                        'base' => $subtotal
+                    ]);
+                    break;
+            }
         }
-        
-        // Usar o novo método para calcular o repasse
-        $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $subtotal, $quantity);
-        $transferFee = $transferFeeResult['transfer_fee'];
 
         $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
 
@@ -655,6 +677,7 @@ class OrdersController extends AppController
             'commission_fee' => $commissionFee,
             'values_from_csv' => $values_from_csv,
             'manual_quantity' => $manualQuantity,
+            'calculation_details_log' => $calculationLog,
         ];
 
         $this->OrderItem->create();
@@ -1624,19 +1647,42 @@ class OrdersController extends AppController
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
 
-        // Calcular quantidade baseada no working days do item
-        $quantity = isset($orderItem['OrderItem']['working_days']) ? $orderItem['OrderItem']['working_days'] : 1;
+        // Calculate transfer fee and save calculation details
+        $calculationLog = null;
         
-        // Para tipo de repasse "Tabela", usar contagem de customer users com benefícios do fornecedor
-        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
-            $quantity = $this->countCustomerUsersForSupplier($benefit['Supplier']['id'], $orderItem['OrderItem']['order_id']);
+        if (isset($benefit['Supplier']['transfer_fee_type'])) {
+            switch ($benefit['Supplier']['transfer_fee_type']) {
+                case 1: // Fixed value
+                    $transferFee = $benefit['Supplier']['transfer_fee_percentage'];
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_value',
+                        'value' => $benefit['Supplier']['transfer_fee_percentage']
+                    ]);
+                    break;
+                    
+                case 2: // Fixed percentage
+                    $transferFee = $orderItem['OrderItem']['subtotal'] * ($benefit['Supplier']['transfer_fee_percentage'] / 100);
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_percentage',
+                        'percentage' => $benefit['Supplier']['transfer_fee_percentage'],
+                        'base' => $orderItem['OrderItem']['subtotal']
+                    ]);
+                    break;
+                    
+                case 3: // Volume tier - needs order-level recalculation
+                    $transferFee = 0; // Will be calculated at order level
+                    break;
+                    
+                default:
+                    $transferFee = 0;
+                    break;
+            }
+        } else {
+            $transferFee = 0;
         }
-        
-        // Usar o novo método para calcular o repasse
-        $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $orderItem['OrderItem']['subtotal'], $quantity);
-        $transferFee = $transferFeeResult['transfer_fee'];
 
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
+        $orderItem['OrderItem']['calculation_details_log'] = $calculationLog;
 
         $proposal = $this->Proposal->find('first', [
             'conditions' => ['Proposal.customer_id' => $orderItem['Order']['customer_id'], 'Proposal.status_id' => 99]
@@ -1654,6 +1700,12 @@ class OrdersController extends AppController
         $this->OrderItem->save($orderItem);
 
         $orderItem = $this->OrderItem->findById($itemId);
+
+        // For volume tier suppliers, recalculate at order level
+        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
+            $this->Order->id = $orderItem['OrderItem']['order_id'];
+            $this->Order->recalculateVolumeTransferFees();
+        }
 
         $this->Order->id = $orderItem['OrderItem']['order_id'];
         $this->Order->reProcessAmounts($orderItem['OrderItem']['order_id']);
@@ -4108,12 +4160,6 @@ class OrdersController extends AppController
         $count = $this->OrderItem->find('count', [
             'joins' => [
                 [
-                    'table' => 'customer_user_itineraries',
-                    'alias' => 'CustomerUserItinerary',
-                    'type' => 'INNER',
-                    'conditions' => ['OrderItem.customer_user_itinerary_id = CustomerUserItinerary.id']
-                ],
-                [
                     'table' => 'benefits',
                     'alias' => 'Benefit',
                     'type' => 'INNER',
@@ -4136,5 +4182,194 @@ class OrdersController extends AppController
         ]);
 
         return $count > 0 ? $count : 1; // Fallback para 1 se não encontrar nenhum
+    }
+
+    /**
+     * Soma o valor total de itens de um fornecedor específico em um pedido
+     * 
+     * @param int $supplierId ID do fornecedor
+     * @param int $orderId ID do pedido
+     * @return float Valor total
+     */
+    private function getTotalAmountForSupplierInOrder($supplierId, $orderId)
+    {
+        $result = $this->OrderItem->find('first', [
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id']
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => ['Benefit.supplier_id = Supplier.id']
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $orderId,
+                'Supplier.id' => $supplierId,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ],
+            'fields' => ['SUM(OrderItem.subtotal) as total_amount'],
+            'group' => false
+        ]);
+
+        $totalAmount = isset($result[0]['total_amount']) ? floatval($result[0]['total_amount']) : 0;
+        return $totalAmount > 0 ? $totalAmount : 1; // Fallback para 1 se não encontrar nenhum valor
+    }
+
+    /**
+     * Calcula e distribui transfer fees para todos os itens de um pedido
+     * Este método é chamado sempre que há mudanças no pedido
+     * 
+     * @param int $orderId ID do pedido
+     */
+    public function recalculateOrderTransferFees($orderId)
+    {
+        // Buscar todos os itens do pedido
+        $orderItems = $this->OrderItem->find('all', [
+            'contain' => [
+                'CustomerUserItinerary' => [
+                    'Benefit' => [
+                        'Supplier'
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $orderId,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ]
+        ]);
+
+        if (empty($orderItems)) {
+            return;
+        }
+
+        // Agrupar itens por fornecedor
+        $supplierGroups = [];
+        foreach ($orderItems as $item) {
+            $supplierId = $item['CustomerUserItinerary']['Benefit']['Supplier']['id'];
+            $supplierGroups[$supplierId][] = $item;
+        }
+
+        // Calcular fees por fornecedor - APENAS para volume tiers
+        foreach ($supplierGroups as $supplierId => $items) {
+            $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
+            $transferFeeType = $supplier['transfer_fee_type'];
+
+            if ($transferFeeType == 3) {
+                // Volume tier calculation - calcular uma vez por fornecedor
+                $this->calculateAndDistributeVolumeTierFees($orderId, $supplierId, $supplier, $items);
+            }
+            // For fixed value/percentage, don't recalculate to preserve calculation_details_log
+        }
+    }
+
+    /**
+     * Calcula volume tier fees e distribui proporcionalmente entre os itens
+     */
+    private function calculateAndDistributeVolumeTierFees($orderId, $supplierId, $supplier, $items)
+    {
+        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
+        CakeLog::write('debug', "OrdersController: Volume tier calculation for supplier {$supplierId}, billing type: {$tipoCobranca}");
+
+        // Determinar a quantidade para o cálculo do tier
+        if ($tipoCobranca == 'cpf') {
+            $quantity = $this->countCustomerUsersForSupplier($supplierId, $orderId);
+            CakeLog::write('debug', "OrdersController: Counted {$quantity} unique users for supplier {$supplierId}");
+        } else {
+            $quantity = $this->getTotalAmountForSupplierInOrder($supplierId, $orderId);
+            CakeLog::write('debug', "OrdersController: Total amount {$quantity} for supplier {$supplierId}");
+        }
+
+        // Calcular o total de subtotal dos itens deste fornecedor
+        $totalSupplierSubtotal = 0;
+        foreach ($items as $item) {
+            $totalSupplierSubtotal += $item['OrderItem']['subtotal'];
+        }
+
+        if ($totalSupplierSubtotal == 0) {
+            CakeLog::write('debug', "OrdersController: No subtotal found for supplier {$supplierId}, skipping");
+            return;
+        }
+
+        // Usar RepaymentCalculator para obter o tier correto
+        try {
+            $calculationResult = RepaymentCalculator::calculateRepayment(
+                $supplierId, 
+                $quantity, 
+                $totalSupplierSubtotal
+            );
+            
+            $totalTransferFee = $calculationResult['repayment_value'];
+            $tierPercentage = $calculationResult['repayment_percentage'];
+            
+            CakeLog::write('debug', "OrdersController: Volume tier result - Total fee: {$totalTransferFee}, Percentage: {$tierPercentage}%");
+
+            // Distribuir proportionally entre os itens
+            foreach ($items as $item) {
+                $itemSubtotal = $item['OrderItem']['subtotal'];
+                $proportion = $totalSupplierSubtotal > 0 ? ($itemSubtotal / $totalSupplierSubtotal) : 0;
+                $itemTransferFee = $totalTransferFee * $proportion;
+
+                CakeLog::write('debug', "OrdersController: Item {$item['OrderItem']['id']} - Subtotal: {$itemSubtotal}, Proportion: {$proportion}, Transfer Fee: {$itemTransferFee}");
+
+                // Atualizar o item
+                $this->OrderItem->id = $item['OrderItem']['id'];
+                $this->OrderItem->saveField('transfer_fee', $itemTransferFee);
+                
+                // Recalcular total do item
+                $newTotal = $itemSubtotal + $itemTransferFee + $item['OrderItem']['commission_fee'];
+                $this->OrderItem->saveField('total', $newTotal);
+            }
+
+        } catch (Exception $e) {
+            CakeLog::write('error', "OrdersController: Error calculating volume tier for supplier {$supplierId}: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Calcula fixed value/percentage fees para itens individuais
+     */
+    private function calculateFixedFeesForItems($supplier, $items)
+    {
+        $transferFeeType = $supplier['transfer_fee_type'];
+        $transferFeePercentage = $supplier['transfer_fee_percentage'];
+
+        foreach ($items as $item) {
+            $subtotal = $item['OrderItem']['subtotal'];
+            $transferFee = 0;
+            $calculationLog = null;
+
+            switch ($transferFeeType) {
+                case 1: // Valor fixo
+                    $transferFee = $transferFeePercentage;
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_value',
+                        'value' => $transferFeePercentage
+                    ]);
+                    break;
+                case 2: // Percentual fixo
+                    $transferFee = $subtotal * ($transferFeePercentage / 100);
+                    $calculationLog = json_encode([
+                        'type' => 'fixed_percentage',
+                        'percentage' => $transferFeePercentage,
+                        'base' => $subtotal
+                    ]);
+                    break;
+            }
+
+            // Atualizar o item
+            $this->OrderItem->id = $item['OrderItem']['id'];
+            $this->OrderItem->saveField('transfer_fee', $transferFee);
+            $this->OrderItem->saveField('calculation_details_log', $calculationLog);
+            
+            // Recalcular total do item
+            $newTotal = $subtotal + $transferFee + $item['OrderItem']['commission_fee'];
+            $this->OrderItem->saveField('total', $newTotal);
+        }
     }
 }
