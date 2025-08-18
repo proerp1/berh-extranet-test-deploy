@@ -853,8 +853,10 @@ class IncomesController extends AppController
     private function get_nfse_type_data($income, $type) {
         if ($type === 'ge') {
           $data = $this->get_gestao_eficiente_data($income);
+        } else if ($type === 'tpp') {
+          $data = $this->get_tpp_data($income);
         } else {
-          $data = $this->get_tpp_data($income, $type);
+          $data = $this->get_ge_and_tpp_data($income);
         }
 
         return $data;
@@ -885,15 +887,11 @@ class IncomesController extends AppController
         ];
     }
 
-    private function get_tpp_data($income, $type) {
-        $title = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos";
-        if ($type === 'ge-tpp') {
-          $title .= " / Gestão Eficiente";
-        }
+    private function get_tpp_data($income) {
         $total = $income['Order']['commission_fee_not_formated'] + $income['Order']['tpp_fee'];
         $total_formatted = number_format($total, 2, ',', '.');
         $tpp_fee_formatted = number_format($income['Order']['tpp_fee'], 2, ',', '.');
-        $obs = "$title
+        $obs = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos
         
         Pedido Nº {$income['Order']['id']}
         
@@ -905,6 +903,40 @@ class IncomesController extends AppController
         
         Taxa Administrativa R$ {$income['Order']['commission_fee']}
         Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
+        Total---------------------------------  R$ {$total_formatted}";
+
+        if ($income['Order']['nfse_observation']) {
+            $obs .= "\n\n{$income['Order']['nfse_observation']}";
+        }
+
+        return [
+            "obs" => $obs,
+            "valor" => $total,
+        ];
+    }
+
+    private function get_ge_and_tpp_data($income) {
+        [$fee_economia, $vl_economia] = $this->get_nfse_order_fee_economia($income);
+        $fee_economia_formatted = number_format($fee_economia, 2, ',', '.');
+
+        $total = $income['Order']['commission_fee_not_formated'] + $income['Order']['tpp_fee'] + $fee_economia;
+        $total_formatted = number_format($total, 2, ',', '.');
+        $tpp_fee_formatted = number_format($income['Order']['tpp_fee'], 2, ',', '.');
+        $admin_fee = $income['Order']['commission_fee'];
+
+        $obs = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos / Gestão Eficiente
+        
+        Pedido Nº {$income['Order']['id']}
+        
+        Item R$ {$income['Order']['subtotal']}
+        Repasse Operadora R$ {$income['Order']['transfer_fee']}
+        Desconto R$ {$income['Order']['desconto']}
+        
+        Informações Adicionais
+        
+        Taxa Administrativa R$ {$admin_fee}
+        Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
+        Gestão Eficiente R$ {$fee_economia_formatted}
         Total---------------------------------  R$ {$total_formatted}";
 
         if ($income['Order']['nfse_observation']) {
