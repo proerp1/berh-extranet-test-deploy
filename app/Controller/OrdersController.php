@@ -791,33 +791,6 @@ class OrdersController extends AppController
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
-        $progress = 1;
-        switch ($order['Order']['status_id']) {
-            case 83:
-                $progress = 1;
-                break;
-
-            case 84:
-                $progress = 3;
-                break;
-
-            case 85:
-                $progress = 5;
-                break;
-
-            case 86:
-                $progress = 7;
-                break;
-
-            case 104:
-                $progress = 8;
-                break;
-
-            case 87:
-                $progress = 9;
-                break;
-        }
-
         $suppliersCount = $this->OrderItem->find('count', [
             'conditions' => ['OrderItem.order_id' => $id],
             'joins' => [
@@ -886,6 +859,33 @@ class OrdersController extends AppController
         } elseif ($order['Order']['condicao_pagamento'] == 2) {
             $v_cond_pagamento = "Faturado";
         }
+
+        // Flag de faturamento
+$hasFaturado = isset($v_cond_pagamento) && $v_cond_pagamento === 'Faturado';
+
+// status_id atual
+$statusId = isset($order['Order']['status_id']) ? (int)$order['Order']['status_id'] : 0;
+
+// Mapeamento -> progress
+$progress = 1; // Início
+
+switch ($statusId) {
+    case 83:  $progress = 1;  break; // Início
+    case 84:  $progress = 3;  break; // Liberado p/ Processamento
+    case 85:  $progress = 5;  break; // Pagamento Confirmado
+    case 86:  $progress = 7;  break; // Em Processamento
+    case 104: $progress = 8;  break; // Aguardando Liberação de Crédito
+
+    case 115: // Em Faturamento
+        $progress = 9; // sempre 9 quando está faturando
+        break;
+
+    case 87:  // Finalizado
+        $progress = $hasFaturado ? 10 : 9; // com faturamento -> 10; sem -> 9
+        break;
+}
+$progress = max(0, min(10, (int)$progress));
+
 
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
@@ -2113,6 +2113,25 @@ class OrdersController extends AppController
         $this->set(compact('action', 'breadcrumb', 'id', 'suppliersAll'));
     }
 
+    public function liberar_faturamento($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 115,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        $this->Flash->set(__('O status foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+
+        $this->redirect(['action' => 'edit/' . $id]);
+    }
+
     public function confirma_pagamento($id)
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
@@ -3077,6 +3096,32 @@ class OrdersController extends AppController
                 $data['OrderItem']['motivo_processamento'] = $motivo;
             }
 
+            if ($statusProcess == 'PAGAMENTO_REALIZADO') {
+                if (in_array($orderItem['OrderItem']['status_processamento'], ['CADASTRO_INCONSISTENTE', 'CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
+                    $subtotal = $orderItem['OrderItem']['subtotal_not_formated'];
+                    if ($subtotal > 0) {
+                        $subtotal = $subtotal * -1;
+                    }
+
+                    $orderBalanceData = [
+                        'order_id' => $orderItem['Order']['id'],
+                        'order_item_id' => $orderItem['OrderItem']['id'],
+                        'customer_user_id' => $orderItem['CustomerUser']['id'],
+                        'benefit_id' => $orderItem['CustomerUserItinerary']['benefit_id'],
+                        'document' => $orderItem['CustomerUser']['cpf'],
+                        'total' => $subtotal,
+                        'pedido_operadora' => $pedido_operadora,
+                        'observacao' => $motivo,
+                        'tipo' => 2,
+                        'created' => date('Y-m-d H:i:s'),
+                        'user_created_id' => CakeSession::read("Auth.User.id")
+                    ];
+
+                    $this->OrderBalance->create();
+                    $this->OrderBalance->save($orderBalanceData);
+                }
+            }
+
             $this->OrderItem->save($data);
 
             if ($statusProcess == 'CREDITO_INCONSISTENTE') {
@@ -3196,6 +3241,32 @@ class OrdersController extends AppController
 
             if ($motivo) {
                 $data['OrderItem']['motivo_processamento'] = $motivo;
+            }
+
+            if ($statusProcess == 'PAGAMENTO_REALIZADO') {
+                if (in_array($orderItem['OrderItem']['status_processamento'], ['CADASTRO_INCONSISTENTE', 'CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
+                    $subtotal = $orderItem['OrderItem']['subtotal_not_formated'];
+                    if ($subtotal > 0) {
+                        $subtotal = $subtotal * -1;
+                    }
+
+                    $orderBalanceData = [
+                        'order_id' => $orderItem['Order']['id'],
+                        'order_item_id' => $orderItem['OrderItem']['id'],
+                        'customer_user_id' => $orderItem['CustomerUser']['id'],
+                        'benefit_id' => $orderItem['CustomerUserItinerary']['benefit_id'],
+                        'document' => $orderItem['CustomerUser']['cpf'],
+                        'total' => $subtotal,
+                        'pedido_operadora' => $pedido_operadora,
+                        'observacao' => $motivo,
+                        'tipo' => 2,
+                        'created' => date('Y-m-d H:i:s'),
+                        'user_created_id' => CakeSession::read("Auth.User.id")
+                    ];
+
+                    $this->OrderBalance->create();
+                    $this->OrderBalance->save($orderBalanceData);
+                }
             }
 
             $this->OrderItem->save($data);
