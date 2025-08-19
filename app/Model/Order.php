@@ -630,11 +630,7 @@ class Order extends AppModel
             return false;
         }
 
-        if ($order['Order']['condicao_pagamento'] == 2) {
-            $statusId = 87;
-        } else {
-            $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
-        }        
+        $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
 
         $this->id = $id;
         
