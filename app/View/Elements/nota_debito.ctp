@@ -212,7 +212,7 @@
                     <td class="pb-10" style="text-align: end"><b>Emitido em: <?php echo date('d/m/Y') ?></b></td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Valor dos serviços:</b></td>
+                    <td width="25%"><b>Valor do Pedido:</b></td>
                     <td width="55%"><b> <?php echo $order['Order']['total'] ?></b></td>
                 </tr>
             </table>
