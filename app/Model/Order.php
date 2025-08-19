@@ -339,10 +339,13 @@ class Order extends AppModel
                     'recursive' => -1
                 ]);
 
-                $emails[$customer['Customer']['email']] = $customer['Customer']['nome_secundario'];
+                $email  = trim($customer['Customer']['email']);
+                $email1 = trim($customer['Customer']['email1']);
 
-                if ($customer['Customer']['email1'] != '') {
-                    $emails[$customer['Customer']['email1']] = $customer['Customer']['nome_primario'];
+                $emails[$email] = $customer['Customer']['nome_secundario'];
+
+                if ($email1 != '') {
+                    $emails[$email1] = $customer['Customer']['nome_primario'];
                 }
 
                 $bccs = [];
@@ -619,7 +622,7 @@ class Order extends AppModel
 
         $order = $this->find('first', [
             'conditions' => ['Order.id' => $id],
-            'fields' => ['Order.pedido_complementar'],
+            'fields' => ['Order.pedido_complementar', 'Order.condicao_pagamento'],
             'recursive' => -1
         ]);
 
@@ -627,7 +630,11 @@ class Order extends AppModel
             return false;
         }
 
-        $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
+        if ($order['Order']['condicao_pagamento'] == 2) {
+            $statusId = 87;
+        } else {
+            $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
+        }        
 
         $this->id = $id;
         
