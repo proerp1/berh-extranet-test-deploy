@@ -432,6 +432,9 @@ class Order extends AppModel
 
     public function reProcessAmounts()
     {
+        // First, recalculate volume tier fees for all items
+        $this->recalculateVolumeTransferFees();
+        
         $order = $this->find('first', [
             'conditions' => [
                 'Order.id' => $this->id
@@ -647,5 +650,213 @@ class Order extends AppModel
         }
 
         return $date->format($format);
+    }
+
+    /**
+     * Recalculates volume tier transfer fees for all order items
+     * This method handles volume tier calculations at the order level
+     */
+    public function recalculateVolumeTransferFees()
+    {
+        // Get all order items with supplier information
+        $orderItems = $this->OrderItem->find('all', [
+            'contain' => [
+                'CustomerUserItinerary' => [
+                    'Benefit' => [
+                        'Supplier'
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $this->id,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ]
+        ]);
+
+        if (empty($orderItems)) {
+            return;
+        }
+
+        // Group items by supplier
+        $supplierGroups = [];
+        foreach ($orderItems as $item) {
+            $supplierId = $item['CustomerUserItinerary']['Benefit']['Supplier']['id'];
+            $supplierGroups[$supplierId][] = $item;
+        }
+
+        // Process each supplier group
+        foreach ($supplierGroups as $supplierId => $items) {
+            $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
+            
+            if ($supplier['transfer_fee_type'] == 3) {
+                // Volume tier calculation
+                $this->calculateSupplierVolumeTierFees($supplierId, $supplier, $items);
+            }
+        }
+    }
+
+    /**
+     * Calculate and distribute volume tier fees for a specific supplier
+     */
+    private function calculateSupplierVolumeTierFees($supplierId, $supplier, $items)
+    {
+        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
+
+        // Determine quantity for tier calculation
+        if ($tipoCobranca == 'cpf') {
+            $quantity = $this->countCustomerUsersForSupplier($supplierId);
+        } else {
+            $quantity = $this->getTotalAmountForSupplier($supplierId);
+        }
+
+        // Calculate total subtotal for this supplier
+        $totalSupplierSubtotal = 0;
+        foreach ($items as $item) {
+            // Use not_formated field if available, otherwise parse the formatted value
+            $subtotalValue = isset($item['OrderItem']['subtotal_not_formated']) 
+                ? $item['OrderItem']['subtotal_not_formated'] 
+                : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
+            $totalSupplierSubtotal += $subtotalValue;
+        }
+
+        if ($totalSupplierSubtotal == 0) {
+            return;
+        }
+
+        // Calculate tier-based transfer fee
+        try {
+            App::uses('RepaymentCalculator', 'Lib');
+            $calculationResult = RepaymentCalculator::calculateRepayment(
+                $supplierId, 
+                $quantity, 
+                $totalSupplierSubtotal
+            );
+            
+            $totalTransferFee = $calculationResult['repayment_value'];
+            $tierUsed = $calculationResult['tier_used'];
+
+            // Distribute proportionally among items
+            foreach ($items as $item) {
+                // Use not_formated fields if available, otherwise parse the formatted values
+                $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
+                    ? $item['OrderItem']['subtotal_not_formated'] 
+                    : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
+                    
+                $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
+                    ? $item['OrderItem']['commission_fee_not_formated'] 
+                    : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
+                    
+                $proportion = $totalSupplierSubtotal > 0 ? ($itemSubtotal / $totalSupplierSubtotal) : 0;
+                $itemTransferFee = $totalTransferFee * $proportion;
+
+                // Prepare calculation details log
+                $calculationLog = json_encode([
+                    'type' => 'volume_tier',
+                    'billing' => $tipoCobranca,
+                    'tier' => $tierUsed['de_qtd'] . '-' . $tierUsed['ate_qtd'] . ' (' . number_format($tierUsed['percentual_repasse_nao_formatado'], 2) . '%)'
+                ]);
+
+                // Update the item
+                $this->OrderItem->id = $item['OrderItem']['id'];
+                $this->OrderItem->saveField('transfer_fee', $itemTransferFee);
+                $this->OrderItem->saveField('calculation_details_log', $calculationLog);
+                
+                // Recalculate total
+                $newTotal = $itemSubtotal + $itemTransferFee + $itemCommissionFee;
+                $this->OrderItem->saveField('total', $newTotal);
+            }
+
+        } catch (Exception $e) {
+            // Silent error handling - let the system continue
+        }
+    }
+
+    /**
+     * Count unique customer users for a supplier in this order
+     */
+    private function countCustomerUsersForSupplier($supplierId)
+    {
+        $count = $this->OrderItem->find('count', [
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id']
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => ['Benefit.supplier_id = Supplier.id']
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $this->id,
+                'Supplier.id' => $supplierId,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ],
+            'fields' => ['COUNT(DISTINCT OrderItem.customer_user_id) as count'],
+            'group' => false
+        ]);
+
+        return $count > 0 ? $count : 1;
+    }
+
+    /**
+     * Get total amount for a supplier in this order
+     */
+    private function getTotalAmountForSupplier($supplierId)
+    {
+        $result = $this->OrderItem->find('first', [
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => ['CustomerUserItinerary.benefit_id = Benefit.id']
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => ['Benefit.supplier_id = Supplier.id']
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $this->id,
+                'Supplier.id' => $supplierId,
+                'OrderItem.data_cancel' => '1901-01-01 00:00:00'
+            ],
+            'fields' => ['SUM(OrderItem.subtotal) as total_amount'],
+            'group' => false
+        ]);
+
+        $totalAmount = isset($result[0]['total_amount']) ? floatval($result[0]['total_amount']) : 0;
+        return $totalAmount > 0 ? $totalAmount : 1;
+    }
+
+    /**
+     * Parse a formatted number (e.g., "1.234,56") back to a float
+     */
+    private function parseFormattedNumber($formattedValue)
+    {
+        if (is_numeric($formattedValue)) {
+            return floatval($formattedValue);
+        }
+        
+        // Handle Brazilian format: 1.234,56 -> 1234.56
+        $value = trim($formattedValue);
+        
+        // If there's both dot and comma, remove dots (thousands separator) and replace comma with dot
+        if (strpos($value, '.') !== false && strpos($value, ',') !== false) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        } elseif (strpos($value, ',') !== false) {
+            // If there's only comma, replace it with dot
+            $value = str_replace(',', '.', $value);
+        }
+        
+        return floatval($value);
     }
 }

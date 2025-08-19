@@ -8,4 +8,12 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customer_supplier_logins']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_supplier_logins/index/2/'.$id; ?>">Logins e Senhas</a>
 	</li>
+	<?php
+	// Mostrar aba de Faixas de Volume apenas se o tipo de repasse for Tabela (3)
+	$supplier = ClassRegistry::init('Supplier')->findById($id);
+	if ($supplier && $supplier['Supplier']['transfer_fee_type'] == 3): ?>
+	<li class="nav-item">
+		<a class="nav-link <?php echo in_array($this->request->params['action'], ['volume_tiers', 'add_volume_tier', 'edit_volume_tier']) ? 'active' : '' ?>" href="<?php echo $this->base.'/suppliers/volume_tiers/'.$id; ?>">Faixas de Volume</a>
+	</li>
+	<?php endif; ?>
 </ul>

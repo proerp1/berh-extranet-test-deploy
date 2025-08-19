@@ -13,6 +13,12 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+
+                    <a href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
+                        <i class="fas fa-table"></i>
+                        Exportar Relatório Pedidos
+                    </a>
+
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -567,6 +573,7 @@
             const v_op_status = [
                 'CARTAO_NOVO',
                 'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                'CADASTRO_INCONSISTENTE',
                 'CREDITO_INCONSISTENTE',
                 'PAGAMENTO_REALIZADO'
             ];

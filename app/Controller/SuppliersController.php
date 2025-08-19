@@ -4,7 +4,7 @@ class SuppliersController extends AppController
 {    
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia', 'TecnologiaVersao'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia', 'TecnologiaVersao', 'SupplierVolumeTier'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -69,6 +69,12 @@ class SuppliersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->Supplier->create();
             
+            // Se não for tipo "Tabela", limpar o campo tipo_cobranca
+            if (isset($this->request->data['Supplier']['transfer_fee_type']) && 
+                $this->request->data['Supplier']['transfer_fee_type'] != 3) {
+                $this->request->data['Supplier']['tipo_cobranca'] = null;
+            }
+            
             if ($this->Supplier->validates()) {
                 $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 
@@ -114,6 +120,12 @@ class SuppliersController extends AppController
         $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Supplier->id = $id;
         if ($this->request->is(['post', 'put'])) {
+            // Se não for tipo "Tabela", limpar o campo tipo_cobranca
+            if (isset($this->request->data['Supplier']['transfer_fee_type']) && 
+                $this->request->data['Supplier']['transfer_fee_type'] != 3) {
+                $this->request->data['Supplier']['tipo_cobranca'] = null;
+            }
+            
             $this->Supplier->validates();
             $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Supplier->save($this->request->data)) {
@@ -278,6 +290,169 @@ class SuppliersController extends AppController
             $this->Flash->set(__('O documento foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'documents/' . $supplier_id]);
         }
+    }
+
+    /*********************
+            VOLUME TIERS
+    **********************/
+    public function volume_tiers($id)
+    {
+        $this->Permission->check(9, 'leitura') ? '' : $this->redirect('/not_allowed');
+
+        $this->Supplier->id = $id;
+        $supplier = $this->Supplier->read();
+        
+        if (!$supplier || $supplier['Supplier']['transfer_fee_type'] != 3) {
+            $this->Flash->set(__('Faixas de volume só são aplicáveis para fornecedores com tipo de repasse "Tabela"'), ['params' => ['class' => "alert alert-warning"]]);
+            $this->redirect(['action' => 'edit', $id]);
+        }
+
+        $this->Paginator->settings = ['SupplierVolumeTier' => [
+            'limit' => 100,
+            'order' => ['SupplierVolumeTier.de_qtd' => 'asc'],
+            'contain' => []
+        ]];
+
+        $condition = ['and' => ['SupplierVolumeTier.supplier_id' => $id], 'or' => []];
+
+        $data = $this->Paginator->paginate('SupplierVolumeTier', $condition);
+        $action = 'Faixas de Volume';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '/suppliers', 'Faixas de Volume' => ''];
+        
+        $this->set(compact('data', 'id', 'action', 'breadcrumb', 'supplier'));
+    }
+
+    public function add_volume_tier($id)
+    {
+        $this->Permission->check(9, 'escrita') ? '' : $this->redirect('/not_allowed');
+        
+        $this->Supplier->id = $id;
+        $supplier = $this->Supplier->read();
+        
+        if (!$supplier || $supplier['Supplier']['transfer_fee_type'] != 3) {
+            $this->Flash->set(__('Faixas de volume só são aplicáveis para fornecedores com tipo de repasse "Tabela"'), ['params' => ['class' => "alert alert-warning"]]);
+            $this->redirect(['action' => 'edit', $id]);
+        }
+
+        if ($this->request->is(['post', 'put'])) {
+            $this->SupplierVolumeTier->create();
+            $this->request->data['SupplierVolumeTier']['supplier_id'] = $id;
+            
+            // Format data before validation (like other models)
+            if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
+                $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
+            }
+            
+            // Set data for validation
+            $this->SupplierVolumeTier->set($this->request->data);
+            
+            // Validar se não há sobreposição
+            $deQtd = $this->request->data['SupplierVolumeTier']['de_qtd'];
+            $ateQtd = $this->request->data['SupplierVolumeTier']['ate_qtd'];
+            
+            if (!$this->SupplierVolumeTier->validateNoOverlap($id, $deQtd, $ateQtd)) {
+                $this->Flash->set(__('Já existe uma faixa que se sobrepõe a esta. Verifique os valores.'), ['params' => ['class' => "alert alert-danger"]]);
+            } elseif ($this->SupplierVolumeTier->validates()) {
+                $this->request->data['SupplierVolumeTier']['user_creator_id'] = CakeSession::read('Auth.User.id');
+                
+                if ($this->SupplierVolumeTier->save($this->request->data)) {
+                    $this->Flash->set(__('Faixa de volume foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect(['action' => 'volume_tiers', $id]);
+                } else {
+                    $this->Flash->set(__('A faixa de volume não pode ser salva. Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                }
+            } else {
+                $this->Flash->set(__('A faixa de volume não pode ser salva. Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        $action = 'Nova Faixa de Volume';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '/suppliers', 'Faixas de Volume' => '/suppliers/volume_tiers/'.$id, 'Nova Faixa' => ''];
+        
+        $this->set("form_action", "add_volume_tier/" . $id);
+        $this->set(compact('action', 'id', 'breadcrumb', 'supplier'));
+    }
+
+    public function edit_volume_tier($id, $tier_id = null)
+    {
+        $this->Permission->check(9, 'escrita') ? '' : $this->redirect('/not_allowed');
+        
+        $this->SupplierVolumeTier->id = $tier_id;
+        $tier = $this->SupplierVolumeTier->read();
+        
+        if (!$tier || $tier['SupplierVolumeTier']['supplier_id'] != $id) {
+            $this->Flash->set(__('Faixa de volume não encontrada'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action' => 'volume_tiers', $id]);
+        }
+
+        if ($this->request->is(['post', 'put'])) {
+            // Format data before validation (like other models)
+            if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
+                $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
+            }
+            
+            // Set data for validation
+            $this->SupplierVolumeTier->set($this->request->data);
+            
+            $deQtd = $this->request->data['SupplierVolumeTier']['de_qtd'];
+            $ateQtd = $this->request->data['SupplierVolumeTier']['ate_qtd'];
+            
+            // Validar se não há sobreposição (excluindo o registro atual)
+            if (!$this->SupplierVolumeTier->validateNoOverlap($id, $deQtd, $ateQtd, $tier_id)) {
+                $this->Flash->set(__('Já existe uma faixa que se sobrepõe a esta. Verifique os valores.'), ['params' => ['class' => "alert alert-danger"]]);
+            } elseif ($this->SupplierVolumeTier->validates()) {
+                $this->request->data['SupplierVolumeTier']['user_updated_id'] = CakeSession::read('Auth.User.id');
+                
+                if ($this->SupplierVolumeTier->save($this->request->data)) {
+                    $this->Flash->set(__('Faixa de volume foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect(['action' => 'volume_tiers', $id]);
+                } else {
+                    $this->Flash->set(__('A faixa de volume não pode ser alterada. Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                }
+            } else {
+                $this->Flash->set(__('A faixa de volume não pode ser alterada. Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+            }
+        }
+
+        // Only read the database data when NOT processing a POST request
+        if (!$this->request->is(['post', 'put'])) {
+            $this->request->data = $this->SupplierVolumeTier->read();
+        }
+
+        $this->Supplier->id = $id;
+        $supplier = $this->Supplier->read();
+        
+        $action = 'Editar Faixa de Volume';
+        $breadcrumb = ['Cadastros' => '', 'Fornecedores' => '/suppliers', 'Faixas de Volume' => '/suppliers/volume_tiers/'.$id, 'Editar Faixa' => ''];
+        
+        $this->set("form_action", "edit_volume_tier/" . $id . '/' . $tier_id);
+        $this->set(compact('action', 'id', 'tier_id', 'breadcrumb', 'supplier'));
+        
+        $this->render("add_volume_tier");
+    }
+
+    public function delete_volume_tier($id, $tier_id)
+    {
+        $this->Permission->check(9, 'excluir') ? '' : $this->redirect('/not_allowed');
+        
+        $this->SupplierVolumeTier->id = $tier_id;
+        $tier = $this->SupplierVolumeTier->read();
+        
+        if (!$tier || $tier['SupplierVolumeTier']['supplier_id'] != $id) {
+            $this->Flash->set(__('Faixa de volume não encontrada'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action' => 'volume_tiers', $id]);
+        }
+
+        $this->request->data['SupplierVolumeTier']['data_cancel'] = date('Y-m-d H:i:s');
+        $this->request->data['SupplierVolumeTier']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
+
+        if ($this->SupplierVolumeTier->save($this->request->data)) {
+            $this->Flash->set(__('Faixa de volume foi excluída com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        } else {
+            $this->Flash->set(__('Erro ao excluir faixa de volume'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+        
+        $this->redirect(['action' => 'volume_tiers', $id]);
     }
 
 }

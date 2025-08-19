@@ -851,12 +851,12 @@ class IncomesController extends AppController
     }
 
     private function get_nfse_type_data($income, $type) {
-        $data = null;
-
-        if ($type === 'tpp') {
-            $data = $this->get_tpp_data($income);
-        } elseif ($type === 'ge') {
-            $data = $this->get_gestao_eficiente_data($income);
+        if ($type === 'ge') {
+          $data = $this->get_gestao_eficiente_data($income);
+        } else if ($type === 'tpp') {
+          $data = $this->get_tpp_data($income);
+        } else {
+          $data = $this->get_ge_and_tpp_data($income);
         }
 
         return $data;
@@ -903,6 +903,40 @@ class IncomesController extends AppController
         
         Taxa Administrativa R$ {$income['Order']['commission_fee']}
         Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
+        Total---------------------------------  R$ {$total_formatted}";
+
+        if ($income['Order']['nfse_observation']) {
+            $obs .= "\n\n{$income['Order']['nfse_observation']}";
+        }
+
+        return [
+            "obs" => $obs,
+            "valor" => $total,
+        ];
+    }
+
+    private function get_ge_and_tpp_data($income) {
+        [$fee_economia, $vl_economia] = $this->get_nfse_order_fee_economia($income);
+        $fee_economia_formatted = number_format($fee_economia, 2, ',', '.');
+
+        $total = $income['Order']['commission_fee_not_formated'] + $income['Order']['tpp_fee'] + $fee_economia;
+        $total_formatted = number_format($total, 2, ',', '.');
+        $tpp_fee_formatted = number_format($income['Order']['tpp_fee'], 2, ',', '.');
+        $admin_fee = $income['Order']['commission_fee'];
+
+        $obs = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos / Gestão Eficiente
+        
+        Pedido Nº {$income['Order']['id']}
+        
+        Item R$ {$income['Order']['subtotal']}
+        Repasse Operadora R$ {$income['Order']['transfer_fee']}
+        Desconto R$ {$income['Order']['desconto']}
+        
+        Informações Adicionais
+        
+        Taxa Administrativa R$ {$admin_fee}
+        Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
+        Gestão Eficiente R$ {$fee_economia_formatted}
         Total---------------------------------  R$ {$total_formatted}";
 
         if ($income['Order']['nfse_observation']) {
@@ -993,7 +1027,12 @@ class IncomesController extends AppController
 
     private function get_nfse_data($income, $type) {
         $data = $this->get_nfse_type_data($income, $type);
-        $serie = $type === 'tpp' ? "1" : "2";
+        $series = [
+          'tpp' => 1,
+          'ge' => 2,
+          'ge-tpp' => 3
+        ];
+        $serie = $series[$type];
         $today = new DateTime();
 
         return [
@@ -1063,7 +1102,7 @@ class IncomesController extends AppController
             return $nfse['data_cancel'] === '1901-01-01 00:00:00';
         });
 
-        $nfse_types = collect(['ge', 'tpp']);
+        $nfse_types = collect(['ge', 'tpp', 'ge-tpp']);
         $nfses = [];
         $nfse_types->each(function ($type) use ($income_nfses, &$nfses) {
             $nfse = $income_nfses->first(function ($nfse) use ($type, &$nfses) {
@@ -1113,13 +1152,6 @@ class IncomesController extends AppController
                 $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action'=> 'nfse', $income_id]);
             }
-
-            $this->IncomeNfse->save([
-                'tipo' => $type,
-                'chave' => $response->chave,
-                'status_id' => 106,
-                'income_id' => $income['Income']['id']
-            ]);
 
             $this->Flash->set(__('A nota fiscal foi emitida com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         } catch (\Exception $e) {

@@ -279,8 +279,8 @@
             var diff = (dataFinal - dataInicial);
             var diffDays = (diff / (1000 * 60 * 60 * 24));
 
-            if (diffDays > 31 || diffDays < 0) {
-                alert('O intervalo máximo permitido é de 31 dias.');
+            if (diffDays > 60 || diffDays < 0) {
+                alert('O intervalo máximo permitido é de 60 dias.');
                 $('.filter').attr('disabled', true);
                 return false;
             }

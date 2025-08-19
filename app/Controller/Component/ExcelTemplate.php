@@ -2209,6 +2209,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração");$col++;
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
         $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Descrição Beneficio");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2342,6 +2343,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['UpdatedGe']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['name']);$col++;
         }
     }
 
@@ -2778,6 +2780,8 @@ public function getBeneficiario($spreadsheet, $dados)
                 $tipo = 'Bolsa de Crédito';
             } elseif ($dado["OrderBalance"]["tipo"] == '6') {
                 $tipo = 'Somente Debita';
+            } elseif ($dado["OrderBalance"]["tipo"] == '7') {
+                $tipo = 'Receita Derivada - Somente Credita';
             }
 
             $col = 'A';

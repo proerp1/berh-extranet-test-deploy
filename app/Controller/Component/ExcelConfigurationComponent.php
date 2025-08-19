@@ -173,6 +173,7 @@ class ExcelConfigurationComponent extends Component {
 					'CustomerUserItinerary.*',
 					'OrderItem.*',
 					'Benefit.code',
+					'Benefit.name',
 					'BenefitType.name',
 					'Supplier.id',
 					'EconomicGroups.razao_social',
