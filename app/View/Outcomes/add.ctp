@@ -244,7 +244,7 @@
                         <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 103])): ?>
                             <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
                             <?php if ($cancelarConta) { ?>
-                                <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/15/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
+                                <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/14/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
                             <?php } ?>
                         <?php endif ?>
                         <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 12])): ?>

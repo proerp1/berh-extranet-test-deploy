@@ -285,8 +285,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('T1', "Digito")
             ->setCellValue('U1', "Tipo Chave")
             ->setCellValue('V1', "Chave PIX")
-            ->setCellValue('W1', "Registro Cobrança");
-            
+            ->setCellValue('W1', "Registro Cobrança")
+            ->setCellValue('X1', "Pedidos");
+
           
 
             $indx = 1;
@@ -320,7 +321,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
                     ->setCellValue('T' . $indx, $dados[$i]['Supplier']['acc_digit'] ?? '')
                     ->setCellValue('U' . $indx, $dados[$i]['Supplier']['pix_type'] ?? '')
                     ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '')
-                    ->setCellValue('X' . $indx, ($dados[$i]['Supplier']['valor'] ?? '') . ' ' . ($dados[$i]['Supplier']['unidade_tempo'] ?? ''));
+                    ->setCellValue('W' . $indx, ($dados[$i]['Supplier']['valor'] ?? '') . ' ' . ($dados[$i]['Supplier']['unidade_tempo'] ?? ''))
+                    ->setCellValue('X' . $indx, $dados[$i][0]['orders']);
 
             }
             
@@ -2956,6 +2958,7 @@ public function getBeneficiario($spreadsheet, $dados)
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         $col = 'A';
+        $activeWorksheet->setCellValue($col.'1', "Benefício BE"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Código Benefício BE"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Código Benefício Cliente"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Data da Criação"); $col++;
@@ -2966,6 +2969,7 @@ public function getBeneficiario($spreadsheet, $dados)
             $col = 'A';
 
             $indx++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["Benefit"]["name"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_be"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_customer"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["created"]); $col++;

@@ -135,7 +135,12 @@ class OutcomesController extends AppController {
 						'Status.name',
 						'BankAccountType.description',
 						'Outcome.*',
-						'BankAccount.*'
+						'BankAccount.*',
+          "(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
+                from outcome_orders
+                     inner join orders on outcome_orders.order_id = orders.id
+                     inner join customers c on orders.customer_id = c.id
+                   where Outcome.id = outcome_orders.outcome_id) as orders"
 					]
 				]
 			);
