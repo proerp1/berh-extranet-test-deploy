@@ -29,9 +29,14 @@
                         Alterar Status Processamento
                     </a>
 
+                    <a href="<?php echo $this->here.'?excel_simples&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel_simples">
+                        <i class="fas fa-table"></i>
+                        Exportar Simples
+                    </a>
+
                     <a href="<?php echo $this->here.'?excel&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
                         <i class="fas fa-table"></i>
-                        Exportar
+                        Exportar Completo
                     </a>
 
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
@@ -92,11 +97,11 @@
                                             <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
                                                 <option value="">Selecione</option>
                                                 <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
-                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
+                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
                                                 <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
                                                 <option value="CARTAO_NOVO" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO</option>
-                                                <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO_CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
-                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
+                                                <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO_CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
+                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
                                                 <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
                                                 <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
                                                 <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && in_array('GERAR_PAGAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
@@ -280,11 +285,11 @@
                             <div class="form-check form-check-custom form-check-solid">
                                 <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
                                     <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                    <option value="CADASTRO_INCONSISTENTE"> 
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
                                     <option value="CARTAO_NOVO">CARTAO_NOVO</option>
-                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
-                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE"> 
+                                    <option value="CREDITO_INCONSISTENTE"> 
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>

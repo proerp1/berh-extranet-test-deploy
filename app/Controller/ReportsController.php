@@ -1194,8 +1194,91 @@ class ReportsController extends AppController
             $this->redirect("/files/excel/" . $nome);
         }
 
+        if (isset($_GET['excel_simples'])) {
+            $nome = 'relatorio_compras_simples_' . date('d_m_Y_H_i_s') . '.xlsx';
+
+            $data = $this->OrderItem->find('all', [
+                'fields' => [
+                    'OrderItem.*',
+                    'CustomerUserItinerary.quantity',
+                    'Customer.documento',
+                    'CustomerUser.name',
+                    'CustomerUser.cpf',
+                    'CustomerUser.rg',
+                    'CustomerUser.emissor_rg',
+                    'CustomerUser.data_nascimento',
+                    'CustomerUser.nome_mae',
+                    'Supplier.code',
+                    'CustomerUserItinerary.card_number',
+                    'CustomerUser.sexo',
+                    'Order.id',
+                    'EconomicGroups.document',
+                    'Order.credit_release_date',
+                    'Order.order_period_from',
+                    'Order.order_period_to',
+                    'CustomerUserItinerary.matricula',
+					'MAX(CustomerUserAddress.zip_code) as cep',
+					'MAX(CustomerUserAddress.address_line) as endereco',
+					'MAX(CustomerUserAddress.address_number) as numero',
+					'MAX(CustomerUserAddress.address_complement) as complemento',
+					'MAX(CustomerUserAddress.neighborhood) as bairro',
+					'MAX(CustomerUserAddress.city) as cidade',
+					'MAX(CustomerUserAddress.state) as estado',
+                ],
+                'joins' => [
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 
+                            'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'economic_groups',
+                        'alias' => 'EconomicGroups',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Order.economic_group_id = EconomicGroups.id'
+                        ]
+                    ],
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id', 
+                            'Supplier.data_cancel' => '1901-01-01',
+                        ]
+                    ],
+					[
+						'table' => 'customer_user_addresses',
+						'alias' => 'CustomerUserAddress',
+						'type' => 'LEFT',
+						'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id and CustomerUserAddress.address_type_id = 1']
+					],
+                ],
+				'group' => [
+					'OrderItem.id'
+				],
+                'conditions' => $condition,
+            ]);
+
+            $this->ExcelGenerator->gerarRelatorioComprasSimples($nome, $data);
+            $this->redirect('/files/excel/' . $nome);
+        }
+
         if (isset($_GET['excel'])) {
-            $nome = 'relatorio_compras_' . date('d_m_Y_H_i_s') . '.xlsx';
+            $nome = 'relatorio_compras_completo_' . date('d_m_Y_H_i_s') . '.xlsx';
 
             $data = $this->OrderItem->find('all', [
                 'fields' => [

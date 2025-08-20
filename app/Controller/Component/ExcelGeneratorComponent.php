@@ -52,6 +52,18 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
+    public function gerarRelatorioComprasSimples($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getRelatorioComprasSimples($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
     public function gerarExcelItineraries($nome, $dados)
     {
         $spreadsheet = new Spreadsheet();
