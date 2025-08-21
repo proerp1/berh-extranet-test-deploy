@@ -169,7 +169,11 @@ class CustomersController extends AppController
                 $this->request->data['Customer']['status_id'] = 3;
                 $this->request->data['Customer']['tipo_credor'] = 'C';
                 $this->request->data['Customer']['created'] = date('Y-m-d H:i:s');
-                //debug($this->request->data);die;
+
+                if ($this->request->data['Customer']['condicao_pagamento'] == 1) {
+                    $this->request->data['Customer']['prazo'] = null;
+                }
+
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
                     /*

@@ -679,8 +679,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
     public function getClientesRelatorio($objPHPExcel, $dados)
     {
-
         $col = 'A';
+
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Situação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de cadastro"); $col++;
@@ -728,6 +728,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade Entrega"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Bairro Entrega"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo"); $col++;
 
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -802,6 +804,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cidadeentrega']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['bairroentrega']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['estadoentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['desc_condicao_pagamento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['prazo']); $col++;
         }
     }
 

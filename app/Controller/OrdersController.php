@@ -296,7 +296,11 @@ class OrdersController extends AppController
             $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
 
             if ($condicao_pagamento == 2) {
-                $order_status_id = 84;
+                if ($pedido_complementar == 1) {
+                    $order_status_id = 86;
+                } else {
+                    $order_status_id = 104;
+                }
             } else {
                 $prazo = null;
                 $order_status_id = 83;
