@@ -379,7 +379,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             
     }
 
-    public function getFluxo($objPHPExcel, $dados, $conta)
+public function getFluxo($objPHPExcel, $dados, $conta)
 {
     $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('A1', "Status")
@@ -396,25 +396,25 @@ public function getNiboContasReceber($objPHPExcel, $dados)
 
     $indx = 2;
     $saldo = 0;
+
     if (!empty($conta)) {
+        // mesmo saldo inicial do index
         $saldo = $conta['BankAccount']['initial_balance_not_formated'];
 
         $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':F' . $indx);
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A' . $indx, $conta['BankAccount']['name'])
-            ->setCellValue('I' . $indx, $conta['BankAccount']['initial_balance']);
+            ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'));
     }
 
     for ($i = 0; $i < count($dados); $i++) {
-        // calcula o saldo usando o operador
-        $saldo = $dados[$i][0]['operador'] == '+' 
-            ? $saldo + $dados[$i][0]['valor_total'] 
-            : $saldo - $dados[$i][0]['valor_total'];
-
-        // aplica o sinal ao valor
-        $valor_total = ($dados[$i][0]['operador'] == '+') 
-            ? $dados[$i][0]['valor_total'] 
+        $valor_total = ($dados[$i][0]['operador'] == '+')
+            ? $dados[$i][0]['valor_total']
             : -$dados[$i][0]['valor_total'];
+
+        $saldo = ($dados[$i][0]['operador'] == '+')
+            ? $saldo + $dados[$i][0]['valor_total']
+            : $saldo - $dados[$i][0]['valor_total'];
 
         $indx++;
         $objPHPExcel->setActiveSheetIndex(0)
@@ -427,8 +427,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('G' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
             ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'))
-            ->setCellValue('J' . $indx, $dados[$i][0]['bank_account_name'])
-            ->setCellValue('K' . $indx, date('d/m/Y', strtotime($dados[$i][0]['created'])));
+            ->setCellValue('J' . $indx, $dados[$i][0]['nome_conta'])
+            ->setCellValue('J' . $indx, $dados[$i][0]['nome']);
     }
 
     $indx++;
@@ -437,6 +437,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('A' . $indx, 'Total:')
         ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'));
 }
+
 
 
     public function getDespesas($objPHPExcel, $dados, $conta)
