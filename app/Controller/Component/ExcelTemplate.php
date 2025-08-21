@@ -390,7 +390,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('F1', "N° Pedido")
         ->setCellValue('G1', "Data")
         ->setCellValue('H1', "Valor")
-        ->setCellValue('I1', "Saldo");
+        ->setCellValue('I1', "Saldo")
+        ->setCellValue('J1', "Nome da Conta")
+        ->setCellValue('K1', "Cadastro");
 
     $indx = 2;
     $saldo = 0;
@@ -420,7 +422,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('F' . $indx, $dados[$i][0]['order_id'])
             ->setCellValue('G' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
-            ->setCellValue('I' . $indx, number_format($saldo_abs, 2, ',', '.'));
+            ->setCellValue('I' . $indx, number_format($saldo_abs, 2, ',', '.'))
+            ->setCellValue('J' . $indx, $dados[$i][0]['bank_account_name'])
+            ->setCellValue('K' . $indx, date('d/m/Y', strtotime($dados[$i][0]['created_nao_formatado'])));
     }
 
     $indx++;
