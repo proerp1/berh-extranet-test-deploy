@@ -982,7 +982,7 @@
                     </div>
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2 required">Valor por dia</label>
-                        <?php echo $this->Form->input('price_per_day', array("id" => "price_per_day", 'type' => 'text', "placeholder" => "Valor por dia", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field", 'readonly'));  ?>
+                        <?php echo $this->Form->input('price_per_day', array("id" => "price_per_day", 'type' => 'text', "placeholder" => "Valor por dia", "required" => true, "class" => "form-control mb-3 mb-lg-0 money_field", 'disabled'));  ?>
                     </div>
                 </div>
 
