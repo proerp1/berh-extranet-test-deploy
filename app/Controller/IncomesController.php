@@ -852,11 +852,11 @@ class IncomesController extends AppController
 
     private function get_nfse_type_data($income, $type) {
         if ($type === 'ge') {
-          $data = $this->get_gestao_eficiente_data($income);
+            $data = $this->get_gestao_eficiente_data($income);
         } else if ($type === 'tpp') {
-          $data = $this->get_tpp_data($income);
+            $data = $this->get_tpp_data($income);
         } else {
-          $data = $this->get_ge_and_tpp_data($income);
+            $data = $this->get_ge_and_tpp_data($income);
         }
 
         return $data;
@@ -876,10 +876,6 @@ class IncomesController extends AppController
         Informações Adicionais
 
         Gestão Eficiente R$ {$fee_economia_formatted}";
-
-        if ($income['Order']['nfse_observation']) {
-            $obs .= "\n\n{$income['Order']['nfse_observation']}";
-        }
 
         return [
             "obs" => $obs,
@@ -904,10 +900,6 @@ class IncomesController extends AppController
         Taxa Administrativa R$ {$income['Order']['commission_fee']}
         Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
         Total---------------------------------  R$ {$total_formatted}";
-
-        if ($income['Order']['nfse_observation']) {
-            $obs .= "\n\n{$income['Order']['nfse_observation']}";
-        }
 
         return [
             "obs" => $obs,
@@ -938,10 +930,6 @@ class IncomesController extends AppController
         Taxa Processamento de Pedidos R$ {$tpp_fee_formatted}
         Gestão Eficiente R$ {$fee_economia_formatted}
         Total---------------------------------  R$ {$total_formatted}";
-
-        if ($income['Order']['nfse_observation']) {
-            $obs .= "\n\n{$income['Order']['nfse_observation']}";
-        }
 
         return [
             "obs" => $obs,
@@ -1025,7 +1013,7 @@ class IncomesController extends AppController
         return str_replace('notaprint', 'notaprintimg', $link_pdf);
     }
 
-    private function get_nfse_data($income, $type) {
+    private function get_nfse_data($income, $type, $obs) {
         $data = $this->get_nfse_type_data($income, $type);
         $series = [
           'tpp' => 1,
@@ -1034,6 +1022,8 @@ class IncomesController extends AppController
         ];
         $serie = $series[$type];
         $today = new DateTime();
+
+        $data['obs'] .= "\n\n$obs";
 
         return [
             "numero" => mb_substr($income['Income']['id'], 0, 9, "UTF-8"),
@@ -1073,7 +1063,7 @@ class IncomesController extends AppController
         $this->Income->recursive = 2;
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $nfse['IncomeNfse']['income_id']]]);
 
-        $nfse_data = $this->get_nfse_data($income, $nfse['IncomeNfse']['tipo']);
+        $nfse_data = $this->get_nfse_data($income, $nfse['IncomeNfse']['tipo'], $nfse['IncomeNfse']['description']);
         $nf_number = $income['Order']['id'];
         $nome = $income['Customer']['nome_secundario'];
         $valor = number_format($nfse_data['servico']['itens'][0]['valor_servicos'], 2, ',', '.');
@@ -1142,9 +1132,10 @@ class IncomesController extends AppController
         }
 
         try {
+            $obs = $this->request->data['IncomeNfse']['description'];
             $nfse_sdk = $this->connect_nfse_sdk();
 
-            $nfse_data = $this->get_nfse_data($income, $type);
+            $nfse_data = $this->get_nfse_data($income, $type, $obs);
 
             $response = $nfse_sdk->cria($nfse_data);
 
@@ -1152,6 +1143,14 @@ class IncomesController extends AppController
                 $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action'=> 'nfse', $income_id]);
             }
+
+            $this->IncomeNfse->save([
+              'tipo' => $type,
+              'chave' => $response->chave,
+              'status_id' => 106,
+              'income_id' => $income['Income']['id'],
+              'description' => $obs
+            ]);
 
             $this->Flash->set(__('A nota fiscal foi emitida com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
         } catch (\Exception $e) {
