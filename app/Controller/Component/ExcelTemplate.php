@@ -406,11 +406,15 @@ public function getNiboContasReceber($objPHPExcel, $dados)
     }
 
     for ($i = 0; $i < count($dados); $i++) {
-        $saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i][0]['valor_total'] : $saldo - $dados[$i][0]['valor_total'];
+        // calcula o saldo usando o operador
+        $saldo = $dados[$i][0]['operador'] == '+' 
+            ? $saldo + $dados[$i][0]['valor_total'] 
+            : $saldo - $dados[$i][0]['valor_total'];
 
-        // Use the absolute value to remove '-' sign from saldo
-        $valor_total = abs($dados[$i][0]['valor_total']);
-        $saldo_abs = abs($saldo); // Absolute value of saldo
+        // aplica o sinal ao valor
+        $valor_total = ($dados[$i][0]['operador'] == '+') 
+            ? $dados[$i][0]['valor_total'] 
+            : -$dados[$i][0]['valor_total'];
 
         $indx++;
         $objPHPExcel->setActiveSheetIndex(0)
@@ -422,7 +426,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('F' . $indx, $dados[$i][0]['order_id'])
             ->setCellValue('G' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
-            ->setCellValue('I' . $indx, number_format($saldo_abs, 2, ',', '.'))
+            ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'))
             ->setCellValue('J' . $indx, $dados[$i][0]['bank_account_name'])
             ->setCellValue('K' . $indx, date('d/m/Y', strtotime($dados[$i][0]['created_nao_formatado'])));
     }
