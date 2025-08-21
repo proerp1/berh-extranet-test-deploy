@@ -428,7 +428,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
             ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'))
             ->setCellValue('J' . $indx, $dados[$i][0]['nome_conta'])
-            ->setCellValue('K' . $indx, $dados[$i][0]['nome']);
+            ->setCellValue('K' . $indx, isset($dados[$i][0]['nome']) ? $dados[$i][0]['nome'] : '');
+
     }
 
     $indx++;
