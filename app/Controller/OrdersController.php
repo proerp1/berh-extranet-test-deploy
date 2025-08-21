@@ -2774,7 +2774,9 @@ class OrdersController extends AppController
         ini_set('memory_limit', '-1');
 
         $view = new View($this, false);
+        
         $view->layout = false;
+
         $order = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
@@ -2835,6 +2837,10 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
+        }
+
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
         }
 
         $orders = $this->Order->find('all', [

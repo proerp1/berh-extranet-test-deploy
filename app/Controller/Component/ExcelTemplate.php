@@ -161,7 +161,6 @@ class ExcelTemplate
 
     public function getContasReceber($objPHPExcel, $dados)
     {
-
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', "Descrição da conta")
             ->setCellValue('B1', "Status")
@@ -180,14 +179,14 @@ class ExcelTemplate
             ->setCellValue('O1', "Centro de custo")
             ->setCellValue('P1', "Observações")
             ->setCellValue('Q1', "Data Pagamento")
-            ->setCellValue('R1', "Pedido");
-
-
+            ->setCellValue('R1', "Pedido")
+            ->setCellValue('S1', "Condição de pagamento")
+            ->setCellValue('T1', "Prazo");
 
         $indx = 1;
         for ($i = 0; $i < count($dados); $i++) {
-
             $indx++;
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A' . $indx, $dados[$i]['Income']['name'])
                 ->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
@@ -206,10 +205,9 @@ class ExcelTemplate
                 ->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
                 ->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
                 ->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
-                ->setCellValue('R' . $indx, $dados[$i]['Order']['id']);
-
-
-
+                ->setCellValue('R' . $indx, $dados[$i]['Order']['id'])
+                ->setCellValue('S' . $indx, $dados[$i]['Order']['desc_condicao_pagamento'])
+                ->setCellValue('T' . $indx, $dados[$i]['Order']['prazo']);
         }
     }
 
@@ -1053,8 +1051,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
     public function getPedidosRelatorio($objPHPExcel, $dados)
     {
-
         $col = 'A';
+
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número"); $col++;
@@ -1084,6 +1082,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Observação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Antecipada"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo"); $col++;
 
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
@@ -1137,6 +1137,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['UpdatedGe']['name']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['observation_ge']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['desc_condicao_pagamento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['prazo']); $col++;
         }
     }
 
@@ -2466,7 +2468,9 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         ->setCellValue('AC1', "Motivo Processamento")
         ->setCellValue('AD1', "Tipo Pedido")
         ->setCellValue('AE1', "Tipo de Benefício / Serviço")
-        ->setCellValue('AF1', "Primeiro Pedido");
+        ->setCellValue('AF1', "Primeiro Pedido")
+        ->setCellValue('AG1', "Condição de pagamento")
+        ->setCellValue('AH1', "Prazo");
 
         $indx = 1;
         $total = 0;
@@ -2525,7 +2529,9 @@ public function getFluxo($objPHPExcel, $dados, $conta)
                 ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
                 ->setCellValue('AD' . $indx, $tipo_pedido)
                 ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
-                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');
+                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não')
+                ->setCellValue('AG'. $indx, $dados[$i]['Order']['desc_condicao_pagamento'])
+                ->setCellValue('AH'. $indx, $dados[$i]['Order']['prazo']);
         }
     }
 
