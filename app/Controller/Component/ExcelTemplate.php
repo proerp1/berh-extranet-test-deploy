@@ -428,7 +428,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
             ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'))
             ->setCellValue('J' . $indx, $dados[$i][0]['bank_account_name'])
-            ->setCellValue('K' . $indx, date('d/m/Y', strtotime($dados[$i][0]['created_nao_formatado'])));
+            ->setCellValue('K' . $indx, date('d/m/Y', strtotime($dados[$i][0]['created'])));
     }
 
     $indx++;
