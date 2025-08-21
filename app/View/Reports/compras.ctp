@@ -14,19 +14,14 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
-                    <a href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
-                        Exportar Relatório Pedidos
-                    </a>
-
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
                     </button>
 
-                    <a href="#" id="alterar_sel" class="btn btn-primary me-3">
-                        <i class="fas fa-edit"></i>
-                        Alterar Status Processamento
+                    <a href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
+                        <i class="fas fa-table"></i>
+                        Exportar Relatório Pedidos
                     </a>
 
                     <a href="<?php echo $this->here.'?excel_simples&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel_simples">
@@ -37,6 +32,11 @@
                     <a href="<?php echo $this->here.'?excel&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
                         <i class="fas fa-table"></i>
                         Exportar Completo
+                    </a>
+
+                    <a href="#" id="alterar_sel" class="btn btn-primary me-3">
+                        <i class="fas fa-edit"></i>
+                        Alterar Status Processamento
                     </a>
 
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
