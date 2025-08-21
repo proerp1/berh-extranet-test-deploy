@@ -176,6 +176,14 @@
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
+                                            Condição de pagamento
+                                        </div>
+                                    </td>
+                                    <td class="fw-bolder text-end"><?php echo $order['Order']['desc_condicao_pagamento']; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">
+                                        <div class="d-flex align-items-center">
                                             Gestão Eficiente
                                         </div>
                                     </td>

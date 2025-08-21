@@ -82,6 +82,8 @@ $(document).ready(function() {
         const dueDateToValue = $('#due_date').val();
         const workingDaysValue = $('#working_days').val();
         const cloneOrder = $('.clone_order:checked').val();
+        const condPagamento = $('#condicao_pagamento').val();
+        const prazo = $('#prazo').val();
 
         $('#message_wd').val('');
         $('#message_classification').val('');
@@ -131,13 +133,26 @@ $(document).ready(function() {
                 event.preventDefault();
                 return; // Evita a execução adicional
             }
-                        
-            const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
-            
-            if (dueDateToDate >= maxInvalidDate) {
-                $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
-                event.preventDefault();
-                return;
+
+            if (condPagamento == 1) {
+                const maxInvalidDate = subtractWorkingDays(creditReleaseDate, 5);
+                
+                if (dueDateToDate >= maxInvalidDate) {
+                    $('#message_classification_due_date').text('Data de vencimento deve estar entre 5 dias úteis antes do dia do crédito previsto.').show();
+                    event.preventDefault();
+                    return;
+                }
+            } else {
+                const currDt = new Date();
+                currDt.setHours(0, 0, 0, 0);
+                
+                const maxDate = addBusinessDays(currDt, prazo);
+                
+                if (dueDateToDate > maxDate) {
+                    $('#message_classification_due_date').text('Data de vencimento não pode ser maior que a data atual + prazo.').show();
+                    event.preventDefault();
+                    return;
+                }
             }
         }
 
@@ -265,7 +280,7 @@ $(document).ready(function() {
                     $('#prazo').val('');
                 }
 
-                $('#condicao_pagamento').val(data['Customer']['condicao_pagamento']);
+                $('#condicao_pagamento').val(data['Customer']['condicao_pagamento']).trigger('change.select2');
 
                 togglePrazo();
             }

@@ -55,17 +55,15 @@ class IncomesController extends AppController
             $condition['or'] = array_merge($condition['or'], ['Income.name LIKE' => "%".$_GET['q']."%", 'Income.doc_num' => $_GET['q'], 'BankAccount.name LIKE' => "%".$_GET['q']."%", 'Customer.nome_primario LIKE' => "%".$_GET['q']."%", 'Customer.nome_secundario LIKE' => "%".$_GET['q']."%", 'Customer.codigo_associado' => $_GET['q']]);
         }
 
-            if (!empty($_GET['c'])) {
+        if (!empty($_GET['c'])) {
             if (is_array($_GET['c'])) {
                 $condition['Income.customer_id'] = $_GET['c'];
             }
         }
 
-
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-        }
-        
+        }        
 
         if (isset($_GET["sc"]) and $_GET["sc"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Customer.status_id' => $_GET['sc']]);
@@ -76,9 +74,8 @@ class IncomesController extends AppController
         }
 
         if (!empty($_GET["payment_method"])) {
-    $condition['and']['Income.payment_method'] = $_GET["payment_method"];
-}
-
+            $condition['and']['Income.payment_method'] = $_GET["payment_method"];
+        }
 
         if (isset($_GET["atraso"]) and $_GET["atraso"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id IN (15,16) ']);
@@ -93,6 +90,10 @@ class IncomesController extends AppController
         if (!empty($_GET['nfse_antecipada']) && $_GET['nfse_antecipada'] != '') {
             $comparator = $_GET['nfse_antecipada'] == 'S' ? '=' : '!=';
             $condition['and'] = array_merge($condition['and'], ["Customer.emitir_nota_fiscal $comparator 'A'"]);
+        }
+
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
         }
 
         $get_de = isset($_GET["de"]) ? $_GET["de"] : '';
@@ -154,45 +155,22 @@ class IncomesController extends AppController
             } else {
                 $this->Income->recursive = -1;
                 $this->Income->unbindModel(['belongsTo' => ['Customer', 'BankAccount', 'Status']], false);
-                
+
                 $joins = [
-                    'fields' => ['Income.*', 'Customer.*', 'BankAccount.*', 'Status.*', 'Order.*', '(select group_concat(nfse.tipo) from income_nfse nfse where nfse.income_id = Income.id group by nfse.income_id) as nfses'],
-                    'joins' => [['table' => 'customers',
-                        'alias' => 'Customer',
-                        'type' => 'INNER',
-                        'conditions' => ['Income.customer_id = Customer.id', 'Customer.data_cancel' => '1901-01-01 00:00:00']
+                    'fields' => [
+                        'Income.*', 
+                        'Customer.*', 
+                        'BankAccount.*', 
+                        'Status.*', 
+                        'Order.*', 
+                        "(CASE WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' WHEN Order.condicao_pagamento = 2 THEN 'Faturado' ELSE '' END) AS desc_condicao_pagamento",
+                        '(SELECT GROUP_CONCAT(nfse.tipo) 
+                        FROM income_nfse nfse 
+                        WHERE nfse.income_id = Income.id 
+                        GROUP BY nfse.income_id) AS nfses'
                     ],
-                    ['table' => 'bank_accounts',
-                        'alias' => 'BankAccount',
-                        'type' => 'INNER',
-                        'conditions' => ['Income.bank_account_id = BankAccount.id']
-                    ],
-                    ['table' => 'statuses',
-                        'alias' => 'Status',
-                        'type' => 'INNER',
-                        'conditions' => ['Income.status_id = Status.id']
-                ],
-                    ['table' => 'orders',
-                        'alias' => 'Order',
-                        'type' => 'LEFT',
-                        'conditions' => ['Income.order_id = Order.id']
-                ],
-                    ['table' => 'income_nfse',
-                        'alias' => 'IncomeNfse',
-                        'type' => 'LEFT',
-                        'conditions' => ['IncomeNfse.income_id = Income.id']
-                ]
-                    ]
-                ];
-
-                $this->paginate['Income'] = array_merge($this->paginate['Income'], $joins);
-                $this->Paginator->settings = $this->paginate;
-                $data = $this->Paginator->paginate('Income', $condition);
-
-                $total_income = $this->Income->find('first', 
-                    [
-                        'conditions' => $condition, 
-                        'joins' => [['table' => 'customers',
+                    'joins' => [
+                        ['table' => 'customers',
                             'alias' => 'Customer',
                             'type' => 'INNER',
                             'conditions' => ['Income.customer_id = Customer.id', 'Customer.data_cancel' => '1901-01-01 00:00:00']
@@ -206,10 +184,50 @@ class IncomesController extends AppController
                             'alias' => 'Status',
                             'type' => 'INNER',
                             'conditions' => ['Income.status_id = Status.id']
-                        ]
                         ],
-                        'fields' => ['sum(Income.valor_total) as total_income']
-                    ]);
+                        ['table' => 'orders',
+                            'alias' => 'Order',
+                            'type' => 'LEFT',
+                            'conditions' => ['Income.order_id = Order.id']
+                        ],
+                        ['table' => 'income_nfse',
+                            'alias' => 'IncomeNfse',
+                            'type' => 'LEFT',
+                            'conditions' => ['IncomeNfse.income_id = Income.id']
+                        ]
+                    ]
+                ];
+
+                $this->paginate['Income'] = array_merge($this->paginate['Income'], $joins);
+                $this->Paginator->settings = $this->paginate;
+                $data = $this->Paginator->paginate('Income', $condition);
+
+                $total_income = $this->Income->find('first', [
+                    'conditions' => $condition, 
+                    'fields' => ['sum(Income.valor_total) as total_income'],
+                    'joins' => [
+                        ['table' => 'customers',
+                            'alias' => 'Customer',
+                            'type' => 'INNER',
+                            'conditions' => ['Income.customer_id = Customer.id', 'Customer.data_cancel' => '1901-01-01 00:00:00']
+                        ],
+                        ['table' => 'bank_accounts',
+                            'alias' => 'BankAccount',
+                            'type' => 'INNER',
+                            'conditions' => ['Income.bank_account_id = BankAccount.id']
+                        ],
+                        ['table' => 'statuses',
+                            'alias' => 'Status',
+                            'type' => 'INNER',
+                            'conditions' => ['Income.status_id = Status.id']
+                        ],
+                        ['table' => 'orders',
+                            'alias' => 'Order',
+                            'type' => 'LEFT',
+                            'conditions' => ['Income.order_id = Order.id']
+                        ],
+                    ],
+                ]);
             }
         }           
         

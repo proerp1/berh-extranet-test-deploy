@@ -172,6 +172,11 @@ class OrdersController extends AppController
             $filtersFilled = true;
         }
 
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
+            $filtersFilled = true;
+        }
+
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {

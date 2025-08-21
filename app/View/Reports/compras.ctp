@@ -92,47 +92,55 @@
                                 </select>
                             </div>
                             
-                                        <div class="mb-10">
-                                            <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
-                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
-                                                <option value="">Selecione</option>
-                                                <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
-                                                <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
-                                                <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
-                                                <option value="CARTAO_NOVO" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO</option>
-                                                <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO_CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
-                                                <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>> 
-                                                <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
-                                                <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
-                                                <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && in_array('GERAR_PAGAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
-                                                <option value="INICIO_PROCESSAMENTO" <?php echo isset($_GET['stp']) && in_array('INICIO_PROCESSAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>INICIO_PROCESSAMENTO</option>
-                                                <option value="PAGAMENTO_REALIZADO" <?php echo isset($_GET['stp']) && in_array('PAGAMENTO_REALIZADO', $_GET['stp']) ? 'selected' : ''; ?>>PAGAMENTO_REALIZADO</option>
-                                                <option value="PROCESSAMENTO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('PROCESSAMENTO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>PROCESSAMENTO_PENDENTE</option>
-                                                <option value="VALIDACAO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('VALIDACAO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>VALIDACAO_PENDENTE</option>
-                                            </select>
-                                        </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status Processamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stp[]" id="stp" multiple>
+                                    <option value="">Selecione</option>
+                                    <option value="ARQUIVO_GERADO" <?php echo isset($_GET['stp']) && in_array('ARQUIVO_GERADO', $_GET['stp']) ? 'selected' : ''; ?>>ARQUIVO_GERADO</option>
+                                    <option value="CADASTRO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CADASTRO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_INCONSISTENTE</option>
+                                    <option value="CADASTRO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CADASTRO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CADASTRO_PROCESSADO</option>
+                                    <option value="CARTAO_NOVO" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO</option>
+                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CARTAO_NOVO_CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
+                                    <option value="CREDITO_INCONSISTENTE" <?php echo isset($_GET['stp']) && in_array('CREDITO_INCONSISTENTE', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_INCONSISTENTE</option>
+                                    <option value="CREDITO_PROCESSADO" <?php echo isset($_GET['stp']) && in_array('CREDITO_PROCESSADO', $_GET['stp']) ? 'selected' : ''; ?>>CREDITO_PROCESSADO</option>
+                                    <option value="FALHA_GERACAO_ARQUIVO" <?php echo isset($_GET['stp']) && in_array('FALHA_GERACAO_ARQUIVO', $_GET['stp']) ? 'selected' : ''; ?>>FALHA_GERACAO_ARQUIVO</option>
+                                    <option value="GERAR_PAGAMENTO" <?php echo isset($_GET['stp']) && in_array('GERAR_PAGAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>GERAR_PAGAMENTO</option>
+                                    <option value="INICIO_PROCESSAMENTO" <?php echo isset($_GET['stp']) && in_array('INICIO_PROCESSAMENTO', $_GET['stp']) ? 'selected' : ''; ?>>INICIO_PROCESSAMENTO</option>
+                                    <option value="PAGAMENTO_REALIZADO" <?php echo isset($_GET['stp']) && in_array('PAGAMENTO_REALIZADO', $_GET['stp']) ? 'selected' : ''; ?>>PAGAMENTO_REALIZADO</option>
+                                    <option value="PROCESSAMENTO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('PROCESSAMENTO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>PROCESSAMENTO_PENDENTE</option>
+                                    <option value="VALIDACAO_PENDENTE" <?php echo isset($_GET['stp']) && in_array('VALIDACAO_PENDENTE', $_GET['stp']) ? 'selected' : ''; ?>>VALIDACAO_PENDENTE</option>
+                                </select>
+                            </div>
 
-                                        <div class="mb-10">
-                                            <label class="form-label fs-5 fw-bold mb-3">Tipo de Benefício:</label>
-                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="bt[]" id="bt" multiple>
-                                                <option value="">Selecione</option>
-                                                <?php foreach ($benefitTypes as $id => $name): ?>
-                                                    <option value="<?php echo $id; ?>" <?php echo (isset($_GET['bt']) && in_array($id, $_GET['bt'])) ? 'selected' : ''; ?>>
-                                                        <?php echo $name; ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo de Benefício:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="bt[]" id="bt" multiple>
+                                    <option value="">Selecione</option>
+                                    <?php foreach ($benefitTypes as $id => $name): ?>
+                                        <option value="<?php echo $id; ?>" <?php echo (isset($_GET['bt']) && in_array($id, $_GET['bt'])) ? 'selected' : ''; ?>>
+                                            <?php echo $name; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-                                        <div class="mb-10">
-                                            <label class="form-label fs-5 fw-bold mb-3">Primeiro Pedido:</label>
-                                            <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="first_order" id="first_order">
-                                                <option value="">Todos</option>
-                                                <option value="sim" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'sim' ? 'selected' : ''; ?>>Sim</option>
-                                                <option value="nao" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'nao' ? 'selected' : ''; ?>>Não</option>
-                                            </select>
-                                        </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Primeiro Pedido:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="first_order" id="first_order">
+                                    <option value="">Todos</option>
+                                    <option value="sim" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'sim' ? 'selected' : ''; ?>>Sim</option>
+                                    <option value="nao" <?php echo isset($_GET['first_order']) && $_GET['first_order'] == 'nao' ? 'selected' : ''; ?>>Não</option>
+                                </select>
+                            </div>
 
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Condição de pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cond_pag" id="cond_pag">
+                                    <option value=''></option>
+                                    <option value="1" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '1' ? 'selected' : ''; ?>>Pré pago</option>
+                                    <option value="2" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '2' ? 'selected' : ''; ?>>Faturado</option>
+                                </select>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
@@ -285,11 +293,11 @@
                             <div class="form-check form-check-custom form-check-solid">
                                 <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
                                     <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                    <option value="CADASTRO_INCONSISTENTE"> 
+                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
                                     <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
                                     <option value="CARTAO_NOVO">CARTAO_NOVO</option>
-                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE"> 
-                                    <option value="CREDITO_INCONSISTENTE"> 
+                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
+                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                     <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                     <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
                                     <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>

@@ -1115,6 +1115,12 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
         }
 
+        if (!empty($_GET['cond_pag'])) {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
+        }
+
         if (isset($_GET['first_order']) and $_GET['first_order'] != '') {
             $buscar = true;
             

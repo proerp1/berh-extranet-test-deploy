@@ -7,6 +7,15 @@ class Order extends AppModel
     public $primaryKey = 'id';
 
     public $actsAs = ['Containable'];
+    
+    public $virtualFields = [
+        'desc_condicao_pagamento' => 
+        "CASE 
+            WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' 
+            WHEN Order.condicao_pagamento = 2 THEN 'Faturado' 
+            ELSE '' 
+        END"
+    ];
 
     public $belongsTo = [
         'Customer' => [
@@ -630,8 +639,12 @@ class Order extends AppModel
             return false;
         }
 
-        $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
-
+        if ($order['Order']['condicao_pagamento'] == 2) {
+            $statusId = 87;
+        } else {
+            $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
+        }
+        
         $this->id = $id;
         
         return $this->save([
