@@ -197,6 +197,8 @@ class ExcelConfigurationComponent extends Component {
 					'Order.updated_ge',
 					'Order.observation_ge',
 					'Order.condicao_pagamento',
+					'Order.prazo',
+					"(CASE WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' WHEN Order.condicao_pagamento = 2 THEN 'Faturado' ELSE '' END) AS desc_condicao_pagamento",
 
 					'OrderStatus.name',
 

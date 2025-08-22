@@ -292,7 +292,7 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
-            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : null;
+            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : 1;
             $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
 
             if ($this->request->data['clone_order'] == 1) {

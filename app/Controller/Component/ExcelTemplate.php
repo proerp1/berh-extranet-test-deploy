@@ -736,12 +736,6 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             if (empty($porcentagem_margem_seguranca)) {
                 $porcentagem_margem_seguranca = "0";
             }
-                                
-            if ($dado['Customer']['condicao_pagamento'] == 1) {
-                $condicao_pagamento = "Pré pago";
-            } else {
-                $condicao_pagamento = "Faturado";
-            }            
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['codigo_associado']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
@@ -1099,14 +1093,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
             $vl_economia = ($vl_economia - $fee_economia);
             $total_economia = ($vl_economia + $fee_economia);
-            
-            $v_cond_pagamento = "";
-            if ($dado['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dado['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
-            }
-        
+
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["codigo_associado"]); $col++;
@@ -2295,6 +2282,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
         $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
         $activeWorksheet->setCellValue($col.'1', "Descrição Beneficio");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Condição de pagamento");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Prazo");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2320,13 +2309,6 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
-            }
-
-            $v_cond_pagamento = "";
-            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
             }
 
             $porcentagem_margem_seguranca = $dados[$i]['Customer']['porcentagem_margem_seguranca'];
@@ -2429,6 +2411,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['desc_condicao_pagamento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['prazo']);$col++;
         }
     }
 
@@ -2488,13 +2472,6 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
-            }
-
-            $v_cond_pagamento = "";
-            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
             }
 
             $activeWorksheet
