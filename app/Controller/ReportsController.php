@@ -1684,7 +1684,7 @@ class ReportsController extends AppController
 
             $this->OrderItem->save($data);
 
-            if ($statusProcess == 'CREDITO_INCONSISTENTE') {
+            if (in_array($statusProcess, ['CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
                 $orderBalanceData = [
                     'order_id' => $orderItem['Order']['id'],
                     'order_item_id' => $orderItem['OrderItem']['id'],
