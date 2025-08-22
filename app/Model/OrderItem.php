@@ -314,7 +314,8 @@ class OrderItem extends AppModel {
                 'EconomicGroups.razao_social',
                 'CustomerDepartments.*',
                 'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs',
-                'BenefitType.name'
+                'BenefitType.name',
+                "(CASE WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' WHEN Order.condicao_pagamento = 2 THEN 'Faturado' ELSE '' END) AS Order__desc_condicao_pagamento",
             ],
             'conditions' => $conditions,
             'joins' => [

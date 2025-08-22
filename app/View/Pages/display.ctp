@@ -28,7 +28,8 @@
                                         <thead>
                                         <tr class="fw-bolder text-muted bg-light"> 
                                         <th>Nome</th>
-                                         <th>Data</th>
+                                        <th>Data</th>
+                                        <th>Observação</th>
                                         <th>Download</th>
                                         </tr>
                                         </thead>
@@ -39,6 +40,7 @@
                                                 <tr>
                                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["titulo"]; ?></td>
                                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["data"]; ?></td>
+                                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Comunicado"]["observacao"]; ?></td>
                                                 <td class="fw-bold fs-7 ps-4"><a href="<?php echo Configure::read('Extranet.link').'/files/comunicado/file/'.$data[$i]["Comunicado"]["id"].'/'.$data[$i]["Comunicado"]["file"] ?> " target='_blank'> Clique aqui e faça o download.</a></td>
                                         
                                          </tr>

@@ -86,6 +86,21 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col">
+                            <label class="mb-2">Condição de pagamento</label>
+                            <div class="row">
+                                <select name="data[condicao_pagamento]" id="condicao_pagamento" data-control="select2" class="form-select mb-3 mb-lg-0 select2-hidden-accessible condicao_pagamento" data-select2-id="select2-data-tipo_pessoa" tabindex="-1" aria-hidden="true">
+                                    <option value="1">Pré pago</option>
+                                    <option value="2">Faturado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col js-prazo">
+                            <label class="fw-semibold fs-6 mb-2">Prazo</label>
+                            <?php echo $this->Form->input('prazo', ["class" => "form-control mb-3 mb-lg-0 prazo", 'div' => false, 'label' => false, "readonly" => true]); ?>
+                        </div>
                     </div>
 
                     <div class="row mb-7 js-pedido_parc">

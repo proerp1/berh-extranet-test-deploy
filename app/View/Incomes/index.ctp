@@ -219,6 +219,14 @@ foreach ($data as $item) {
                                     <option value="N" <?php echo isset($_GET['nfse_antecipada']) && $_GET['nfse_antecipada'] == 'N' ? 'selected' : '' ?>>Não</option>
                                 </select>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Condição de pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cond_pag" id="cond_pag">
+                                    <option value=''></option>
+                                    <option value="1" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '1' ? 'selected' : ''; ?>>Pré pago</option>
+                                    <option value="2" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '2' ? 'selected' : ''; ?>>Faturado</option>
+                                </select>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
@@ -253,6 +261,7 @@ foreach ($data as $item) {
                         <th data-priority="1"><?php echo $this->Paginator->sort('Income.valor_total', 'Valor a receber R$'); ?> <?php echo $this->Paginator->sortKey() == 'Income.valor_total' ? "<i class='fas fa-sort-".($this->Paginator->sortDir() == 'asc' ? 'up' : 'down')."'></i>" : ''; ?></th>
                         <th>Valor pago R$</th>
                         <th>Forma de pagamento</th>
+                        <th>Condição de pagamento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -290,8 +299,8 @@ foreach ($data as $item) {
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["parcela"].'ª'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_pago"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4">
-                                <?php echo isset($payment_method[$data[$i]['Income']['payment_method']]) ? $payment_method[$data[$i]['Income']['payment_method']] : '-'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo isset($payment_method[$data[$i]['Income']['payment_method']]) ? $payment_method[$data[$i]['Income']['payment_method']] : '-'; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["desc_condicao_pagamento"]; ?></td>
 
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">

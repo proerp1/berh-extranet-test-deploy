@@ -120,6 +120,14 @@
                                     <option value="N" <?php echo isset($_GET['antecipada']) && $_GET['antecipada'] == 'N' ? 'selected' : ''; ?>>Não</option>
                                 </select>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Condição de pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cond_pag" id="cond_pag">
+                                    <option value=''></option>
+                                    <option value="1" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '1' ? 'selected' : ''; ?>>Pré pago</option>
+                                    <option value="2" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '2' ? 'selected' : ''; ?>>Faturado</option>
+                                </select>
+                            </div>
 
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
@@ -162,6 +170,7 @@
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
                         <th>NFSe Antecipada</th>
+                        <th>Condição de pagamento</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -204,7 +213,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo date("d/m/Y H:i:s", strtotime($data[$i]['Order']['created_nao_formatado'])); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>  
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>        
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
@@ -219,7 +228,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'; ?></td>
-
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["desc_condicao_pagamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base . '/orders/edit/' . $data[$i]["Order"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

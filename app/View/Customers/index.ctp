@@ -92,6 +92,15 @@
                                     <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>">
                                 </div>
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Condição de pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cond_pag" id="cond_pag">
+                                    <option value=''></option>
+                                    <option value="1" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '1' ? 'selected' : ''; ?>>Pré pago</option>
+                                    <option value="2" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '2' ? 'selected' : ''; ?>>Faturado</option>
+                                </select>
+                            </div>
+                            
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -118,6 +127,7 @@
                         <th>Responsável</th>
                         <th>Telefone</th>
                         <th>Email</th>
+                        <th>Condição de pagamento</th>
                         <th>Cidade</th>
                         <th>UF</th>
                         <th>Revenda</th>
@@ -125,7 +135,6 @@
                         <th>Emite Nf</th>
                         <th>Elegivel GE</th>
                         <th>Observação</th>
-
                         <th class="w-150px min-w-150px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -161,6 +170,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["responsavel"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["telefone1"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["email"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["desc_condicao_pagamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["cidade"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["estado"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>

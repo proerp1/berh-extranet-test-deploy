@@ -1,5 +1,4 @@
 <?php
-    $isAdmin = CakeSession::read('Auth.User.group_id') == 1;
     echo $this->element("abas_customers", array('id' => $id));
 ?>
 
@@ -18,7 +17,7 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-                    <?php if ($isAdmin) { ?>
+                    <?php if ($can_bulk_edit) { ?>
                         <button type="button" class="btn btn-danger me-3" id="delete_all" disabled>Apagar Selecionados</button>
                     <?php } ?>
 
@@ -42,7 +41,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <?php if ($isAdmin) { ?>
+                        <?php if ($can_bulk_edit) { ?>
                             <th class="w-80px min-w-80px ps-4">
                                 <input type="checkbox" class="delete_id delete_id_all" name="delete_id" value="all">
                             </th>
@@ -57,7 +56,7 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <tr>
-                                <?php if ($isAdmin) { ?>
+                                <?php if ($can_bulk_edit) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <input type="checkbox" class="delete_id delete_id_<?php echo $data[$i]["CustomerBenefitCode"]["id"] ?>" name="delete_id" value="<?php echo $data[$i]["CustomerBenefitCode"]["id"] ?>">
                                     </td>
@@ -113,7 +112,8 @@
 
 <script>
     const allIds = JSON.parse('<?= json_encode(array_values($allIds)) ?>')
-    let deleteIds = getCookie('customerBenefitCodesDeleteIds').split(',')
+    let deleteIdCookies = getCookie('customerBenefitCodesDeleteIds')
+    let deleteIds = deleteIdCookies ? deleteIdCookies.split(',') : []
     let isAllIds = JSON.parse(getCookie('checkedAllIds'))
 
     $('.delete_id_all').prop('checked', isAllIds)
@@ -148,7 +148,7 @@
             updateDeleteIds(deleteId, isChecked)
         })
 
-        <?php if ($isAdmin) { ?>
+        <?php if ($can_bulk_edit) { ?>
             $('#delete_all').on('click', function () {
                 verConfirm('/customer_benefit_codes/delete_all/<?= $id ?>?ids='+deleteIds.toString())
             })

@@ -172,6 +172,11 @@ class OrdersController extends AppController
             $filtersFilled = true;
         }
 
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
+            $filtersFilled = true;
+        }
+
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {
@@ -287,15 +292,8 @@ class OrdersController extends AppController
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
 
-            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : null;
+            $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : 1;
             $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
-
-            if ($condicao_pagamento == 2) {
-                $order_status_id = 84;
-            } else {
-                $prazo = null;
-                $order_status_id = 83;
-            }
 
             if ($this->request->data['clone_order'] == 1) {
                 $this->cloneOrder();
@@ -380,6 +378,17 @@ class OrdersController extends AppController
             }
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
+
+            if ($condicao_pagamento == 2) {
+                if ($pedido_complementar == 1) {
+                    $order_status_id = 86;
+                } else {
+                    $order_status_id = 104;
+                }
+            } else {
+                $prazo = null;
+                $order_status_id = 83;
+            }
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -2754,7 +2763,9 @@ class OrdersController extends AppController
         ini_set('memory_limit', '-1');
 
         $view = new View($this, false);
+        
         $view->layout = false;
+
         $order = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $id],
@@ -2815,6 +2826,10 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
+        }
+
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
         }
 
         $orders = $this->Order->find('all', [

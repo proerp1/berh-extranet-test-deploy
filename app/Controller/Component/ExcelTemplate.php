@@ -161,7 +161,6 @@ class ExcelTemplate
 
     public function getContasReceber($objPHPExcel, $dados)
     {
-
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A1', "Descrição da conta")
             ->setCellValue('B1', "Status")
@@ -180,14 +179,14 @@ class ExcelTemplate
             ->setCellValue('O1', "Centro de custo")
             ->setCellValue('P1', "Observações")
             ->setCellValue('Q1', "Data Pagamento")
-            ->setCellValue('R1', "Pedido");
-
-
+            ->setCellValue('R1', "Pedido")
+            ->setCellValue('S1', "Condição de pagamento")
+            ->setCellValue('T1', "Prazo");
 
         $indx = 1;
         for ($i = 0; $i < count($dados); $i++) {
-
             $indx++;
+
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A' . $indx, $dados[$i]['Income']['name'])
                 ->setCellValue('B' . $indx, $dados[$i]['Status']['name'])
@@ -206,10 +205,9 @@ class ExcelTemplate
                 ->setCellValue('O' . $indx, $dados[$i]['CostCenter']['name'])
                 ->setCellValue('P' . $indx, $dados[$i]['Income']['observation'])
                 ->setCellValue('Q' . $indx, $dados[$i]['Income']['data_pagamento'])
-                ->setCellValue('R' . $indx, $dados[$i]['Order']['id']);
-
-
-
+                ->setCellValue('R' . $indx, $dados[$i]['Order']['id'])
+                ->setCellValue('S' . $indx, $dados[$i]['Order']['desc_condicao_pagamento'])
+                ->setCellValue('T' . $indx, $dados[$i]['Order']['prazo']);
         }
     }
 
@@ -285,8 +283,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('T1', "Digito")
             ->setCellValue('U1', "Tipo Chave")
             ->setCellValue('V1', "Chave PIX")
-            ->setCellValue('W1', "Registro Cobrança");
-            
+            ->setCellValue('W1', "Registro Cobrança")
+            ->setCellValue('X1', "Pedidos");
+
           
 
             $indx = 1;
@@ -320,7 +319,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
                     ->setCellValue('T' . $indx, $dados[$i]['Supplier']['acc_digit'] ?? '')
                     ->setCellValue('U' . $indx, $dados[$i]['Supplier']['pix_type'] ?? '')
                     ->setCellValue('V' . $indx, $dados[$i]['Supplier']['pix_id'] ?? '')
-                    ->setCellValue('X' . $indx, ($dados[$i]['Supplier']['valor'] ?? '') . ' ' . ($dados[$i]['Supplier']['unidade_tempo'] ?? ''));
+                    ->setCellValue('W' . $indx, ($dados[$i]['Supplier']['valor'] ?? '') . ' ' . ($dados[$i]['Supplier']['unidade_tempo'] ?? ''))
+                    ->setCellValue('X' . $indx, $dados[$i][0]['orders']);
 
             }
             
@@ -377,7 +377,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             
     }
 
-    public function getFluxo($objPHPExcel, $dados, $conta)
+public function getFluxo($objPHPExcel, $dados, $conta)
 {
     $objPHPExcel->setActiveSheetIndex(0)
         ->setCellValue('A1', "Status")
@@ -388,25 +388,31 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('F1', "N° Pedido")
         ->setCellValue('G1', "Data")
         ->setCellValue('H1', "Valor")
-        ->setCellValue('I1', "Saldo");
+        ->setCellValue('I1', "Saldo")
+        ->setCellValue('J1', "Nome da Conta")
+        ->setCellValue('K1', "Cadastro");
 
     $indx = 2;
     $saldo = 0;
+
     if (!empty($conta)) {
+        // mesmo saldo inicial do index
         $saldo = $conta['BankAccount']['initial_balance_not_formated'];
 
         $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A' . $indx . ':F' . $indx);
         $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('A' . $indx, $conta['BankAccount']['name'])
-            ->setCellValue('I' . $indx, $conta['BankAccount']['initial_balance']);
+            ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'));
     }
 
     for ($i = 0; $i < count($dados); $i++) {
-        $saldo = $dados[$i][0]['operador'] == '+' ? $saldo + $dados[$i][0]['valor_total'] : $saldo - $dados[$i][0]['valor_total'];
+        $valor_total = ($dados[$i][0]['operador'] == '+')
+            ? $dados[$i][0]['valor_total']
+            : -$dados[$i][0]['valor_total'];
 
-        // Use the absolute value to remove '-' sign from saldo
-        $valor_total = abs($dados[$i][0]['valor_total']);
-        $saldo_abs = abs($saldo); // Absolute value of saldo
+        $saldo = ($dados[$i][0]['operador'] == '+')
+            ? $saldo + $dados[$i][0]['valor_total']
+            : $saldo - $dados[$i][0]['valor_total'];
 
         $indx++;
         $objPHPExcel->setActiveSheetIndex(0)
@@ -418,7 +424,10 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             ->setCellValue('F' . $indx, $dados[$i][0]['order_id'])
             ->setCellValue('G' . $indx, date('d/m/Y', strtotime($dados[$i][0]['data_pagamento'])))
             ->setCellValue('H' . $indx, number_format($valor_total, 2, ',', '.'))
-            ->setCellValue('I' . $indx, number_format($saldo_abs, 2, ',', '.'));
+            ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'))
+            ->setCellValue('J' . $indx, $dados[$i][0]['nome_conta'])
+            ->setCellValue('K' . $indx, isset($dados[$i][0]['nome']) ? $dados[$i][0]['nome'] : '');
+
     }
 
     $indx++;
@@ -427,6 +436,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('A' . $indx, 'Total:')
         ->setCellValue('I' . $indx, number_format($saldo, 2, ',', '.'));
 }
+
 
 
     public function getDespesas($objPHPExcel, $dados, $conta)
@@ -667,8 +677,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
 
     public function getClientesRelatorio($objPHPExcel, $dados)
     {
-
         $col = 'A';
+
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Situação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de cadastro"); $col++;
@@ -716,6 +726,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade Entrega"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Bairro Entrega"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado Entrega"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo"); $col++;
 
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -724,12 +736,6 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             if (empty($porcentagem_margem_seguranca)) {
                 $porcentagem_margem_seguranca = "0";
             }
-                                
-            if ($dado['Customer']['condicao_pagamento'] == 1) {
-                $condicao_pagamento = "Pré pago";
-            } else {
-                $condicao_pagamento = "Faturado";
-            }            
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['codigo_associado']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Status']['name']); $col++;
@@ -790,6 +796,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['cidadeentrega']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['bairroentrega']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['estadoentrega']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['desc_condicao_pagamento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['prazo']); $col++;
         }
     }
 
@@ -1037,8 +1045,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
 
     public function getPedidosRelatorio($objPHPExcel, $dados)
     {
-
         $col = 'A';
+
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número"); $col++;
@@ -1068,6 +1076,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Usuário Alteração"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gestão Eficiente - Observação"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Antecipada"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo"); $col++;
 
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
@@ -1083,14 +1093,7 @@ public function getNiboContasReceber($objPHPExcel, $dados)
 
             $vl_economia = ($vl_economia - $fee_economia);
             $total_economia = ($vl_economia + $fee_economia);
-            
-            $v_cond_pagamento = "";
-            if ($dado['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dado['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
-            }
-        
+
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Status"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]["codigo_associado"]); $col++;
@@ -1121,6 +1124,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['UpdatedGe']['name']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['observation_ge']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Customer"]['emitir_nota_fiscal'] == 'A' ? 'Sim' : 'Não'); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['desc_condicao_pagamento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['prazo']); $col++;
         }
     }
 
@@ -1158,9 +1163,6 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Beneficio"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeiro Pedido"); $col++;
-
-
-
         
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -1197,8 +1199,78 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["BenefitType"]["name"] ); $col++;
             $primeiro_pedido = $dado["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $primeiro_pedido); $col++;
+        }
+    }
 
+    public function getRelatorioComprasSimples($objPHPExcel, $dados)
+    {
+        $col = 'A';
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CNPJ CLIENTE"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "RG"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Orgão Expeditor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data De Nascimento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome Da Mãe"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Dias Úteis"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Id(Código Operadora)"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número do Cartão (Vale Transporte)"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "VlUnit"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde do Benefício por Dia"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cep Residência Colaborador"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Rua Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Complemento Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Bairro Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cidade Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Estado Residência"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Gênero"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE-CNPJ"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Liberação do crédito"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Período Inicio"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Período Fim"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Compra Operadora"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeira Compra"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matricula Operadora"); $col++;
+        
+        foreach ($dados as $key => $dado) {
+            $col = 'A';
 
+            $quantity = $dado['OrderItem']['manual_quantity'] != 0 ? 
+                        $dado['OrderItem']['manual_quantity'] : 
+                        $dado['CustomerUserItinerary']['quantity'];
+
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Customer']['documento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['name']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['cpf']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['rg']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['emissor_rg']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['data_nascimento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['nome_mae']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['working_days']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Supplier']['code']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUserItinerary']['card_number']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['valor_unit']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['working_days']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $quantity); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['cep']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['endereco']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['numero']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['complemento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['bairro']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['cidade']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]['estado']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUser']['sexo']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['id']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['EconomicGroups']['document']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['credit_release_date']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['order_period_from']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['order_period_to']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), number_format(($dado['OrderItem']['subtotal_not_formated'] - $dado['OrderItem']['saldo_not_formated']), 2, ',', '.')); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não'); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUserItinerary']['matricula']); $col++;
         }
     }
 
@@ -2210,6 +2282,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         $activeWorksheet->setCellValue($col.'1', "Gestão Eficiente - Observação");$col++;
         $activeWorksheet->setCellValue($col.'1', "Tipo Beneficio");$col++;
         $activeWorksheet->setCellValue($col.'1', "Descrição Beneficio");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Condição de pagamento");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Prazo");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2235,13 +2309,6 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
-            }
-
-            $v_cond_pagamento = "";
-            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
             }
 
             $porcentagem_margem_seguranca = $dados[$i]['Customer']['porcentagem_margem_seguranca'];
@@ -2344,6 +2411,8 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['observation_ge']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['BenefitType']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['desc_condicao_pagamento']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['prazo']);$col++;
         }
     }
 
@@ -2383,7 +2452,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
         ->setCellValue('AC1', "Motivo Processamento")
         ->setCellValue('AD1', "Tipo Pedido")
         ->setCellValue('AE1', "Tipo de Benefício / Serviço")
-        ->setCellValue('AF1', "Primeiro Pedido");
+        ->setCellValue('AF1', "Primeiro Pedido")
+        ->setCellValue('AG1', "Condição de pagamento")
+        ->setCellValue('AH1', "Prazo");
 
         $indx = 1;
         $total = 0;
@@ -2401,13 +2472,6 @@ public function getNiboContasReceber($objPHPExcel, $dados)
             }
              elseif ($dados[$i]['Order']['is_partial'] == '4') {
                 $tipo_pedido = 'PIX';
-            }
-
-            $v_cond_pagamento = "";
-            if ($dados[$i]['Order']['condicao_pagamento'] == 1) {
-                $v_cond_pagamento = "Pré pago";
-            } elseif ($dados[$i]['Order']['condicao_pagamento'] == 2) {
-                $v_cond_pagamento = "Faturado";
             }
 
             $activeWorksheet
@@ -2442,7 +2506,9 @@ public function getNiboContasReceber($objPHPExcel, $dados)
                 ->setCellValue('AC'. $indx, $dados[$i]['OrderItem']['motivo_processamento'])
                 ->setCellValue('AD' . $indx, $tipo_pedido)
                 ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
-                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não');
+                ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não')
+                ->setCellValue('AG'. $indx, $dados[$i]['Order']['desc_condicao_pagamento'])
+                ->setCellValue('AH'. $indx, $dados[$i]['Order']['prazo']);
         }
     }
 
@@ -2956,6 +3022,7 @@ public function getBeneficiario($spreadsheet, $dados)
         $activeWorksheet = $spreadsheet->getActiveSheet();
 
         $col = 'A';
+        $activeWorksheet->setCellValue($col.'1', "Benefício BE"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Código Benefício BE"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Código Benefício Cliente"); $col++;
         $activeWorksheet->setCellValue($col.'1', "Data da Criação"); $col++;
@@ -2966,6 +3033,7 @@ public function getBeneficiario($spreadsheet, $dados)
             $col = 'A';
 
             $indx++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]["Benefit"]["name"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_be"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["code_customer"]); $col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["CustomerBenefitCode"]["created"]); $col++;

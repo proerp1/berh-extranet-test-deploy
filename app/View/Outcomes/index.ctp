@@ -331,7 +331,7 @@
 
 								<td class="fw-bold fs-7 ps-4">
 
-                                    <span class='badge badge-success'><i class="fas fa-info" style="color:#fff" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"></i></span>
+                                    <button class='btn btn-sm btn-success' data-toggle="tooltip" data-placement="top" title="<?php echo $data[$i]["Outcome"]["observation"]; ?>"><i class="fas fa-info" style="color:#fff" ></i></button>
 
                                         
 									<a href="<?php echo $this->Html->url(['controller' => 'outcomes', 'action' => 'edit', $data[$i]["Outcome"]["id"], '?' => $_SERVER['QUERY_STRING']]); ?>" class="btn btn-info btn-sm">
@@ -438,6 +438,8 @@
 
 <script>
     $( document ).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+
         $(".datepicker").datepicker({
             format: 'dd/mm/yyyy',
             weekStart: 1,

@@ -21,7 +21,16 @@ class Customer extends AppModel
             'logo',
         ],
     ];
-        
+           
+    public $virtualFields = [
+        'desc_condicao_pagamento' => 
+        "CASE 
+            WHEN Customer.condicao_pagamento = 1 THEN 'Pré pago' 
+            WHEN Customer.condicao_pagamento = 2 THEN 'Faturado' 
+            ELSE '' 
+        END"
+    ];
+ 
     public $hasMany = [
         'Proposal' => [
             'className' => 'Proposal',

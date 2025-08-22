@@ -41,14 +41,19 @@ class CustomerBenefitCodesController extends AppController
 
         $breadcrumb = ['Cadastros' => '', 'Benefício' => '', 'Clientes' => ''];
         $this->set('url_novo', "/customer_benefit_codes/add/$id");
+        $this->set('can_bulk_edit', $this->Permission->check(83, 'leitura'));
         $this->set(compact('data', 'id', 'action', 'breadcrumb', 'allIds'));
     }
     
     public function add($customer_id) {
         $this->Permission->check(71, "escrita") ? "" : $this->redirect("/not_allowed");
+
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerBenefitCode->create();
             if ($this->CustomerBenefitCode->validates()) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.id' => $this->request->data['CustomerBenefitCode']['benefit_id']]]);
+
+                $this->request->data['CustomerBenefitCode']['code_be'] = $benefit['Benefit']['code'];
                 $this->request->data['CustomerBenefitCode']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->CustomerBenefitCode->save($this->request->data)) {
                     $benefit_customer_id = $this->CustomerBenefitCode->id;
@@ -77,13 +82,19 @@ class CustomerBenefitCodesController extends AppController
         $this->CustomerBenefitCode->id = $id;
 
         if ($this->request->is(['post', 'put'])) {
-            $this->CustomerBenefitCode->validates();
-            $this->request->data['CustomerBenefitCode']['user_updated_id'] = CakeSession::read("Auth.User.id");
-            if ($this->CustomerBenefitCode->save($this->request->data)) {
-                $this->Flash->set(__('O Benefício foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => "edit/$customer_id/$id"]);
+            if ($this->CustomerBenefitCode->validates()) {
+                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.id' => $this->request->data['CustomerBenefitCode']['benefit_id']]]);
+
+                $this->request->data['CustomerBenefitCode']['code_be'] = $benefit['Benefit']['code'];
+                $this->request->data['CustomerBenefitCode']['user_updated_id'] = CakeSession::read("Auth.User.id");
+                if ($this->CustomerBenefitCode->save($this->request->data)) {
+                    $this->Flash->set(__('A exceção do benefício foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect(['action' => "edit/$customer_id/$id"]);
+                } else {
+                    $this->Flash->set(__('A exceção do benefício não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                }
             } else {
-                $this->Flash->set(__('O Benefício não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
+                $this->Flash->set(__('A exceção do benefício não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
         }
 
@@ -115,7 +126,7 @@ class CustomerBenefitCodesController extends AppController
     }
 
     public function delete_all($customer_id) {
-        CakeSession::read('Auth.User.group_id') == 1 ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(83, 'leitura') ? '' : $this->redirect('/not_allowed');
         if (!isset($_GET['ids']) || !$_GET['ids']) $this->redirect($this->referer());
 
         $benefitIds = explode(',', $_GET['ids']);

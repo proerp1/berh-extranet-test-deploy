@@ -29,12 +29,12 @@ class CustomersController extends AppController
                 'Customer.flag_gestao_economico',
                 'Customer.condicao_pagamento',
                 'Customer.prazo',
+                'Customer.desc_condicao_pagamento',
                 'Status.*',
                 'Resale.nome_fantasia',
                 'Seller.name',
                 'PlanoAtivo.plan_id',
             ],
-            // 'recursive' => 2,
         ],
         'PlanCustomer'                      => ['limit' => 10, 'order' => ['PlanCustomer.status_id' => 'asc']],
         'LoginConsulta'                     => ['limit' => 10, 'order' => ['LoginConsulta.status_id' => 'asc']],
@@ -101,6 +101,10 @@ class CustomersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.cod_franquia' => $_GET['f']]);
         }
 
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Customer.condicao_pagamento' => $_GET['cond_pag']]);
+        }
+
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
 
@@ -165,7 +169,11 @@ class CustomersController extends AppController
                 $this->request->data['Customer']['status_id'] = 3;
                 $this->request->data['Customer']['tipo_credor'] = 'C';
                 $this->request->data['Customer']['created'] = date('Y-m-d H:i:s');
-                //debug($this->request->data);die;
+
+                if ($this->request->data['Customer']['condicao_pagamento'] == 1) {
+                    $this->request->data['Customer']['prazo'] = null;
+                }
+
                 if ($this->Customer->save($this->request->data)) {
                     $id = $this->Customer->id;
                     /*
@@ -253,6 +261,10 @@ class CustomersController extends AppController
 
             $fields_ge = ['flag_gestao_economico', 'porcentagem_margem_seguranca', 'qtde_minina_diaria', 'tipo_ge'];
             $alter_ge = false;
+
+            if ($this->request->data['Customer']['condicao_pagamento'] == 1) {
+                $this->request->data['Customer']['prazo'] = null;
+            }
 
             foreach ($fields_ge as $field) {
                 $val_old = $customer_old['Customer'][$field];
