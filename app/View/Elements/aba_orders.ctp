@@ -5,27 +5,33 @@
             <div class="color-bar"></div>
             <ul>
                 <li class="bullet-1">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 25px; height: 25px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 25px; height: 25px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Aguardando <br>Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
                 <li class="bullet-3">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 25px; height: 25px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Pagamento <br>Confirmado <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
                 <li class="bullet-4">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 25px; height: 25px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Em <br>Processamento <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
                 <li class="bullet-5">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 25px; height: 25px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Aguardando <br>Liberação <br>de Crédito</div>
                 </li>
-                <li class="bullet-6">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 25px; height: 25px;"></i></div>
+                <?php if ($this->request->data['Order']['condicao_pagamento'] == 2) { ?>
+                    <li class="bullet-6">
+                        <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Faturamento" style="width: 15px; height: 15px;"></i></div>
+                        <div class="txt">Em <br>Faturamento</div>
+                    </li>
+                <?php } ?>
+                <li class="bullet-7">
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 15px; height: 15px;"></i></div>
                     <div class="txt">Finalizado</div>
                 </li>
             </ul>
@@ -123,7 +129,7 @@
         -o-transition: all 0.5s;
         display: inline-block;
         position: relative;
-        width: 10%;
+        width: 8%; /* Ajustado para 7 itens */
     }
 
     .tracking ul>li .el {
@@ -155,24 +161,24 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background-color: transparent; /* Remove o fundo */
-        color: var(--blue); /* Cor da seta */
-        font-size: 10px; /* Tamanho da seta */
-        padding: 3px; /* Ajuste para a área clicável */
+        background-color: transparent;
+        color: var(--blue);
+        font-size: 10px;
+        padding: 3px;
         cursor: pointer;
         z-index: 2;
         transition: background-color 0.3s, transform 0.2s ease-in-out;
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 40px; /* Tamanho fixo para as setas */
+        width: 40px;
         height: 40px;
         border-radius: 50%;
     }
 
     .arrow-button i {
         font-size: 15px;
-        color: var(--blue); /* Cor da seta */
+        color: var(--blue);
     }
 
     .arrow-button.left {
@@ -184,21 +190,20 @@
     }
 
     .arrow-button:hover {
-        background-color: #fff; /* Cor de fundo ao passar o mouse */
-        transform: translateY(-50%) rotate(360deg); /* Efeito de rotação */
+        background-color: #fff;
+        transform: translateY(-50%) rotate(360deg);
     }
 
     .arrow-button:hover i {
-        color: #ED0677; /* Cor da seta no hover */
+        color: #ED0677;
     }
 
-    /* Animação de loading da seta */
     .arrow-button.loading {
-        pointer-events: none; /* Desativa a interação durante o carregamento */
+        pointer-events: none;
     }
 
     .arrow-button.loading i {
-        display: none; /* Esconde a seta */
+        display: none;
     }
 
     .arrow-button.loading::after {
@@ -208,58 +213,72 @@
         border-radius: 50%;
         width: 24px;
         height: 24px;
-        animation: spin 1s linear infinite; /* Animação de giro */
+        animation: spin 1s linear infinite;
     }
 
-/* Animação de rotação do círculo */
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
-    100% {
-        transform: rotate(360deg);
-    }
-}
+
+    /* Progress bar widths - ajustados para 7 etapas */
     .tracking .progress-0 .color-bar {
-        width: 00%;
+        width: 0%;
     }
 
     .tracking .progress-1 .color-bar {
-        width: 12%;
+        width: 10%;
     }
 
     .tracking .progress-2 .color-bar {
-        width: 34%;
+        width: 25%;
     }
 
     .tracking .progress-3 .color-bar {
-        width: 34%;
+        width: 25%;
     }
 
     .tracking .progress-4 .color-bar {
-        width: 56%;
+        width: 40%;
     }
 
     .tracking .progress-5 .color-bar {
-        width: 56%;
+        width: 40%;
     }
 
     .tracking .progress-6 .color-bar {
-        width: 70%;
+        width: 55%;
     }
 
     .tracking .progress-7 .color-bar {
-        width: 70%;
+        width: 55%;
     }
 
     .tracking .progress-8 .color-bar {
-        width: 90%;
+        width: 70%;
     }
 
     .tracking .progress-9 .color-bar {
+        width: 70%;
+    }
+
+    .tracking .progress-10 .color-bar {
+        width: 85%;
+    }
+
+    .tracking .progress-11 .color-bar {
+        width: 85%;
+    }
+
+    .tracking .progress-12 .color-bar {
         width: 90%;
     }
 
+    /* Background colors for bullets - Bullet 1 (Início) */
     .tracking .progress-0>ul>li.bullet-1,
     .tracking .progress-1>ul>li.bullet-1,
     .tracking .progress-2>ul>li.bullet-1,
@@ -269,10 +288,14 @@
     .tracking .progress-6>ul>li.bullet-1,
     .tracking .progress-7>ul>li.bullet-1,
     .tracking .progress-8>ul>li.bullet-1,
-    .tracking .progress-9>ul>li.bullet-1 {
+    .tracking .progress-9>ul>li.bullet-1,
+    .tracking .progress-10>ul>li.bullet-1,
+    .tracking .progress-11>ul>li.bullet-1,
+    .tracking .progress-12>ul>li.bullet-1 {
         background-color: var(--blue);
     }
 
+    /* Bullet 2 (Aguardando Pagamento) */
     .tracking .progress-2>ul>li.bullet-2,
     .tracking .progress-3>ul>li.bullet-2,
     .tracking .progress-4>ul>li.bullet-2,
@@ -280,34 +303,59 @@
     .tracking .progress-6>ul>li.bullet-2,
     .tracking .progress-7>ul>li.bullet-2,
     .tracking .progress-8>ul>li.bullet-2,
-    .tracking .progress-9>ul>li.bullet-2 {
+    .tracking .progress-9>ul>li.bullet-2,
+    .tracking .progress-10>ul>li.bullet-2,
+    .tracking .progress-11>ul>li.bullet-2,
+    .tracking .progress-12>ul>li.bullet-2 {
         background-color: var(--blue);
     }
 
+    /* Bullet 3 (Pagamento Confirmado) */
     .tracking .progress-4>ul>li.bullet-3,
     .tracking .progress-5>ul>li.bullet-3,
     .tracking .progress-6>ul>li.bullet-3,
     .tracking .progress-7>ul>li.bullet-3,
     .tracking .progress-8>ul>li.bullet-3,
-    .tracking .progress-9>ul>li.bullet-3 {
+    .tracking .progress-9>ul>li.bullet-3,
+    .tracking .progress-10>ul>li.bullet-3,
+    .tracking .progress-11>ul>li.bullet-3,
+    .tracking .progress-12>ul>li.bullet-3 {
         background-color: var(--blue);
     }
 
+    /* Bullet 4 (Em Processamento) */
+    .tracking .progress-6>ul>li.bullet-4,
     .tracking .progress-7>ul>li.bullet-4,
     .tracking .progress-8>ul>li.bullet-4,
-    .tracking .progress-9>ul>li.bullet-4 {
+    .tracking .progress-9>ul>li.bullet-4,
+    .tracking .progress-10>ul>li.bullet-4,
+    .tracking .progress-11>ul>li.bullet-4,
+    .tracking .progress-12>ul>li.bullet-4 {
         background-color: var(--blue);
     }
 
+    /* Bullet 5 (Aguardando Liberação) */
     .tracking .progress-8>ul>li.bullet-5,
-    .tracking .progress-9>ul>li.bullet-5 {
+    .tracking .progress-9>ul>li.bullet-5,
+    .tracking .progress-10>ul>li.bullet-5,
+    .tracking .progress-11>ul>li.bullet-5,
+    .tracking .progress-12>ul>li.bullet-5 {
         background-color: var(--blue);
     }
 
-    .tracking .progress-9>ul>li.bullet-6 {
+    /* Bullet 6 (Nova Etapa - Em Entrega) */
+    .tracking .progress-10>ul>li.bullet-6,
+    .tracking .progress-11>ul>li.bullet-6,
+    .tracking .progress-12>ul>li.bullet-6 {
+        background-color: var(--blue);
+    }
+
+    /* Bullet 7 (Finalizado) */
+    .tracking .progress-12>ul>li.bullet-7 {
         background-color: var(--green);
     }
 
+    /* Icon visibility - Bullet 1 */
     .tracking .progress-1>ul>li.bullet-1 .el i,
     .tracking .progress-2>ul>li.bullet-1 .el i,
     .tracking .progress-3>ul>li.bullet-1 .el i,
@@ -316,43 +364,69 @@
     .tracking .progress-6>ul>li.bullet-1 .el i,
     .tracking .progress-7>ul>li.bullet-1 .el i,
     .tracking .progress-8>ul>li.bullet-1 .el i,
-    .tracking .progress-9>ul>li.bullet-1 .el i {
+    .tracking .progress-9>ul>li.bullet-1 .el i,
+    .tracking .progress-10>ul>li.bullet-1 .el i,
+    .tracking .progress-11>ul>li.bullet-1 .el i,
+    .tracking .progress-12>ul>li.bullet-1 .el i {
         display: block;
     }
 
+    /* Icon visibility - Bullet 2 */
     .tracking .progress-3>ul>li.bullet-2 .el i,
     .tracking .progress-4>ul>li.bullet-2 .el i,
     .tracking .progress-5>ul>li.bullet-2 .el i,
     .tracking .progress-6>ul>li.bullet-2 .el i,
     .tracking .progress-7>ul>li.bullet-2 .el i,
     .tracking .progress-8>ul>li.bullet-2 .el i,
-    .tracking .progress-9>ul>li.bullet-2 .el i {
+    .tracking .progress-9>ul>li.bullet-2 .el i,
+    .tracking .progress-10>ul>li.bullet-2 .el i,
+    .tracking .progress-11>ul>li.bullet-2 .el i,
+    .tracking .progress-12>ul>li.bullet-2 .el i {
         display: block;
     }
 
+    /* Icon visibility - Bullet 3 */
     .tracking .progress-5>ul>li.bullet-3 .el i,
     .tracking .progress-6>ul>li.bullet-3 .el i,
     .tracking .progress-7>ul>li.bullet-3 .el i,
     .tracking .progress-8>ul>li.bullet-3 .el i,
-    .tracking .progress-9>ul>li.bullet-3 .el i {
+    .tracking .progress-9>ul>li.bullet-3 .el i,
+    .tracking .progress-10>ul>li.bullet-3 .el i,
+    .tracking .progress-11>ul>li.bullet-3 .el i,
+    .tracking .progress-12>ul>li.bullet-3 .el i {
         display: block;
     }
 
+    /* Icon visibility - Bullet 4 */
     .tracking .progress-7>ul>li.bullet-4 .el i,
     .tracking .progress-8>ul>li.bullet-4 .el i,
-    .tracking .progress-9>ul>li.bullet-4 .el i {
+    .tracking .progress-9>ul>li.bullet-4 .el i,
+    .tracking .progress-10>ul>li.bullet-4 .el i,
+    .tracking .progress-11>ul>li.bullet-4 .el i,
+    .tracking .progress-12>ul>li.bullet-4 .el i {
         display: block;
     }
 
-    .tracking .progress-8>ul>li.bullet-5 .el i,
-    .tracking .progress-9>ul>li.bullet-5 .el i {
+    /* Icon visibility - Bullet 5 */
+    .tracking .progress-9>ul>li.bullet-5 .el i,
+    .tracking .progress-10>ul>li.bullet-5 .el i,
+    .tracking .progress-11>ul>li.bullet-5 .el i,
+    .tracking .progress-12>ul>li.bullet-5 .el i {
         display: block;
     }
 
-    .tracking .progress-9>ul>li.bullet-6 .el i {
+    /* Icon visibility - Bullet 6 */
+    .tracking .progress-11>ul>li.bullet-6 .el i,
+    .tracking .progress-12>ul>li.bullet-6 .el i {
         display: block;
     }
 
+    /* Icon visibility - Bullet 7 */
+    .tracking .progress-12>ul>li.bullet-7 .el i {
+        display: block;
+    }
+
+    /* Text colors - Bullet 1 */
     .tracking .progress-1>ul>li.bullet-1 .txt,
     .tracking .progress-2>ul>li.bullet-1 .txt,
     .tracking .progress-3>ul>li.bullet-1 .txt,
@@ -361,101 +435,132 @@
     .tracking .progress-6>ul>li.bullet-1 .txt,
     .tracking .progress-7>ul>li.bullet-1 .txt,
     .tracking .progress-8>ul>li.bullet-1 .txt,
-    .tracking .progress-9>ul>li.bullet-1 .txt {
+    .tracking .progress-9>ul>li.bullet-1 .txt,
+    .tracking .progress-10>ul>li.bullet-1 .txt,
+    .tracking .progress-11>ul>li.bullet-1 .txt,
+    .tracking .progress-12>ul>li.bullet-1 .txt {
         color: var(--blue);
     }
 
+    /* Text colors - Bullet 2 */
     .tracking .progress-3>ul>li.bullet-2 .txt,
     .tracking .progress-4>ul>li.bullet-2 .txt,
     .tracking .progress-5>ul>li.bullet-2 .txt,
     .tracking .progress-6>ul>li.bullet-2 .txt,
     .tracking .progress-7>ul>li.bullet-2 .txt,
     .tracking .progress-8>ul>li.bullet-2 .txt,
-    .tracking .progress-9>ul>li.bullet-2 .txt {
+    .tracking .progress-9>ul>li.bullet-2 .txt,
+    .tracking .progress-10>ul>li.bullet-2 .txt,
+    .tracking .progress-11>ul>li.bullet-2 .txt,
+    .tracking .progress-12>ul>li.bullet-2 .txt {
         color: var(--blue);
     }
 
+    /* Text colors - Bullet 3 */
     .tracking .progress-5>ul>li.bullet-3 .txt,
     .tracking .progress-6>ul>li.bullet-3 .txt,
     .tracking .progress-7>ul>li.bullet-3 .txt,
     .tracking .progress-8>ul>li.bullet-3 .txt,
-    .tracking .progress-9>ul>li.bullet-3 .txt {
+    .tracking .progress-9>ul>li.bullet-3 .txt,
+    .tracking .progress-10>ul>li.bullet-3 .txt,
+    .tracking .progress-11>ul>li.bullet-3 .txt,
+    .tracking .progress-12>ul>li.bullet-3 .txt {
         color: var(--blue);
     }
 
+    /* Text colors - Bullet 4 */
     .tracking .progress-7>ul>li.bullet-4 .txt,
     .tracking .progress-8>ul>li.bullet-4 .txt,
-    .tracking .progress-9>ul>li.bullet-4 .txt {
+    .tracking .progress-9>ul>li.bullet-4 .txt,
+    .tracking .progress-10>ul>li.bullet-4 .txt,
+    .tracking .progress-11>ul>li.bullet-4 .txt,
+    .tracking .progress-12>ul>li.bullet-4 .txt {
         color: var(--blue);
     }
 
-    .tracking .progress-8>ul>li.bullet-5 .txt,
-    .tracking .progress-9>ul>li.bullet-5 .txt {
+    /* Text colors - Bullet 5 */
+    .tracking .progress-9>ul>li.bullet-5 .txt,
+    .tracking .progress-10>ul>li.bullet-5 .txt,
+    .tracking .progress-11>ul>li.bullet-5 .txt,
+    .tracking .progress-12>ul>li.bullet-5 .txt {
         color: var(--blue);
     }
 
-    .tracking .progress-9>ul>li.bullet-6 .txt {
+    /* Text colors - Bullet 6 */
+    .tracking .progress-11>ul>li.bullet-6 .txt,
+    .tracking .progress-12>ul>li.bullet-6 .txt {
+        color: var(--blue);
+    }
+
+    /* Text colors - Bullet 7 */
+    .tracking .progress-12>ul>li.bullet-7 .txt {
         color: var(--blue);
     }
 
     /* Responsividade das setas */
     @media (max-width: 768px) {
-    .tracking {
-        max-width: 94%;
-    }
-
-    .tracking ul {
-        flex-wrap: wrap;
-    }
-
-    .tracking ul li {
-        flex: none;
-        width: 20%;
-        background-size: 50%; 
-        background-position: center center;
-    }
-    .tracking ul>li .el i {
-            font-size: 1.42rem; 
-            margin-left: 10px;
+        .tracking {
+            max-width: 94%;
         }
-    .arrow-button {
-        font-size: 16px;
-        top: 40%;
-    }
 
-    .arrow-button.left {
-        left: 5px;
-    }
+        .tracking ul {
+            flex-wrap: wrap;
+        }
 
-    .arrow-button.right {
-        right: 5px;
-    }
-}
-@media (max-width: 480px) {
-    .arrow-button {
-        font-size: 10px; /* Reduz o tamanho das setas em telas menores ainda */
-        padding: 3px; /* Ajuste no padding para telas muito pequenas */
-        top: 65%; /* Sobe ainda mais as setas em telas pequenas */
-    }
-
-    .arrow-button.left {
-        left: -25px; /* Ajuste da seta esquerda */
+        .tracking ul li {
+            flex: none;
+            width: 12%; /* Ajustado para 7 itens */
+            background-size: 50%; 
+            background-position: center center;
+        }
         
+        .tracking ul>li .el i {
+            font-size: 1.2rem; 
+            margin-left: 8px;
+        }
+        
+        .arrow-button {
+            font-size: 16px;
+            top: 40%;
+        }
+
+        .arrow-button.left {
+            left: 5px;
+        }
+
+        .arrow-button.right {
+            right: 5px;
+        }
     }
 
-    .arrow-button.right {
-        right: -25px; /* Ajuste da seta direita */
+    @media (max-width: 480px) {
+        .tracking ul li {
+            width: 10%; /* Ainda mais compacto para telas pequenas */
+        }
+        
+        .arrow-button {
+            font-size: 10px;
+            padding: 3px;
+            top: 65%;
+        }
+
+        .arrow-button.left {
+            left: -25px;
+        }
+
+        .arrow-button.right {
+            right: -25px;
+        }
     }
-}
 </style>
 
 <script>
     document.querySelectorAll('.arrow-button').forEach(button => {
         button.addEventListener('click', function() {
-            this.classList.add('loading'); // Adiciona a animação de loading
+            this.classList.add('loading');
             setTimeout(() => {
-                window.location.href = this.querySelector('a').href; // Redireciona após o tempo de carregamento
-            }, 1000); // Ajuste o tempo conforme necessário
+                window.location.href = this.querySelector('a').href;
+            }, 1000);
         });
     });
 </script>

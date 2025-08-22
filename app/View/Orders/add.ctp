@@ -347,6 +347,12 @@
                                         </a>
                                     <?php }*/ ?>
 
+                                    <?php if ($order['Order']['status_id'] == 104 && $order['Order']['condicao_pagamento'] == 2) { ?>
+                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_enviar_faturamento">
+                                            Liberar para Faturamento
+                                        </a>
+                                    <?php } ?>
+
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                         Relatórios e Ações
                                     </button>
@@ -372,14 +378,14 @@
                                                 <i class="fas fa-download"></i> Resumo
                                             </a>
 
-                                          <!-- Verificação de status para mostrar os botões adicionais -->
+                                            <!-- Verificação de status para mostrar os botões adicionais -->
                                             <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84) && $user['Group']['id'] == 1) { ?>
                                                 <a href="#" class="btn btn-sm btn-primary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_enviar_confirmado">
                                                     <i class="fas fa-arrow-right"></i> Pagamento Confirmado
                                                 </a>
                                             <?php } ?>
 
-                                               <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84 ) && $user['Group']['id'] == 1) { ?>
+                                            <?php if (($order['Order']['status_id'] == 83 || $order['Order']['status_id'] == 84 ) && $user['Group']['id'] == 1) { ?>
                                                 <a href="#" class="btn btn-sm btn-danger me-2 mb-2" data-bs-toggle="modal" data-bs-target="#modal_cancelar_pedido">
                                                     <i class="fas fa-arrow-right"></i> Cancelar Pedido
                                                 </a>
@@ -913,6 +919,26 @@
             <form action="<?php echo $this->base . '/orders/confirma_pagamento/' . $id; ?>" class="form-horizontal" method="post">
                 <div class="modal-body">
                     <p>Tem certeza que deseja confirmar o pagamento?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success js-salvar">Sim</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_enviar_faturamento" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form action="<?php echo $this->base . '/orders/confirma_faturamento/' . $id; ?>" class="form-horizontal" method="post">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja alterar o status?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>

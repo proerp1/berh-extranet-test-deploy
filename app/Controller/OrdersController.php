@@ -845,11 +845,15 @@ class OrdersController extends AppController
                 break;
 
             case 104:
-                $progress = 8;
+                $progress = 9;
+                break;
+
+            case 115:
+                $progress = 11;
                 break;
 
             case 87:
-                $progress = 9;
+                $progress = 12;
                 break;
         }
 
@@ -2199,6 +2203,25 @@ class OrdersController extends AppController
         $this->Order->atualizarStatusPagamento($id);
 
         $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+
+        $this->redirect(['action' => 'edit/' . $id]);
+    }
+
+    public function confirma_faturamento($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 115,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        $this->Flash->set(__('O status foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 
         $this->redirect(['action' => 'edit/' . $id]);
     }
