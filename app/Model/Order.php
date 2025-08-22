@@ -688,10 +688,8 @@ class Order extends AppModel
         foreach ($supplierGroups as $supplierId => $items) {
             $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
             
-            if ($supplier['transfer_fee_type'] == 3) {
-                // Volume tier calculation
-                $this->calculateSupplierVolumeTierFees($supplierId, $supplier, $items);
-            }
+            // All suppliers now use volume tier calculation
+            $this->calculateSupplierVolumeTierFees($supplierId, $supplier, $items);
         }
     }
 

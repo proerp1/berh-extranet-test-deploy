@@ -19,7 +19,7 @@ if (isset($id)) {
         <?php echo $this->Form->create('SupplierVolumeTier', ["id" => "js-form-submit", "url" => "/suppliers/" . $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
         
         <div class="row">
-            <div class="mb-7 col-md-4">
+            <div class="mb-7 col-md-3">
                 <label class="fw-semibold fs-6 mb-2 required">De (Qtd)</label>
                 <?php echo $this->Form->input('de_qtd', [
                     "placeholder" => "Quantidade inicial", 
@@ -31,7 +31,7 @@ if (isset($id)) {
                 <div class="form-text">Quantidade mínima para esta faixa</div>
             </div>
 
-            <div class="mb-7 col-md-4">
+            <div class="mb-7 col-md-3">
                 <label class="fw-semibold fs-6 mb-2 required">Até (Qtd)</label>
                 <?php echo $this->Form->input('ate_qtd', [
                     "placeholder" => "Quantidade final", 
@@ -43,14 +43,37 @@ if (isset($id)) {
                 <div class="form-text">Quantidade máxima para esta faixa</div>
             </div>
 
-            <div class="mb-7 col-md-4">
-                <label class="fw-semibold fs-6 mb-2 required">% Repasse</label>
+            <div class="mb-7 col-md-3">
+                <label class="fw-semibold fs-6 mb-2 required">Tipo de Taxa</label>
+                <?php echo $this->Form->input('fee_type', [
+                    "id" => "fee_type",
+                    "options" => ['percentage' => 'Percentual', 'fixed' => 'Valor Fixo'], 
+                    "class" => "form-select mb-3 mb-lg-0", 
+                    "data-control" => "select2", 
+                    "empty" => "Selecione", 
+                    "type" => "select"
+                ]); ?>
+                <div class="form-text">Tipo de cobrança para esta faixa</div>
+            </div>
+
+            <div class="mb-7 col-md-3" id="percentage_field">
+                <label class="fw-semibold fs-6 mb-2">% Repasse</label>
                 <?php echo $this->Form->input('percentual_repasse', [
                     "placeholder" => "0,00", 
                     "class" => "form-control mb-3 mb-lg-0 money_exchange",
                     "type" => "text"
                 ]); ?>
                 <div class="form-text">Percentual aplicado sobre o valor</div>
+            </div>
+
+            <div class="mb-7 col-md-3" id="fixed_field" style="display: none;">
+                <label class="fw-semibold fs-6 mb-2">Valor Fixo</label>
+                <?php echo $this->Form->input('valor_fixo', [
+                    "placeholder" => "0,00", 
+                    "class" => "form-control mb-3 mb-lg-0 money_exchange",
+                    "type" => "text"
+                ]); ?>
+                <div class="form-text">Valor fixo a ser cobrado</div>
             </div>
         </div>
 
@@ -77,14 +100,58 @@ if (isset($id)) {
             allowNegative: false
         });
 
+        // Handle fee type change
+        $('#fee_type').on('change', function() {
+            const feeType = $(this).val();
+            
+            if (feeType === 'percentage') {
+                $('#percentage_field').show();
+                $('#fixed_field').hide();
+                $('#SupplierVolumeTierValorFixo').prop('required', false);
+                $('#SupplierVolumeTierPercentualRepasse').prop('required', true);
+            } else if (feeType === 'fixed') {
+                $('#percentage_field').hide();
+                $('#fixed_field').show();
+                $('#SupplierVolumeTierPercentualRepasse').prop('required', false);
+                $('#SupplierVolumeTierValorFixo').prop('required', true);
+            } else {
+                $('#percentage_field').show();
+                $('#fixed_field').hide();
+                $('#SupplierVolumeTierPercentualRepasse').prop('required', false);
+                $('#SupplierVolumeTierValorFixo').prop('required', false);
+            }
+        });
+
+        // Initialize fee type display
+        $('#fee_type').trigger('change');
+
         // Validação básica no frontend
         $('#js-form-submit').on('submit', function(e) {
             const deQtd = parseInt($('#SupplierVolumeTierDeQtd').val());
             const ateQtd = parseInt($('#SupplierVolumeTierAteQtd').val());
+            const feeType = $('#fee_type').val();
             
             if (deQtd >= ateQtd) {
                 e.preventDefault();
                 alert('A quantidade final deve ser maior que a quantidade inicial.');
+                return false;
+            }
+
+            if (!feeType) {
+                e.preventDefault();
+                alert('Por favor, selecione o tipo de taxa.');
+                return false;
+            }
+
+            if (feeType === 'percentage' && !$('#SupplierVolumeTierPercentualRepasse').val()) {
+                e.preventDefault();
+                alert('Por favor, informe o percentual de repasse.');
+                return false;
+            }
+
+            if (feeType === 'fixed' && !$('#SupplierVolumeTierValorFixo').val()) {
+                e.preventDefault();
+                alert('Por favor, informe o valor fixo.');
                 return false;
             }
         });

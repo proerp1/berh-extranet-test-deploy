@@ -69,11 +69,6 @@ class SuppliersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->Supplier->create();
             
-            // Se não for tipo "Tabela", limpar o campo tipo_cobranca
-            if (isset($this->request->data['Supplier']['transfer_fee_type']) && 
-                $this->request->data['Supplier']['transfer_fee_type'] != 3) {
-                $this->request->data['Supplier']['tipo_cobranca'] = null;
-            }
             
             if ($this->Supplier->validates()) {
                 $this->request->data['Supplier']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -120,11 +115,6 @@ class SuppliersController extends AppController
         $this->Permission->check(9, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Supplier->id = $id;
         if ($this->request->is(['post', 'put'])) {
-            // Se não for tipo "Tabela", limpar o campo tipo_cobranca
-            if (isset($this->request->data['Supplier']['transfer_fee_type']) && 
-                $this->request->data['Supplier']['transfer_fee_type'] != 3) {
-                $this->request->data['Supplier']['tipo_cobranca'] = null;
-            }
             
             $this->Supplier->validates();
             $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
@@ -302,9 +292,9 @@ class SuppliersController extends AppController
         $this->Supplier->id = $id;
         $supplier = $this->Supplier->read();
         
-        if (!$supplier || $supplier['Supplier']['transfer_fee_type'] != 3) {
-            $this->Flash->set(__('Faixas de volume só são aplicáveis para fornecedores com tipo de repasse "Tabela"'), ['params' => ['class' => "alert alert-warning"]]);
-            $this->redirect(['action' => 'edit', $id]);
+        if (!$supplier) {
+            $this->Flash->set(__('Fornecedor não encontrado'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action' => 'index']);
         }
 
         $this->Paginator->settings = ['SupplierVolumeTier' => [
@@ -329,9 +319,9 @@ class SuppliersController extends AppController
         $this->Supplier->id = $id;
         $supplier = $this->Supplier->read();
         
-        if (!$supplier || $supplier['Supplier']['transfer_fee_type'] != 3) {
-            $this->Flash->set(__('Faixas de volume só são aplicáveis para fornecedores com tipo de repasse "Tabela"'), ['params' => ['class' => "alert alert-warning"]]);
-            $this->redirect(['action' => 'edit', $id]);
+        if (!$supplier) {
+            $this->Flash->set(__('Fornecedor não encontrado'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action' => 'index']);
         }
 
         if ($this->request->is(['post', 'put'])) {

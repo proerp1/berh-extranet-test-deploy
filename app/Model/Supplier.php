@@ -125,14 +125,9 @@ class Supplier extends AppModel
 
     public function requiredForTableType($check)
     {
-        // Se o tipo de repasse for 3 (Tabela), o tipo de cobrança é obrigatório
-        if (isset($this->data[$this->alias]['transfer_fee_type']) && $this->data[$this->alias]['transfer_fee_type'] == 3) {
-            $tipo_cobranca = array_values($check)[0];
-            // Retorna falso apenas se estiver vazio ou for string vazia
-            return !empty($tipo_cobranca) && $tipo_cobranca !== '';
-        }
-        
-        return true; // Se não for tipo tabela, não é obrigatório
+        // Tipo de cobrança agora é obrigatório para todos os fornecedores
+        $tipo_cobranca = array_values($check)[0];
+        return !empty($tipo_cobranca) && $tipo_cobranca !== '';
     }
 
     public $validate = [

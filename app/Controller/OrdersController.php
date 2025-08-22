@@ -629,30 +629,29 @@ class OrdersController extends AppController
         $transferFee = 0;
         $calculationLog = null;
         
-        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] != 3) {
-            // Calcular quantidade baseada no working days para este item específico
+        // Todos os fornecedores agora usam volume tiers - usar RepaymentCalculator
+        App::uses('RepaymentCalculator', 'Lib');
+        try {
             $quantity = $workingDaysUser;
+            $calculationResult = RepaymentCalculator::calculateRepayment(
+                $benefit['Supplier']['id'], 
+                $quantity, 
+                $subtotal
+            );
+            $transferFee = $calculationResult['repayment_value'];
             
-            // Usar o método existente para cálculos fixos
-            $transferFeeResult = $this->calculateSupplierTransferFee($benefit, $subtotal, $quantity);
-            $transferFee = $transferFeeResult['transfer_fee'];
+            // Prepare calculation log with new unified system
+            $calculationLog = json_encode([
+                'type' => $calculationResult['calculation_method'],
+                'tier_info' => isset($calculationResult['tier_used']) ? $calculationResult['tier_used'] : null,
+                'quantity' => $quantity,
+                'base_value' => $subtotal
+            ]);
             
-            // Prepare calculation log for fixed calculations
-            switch ($benefit['Supplier']['transfer_fee_type']) {
-                case 1: // Fixed value
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_value',
-                        'value' => $benefit['Supplier']['transfer_fee_percentage']
-                    ]);
-                    break;
-                case 2: // Fixed percentage
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_percentage',
-                        'percentage' => $benefit['Supplier']['transfer_fee_percentage'],
-                        'base' => $subtotal
-                    ]);
-                    break;
-            }
+        } catch (Exception $e) {
+            // Fallback em caso de erro
+            $transferFee = 0;
+            $calculationLog = json_encode(['error' => $e->getMessage()]);
         }
 
         $commissionFee = $commissionPerc > 0 ? $subtotal * ($commissionPerc / 100) : 0;
@@ -1647,38 +1646,30 @@ class OrdersController extends AppController
         $benefitId = $orderItem['CustomerUserItinerary']['benefit_id'];
         $benefit = $this->Benefit->findById($benefitId);
 
-        // Calculate transfer fee and save calculation details
+        // Calculate transfer fee using unified RepaymentCalculator
+        App::uses('RepaymentCalculator', 'Lib');
+        $transferFee = 0;
         $calculationLog = null;
         
-        if (isset($benefit['Supplier']['transfer_fee_type'])) {
-            switch ($benefit['Supplier']['transfer_fee_type']) {
-                case 1: // Fixed value
-                    $transferFee = $benefit['Supplier']['transfer_fee_percentage'];
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_value',
-                        'value' => $benefit['Supplier']['transfer_fee_percentage']
-                    ]);
-                    break;
-                    
-                case 2: // Fixed percentage
-                    $transferFee = $orderItem['OrderItem']['subtotal'] * ($benefit['Supplier']['transfer_fee_percentage'] / 100);
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_percentage',
-                        'percentage' => $benefit['Supplier']['transfer_fee_percentage'],
-                        'base' => $orderItem['OrderItem']['subtotal']
-                    ]);
-                    break;
-                    
-                case 3: // Volume tier - needs order-level recalculation
-                    $transferFee = 0; // Will be calculated at order level
-                    break;
-                    
-                default:
-                    $transferFee = 0;
-                    break;
-            }
-        } else {
+        try {
+            $quantity = $workingDays;
+            $calculationResult = RepaymentCalculator::calculateRepayment(
+                $benefit['Supplier']['id'], 
+                $quantity, 
+                $orderItem['OrderItem']['subtotal']
+            );
+            $transferFee = $calculationResult['repayment_value'];
+            
+            $calculationLog = json_encode([
+                'type' => $calculationResult['calculation_method'],
+                'tier_info' => isset($calculationResult['tier_used']) ? $calculationResult['tier_used'] : null,
+                'quantity' => $quantity,
+                'base_value' => $orderItem['OrderItem']['subtotal']
+            ]);
+            
+        } catch (Exception $e) {
             $transferFee = 0;
+            $calculationLog = json_encode(['error' => $e->getMessage()]);
         }
 
         $orderItem['OrderItem']['transfer_fee'] = $transferFee;
@@ -1701,11 +1692,9 @@ class OrdersController extends AppController
 
         $orderItem = $this->OrderItem->findById($itemId);
 
-        // For volume tier suppliers, recalculate at order level
-        if (isset($benefit['Supplier']['transfer_fee_type']) && $benefit['Supplier']['transfer_fee_type'] == 3) {
-            $this->Order->id = $orderItem['OrderItem']['order_id'];
-            $this->Order->recalculateVolumeTransferFees();
-        }
+        // All suppliers now use volume tiers, recalculate at order level
+        $this->Order->id = $orderItem['OrderItem']['order_id'];
+        $this->Order->recalculateVolumeTransferFees();
 
         $this->Order->id = $orderItem['OrderItem']['order_id'];
         $this->Order->reProcessAmounts($orderItem['OrderItem']['order_id']);

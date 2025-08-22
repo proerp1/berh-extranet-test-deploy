@@ -36,34 +36,33 @@ class RepaymentCalculator
             'calculation_method' => ''
         ];
         
-        switch ($supplier['Supplier']['transfer_fee_type']) {
-            case 1: // Valor fixo
-                $result['repayment_value'] = $supplier['Supplier']['transfer_fee_percentage'];
-                $result['calculation_method'] = 'fixed_value';
+        // All suppliers now use volume tier system
+        $tierModel = ClassRegistry::init('SupplierVolumeTier');
+        $tier = $tierModel->findTierForQuantity($supplierId, $quantity);
+        
+        if (!$tier) {
+            throw new InvalidArgumentException("Nenhuma faixa de volume encontrada para quantidade {$quantity} do fornecedor {$supplierId}");
+        }
+        
+        $result['tier_used'] = $tier['SupplierVolumeTier'];
+        
+        // Calculate based on tier fee type
+        switch ($tier['SupplierVolumeTier']['fee_type']) {
+            case 'fixed':
+                $result['repayment_value'] = $tier['SupplierVolumeTier']['valor_fixo'];
+                $result['calculation_method'] = 'volume_tier_fixed';
                 break;
                 
-            case 2: // Percentual fixo
-                $result['repayment_percentage'] = $supplier['Supplier']['transfer_fee_percentage'];
+            case 'percentage':
+                $result['repayment_percentage'] = isset($tier['SupplierVolumeTier']['percentual_repasse_nao_formatado']) 
+                    ? $tier['SupplierVolumeTier']['percentual_repasse_nao_formatado']
+                    : $tier['SupplierVolumeTier']['percentual_repasse'];
                 $result['repayment_value'] = ($baseValue * $result['repayment_percentage']) / 100;
-                $result['calculation_method'] = 'fixed_percentage';
-                break;
-                
-            case 3: // Tabela de volume
-                $tierModel = ClassRegistry::init('SupplierVolumeTier');
-                $tier = $tierModel->findTierForQuantity($supplierId, $quantity);
-                
-                if (!$tier) {
-                    throw new InvalidArgumentException("Nenhuma faixa de volume encontrada para quantidade {$quantity} do fornecedor {$supplierId}");
-                }
-                
-                $result['tier_used'] = $tier['SupplierVolumeTier'];
-                $result['repayment_percentage'] = $tier['SupplierVolumeTier']['percentual_repasse_nao_formatado'];
-                $result['repayment_value'] = ($baseValue * $result['repayment_percentage']) / 100;
-                $result['calculation_method'] = 'volume_tier';
+                $result['calculation_method'] = 'volume_tier_percentage';
                 break;
                 
             default:
-                throw new InvalidArgumentException("Tipo de repasse inválido: {$supplier['Supplier']['transfer_fee_type']}");
+                throw new InvalidArgumentException("Tipo de taxa inválido na faixa: {$tier['SupplierVolumeTier']['fee_type']}");
         }
         
         return $result;
@@ -143,60 +142,66 @@ class RepaymentCalculator
             $validation['errors'][] = "Tipo de repasse não configurado";
         }
         
-        // Validações específicas por tipo
-        switch ($supplier['Supplier']['transfer_fee_type']) {
-            case 1: // Valor fixo
-            case 2: // Percentual fixo
-                if (empty($supplier['Supplier']['transfer_fee_percentage'])) {
+        // Validar tipo de cobrança (agora obrigatório para todos)
+        if (empty($supplier['Supplier']['tipo_cobranca'])) {
+            $validation['is_valid'] = false;
+            $validation['errors'][] = "Tipo de cobrança não configurado";
+        }
+        
+        // Validar se existem faixas configuradas (agora obrigatório para todos)
+        $tierModel = ClassRegistry::init('SupplierVolumeTier');
+        $tiersCount = $tierModel->find('count', [
+            'conditions' => [
+                'SupplierVolumeTier.supplier_id' => $supplierId,
+                'SupplierVolumeTier.data_cancel' => '1901-01-01 00:00:00'
+            ]
+        ]);
+        
+        if ($tiersCount == 0) {
+            $validation['is_valid'] = false;
+            $validation['errors'][] = "Nenhuma faixa de volume configurada";
+        }
+        
+        // Verificar se há gaps nas faixas
+        $tiers = $tierModel->find('all', [
+            'conditions' => [
+                'SupplierVolumeTier.supplier_id' => $supplierId,
+                'SupplierVolumeTier.data_cancel' => '1901-01-01 00:00:00'
+            ],
+            'order' => ['SupplierVolumeTier.de_qtd' => 'ASC']
+        ]);
+        
+        if (count($tiers) > 0 && $tiers[0]['SupplierVolumeTier']['de_qtd'] > 1) {
+            $validation['warnings'][] = "A primeira faixa não começa em 1";
+        }
+        
+        for ($i = 1; $i < count($tiers); $i++) {
+            $previousTier = $tiers[$i-1]['SupplierVolumeTier'];
+            $currentTier = $tiers[$i]['SupplierVolumeTier'];
+            
+            if ($currentTier['de_qtd'] != ($previousTier['ate_qtd'] + 1)) {
+                $validation['warnings'][] = "Gap entre faixas: {$previousTier['ate_qtd']} e {$currentTier['de_qtd']}";
+            }
+        }
+        
+        // Validar configuração de cada faixa
+        foreach ($tiers as $tier) {
+            $tierData = $tier['SupplierVolumeTier'];
+            
+            if (empty($tierData['fee_type'])) {
+                $validation['is_valid'] = false;
+                $validation['errors'][] = "Tipo de taxa não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
+            } elseif ($tierData['fee_type'] == 'fixed') {
+                if (empty($tierData['valor_fixo']) && $tierData['valor_fixo'] !== '0') {
                     $validation['is_valid'] = false;
-                    $validation['errors'][] = "Valor/percentual de repasse não configurado";
+                    $validation['errors'][] = "Valor fixo não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
                 }
-                break;
-                
-            case 3: // Tabela
-                // Validar tipo de cobrança
-                if (empty($supplier['Supplier']['tipo_cobranca'])) {
+            } elseif ($tierData['fee_type'] == 'percentage') {
+                if (empty($tierData['percentual_repasse']) && $tierData['percentual_repasse'] !== '0') {
                     $validation['is_valid'] = false;
-                    $validation['errors'][] = "Tipo de cobrança não configurado para modalidade Tabela";
+                    $validation['errors'][] = "Percentual não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
                 }
-                
-                // Validar se existem faixas configuradas
-                $tierModel = ClassRegistry::init('SupplierVolumeTier');
-                $tiersCount = $tierModel->find('count', [
-                    'conditions' => [
-                        'SupplierVolumeTier.supplier_id' => $supplierId,
-                        'SupplierVolumeTier.data_cancel' => '1901-01-01 00:00:00'
-                    ]
-                ]);
-                
-                if ($tiersCount == 0) {
-                    $validation['is_valid'] = false;
-                    $validation['errors'][] = "Nenhuma faixa de volume configurada";
-                }
-                
-                // Verificar se há gaps nas faixas
-                $tiers = $tierModel->find('all', [
-                    'conditions' => [
-                        'SupplierVolumeTier.supplier_id' => $supplierId,
-                        'SupplierVolumeTier.data_cancel' => '1901-01-01 00:00:00'
-                    ],
-                    'order' => ['SupplierVolumeTier.de_qtd' => 'ASC']
-                ]);
-                
-                if (count($tiers) > 0 && $tiers[0]['SupplierVolumeTier']['de_qtd'] > 1) {
-                    $validation['warnings'][] = "A primeira faixa não começa em 1";
-                }
-                
-                for ($i = 1; $i < count($tiers); $i++) {
-                    $previousTier = $tiers[$i-1]['SupplierVolumeTier'];
-                    $currentTier = $tiers[$i]['SupplierVolumeTier'];
-                    
-                    if ($currentTier['de_qtd'] != ($previousTier['ate_qtd'] + 1)) {
-                        $validation['warnings'][] = "Gap entre faixas: {$previousTier['ate_qtd']} e {$currentTier['de_qtd']}";
-                    }
-                }
-                
-                break;
+            }
         }
         
         return $validation;

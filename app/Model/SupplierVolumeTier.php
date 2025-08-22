@@ -25,6 +25,11 @@ class SupplierVolumeTier extends AppModel
                 $results[$key][$this->alias]['percentual_repasse_nao_formatado'] = $results[$key][$this->alias]['percentual_repasse'];
                 $results[$key][$this->alias]['percentual_repasse'] = number_format($results[$key][$this->alias]['percentual_repasse'], 2, ',', '.');
             }
+            
+            if (isset($val[$this->alias]['valor_fixo'])) {
+                $results[$key][$this->alias]['valor_fixo_nao_formatado'] = $results[$key][$this->alias]['valor_fixo'];
+                $results[$key][$this->alias]['valor_fixo'] = number_format($results[$key][$this->alias]['valor_fixo'], 2, ',', '.');
+            }
         }
 
         return $results;
@@ -35,6 +40,10 @@ class SupplierVolumeTier extends AppModel
     {
         if (!empty($this->data[$this->alias]['percentual_repasse'])) {
             $this->data[$this->alias]['percentual_repasse'] = $this->priceFormatBeforeSave($this->data[$this->alias]['percentual_repasse']);
+        }
+        
+        if (!empty($this->data[$this->alias]['valor_fixo'])) {
+            $this->data[$this->alias]['valor_fixo'] = $this->priceFormatBeforeSave($this->data[$this->alias]['valor_fixo']);
         }
         
         if (isset($this->data[$this->alias]['de_qtd']) && $this->data[$this->alias]['de_qtd'] !== '') {
@@ -122,22 +131,51 @@ class SupplierVolumeTier extends AppModel
                 'message' => 'Quantidade final deve ser maior que a quantidade inicial'
             ]
         ],
-        'percentual_repasse' => [
+        'fee_type' => [
             'required' => [
                 'rule' => ['notBlank'],
-                'message' => 'Percentual de repasse é obrigatório'
+                'message' => 'Tipo de taxa é obrigatório'
+            ],
+            'inList' => [
+                'rule' => [['inList', ['fixed', 'percentage']]],
+                'message' => 'Tipo de taxa deve ser "fixed" ou "percentage"'
+            ]
+        ],
+        'percentual_repasse' => [
+            'conditionalRequired' => [
+                'rule' => ['conditionalRequired'],
+                'message' => 'Percentual de repasse é obrigatório quando tipo é "percentage"'
             ],
             'decimal' => [
                 'rule' => ['decimal'],
-                'message' => 'Percentual de repasse deve ser um número decimal'
+                'message' => 'Percentual de repasse deve ser um número decimal',
+                'allowEmpty' => true
             ],
             'range' => [
                 'rule' => ['comparison', '>=', 0.01],
-                'message' => 'Percentual de repasse deve ser maior ou igual a 0,01%'
+                'message' => 'Percentual de repasse deve ser maior ou igual a 0,01%',
+                'allowEmpty' => true
             ],
             'maxRange' => [
                 'rule' => ['comparison', '<=', 100.00],
-                'message' => 'Percentual de repasse deve ser menor ou igual a 100,00%'
+                'message' => 'Percentual de repasse deve ser menor ou igual a 100,00%',
+                'allowEmpty' => true
+            ]
+        ],
+        'valor_fixo' => [
+            'conditionalRequiredFixed' => [
+                'rule' => ['conditionalRequiredFixed'],
+                'message' => 'Valor fixo é obrigatório quando tipo é "fixed"'
+            ],
+            'decimal' => [
+                'rule' => ['decimal'],
+                'message' => 'Valor fixo deve ser um número decimal',
+                'allowEmpty' => true
+            ],
+            'range' => [
+                'rule' => ['comparison', '>=', 0.01],
+                'message' => 'Valor fixo deve ser maior ou igual a 0,01',
+                'allowEmpty' => true
             ]
         ]
     ];
@@ -148,6 +186,30 @@ class SupplierVolumeTier extends AppModel
         $de_qtd = $this->data[$this->alias]['de_qtd'];
         
         return $ate_qtd > $de_qtd;
+    }
+
+    public function conditionalRequired($check)
+    {
+        $value = array_values($check)[0];
+        $feeType = isset($this->data[$this->alias]['fee_type']) ? $this->data[$this->alias]['fee_type'] : '';
+        
+        if ($feeType === 'percentage') {
+            return !empty($value) || $value === '0';
+        }
+        
+        return true; // Not required for other fee types
+    }
+
+    public function conditionalRequiredFixed($check)
+    {
+        $value = array_values($check)[0];
+        $feeType = isset($this->data[$this->alias]['fee_type']) ? $this->data[$this->alias]['fee_type'] : '';
+        
+        if ($feeType === 'fixed') {
+            return !empty($value) || $value === '0';
+        }
+        
+        return true; // Not required for other fee types
     }
 
     /**

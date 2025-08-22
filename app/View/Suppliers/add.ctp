@@ -108,15 +108,10 @@ if (isset($id)) {
 
             <div class="mb-7 col-2">
                 <label class="fw-semibold fs-6 mb-2">Tipo Repasse</label>
-                <?php echo $this->Form->input('transfer_fee_type', ["id" => "transfer_fee_type", "options" => [1 => 'Valor', 2 => 'Percentual', 3 => 'Tabela'], "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "type" => "select"]); ?>
+                <?php echo $this->Form->input('transfer_fee_type', ["id" => "transfer_fee_type", "options" => [1 => 'Valor', 2 => 'Percentual'], "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "type" => "select"]); ?>
             </div>
 
-            <div class="mb-7 col-2" id="repasse_field">
-                <label class="fw-semibold fs-6 mb-2">Repasse</label>
-                <?php echo $this->Form->input('transfer_fee_percentage', ["id" => "transfer_fee_percentage", "placeholder" => "Repasse", "class" => "form-control mb-3 mb-lg-0 money_exchange", "type" => "text"]); ?>
-            </div>
-
-            <div class="mb-7 col-2" id="tipo_cobranca_field" style="display: none;">
+            <div class="mb-7 col-2">
                 <label class="fw-semibold fs-6 mb-2">Tipo de Cobrança</label>
                 <?php echo $this->Form->input('tipo_cobranca', ["id" => "tipo_cobranca", "options" => ['pedido' => 'Por Pedido', 'cpf' => 'Por CPF'], "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "type" => "select", "required" => false]); ?>
             </div>
