@@ -1130,74 +1130,63 @@ class ReportsController extends AppController
                 $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
             }
         }
-
+        
         if (isset($_GET['excel_pedidos'])) {
-            $nome = 'pedidos' . date('d_m_Y_H_i_s') . '.xlsx';
+            $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
+            $this->Paginator->settings = ['OrderItem' => $paginationConfig];
+        }
 
-            $data = $this->Order->find('all', [
-                'contain' => [
-                    'Status',
-                    'Customer',
-                    'CustomerCreator',
-                    'EconomicGroup',
-                    'Income.data_pagamento',
-                    'UpdatedGe',
-                ],
+        $items = [];
+        $items_total = null;
+        if ($buscar) {
+            $items = $this->Paginator->paginate('OrderItem', $condition);
+
+            $items_total = $this->OrderItem->find('all', [
+                'fields' => ['SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee', 'SUM(OrderItem.commission_fee) as commission_fee', 'SUM(OrderItem.total) as total', 'SUM(OrderItem.saldo) as saldo'],
                 'joins' => [
                     [
-                        'table' => 'order_items',
-                        'alias' => 'OrderItem',
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
                         'type' => 'INNER',
                         'conditions' => [
-                            'Order.id = OrderItem.order_id'
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
                         ]
                     ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
+
                 ],
-                'group' => ['Order.id'],
                 'conditions' => $condition,
             ]);
+        }
 
-            foreach ($data as $k => $pedido) {
-                $suppliersCount = $this->OrderItem->find('count', [
-                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
-                    'joins' => [
-                        [
-                            'table' => 'benefits',
-                            'alias' => 'Benefit',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'Benefit.id = CustomerUserItinerary.benefit_id'
-                            ]
-                        ],
-                        [
-                            'table' => 'suppliers',
-                            'alias' => 'Supplier',
-                            'type' => 'INNER',
-                            'conditions' => [
-                                'Supplier.id = Benefit.supplier_id'
-                            ]
-                        ]
-                    ],
-                    'group' => ['Supplier.id'],
-                    'fields' => ['Supplier.id']
-                ]);
+        if (isset($_GET['excel_pedidos'])) {
+            $nome = 'relatorio_pedidos_' . date('d_m_Y_H_i_s') . '.xlsx';
 
-                $usersCount = $this->OrderItem->find('count', [
-                    'conditions' => ['OrderItem.order_id' => $pedido['Order']['id']],
-                    'group' => ['OrderItem.customer_user_id'],
-                    'fields' => ['OrderItem.customer_user_id']
-                ]);
-
-                $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $pedido['Order']['id'], "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
-
-                $data[$k]['Order']['suppliersCount'] = $suppliersCount;
-                $data[$k]['Order']['usersCount'] = $usersCount;
-                $data[$k]["Order"]["total_balances"] = $order_balances_total[0][0]['total'];
-            }
-
-            $this->ExcelGenerator->gerarExcelPedidoscustomer($nome, $data);
-
-            $this->redirect("/files/excel/" . $nome);
+            $this->ExcelGenerator->gerarExcelOrders($nome, $items);
+            $this->redirect('/files/excel/' . $nome);            
         }
 
         if (isset($_GET['excel_simples'])) {
@@ -1355,58 +1344,11 @@ class ReportsController extends AppController
             $this->redirect('/files/excel/' . $nome);
         }
 
-        $items = [];
-        $items_total = null;
-        if ($buscar) {
-            $items = $this->Paginator->paginate('OrderItem', $condition);
-
-            $items_total = $this->OrderItem->find('all', [
-                'fields' => ['SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee', 'SUM(OrderItem.commission_fee) as commission_fee', 'SUM(OrderItem.total) as total', 'SUM(OrderItem.saldo) as saldo'],
-                'joins' => [
-                    [
-                        'table' => 'benefits',
-                        'alias' => 'Benefit',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Benefit.id = CustomerUserItinerary.benefit_id'
-                        ]
-                    ],
-                    [
-                        'table' => 'suppliers',
-                        'alias' => 'Supplier',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Supplier.id = Benefit.supplier_id'
-                        ]
-                    ],
-                    [
-                        'table' => 'customers',
-                        'alias' => 'Customer',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
-                        ],
-                    ],
-                    [
-                        'table' => 'statuses',
-                        'alias' => 'Status',
-                        'type' => 'INNER',
-                        'conditions' => [
-                            'Status.id = Order.status_id',
-                        ]
-                    ],
-
-                ],
-                'conditions' => $condition,
-            ]);
-        }
-
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
         $benefitTypes = $this->BenefitType->find('list', [
             'order' => ['BenefitType.name' => 'ASC']
         ]);
         
-
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
