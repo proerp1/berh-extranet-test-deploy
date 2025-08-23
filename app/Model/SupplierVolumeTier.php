@@ -137,7 +137,7 @@ class SupplierVolumeTier extends AppModel
                 'message' => 'Tipo de taxa é obrigatório'
             ],
             'inList' => [
-                'rule' => [['inList', ['fixed', 'percentage']]],
+                'rule' => ['inList', ['fixed', 'percentage']],
                 'message' => 'Tipo de taxa deve ser "fixed" ou "percentage"'
             ]
         ],

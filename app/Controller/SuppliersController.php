@@ -332,6 +332,9 @@ class SuppliersController extends AppController
             if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
                 $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
             }
+            if (!empty($this->request->data['SupplierVolumeTier']['valor_fixo'])) {
+                $this->request->data['SupplierVolumeTier']['valor_fixo'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['valor_fixo']);
+            }
             
             // Set data for validation
             $this->SupplierVolumeTier->set($this->request->data);
@@ -379,6 +382,9 @@ class SuppliersController extends AppController
             // Format data before validation (like other models)
             if (!empty($this->request->data['SupplierVolumeTier']['percentual_repasse'])) {
                 $this->request->data['SupplierVolumeTier']['percentual_repasse'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['percentual_repasse']);
+            }
+            if (!empty($this->request->data['SupplierVolumeTier']['valor_fixo'])) {
+                $this->request->data['SupplierVolumeTier']['valor_fixo'] = $this->SupplierVolumeTier->priceFormatBeforeSave($this->request->data['SupplierVolumeTier']['valor_fixo']);
             }
             
             // Set data for validation
