@@ -845,11 +845,15 @@ class OrdersController extends AppController
                 break;
 
             case 104:
-                $progress = 8;
+                $progress = 9;
+                break;
+
+            case 115:
+                $progress = 11;
                 break;
 
             case 87:
-                $progress = 9;
+                $progress = 12;
                 break;
         }
 
@@ -2203,6 +2207,25 @@ class OrdersController extends AppController
         $this->redirect(['action' => 'edit/' . $id]);
     }
 
+    public function confirma_faturamento($id)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->autoRender = false;
+
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 115,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        $this->Flash->set(__('O status foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+
+        $this->redirect(['action' => 'edit/' . $id]);
+    }
+
     public function gerar_pagamento()
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
@@ -3188,7 +3211,7 @@ class OrdersController extends AppController
 
             $this->OrderItem->save($data);
 
-            if ($statusProcess == 'CREDITO_INCONSISTENTE') {
+            if (in_array($statusProcess, ['CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
                 $orderBalanceData = [
                     'order_id' => $orderItem['Order']['id'],
                     'order_item_id' => $orderItem['OrderItem']['id'],
@@ -3335,7 +3358,7 @@ class OrdersController extends AppController
 
             $this->OrderItem->save($data);
 
-            if ($statusProcess == 'CREDITO_INCONSISTENTE') {
+            if (in_array($statusProcess, ['CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
                 $orderBalanceData = [
                     'order_id' => $orderItem['Order']['id'],
                     'order_item_id' => $orderItem['OrderItem']['id'],

@@ -1150,7 +1150,9 @@ class IncomesController extends AppController
         }
 
         try {
-            $obs = $this->request->data['IncomeNfse']['description'];
+            $obs = isset($this->request->data['IncomeNfse']) && isset($this->request->data['IncomeNfse']['description'])
+              ? $this->request->data['IncomeNfse']['description'] : '';
+
             $nfse_sdk = $this->connect_nfse_sdk();
 
             $nfse_data = $this->get_nfse_data($income, $type, $obs);
