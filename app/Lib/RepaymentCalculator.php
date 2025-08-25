@@ -23,6 +23,10 @@ class RepaymentCalculator
         if (!$supplier) {
             throw new InvalidArgumentException("Fornecedor não encontrado: {$supplierId}");
         }
+
+        if($quantity <= 0) {
+            $quantity = 1;
+        }
         
         $result = [
             'supplier_id' => $supplierId,
