@@ -276,21 +276,7 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
-                $newCustomer = $this->Customer->find('first', ['conditions' => ['Customer.id' => $id]]);
-                $userId = CakeSession::read("Auth.User.id");
-
-                $logCustomer = [
-                    'LogCustomer' => [
-                        'customer_id'         => $newCustomer['Customer']['id'],
-                        'emitir_nota_fiscal'  => $newCustomer['Customer']['emitir_nota_fiscal'],
-                        'economia_inicial'    => $newCustomer['Customer']['economia_inicial'],
-                        'dt_economia_inicial' => $newCustomer['Customer']['dt_economia_inicial'],
-                        'user_creator_id'     => $userId,
-                    ]
-                ];
-
-                $this->LogCustomer->create();
-                $this->LogCustomer->save($logCustomer);
+                $this->LogCustomer->createLogCustomer($this->Customer->read());
 
                 $this->Log->save($dados_log);
 

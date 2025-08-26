@@ -53,7 +53,7 @@ class LogSupplier extends AppModel {
       return $results;
     }
 
-    public function logSupplier($data_item)
+    public function createLogSupplier($data_item)
     {
         $userId = CakeSession::read("Auth.User.id");
 
