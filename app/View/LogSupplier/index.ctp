@@ -25,7 +25,7 @@
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <?php
-                                $repasses = [1 => 'Valor', 2 => 'Percentual'];
+                                $repasses = [1 => 'Valor', 2 => 'Percentual', '' => '-'];
                                 $payment_method = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transferência', '9' => 'Desconto', '11' => 'Pix', '10' => 'Outros'];
                                 $pix_types = ['' => '-', 'cnpj' => 'CNPJ', 'cpf' => 'CPF', 'email' => 'E-mail', 'celular' => 'Celular', 'chave' => 'Chave', 'qr code' => 'Qr Code', 'aleatoria' => 'Aleatória'];
 

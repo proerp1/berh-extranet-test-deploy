@@ -27,8 +27,8 @@ class LogSupplierController extends AppController
         $data = $this->Paginator->paginate('LogSupplier', $condition);
 
         $breadcrumb = [
-          $cliente['Supplier']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-          'Histórico Alterações' => '',
+            $cliente['Supplier']['nome_fantasia'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Histórico Alterações' => '',
         ];
 
         $this->set('action', 'Histórico Alterações');

@@ -175,7 +175,6 @@ class CustomersController extends AppController
                 }
 
                 if ($this->Customer->save($this->request->data)) {
-                    $this->LogCustomer->logCustomer($this->Customer->read());
                     $id = $this->Customer->id;
                     /*
                     $customer_user = ['CustomerUser' => ['name' => $this->request->data['Customer']['nome_primario'],
@@ -277,7 +276,22 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
-                $this->LogCustomer->logCustomer($this->Customer->read());
+                $newCustomer = $this->Customer->read();
+                $userId = CakeSession::read("Auth.User.id");
+
+                $registro = [
+                    'LogCustomer' => [
+                        'customer_id'         => $newCustomer['Customer']['id'],
+                        'emitir_nota_fiscal'  => $newCustomer['Customer']['emitir_nota_fiscal'],
+                        'economia_inicial'    => $newCustomer['Customer']['economia_inicial'],
+                        'dt_economia_inicial' => $newCustomer['Customer']['dt_economia_inicial'],
+                        'user_creator_id'     => $userId,
+                    ]
+                ];
+
+                $this->LogCustomer->create();
+                $this->LogCustomer->save($registro);
+
                 $this->Log->save($dados_log);
 
                 if ($alter_ge) {
