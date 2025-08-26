@@ -1174,7 +1174,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Supplier"]["nome_fantasia"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"] ); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["id"] ); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['working_days'] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["manual_quantity"] != 0 ? $dado["OrderItem"]["manual_quantity"] : $dado["CustomerUserItinerary"]["quantity"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 'R$' . $dado["OrderItem"]["price_per_day"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 'R$' . $dado["OrderItem"]["subtotal"] ); $col++;
