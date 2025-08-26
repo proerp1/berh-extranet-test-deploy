@@ -36,7 +36,7 @@
         <div class="row">
             <?php for ($i = 0; $i < count($nfses); $i++) { ?>
                 <?php $nfse = $nfses[$i] ?>
-                <?php echo $this->Form->create('Income', array("id" => "js-form-submit", "action" => "/cria_nfse/$id/".$nfse['tipo'], "class" => $hasMergedNfse ? 'col-12' : ($hasSingleNfse ? 'col-6' : 'col-4'), "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
+                <?php echo $this->Form->create('Income', array("id" => "js-form-submit", "action" => "/cria_nfse/$id/".$nfse['tipo'], "class" => 'col', "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false])); ?>
                     <?php if (($nfse['tipo'] === 'ge-tpp' && !$hasSingleNfse) || ($nfse['tipo'] !== 'ge-tpp' && !$hasMergedNfse)) { ?>
                         <h2><?php echo $nfse_type_title[$nfse['tipo']] ?></h2>
                             <div>

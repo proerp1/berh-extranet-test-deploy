@@ -1110,7 +1110,12 @@ class IncomesController extends AppController
             return $nfse['data_cancel'] === '1901-01-01 00:00:00';
         });
 
-        $nfse_types = collect(['ge', 'tpp', 'ge-tpp']);
+        if ($this->request->data['Customer']['emitir_nota_fiscal'] === 'M') {
+          $nfse_types = collect(['ge', 'tpp']);
+        } else {
+          $nfse_types = collect(['ge-tpp']);
+        }
+
         $nfses = [];
         $nfse_types->each(function ($type) use ($income_nfses, &$nfses) {
             $nfse = $income_nfses->first(function ($nfse) use ($type, &$nfses) {
