@@ -48,24 +48,24 @@ class LogCustomer extends AppModel {
       return $results;
     }
 
-    public function logCustomer($data_item)
-    {
-        $userId = CakeSession::read("Auth.User.id");
-
-        $data = $data_item['Customer'];
-
-        $registro = [
-            'LogCustomer' => [
-                'customer_id'         => $data['id'],
-                'emitir_nota_fiscal'  => $data['emitir_nota_fiscal'],
-                'economia_inicial'    => $data['economia_inicial'],
-                'dt_economia_inicial' => $data['dt_economia_inicial'],
-                'user_creator_id'     => $userId,
-            ]
-        ];
-
-        $this->create();
-
-        return $this->save($registro);
-    }
+//    public function logCustomer($data_item)
+//    {
+//        $userId = CakeSession::read("Auth.User.id");
+//
+//        $data = $data_item['Customer'];
+//
+//        $registro = [
+//            'LogCustomer' => [
+//                'customer_id'         => $data['id'],
+//                'emitir_nota_fiscal'  => $data['emitir_nota_fiscal'],
+//                'economia_inicial'    => $data['economia_inicial'],
+//                'dt_economia_inicial' => $data['dt_economia_inicial'],
+//                'user_creator_id'     => $userId,
+//            ]
+//        ];
+//
+//        $this->create();
+//
+//        return $this->save($registro);
+//    }
 }

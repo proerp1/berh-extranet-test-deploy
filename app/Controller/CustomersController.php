@@ -276,10 +276,10 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
-                $newCustomer = $this->Customer->read();
+                $newCustomer = $this->Customer->find('first', ['conditions' => ['Customer.id' => $id]]);
                 $userId = CakeSession::read("Auth.User.id");
 
-                $registro = [
+                $logCustomer = [
                     'LogCustomer' => [
                         'customer_id'         => $newCustomer['Customer']['id'],
                         'emitir_nota_fiscal'  => $newCustomer['Customer']['emitir_nota_fiscal'],
@@ -290,7 +290,7 @@ class CustomersController extends AppController
                 ];
 
                 $this->LogCustomer->create();
-                $this->LogCustomer->save($registro);
+                $this->LogCustomer->save($logCustomer);
 
                 $this->Log->save($dados_log);
 
