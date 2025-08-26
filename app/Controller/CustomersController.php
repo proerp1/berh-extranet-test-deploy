@@ -4,7 +4,7 @@ class CustomersController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal','CustomerGeLog', 'CustomerAddress'];
+    public $uses = ['Customer', 'Status', 'Franquia', 'Seller', 'PlanCustomer', 'Plan', 'PriceTable', 'LoginConsulta', 'Document', 'ActivityArea', 'CustomerUser', 'Income', 'Resale', 'CustomerDiscount', 'Product', 'CustomerDiscountsProduct', 'Log', 'Order', 'OrderItem', 'MovimentacaoCredor', 'EconomicGroup', 'CustomerFile','Proposal','CustomerGeLog', 'CustomerAddress', 'LogCustomer'];
 
     public $paginate = [
         'Customer' => [
@@ -175,6 +175,7 @@ class CustomersController extends AppController
                 }
 
                 if ($this->Customer->save($this->request->data)) {
+                    $this->LogCustomer->logCustomer($this->Customer->read());
                     $id = $this->Customer->id;
                     /*
                     $customer_user = ['CustomerUser' => ['name' => $this->request->data['Customer']['nome_primario'],
@@ -276,6 +277,7 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
+                $this->LogCustomer->logCustomer($this->Customer->read());
                 $this->Log->save($dados_log);
 
                 if ($alter_ge) {
