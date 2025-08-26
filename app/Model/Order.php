@@ -764,11 +764,15 @@ class Order extends AppModel
                 $itemTransferFee = $totalTransferFee * $proportion;
 
                 // Prepare calculation details log
-                $calculationLog = json_encode([
-                    'type' => 'volume_tier',
-                    'billing' => $tipoCobranca,
-                    'tier' => $tierUsed['de_qtd'] . '-' . $tierUsed['ate_qtd'] . ' (' . number_format($tierUsed['percentual_repasse_nao_formatado'], 2) . '%)'
-                ]);
+                if ($tierUsed) {
+                    $calculationLog = json_encode([
+                        'type' => 'volume_tier',
+                        'billing' => $tipoCobranca,
+                        'tier' => $tierUsed['de_qtd'] . '-' . $tierUsed['ate_qtd'] . ' (' . number_format($tierUsed['percentual_repasse_nao_formatado'], 2) . '%)'
+                    ]);
+                } else {
+                    $calculationLog = json_encode(['type' => 'no_tier']);
+                }
 
                 // Update the item
                 $this->OrderItem->id = $item['OrderItem']['id'];

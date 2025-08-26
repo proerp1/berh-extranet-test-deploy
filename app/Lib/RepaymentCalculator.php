@@ -45,7 +45,11 @@ class RepaymentCalculator
         $tier = $tierModel->findTierForQuantity($supplierId, $quantity);
         
         if (!$tier) {
-            throw new InvalidArgumentException("Nenhuma faixa de volume encontrada para quantidade {$quantity} do fornecedor {$supplierId}");
+            // If no tier is found, return zero fee instead of throwing exception
+            $result['repayment_value'] = 0;
+            $result['calculation_method'] = 'no_tier_found';
+            $result['tier_used'] = null;
+            return $result;
         }
         
         $result['tier_used'] = $tier['SupplierVolumeTier'];
