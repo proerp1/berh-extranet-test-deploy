@@ -4,7 +4,7 @@ class SuppliersController extends AppController
 {    
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia', 'TecnologiaVersao', 'SupplierVolumeTier'];
+    public $uses = ['Supplier', 'Status','BankCode','BankAccountType', 'Docsupplier', 'CustomerSupplierLogin', 'Modalidade', 'Tecnologia', 'TecnologiaVersao', 'SupplierVolumeTier', 'LogSupplier'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Supplier.id' => 'asc']
@@ -82,6 +82,7 @@ class SuppliersController extends AppController
                 }
                 
                 if ($this->Supplier->save($this->request->data)) {
+                    $this->LogSupplier->createLogSupplier($this->Supplier->read());
                     $this->Flash->set(__('O fornecedor foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => 'edit/'.$this->Supplier->id]);
                 } else {
@@ -119,6 +120,7 @@ class SuppliersController extends AppController
             $this->Supplier->validates();
             $this->request->data['Supplier']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Supplier->save($this->request->data)) {
+                $this->LogSupplier->createLogSupplier($this->Supplier->read());
                 $this->Flash->set(__('O fornecedor foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
                 $this->Flash->set(__('O fornecedor não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);

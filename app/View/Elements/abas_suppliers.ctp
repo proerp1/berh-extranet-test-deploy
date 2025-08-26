@@ -11,4 +11,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['volume_tiers', 'add_volume_tier', 'edit_volume_tier']) ? 'active' : '' ?>" href="<?php echo $this->base.'/suppliers/volume_tiers/'.$id; ?>">Faixas de Volume</a>
 	</li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo in_array($this->request->params['controller'], ['log_supplier']) ? 'active' : '' ?>" href="<?php echo $this->base.'/log_supplier/index/'.$id; ?>">Histórico Alterações</a>
+    </li>
 </ul>

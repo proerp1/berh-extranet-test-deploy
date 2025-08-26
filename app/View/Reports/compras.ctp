@@ -234,10 +234,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["BenefitType"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não'; ?></td>
-
-                            <td class="fw-bold fs-7 ps-4">
-                                <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
-                            </td>
+                            <td class="fw-bold fs-7 ps-4"><input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>"><?php echo $items[$i]["OrderItem"]["working_days"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
                             <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
