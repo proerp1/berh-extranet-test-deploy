@@ -216,16 +216,7 @@ class CustomersController extends AppController
     {
         $this->Permission->check(3, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Customer->id = $id;
-
-        $perm_nf_escrita = $this->Permission->check(83, 'escrita');
-        $perm_nf_leitura = $this->Permission->check(83, 'leitura');
-        $can_view_nf = ($perm_nf_escrita || $perm_nf_leitura);
-        $can_edit_nf = $perm_nf_escrita;
-
         if ($this->request->is(['post', 'put'])) {
-            if (!$perm_nf_escrita) {
-            unset($this->request->data['Customer']['observacao_notafiscal']);
-        }
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read('Auth.User.id');
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
 
@@ -329,7 +320,7 @@ class CustomersController extends AppController
 
         $this->set('action', $this->request->data['Customer']['nome_secundario']);
         $this->set('form_action', 'edit');
-        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'is_admin', 'can_view_nf', 'can_edit_nf'));
+        $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
 
         $this->render("add");
     }
