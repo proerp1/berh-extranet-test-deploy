@@ -24,19 +24,25 @@
                         <label class="fw-semibold fs-6 mb-2">Fornecedor</label>
                         <?php echo $this->Form->input('supplier_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
                     </div>
+
+                    <div class="mb-7 col-md-4">
+                        <label class="fw-semibold fs-6 mb-2">Grupo Econômico</label>
+                        <?php echo $this->Form->input('economic_group_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Todos']); ?>
+                    </div>
                 <?php } else { ?>
                     <input type="hidden" name="data[CustomerSupplierLogin][supplier_id]" value="<?php echo $id ?>">
+                    <input type="hidden" class="economic_group" value="<?php echo isset($this->request->data['CustomerSupplierLogin']['economic_group_id']) ? $this->request->data['CustomerSupplierLogin']['economic_group_id'] : null; ?>">
 
                     <div class="mb-7 col-md-4">
                         <label class="fw-semibold fs-6 mb-2">Cliente</label>
-                        <?php echo $this->Form->input('customer_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
+                        <?php echo $this->Form->input('customer_id', ["class" => "form-select mb-3 mb-lg-0 customer_id", "data-control" => "select2", "empty" => "Selecione"]); ?>
+                    </div>
+
+                    <div class="mb-7 col-md-4">
+                        <label class="fw-semibold fs-6 mb-2">Grupo Econômico</label>
+                        <?php echo $this->Form->input('economic_group_id', ['class' => 'form-select mb-3 mb-lg-0 economic_group_id', 'data-control' => 'select2', 'empty' => 'Todos']); ?>
                     </div>
                 <?php } ?>
-
-                <div class="mb-7 col-md-4">
-                    <label class="fw-semibold fs-6 mb-2">Grupo Econômico</label>
-                    <?php echo $this->Form->input('economic_group_id', ['class' => 'form-select mb-3 mb-lg-0', 'data-control' => 'select2', 'empty' => 'Todos']); ?>
-                </div>
 
                 <div class="mb-7 col-md-4">
                     <label class="fw-semibold fs-6 mb-2">URL</label>
@@ -68,3 +74,45 @@
         </form>
     </div>
 </div>
+
+<script>
+    function trigger_change() {
+        let customer_id = $('.customer_id').val();
+        let curr_grp = $('.economic_group').val();
+
+        $.ajax({
+            url: '<?php echo $this->Html->url(array("controller" => "customer_supplier_logins", "action" => "getEconomicGroups")); ?>',
+            type: 'POST',
+            data: { 
+                customer_id: customer_id
+            },
+            success: function(data) {
+                let obj = JSON.parse(data);
+                let html = '<option value="">Selecione</option>';
+                let sel_grp = '';
+
+                for (let i = 0; i < obj.economicGroups.length; i++) {
+                    if (obj.economicGroups[i].EconomicGroup.id == curr_grp) {
+                        sel_grp = 'selected';
+                    } else {
+                        sel_grp = '';
+                    }
+
+                    html += '<option value="' + obj.economicGroups[i].EconomicGroup.id + '" '+sel_grp+'>' + obj.economicGroups[i].EconomicGroup.name + '</option>';
+                }
+
+                $(".economic_group_id").html(html);
+
+                $(".economic_group_id").select2();
+            }
+        });
+    }
+    
+    $(document).ready(function() {
+        trigger_change();
+
+        $('.customer_id').on('change', function() {
+            trigger_change();
+        });
+    });
+</script>
