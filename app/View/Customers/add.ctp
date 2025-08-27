@@ -562,12 +562,16 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="mb-7 col-12">
-                    <label class="fw-semibold fs-6 mb-2">Observação Notal fiscal</label>
-                    <?php echo $this->Form->input('observacao_notafiscal', array("placeholder" => "Observação Notal fiscal", "id" => "summernote_notafiscal" , "class" => "form-control mb-3 mb-lg-0"));  ?>
-                </div>
-            </div>
+            <?php if (!empty($can_view_nf)): ?>
+                    <div class="row">
+                        <div class="mb-7 col-12">
+                            <label class="fw-semibold fs-6 mb-2">Observação Notal fiscal</label>
+                            <?php
+                                echo $this->Form->input('observacao_notafiscal', ['type' => 'textarea', 'placeholder' => 'Observação Notal fiscal', 'id' => 'summernote_notafiscal', 'class' => 'form-control mb-3 mb-lg-0', 'readonly' => empty($can_edit_nf),]);?>
+                        </div>
+                    </div>
+            <?php endif; ?>
+
 
             <div class="row" id="observacao">
                 <div class="mb-7 col-12">
