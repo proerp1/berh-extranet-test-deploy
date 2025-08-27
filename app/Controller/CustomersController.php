@@ -219,7 +219,7 @@ class CustomersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->request->data['Customer']['user_updated_id'] = CakeSession::read('Auth.User.id');
             $this->request->data['Customer']['updated'] = date('Y-m-d H:i:s');
-//log old value
+
             $log_old_value = $this->request->data['log_old_value'];
             unset($this->request->data['log_old_value']);
 
@@ -277,13 +277,14 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
-                $this->LogCustomer->logCustomer($this->Customer->read());
+                $this->LogCustomer->createLogCustomer($this->Customer->read());
+
                 $this->Log->save($dados_log);
 
                 if ($alter_ge) {
                     $this->CustomerGeLog->save($dados_ge_log);
                 }
-                                
+
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
 
                 $this->redirect("/customers/edit/" . $id);
