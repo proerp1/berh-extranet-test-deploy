@@ -81,6 +81,12 @@ class Income extends AppModel
         if (!empty($this->data[$this->alias]['nosso_numero'])) {
             $this->data[$this->alias]['nosso_numero'] = str_replace(['-','/','.'], '', $this->data[$this->alias]['nosso_numero']);
         }
+
+        if (empty($this->data[$this->alias]['id']) && empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = date('Y-m-d H:i:s');
+        } elseif (!empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
     
         return true;
     }
@@ -139,7 +145,7 @@ class Income extends AppModel
             }
             if (isset($val[$this->alias]['data_baixa'])) {
                 $results[$key][$this->alias]['data_baixa_nao_formatado'] = $val[$this->alias]['data_baixa'];
-                $results[$key][$this->alias]['data_baixa'] = date("d/m/Y", strtotime($val[$this->alias]['data_baixa']));
+                $results[$key][$this->alias]['data_baixa'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['data_baixa']));
             }
             if (isset($val[$this->alias]['valor_bruto'])) {
                 $results[$key][$this->alias]['valor_bruto_nao_formatado'] = $results[$key][$this->alias]['valor_bruto'];

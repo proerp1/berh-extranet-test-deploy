@@ -578,6 +578,42 @@ class IncomesController extends AppController
         }
     }
 
+  public function reabrir_conta($id, $status)
+  {
+    $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+
+    $this->Income->id = $id;
+    $log_old_value = $this->Income->read();
+
+    $data = ['Income' => ['status_id' => $status, 'valor_pago' => null, 'data_pagamento' => null, 'data_baixa' => null]];
+
+    if ($this->Income->save($data)) {
+      $new_value = $this->Income->read();
+
+      $dados_log = [
+        "old_value" => json_encode($log_old_value),
+        "new_value" => json_encode($new_value),
+        "route" => "incomes/reabrir_conta",
+        "log_action" => "reabrir_conta",
+        "log_table" => "Income",
+        "primary_key" => $id,
+        "parent_log" => 0,
+        "user_type" => "ADMIN",
+        "user_id" => CakeSession::read("Auth.User.id"),
+        "message" => "A conta a receber foi alterada com sucesso",
+        "log_date" => date("Y-m-d H:i:s"),
+        "data_cancel" => "1901-01-01",
+        "usuario_data_cancel" => 0,
+        "ip" => $_SERVER["REMOTE_ADDR"]
+      ];
+
+      $this->Log->save($dados_log);
+
+      $this->Flash->set(__('Conta reaberta com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+      $this->redirect(array('action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')));
+    }
+  }
+
     public function baixar_titulo($id)
     {
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
