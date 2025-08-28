@@ -379,16 +379,11 @@ class OrdersController extends AppController
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
 
-            if ($condicao_pagamento == 2) {
-                if ($pedido_complementar == 1) {
-                    $order_status_id = 86;
-                } else {
-                    $order_status_id = 104;
-                }
-            } else {
+            if ($condicao_pagamento != 2) {
                 $prazo = null;
-                $order_status_id = 83;
             }
+            
+            $order_status_id = 83;
 
             $orderData = [
                 'customer_id' => $customerId,
@@ -1039,11 +1034,20 @@ class OrdersController extends AppController
             if ($order['Customer']['emitir_nota_fiscal'] == 'A') {
                 $this->notificaNotaAntecipada($order);
             }
+            
+            $order_status_id = 84;
+            if ($order['Order']['condicao_pagamento'] == 2) {
+                if ($order['Order']['pedido_complementar'] == 1) {
+                    $order_status_id = 86;
+                } else {
+                    $order_status_id = 104;
+                }
+            }
 
             $this->Order->save([
                 'Order' => [
                     'id' => $id,
-                    'status_id' => 84,
+                    'status_id' => $order_status_id,
                     'user_updated_id' => CakeSession::read("Auth.User.id"),
                     'validation_date' => date('Y-m-d'),
                 ]
