@@ -33,6 +33,10 @@ class LogSupplier extends AppModel {
           'className' => 'BankCode',
           'foreignKey' => 'bank_code_id'
         ],
+        'Creator' => [
+            'className' => 'User',
+            'foreignKey' => 'user_creator_id',
+        ],
     ];
 
     public function beforeFind($queryData)
