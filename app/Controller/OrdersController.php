@@ -778,7 +778,9 @@ class OrdersController extends AppController
 
         $temp_errors = $this->Order->validationErrors;
         $this->request->data = $this->Order->read();
+
         $order = $this->Order->findById($id);
+
         $this->Order->validationErrors = $temp_errors;
 
         $this->Paginator->settings = ['OrderItem' => [
@@ -822,32 +824,56 @@ class OrdersController extends AppController
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $progress = 1;
+        $condicao_pagamento = $this->request->data['Order']['condicao_pagamento'];
+        $pedido_complementar = $this->request->data['Order']['pedido_complementar'];
+
+        $hide_payment_confirmed = false;
+        $hide_credit_release = false;
+        $hide_processing = false;
+
+        if ($condicao_pagamento == 2 && $pedido_complementar == 1) {
+            // Ocultar "Pagamento Confirmado" e "Liberação Créditos"
+            $hide_payment_confirmed = true;
+            $hide_credit_release = true;
+        } elseif ($condicao_pagamento == 2 && $pedido_complementar == 2) {
+            // Ocultar "Pagamento Confirmado" e "Em Processamento"
+            $hide_payment_confirmed = true;
+            $hide_processing = true;
+        }
+
+        // Ajustar progress baseado no status
         switch ($order['Order']['status_id']) {
-            case 83:
+            case 83: // Início
                 $progress = 1;
                 break;
-
-            case 84:
+            case 84: // Aguardando Pagamento
                 $progress = 3;
                 break;
-
-            case 85:
-                $progress = 5;
+            case 85: // Pagamento Confirmado (se não oculto) / Em Processamento (se pagamento oculto)
+                if ($hide_payment_confirmed) {
+                    $progress = 5; // Pular para próxima etapa visível
+                } else {
+                    $progress = 5;
+                }
                 break;
-
-            case 86:
-                $progress = 7;
+            case 86: // Em Processamento (se não oculto) / Aguardando Liberação (se processamento oculto)
+                if ($hide_processing) {
+                    $progress = 7; // Pular para próxima etapa visível
+                } else {
+                    $progress = 7;
+                }
                 break;
-
-            case 104:
-                $progress = 9;
+            case 104: // Aguardando Liberação (se não oculto) / Em Faturamento
+                if ($hide_credit_release) {
+                    $progress = 9; // Pular para próxima etapa visível
+                } else {
+                    $progress = 9;
+                }
                 break;
-
-            case 115:
+            case 115: // Em Faturamento
                 $progress = 11;
                 break;
-
-            case 87:
+            case 87: // Finalizado
                 $progress = 12;
                 break;
         }
@@ -957,8 +983,9 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $this->set("form_action", "edit");
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'v_is_partial', 'v_cond_pagamento'));
         $this->set(compact('suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
+        $this->set(compact('progress', 'hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento'));
 
         $this->render("add");
     }

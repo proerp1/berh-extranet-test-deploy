@@ -1,56 +1,70 @@
+<?php 
+    if ($condicao_pagamento == 2) { 
+        $i_style = 'width: 32px; height: 32px;';
+    } else { 
+        $i_style = 'width: 15px; height: 15px;';
+    } 
+?>
+
 <div class="tracking-wrapper">
     <div class="tracking">
-        <div id="progress" class="progress-<?php echo $progress; ?>">
+        <div id="progress" class="progress-<?php echo $progress; ?> <?php if($hide_payment_confirmed) echo 'hide-payment '; ?><?php if($hide_credit_release) echo 'hide-credit '; ?><?php if($hide_processing) echo 'hide-processing '; ?>">
             <div class="empty-bar"></div>
             <div class="color-bar"></div>
             <ul>
                 <li class="bullet-1">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/inicio.ico" ?>" alt="Início" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Início <br><br><?php echo $this->request->data['Order']['created']; ?></div>
                 </li>
                 <li class="bullet-2">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_pagamento.ico" ?>" alt="Aguardando Pagamento" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Aguardando <br>Pagamento <br><br><?php echo $this->request->data['Order']['validation_date']; ?></div>
                 </li>
+                <?php if (!$hide_payment_confirmed){ ?>
                 <li class="bullet-3">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/pagamento_confirmado.ico" ?>" alt="Pagamento Confirmado" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Pagamento <br>Confirmado <br><br><?php echo $this->request->data['Order']['payment_date']; ?></div>
                 </li>
+                <?php } ?>
+                <?php if (!$hide_processing){ ?>
                 <li class="bullet-4">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Processamento" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Em <br>Processamento <br><br><?php echo $this->request->data['Order']['issuing_date']; ?></div>
                 </li>
+                <?php } ?>
+                <?php if (!$hide_credit_release){ ?>
                 <li class="bullet-5">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/aguardando_liberacao.ico" ?>" alt="Liberação Créditos" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Aguardando <br>Liberação <br>de Crédito</div>
                 </li>
-                <?php if ($this->request->data['Order']['condicao_pagamento'] == 2) { ?>
+                <?php } ?>
+                <?php if ($condicao_pagamento == 2) { ?>
                     <li class="bullet-6">
-                        <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Faturamento" style="width: 15px; height: 15px;"></i></div>
+                        <div class="el"><i><img src="<?php echo $this->base."/img/icones/em_processamento.ico" ?>" alt="Em Faturamento" style="<?php echo $i_style; ?>"></i></div>
                         <div class="txt">Em <br>Faturamento</div>
                     </li>
                 <?php } ?>
                 <li class="bullet-7">
-                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="width: 15px; height: 15px;"></i></div>
+                    <div class="el"><i><img src="<?php echo $this->base."/img/icones/finalizado.ico" ?>" alt="Finalizado" style="<?php echo $i_style; ?>"></i></div>
                     <div class="txt">Finalizado</div>
                 </li>
             </ul>
         </div>
 
         <div class="arrow-button left">
-            <?php if (!empty($prev_order['Order']['id'])): ?>
+            <?php if (!empty($prev_order['Order']['id'])){ ?>
                 <a href="<?php echo $this->base . '/orders/edit/' . $prev_order['Order']['id']; ?>" class="arrow-link">
                     <i class="fa fa-arrow-left"></i>
                 </a>
-            <?php endif; ?>
+            <?php } ?>
         </div>
 
         <div class="arrow-button right">
-            <?php if (!empty($next_order['Order']['id'])): ?>
+            <?php if (!empty($next_order['Order']['id'])){ ?>
                 <a href="<?php echo $this->base . '/orders/edit/' . $next_order['Order']['id']; ?>" class="arrow-link">
                     <i class="fa fa-arrow-right"></i>
                 </a>
-            <?php endif; ?>
+            <?php } ?>
         </div>
     </div>
 </div>
@@ -129,7 +143,16 @@
         -o-transition: all 0.5s;
         display: inline-block;
         position: relative;
-        width: 8%; /* Ajustado para 7 itens */
+        width: 8%;
+    }
+
+    /* Ajuste dinâmico da largura baseado nos itens ocultos */
+    .tracking .hide-payment.hide-credit ul>li {
+        width: 12%; /* Para 5 itens visíveis */
+    }
+
+    .tracking .hide-payment.hide-processing ul>li {
+        width: 12%; /* Para 5 itens visíveis */
     }
 
     .tracking ul>li .el {
@@ -225,60 +248,41 @@
         }
     }
 
-    /* Progress bar widths - ajustados para 7 etapas */
-    .tracking .progress-0 .color-bar {
-        width: 0%;
-    }
+    /* Progress bar widths ajustadas dinamicamente */
+    .tracking .progress-0 .color-bar { width: 0%; }
+    .tracking .progress-1 .color-bar { width: 10%; }
+    .tracking .progress-2 .color-bar { width: 25%; }
+    .tracking .progress-3 .color-bar { width: 25%; }
+    .tracking .progress-4 .color-bar { width: 40%; }
+    .tracking .progress-5 .color-bar { width: 40%; }
+    .tracking .progress-6 .color-bar { width: 55%; }
+    .tracking .progress-7 .color-bar { width: 55%; }
+    .tracking .progress-8 .color-bar { width: 70%; }
+    .tracking .progress-9 .color-bar { width: 70%; }
+    .tracking .progress-10 .color-bar { width: 85%; }
+    .tracking .progress-11 .color-bar { width: 85%; }
+    .tracking .progress-12 .color-bar { width: 90%; }
 
-    .tracking .progress-1 .color-bar {
-        width: 10%;
-    }
+    /* Ajuste para quando itens estão ocultos - barras de progresso mais longas */
+    .tracking.hide-payment.hide-credit .progress-5 .color-bar,
+    .tracking.hide-payment.hide-credit .progress-6 .color-bar { width: 50%; }
+    .tracking.hide-payment.hide-credit .progress-7 .color-bar,
+    .tracking.hide-payment.hide-credit .progress-8 .color-bar { width: 65%; }
+    .tracking.hide-payment.hide-credit .progress-9 .color-bar,
+    .tracking.hide-payment.hide-credit .progress-10 .color-bar { width: 80%; }
+    .tracking.hide-payment.hide-credit .progress-11 .color-bar,
+    .tracking.hide-payment.hide-credit .progress-12 .color-bar { width: 90%; }
 
-    .tracking .progress-2 .color-bar {
-        width: 25%;
-    }
+    .tracking.hide-payment.hide-processing .progress-5 .color-bar,
+    .tracking.hide-payment.hide-processing .progress-6 .color-bar { width: 50%; }
+    .tracking.hide-payment.hide-processing .progress-7 .color-bar,
+    .tracking.hide-payment.hide-processing .progress-8 .color-bar { width: 65%; }
+    .tracking.hide-payment.hide-processing .progress-9 .color-bar,
+    .tracking.hide-payment.hide-processing .progress-10 .color-bar { width: 80%; }
+    .tracking.hide-payment.hide-processing .progress-11 .color-bar,
+    .tracking.hide-payment.hide-processing .progress-12 .color-bar { width: 90%; }
 
-    .tracking .progress-3 .color-bar {
-        width: 25%;
-    }
-
-    .tracking .progress-4 .color-bar {
-        width: 40%;
-    }
-
-    .tracking .progress-5 .color-bar {
-        width: 40%;
-    }
-
-    .tracking .progress-6 .color-bar {
-        width: 55%;
-    }
-
-    .tracking .progress-7 .color-bar {
-        width: 55%;
-    }
-
-    .tracking .progress-8 .color-bar {
-        width: 70%;
-    }
-
-    .tracking .progress-9 .color-bar {
-        width: 70%;
-    }
-
-    .tracking .progress-10 .color-bar {
-        width: 85%;
-    }
-
-    .tracking .progress-11 .color-bar {
-        width: 85%;
-    }
-
-    .tracking .progress-12 .color-bar {
-        width: 90%;
-    }
-
-    /* Background colors for bullets - Bullet 1 (Início) */
+    /* Background colors for bullets - mantém as mesmas regras originais */
     .tracking .progress-0>ul>li.bullet-1,
     .tracking .progress-1>ul>li.bullet-1,
     .tracking .progress-2>ul>li.bullet-1,
@@ -295,7 +299,6 @@
         background-color: var(--blue);
     }
 
-    /* Bullet 2 (Aguardando Pagamento) */
     .tracking .progress-2>ul>li.bullet-2,
     .tracking .progress-3>ul>li.bullet-2,
     .tracking .progress-4>ul>li.bullet-2,
@@ -310,7 +313,6 @@
         background-color: var(--blue);
     }
 
-    /* Bullet 3 (Pagamento Confirmado) */
     .tracking .progress-4>ul>li.bullet-3,
     .tracking .progress-5>ul>li.bullet-3,
     .tracking .progress-6>ul>li.bullet-3,
@@ -323,7 +325,6 @@
         background-color: var(--blue);
     }
 
-    /* Bullet 4 (Em Processamento) */
     .tracking .progress-6>ul>li.bullet-4,
     .tracking .progress-7>ul>li.bullet-4,
     .tracking .progress-8>ul>li.bullet-4,
@@ -334,7 +335,6 @@
         background-color: var(--blue);
     }
 
-    /* Bullet 5 (Aguardando Liberação) */
     .tracking .progress-8>ul>li.bullet-5,
     .tracking .progress-9>ul>li.bullet-5,
     .tracking .progress-10>ul>li.bullet-5,
@@ -343,19 +343,17 @@
         background-color: var(--blue);
     }
 
-    /* Bullet 6 (Nova Etapa - Em Entrega) */
     .tracking .progress-10>ul>li.bullet-6,
     .tracking .progress-11>ul>li.bullet-6,
     .tracking .progress-12>ul>li.bullet-6 {
         background-color: var(--blue);
     }
 
-    /* Bullet 7 (Finalizado) */
     .tracking .progress-12>ul>li.bullet-7 {
         background-color: var(--green);
     }
 
-    /* Icon visibility - Bullet 1 */
+    /* Icon visibility - mantém as mesmas regras */
     .tracking .progress-1>ul>li.bullet-1 .el i,
     .tracking .progress-2>ul>li.bullet-1 .el i,
     .tracking .progress-3>ul>li.bullet-1 .el i,
@@ -367,11 +365,8 @@
     .tracking .progress-9>ul>li.bullet-1 .el i,
     .tracking .progress-10>ul>li.bullet-1 .el i,
     .tracking .progress-11>ul>li.bullet-1 .el i,
-    .tracking .progress-12>ul>li.bullet-1 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-1 .el i { display: block; }
 
-    /* Icon visibility - Bullet 2 */
     .tracking .progress-3>ul>li.bullet-2 .el i,
     .tracking .progress-4>ul>li.bullet-2 .el i,
     .tracking .progress-5>ul>li.bullet-2 .el i,
@@ -381,11 +376,8 @@
     .tracking .progress-9>ul>li.bullet-2 .el i,
     .tracking .progress-10>ul>li.bullet-2 .el i,
     .tracking .progress-11>ul>li.bullet-2 .el i,
-    .tracking .progress-12>ul>li.bullet-2 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-2 .el i { display: block; }
 
-    /* Icon visibility - Bullet 3 */
     .tracking .progress-5>ul>li.bullet-3 .el i,
     .tracking .progress-6>ul>li.bullet-3 .el i,
     .tracking .progress-7>ul>li.bullet-3 .el i,
@@ -393,40 +385,26 @@
     .tracking .progress-9>ul>li.bullet-3 .el i,
     .tracking .progress-10>ul>li.bullet-3 .el i,
     .tracking .progress-11>ul>li.bullet-3 .el i,
-    .tracking .progress-12>ul>li.bullet-3 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-3 .el i { display: block; }
 
-    /* Icon visibility - Bullet 4 */
     .tracking .progress-7>ul>li.bullet-4 .el i,
     .tracking .progress-8>ul>li.bullet-4 .el i,
     .tracking .progress-9>ul>li.bullet-4 .el i,
     .tracking .progress-10>ul>li.bullet-4 .el i,
     .tracking .progress-11>ul>li.bullet-4 .el i,
-    .tracking .progress-12>ul>li.bullet-4 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-4 .el i { display: block; }
 
-    /* Icon visibility - Bullet 5 */
     .tracking .progress-9>ul>li.bullet-5 .el i,
     .tracking .progress-10>ul>li.bullet-5 .el i,
     .tracking .progress-11>ul>li.bullet-5 .el i,
-    .tracking .progress-12>ul>li.bullet-5 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-5 .el i { display: block; }
 
-    /* Icon visibility - Bullet 6 */
     .tracking .progress-11>ul>li.bullet-6 .el i,
-    .tracking .progress-12>ul>li.bullet-6 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-6 .el i { display: block; }
 
-    /* Icon visibility - Bullet 7 */
-    .tracking .progress-12>ul>li.bullet-7 .el i {
-        display: block;
-    }
+    .tracking .progress-12>ul>li.bullet-7 .el i { display: block; }
 
-    /* Text colors - Bullet 1 */
+    /* Text colors - mantém as mesmas regras */
     .tracking .progress-1>ul>li.bullet-1 .txt,
     .tracking .progress-2>ul>li.bullet-1 .txt,
     .tracking .progress-3>ul>li.bullet-1 .txt,
@@ -438,11 +416,8 @@
     .tracking .progress-9>ul>li.bullet-1 .txt,
     .tracking .progress-10>ul>li.bullet-1 .txt,
     .tracking .progress-11>ul>li.bullet-1 .txt,
-    .tracking .progress-12>ul>li.bullet-1 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-1 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 2 */
     .tracking .progress-3>ul>li.bullet-2 .txt,
     .tracking .progress-4>ul>li.bullet-2 .txt,
     .tracking .progress-5>ul>li.bullet-2 .txt,
@@ -452,11 +427,8 @@
     .tracking .progress-9>ul>li.bullet-2 .txt,
     .tracking .progress-10>ul>li.bullet-2 .txt,
     .tracking .progress-11>ul>li.bullet-2 .txt,
-    .tracking .progress-12>ul>li.bullet-2 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-2 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 3 */
     .tracking .progress-5>ul>li.bullet-3 .txt,
     .tracking .progress-6>ul>li.bullet-3 .txt,
     .tracking .progress-7>ul>li.bullet-3 .txt,
@@ -464,40 +436,26 @@
     .tracking .progress-9>ul>li.bullet-3 .txt,
     .tracking .progress-10>ul>li.bullet-3 .txt,
     .tracking .progress-11>ul>li.bullet-3 .txt,
-    .tracking .progress-12>ul>li.bullet-3 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-3 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 4 */
     .tracking .progress-7>ul>li.bullet-4 .txt,
     .tracking .progress-8>ul>li.bullet-4 .txt,
     .tracking .progress-9>ul>li.bullet-4 .txt,
     .tracking .progress-10>ul>li.bullet-4 .txt,
     .tracking .progress-11>ul>li.bullet-4 .txt,
-    .tracking .progress-12>ul>li.bullet-4 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-4 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 5 */
     .tracking .progress-9>ul>li.bullet-5 .txt,
     .tracking .progress-10>ul>li.bullet-5 .txt,
     .tracking .progress-11>ul>li.bullet-5 .txt,
-    .tracking .progress-12>ul>li.bullet-5 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-5 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 6 */
     .tracking .progress-11>ul>li.bullet-6 .txt,
-    .tracking .progress-12>ul>li.bullet-6 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-6 .txt { color: var(--blue); }
 
-    /* Text colors - Bullet 7 */
-    .tracking .progress-12>ul>li.bullet-7 .txt {
-        color: var(--blue);
-    }
+    .tracking .progress-12>ul>li.bullet-7 .txt { color: var(--blue); }
 
-    /* Responsividade das setas */
+    /* Responsividade */
     @media (max-width: 768px) {
         .tracking {
             max-width: 94%;
@@ -509,9 +467,14 @@
 
         .tracking ul li {
             flex: none;
-            width: 12%; /* Ajustado para 7 itens */
+            width: 12%;
             background-size: 50%; 
             background-position: center center;
+        }
+
+        .tracking .hide-payment.hide-credit ul>li,
+        .tracking .hide-payment.hide-processing ul>li {
+            width: 15%; /* Ajuste para telas menores com itens ocultos */
         }
         
         .tracking ul>li .el i {
@@ -535,7 +498,12 @@
 
     @media (max-width: 480px) {
         .tracking ul li {
-            width: 10%; /* Ainda mais compacto para telas pequenas */
+            width: 10%;
+        }
+
+        .tracking .hide-payment.hide-credit ul>li,
+        .tracking .hide-payment.hide-processing ul>li {
+            width: 16%; /* Ajuste para telas muito pequenas com itens ocultos */
         }
         
         .arrow-button {
