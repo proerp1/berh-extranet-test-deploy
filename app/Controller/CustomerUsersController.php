@@ -674,6 +674,21 @@ class CustomerUsersController extends AppController
         $this->render("add_bank_info");
     }
 
+    public function delete_bank_info($customer_id, $user_id, $id)
+    {
+        $this->Permission->check(65, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->CustomerUserBankAccount->id = $id;
+        $this->request->data = $this->CustomerUserBankAccount->read();
+
+        $this->request->data['CustomerUserBankAccount']['data_cancel'] = date("Y-m-d H:i:s");
+        $this->request->data['CustomerUserBankAccount']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
+
+        if ($this->CustomerUserBankAccount->save($this->request->data)) {
+            $this->Flash->set(__('O usuário foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+          $this->redirect(['action' => 'bank_info/' . $customer_id . '/' . $user_id]);
+        }
+    }
+
     /*******************
                 Itinerário
      ********************/
