@@ -4137,91 +4137,6 @@ class OrdersController extends AppController
         return $extra_ids;
     }
 
-    /**
-     * Calcula a taxa de repasse do fornecedor baseado no tipo configurado
-     * 
-     * @param array $benefit Dados do benefício com informações do supplier
-     * @param float $subtotal Valor base para cálculo
-     * @param int $quantity Quantidade para cálculo (usado apenas para tipo Tabela)
-     * @param array $orderData Dados do pedido (opcional, para contexto adicional)
-     * @return array Array com informações do cálculo
-     */
-    private function calculateSupplierTransferFee($benefit, $subtotal, $quantity = 1, $orderData = [])
-    {
-        // Validar dados de entrada
-        if (empty($benefit['Supplier'])) {
-            throw new InvalidArgumentException('Dados do fornecedor não encontrados no benefício');
-        }
-
-        $supplier = $benefit['Supplier'];
-        $transferFeeType = isset($supplier['transfer_fee_type']) ? $supplier['transfer_fee_type'] : 1;
-        $transferFeePercentage = isset($supplier['transfer_fee_percentage_nao_formatado']) 
-            ? $supplier['transfer_fee_percentage_nao_formatado'] 
-            : 0;
-
-        $result = [
-            'supplier_id' => $supplier['id'],
-            'transfer_fee_type' => $transferFeeType,
-            'subtotal' => $subtotal,
-            'quantity' => $quantity,
-            'transfer_fee' => 0,
-            'calculation_method' => '',
-            'tier_info' => null,
-            'percentage_applied' => 0
-        ];
-
-        try {
-            switch ($transferFeeType) {
-                case 1: // Valor Fixo
-                    $result['transfer_fee'] = $transferFeePercentage;
-                    $result['calculation_method'] = 'fixed_value';
-                    $result['percentage_applied'] = 0;
-                    break;
-
-                case 2: // Percentual Fixo
-                    $result['transfer_fee'] = $subtotal * ($transferFeePercentage / 100);
-                    $result['calculation_method'] = 'fixed_percentage';
-                    $result['percentage_applied'] = $transferFeePercentage;
-                    break;
-
-                case 3: // Tabela de Volume
-                    // Volume tier calculation needs full order context
-                    // Will be calculated properly in recalculateOrderTransferFees()
-                    $result['transfer_fee'] = 0;
-                    $result['calculation_method'] = 'volume_tier_pending';
-                    $result['percentage_applied'] = 0;
-                    $result['tier_info'] = 'Will be calculated after all items are created';
-                    break;
-
-                default:
-                    // Fallback para valor fixo
-                    $result['transfer_fee'] = $transferFeePercentage;
-                    $result['calculation_method'] = 'fixed_value_fallback';
-                    $result['percentage_applied'] = 0;
-                    break;
-            }
-
-            // Garantir que o valor não seja negativo
-            $result['transfer_fee'] = max(0, $result['transfer_fee']);
-
-        } catch (Exception $e) {
-            // Log do erro mas não interrompe o processamento
-            CakeLog::error('Erro no cálculo de repasse do fornecedor: ' . $e->getMessage());
-            
-            // Fallback para valor/percentual fixo baseado no tipo
-            if ($transferFeeType == 2) {
-                $result['transfer_fee'] = $subtotal * ($transferFeePercentage / 100);
-                $result['calculation_method'] = 'fixed_percentage_fallback';
-            } else {
-                $result['transfer_fee'] = $transferFeePercentage;
-                $result['calculation_method'] = 'fixed_value_fallback';
-            }
-            
-            $result['error'] = $e->getMessage();
-        }
-
-        return $result;
-    }
 
     /**
      * Determina a quantidade consolidada baseada no tipo de cobrança do fornecedor
@@ -4635,47 +4550,6 @@ class OrdersController extends AppController
         return floatval($value);
     }
 
-    /**
-     * Calcula fixed value/percentage fees para itens individuais
-     */
-    private function calculateFixedFeesForItems($supplier, $items)
-    {
-        $transferFeeType = $supplier['transfer_fee_type'];
-        $transferFeePercentage = $supplier['transfer_fee_percentage'];
-
-        foreach ($items as $item) {
-            $subtotal = $item['OrderItem']['subtotal'];
-            $transferFee = 0;
-            $calculationLog = null;
-
-            switch ($transferFeeType) {
-                case 1: // Valor fixo
-                    $transferFee = $transferFeePercentage;
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_value',
-                        'value' => $transferFeePercentage
-                    ]);
-                    break;
-                case 2: // Percentual fixo
-                    $transferFee = $subtotal * ($transferFeePercentage / 100);
-                    $calculationLog = json_encode([
-                        'type' => 'fixed_percentage',
-                        'percentage' => $transferFeePercentage,
-                        'base' => $subtotal
-                    ]);
-                    break;
-            }
-
-            // Atualizar o item
-            $this->OrderItem->id = $item['OrderItem']['id'];
-            $this->OrderItem->saveField('transfer_fee', $transferFee);
-            $this->OrderItem->saveField('calculation_details_log', $calculationLog);
-            
-            // Recalcular total do item
-            $newTotal = $subtotal + $transferFee + $item['OrderItem']['commission_fee'];
-            $this->OrderItem->saveField('total', $newTotal);
-        }
-    }
 
     /**
      * Centralized method to calculate transfer fees for a supplier using RepaymentCalculator
