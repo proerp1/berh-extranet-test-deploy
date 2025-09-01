@@ -38,7 +38,8 @@ class OrdersController extends AppController
         'BankAccount',
         'OrderDiscount',
         'LogOrderItemsProcessamento',
-        'SupplierVolumeTier'
+        'SupplierVolumeTier',
+        'OutcomeOrder',
     ];
     
     public $groupBenefitType = [
@@ -3074,7 +3075,7 @@ class OrdersController extends AppController
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 200,
             'order' => ['CustomerUser.name' => 'asc'],
-            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'Supplier.*'],
+            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'Supplier.*', 'StatusOutcome.*'],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -3091,8 +3092,23 @@ class OrdersController extends AppController
                     'conditions' => [
                         'Supplier.id = Benefit.supplier_id'
                     ]
-                ]
-
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
             ]
         ]];
 
@@ -3243,6 +3259,112 @@ class OrdersController extends AppController
                 $this->OrderBalance->save($orderBalanceData);
             }
         }
+        
+        if (in_array($statusProcess, ['GERAR_PAGAMENTO'])) {
+            $orderItems = $this->OrderItem->find('all', [
+                'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ],
+                'conditions' => [
+                    'OrderItem.id' => $itemOrderId,
+                ],
+                'group' => ['Supplier.id'],
+            ]);
+
+            foreach ($orderItems as $item) {
+                $valor_total = ($item[0]['subtotal'] - $item[0]['transfer_fee']);
+                
+                $outcome = [];
+                $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
+                $outcome['Outcome']['resale_id'] = 1;
+                $outcome['Outcome']['doc_num'] = $pedido_operadora;
+                $outcome['Outcome']['parcela'] = 1;
+                $outcome['Outcome']['status_id'] = 11;
+                $outcome['Outcome']['name'] = 'Pagamento a Operadoras';
+                $outcome['Outcome']['valor_multa'] = 0;
+                $outcome['Outcome']['valor_desconto'] = 0;
+                $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
+                $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
+                $outcome['Outcome']['bank_account_id'] = 3;
+                $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+                $outcome['Outcome']['expense_id'] = 2;
+                $outcome['Outcome']['cost_center_id'] = 113;
+                $outcome['Outcome']['plano_contas_id'] = 1;
+                $outcome['Outcome']['recorrencia'] = 2;
+                $outcome['Outcome']['data_competencia'] = date('01/m/Y');
+                $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
+                
+                $this->Outcome->create();
+                $this->Outcome->save($outcome);
+                
+                $outcome_id = $this->Outcome->id;
+                
+                // Buscar TODOS os pedidos deste supplier nos itens selecionados
+                $ordersForSupplier = $this->OrderItem->find('all', [
+                    'fields' => ['DISTINCT Order.id'],
+                    'joins' => [
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ],
+                    'conditions' => [
+                        'OrderItem.id' => $itemOrderId,
+                        'Supplier.id' => $item['Supplier']['id']
+                    ]
+                ]);
+                
+                // Salvar na tabela OutcomeOrder para cada pedido deste supplier
+                foreach ($ordersForSupplier as $order) {
+                    $outcomeOrder = [];
+                    $outcomeOrder['OutcomeOrder']['outcome_id'] = $outcome_id;
+                    $outcomeOrder['OutcomeOrder']['order_id'] = $order['Order']['id'];
+                    
+                    $this->OutcomeOrder->create();
+                    $this->OutcomeOrder->save($outcomeOrder);
+                }
+                
+                // Atualizar todos os OrderItems deste supplier com o outcome_id
+                $this->OrderItem->updateAll(
+                    ['OrderItem.outcome_id' => $outcome_id],
+                    [
+                        'OrderItem.id' => $itemOrderId,
+                        'EXISTS (SELECT 1 FROM benefits b 
+                                INNER JOIN suppliers s ON s.id = b.supplier_id 
+                                WHERE b.id = CustomerUserItinerary.benefit_id 
+                                AND s.id = ' . $item['Supplier']['id'] . ')'
+                    ]
+                );
+            }
+        }
 
         echo json_encode(['success' => true]);
     }
@@ -3388,6 +3510,112 @@ class OrdersController extends AppController
 
                 $this->OrderBalance->create();
                 $this->OrderBalance->save($orderBalanceData);
+            }
+        }
+        
+        if (in_array($statusProcess, ['GERAR_PAGAMENTO'])) {
+            $orderItems = $this->OrderItem->find('all', [
+                'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ]
+                ],
+                'conditions' => [
+                    'OrderItem.id' => $itemOrderId,
+                ],
+                'group' => ['Supplier.id'],
+            ]);
+
+            foreach ($orderItems as $item) {
+                $valor_total = ($item[0]['subtotal'] - $item[0]['transfer_fee']);
+                
+                $outcome = [];
+                $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
+                $outcome['Outcome']['resale_id'] = 1;
+                $outcome['Outcome']['doc_num'] = $pedido_operadora;
+                $outcome['Outcome']['parcela'] = 1;
+                $outcome['Outcome']['status_id'] = 11;
+                $outcome['Outcome']['name'] = 'Pagamento a Operadoras';
+                $outcome['Outcome']['valor_multa'] = 0;
+                $outcome['Outcome']['valor_desconto'] = 0;
+                $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
+                $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
+                $outcome['Outcome']['bank_account_id'] = 3;
+                $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+                $outcome['Outcome']['expense_id'] = 2;
+                $outcome['Outcome']['cost_center_id'] = 113;
+                $outcome['Outcome']['plano_contas_id'] = 1;
+                $outcome['Outcome']['recorrencia'] = 2;
+                $outcome['Outcome']['data_competencia'] = date('01/m/Y');
+                $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
+                
+                $this->Outcome->create();
+                $this->Outcome->save($outcome);
+                
+                $outcome_id = $this->Outcome->id;
+                
+                // Buscar TODOS os pedidos deste supplier nos itens selecionados
+                $ordersForSupplier = $this->OrderItem->find('all', [
+                    'fields' => ['DISTINCT Order.id'],
+                    'joins' => [
+                        [
+                            'table' => 'benefits',
+                            'alias' => 'Benefit',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Benefit.id = CustomerUserItinerary.benefit_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'suppliers',
+                            'alias' => 'Supplier',
+                            'type' => 'INNER',
+                            'conditions' => [
+                                'Supplier.id = Benefit.supplier_id'
+                            ]
+                        ]
+                    ],
+                    'conditions' => [
+                        'OrderItem.id' => $itemOrderId,
+                        'Supplier.id' => $item['Supplier']['id']
+                    ]
+                ]);
+                
+                // Salvar na tabela OutcomeOrder para cada pedido deste supplier
+                foreach ($ordersForSupplier as $order) {
+                    $outcomeOrder = [];
+                    $outcomeOrder['OutcomeOrder']['outcome_id'] = $outcome_id;
+                    $outcomeOrder['OutcomeOrder']['order_id'] = $order['Order']['id'];
+                    
+                    $this->OutcomeOrder->create();
+                    $this->OutcomeOrder->save($outcomeOrder);
+                }
+                
+                // Atualizar todos os OrderItems deste supplier com o outcome_id
+                $this->OrderItem->updateAll(
+                    ['OrderItem.outcome_id' => $outcome_id],
+                    [
+                        'OrderItem.id' => $itemOrderId,
+                        'EXISTS (SELECT 1 FROM benefits b 
+                                INNER JOIN suppliers s ON s.id = b.supplier_id 
+                                WHERE b.id = CustomerUserItinerary.benefit_id 
+                                AND s.id = ' . $item['Supplier']['id'] . ')'
+                    ]
+                );
             }
         }
 
