@@ -182,4 +182,15 @@ class CustomerSupplierLoginsController extends AppController {
 			$this->redirect(array('action' => 'index', $tipo, $id));
 		}
 	}
+
+    public function getEconomicGroups()
+    {
+        $this->autoRender = false;
+
+        $customer_id = isset($this->request->data['customer_id']) ? (int)$this->request->data['customer_id'] : null;
+
+        $economicGroups = $this->EconomicGroup->find("all", ['fields' => ['id', 'name'], "conditions" => ["EconomicGroup.status_id" => 1, 'EconomicGroup.customer_id' => $customer_id]]);        
+
+        echo json_encode(['economicGroups' => $economicGroups]);
+    }
 }

@@ -277,13 +277,14 @@ class CustomersController extends AppController
             }
 
             if ($this->Customer->save($this->request->data)) {
-                $this->LogCustomer->logCustomer($this->Customer->read());
+                $this->LogCustomer->createLogCustomer($this->Customer->read());
+
                 $this->Log->save($dados_log);
 
                 if ($alter_ge) {
                     $this->CustomerGeLog->save($dados_ge_log);
                 }
-                                
+
                 $this->Flash->set(__('O cliente foi alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
 
                 $this->redirect("/customers/edit/" . $id);

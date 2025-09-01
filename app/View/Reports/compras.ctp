@@ -194,7 +194,7 @@
                 <?php if (isset($items_total[0])) { ?>
                     <tr>
                         <td>Total</td>
-                        <td colspan="12"></td>
+                        <td colspan="13"></td>
                         <td class="subtotal_sum">R$<?php echo number_format($items_total[0][0]['subtotal'], 2, ',', '.'); ?></td>
                         <td class="transfer_fee_sum">R$<?php echo number_format($items_total[0][0]['transfer_fee'], 2, ',', '.'); ?></td>
                         <td class="commission_fee_sum">R$<?php echo number_format($items_total[0][0]['commission_fee'], 2, ',', '.'); ?></td>

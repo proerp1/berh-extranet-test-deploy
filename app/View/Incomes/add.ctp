@@ -114,7 +114,7 @@
 
                     <div class="mb-7 col">
                         <label class="fw-semibold fs-6 mb-2">Data da baixa manual</label>
-                        <p><?php echo $this->request->data['Income']['data_baixa'] != null ? date('d/m/Y H:i:s', strtotime($this->request->data['Income']['data_baixa'])) : '-' ?></p>
+                        <p><?php echo $this->request->data['Income']['data_baixa'] != null ? $this->request->data['Income']['data_baixa'] : '-' ?></p>
                     </div>
 
                     <hr>
@@ -184,7 +184,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Conta bancária</label>
-                <?php echo $this->Form->input('bank_account_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
+                <?php echo $this->Form->input('bank_account_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", 'default' => 4]);?>
             </div>
 
             <div class="mb-7">
@@ -263,6 +263,9 @@
                         <?php if ($this->request->data['Status']['id'] != 17 || CakeSession::read("Auth.User.Group.id") == 1){ ?>
                             <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
                         <?php } ?>
+                      <?php if ($this->request->data['Status']['id'] == 17){ ?>
+                            <a href="<?php echo $this->base.'/incomes/reabrir_conta/'.$id.'/15/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-warning">Reabrir conta</a>
+                      <?php } ?>
                         <?php if (($this->request->data['Status']['id'] == 15 || $this->request->data['Status']['id'] == 16) && $this->request->data['Income']['cnab_gerado'] == 1){ ?>
                             <a href="<?php echo $this->base.'/incomes/gerar_boleto/'.$this->request->data["Income"]["id"].'/1'; ?>" class="btn btn-success">Ver boleto</a>
                             <?php if ($this->request->data["CnabItem"]["id_web"] && $this->request->data["BankAccount"]["bank_id"] != 9){ ?>

@@ -7,6 +7,10 @@ class LogCustomer extends AppModel {
 
     public $belongsTo = [
         'Customer',
+        'Creator' => [
+            'className' => 'User',
+            'foreignKey' => 'user_creator_id',
+        ],
     ];
 
     public function beforeFind($queryData)

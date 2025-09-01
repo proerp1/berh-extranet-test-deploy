@@ -19,6 +19,7 @@
                         <th>Conta</th>
                         <th>Chave PIX</th>
                         <th>Data Alteração</th>
+                        <th>Usuário Alteração</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogSupplier']['acc_number'].'-'.$data[$i]['LogSupplier']['acc_digit']; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $pix; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogSupplier']['created']; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Creator']['name']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

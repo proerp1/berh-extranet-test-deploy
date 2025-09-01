@@ -10,6 +10,7 @@
                         <th>Saldo Inicial</th>
                         <th>Data Saldo Inicial</th>
                         <th>Data e hora da Alteração</th>
+                        <th>Usuário Alteração</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,6 +25,7 @@
                                 <td class="fw-bold fs-7 ps-4">R$ <?php echo $data[$i]['LogCustomer']['economia_inicial']; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogCustomer']['dt_economia_inicial']; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogCustomer']['created']; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Creator']['name']; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
