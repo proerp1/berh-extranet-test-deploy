@@ -130,6 +130,20 @@ class Supplier extends AppModel
         return !empty($tipo_cobranca) && $tipo_cobranca !== '';
     }
 
+    public function mustBePedidoForPercentage($check)
+    {
+        $tipo_cobranca = array_values($check)[0];
+        $transfer_fee_type = isset($this->data[$this->alias]['transfer_fee_type']) ? $this->data[$this->alias]['transfer_fee_type'] : null;
+        
+        // If transfer_fee_type is 2 (Percentual), tipo_cobranca must be 'pedido'
+        if ($transfer_fee_type == 2) {
+            return $tipo_cobranca === 'pedido';
+        }
+        
+        // For other transfer_fee_types, any tipo_cobranca is valid
+        return true;
+    }
+
     public $validate = [
         'nome_fantasia' => [
             'required' => [
@@ -209,6 +223,10 @@ class Supplier extends AppModel
             'requiredForTableType' => [
                 'rule' => ['requiredForTableType'],
                 'message' => 'Tipo de cobrança é obrigatório quando tipo de repasse for "Tabela"'
+            ],
+            'mustBePedidoForPercentage' => [
+                'rule' => ['mustBePedidoForPercentage'],
+                'message' => 'Quando o tipo de repasse é "Percentual", o tipo de cobrança deve ser "Por Pedido"'
             ]
         ]
     ];

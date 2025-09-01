@@ -800,7 +800,8 @@
                     $subtotal = 0;
                     $transfer_fee = 0;
                     $total = 0;
-                    if ($items) { ?>
+                    ?>
+                    <?php if ($items) { ?>
                         <?php for ($i = 0; $i < count($items); $i++) {
                             $subtotal += $items[$i]["OrderItem"]["subtotal_not_formated"];
                             $transfer_fee += $items[$i]["OrderItem"]["transfer_fee_not_formated"];
@@ -836,7 +837,22 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["valor_unit"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>">
+                                    <?php 
+                                    // Check if this item uses volume tier fixed calculation
+                                    $calculationDetails = json_decode($items[$i]["OrderItem"]["calculation_details_log"], true);
+                                    $isVolumeFixedByOrder = isset($calculationDetails['type']) && $calculationDetails['type'] === 'volume_tier_fixed' && 
+                                                           isset($calculationDetails['billing_type']) && $calculationDetails['billing_type'] === 'pedido';
+                                    
+                                    if ($isVolumeFixedByOrder) {
+                                        // Show R$ 0,00 with tooltip for volume tier fixed items
+                                        echo '<span data-bs-toggle="tooltip" data-bs-placement="top" title="Taxa aplicada por pedido devido à presença deste fornecedor">R$ 0,00 <i class="fas fa-info-circle text-info"></i></span>';
+                                    } else {
+                                        // Show normal transfer fee for other calculation types
+                                        echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"];
+                                    }
+                                    ?>
+                                </td>
                                 <td class="fw-bold fs-7 ps-4 commission_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4 saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo"]; ?></td>
@@ -1221,6 +1237,9 @@ $statusCancelado = 94; // ID do status "Cancelado"
                 scrollTop: $("#excluir_sel").offset().top - 150
             }, 100);
         }
+        
+        // Initialize Bootstrap tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
         $('.money_field').maskMoney({
             decimal: ',',
             thousands: '.',
@@ -1255,7 +1274,18 @@ $statusCancelado = 94; // ID do status "Cancelado"
                     success: function(response) {
                         line.find('.total_line').html('R$' + response.total);
                         line.find('.subtotal_line').html('R$' + response.subtotal);
-                        line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                        
+                        // Check if this should show consolidated fee display
+                        var calculationDetails = response.calculation_details_log ? JSON.parse(response.calculation_details_log) : {};
+                        var isVolumeFixedByOrder = calculationDetails.type === 'volume_tier_fixed' && calculationDetails.billing_type === 'pedido';
+                        
+                        if (isVolumeFixedByOrder) {
+                            // Show R$ 0,00 with tooltip for volume tier fixed items
+                            line.find('.transfer_fee_line').html('<span data-bs-toggle="tooltip" data-bs-placement="top" title="Taxa aplicada por pedido devido à presença deste fornecedor">R$ 0,00 <i class="fas fa-info-circle text-info"></i></span>');
+                        } else {
+                            line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                        }
+                        
                         line.find('.commission_fee_line').html('R$' + response.commission_fee);
 
                         $('.subtotal_sum').html('R$' + response.pedido_subtotal);
@@ -1295,7 +1325,18 @@ $statusCancelado = 94; // ID do status "Cancelado"
                 success: function(response) {
                     line.find('.total_line').html('R$' + response.total);
                     line.find('.subtotal_line').html('R$' + response.subtotal);
-                    line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                    
+                    // Check if this should show consolidated fee display
+                    var calculationDetails = response.calculation_details_log ? JSON.parse(response.calculation_details_log) : {};
+                    var isVolumeFixedByOrder = calculationDetails.type === 'volume_tier_fixed' && calculationDetails.billing_type === 'pedido';
+                    
+                    if (isVolumeFixedByOrder) {
+                        // Show R$ 0,00 with tooltip for volume tier fixed items
+                        line.find('.transfer_fee_line').html('<span data-bs-toggle="tooltip" data-bs-placement="top" title="Taxa aplicada por pedido devido à presença deste fornecedor">R$ 0,00 <i class="fas fa-info-circle text-info"></i></span>');
+                    } else {
+                        line.find('.transfer_fee_line').html('R$' + response.transfer_fee);
+                    }
+                    
                     line.find('.commission_fee_line').html('R$' + response.commission_fee);
 
                     $('.subtotal_sum').html('R$' + response.pedido_subtotal);

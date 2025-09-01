@@ -131,21 +131,7 @@ class SupplierVolumeTier extends AppModel
                 'message' => 'Quantidade final deve ser maior que a quantidade inicial'
             ]
         ],
-        'fee_type' => [
-            'required' => [
-                'rule' => ['notBlank'],
-                'message' => 'Tipo de taxa é obrigatório'
-            ],
-            'inList' => [
-                'rule' => ['inList', ['fixed', 'percentage']],
-                'message' => 'Tipo de taxa deve ser "fixed" ou "percentage"'
-            ]
-        ],
         'percentual_repasse' => [
-            'conditionalRequired' => [
-                'rule' => ['conditionalRequired'],
-                'message' => 'Percentual de repasse é obrigatório quando tipo é "percentage"'
-            ],
             'decimal' => [
                 'rule' => ['decimal'],
                 'message' => 'Percentual de repasse deve ser um número decimal',
@@ -163,10 +149,6 @@ class SupplierVolumeTier extends AppModel
             ]
         ],
         'valor_fixo' => [
-            'conditionalRequiredFixed' => [
-                'rule' => ['conditionalRequiredFixed'],
-                'message' => 'Valor fixo é obrigatório quando tipo é "fixed"'
-            ],
             'decimal' => [
                 'rule' => ['decimal'],
                 'message' => 'Valor fixo deve ser um número decimal',
@@ -188,29 +170,6 @@ class SupplierVolumeTier extends AppModel
         return $ate_qtd > $de_qtd;
     }
 
-    public function conditionalRequired($check)
-    {
-        $value = array_values($check)[0];
-        $feeType = isset($this->data[$this->alias]['fee_type']) ? $this->data[$this->alias]['fee_type'] : '';
-        
-        if ($feeType === 'percentage') {
-            return !empty($value) || $value === '0';
-        }
-        
-        return true; // Not required for other fee types
-    }
-
-    public function conditionalRequiredFixed($check)
-    {
-        $value = array_values($check)[0];
-        $feeType = isset($this->data[$this->alias]['fee_type']) ? $this->data[$this->alias]['fee_type'] : '';
-        
-        if ($feeType === 'fixed') {
-            return !empty($value) || $value === '0';
-        }
-        
-        return true; // Not required for other fee types
-    }
 
     /**
      * Valida se não há sobreposição de faixas para o mesmo fornecedor

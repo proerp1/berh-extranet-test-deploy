@@ -43,6 +43,8 @@ class RepaymentCalculator
         // All suppliers now use volume tier system
         $tierModel = ClassRegistry::init('SupplierVolumeTier');
         $tier = $tierModel->findTierForQuantity($supplierId, $quantity);
+
+        CakeLog::write('debug', "RepaymentCalculator: Found tier for supplier {$supplierId} and quantity {$quantity}: ");
         
         if (!$tier) {
             // If no tier is found, return zero fee instead of throwing exception
@@ -54,23 +56,24 @@ class RepaymentCalculator
         
         $result['tier_used'] = $tier['SupplierVolumeTier'];
         
-        // Calculate based on tier fee type
-        switch ($tier['SupplierVolumeTier']['fee_type']) {
-            case 'fixed':
-                $result['repayment_value'] = $tier['SupplierVolumeTier']['valor_fixo'];
+        // Calculate based on supplier's transfer fee type
+        switch ($supplier['Supplier']['transfer_fee_type']) {
+            case 1: // Fixed value
+                $result['repayment_value'] = self::parseFormattedNumber($tier['SupplierVolumeTier']['valor_fixo']);
                 $result['calculation_method'] = 'volume_tier_fixed';
                 break;
                 
-            case 'percentage':
-                $result['repayment_percentage'] = isset($tier['SupplierVolumeTier']['percentual_repasse_nao_formatado']) 
+            case 2: // Percentage
+                $percentageValue = isset($tier['SupplierVolumeTier']['percentual_repasse_nao_formatado']) 
                     ? $tier['SupplierVolumeTier']['percentual_repasse_nao_formatado']
                     : $tier['SupplierVolumeTier']['percentual_repasse'];
+                $result['repayment_percentage'] = self::parseFormattedNumber($percentageValue);
                 $result['repayment_value'] = ($baseValue * $result['repayment_percentage']) / 100;
                 $result['calculation_method'] = 'volume_tier_percentage';
                 break;
                 
             default:
-                throw new InvalidArgumentException("Tipo de taxa inválido na faixa: {$tier['SupplierVolumeTier']['fee_type']}");
+                throw new InvalidArgumentException("Tipo de taxa inválido do fornecedor: {$supplier['Supplier']['transfer_fee_type']}");
         }
         
         return $result;
@@ -192,19 +195,16 @@ class RepaymentCalculator
             }
         }
         
-        // Validar configuração de cada faixa
+        // Validar configuração de cada faixa baseado no tipo de taxa do fornecedor
         foreach ($tiers as $tier) {
             $tierData = $tier['SupplierVolumeTier'];
             
-            if (empty($tierData['fee_type'])) {
-                $validation['is_valid'] = false;
-                $validation['errors'][] = "Tipo de taxa não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
-            } elseif ($tierData['fee_type'] == 'fixed') {
+            if ($supplier['Supplier']['transfer_fee_type'] == 1) { // Fixed value
                 if (empty($tierData['valor_fixo']) && $tierData['valor_fixo'] !== '0') {
                     $validation['is_valid'] = false;
                     $validation['errors'][] = "Valor fixo não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
                 }
-            } elseif ($tierData['fee_type'] == 'percentage') {
+            } elseif ($supplier['Supplier']['transfer_fee_type'] == 2) { // Percentage
                 if (empty($tierData['percentual_repasse']) && $tierData['percentual_repasse'] !== '0') {
                     $validation['is_valid'] = false;
                     $validation['errors'][] = "Percentual não configurado na faixa {$tierData['de_qtd']}-{$tierData['ate_qtd']}";
@@ -244,5 +244,32 @@ class RepaymentCalculator
         }
         
         return $report;
+    }
+    
+    /**
+     * Parse a formatted number (e.g., "1.234,56") back to a float
+     * 
+     * @param mixed $formattedValue The value to parse
+     * @return float Parsed numeric value
+     */
+    private static function parseFormattedNumber($formattedValue)
+    {
+        if (is_numeric($formattedValue)) {
+            return floatval($formattedValue);
+        }
+        
+        // Handle Brazilian format: 1.234,56 -> 1234.56
+        $value = trim($formattedValue);
+        
+        // If there's both dot and comma, remove dots (thousands separator) and replace comma with dot
+        if (strpos($value, '.') !== false && strpos($value, ',') !== false) {
+            $value = str_replace('.', '', $value);
+            $value = str_replace(',', '.', $value);
+        } elseif (strpos($value, ',') !== false) {
+            // If there's only comma, replace it with dot
+            $value = str_replace(',', '.', $value);
+        }
+        
+        return floatval($value);
     }
 }

@@ -564,46 +564,114 @@ if (isset($id)) {
 
     // Controle de campos baseado no tipo de repasse
     const transferFeeType = document.getElementById('transfer_fee_type');
-    const repasseField = document.getElementById('repasse_field');
-    const tipoCobrancaField = document.getElementById('tipo_cobranca_field');
-    const volumeTiersSection = document.getElementById('volume_tiers_section');
 
     function toggleFieldsBasedOnTransferType() {
-        const selectedType = transferFeeType.value;
+        const selectedType = transferFeeType ? transferFeeType.value : null;
         const tipoCobrancaSelect = document.getElementById('tipo_cobranca');
         
-        if (selectedType == '3') { // Tabela
-            repasseField.style.display = 'none';
-            tipoCobrancaField.style.display = 'block';
-            volumeTiersSection.style.display = 'block';
-            // Make tipo_cobranca required when visible
-            if (tipoCobrancaSelect) {
-                tipoCobrancaSelect.setAttribute('required', 'required');
+        console.log('toggleFieldsBasedOnTransferType called with:', selectedType);
+
+        // Auto-update logic for tipo_cobranca based on transfer_fee_type
+        updateTipoCobrancaForTransferType(selectedType, tipoCobrancaSelect);
+    }
+
+    function updateTipoCobrancaForTransferType(transferType, tipoCobrancaSelect) {
+        if (!tipoCobrancaSelect) {
+            console.log('tipo_cobranca select not found');
+            return;
+        }
+
+        console.log('Updating tipo_cobranca for transfer type:', transferType);
+
+        if (transferType == '2') { // Percentual
+            console.log('Setting to pedido and disabling field');
+            
+            // Set value to "Por Pedido"
+            $(tipoCobrancaSelect).val('pedido');
+            
+            // Disable the field
+            $(tipoCobrancaSelect).prop('disabled', true);
+            
+            // Update Select2 if it exists
+            if ($(tipoCobrancaSelect).hasClass('select2-hidden-accessible')) {
+                $(tipoCobrancaSelect).select2('destroy');
+                $(tipoCobrancaSelect).select2({
+                    placeholder: "Por Pedido (automático)"
+                });
             }
+            
         } else {
-            repasseField.style.display = 'block';
-            tipoCobrancaField.style.display = 'none';
-            volumeTiersSection.style.display = 'none';
-            // Remove required attribute when hidden
-            if (tipoCobrancaSelect) {
-                tipoCobrancaSelect.removeAttribute('required');
-                tipoCobrancaSelect.value = ''; // Clear the value
+            console.log('Enabling field for other transfer types');
+            
+            // Enable the field
+            $(tipoCobrancaSelect).prop('disabled', false);
+            
+            // Update Select2 if it exists  
+            if ($(tipoCobrancaSelect).hasClass('select2-hidden-accessible')) {
+                $(tipoCobrancaSelect).select2('destroy');
+                $(tipoCobrancaSelect).select2({
+                    placeholder: "Selecione"
+                });
             }
         }
     }
 
-    // Verificar estado inicial
+    // Initialize on page load
     if (transferFeeType) {
+        console.log('Initializing transfer fee type functionality');
+        
+        // Set initial state
         toggleFieldsBasedOnTransferType();
 
-        // Evento de mudança no tipo de repasse - both regular change and Select2 change
-        transferFeeType.addEventListener('change', toggleFieldsBasedOnTransferType);
-        
-        // For Select2 compatibility
+        // Event listeners for transfer fee type changes
         $(transferFeeType).on('change', function() {
+            console.log('Transfer fee type changed to:', $(this).val());
             toggleFieldsBasedOnTransferType();
         });
     }
+
+    // Direct event handler for testing
+    $('#transfer_fee_type').on('change', function() {
+        const selectedValue = $(this).val();
+        console.log('Direct handler - Transfer fee type changed to:', selectedValue);
+        
+        if (selectedValue == '2') {
+            console.log('Setting tipo_cobranca to pedido');
+            $('#tipo_cobranca').val('pedido').prop('disabled', true);
+            console.log('Current tipo_cobranca value:', $('#tipo_cobranca').val());
+        } else {
+            console.log('Enabling tipo_cobranca');
+            $('#tipo_cobranca').prop('disabled', false);
+        }
+    });
+
+    // Add real-time validation feedback
+    $('#tipo_cobranca').on('change', function() {
+        const transferFeeTypeValue = $('#transfer_fee_type').val();
+        const tipoCobrancaValue = $(this).val();
+        const warningDiv = $('#tipo_cobranca_warning');
+        
+        // Remove existing warning
+        warningDiv.remove();
+        
+        // Show warning if rule is violated
+        if (transferFeeTypeValue == '2' && tipoCobrancaValue !== 'pedido') {
+            $(this).after('<div id="tipo_cobranca_warning" class="text-danger mt-1 small">Atenção: Para tipo "Percentual", deve ser "Por Pedido"</div>');
+        }
+    });
+
+    // Add form submission validation
+    $('form').on('submit', function(e) {
+        const transferFeeTypeValue = $('#transfer_fee_type').val();
+        const tipoCobrancaValue = $('#tipo_cobranca').val();
+        
+        // Validate: If Percentual is selected, tipo_cobranca must be "Por Pedido"
+        if (transferFeeTypeValue == '2' && tipoCobrancaValue !== 'pedido') {
+            e.preventDefault();
+            alert('Quando o Tipo Repasse é "Percentual", o Tipo de Cobrança deve ser "Por Pedido".');
+            return false;
+        }
+    });
 });
 
     </script>

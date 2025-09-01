@@ -441,10 +441,16 @@ class SuppliersController extends AppController
             $this->redirect(['action' => 'volume_tiers', $id]);
         }
 
-        $this->request->data['SupplierVolumeTier']['data_cancel'] = date('Y-m-d H:i:s');
-        $this->request->data['SupplierVolumeTier']['usuario_id_cancel'] = CakeSession::read('Auth.User.id');
+        $this->SupplierVolumeTier->unbindModel(['belongsTo' => array_keys($this->SupplierVolumeTier->belongsTo)]);
+        $this->SupplierVolumeTier->unbindModel(['hasMany' => array_keys($this->SupplierVolumeTier->hasMany)]);
+        $this->SupplierVolumeTier->unbindModel(['hasOne' => array_keys($this->SupplierVolumeTier->hasOne)]);
+        
+        $updateData = [
+            'data_cancel' => "'" . date('Y-m-d H:i:s') . "'",
+            'usuario_id_cancel' => CakeSession::read('Auth.User.id')
+        ];
 
-        if ($this->SupplierVolumeTier->save($this->request->data)) {
+        if ($this->SupplierVolumeTier->updateAll($updateData, ['id' => $tier_id])) {
             $this->Flash->set(__('Faixa de volume foi excluída com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } else {
             $this->Flash->set(__('Erro ao excluir faixa de volume'), ['params' => ['class' => "alert alert-danger"]]);

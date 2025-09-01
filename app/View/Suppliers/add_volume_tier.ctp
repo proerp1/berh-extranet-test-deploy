@@ -43,18 +43,6 @@ if (isset($id)) {
                 <div class="form-text">Quantidade máxima para esta faixa</div>
             </div>
 
-            <div class="mb-7 col-md-3">
-                <label class="fw-semibold fs-6 mb-2 required">Tipo de Taxa</label>
-                <?php echo $this->Form->input('fee_type', [
-                    "id" => "fee_type",
-                    "options" => ['percentage' => 'Percentual', 'fixed' => 'Valor Fixo'], 
-                    "class" => "form-select mb-3 mb-lg-0", 
-                    "data-control" => "select2", 
-                    "empty" => "Selecione", 
-                    "type" => "select"
-                ]); ?>
-                <div class="form-text">Tipo de cobrança para esta faixa</div>
-            </div>
 
             <div class="mb-7 col-md-3" id="percentage_field">
                 <label class="fw-semibold fs-6 mb-2">% Repasse</label>
@@ -100,36 +88,25 @@ if (isset($id)) {
             allowNegative: false
         });
 
-        // Handle fee type change
-        $('#fee_type').on('change', function() {
-            const feeType = $(this).val();
-            
-            if (feeType === 'percentage') {
-                $('#percentage_field').show();
-                $('#fixed_field').hide();
-                $('#SupplierVolumeTierValorFixo').prop('required', false);
-                $('#SupplierVolumeTierPercentualRepasse').prop('required', true);
-            } else if (feeType === 'fixed') {
-                $('#percentage_field').hide();
-                $('#fixed_field').show();
-                $('#SupplierVolumeTierPercentualRepasse').prop('required', false);
-                $('#SupplierVolumeTierValorFixo').prop('required', true);
-            } else {
-                $('#percentage_field').show();
-                $('#fixed_field').hide();
-                $('#SupplierVolumeTierPercentualRepasse').prop('required', false);
-                $('#SupplierVolumeTierValorFixo').prop('required', false);
-            }
-        });
-
-        // Initialize fee type display
-        $('#fee_type').trigger('change');
+        // Show/hide fields based on supplier's transfer_fee_type
+        var supplierFeeType = <?php echo json_encode($supplier['Supplier']['transfer_fee_type'] ?? 2); ?>;
+        
+        if (supplierFeeType == 1) { // Fixed value
+            $('#percentage_field').hide();
+            $('#fixed_field').show();
+            $('#SupplierVolumeTierPercentualRepasse').prop('required', false);
+            $('#SupplierVolumeTierValorFixo').prop('required', true);
+        } else { // Percentage (2 or default)
+            $('#percentage_field').show();
+            $('#fixed_field').hide();
+            $('#SupplierVolumeTierValorFixo').prop('required', false);
+            $('#SupplierVolumeTierPercentualRepasse').prop('required', true);
+        }
 
         // Validação básica no frontend
         $('#js-form-submit').on('submit', function(e) {
             const deQtd = parseInt($('#SupplierVolumeTierDeQtd').val());
             const ateQtd = parseInt($('#SupplierVolumeTierAteQtd').val());
-            const feeType = $('#fee_type').val();
             
             if (deQtd >= ateQtd) {
                 e.preventDefault();
@@ -137,21 +114,16 @@ if (isset($id)) {
                 return false;
             }
 
-            if (!feeType) {
-                e.preventDefault();
-                alert('Por favor, selecione o tipo de taxa.');
-                return false;
-            }
-
-            if (feeType === 'percentage' && !$('#SupplierVolumeTierPercentualRepasse').val()) {
-                e.preventDefault();
-                alert('Por favor, informe o percentual de repasse.');
-                return false;
-            }
-
-            if (feeType === 'fixed' && !$('#SupplierVolumeTierValorFixo').val()) {
+            // Validate based on supplier's fee type
+            if (supplierFeeType == 1 && !$('#SupplierVolumeTierValorFixo').val()) {
                 e.preventDefault();
                 alert('Por favor, informe o valor fixo.');
+                return false;
+            }
+            
+            if (supplierFeeType == 2 && !$('#SupplierVolumeTierPercentualRepasse').val()) {
+                e.preventDefault();
+                alert('Por favor, informe o percentual de repasse.');
                 return false;
             }
         });

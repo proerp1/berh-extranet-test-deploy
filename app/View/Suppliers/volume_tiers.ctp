@@ -39,8 +39,13 @@ if (isset($id)) {
                         <tr class="fw-bolder text-muted">
                             <th class="min-w-100px">De (Qtd)</th>
                             <th class="min-w-100px">Até (Qtd)</th>
-                            <th class="min-w-120px">Tipo Taxa</th>
-                            <th class="min-w-120px">Valor/Percentual</th>
+                            <th class="min-w-120px">
+                                <?php if ($supplier['Supplier']['transfer_fee_type'] == 1): ?>
+                                    Valor Fixo
+                                <?php else: ?>
+                                    % Repasse
+                                <?php endif; ?>
+                            </th>
                             <th class="min-w-100px text-end">Ações</th>
                         </tr>
                     </thead>
@@ -58,21 +63,11 @@ if (isset($id)) {
                                     </span>
                                 </td>
                                 <td>
-                                    <?php 
-                                    $feeType = isset($row['SupplierVolumeTier']['fee_type']) ? $row['SupplierVolumeTier']['fee_type'] : 'percentage';
-                                    $badgeClass = $feeType === 'fixed' ? 'badge-light-success' : 'badge-light-primary';
-                                    $feeTypeLabel = $feeType === 'fixed' ? 'Valor Fixo' : 'Percentual';
-                                    ?>
-                                    <span class="badge <?php echo $badgeClass; ?>">
-                                        <?php echo $feeTypeLabel; ?>
-                                    </span>
-                                </td>
-                                <td>
                                     <span class="text-dark fw-bolder text-hover-primary d-block fs-6">
-                                        <?php if ($feeType === 'fixed'): ?>
-                                            R$ <?php echo isset($row['SupplierVolumeTier']['valor_fixo']) ? $row['SupplierVolumeTier']['valor_fixo'] : '0,00'; ?>
+                                        <?php if ($supplier['Supplier']['transfer_fee_type'] == 1): ?>
+                                            <?php echo isset($row['SupplierVolumeTier']['valor_fixo']) ? 'R$ ' . $row['SupplierVolumeTier']['valor_fixo'] : '-'; ?>
                                         <?php else: ?>
-                                            <?php echo $row['SupplierVolumeTier']['percentual_repasse']; ?>%
+                                            <?php echo isset($row['SupplierVolumeTier']['percentual_repasse']) ? $row['SupplierVolumeTier']['percentual_repasse'] . '%' : '-'; ?>
                                         <?php endif; ?>
                                     </span>
                                 </td>
@@ -85,7 +80,8 @@ if (isset($id)) {
                                         </a>
                                         <a href="<?php echo $this->base . '/suppliers/delete_volume_tier/' . $id . '/' . $row['SupplierVolumeTier']['id']; ?>" 
                                            class="btn btn-sm btn-danger" 
-                                           onclick="return confirm('Tem certeza que deseja excluir esta faixa?')"
+                                           id="delete-tier-<?php echo $row['SupplierVolumeTier']['id']; ?>"
+                                           onclick="return confirm('Tem certeza que deseja excluir esta faixa de volume? Esta ação não pode ser desfeita.')"
                                            title="Excluir">
                                             <i class="fas fa-trash"></i>
                                         </a>
@@ -99,3 +95,14 @@ if (isset($id)) {
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('.btn-danger[id^="delete-tier-"]').on('click', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        confirm('Tem certeza que deseja excluir esta faixa de volume? Esta ação não pode ser desfeita.', url);
+        return false;
+    });
+});
+</script>

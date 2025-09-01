@@ -669,8 +669,7 @@ class Order extends AppModel
     }
 
     /**
-     * Recalculates volume tier transfer fees for all order items
-     * This method handles volume tier calculations at the order level
+     * Recalculates transfer fees for all order items using RepaymentCalculator
      */
     public function recalculateVolumeTransferFees()
     {
@@ -700,33 +699,27 @@ class Order extends AppModel
             $supplierGroups[$supplierId][] = $item;
         }
 
-        // Process each supplier group
+        // Process each supplier group using RepaymentCalculator
         foreach ($supplierGroups as $supplierId => $items) {
-            $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
-            
-            // All suppliers now use volume tier calculation
-            $this->calculateSupplierVolumeTierFees($supplierId, $supplier, $items);
+            $this->calculateSupplierFeesUsingRepaymentCalculator($supplierId, $items);
         }
     }
 
     /**
-     * Calculate and distribute volume tier fees for a specific supplier
+     * Calculate transfer fees for supplier using RepaymentCalculator
      */
-    private function calculateSupplierVolumeTierFees($supplierId, $supplier, $items)
+    private function calculateSupplierFeesUsingRepaymentCalculator($supplierId, $items)
     {
-        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
-
-        // Determine quantity for tier calculation
-        if ($tipoCobranca == 'cpf') {
-            $quantity = $this->countCustomerUsersForSupplier($supplierId);
-        } else {
-            $quantity = $this->getTotalAmountForSupplier($supplierId);
+        if (empty($items)) {
+            return;
         }
+
+        $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
+        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
 
         // Calculate total subtotal for this supplier
         $totalSupplierSubtotal = 0;
         foreach ($items as $item) {
-            // Use not_formated field if available, otherwise parse the formatted value
             $subtotalValue = isset($item['OrderItem']['subtotal_not_formated']) 
                 ? $item['OrderItem']['subtotal_not_formated'] 
                 : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
@@ -737,7 +730,14 @@ class Order extends AppModel
             return;
         }
 
-        // Calculate tier-based transfer fee
+        // Determine quantity for calculation based on billing type
+        if ($tipoCobranca == 'cpf') {
+            $quantity = $this->countCustomerUsersForSupplier($supplierId);
+        } else {
+            $quantity = $this->getTotalAmountForSupplier($supplierId);
+        }
+
+        // Use RepaymentCalculator for all calculations
         try {
             App::uses('RepaymentCalculator', 'Lib');
             $calculationResult = RepaymentCalculator::calculateRepayment(
@@ -746,47 +746,98 @@ class Order extends AppModel
                 $totalSupplierSubtotal
             );
             
-            $totalTransferFee = $calculationResult['repayment_value'];
+            $totalTransferFee = $this->parseFormattedNumber($calculationResult['repayment_value']);
+            $calculationMethod = $calculationResult['calculation_method'];
             $tierUsed = $calculationResult['tier_used'];
 
-            // Distribute proportionally among items
-            foreach ($items as $item) {
-                // Use not_formated fields if available, otherwise parse the formatted values
-                $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
-                    ? $item['OrderItem']['subtotal_not_formated'] 
-                    : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
-                    
-                $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
-                    ? $item['OrderItem']['commission_fee_not_formated'] 
-                    : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
-                    
-                $proportion = $totalSupplierSubtotal > 0 ? ($itemSubtotal / $totalSupplierSubtotal) : 0;
-                $itemTransferFee = $totalTransferFee * $proportion;
-
-                // Prepare calculation details log
-                if ($tierUsed) {
-                    $calculationLog = json_encode([
-                        'type' => 'volume_tier',
-                        'billing' => $tipoCobranca,
-                        'tier' => $tierUsed['de_qtd'] . '-' . $tierUsed['ate_qtd'] . ' (' . number_format($tierUsed['percentual_repasse_nao_formatado'], 2) . '%)'
-                    ]);
-                } else {
-                    $calculationLog = json_encode(['type' => 'no_tier']);
-                }
-
-                // Update the item
-                $this->OrderItem->id = $item['OrderItem']['id'];
-                $this->OrderItem->saveField('transfer_fee', $itemTransferFee);
-                $this->OrderItem->saveField('calculation_details_log', $calculationLog);
-                
-                // Recalculate total
-                $newTotal = $itemSubtotal + $itemTransferFee + $itemCommissionFee;
-                $this->OrderItem->saveField('total', $newTotal);
+            // Distribute fees among items based on calculation method
+            if ($calculationMethod === 'volume_tier_percentage' && $calculationResult['billing_type'] == 'item') {
+                // Individual percentage application
+                $repaymentPercentage = $this->parseFormattedNumber($calculationResult['repayment_percentage']);
+                $this->applyIndividualPercentageFees($items, $repaymentPercentage, $calculationMethod, $tierUsed);
+            } else {
+                // Proportional distribution (for volume tiers, fixed values, etc.)
+                $this->distributeFeesProportionally($items, $totalTransferFee, $totalSupplierSubtotal, $calculationMethod, $tierUsed, $tipoCobranca);
             }
 
         } catch (Exception $e) {
             // Silent error handling - let the system continue
         }
+    }
+
+    /**
+     * Apply individual percentage fees to each item
+     */
+    private function applyIndividualPercentageFees($items, $percentage, $calculationMethod, $tierUsed)
+    {
+        foreach ($items as $item) {
+            $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
+                ? $item['OrderItem']['subtotal_not_formated'] 
+                : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
+                
+            $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
+                ? $item['OrderItem']['commission_fee_not_formated'] 
+                : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
+
+            $itemTransferFee = ($itemSubtotal * $percentage) / 100;
+
+            $calculationLog = json_encode([
+                'type' => $calculationMethod,
+                'percentage' => $percentage,
+                'tier_used' => $tierUsed,
+                'item_subtotal' => $itemSubtotal,
+                'calculated_fee' => $itemTransferFee
+            ]);
+
+            $this->updateOrderItemFees($item['OrderItem']['id'], $itemTransferFee, $itemSubtotal, $itemCommissionFee, $calculationLog);
+        }
+    }
+
+    /**
+     * Distribute total fees proportionally among items
+     */
+    private function distributeFeesProportionally($items, $totalTransferFee, $totalSupplierSubtotal, $calculationMethod, $tierUsed, $tipoCobranca)
+    {
+        foreach ($items as $item) {
+            $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
+                ? $item['OrderItem']['subtotal_not_formated'] 
+                : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
+                
+            $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
+                ? $item['OrderItem']['commission_fee_not_formated'] 
+                : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
+                
+            $proportion = $totalSupplierSubtotal > 0 ? ($itemSubtotal / $totalSupplierSubtotal) : 0;
+            $itemTransferFee = $totalTransferFee * $proportion;
+
+            $calculationLog = json_encode([
+                'type' => $calculationMethod,
+                'billing_type' => $tipoCobranca,
+                'tier_used' => $tierUsed,
+                'total_fee' => $totalTransferFee,
+                'proportion' => $proportion,
+                'calculated_fee' => $itemTransferFee
+            ]);
+
+            $this->updateOrderItemFees($item['OrderItem']['id'], $itemTransferFee, $itemSubtotal, $itemCommissionFee, $calculationLog);
+        }
+    }
+
+    /**
+     * Update order item fees
+     */
+    private function updateOrderItemFees($itemId, $transferFee, $subtotal, $commissionFee, $calculationLog)
+    {
+        $updateData = [
+            'OrderItem' => [
+                'id' => $itemId,
+                'transfer_fee' => $transferFee,
+                'total' => $subtotal + $transferFee + $commissionFee,
+                'calculation_details_log' => $calculationLog
+            ]
+        ];
+        
+        $this->OrderItem->save($updateData, ['callbacks' => false, 'validate' => false]);
     }
 
     /**
