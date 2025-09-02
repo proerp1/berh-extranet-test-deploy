@@ -292,10 +292,10 @@ class OrdersController extends AppController
         ]);
 
         $total_economia = 0;
-        foreach ($order_ids as $order_id) {
+        /*foreach ($order_ids as $order_id) {
             $extrato = $this->Order->getExtrato($order_id);
             $total_economia += $extrato['v_total_economia'];
-        }
+        }*/
 
         $totalOrders[0]['total_economia'] = $total_economia;
         
