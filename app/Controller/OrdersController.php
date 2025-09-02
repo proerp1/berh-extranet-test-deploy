@@ -246,11 +246,34 @@ class OrdersController extends AppController
             'order' => ['nome_primario' => 'asc']
         ]);
 
+        $conditionsJson = base64_encode(json_encode($condition));
+
+        $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
+
+        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+
+        $action = 'Pedido';
+        $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
+        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'conditionsJson', 'filtersFilled', 'queryString'));
+    }
+
+    public function getTotalOrders()
+    {
+        $this->autoRender = false;
+        $this->response->type('json');
+        
+        if (!$this->request->is('ajax')) {
+            throw new NotFoundException();
+        }
+        
+        $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+        
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
                 'sum(Order.subtotal) as subtotal',
                 'sum(Order.transfer_fee) as transfer_fee',
+                'sum(Order.tpp_fee) as total_tpp',
                 'sum(Order.commission_fee) as commission_fee',
                 'sum(Order.desconto) as desconto',
                 'sum(Order.total) as total',
@@ -259,15 +282,25 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
 
-        $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
+        $order_ids = $this->Order->find('list', [
+            'fields' => ['Order.id'],
+            'conditions' => $condition,
+            'recursive' => -1
+        ]);
 
-        $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+        $total_economia = 0;
+        foreach ($order_ids as $order_id) {
+            $extrato = $this->Order->getExtrato($order_id);
+            $total_economia += $extrato['v_total_economia'];
+        }
 
-        $action = 'Pedido';
-        $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
-        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $totalOrders[0]['total_economia'] = $total_economia;
+        
+        echo json_encode([
+            'success' => true,
+            'totals' => $totalOrders[0]
+        ]);
     }
-
 
     public function createOrder()
     {
