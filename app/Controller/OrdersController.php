@@ -95,8 +95,10 @@ class OrdersController extends AppController
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
 
         $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 50;
+
         $this->paginate['Order']['limit'] = $limit;
         $this->Paginator->settings = $this->paginate;
+
         ini_set('memory_limit', '-1');
 
         if (!in_array(CakeSession::read("Auth.User.Group.name"), array('Administrador', 'Diretoria'))) {
@@ -109,9 +111,9 @@ class OrdersController extends AppController
 
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => $_GET['q'],
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
+                'Order.id' => "%" . $_GET['q'] . "%",
                 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
+                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.id LIKE' => "%" . $_GET['q'] . "%"
             ]);
@@ -119,10 +121,7 @@ class OrdersController extends AppController
         }
 
         if (!empty($_GET['cliente'])) {
-            $condition['and'] = array_merge(
-                $condition['and'], 
-                ['Order.customer_id' => $_GET['cliente']]
-            );
+            $condition['and'] = array_merge($condition['and'], ['Order.customer_id' => $_GET['cliente']]);
             $filtersFilled = true;
         }
 
@@ -254,6 +253,7 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
+
         $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'conditionsJson', 'filtersFilled', 'queryString'));
     }
 
@@ -261,13 +261,15 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
         $this->response->type('json');
+
+        ini_set('memory_limit', '-1');
         
         if (!$this->request->is('ajax')) {
             throw new NotFoundException();
         }
         
         $condition = json_decode(base64_decode($this->request->data('conditions')), true);
-        
+
         $totalOrders = $this->Order->find('first', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => [
@@ -283,6 +285,7 @@ class OrdersController extends AppController
         ]);
 
         $order_ids = $this->Order->find('list', [
+            'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => ['Order.id'],
             'conditions' => $condition,
             'recursive' => -1
