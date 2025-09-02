@@ -453,17 +453,16 @@ class Order extends AppModel
             ],
             'fields' => [
                 'Order.customer_id',
+                'Order.economic_group_id',
                 'Order.desconto'
             ]
         ]);
 
+        $proposal = $this->getProposalForOrder($order['Order']['customer_id'], $order['Order']['economic_group_id']);
+        
         $tpp_fee = 0;
-        $prop = ClassRegistry::init('Proposal');
-        $proposal = $prop->find('first', [
-            'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
-        ]);
         if (!empty($proposal)) {
-            $tpp_fee = $proposal['Proposal']['tpp_not_formatted'];
+            $tpp_fee = $proposal['tpp_not_formatted'];
         }
 
         $items = $this->OrderItem->find('first', [
@@ -925,5 +924,40 @@ class Order extends AppModel
         }
         
         return floatval($value);
+    }
+
+    public function getProposalForOrder($customerId, $economic_group_id = null) 
+    {
+        $proposal = null;
+
+        if (!empty($economic_group_id)) {
+            $economicGroupProp = ClassRegistry::init('EconomicGroupProposal');
+
+            $economicGroupProposal = $economicGroupProp->find('first', [
+                'conditions' => [
+                    'EconomicGroupProposal.customer_id' => $customerId, 
+                    'EconomicGroupProposal.economic_group_id' => $economic_group_id, 
+                    'EconomicGroupProposal.status_id' => 99
+                ]
+            ]);
+            
+            if (!empty($economicGroupProposal)) {
+                $proposal = $economicGroupProposal['EconomicGroupProposal'];
+            }
+        }
+        
+        if (empty($proposal)) {
+            $prop = ClassRegistry::init('Proposal');
+
+            $customerProposal = $prop->find('first', [
+                'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
+            ]);
+            
+            if (!empty($customerProposal)) {
+                $proposal = $customerProposal['Proposal'];
+            }
+        }
+        
+        return $proposal;
     }
 }

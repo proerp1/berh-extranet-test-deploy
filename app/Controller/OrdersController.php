@@ -28,6 +28,7 @@ class OrdersController extends AppController
         'Outcome',
         'Status',
         'Proposal',
+        'EconomicGroupProposal',
         'OrderBalance',
         'Log',
         'Supplier',
@@ -363,9 +364,8 @@ class OrdersController extends AppController
                 }
             }
 
-            $proposal = $this->Proposal->find('first', [
-                'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
-            ]);
+            $proposal = $this->Order->getProposalForOrder($customerId, $grupo_especifico);
+
             if (empty($proposal)) {
                 $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
                 $this->redirect(['action' => 'index']);
@@ -1359,9 +1359,8 @@ class OrdersController extends AppController
             'Supplier.status_id' => 1,
         ];
 
-        $proposal = $this->Proposal->find('first', [
-            'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
-        ]);
+        $proposal = $this->Order->getProposalForOrder($order['Order']['customer_id'], $order['Order']['economic_group_id']);
+
         if (empty($proposal)) {
             $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
@@ -1411,9 +1410,10 @@ class OrdersController extends AppController
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
-        $proposal = $this->Proposal->find('first', [
-            'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
-        ]);
+        $order = $this->Order->findById($orderId);
+
+        $proposal = $this->Order->getProposalForOrder($order['Order']['customer_id'], $order['Order']['economic_group_id']);
+
         if (empty($proposal)) {
             $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
@@ -1436,7 +1436,6 @@ class OrdersController extends AppController
         $customerUsersIds = $ret['customerUsersIds'];
         $manualPricing = $ret['unitPriceMapping'];
 
-        $order = $this->Order->findById($orderId);
         $cond = [
             'CustomerUserItinerary.customer_user_id' => $customerUsersIds, 
             'CustomerUserItinerary.status_id' => 1,
@@ -1749,9 +1748,8 @@ class OrdersController extends AppController
         $orderItem['OrderItem']['transfer_fee'] = 0;
         $orderItem['OrderItem']['calculation_details_log'] = json_encode(['note' => 'Will be calculated with full order context']);
 
-        $proposal = $this->Proposal->find('first', [
-            'conditions' => ['Proposal.customer_id' => $orderItem['Order']['customer_id'], 'Proposal.status_id' => 99]
-        ]);
+        $proposal = $this->Order->getProposalForOrder($orderItem['Order']['customer_id'], $orderItem['Order']['economic_group_id']);
+        
         $commissionPerc = 0;
         if (!empty($proposal)) {
             $commissionPerc = $this->getCommissionPerc($benefit['Benefit']['benefit_type_id'], $proposal);
@@ -1841,9 +1839,10 @@ class OrdersController extends AppController
         $id = $this->request->data['customer_id'];
         $orderId = $this->request->data['order_id'];
 
-        $proposal = $this->Proposal->find('first', [
-            'conditions' => ['Proposal.customer_id' => $id, 'Proposal.status_id' => 99]
-        ]);
+        $order = $this->Order->findById($orderId);
+
+        $proposal = $this->Order->getProposalForOrder($order['Order']['customer_id'], $order['Order']['economic_group_id']);
+
         if (empty($proposal)) {
             $this->Flash->set(__('Cliente não possui uma proposta ativa.'), ['params' => ['class' => "alert alert-danger"]]);
             $this->redirect($this->referer());
@@ -1857,9 +1856,7 @@ class OrdersController extends AppController
 
         if ($this->CustomerUserItinerary->save($this->request->data)) {
 
-            $idLastInserted = $this->CustomerUserItinerary->getLastInsertId();
-
-            $order = $this->Order->findById($orderId);
+            $idLastInserted = $this->CustomerUserItinerary->getLastInsertId();            
 
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
                 'conditions' => [
@@ -3036,19 +3033,19 @@ class OrdersController extends AppController
             case 2:
             case 3:
             case 9:
-                $commissionPerc = $proposal['Proposal']['transport_adm_fee'];
+                $commissionPerc = $proposal['transport_adm_fee'];
                 break;
             case 4:
-                $commissionPerc = $proposal['Proposal']['meal_adm_fee'];
+                $commissionPerc = $proposal['meal_adm_fee'];
                 break;
             case 8:
-                $commissionPerc = $proposal['Proposal']['fuel_adm_fee'];
+                $commissionPerc = $proposal['fuel_adm_fee'];
                 break;
             case 5:
             case 6:
             case 7:
             case 10:
-                $commissionPerc = $proposal['Proposal']['multi_card_adm_fee'];
+                $commissionPerc = $proposal['multi_card_adm_fee'];
                 break;
         }
 
