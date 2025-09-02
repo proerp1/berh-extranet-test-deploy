@@ -71,7 +71,10 @@ public $belongsTo = array(
 	}
 
     public function update_order_item_saldo($orderID, $userID) {
-        $this->query("UPDATE order_items SET saldo = 0, total_saldo = 0, updated = now(), updated_user_id = ".$userID." WHERE order_id = ".$orderID);
+        $orderID = (int)$orderID;
+        $userID = (int)$userID;
+        
+        $this->query("UPDATE order_items SET saldo = 0, total_saldo = 0, updated = NOW(), updated_user_id = {$userID} WHERE order_id = {$orderID}");
 
         $sql = "SELECT MIN(i.id) AS id, be.total AS total, be.order_item_id 
                     FROM orders o
@@ -82,11 +85,12 @@ public $belongsTo = array(
                                         FROM order_balances b
                                         WHERE b.data_cancel = '1901-01-01'
                                                 AND b.tipo = 1 
+                                                AND b.order_id = {$orderID}
                                         GROUP BY b.customer_user_id, b.benefit_id, b.order_id, b.order_item_id
                                     ) be ON be.customer_user_id = i.customer_user_id
                                             AND be.benefit_id = t.benefit_id
                                             AND be.order_id = o.id
-                    WHERE o.id = ".$orderID." 
+                    WHERE o.id = {$orderID} 
                             AND o.data_cancel = '1901-01-01 00:00:00'
                             AND i.data_cancel = '1901-01-01 00:00:00'
                     GROUP BY be.customer_user_id, be.benefit_id, be.order_id, be.order_item_id
@@ -188,5 +192,37 @@ public $belongsTo = array(
         $rsSql = $this->query($sql);
 
         return $rsSql;
+    }
+    
+    public function batchCancelBalances($cancelData, $userID) {
+        if (empty($cancelData)) {
+            return;
+        }
+        
+        $cancelDate = date('Y-m-d H:i:s');
+        $batchSize = 500;
+        $batches = array_chunk($cancelData, $batchSize);
+        
+        foreach ($batches as $batch) {
+            $conditions = [];
+            
+            foreach ($batch as $data) {
+                $orderId = (int)$data['order_id'];
+                $tipo = (int)$data['tipo'];
+                $orderItemId = (int)$data['order_item_id'];
+                
+                $conditions[] = "(order_id = {$orderId} AND tipo = {$tipo} AND order_item_id = {$orderItemId})";
+            }
+            
+            if (!empty($conditions)) {
+                $sql = "UPDATE order_balances 
+                        SET usuario_id_cancel = {$userID}, 
+                            data_cancel = '{$cancelDate}' 
+                        WHERE data_cancel = '1901-01-01 00:00:00' 
+                        AND (" . implode(' OR ', $conditions) . ")";
+                
+                $this->query($sql);
+            }
+        }
     }
 }

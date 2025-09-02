@@ -1421,62 +1421,64 @@ class OrdersController extends AppController
 
     public function upload_saldo_csv()
     {
+        set_time_limit(0);
+        ini_set('memory_limit', '256M');
+        ignore_user_abort(true);
+        
         $orderId = $this->request->data['order_id'];
         $customerId = $this->request->data['customer_id'];
 
-        $ret = $this->parseCSVSaldo($customerId, $orderId, $this->request->data['file']['tmp_name']);
+        $dataSource = $this->OrderBalance->getDataSource();
+        $dataSource->begin();
+        
+        try {
+            $ret = $this->parseCSVSaldo($customerId, $orderId, $this->request->data['file']['tmp_name']);
 
-        $groupTipoItens = [];
+            if (!$ret['success']) {
+                throw new Exception($ret['error']);
+            }
 
-        foreach ($ret['data'] as $data) {
-            $groupTipoItens[$data['tipo']][] = $data['order_item_id'];
-        }
+            $cancelData = [];
+            $benefitCache = $this->buildBenefitCache();
 
-        foreach ($groupTipoItens as $tipo => $itens) {
-            if ($tipo) {
-                foreach ($itens as $itemId) {
-                    $this->OrderBalance->update_cancel_balances($orderId, $tipo, CakeSession::read("Auth.User.id"), $itemId);
+            foreach ($ret['data'] as $data) {
+                if ($data['tipo']) {
+                    $cancelData[] = [
+                        'order_id' => $orderId,
+                        'tipo' => $data['tipo'],
+                        'order_item_id' => $data['order_item_id']
+                    ];
                 }
             }
-        }
 
-        foreach ($ret['data'] as $data) {
-            if ($data['tipo']) {
-                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
-
-                if (isset($benefit['Benefit'])) {
-                    $benefit_id = $benefit['Benefit']['id'];
-                } else {
-                    $benefit_id = null;
-                }
-
-                $orderBalanceData = [
-                    'order_id' => $orderId,
-                    'order_item_id' => $data['order_item_id'],
-                    'customer_user_id' => $data['customer_user_id'],
-                    'benefit_id' => $benefit_id,
-                    'document' => $data['document'],
-                    'total' => $data['total'],
-                    'pedido_operadora' => $data['pedido_operadora'],
-                    'tipo' => $data['tipo'],
-                    'observacao' => $data['observacao'],
-                    'created' => date('Y-m-d H:i:s'),
-                    'user_created_id' => CakeSession::read("Auth.User.id")
-                ];
-
-                $this->OrderBalance->create();
-                $this->OrderBalance->save($orderBalanceData);
+            if (!empty($cancelData)) {
+                $this->OrderBalance->batchCancelBalances($cancelData, CakeSession::read("Auth.User.id"));
             }
+
+            if (!empty($ret['data'])) {
+                $processedData = array_map(function($item) use ($orderId) {
+                    $item['order_id'] = $orderId;
+                    return $item;
+                }, $ret['data']);
+                
+                $this->bulkInsertOrderBalances($processedData, $benefitCache);
+            }
+
+            $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
+
+            $file = new File($this->request->data['file']['name']);
+            $dir = new Folder(APP . "webroot/files/order_balances/" . $orderId . "/", true);
+
+            $this->Uploader->up($this->request->data['file'], $dir->path);
+
+            $dataSource->commit();
+            
+            $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        } catch (Exception $e) {
+            $dataSource->rollback();
+            $this->Flash->set(__('Erro ao processar arquivo: ') . $e->getMessage(), ['params' => ['class' => "alert alert-danger"]]);
         }
-
-        $this->OrderBalance->update_order_item_saldo($orderId, CakeSession::read("Auth.User.id"));
-
-        $file = new File($this->request->data['file']['name']);
-        $dir = new Folder(APP . "webroot/files/order_balances/" . $orderId . "/", true);
-
-        $this->Uploader->up($this->request->data['file'], $dir->path);
-
-        $this->Flash->set(__('Saldos incluídos com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        
         $this->redirect(['action' => 'saldos/' . $orderId]);
     }
 
@@ -1607,55 +1609,58 @@ class OrdersController extends AppController
 
     private function parseCSVSaldo($customerId, $orderId, $tmpFile)
     {
-        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
-        $csv = Reader::createFromString($file);
-        $csv->setDelimiter(';');
-
-        $numLines = substr_count($file, "\n");
-
-        if ($numLines < 1) {
-            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        if (!file_exists($tmpFile) || !is_readable($tmpFile)) {
+            return ['success' => false, 'error' => 'Arquivo não encontrado ou não legível.'];
         }
 
+        $csv = Reader::createFromPath($tmpFile, 'r');
+        $csv->setDelimiter(';');
+        
+        $records = $csv->getRecords();
         $line = 0;
         $data = [];
-        foreach ($csv->getRecords() as $row) {
-            $saldo = 0;
+        $userCache = [];
 
-            if ($line == 0 || empty($row[0])) {
-                if ($line == 0) {
-                    $line++;
-                }
+        foreach ($records as $row) {
+            if ($line == 0 || empty($row[0]) || count($row) < 7) {
+                $line++;
                 continue;
             }
 
             $cpf = preg_replace('/\D/', '', $row[0]);
-
-            $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
-
-            $customer_user_id = null;
-            if (isset($existingUser[0]['u'])) {
-                $customer_user_id = $existingUser[0]['u']['id'];
+            
+            if (empty($cpf)) {
+                $line++;
+                continue;
             }
 
-            $total = str_replace("R$", "", $row[2]);
-            $total = str_replace(" ", "", $total);
+            $userCacheKey = $orderId . '_' . $cpf;
+            if (!isset($userCache[$userCacheKey])) {
+                $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
+                $userCache[$userCacheKey] = isset($existingUser[0]['u']) ? $existingUser[0]['u']['id'] : null;
+            }
+
+            $total = str_replace(["R$", " "], "", $row[2]);
 
             $data[] = [
-                'customer_user_id' => $customer_user_id,
+                'customer_user_id' => $userCache[$userCacheKey],
                 'document' => $row[0],
                 'benefit_code' => $row[1],
                 'total' => $total,
                 'pedido_operadora' => $row[3],
                 'order_item_id' => $row[4],
                 'tipo' => $row[5],
-                'observacao' => $row[6],
+                'observacao' => isset($row[6]) ? $row[6] : '',
             ];
 
             $line++;
         }
 
-        return ['data' => $data];
+        return [
+            'success' => true,
+            'data' => $data,
+            'processedLines' => $line - 1
+        ];
     }
 
     public function updateWorkingDays()
@@ -2426,7 +2431,6 @@ class OrdersController extends AppController
         ini_set('pcre.backtrack_limit', '20000000');
         $this->layout = 'ajax';
         $this->autoRender = false;
-        ini_set('max_execution_time', '-1');
 
         ini_set('memory_limit', '-1');
 
@@ -3791,88 +3795,94 @@ class OrdersController extends AppController
 
     public function upload_saldo_csv_all()
     {
-        $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
+        set_time_limit(0);
+        ini_set('memory_limit', '512M');
+        ignore_user_abort(true);
+        
+        $dataSource = $this->OrderBalance->getDataSource();
+        $dataSource->begin();
+        
+        try {
+            $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
 
-        $groupTpOrder = [];
-        $groupOrder = [];
+            if (!$ret['success']) {
+                throw new Exception($ret['error']);
+            }
 
-        foreach ($ret['data'] as $item) {
-            $keyTp = $item['tipo'] . '-' . $item['order_id'];
-            $keyOr = $item['order_id'];
+            $processedData = $ret['data'];
+            $groupTpOrder = [];
+            $groupOrder = [];
+            $cancelData = [];
 
-            if (!isset($groupTpOrder[$keyTp])) {
-                $groupTpOrder[$keyTp] = [
-                    'tipo' => $item['tipo'],
+            foreach ($processedData as $item) {
+                $keyTp = $item['tipo'] . '-' . $item['order_id'];
+                $keyOr = $item['order_id'];
+
+                if (!isset($groupTpOrder[$keyTp])) {
+                    $groupTpOrder[$keyTp] = [
+                        'tipo' => $item['tipo'],
+                        'order_id' => $item['order_id'],
+                        'order_item_ids' => []
+                    ];
+                }
+
+                if (!isset($groupOrder[$keyOr])) {
+                    $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
+                }
+
+                $groupTpOrder[$keyTp]['order_item_ids'][] = $item['order_item_id'];
+                
+                $cancelData[] = [
                     'order_id' => $item['order_id'],
-                    'order_item_ids' => []
+                    'tipo' => $item['tipo'],
+                    'order_item_id' => $item['order_item_id']
                 ];
             }
 
-            if (!isset($groupOrder[$keyOr])) {
-                $groupOrder[$keyOr] = ['order_id' => $item['order_id']];
+            if (!empty($cancelData)) {
+                $this->OrderBalance->batchCancelBalances($cancelData, CakeSession::read("Auth.User.id"));
             }
 
-            $groupTpOrder[$keyTp]['order_item_ids'][] = $item['order_item_id'];
-        }
+            if (!empty($processedData)) {
+                $this->bulkInsertOrderBalances($processedData, $ret['benefitCache']);
+            }
 
-        foreach ($groupTpOrder as $item) {
-            if ($item['order_id']) {
-                foreach ($item['order_item_ids'] as $itemId) {
-                    $this->OrderBalance->update_cancel_balances($item['order_id'], $item['tipo'], CakeSession::read("Auth.User.id"), $itemId);
+            $processedOrders = 0;
+            $totalOrders = count($groupOrder);
+            
+            foreach ($groupOrder as $item) {
+                if ($item['order_id']) {
+                    $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
+                    $processedOrders++;
+                    
+                    if ($processedOrders % 10 == 0 || $processedOrders == $totalOrders) {
+                        CakeLog::write('info', "Updated {$processedOrders}/{$totalOrders} orders");
+                    }
                 }
             }
+
+            $file = new File($this->request->data['file']['name']);
+            $dir = new Folder(APP . "webroot/files/order_balances_all/", true);
+
+            $file = $this->Uploader->up($this->request->data['file'], $dir->path);
+
+            $orderBalanceFile = [
+                'file_name' => $file['nome'],
+                'user_creator_id' => CakeSession::read("Auth.User.id"),
+                'created' => date('Y-m-d H:i:s'),
+            ];
+
+            $this->OrderBalanceFile->create();
+            $this->OrderBalanceFile->save($orderBalanceFile);
+
+            $dataSource->commit();
+            
+            $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        } catch (Exception $e) {
+            $dataSource->rollback();
+            $this->Flash->set(__('Erro ao processar arquivo: ') . $e->getMessage(), ['params' => ['class' => "alert alert-danger"]]);
         }
-
-        foreach ($ret['data'] as $data) {
-            if ($data['tipo']) {
-                $benefit = $this->Benefit->find('first', ['conditions' => ['Benefit.code' => $data['benefit_code']]]);
-
-                if (isset($benefit['Benefit'])) {
-                    $benefit_id = $benefit['Benefit']['id'];
-                } else {
-                    $benefit_id = null;
-                }
-
-                $orderBalanceData = [
-                    'order_id' => $data['order_id'],
-                    'order_item_id' => $data['order_item_id'],
-                    'customer_user_id' => $data['customer_user_id'],
-                    'benefit_id' => $benefit_id,
-                    'document' => $data['document'],
-                    'total' => $data['total'],
-                    'pedido_operadora' => $data['pedido_operadora'],
-                    'tipo' => $data['tipo'],
-                    'observacao' => $data['observacao'],
-                    'created' => date('Y-m-d H:i:s'),
-                    'user_created_id' => CakeSession::read("Auth.User.id")
-                ];
-
-                $this->OrderBalance->create();
-                $this->OrderBalance->save($orderBalanceData);
-            }
-        }
-
-        foreach ($groupOrder as $item) {
-            if ($item['order_id']) {
-                $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
-            }
-        }
-
-        $file = new File($this->request->data['file']['name']);
-        $dir = new Folder(APP . "webroot/files/order_balances_all/", true);
-
-        $file = $this->Uploader->up($this->request->data['file'], $dir->path);
-
-        $orderBalanceFile = [
-            'file_name' => $file['nome'],
-            'user_creator_id' => CakeSession::read("Auth.User.id"),
-            'created' => date('Y-m-d H:i:s'),
-        ];
-
-        $this->OrderBalanceFile->create();
-        $this->OrderBalanceFile->save($orderBalanceFile);
-
-        $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+        
         $this->redirect('/reports/importar_movimentacao');
     }
 
@@ -3885,56 +3895,140 @@ class OrdersController extends AppController
 
         return $cpf;
     }
+    
+    private function buildBenefitCache()
+    {
+        $benefits = $this->Benefit->find('all', [
+            'fields' => ['Benefit.id', 'Benefit.code'],
+            'conditions' => ['Benefit.data_cancel' => '1901-01-01 00:00:00'],
+            'recursive' => -1
+        ]);
+        
+        $cache = [];
+        foreach ($benefits as $benefit) {
+            $cache[$benefit['Benefit']['code']] = $benefit['Benefit']['id'];
+        }
+        
+        return $cache;
+    }
+    
+    private function bulkInsertOrderBalances($data, $benefitCache)
+    {
+        $batchSize = 500;
+        $batches = array_chunk($data, $batchSize);
+        $userId = CakeSession::read("Auth.User.id");
+        $currentDateTime = date('Y-m-d H:i:s');
+        $totalBatches = count($batches);
+        $processedBatches = 0;
+        
+        foreach ($batches as $batch) {
+            $values = [];
+            $placeholders = [];
+            
+            foreach ($batch as $item) {
+                if (!$item['tipo']) continue;
+                
+                $benefit_id = isset($benefitCache[$item['benefit_code']]) ? $benefitCache[$item['benefit_code']] : null;
+                
+                $values = array_merge($values, [
+                    $item['order_id'],
+                    $item['order_item_id'],
+                    $item['customer_user_id'],
+                    $benefit_id,
+                    $item['document'],
+                    $this->OrderBalance->priceFormatBeforeSave($item['total']),
+                    $item['pedido_operadora'],
+                    $item['tipo'],
+                    $item['observacao'],
+                    $currentDateTime,
+                    $userId
+                ]);
+                
+                $placeholders[] = '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            }
+            
+            if (!empty($placeholders)) {
+                $sql = "INSERT INTO order_balances 
+                        (order_id, order_item_id, customer_user_id, benefit_id, document, total, 
+                         pedido_operadora, tipo, observacao, created, user_created_id) 
+                        VALUES " . implode(', ', $placeholders);
+                
+                try {
+                    $this->OrderBalance->query($sql, $values);
+                    $processedBatches++;
+                    
+                    if ($processedBatches % 10 == 0 || $processedBatches == $totalBatches) {
+                        CakeLog::write('info', "Processed {$processedBatches}/{$totalBatches} batches");
+                    }
+                } catch (Exception $e) {
+                    CakeLog::write('error', 'Bulk insert failed: ' . $e->getMessage());
+                    throw $e;
+                }
+            }
+        }
+    }
 
     private function parseCSVSaldoAll($tmpFile)
     {
-        $file = file_get_contents($tmpFile, FILE_IGNORE_NEW_LINES);
-        $csv = Reader::createFromString($file);
-        $csv->setDelimiter(';');
-
-        $numLines = substr_count($file, "\n");
-
-        if ($numLines < 1) {
-            return ['success' => false, 'error' => 'Arquivo inválido.'];
+        if (!file_exists($tmpFile) || !is_readable($tmpFile)) {
+            return ['success' => false, 'error' => 'Arquivo não encontrado ou não legível.'];
         }
 
-        $rec = iterator_to_array($csv->getRecords());
-
-        $header = array_shift($rec);
-
-        usort($rec, function ($a, $b) {
-            return strcmp($a[7], $b[7]);
-        });
-
-        array_unshift($rec, $header);
-
-        $line = 0;
+        $csv = Reader::createFromPath($tmpFile, 'r');
+        $csv->setDelimiter(';');
+        
+        $records = $csv->getRecords();
+        $header = null;
         $data = [];
+        $line = 0;
+        $chunkSize = 1000;
+        $currentChunk = [];
+        
+        $benefitCache = $this->buildBenefitCache();
+        $userCache = [];
+        $processedOrderIds = [];
+        $lastProgressReport = 0;
 
-        foreach ($rec as $row) {
-            $saldo = 0;
-
-            if ($line == 0 || empty($row[0])) {
-                if ($line == 0) {
-                    $line++;
+        foreach ($records as $row) {
+            if ($line == 0) {
+                $header = $row;
+                if (count($row) < 8) {
+                    return ['success' => false, 'error' => 'Formato de arquivo inválido. Esperado 8 colunas, encontrado ' . count($row)];
                 }
+                $line++;
+                continue;
+            }
+
+            if (empty($row[0]) || count($row) < 8) {
+                $line++;
                 continue;
             }
 
             $cpf = preg_replace('/\D/', '', $row[0]);
-
-            $existingUser = $this->OrderBalance->find_user_order_items($row[7], $cpf);
-
-            $customer_user_id = null;
-            if (isset($existingUser[0]['u'])) {
-                $customer_user_id = $existingUser[0]['u']['id'];
+            $orderId = trim($row[7]);
+            
+            if (empty($cpf) || empty($orderId) || !is_numeric($orderId)) {
+                CakeLog::write('warning', "Linha {$line}: CPF ou Order ID inválido - CPF: {$row[0]}, Order ID: {$orderId}");
+                $line++;
+                continue;
+            }
+            
+            if (strlen($cpf) != 11) {
+                CakeLog::write('warning', "Linha {$line}: CPF com formato inválido: {$cpf}");
+                $line++;
+                continue;
             }
 
-            $total = str_replace("R$", "", $row[2]);
-            $total = str_replace(" ", "", $total);
+            $userCacheKey = $orderId . '_' . $cpf;
+            if (!isset($userCache[$userCacheKey])) {
+                $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
+                $userCache[$userCacheKey] = isset($existingUser[0]['u']) ? $existingUser[0]['u']['id'] : null;
+            }
 
-            $data[] = [
-                'customer_user_id' => $customer_user_id,
+            $total = str_replace(["R$", " "], "", $row[2]);
+            
+            $currentChunk[] = [
+                'customer_user_id' => $userCache[$userCacheKey],
                 'document' => $row[0],
                 'benefit_code' => $row[1],
                 'total' => $total,
@@ -3942,13 +4036,38 @@ class OrdersController extends AppController
                 'order_item_id' => $row[4],
                 'tipo' => $row[5],
                 'observacao' => $row[6],
-                'order_id' => $row[7],
+                'order_id' => $orderId,
             ];
+            
+            $processedOrderIds[$orderId] = true;
+
+            if (count($currentChunk) >= $chunkSize) {
+                $data = array_merge($data, $currentChunk);
+                $currentChunk = [];
+                
+                if ($line - $lastProgressReport >= 5000) {
+                    CakeLog::write('info', "Processed {$line} lines from CSV");
+                    $lastProgressReport = $line;
+                }
+            }
 
             $line++;
         }
+        
+        if (!empty($currentChunk)) {
+            $data = array_merge($data, $currentChunk);
+        }
+        
+        usort($data, function ($a, $b) {
+            return strcmp($a['order_id'], $b['order_id']);
+        });
 
-        return ['data' => $data];
+        return [
+            'success' => true,
+            'data' => $data,
+            'benefitCache' => $benefitCache,
+            'processedLines' => $line - 1
+        ];
     }
 
     public function aplicar_desconto()
