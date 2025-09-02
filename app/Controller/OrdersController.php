@@ -284,6 +284,26 @@ class OrdersController extends AppController
             'recursive' => -1
         ]);
 
+        echo json_encode([
+            'success' => true,
+            'totals' => $totalOrders[0],
+            'has_economia' => false
+        ]);
+    }
+
+    public function getTotalEconomia()
+    {
+        $this->autoRender = false;
+        $this->response->type('json');
+
+        ini_set('memory_limit', '-1');
+        
+        if (!$this->request->is('ajax')) {
+            throw new NotFoundException();
+        }
+        
+        $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+
         $order_ids = $this->Order->find('list', [
             'contain' => ['Customer', 'EconomicGroup', 'Income'],
             'fields' => ['Order.id'],
@@ -297,11 +317,9 @@ class OrdersController extends AppController
             $total_economia += $extrato['v_total_economia'];
         }
 
-        $totalOrders[0]['total_economia'] = $total_economia;
-        
         echo json_encode([
             'success' => true,
-            'totals' => $totalOrders[0]
+            'economia' => $total_economia
         ]);
     }
 

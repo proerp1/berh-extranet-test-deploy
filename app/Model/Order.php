@@ -556,7 +556,7 @@ class Order extends AppModel
 
     public function getExtrato($id)
     {
-        $order = $this->find('first', ['conditions' => ['Order.id' => $id], 'recursive' => -1]);
+        $order = $this->find('first', ['fields' => ['Order.id'], 'conditions' => ['Order.id' => $id], 'recursive' => -1]);
 
         $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total ELSE 0 END), 0) AS total_bal_economia, 
                             COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_cred, 
