@@ -103,14 +103,13 @@ class EconomicGroupsController extends AppController
             'Grupos Econômicos' => ['controller' => 'group_economics', 'action' => 'index'],
             $this->request->data['EconomicGroup']['name'] => '',
         ];
+        
         $this->set(compact('action', 'breadcrumb', 'id', 'economicGroupId', 'statuses'));
         $this->render('add');
     }
 
     public function delete($id = null)
     {
-  
-
         $this->EconomicGroup->id = $id;
         $this->request->data = $this->EconomicGroup->read();
 

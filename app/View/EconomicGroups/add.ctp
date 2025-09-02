@@ -1,72 +1,68 @@
 <?php
     $form_action = isset($economicGroupId) ? 'edit' : 'add';
     echo $this->element("abas_customers", array('id' => $id));
-    
+
+    if (isset($economicGroupId)) {
+        echo $this->element("abas_grupo_economico");
+    }
 ?>
 
-<script type="text/javascript">
-    
-           $(document).ready(function(){
-            function buscarCEP(cepInput, enderecoInput, bairroInput, cidadeInput, estadoInput) {
-                var $el = $(cepInput);
-                
-                $.ajax({
-                    url: 'https://viacep.com.br/ws/' + $el.val() + '/json/',
-                    type: "GET",
-                    dataType: "json",
-                    beforeSend: function(){
-                        $el.parent().find('span > i').removeClass('fas fa-map-marker');
-                        $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
-                    }
-                }).done(function(data) {
-                    if (!data.erro) {
-                        $(enderecoInput).val(data.logradouro);
-                        $(bairroInput).val(data.bairro);
-                        $(cidadeInput).val(data.localidade);
-                        $(estadoInput).val(data.uf);
-                    } else {
-                        alert("CEP não encontrado.");
-                    }
-                }).fail(function(){
-                    alert("Erro ao consultar o CEP. Tente novamente.");
-                }).always(function() {
-                    $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
-                    $el.parent().find('span > i').addClass('fas fa-map-marker');
-                });
-            }
-
-            $("#cep").change(function() {
-                buscarCEP("#cep", "#endereco", "#bairro", "#cidade", "#estado");
-            });
-
-            $("#cepentrega").change(function() {
-                buscarCEP("#cepentrega", "#enderecoentrega", "#bairroentrega", "#cidadeentrega", "#estadoentrega");
-            });
-
-            $("#cep, #cepentrega").mask("99999-999");
-            $("#documento").mask("99.999.999/9999-99");
-
-
-            $("#mesmo_endereco").change(function() {
-                if($(this).is(":checked")) {
-                    $("#cepentrega").val($("#cep").val());
-                    $("#enderecoentrega").val($("#endereco").val());
-                    $("#numeroentrega").val($("#numero").val());
-                    $("#complementoentrega").val($("#complemento").val());
-                    $("#bairroentrega").val($("#bairro").val());
-                    $("#cidadeentrega").val($("#cidade").val());
-                    $("#estadoentrega").val($("#estado").val());
-                } else {
-                    $("#cepentrega, #enderecoentrega, #numeroentrega, #complementoentrega, #bairroentrega, #cidadeentrega, #estadoentrega").val('');
+<script type="text/javascript">    
+    $(document).ready(function(){
+        function buscarCEP(cepInput, enderecoInput, bairroInput, cidadeInput, estadoInput) {
+            var $el = $(cepInput);
+            
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + $el.val() + '/json/',
+                type: "GET",
+                dataType: "json",
+                beforeSend: function(){
+                    $el.parent().find('span > i').removeClass('fas fa-map-marker');
+                    $el.parent().find('span > i').addClass('fas fa-spinner fa-spin');
                 }
+            }).done(function(data) {
+                if (!data.erro) {
+                    $(enderecoInput).val(data.logradouro);
+                    $(bairroInput).val(data.bairro);
+                    $(cidadeInput).val(data.localidade);
+                    $(estadoInput).val(data.uf);
+                } else {
+                    alert("CEP não encontrado.");
+                }
+            }).fail(function(){
+                alert("Erro ao consultar o CEP. Tente novamente.");
+            }).always(function() {
+                $el.parent().find('span > i').removeClass('fas fa-spinner fa-spin');
+                $el.parent().find('span > i').addClass('fas fa-map-marker');
             });
+        }
+
+        $("#cep").change(function() {
+            buscarCEP("#cep", "#endereco", "#bairro", "#cidade", "#estado");
         });
 
-   
+        $("#cepentrega").change(function() {
+            buscarCEP("#cepentrega", "#enderecoentrega", "#bairroentrega", "#cidadeentrega", "#estadoentrega");
+        });
 
+        $("#cep, #cepentrega").mask("99999-999");
+        $("#documento").mask("99.999.999/9999-99");
 
+        $("#mesmo_endereco").change(function() {
+            if($(this).is(":checked")) {
+                $("#cepentrega").val($("#cep").val());
+                $("#enderecoentrega").val($("#endereco").val());
+                $("#numeroentrega").val($("#numero").val());
+                $("#complementoentrega").val($("#complemento").val());
+                $("#bairroentrega").val($("#bairro").val());
+                $("#cidadeentrega").val($("#cidade").val());
+                $("#estadoentrega").val($("#estado").val());
+            } else {
+                $("#cepentrega, #enderecoentrega, #numeroentrega, #complementoentrega, #bairroentrega, #cidadeentrega, #estadoentrega").val('');
+            }
+        });
+    });
 </script>
-
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">

@@ -453,17 +453,16 @@ class Order extends AppModel
             ],
             'fields' => [
                 'Order.customer_id',
+                'Order.economic_group_id',
                 'Order.desconto'
             ]
         ]);
 
+        $proposal = $this->getProposalForOrder($order['Order']['customer_id'], $order['Order']['economic_group_id']);
+        
         $tpp_fee = 0;
-        $prop = ClassRegistry::init('Proposal');
-        $proposal = $prop->find('first', [
-            'conditions' => ['Proposal.customer_id' => $order['Order']['customer_id'], 'Proposal.status_id' => 99]
-        ]);
         if (!empty($proposal)) {
-            $tpp_fee = $proposal['Proposal']['tpp_not_formatted'];
+            $tpp_fee = $proposal['tpp_not_formatted'];
         }
 
         $items = $this->OrderItem->find('first', [
@@ -556,18 +555,16 @@ class Order extends AppModel
 
     public function getExtrato($id)
     {
-        $order = $this->find('first', ['conditions' => ['Order.id' => $id], 'recursive' => -1]);
+        $order = $this->find('first', ['fields' => ['Order.id'], 'conditions' => ['Order.id' => $id], 'recursive' => -1]);
 
-        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total ELSE 0 END), 0) AS total_bal_economia, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_cred, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_deb, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total ELSE 0 END), 0) AS total_bal_inconsistencia, 
+        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total END), 0) AS total_bal_economia, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END), 0) AS total_bal_ajuste_cred, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END), 0) AS total_bal_ajuste_deb, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total END), 0) AS total_bal_inconsistencia, 
                             GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
                         FROM order_balances b 
-                            INNER JOIN orders o ON o.id = b.order_id 
-                        WHERE o.id = :order_id 
+                        WHERE b.order_id = :order_id 
                             AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
                             AND b.tipo IN(1, 2, 3) 
                     ";
         $ex_bal = $this->query($sql_bal, ['order_id' => $id]);
@@ -927,5 +924,40 @@ class Order extends AppModel
         }
         
         return floatval($value);
+    }
+
+    public function getProposalForOrder($customerId, $economic_group_id = null) 
+    {
+        $proposal = null;
+
+        if (!empty($economic_group_id)) {
+            $economicGroupProp = ClassRegistry::init('EconomicGroupProposal');
+
+            $economicGroupProposal = $economicGroupProp->find('first', [
+                'conditions' => [
+                    'EconomicGroupProposal.customer_id' => $customerId, 
+                    'EconomicGroupProposal.economic_group_id' => $economic_group_id, 
+                    'EconomicGroupProposal.status_id' => 99
+                ]
+            ]);
+            
+            if (!empty($economicGroupProposal)) {
+                $proposal = $economicGroupProposal['EconomicGroupProposal'];
+            }
+        }
+        
+        if (empty($proposal)) {
+            $prop = ClassRegistry::init('Proposal');
+
+            $customerProposal = $prop->find('first', [
+                'conditions' => ['Proposal.customer_id' => $customerId, 'Proposal.status_id' => 99]
+            ]);
+            
+            if (!empty($customerProposal)) {
+                $proposal = $customerProposal['Proposal'];
+            }
+        }
+        
+        return $proposal;
     }
 }

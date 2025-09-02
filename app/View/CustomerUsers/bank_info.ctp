@@ -85,7 +85,7 @@
                                     Editar
                                 </a>
 
-                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customers/delete_bank_info/'.$id.'/'.$user_id.'/'.$value["CustomerUserBankAccount"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
+                                <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/customer_users/delete_bank_info/'.$id.'/'.$user_id.'/'.$value["CustomerUserBankAccount"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                     Excluir
                                 </a>
                             </td>
