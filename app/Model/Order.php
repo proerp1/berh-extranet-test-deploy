@@ -558,16 +558,14 @@ class Order extends AppModel
     {
         $order = $this->find('first', ['fields' => ['Order.id'], 'conditions' => ['Order.id' => $id], 'recursive' => -1]);
 
-        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total ELSE 0 END), 0) AS total_bal_economia, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_cred, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total ELSE 0 END), 0) AS total_bal_ajuste_deb, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total ELSE 0 END), 0) AS total_bal_inconsistencia, 
+        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total END), 0) AS total_bal_economia, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END), 0) AS total_bal_ajuste_cred, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END), 0) AS total_bal_ajuste_deb, 
+                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total END), 0) AS total_bal_inconsistencia, 
                             GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
                         FROM order_balances b 
-                            INNER JOIN orders o ON o.id = b.order_id 
-                        WHERE o.id = :order_id 
+                        WHERE b.order_id = :order_id 
                             AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
                             AND b.tipo IN(1, 2, 3) 
                     ";
         $ex_bal = $this->query($sql_bal, ['order_id' => $id]);

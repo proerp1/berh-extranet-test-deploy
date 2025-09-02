@@ -119,7 +119,6 @@
     }
 
     function loadTotals() {
-        // Primeira requisição: totais básicos
         $.ajax({
             url: '/orders/getTotalOrders',
             method: 'POST',
@@ -129,10 +128,8 @@
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    // Atualiza todos os valores exceto economia
                     updateBasicTotalsDisplay(response.totals);
                     
-                    // Segunda requisição: economia (em paralelo ou sequencial)
                     loadEconomia();
                 } else {
                     showTotalsError();
@@ -145,7 +142,6 @@
     }
 
     function loadEconomia() {
-        // Manter o spinner só na economia enquanto carrega
         $('#economia-value').html('<div class="spinner-border spinner-border-sm text-warning" role="status"><span class="sr-only">Calculando economia...</span></div>');
         
         $.ajax({
@@ -169,7 +165,6 @@
     }
 
     function updateBasicTotalsDisplay(totals) {
-        // Atualizar valores básicos (exceto economia que carregará separadamente)
         $('#subtotal-value').text(formatMoney(totals.subtotal));
         $('#repasse-value').text(formatMoney(totals.transfer_fee));
         $('#tpp-value').text(formatMoney(totals.total_tpp));
@@ -178,7 +173,6 @@
         $('#total-value').text(formatMoney(totals.total));
     }
 
-    // Função para formatar valores em Real brasileiro
     function formatMoney(value) {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
