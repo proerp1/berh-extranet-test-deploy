@@ -379,9 +379,13 @@ class OrdersController extends AppController
                 $pedido_complementar = ($customer['Customer']['flag_gestao_economico'] == "S" ? 1 : 2);
             }
 
+            if ($condicao_pagamento != 2) {
+                $prazo = null;
+            }
+
             if ($is_consolidated == 2) {
                 $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar, $condicao_pagamento, $prazo);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -433,10 +437,6 @@ class OrdersController extends AppController
             }
 
             $customer_orders = $this->Order->find('count', ['conditions' => ['Order.customer_id' => $customerId]]);
-
-            if ($condicao_pagamento != 2) {
-                $prazo = null;
-            }
             
             $order_status_id = 83;
 
@@ -1894,7 +1894,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar, $condicao_pagamento, $prazo)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -2033,6 +2033,8 @@ class OrdersController extends AppController
                 'qtde_minina_diaria' => $customer['Customer']['qtde_minina_diaria'],
                 'tipo_ge' => $customer['Customer']['tipo_ge'],
                 'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
+                'condicao_pagamento' => $condicao_pagamento,
+                'prazo' => $prazo,
             ];
 
             $this->Order->create();
