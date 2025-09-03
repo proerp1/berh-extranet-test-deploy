@@ -555,17 +555,23 @@ class Order extends AppModel
 
     public function getExtrato($id)
     {
-        $order = $this->find('first', ['fields' => ['Order.id'], 'conditions' => ['Order.id' => $id], 'recursive' => -1]);
-
-        $sql_bal = "SELECT  COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total END), 0) AS total_bal_economia, 
+        $sql_bal = "SELECT  
+                            o.fee_saldo,
+                            o.transfer_fee,
+                            o.subtotal,
+                            o.total,
+                            o.desconto,
+                            COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total END), 0) AS total_bal_economia, 
                             COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END), 0) AS total_bal_ajuste_cred, 
                             COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END), 0) AS total_bal_ajuste_deb, 
                             COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total END), 0) AS total_bal_inconsistencia, 
                             GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
-                        FROM order_balances b 
+                        FROM orders o 
+                            INNER JOIN order_balances b ON o.id = b.order_id 
+                                                            AND b.data_cancel = '1901-01-01 00:00:00' 
+                                                            AND b.tipo IN(1, 2, 3) 
                         WHERE b.order_id = :order_id 
-                            AND b.data_cancel = '1901-01-01 00:00:00' 
-                            AND b.tipo IN(1, 2, 3) 
+                            AND o.data_cancel = '1901-01-01 00:00:00' 
                     ";
         $ex_bal = $this->query($sql_bal, ['order_id' => $id]);
 
@@ -578,11 +584,11 @@ class Order extends AppModel
         $v_observacao                   = $ex_bal[0][0]['observacoes'];
 
         $v_vl_economia      = $v_total_bal_economia;
-        $fee_saldo          = $order["Order"]["fee_saldo_not_formated"];
-        $transfer_fee       = $order["Order"]["transfer_fee_not_formated"];
-        $subtotal           = $order["Order"]["subtotal_not_formated"];
-        $total              = $order["Order"]["total_not_formated"];
-        $desconto           = $order["Order"]["desconto_not_formated"];
+        $fee_saldo          = $ex_bal[0]['o']["fee_saldo"];
+        $transfer_fee       = $ex_bal[0]['o']["transfer_fee"];
+        $subtotal           = $ex_bal[0]['o']["subtotal"];
+        $total              = $ex_bal[0]['o']["total"];
+        $desconto           = $ex_bal[0]['o']["desconto"];
 
         if ($fee_saldo != 0 and $v_vl_economia != 0) {
             $v_fee_economia   = (($fee_saldo / 100) * $v_vl_economia);
