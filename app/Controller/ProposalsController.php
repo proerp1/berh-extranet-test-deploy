@@ -28,13 +28,23 @@ class ProposalsController extends AppController
 
         if (isset($_GET['t']) and $_GET['t'] != '') {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
-        }
-
-        
+        }        
 
         $data = $this->Paginator->paginate('Proposal', $condition);
 
-       if (isset($_GET['excel'])) {
+        if (isset($_GET['excel'])) {
+            unset($condition['and']['Proposal.customer_id']);
+
+            $data = $this->Proposal->find('all', [
+                'fields' => [
+                    'Proposal.*',
+                    'Customer.codigo_associado',
+                    'Customer.nome_primario',
+                    'Status.name',
+                ],
+                'conditions' => $condition,
+            ]);
+
             $this->ExcelGenerator->gerarExcelProposal('Proposta', $data);
 
             $this->redirect('/private_files/baixar/excel/Proposta_xlsx');
@@ -42,13 +52,16 @@ class ProposalsController extends AppController
 
         $this->Customer->id = $id;
         $this->Customer->recursive = -1;
+
         $cliente = $this->Customer->read();
 
         $action = 'Propostas';
+
         $breadcrumb = [
             $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id], 
             'Propostas' => ''
         ];
+
         $this->set(compact('data', 'action', 'breadcrumb', 'id'));
     }
 
@@ -122,8 +135,6 @@ class ProposalsController extends AppController
                 $this->Flash->set(__('A proposta não pode ser alterada, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
             }
         }
-
-        
 
         $temp_errors = $this->Proposal->validationErrors;
         $this->request->data = $this->Proposal->read();

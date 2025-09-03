@@ -2514,208 +2514,208 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         }
     }
 
-public function getBeneficiario($spreadsheet, $dados)
-{
-    $activeWorksheet = $spreadsheet->getActiveSheet();
+    public function getBeneficiario($spreadsheet, $dados)
+    {
+        $activeWorksheet = $spreadsheet->getActiveSheet();
 
-    $headers = [
-        'A1' => "Status(beneficiário)",
-        'B1' => "Nome(beneficiário)",
-        'C1' => "Matricula(beneficiário)",
-        'D1' => "Email(beneficiário)",
-        'E1' => "Telefone(beneficiário)",
-        'F1' => "Celular(beneficiário)",
-        'G1' => "CPF(beneficiário)",
-        'H1' => "RG(beneficiário)",
-        'I1' => "Emissor(beneficiário)",
-        'J1' => "Estado Emissor(beneficiário)",
-        'K1' => "Nome da Mãe(beneficiário)",
-        'L1' => "Sexo(beneficiário)",
-        'M1' => "Data Nascimento(beneficiário)",
-        'N1' => "Departamento(beneficiário)",
-        'O1' => "Cargo(beneficiário)",
-        'P1' => "Centro de Custo(beneficiário)",
-        'Q1' => "Salário(beneficiário)",
-        'R1' => "Estado Civil(beneficiário)",
-        'S1' => "Empresas do Grupo econômico(beneficiário)",
-        'T1' => "Observações(beneficiário)",
-        'U1' => "Nome (Grupo Econômico)",
-        'V1' => "CNPJ (Grupo Econômico)",
-        'W1' => "COD Benefício",
-        'X1' => "Benefício(Benefício)",
-        'Y1' => "Dias Úteis(Benefício)",
-        'Z1' => "N° Cartão(Benefício)",
-        'AA1' => "Quantidade(Benefício)",
-        'AB1' => "Valor Unitario(Benefício)",
-        'AC1' => "Valor por dia(Benefício)",
-        'AD1' => "Endereço de entrega",
-    ];
+        $headers = [
+            'A1' => "Status(beneficiário)",
+            'B1' => "Nome(beneficiário)",
+            'C1' => "Matricula(beneficiário)",
+            'D1' => "Email(beneficiário)",
+            'E1' => "Telefone(beneficiário)",
+            'F1' => "Celular(beneficiário)",
+            'G1' => "CPF(beneficiário)",
+            'H1' => "RG(beneficiário)",
+            'I1' => "Emissor(beneficiário)",
+            'J1' => "Estado Emissor(beneficiário)",
+            'K1' => "Nome da Mãe(beneficiário)",
+            'L1' => "Sexo(beneficiário)",
+            'M1' => "Data Nascimento(beneficiário)",
+            'N1' => "Departamento(beneficiário)",
+            'O1' => "Cargo(beneficiário)",
+            'P1' => "Centro de Custo(beneficiário)",
+            'Q1' => "Salário(beneficiário)",
+            'R1' => "Estado Civil(beneficiário)",
+            'S1' => "Empresas do Grupo econômico(beneficiário)",
+            'T1' => "Observações(beneficiário)",
+            'U1' => "Nome (Grupo Econômico)",
+            'V1' => "CNPJ (Grupo Econômico)",
+            'W1' => "COD Benefício",
+            'X1' => "Benefício(Benefício)",
+            'Y1' => "Dias Úteis(Benefício)",
+            'Z1' => "N° Cartão(Benefício)",
+            'AA1' => "Quantidade(Benefício)",
+            'AB1' => "Valor Unitario(Benefício)",
+            'AC1' => "Valor por dia(Benefício)",
+            'AD1' => "Endereço de entrega",
+        ];
 
-    foreach ($headers as $cell => $text) {
-        $activeWorksheet->setCellValue($cell, $text);
-    }
+        foreach ($headers as $cell => $text) {
+            $activeWorksheet->setCellValue($cell, $text);
+        }
 
-    $indx = 1;
-    $chunkSize = 100;
-    $totalRows = count($dados);
+        $indx = 1;
+        $chunkSize = 100;
+        $totalRows = count($dados);
 
-    for ($i = 0; $i < $totalRows; $i += $chunkSize) {
-        $chunk = array_slice($dados, $i, $chunkSize);
+        for ($i = 0; $i < $totalRows; $i += $chunkSize) {
+            $chunk = array_slice($dados, $i, $chunkSize);
 
-        foreach ($chunk as $data) {
-            $indx++;
+            foreach ($chunk as $data) {
+                $indx++;
 
-            $activeWorksheet
-                ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
-                ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
-                ->setCellValue('C' . $indx, $data['CustomerUser']['matricula'] ?? '')
-                ->setCellValue('D' . $indx, $data['CustomerUser']['email'] ?? '')
-                ->setCellValue('E' . $indx, $data['CustomerUser']['tel'] ?? '')
-                ->setCellValue('F' . $indx, $data['CustomerUser']['cel'] ?? '')
-                ->setCellValue('G' . $indx, $data['CustomerUser']['cpf'] ?? '')
-                ->setCellValue('H' . $indx, $data['CustomerUser']['rg'] ?? '')
-                ->setCellValue('I' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
-                ->setCellValue('J' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
-                ->setCellValue('K' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
-                ->setCellValue('L' . $indx, $data['CustomerUser']['sexo'] ?? '')
-                ->setCellValue('M' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
-                ->setCellValue('N' . $indx, $data['CustomerDepartment']['name'] ?? '')
-                ->setCellValue('O' . $indx, $data['CustomerPosition']['name'] ?? '')
-                ->setCellValue('P' . $indx, $data['CostCenter']['name'] ?? '')
-                ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
-                ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
-                ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
-                ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
-
-            if (!empty($data['EconomicGroup'])) {
                 $activeWorksheet
-                    ->setCellValue('U' . $indx, $data['EconomicGroup']['name'] ?? '')
-                    ->setCellValue('V' . $indx, $data['EconomicGroup']['document'] ?? '');
-            }
+                    ->setCellValue('A' . $indx, ($data['CustomerUser']['status_id'] == 1) ? 'Ativo' : (($data['CustomerUser']['status_id'] == 2) ? 'Inativo' : ''))
+                    ->setCellValue('B' . $indx, $data['CustomerUser']['name'] ?? '')
+                    ->setCellValue('C' . $indx, $data['CustomerUser']['matricula'] ?? '')
+                    ->setCellValue('D' . $indx, $data['CustomerUser']['email'] ?? '')
+                    ->setCellValue('E' . $indx, $data['CustomerUser']['tel'] ?? '')
+                    ->setCellValue('F' . $indx, $data['CustomerUser']['cel'] ?? '')
+                    ->setCellValue('G' . $indx, $data['CustomerUser']['cpf'] ?? '')
+                    ->setCellValue('H' . $indx, $data['CustomerUser']['rg'] ?? '')
+                    ->setCellValue('I' . $indx, $data['CustomerUser']['emissor_rg'] ?? '')
+                    ->setCellValue('J' . $indx, $data['CustomerUser']['emissor_estado'] ?? '')
+                    ->setCellValue('K' . $indx, $data['CustomerUser']['nome_mae'] ?? '')
+                    ->setCellValue('L' . $indx, $data['CustomerUser']['sexo'] ?? '')
+                    ->setCellValue('M' . $indx, $data['CustomerUser']['data_nascimento'] ?? '')
+                    ->setCellValue('N' . $indx, $data['CustomerDepartment']['name'] ?? '')
+                    ->setCellValue('O' . $indx, $data['CustomerPosition']['name'] ?? '')
+                    ->setCellValue('P' . $indx, $data['CostCenter']['name'] ?? '')
+                    ->setCellValue('Q' . $indx, $data['SalaryRange']['range'] ?? '')
+                    ->setCellValue('R' . $indx, $data['MaritalStatus']['status'] ?? '')
+                    ->setCellValue('S' . $indx, $data['CustomerUser']['economic_group_id'] ?? '')
+                    ->setCellValue('T' . $indx, $data['CustomerUser']['observation'] ?? '');
 
-            if (!empty($data['CustomerUserItinerary'])) {
-                foreach ($data['CustomerUserItinerary'] as $itinerary) {
+                if (!empty($data['EconomicGroup'])) {
                     $activeWorksheet
-                        ->setCellValue('W' . $indx, $itinerary['benefit_code'] ?? '')
-                        ->setCellValue('X' . $indx, $itinerary['benefit_name'] ?? '')
-                        ->setCellValue('Y' . $indx, $itinerary['working_days'] ?? '')
-                        ->setCellValue('Z' . $indx, $itinerary['card_number'] ?? '')
-                        ->setCellValue('AA' . $indx, $itinerary['quantity'] ?? '')
-                        ->setCellValue('AB' . $indx, $itinerary['unit_price'] ?? '')
-                        ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
+                        ->setCellValue('U' . $indx, $data['EconomicGroup']['name'] ?? '')
+                        ->setCellValue('V' . $indx, $data['EconomicGroup']['document'] ?? '');
                 }
-            }
 
-           
-            if (!empty($data['CustomerUserAddress']) && is_array($data['CustomerUserAddress'])) {
-                
-                $activeWorksheet->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
-            } elseif (!empty($data['CustomerUserAddresses']) && is_array($data['CustomerUserAddresses'])) {
-                
-                foreach ($data['CustomerUserAddresses'] as $address) {
-                    $activeWorksheet->setCellValue('AD' . $indx, $address['address_line'] ?? '');
-                    
+                if (!empty($data['CustomerUserItinerary'])) {
+                    foreach ($data['CustomerUserItinerary'] as $itinerary) {
+                        $activeWorksheet
+                            ->setCellValue('W' . $indx, $itinerary['benefit_code'] ?? '')
+                            ->setCellValue('X' . $indx, $itinerary['benefit_name'] ?? '')
+                            ->setCellValue('Y' . $indx, $itinerary['working_days'] ?? '')
+                            ->setCellValue('Z' . $indx, $itinerary['card_number'] ?? '')
+                            ->setCellValue('AA' . $indx, $itinerary['quantity'] ?? '')
+                            ->setCellValue('AB' . $indx, $itinerary['unit_price'] ?? '')
+                            ->setCellValue('AC' . $indx, $itinerary['price_per_day'] ?? '');
+                    }
                 }
-            } else {
-              
-                $activeWorksheet->setCellValue('AD' . $indx, '');
+
+            
+                if (!empty($data['CustomerUserAddress']) && is_array($data['CustomerUserAddress'])) {
+                    
+                    $activeWorksheet->setCellValue('AD' . $indx, $data['CustomerUserAddress']['address_line'] ?? '');
+                } elseif (!empty($data['CustomerUserAddresses']) && is_array($data['CustomerUserAddresses'])) {
+                    
+                    foreach ($data['CustomerUserAddresses'] as $address) {
+                        $activeWorksheet->setCellValue('AD' . $indx, $address['address_line'] ?? '');
+                        
+                    }
+                } else {
+                
+                    $activeWorksheet->setCellValue('AD' . $indx, '');
+                }
             }
         }
     }
-}
 
-
-    
-
-
-    public function getProposal($spreadsheet, $dados)
+    public function getProposal($objPHPExcel, $dados)
     {
         if (is_array($dados)) {
-            $activeWorksheet = $spreadsheet->getActiveSheet();
-
-            $activeWorksheet
-                ->setCellValue('A1', "Data da Proposta")
-                ->setCellValue('B1', "Data da previsão de fechamento ")
-                ->setCellValue('C1', "Data do fechamento")
-                ->setCellValue('D1', "TPP")
-                ->setCellValue('E1', "Taxa administrativa VT")
-                ->setCellValue('F1', "Taxa de entrega VT")
-                ->setCellValue('G1', "PGE* VT ")
-                ->setCellValue('H1', "Qtde de Colaboradores VT")
-                ->setCellValue('I1', "Valor por colaborador VT")
-                ->setCellValue('J1', "Total por colaborador VT")
-                ->setCellValue('K1', "Taxa administrativa VR")
-                ->setCellValue('L1', "Taxa de entrega VR")
-                ->setCellValue('M1', "Qtde de Colaboradores VR")
-                ->setCellValue('N1', "Valor por colaborador VR")
-                ->setCellValue('O1', "Total por colaborador VR")
-                ->setCellValue('P1', "Taxa administrativa VC")
-                ->setCellValue('Q1', "Taxa de entrega VC")
-                ->setCellValue('R1', "Qtde de Colaboradores VC ")
-                ->setCellValue('S1', "Valor por colaborador VC")
-                ->setCellValue('T1', "Total por colaborador VC")
-                ->setCellValue('U1', "Taxa administrativa CM")
-                ->setCellValue('V1', "Taxa de entrega CM")
-                ->setCellValue('W1', "Qtde de Colaboradores CM")
-                ->setCellValue('X1', "Valor por colaborador CM")
-                ->setCellValue('Y1', "Total por colaboradorCM")
-                ->setCellValue('Z1', "Taxa administrativa-Saúde")
-                ->setCellValue('AA1', "Taxa de entrega-Saúde")
-                ->setCellValue('AB1', "Qtde de Colaboradores-Saúde")
-                ->setCellValue('AC1', "Valor por colaborador-Saúde")
-                ->setCellValue('AD1', "Total por colaborador-Saúde")
-                ->setCellValue('AE1', "Taxa administrativa-Previdenciário")
-                ->setCellValue('AF1', "Taxa de entrega-Previdenciário")
-                ->setCellValue('AG1', "Qtde de Colaboradores-Previdenciário")
-                ->setCellValue('AH1', "Valor por colaborador-Previdenciário")
-                ->setCellValue('AI1', "Total por colaborador-Previdenciário")
-                ->setCellValue('AJ1', "Total geral");
-
+            $col = 'A';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Código Cliente"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome Cliente"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status da Proposta"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Número da Proposta"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data da Proposta"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data da previsão de fechamento "); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data do fechamento"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "TPP"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa VT"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega VT"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "PGE* VT "); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores VT"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador VT"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaborador VT"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa VR"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega VR"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores VR"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador VR"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaborador VR"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa VC"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega VC"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores VC "); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador VC"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaborador VC"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa CM"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega CM"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores CM"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador CM"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaboradorCM"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa-Saúde"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega-Saúde"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores-Saúde"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador-Saúde"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaborador-Saúde"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa administrativa-Previdenciário"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Taxa de entrega-Previdenciário"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Qtde de Colaboradores-Previdenciário"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor por colaborador-Previdenciário"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total por colaborador-Previdenciário"); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total geral"); $col++;
             
             $indx = 1;
             $total = 0;
 
-            //debug($dados); die;
-            foreach ($dados as $data) { // Use um foreach para percorrer o array
+            foreach ($dados as $data) {
                 $indx++;
 
-                // Aqui você pode acessar os dados diretamente de $data
-                $activeWorksheet->setCellValue('A'. $indx, $data["Proposal"]["date"])
-                    ->setCellValue('B'. $indx, $data["Proposal"]["expected_closing_date"])
-                    ->setCellValue('C'. $indx, $data['Proposal']['closing_date'])
-                    ->setCellValue('D'. $indx, $data['Proposal']['tpp'])
-                    ->setCellValue('E'. $indx, $data['Proposal']['transport_adm_fee'])
-                    ->setCellValue('F'. $indx, $data['Proposal']['transport_deli_fee'])
-                    ->setCellValue('G'. $indx, $data['Proposal']['management_feel'])
-                    ->setCellValue('H'. $indx, $data['Proposal']['transport_workers_qty'])
-                    ->setCellValue('I'. $indx, $data['Proposal']['transport_workers_price'])
-                    ->setCellValue('J'. $indx, $data['Proposal']['transport_workers_price_total'])
-                    ->setCellValue('K'. $indx, $data['Proposal']['meal_adm_fee'])
-                    ->setCellValue('L'. $indx, $data['Proposal']['meal_deli_fee'])
-                    ->setCellValue('M'. $indx, $data['Proposal']['meal_workers_qty'])
-                    ->setCellValue('N'. $indx, $data['Proposal']['meal_workers_price'])
-                    ->setCellValue('O'. $indx, $data['Proposal']['meal_workers_price_total'])
-                    ->setCellValue('P'. $indx, $data['Proposal']['fuel_adm_fee'])
-                    ->setCellValue('Q'. $indx, $data['Proposal']['fuel_deli_fee'])
-                    ->setCellValue('R'. $indx, $data['Proposal']['fuel_workers_qty'])
-                    ->setCellValue('S'. $indx, $data['Proposal']['fuel_workers_price'])
-                    ->setCellValue('T'. $indx, $data['Proposal']['fuel_workers_price_total'])
-                    ->setCellValue('U'. $indx, $data['Proposal']['multi_card_adm_fee'])
-                    ->setCellValue('V'. $indx, $data['Proposal']['multi_card_deli_fee'])
-                    ->setCellValue('W'. $indx, $data['Proposal']['multi_card_workers_qty'])
-                    ->setCellValue('X'. $indx, $data['Proposal']['multi_card_workers_price'])
-                    ->setCellValue('Y'. $indx, $data['Proposal']['multi_card_workers_price_total'])
-                    ->setCellValue('Z'. $indx, $data['Proposal']['saude_card_adm_fee'])
-                    ->setCellValue('AA'. $indx, $data['Proposal']['saude_card_deli_fee'])
-                    ->setCellValue('AB'. $indx, $data['Proposal']['saude_card_workers_qty'])
-                    ->setCellValue('AC'. $indx, $data['Proposal']['saude_card_workers_price'])
-                    ->setCellValue('AD'. $indx, $data['Proposal']['saude_card_workers_price_total'])
-                    ->setCellValue('AE'. $indx, $data['Proposal']['prev_card_adm_fee'])
-                    ->setCellValue('AF'. $indx, $data['Proposal']['prev_card_deli_fee'])
-                    ->setCellValue('AG'. $indx, $data['Proposal']['prev_card_workers_qty'])
-                    ->setCellValue('AH'. $indx, $data['Proposal']['prev_card_workers_price'])
-                    ->setCellValue('AI'. $indx, $data['Proposal']['prev_card_workers_price_total'])
-                    ->setCellValue('AJ'. $indx, $data['Proposal']['total_price']);
+                $col = 'A';
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Customer"]["codigo_associado"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Customer"]["nome_primario"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Status"]["name"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Proposal"]["number"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Proposal"]["date"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data["Proposal"]["expected_closing_date"]); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['closing_date']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['tpp']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['transport_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['transport_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['management_feel']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['transport_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['transport_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['transport_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['meal_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['meal_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['meal_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['meal_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['meal_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['fuel_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['fuel_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['fuel_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['fuel_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['fuel_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['multi_card_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['multi_card_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['multi_card_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['multi_card_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['multi_card_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['saude_card_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['saude_card_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['saude_card_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['saude_card_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['saude_card_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['prev_card_adm_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['prev_card_deli_fee']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['prev_card_workers_qty']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['prev_card_workers_price']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['prev_card_workers_price_total']); $col++;
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.$indx, $data['Proposal']['total_price']); $col++;
             }
         } 
     }
