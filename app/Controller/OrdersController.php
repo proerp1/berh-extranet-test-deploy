@@ -112,7 +112,7 @@ class OrdersController extends AppController
 
         if (isset($_GET['q']) && $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], [
-                'Order.id' => "%" . $_GET['q'] . "%",
+                'Order.id' => "" . $_GET['q'] . "",
                 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
                 'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
