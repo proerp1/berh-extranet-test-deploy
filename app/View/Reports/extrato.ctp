@@ -312,7 +312,6 @@
                                 $v_total_bal_ajuste_cred    = $data_extrato['v_total_bal_ajuste_cred'];
                                 $v_total_bal_ajuste_deb     = $data_extrato['v_total_bal_ajuste_deb'];
                                 $v_total_bal_inconsistencia = $data_extrato['v_total_bal_inconsistencia'];
-                                $v_observacao               = $data_extrato['v_observacao'];
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">

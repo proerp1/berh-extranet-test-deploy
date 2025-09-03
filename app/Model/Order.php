@@ -564,8 +564,7 @@ class Order extends AppModel
                             SUM(CASE WHEN b.tipo = 1 THEN b.total END) AS total_bal_economia, 
                             SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END) AS total_bal_ajuste_cred, 
                             SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END) AS total_bal_ajuste_deb, 
-                            SUM(CASE WHEN b.tipo = 3 THEN b.total END) AS total_bal_inconsistencia, 
-                            GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
+                            SUM(CASE WHEN b.tipo = 3 THEN b.total END) AS total_bal_inconsistencia 
                         FROM orders o 
                             INNER JOIN order_balances b ON o.id = b.order_id 
                                                             AND b.data_cancel = '1901-01-01 00:00:00' 
@@ -579,7 +578,6 @@ class Order extends AppModel
         $v_total_bal_ajuste_cred        = $ex_bal[0][0]['total_bal_ajuste_cred'];
         $v_total_bal_ajuste_deb         = $ex_bal[0][0]['total_bal_ajuste_deb'];
         $v_total_bal_inconsistencia     = $ex_bal[0][0]['total_bal_inconsistencia'];
-        $v_observacao                   = $ex_bal[0][0]['observacoes'];
         $fee_saldo                      = $ex_bal[0]['o']["fee_saldo"];
         $transfer_fee                   = $ex_bal[0]['o']["transfer_fee"];
         $subtotal                       = $ex_bal[0]['o']["subtotal"];
@@ -619,7 +617,6 @@ class Order extends AppModel
             'v_repasse_pedido_compra'       => $v_repasse_pedido_compra,
             'v_diferenca_repasse'           => $v_diferenca_repasse,
             'v_saldo'                       => $v_saldo,
-            'v_observacao'                  => $v_observacao,
         ];
 
         return $data;
