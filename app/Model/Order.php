@@ -561,37 +561,36 @@ class Order extends AppModel
                             o.subtotal,
                             o.total,
                             o.desconto,
-                            COALESCE(SUM(CASE WHEN b.tipo = 1 THEN b.total END), 0) AS total_bal_economia, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END), 0) AS total_bal_ajuste_cred, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END), 0) AS total_bal_ajuste_deb, 
-                            COALESCE(SUM(CASE WHEN b.tipo = 3 THEN b.total END), 0) AS total_bal_inconsistencia, 
+                            SUM(CASE WHEN b.tipo = 1 THEN b.total END) AS total_bal_economia, 
+                            SUM(CASE WHEN b.tipo = 2 AND b.total > 0 THEN b.total END) AS total_bal_ajuste_cred, 
+                            SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END) AS total_bal_ajuste_deb, 
+                            SUM(CASE WHEN b.tipo = 3 THEN b.total END) AS total_bal_inconsistencia, 
                             GROUP_CONCAT(DISTINCT TRIM(b.observacao) SEPARATOR ' | ') AS observacoes 
                         FROM orders o 
                             INNER JOIN order_balances b ON o.id = b.order_id 
                                                             AND b.data_cancel = '1901-01-01 00:00:00' 
                                                             AND b.tipo IN(1, 2, 3) 
-                        WHERE b.order_id = :order_id 
-                            AND o.data_cancel = '1901-01-01 00:00:00' 
+                        WHERE o.id = :order_id 
+                                AND o.data_cancel = '1901-01-01 00:00:00' 
                     ";
         $ex_bal = $this->query($sql_bal, ['order_id' => $id]);
-
-        $v_fee_economia     = 0;
 
         $v_total_bal_economia           = $ex_bal[0][0]['total_bal_economia'];
         $v_total_bal_ajuste_cred        = $ex_bal[0][0]['total_bal_ajuste_cred'];
         $v_total_bal_ajuste_deb         = $ex_bal[0][0]['total_bal_ajuste_deb'];
         $v_total_bal_inconsistencia     = $ex_bal[0][0]['total_bal_inconsistencia'];
         $v_observacao                   = $ex_bal[0][0]['observacoes'];
+        $fee_saldo                      = $ex_bal[0]['o']["fee_saldo"];
+        $transfer_fee                   = $ex_bal[0]['o']["transfer_fee"];
+        $subtotal                       = $ex_bal[0]['o']["subtotal"];
+        $total                          = $ex_bal[0]['o']["total"];
+        $desconto                       = $ex_bal[0]['o']["desconto"];
 
-        $v_vl_economia      = $v_total_bal_economia;
-        $fee_saldo          = $ex_bal[0]['o']["fee_saldo"];
-        $transfer_fee       = $ex_bal[0]['o']["transfer_fee"];
-        $subtotal           = $ex_bal[0]['o']["subtotal"];
-        $total              = $ex_bal[0]['o']["total"];
-        $desconto           = $ex_bal[0]['o']["desconto"];
+        $v_vl_economia          = $v_total_bal_economia;
+        $v_fee_economia         = 0;
 
         if ($fee_saldo != 0 and $v_vl_economia != 0) {
-            $v_fee_economia   = (($fee_saldo / 100) * $v_vl_economia);
+            $v_fee_economia     = (($fee_saldo / 100) * $v_vl_economia);
         }
 
         $v_vl_economia              = ($v_vl_economia - $v_fee_economia);
