@@ -939,16 +939,16 @@ public function edit_document($id, $document_id = null)
         $this->autoRender = false;
 
         $outcome = $this->Outcome->read(null, $id);
-        $data = $this->get_pix_pendentes($outcome);
+        $pix_pendentes = $this->get_pix_pendentes($outcome);
 
-        if (!count($data)) {
+        if (!count($pix_pendentes)) {
             $this->Flash->set(__('Não há pagamentos pendentes.'), ['params' => ['class' => "alert alert-warning"]]);
             $this->redirect(['action'=> 'payments', $id]);
         }
 
         $hasError = false;
-        for ($i=0; $i < count($data); $i++) {
-            $orderItem = $data[$i];
+        for ($i=0; $i < count($pix_pendentes); $i++) {
+            $orderItem = $pix_pendentes[$i];
 
             $ApiBtgPactual = new ApiBtgPactual();
             $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento']);

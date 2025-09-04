@@ -219,49 +219,29 @@ class ApiBtgPactual extends Controller
 
     public function criaPagamentoPix($data, $pagamento) {
         $body = [
-            "items" => [
-                [
-                    "detail" => [
-                        "creditParty" => [
-                            "name" => $data['u']['name'],
-                            "taxId" => $data['u']['cpf']
-                        ],
-                    ],
-                    "amount" => $data["i"]["subtotal"],
-                    "debitParty" => [
-                        "branchCode" => "50",
-                        "number" => "5695397"
-                    ],
-                    "paymentDate" => $pagamento
-                ]
-            ]
+            "name" => $data['u']['name'],
+            "account" => [
+              "branch" => "50",
+              "number" => "5695397"
+            ],
+            "amount" => 1,
+            "notifications" => [
+              "deliveryMediums" => [],
+            ],
+            "paymentMethods" => [
+              "BANKSLIP", "IMMEDIATE_QRCODE",
+            ],
+            'type' => 'SINGLE',
         ];
 
-        $pixType = strtolower($data["b"]['pix_type']);
-        if ($pixType) {
-            $pixKey = $data['b']['pix_id'];
+        if ($data['u']['email']) {
+          $body['notifications']['deliveryMediums'][] = 'Email';
+          $body['notifications']['email'] = $data['u']['email'];
+        }
 
-            if ($pixType === 'celular') {
-                $pixKey = preg_replace('/[a-zA-Z()]/', '', $pixType);
-                if (strlen($pixKey) < 11) {
-                    return false;
-                }
-                if (!str_contains($pixKey, '+55')) {
-                    $pixKey = '+55'.$pixKey;
-                }
-            }
-
-            $body['items'][0]['detail']['key'] = [
-                'value' => $pixKey,
-            ];
-        } elseif ($data["k"]['code']) {
-            $accountType = $data["t"]['description'] == 'Conta Corrente' ? 'CC' : 'PP';
-            $body['items'][0]['detail']['creditParty']['account'] = [
-                "number" => trim($data[0]['conta']),
-                "branch" => trim($data[0]['agencia']),
-                "bankCode" => $data["k"]['code'],
-                "type" => $accountType
-            ];
+        if ($data[0]['telefone']) {
+          $body['notifications']['deliveryMediums'][] = 'Sms';
+          $body['notifications']['phone'] = $data['u']['telefone'];
         }
 
         try {
