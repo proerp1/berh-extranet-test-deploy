@@ -3341,7 +3341,7 @@ class OrdersController extends AppController
                 'conditions' => [
                     'OrderItem.id' => $itemOrderId,
                 ],
-                'group' => ['Supplier.i d'],
+                'group' => ['Supplier.id'],
             ]);
 
             foreach ($orderItems as $item) {
