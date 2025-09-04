@@ -1732,7 +1732,7 @@ class ReportsController extends AppController
             ]);
 
             foreach ($orderItems as $item) {
-                $valor_total = ($item[0]['subtotal'] - $item[0]['transfer_fee']);
+                $valor_total = ($item[0]['subtotal'] + $item[0]['transfer_fee']);
                 
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];

@@ -3341,11 +3341,11 @@ class OrdersController extends AppController
                 'conditions' => [
                     'OrderItem.id' => $itemOrderId,
                 ],
-                'group' => ['Supplier.id'],
+                'group' => ['Supplier.i d'],
             ]);
 
             foreach ($orderItems as $item) {
-                $valor_total = ($item[0]['subtotal'] - $item[0]['transfer_fee']);
+                $valor_total = ($item[0]['subtotal'] + $item[0]['transfer_fee']);
                 
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
@@ -3598,7 +3598,7 @@ class OrdersController extends AppController
             ]);
 
             foreach ($orderItems as $item) {
-                $valor_total = ($item[0]['subtotal'] - $item[0]['transfer_fee']);
+                $valor_total = ($item[0]['subtotal'] + $item[0]['transfer_fee']);
                 
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
