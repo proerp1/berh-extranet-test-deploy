@@ -540,7 +540,7 @@ class OutcomesController extends AppController {
      **********************/
     public function documents($id)
     {
-		$this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
+		    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Outcome.id' => $id], 'or' => []];
@@ -554,7 +554,7 @@ class OutcomesController extends AppController {
         }
 
         $this->Outcome->id = $id;
-        $cliente = $this->Outcome->read();
+        $this->request->data = $this->Outcome->read();
 
         $action = 'Documentos';
 
