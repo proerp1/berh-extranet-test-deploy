@@ -4364,7 +4364,9 @@ class OrdersController extends AppController
                 continue;
             }
             
-            if (strlen($cpf) != 11) {
+            $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+
+            if (empty($cpf) || !$this->isValidCPF($cpf)) {
                 CakeLog::write('warning', "Linha {$line}: CPF com formato inválido: {$cpf}");
                 $line++;
                 continue;
