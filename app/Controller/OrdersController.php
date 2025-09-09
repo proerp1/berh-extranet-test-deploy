@@ -847,7 +847,8 @@ class OrdersController extends AppController
                 'Benefit.*',
                 'BenefitType.name',  // <-- Puxar o nome do tipo
                 'Order.*',
-                'CustomerUser.*'
+                'CustomerUser.*',
+                'StatusOutcome.name',
             ],
             'joins' => [
                 [
@@ -865,10 +866,25 @@ class OrdersController extends AppController
                     'conditions' => [
                         'BenefitType.id = Benefit.benefit_type_id'
                     ]
-                ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
             ]
         ]];
-
 
         $condition = ["and" => ['Order.id' => $id], "or" => []];
 
@@ -2161,26 +2177,32 @@ class OrdersController extends AppController
                 'OrderItem.status_processamento',
                 'sum(OrderItem.subtotal) as subtotal',
                 "(SELECT sum(b.total) as total_saldo
-                                FROM order_balances b
-                                INNER JOIN benefits be ON be.id = b.benefit_id
-                                WHERE be.supplier_id = Supplier.id
-                                        AND b.tipo = 1
-                                        AND b.order_id = OrderItem.order_id
-                                        AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS total_saldo",
+                    FROM order_balances b
+                    INNER JOIN benefits be ON be.id = b.benefit_id
+                    WHERE be.supplier_id = Supplier.id
+                            AND b.tipo = 1
+                            AND b.order_id = OrderItem.order_id
+                            AND b.data_cancel = '1901-01-01 00:00:00'
+                ) AS total_saldo",
                 "(SELECT max(b.pedido_operadora) as pedido_operadora
-                                FROM order_balances b
-                                WHERE b.benefit_id = Benefit.id
-                                        AND b.tipo = 1
-                                        AND b.order_id = OrderItem.order_id
-                                        AND b.data_cancel = '1901-01-01 00:00:00'
-                            ) AS pedido_operadora",
+                    FROM order_balances b
+                    WHERE b.benefit_id = Benefit.id
+                            AND b.tipo = 1
+                            AND b.order_id = OrderItem.order_id
+                            AND b.data_cancel = '1901-01-01 00:00:00'
+                ) AS pedido_operadora",
                 "(SELECT COUNT(1)
-                                FROM outcomes o
-                                WHERE o.order_id = OrderItem.order_id
-                                        AND o.supplier_id = Supplier.id
-                                        AND o.data_cancel = '1901-01-01 00:00:00'
-                            ) AS count_outcomes"
+                    FROM outcomes o
+                    WHERE o.id = OrderItem.outcome_id
+                            AND o.supplier_id = Supplier.id
+                            AND o.data_cancel = '1901-01-01 00:00:00'
+                ) AS count_outcomes",
+                "(SELECT SUM(o.valor_total) AS valor_total 
+                    FROM outcomes o
+                    WHERE o.id = OrderItem.outcome_id
+                            AND o.supplier_id = Supplier.id
+                            AND o.data_cancel = '1901-01-01 00:00:00'
+                ) AS total_outcomes",
             ],
             'joins' => [
                 [

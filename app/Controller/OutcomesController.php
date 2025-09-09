@@ -21,11 +21,18 @@ class OutcomesController extends AppController {
                             AND c.data_cancel = '1901-01-01 00:00:00' 
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                 ) as nome_primario",
-              "(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
-                from outcome_orders
-                     inner join orders on outcome_orders.order_id = orders.id
-                     inner join customers c on orders.customer_id = c.id
-                   where Outcome.id = outcome_orders.outcome_id) as orders"
+              	"(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
+                	from outcome_orders
+                     	inner join orders on outcome_orders.order_id = orders.id
+                     	inner join customers c on orders.customer_id = c.id
+                   	where Outcome.id = outcome_orders.outcome_id
+				) as orders",
+				"(select IFNULL(group_concat(orders.id SEPARATOR '<br>'), '')
+					from outcome_orders
+						inner join orders on outcome_orders.order_id = orders.id
+						inner join customers c on orders.customer_id = c.id
+					where Outcome.id = outcome_orders.outcome_id
+				) as order_ids"
             ],
             'limit' => 175,
             'order' => ['Status.id' => 'asc', 'Outcome.vencimento' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc'],
@@ -138,11 +145,18 @@ class OutcomesController extends AppController {
 						'BankAccountType.description',
 						'Outcome.*',
 						'BankAccount.*',
-          "(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
-                from outcome_orders
-                     inner join orders on outcome_orders.order_id = orders.id
-                     inner join customers c on orders.customer_id = c.id
-                   where Outcome.id = outcome_orders.outcome_id) as orders"
+          				"(select IFNULL(group_concat(orders.id, ' - ', c.nome_primario SEPARATOR '<br>'), '')
+                			from outcome_orders
+                     			inner join orders on outcome_orders.order_id = orders.id
+                     			inner join customers c on orders.customer_id = c.id
+                   			where Outcome.id = outcome_orders.outcome_id
+						) as orders",
+          				"(select IFNULL(group_concat(orders.id SEPARATOR '<br>'), '')
+                			from outcome_orders
+                     			inner join orders on outcome_orders.order_id = orders.id
+                     			inner join customers c on orders.customer_id = c.id
+                   			where Outcome.id = outcome_orders.outcome_id
+						) as order_ids"
 					]
 				]
 			);

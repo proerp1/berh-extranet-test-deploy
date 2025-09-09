@@ -777,6 +777,8 @@
                         <th>Status Processamento</th>
                         <th>Motivo Processamento</th>
                         <th>Pedido Operadora</th>
+                        <th>ID Conta Pagar</th>
+                        <th>Status do Pagamento</th>
                         <th>Primeiro Pedido</th>
                         <?php if ($order['Order']['status_id'] == 83) { ?>
                             <th class="rounded-end"></th>
@@ -868,6 +870,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["outcome_id"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["StatusOutcome"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não'; ?></td>
 
                                 <?php if ($order['Order']['status_id'] == 83) { ?>
