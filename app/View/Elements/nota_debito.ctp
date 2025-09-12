@@ -338,7 +338,7 @@
                     <td style="text-align: center;"> <?php echo $order['Order']['transfer_fee']; ?></td>
                 </tr>
                 <tr>
-                    <th colspan="2" style="text-align: right;" class="pr-10">DESCONTO (C)</th>
+                    <th colspan="2" style="text-align: right;" class="pr-10">CRÉDITO (C)</th>
                     <td style="text-align: center;"> <?php echo $order['Order']['desconto']; ?></td>
                 </tr>
                 <tr>

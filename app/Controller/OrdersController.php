@@ -767,8 +767,10 @@ class OrdersController extends AppController
     public function edit($id = null)
     {
         $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+        
         $user = $this->Auth->user();
         $this->set('user', $user);
 
@@ -1055,11 +1057,13 @@ class OrdersController extends AppController
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
+        $permObsPedido = $this->Permission->check(85, "escrita");
+
         $this->set("form_action", "edit");
 
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
         $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
-        $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento'));
+        $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento', 'permObsPedido'));
 
 
         $this->render("add");
@@ -2484,7 +2488,7 @@ class OrdersController extends AppController
         $itens = $this->OrderItem->find('all', [
             'fields' => [
                 'CustomerUserItinerary.benefit_id',
-                'sum(CustomerUserItinerary.quantity) as qtd',
+                'count(CustomerUserItinerary.quantity) as qtd',
                 'round(sum(OrderItem.subtotal),2) as valor',
                 'round(sum(OrderItem.total),2) as total',
             ],

@@ -296,7 +296,7 @@
                                 <textarea 
                                     name="data[Order][observation]" 
                                     class="form-control auto-expand" 
-                                    <?php echo $order['Order']['status_id'] >= 85 ? 'readonly' : ''; ?>
+                                    <?php echo $order['Order']['status_id'] >= 85 && !$permObsPedido ? 'readonly' : ''; ?>
                                 ><?php echo $order['Order']['observation']; ?></textarea>
                             </div>
 
@@ -412,7 +412,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" id="update-order" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] == 87) ? 'disabled="disabled"' : ''; ?>>
+                                    <button type="submit" id="update-order" class="btn btn-sm btn-success me-3 js-salvar" style="padding: 11px 20px; font-size: 15px;" <?php echo ($order['Order']['status_id'] == 87 && !$permObsPedido) ? 'disabled="disabled"' : ''; ?>>
                                         Salvar dados
                                     </button>
                                 </div>
