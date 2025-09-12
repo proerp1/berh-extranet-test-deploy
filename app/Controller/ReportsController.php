@@ -1344,6 +1344,11 @@ class ReportsController extends AppController
             $this->redirect('/files/excel/' . $nome);
         }
 
+        $conditionsJson = false;
+        if ($buscar) {
+            $conditionsJson = base64_encode(json_encode($condition));
+        }
+
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
         $benefitTypes = $this->BenefitType->find('list', [
             'order' => ['BenefitType.name' => 'ASC']
@@ -1352,7 +1357,7 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson'));
     }
 
     public function getSupplierAndCustomer()
@@ -2037,5 +2042,146 @@ class ReportsController extends AppController
         }
         
         echo json_encode(['success' => true]);
+    }
+
+    public function getTotalOrders()
+    {
+        $this->autoRender = false;
+        $this->response->type('json');
+
+        ini_set('memory_limit', '-1');
+        
+        if (!$this->request->is('ajax')) {
+            throw new NotFoundException();
+        }
+        
+        $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+
+        $data = [];
+        if ($this->request->data('conditions')) {
+            $totalOrders = $this->OrderItem->find('first', [
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
+
+                ],
+                'conditions' => $condition,
+                'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+                'fields' => [
+                    'sum(OrderItem.subtotal) as subtotal',
+                    'sum(OrderItem.transfer_fee) as transfer_fee',
+                    'sum(OrderItem.commission_fee) as commission_fee',
+                    'sum(OrderItem.total) as total',
+                ],
+            ]);
+
+            $data = $totalOrders[0];
+        }
+
+        echo json_encode([
+            'success' => true,
+            'totals' => $data,
+            'has_economia' => false
+        ]);
+    }
+
+    public function getTotalEconomia()
+    {
+        $this->autoRender = false;
+        $this->response->type('json');
+
+        ini_set('memory_limit', '-1');
+        
+        if (!$this->request->is('ajax')) {
+            throw new NotFoundException();
+        }
+        
+        $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+
+        $order_ids = [];
+        if ($this->request->data('conditions')) {
+            $order_ids = $this->OrderItem->find('list', [
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'suppliers',
+                        'alias' => 'Supplier',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Supplier.id = Benefit.supplier_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'customers',
+                        'alias' => 'Customer',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                        ],
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'Status',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Status.id = Order.status_id',
+                        ]
+                    ],
+
+                ],
+                'conditions' => $condition,
+                'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
+                'fields' => ['Order.id'],
+                'group' => ['Order.id'],
+            ]);
+        }
+
+        $total_economia = 0;
+        foreach ($order_ids as $order_id) {
+            $extrato = $this->Order->getExtrato($order_id);
+            $total_economia += $extrato['v_total_economia'];
+        }
+
+        echo json_encode([
+            'success' => true,
+            'economia' => $total_economia
+        ]);
     }
 }
