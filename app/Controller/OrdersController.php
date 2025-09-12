@@ -1580,7 +1580,8 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $cpfToValidate = $row[0];
+            $cpfToValidate = $row[0];            
+            $cpfToValidate = str_pad($cpfToValidate, 11, '0', STR_PAD_LEFT);
 
             if (empty($cpfToValidate) || !$this->isValidCPF($cpfToValidate)) {
                 return ['success' => false, 'error' => 'CPF inválido na linha ' . ($line + 1) . '.'];
@@ -1655,27 +1656,29 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $benefitId = $row[3];
+            $unitPrice = $row[1];
+            $benefitId = $row[3];            
 
             $benefit = $this->Benefit->find('first', [
                 'conditions' => [
                     'Benefit.code' => $benefitId,
                     'Benefit.data_cancel' => '1901-01-01 00:00:00'
                 ],
-                'fields' => ['Benefit.id', 'Benefit.is_variable']
+                'fields' => ['Benefit.id', 'Benefit.is_variable', 'Benefit.unit_price']
             ]);
+            
+            $is_variable = (int)$benefit['Benefit']['is_variable'] === 1;
 
-            // desabilita temporariamente a verificação de benefício
-            // if ((int)$benefit['Benefit']['is_variable'] === 1) {
-            $unitPrice = $row[1];
-            // convert brl string to float
-            $unitPrice = str_replace(".", "", $unitPrice);
-            $unitPrice = (float)str_replace(",", ".", $unitPrice);
+            if ($is_variable) {
+                $unitPrice = $this->priceFormatBeforeSave($unitPrice);
+            } else {
+                $unitPrice = $benefit['Benefit']['unit_price_not_formated'];
+            }
+            
             $workingDays = $row[2];
             $benefitId = $row[3];
             $quantity = $row[4];
             $unitPriceMapping[$existingUser['CustomerUser']['id']][] = ['unitPrice' => $unitPrice, 'workingDays' => $workingDays, 'quantity' => $quantity, 'benefitId' => $benefitId];
-            // }
 
             $customerUsersIds[] = $existingUser['CustomerUser']['id'];
 
