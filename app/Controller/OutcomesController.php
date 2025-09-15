@@ -421,6 +421,7 @@ class OutcomesController extends AppController {
         foreach ($orderArr as $order) {
             $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
         }
+
 		$cancelarConta = $this->Permission->check(57, "escrita");
 
 		$action = 'Contas a pagar';
@@ -904,7 +905,7 @@ public function edit_document($id, $document_id = null)
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 100,
             'order' => ['CustomerUser.name' => 'asc'],
-            'fields' => ['OrderItem.*', 'CustomerUserItinerary.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'PixStatus.*'],
+            'fields' => ['OrderItem.*', 'Benefit.*', 'Order.*', 'CustomerUser.*', 'PixStatus.*', 'CustomerUserBankAccounts.*', 'Outcome.*', 'BankCode.*'],
             'joins' => [
                 [
                     'table' => 'benefits',
@@ -912,6 +913,30 @@ public function edit_document($id, $document_id = null)
                     'type' => 'INNER',
                     'conditions' => [
                         'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_user_bank_accounts',
+                    'alias' => 'CustomerUserBankAccounts',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUserBankAccounts.customer_user_id = CustomerUser.id'
+                    ]
+                ],
+                [
+                    'table' => 'bank_codes',
+                    'alias' => 'BankCode',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerUserBankAccounts.bank_code_id = BankCode.id'
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.order_id = Order.id'
                     ]
                 ]
             ]
@@ -926,26 +951,11 @@ public function edit_document($id, $document_id = null)
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
         $outcome = $this->Outcome->read(null, $id);
-        $pendingPix = $this->get_pix_pendentes($outcome);
+        $pendingPix = $this->CustomerUser->find_pix_pendentes($outcome['Outcome']['order_id']);
 
         $action = 'Contas a pagar';
         $breadcrumb = ['Pagamentos' => ''];
         $this->set(compact('breadcrumb', 'action', 'id', 'order', 'items', 'pendingPix'));
-    }
-
-    private function get_pix_pendentes($outcome) {
-        $data = $this->CustomerUser->find_pedido_beneficiarios_info($outcome['Outcome']['order_id']);
-
-        $pix_pendentes = [];
-        for ($i=0; $i < count($data); $i++) {
-            $orderItem = $data[$i];
-
-            if ($orderItem['i']['pix_status_id'] != "109") continue;
-
-            $pix_pendentes[] = $orderItem;
-        }
-
-        return $pix_pendentes;
     }
 
     public function enviar_btg($id) {
@@ -953,28 +963,32 @@ public function edit_document($id, $document_id = null)
         $this->autoRender = false;
 
         $outcome = $this->Outcome->read(null, $id);
-        $pix_pendentes = $this->get_pix_pendentes($outcome);
+        $pix_pendentes = $this->CustomerUser->find_pix_pendentes($outcome['Outcome']['order_id']);
 
         if (!count($pix_pendentes)) {
             $this->Flash->set(__('Não há pagamentos pendentes.'), ['params' => ['class' => "alert alert-warning"]]);
+            $this->redirect(['action'=> 'payments', $id]);
+        } elseif (!$outcome['Outcome']['data_pagamento']) {
+            $this->Flash->set(__('Cadastre uma data de pagamento para realizar a liberação do pix.'), ['params' => ['class' => "alert alert-warning"]]);
             $this->redirect(['action'=> 'payments', $id]);
         }
 
         $hasError = false;
         for ($i=0; $i < count($pix_pendentes); $i++) {
             $orderItem = $pix_pendentes[$i];
-
-            $ApiBtgPactual = new ApiBtgPactual();
-            $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento']);
-
-            if (!$success) {
-                $hasError = true;
-            }
+            $success = true;
+//            $ApiBtgPactual = new ApiBtgPactual();
+//            $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento_nao_formatado']);
+//
+//            if (!$success) {
+//                $hasError = true;
+//            }
 
             $pix_status_id = $success ? 111 : 110;
             $this->OrderItem->id = $orderItem['i']['id'];
             $this->OrderItem->save([
-                'pix_status_id' => $pix_status_id
+                'pix_status_id' => $pix_status_id,
+                'bank_sent_date' => date('Y-m-d H:i:s')
             ]);
             $this->OrderItem->clear();
         }

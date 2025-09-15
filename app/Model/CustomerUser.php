@@ -219,4 +219,58 @@ class CustomerUser extends AppModel
         return $res;
     }
 
+    public function find_pix_pendentes($orderID)
+    {
+        $sql = "SELECT 
+                  u.name, 
+                  u.cpf, 
+                  u.email, 
+                  IFNULL(u.cel, u.tel) AS telefone, 
+                  k.name, 
+                  k.code, 
+                  CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, 
+                  CONCAT(b.acc_number, '-', b.acc_digit) AS conta, 
+                  b.pix_type, 
+                  b.pix_id, 
+                  t.description, 
+                  i.subtotal, 
+                  i.total, 
+                  i.id, 
+                  i.pix_status_id
+              FROM orders o 
+              INNER JOIN order_items i 
+                  ON i.order_id = o.id 
+              INNER JOIN customers c 
+                  ON c.id = o.customer_id 
+              INNER JOIN customer_users u 
+                  ON u.customer_id = c.id 
+                 AND u.id = i.customer_user_id 
+              LEFT JOIN (
+                  SELECT b1.*
+                  FROM customer_user_bank_accounts b1
+                  WHERE b1.data_cancel = '1901-01-01 00:00:00'
+                    AND b1.id = (
+                        SELECT MAX(b2.id) 
+                        FROM customer_user_bank_accounts b2 
+                        WHERE b2.customer_user_id = b1.customer_user_id
+                          AND b2.data_cancel = '1901-01-01 00:00:00'
+                          AND b2.status_id = 1
+                    )
+              ) b ON b.customer_user_id = u.id
+              LEFT JOIN bank_codes k ON k.id = b.bank_code_id 
+              LEFT JOIN bank_account_types t ON t.id = b.account_type_id 
+              WHERE o.id = ".$orderID."
+                AND i.pix_status_id = 109
+                AND o.data_cancel = '1901-01-01 00:00:00' 
+                AND c.data_cancel = '1901-01-01 00:00:00' 
+                AND u.data_cancel = '1901-01-01 00:00:00' 
+                AND i.data_cancel = '1901-01-01 00:00:00' 
+              ORDER BY 1;
+                    ";
+
+        $res = $this->query($sql);
+
+        return $res;
+    }
+
 }

@@ -31,9 +31,13 @@ class Outcome extends AppModel {
 			$this->data['Outcome']['vencimento'] = $this->dateFormatBeforeSave($this->data['Outcome']['vencimento']);
 		}
 
+		if (!empty($this->data['Outcome']['data_pagamento'])) {
+			$this->data['Outcome']['data_pagamento'] = $this->dateFormatBeforeSave($this->data['Outcome']['data_pagamento']);
+		}
+
 		if (empty($this->data['Outcome']['id']) && empty($this->data['Outcome']['created'])) {
-		$this->data['Outcome']['created'] = date('Y-m-d H:i:s');
-	}
+      $this->data['Outcome']['created'] = date('Y-m-d H:i:s');
+    }
 
 		if (!empty($this->data['Outcome']['valor_bruto'])) {
 			$this->data['Outcome']['valor_bruto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_bruto']);
@@ -77,15 +81,17 @@ class Outcome extends AppModel {
 	public function afterFind($results, $primary = false){
 		foreach ($results as $key => $val) {
 			if (isset($val['Outcome']['vencimento'])) {
-	        	$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
-	      	}
-			  if (isset($val['Outcome']['created'])) {
+        $results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
+      }
+      if (isset($val['Outcome']['created'])) {
 				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
-	        	$results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
-	      	}
-	      	if (isset($val['Outcome']['data_pagamento'])) {
-	        	$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
-	      	}
+        $results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
+      }
+      if (isset($val['Outcome']['data_pagamento'])) {
+        $results[$key]['Outcome']['data_pagamento_nao_formatado'] = $val['Outcome']['data_pagamento'];
+
+        $results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
+      }
 			if (isset($val['Outcome']['valor_bruto'])) {
 				$results[$key]['Outcome']['valor_bruto'] = number_format($results[$key]['Outcome']['valor_bruto'],2,',','.');
 			}

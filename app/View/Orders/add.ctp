@@ -19,6 +19,17 @@
             toggleActive: true
         });
 
+        $("#PixPagamento").datepicker({
+            format: 'dd/mm/yyyy',
+            weekStart: 1,
+            startDate: "today",
+            orientation: "bottom auto",
+            autoclose: true,
+            language: "pt-BR",
+            todayHighlight: true,
+            toggleActive: true
+        });
+
         $('.OrderDueDate').mask('99/99/9999');
 
         $('#OrderUnitPrice').maskMoney({
@@ -702,9 +713,9 @@
                         </a>
                     <?php } ?>
                     <?php if ($order['Order']['is_partial'] == 3) { ?>
-                        <a href="<?php echo $this->base . '/orders/gerar_remessa_pix/' . $id; ?>" class="btn btn-sm btn-warning me-3" style="float:right">
+                        <a data-bs-toggle="modal" data-bs-target="#modal_gera_remessa_pix" class="btn btn-sm btn-success me-3" style="float:right">
                             <i class="fas fa-dollar-sign"></i>
-                            Criar remessa Contas a Pagar
+                            Remessa Pix
                         </a>
                         <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
                             <i class="fas fa-file-excel"></i>
@@ -913,20 +924,26 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_criar_remessa_pix" role="dialog">
+<div class="modal fade" tabindex="-1" id="modal_gera_remessa_pix" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
+                <h4 class="modal-title">Tem certeza que deseja gerar a remessa pix?</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form action="<?php echo $this->base . '/orders/modal_criar_remessa_pix/' . $id; ?>" class="form-horizontal" method="post">
+            <form action="<?php echo $this->base . '/orders/gerar_remessa_pix/' . $id; ?>" class="form-horizontal" method="post">
                 <div class="modal-body">
-                    <p>Tem certeza que deseja gerar o boleto?</p>
+                    <div class="mb-7 col">
+                        <label class="form-label">Data de Pagamento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                            <input type="text" name="data[Outcome][data_pagamento]" id="PixPagamento" required class="form-control">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-success js-salvar">Sim</button>
+                    <button type="submit" class="btn btn-success js-salvar">Gerar</button>
                 </div>
             </form>
         </div>

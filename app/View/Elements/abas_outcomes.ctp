@@ -6,7 +6,7 @@
 		<a class="nav-link <?php echo in_array($this->request->params['action'], ['documents', 'add_document', 'edit_document']) ? 'active' : '' ?>" href="<?php echo $this->base.'/outcomes/documents/'.$id; ?>">Documentos</a>
 	</li>
 
-    <?php if ($this->request->data['Outcome']['order_id']) { ?>
+    <?php if ($this->request->data['Outcome']['order_id'] && $this->request->data['Outcome']['status_id'] == 12) { ?>
         <li class="nav-item">
             <a class="nav-link <?php echo in_array($this->request->params['action'], ['payments']) ? 'active' : '' ?>" href="<?php echo $this->base.'/outcomes/payments/'.$id; ?>">Pagamentos</a>
         </li>

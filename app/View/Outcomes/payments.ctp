@@ -65,7 +65,7 @@
                         <?php if (count($pendingPix)) { ?>
                             <a href="<?php echo $this->base . '/outcomes/enviar_btg/' . $id; ?>" class="btn btn-sm btn-success me-3" style="float:right">
                                 <i class="fas fa-dollar-sign"></i>
-                                Enviar para BTG
+                                Liberar PIX
                             </a>
                         <?php } ?>
                         <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $order['Order']['id']; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
@@ -111,42 +111,22 @@
                     </th>
                     <th>Beneficiário</th>
                     <th>Benefício</th>
-                    <th width="90px">Dias Úteis</th>
-                    <!--<th width="120px">Desconto</th>-->
-                    <th width="120px">Quantidade por dia</th>
-                    <th>Valor por dia</th>
-                    <th>Subtotal</th>
-                    <th>Repasse</th>
-                    <th>Taxa</th>
-                    <th class="<?php echo $order['Order']['status_id'] != 83 ? 'rounded-end' : '' ?>">Total</th>
-                    <th>Economia</th>
-                    <th>Repasse com Economia</th>
-                    <th>Relatório beneficio</th>
-                    <th>Repasse Compra</th>
-                    <th>Data inicio Processamento</th>
-                    <th>Data fim Processamento</th>
-                    <th>Status Processamento</th>
-                    <th>Motivo Processamento</th>
-                    <th>Pedido Operadora</th>
-                    <th>Primeiro Pedido</th>
+                    <th>Valor</th>
+                    <th>Data Pagamento</th>
+                    <th>Tipo Chave</th>
+                    <th>Chave</th>
                     <th>Status Pix</th>
-                    <th class="rounded-end"></th>
+                    <th>Data Envio Banco</th>
+                    <th>Cod Banco</th>
+                    <th>Nome Banco</th>
+                    <th>Conta Corrente</th>
+                    <th>Digito</th>
+                    <th>Agência</th>
+                    <th>Digito</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Total</td>
-                    <td colspan="5"></td>
-                    <td class="subtotal_sum">R$<?php echo $order['Order']['subtotal']; ?></td>
-                    <td class="transfer_fee_sum">R$<?php echo $order['Order']['transfer_fee']; ?></td>
-                    <td class="commission_fee_sum">R$<?php echo $order['Order']['commission_fee']; ?></td>
-                    <td class="total_sum">R$<?php echo $order['Order']['total']; ?></td>
-                    <td class="saldo_sum">R$<?php echo $order['Order']['saldo']; ?></td>
-                    <td class="saldo_transfer_fee_sum">R$<?php echo $order['Order']['saldo_transfer_fee']; ?></td>
-                    <td class="total_saldo_sum">R$<?php echo $order['Order']['total_saldo']; ?></td>
-                    <td class="repasse_compra_sum">R$<?php echo number_format(($order["Order"]["transfer_fee_not_formated"] - $order["Order"]["saldo_transfer_fee_not_formated"]), 2, ',', '.'); ?></td>
-                    <td colspan="8"></td>
-                </tr>
                 <?php
                 $subtotal = 0;
                 $transfer_fee = 0;
@@ -165,53 +145,27 @@
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4">
-                                <?php if ($order['Order']['status_id'] == 83) { ?>
-                                    <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
-                                    <input type="hidden" class="user_id" value="<?php echo $items[$i]["OrderItem"]["customer_user_id"]; ?>">
-                                    <input type="number" class="form-control working_days_input" value="<?php echo $items[$i]["OrderItem"]["working_days"]; ?>">
-                                <?php } else { ?>
-                                    <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
-                                <?php } ?>
-                            </td>
-                            <!--<td class="fw-bold fs-7 ps-4">
-                                    <?php if ($order['Order']['status_id'] == 83) { ?>
-                                        <input type="text" class="form-control money_field var_days_input" value="<?php echo $items[$i]["OrderItem"]["var"]; ?>">
-                                    <?php } else { ?>
-                                        <?php echo $items[$i]["OrderItem"]["var"]; ?>
-                                    <?php } ?>
-                                </td> !-->
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["transfer_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 commission_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["commission_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["commission_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 total_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 saldo_transfer_fee_line" data-valor="<?php echo $items[$i]["OrderItem"]["saldo_transfer_fee_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["saldo_transfer_fee"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 total_saldo_line" data-valor="<?php echo $items[$i]["OrderItem"]["total_saldo_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["total_saldo"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4 repasse_compra_line" data-valor="<?php echo $repasse_compra; ?>"><?php echo 'R$' . number_format($repasse_compra, 2, ',', '.'); ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_inicio_processamento"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_fim_processamento"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não'; ?></td>
-                            <td class="fw-bold fs-7 ps-4">
+                            <!--Valor--> <td class="fw-bold fs-7 ps-4 subtotal_line" data-valor="<?php echo $items[$i]["OrderItem"]["subtotal_not_formated"]; ?>"><?php echo 'R$' . $items[$i]["OrderItem"]["subtotal"]; ?></td>
+                            <!--Data de Pagamento--> <td class="fw-bold fs-7 ps-4"><?php echo date("d/m/Y", strtotime($items[$i]['Outcome']['data_pagamento'])); ?></td>
+                            <?php $pix_types = ['' => '-', 'cnpj' => 'CNPJ', 'cpf' => 'CPF', 'email' => 'E-mail', 'celular' => 'Celular', 'chave' => 'Chave', 'qr code' => 'Qr Code', 'aleatoria' => 'Aleatória'] ?>
+                            <!--Tipo Chave--> <td class="fw-bold fs-7 ps-4"><?php echo $pix_types[$items[$i]["CustomerUserBankAccounts"]["pix_type"]]; ?></td>
+                            <!--Chave--> <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserBankAccounts"]["pix_id"]; ?></td>
+                            <!--Status Pix--> <td class="fw-bold fs-7 ps-4">
                                 <span class="badge <?php echo $items[$i]["PixStatus"]["label"]; ?>">
                                     <?php echo $items[$i]["PixStatus"]["name"]; ?>
                                 </span>
                             </td>
-
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["bank_sent_date"] ? date("d/m/Y", strtotime($items[$i]['OrderItem']['bank_sent_date'])) : '-'; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["BankCode"]["code"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["BankCode"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserBankAccounts"]["acc_number"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserBankAccounts"]["acc_digit"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserBankAccounts"]["branch_number"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUserBankAccounts"]["branch_digit"]; ?></td>
                             <td class="fw-bold fs-7 ps-4 nowrap">
-                                <?php if ($items[$i]['PixStatus']['id'] == 111) { ?>
-                                    <a href="<?php echo $this->base.'/outcomes/marcar_pix_pago/'.$items[$i]['OrderItem']['id'] ?>" class="btn btn-success btn-sm">Pago</a>
-                                <?php } ?>
-                                <?php if ($order['Order']['status_id'] == 83) { ?>
-                                    <button class="btn btn-secondary btn-icon btn-sm" onclick="confirm('<h3>Deseja mesmo remover este benefício?</h3>', '<?php echo $this->base . '/orders/removeOrderItem/' . $items[$i]["OrderItem"]["order_id"] . '/' . $items[$i]["OrderItem"]["id"]; ?>')">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                <?php } ?>
+                              <?php if ($items[$i]['PixStatus']['id'] == 111) { ?>
+                                  <a href="<?php echo $this->base.'/outcomes/marcar_pix_pago/'.$items[$i]['OrderItem']['id'] ?>" class="btn btn-success btn-sm">Pago</a>
+                              <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>

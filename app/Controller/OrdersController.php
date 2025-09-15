@@ -3166,7 +3166,7 @@ class OrdersController extends AppController
         try {
             $order = $this->Order->findById($id);
 
-            $this->Outcome->save(['Outcome' => [
+            $newOutcome = $this->Outcome->save(['Outcome' => [
                 'status_id' => 11,
                 'doc_num' => $order['Order']['id'],
                 'order_id' => $order['Order']['id'],
@@ -3179,13 +3179,19 @@ class OrdersController extends AppController
                 'supplier_id' => 1,
                 'cost_center_id' => 116,
                 'recorrencia' => 2,
-                'name' => 'PIX',
+                'name' => 'Pagamento ao fornecedor',
                 'valor_multa' => 0,
                 'valor_bruto' => $order['Order']['subtotal'],
                 'valor_total' => $order['Order']['total'],
                 'vencimento' => $order['Order']['due_date'],
+                'data_pagamento' => $this->request->data['Outcome']['data_pagamento'],
                 'created' => date('Y-m-d H:i:s'),
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
+            ]]);
+
+            $this->OutcomeOrder->save(['OutcomeOrder' => [
+              'order_id' => $order['Order']['id'],
+              'outcome_id' => $newOutcome['Outcome']['id'],
             ]]);
         } catch (Exception $e) {
             $this->Flash->set(__('Não foi possível gerar a remessa. Verifique os dados e tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
