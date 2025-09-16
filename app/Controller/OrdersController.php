@@ -3184,7 +3184,7 @@ class OrdersController extends AppController
                 'valor_bruto' => $order['Order']['subtotal'],
                 'valor_total' => $order['Order']['total'],
                 'vencimento' => $order['Order']['due_date'],
-                'data_pagamento' => $this->request->data['Outcome']['data_pagamento'],
+                'data_pagamento' => date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento']))),
                 'created' => date('Y-m-d H:i:s'),
                 'user_creator_id' => CakeSession::read("Auth.User.id"),
             ]]);

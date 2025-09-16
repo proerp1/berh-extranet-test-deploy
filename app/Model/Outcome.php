@@ -31,10 +31,6 @@ class Outcome extends AppModel {
 			$this->data['Outcome']['vencimento'] = $this->dateFormatBeforeSave($this->data['Outcome']['vencimento']);
 		}
 
-		if (!empty($this->data['Outcome']['data_pagamento'])) {
-			$this->data['Outcome']['data_pagamento'] = $this->dateFormatBeforeSave($this->data['Outcome']['data_pagamento']);
-		}
-
 		if (empty($this->data['Outcome']['id']) && empty($this->data['Outcome']['created'])) {
       $this->data['Outcome']['created'] = date('Y-m-d H:i:s');
     }

@@ -976,13 +976,13 @@ public function edit_document($id, $document_id = null)
         $hasError = false;
         for ($i=0; $i < count($pix_pendentes); $i++) {
             $orderItem = $pix_pendentes[$i];
-            $success = true;
-//            $ApiBtgPactual = new ApiBtgPactual();
-//            $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento_nao_formatado']);
-//
-//            if (!$success) {
-//                $hasError = true;
-//            }
+
+            $ApiBtgPactual = new ApiBtgPactual();
+            $success = $ApiBtgPactual->criaPagamentoPix($orderItem, $outcome['Outcome']['data_pagamento_nao_formatado']);
+
+            if (!$success) {
+                $hasError = true;
+            }
 
             $pix_status_id = $success ? 111 : 110;
             $this->OrderItem->id = $orderItem['i']['id'];
