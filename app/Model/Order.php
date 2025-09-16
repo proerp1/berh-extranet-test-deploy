@@ -59,7 +59,8 @@ class Order extends AppModel
         'OrderItem' => [
             'className' => 'OrderItem',
             'foreignKey' => 'order_id'
-        ]
+        ],
+        'OrderDesconto'
     ];
 
     public function beforeFind($queryData)

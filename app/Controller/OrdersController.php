@@ -41,6 +41,7 @@ class OrdersController extends AppController
         'LogOrderItemsProcessamento',
         'SupplierVolumeTier',
         'OutcomeOrder',
+        'OrderDesconto'
     ];
     
     public $groupBenefitType = [
@@ -1054,6 +1055,11 @@ class OrdersController extends AppController
 
         $outcome = $this->Outcome->find('first', ['conditions' => ['Outcome.order_id' => $id]]);
 
+        $descontos = $this->OrderDesconto->find('all', ['conditions' => ['OrderDesconto.order_id' => $id]]);
+        $soma_descontos = array_reduce($descontos, function ($reduced, $desconto) {
+          return $reduced + $desconto['OrderDesconto']['valor_nao_formatado'];
+        }, 0);
+
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
@@ -1061,7 +1067,7 @@ class OrdersController extends AppController
 
         $this->set("form_action", "edit");
 
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
+        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento', 'soma_descontos'));
         $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
         $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento', 'permObsPedido'));
 
