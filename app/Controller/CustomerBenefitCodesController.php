@@ -20,8 +20,9 @@ class CustomerBenefitCodesController extends AppController
 
         if (isset($_GET['q']) && $_GET['q'] != '') {
             $query = $_GET['q'];
-            $condition['or'] = array_merge($condition['or'], ["Customer.code_be LIKE '%$query%'"]);
-            $condition['or'] = array_merge($condition['or'], ["Customer.code_customer LIKE '%$query%'"]);
+            $condition['or'] = array_merge($condition['or'], ["CustomerBenefitCode.code_be LIKE '%$query%'"]);
+            $condition['or'] = array_merge($condition['or'], ["CustomerBenefitCode.code_customer LIKE '%$query%'"]);
+            $condition['or'] = array_merge($condition['or'], ["Benefit.name LIKE '%$query%'"]);
         }
 
         if (isset($_GET['excel'])) {

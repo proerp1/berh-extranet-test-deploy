@@ -3,7 +3,7 @@
 ?>
 
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array( "controller" => "customers_benefit_code", "action" => "index", $id)); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array( "controller" => "customer_benefit_codes", "action" => "index", $id)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
