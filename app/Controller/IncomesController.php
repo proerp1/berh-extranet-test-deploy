@@ -937,11 +937,8 @@ class IncomesController extends AppController
         ];
     }
 
-    private function get_tpp_data($income, $type) {
+    private function get_tpp_data($income) {
         $title = "Prestação de Serviços - Taxa Administrativa / Taxa Processamento de Pedidos";
-        if ($type === 'ge-tpp') {
-          $title .= " / Gestão Eficiente";
-        }
         $total = $income['Order']['commission_fee_not_formated'] + $income['Order']['tpp_fee'];
         $total_formatted = number_format($total, 2, ',', '.');
         $tpp_fee_formatted = number_format($income['Order']['tpp_fee'], 2, ',', '.');
