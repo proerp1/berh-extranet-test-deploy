@@ -30,6 +30,12 @@
             toggleActive: true
         });
 
+        $('#OrderUnitPrice').maskMoney({
+            decimal: ',',
+            thousands: '.',
+            precision: 2
+        });
+
         $('.OrderDueDate').mask('99/99/9999');
     });
 </script>
@@ -339,7 +345,7 @@
 
                             <div class="mb-7 col-4">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled>
+                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
                             </div>
                         </div>
 
