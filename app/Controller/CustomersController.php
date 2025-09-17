@@ -319,7 +319,7 @@ class CustomersController extends AppController
         $hash = base64_encode($this->request->data['Customer']['codigo_associado']);
         $this->set('hash', rawurlencode($hash));
 
-        $this->set('canEditNfseObs', $this->Permission->check(84, "escrita"));
+        $this->set('canEditNfseObs', $this->Permission->check(86, "escrita"));
         $this->set('action', $this->request->data['Customer']['nome_secundario']);
         $this->set('form_action', 'edit');
         $this->set(compact('statuses', 'id', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));

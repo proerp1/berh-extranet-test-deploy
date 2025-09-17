@@ -19,7 +19,7 @@ final class CreateEditNfseObservationPermission extends AbstractMigration
     public function change(): void
     {
       $rows = [
-          ['id' => 84, 'name' => 'Clientes - Editar Observação Nota Fiscal'],
+          ['id' => 86, 'name' => 'Clientes - Editar Observação Nota Fiscal'],
       ];
 
       $this->table('pages')->insert($rows)->saveData();
