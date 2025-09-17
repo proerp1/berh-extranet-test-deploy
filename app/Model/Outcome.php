@@ -12,7 +12,11 @@ class Outcome extends AppModel {
 		'BankAccount',
 		'Expense',
 		'CostCenter',
-		'Supplier'
+		'Supplier',
+    'UserUpdated' => array(
+      'className' => 'User',
+      'foreignKey' => 'user_updated_id'
+    ),
 	);
 
   public $hasMany = array(
@@ -82,6 +86,10 @@ class Outcome extends AppModel {
       if (isset($val['Outcome']['created'])) {
 				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
         $results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
+      }
+      if (isset($val[$this->alias]['updated'])) {
+				$results[$key][$this->alias]['updated_nao_formatado'] = $val[$this->alias]['updated'];
+        $results[$key][$this->alias]['updated'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['updated']));
       }
       if (isset($val['Outcome']['data_pagamento'])) {
         $results[$key]['Outcome']['data_pagamento_nao_formatado'] = $val['Outcome']['data_pagamento'];

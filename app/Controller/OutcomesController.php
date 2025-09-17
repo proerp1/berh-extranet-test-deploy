@@ -12,8 +12,9 @@ class OutcomesController extends AppController {
                 'Outcome.*',
                 'Status.*',
                 'Supplier.nome_fantasia',
-				'Supplier.valor',
-				'Supplier.unidade_tempo',
+                'UserUpdated.name',
+                'Supplier.valor',
+                'Supplier.unidade_tempo',
                 "(SELECT c.nome_primario
                     FROM orders o 
                         INNER JOIN customers c ON o.customer_id = c.id  

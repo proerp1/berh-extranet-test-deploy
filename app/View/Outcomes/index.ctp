@@ -289,6 +289,7 @@
                         <th>Forma de pagamento</th>
                         <th>Registro Cobrança</th>
                         <th>Pedidos</th>
+                        <th>Última Atualização</th>
 						<th class="w-300px min-w-300px rounded-end">Ações</th>
 					</tr>
 				</thead>
@@ -338,6 +339,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Supplier"]["valor"] . ' ' . $data[$i]["Supplier"]["unidade_tempo"]; ?></td>
 
                                 <td class="fw-bold fs-7 ps-4" style="min-width: 240px"><?php echo $data[$i][0]["orders"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['UserUpdated']["name"] ? $data[$i]['UserUpdated']["name"].' - '.$data[$i]['Outcome']['updated'] : ' - '; ?></td>
 
 								<td class="fw-bold fs-7 ps-4">
 

@@ -162,7 +162,8 @@ class IncomesController extends AppController
                         'Customer.*', 
                         'BankAccount.*', 
                         'Status.*', 
-                        'Order.*', 
+                        'Order.*',
+                        'UserUpdated.name',
                         "(CASE WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' WHEN Order.condicao_pagamento = 2 THEN 'Faturado' ELSE '' END) AS desc_condicao_pagamento",
                         '(SELECT GROUP_CONCAT(nfse.tipo) 
                         FROM income_nfse nfse 
@@ -189,6 +190,11 @@ class IncomesController extends AppController
                             'alias' => 'Order',
                             'type' => 'LEFT',
                             'conditions' => ['Income.order_id = Order.id']
+                        ],
+                        ['table' => 'users',
+                            'alias' => 'UserUpdated',
+                            'type' => 'LEFT',
+                            'conditions' => ['Income.user_updated_id = UserUpdated.id']
                         ],
                         ['table' => 'income_nfse',
                             'alias' => 'IncomeNfse',

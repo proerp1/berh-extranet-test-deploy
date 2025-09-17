@@ -33,6 +33,10 @@ class Income extends AppModel
             'className' => 'User',
             'foreignKey' => 'user_creator_id',
         ],
+        'UserUpdated' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_id'
+        ],
     ];
 
     public $hasOne = [
@@ -133,6 +137,10 @@ class Income extends AppModel
             if (isset($val[$this->alias]['created'])) {
                 $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
                 $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+            }
+            if (isset($val[$this->alias]['updated'])) {
+                $results[$key][$this->alias]['updated_nao_formatado'] = $val[$this->alias]['updated'];
+                $results[$key][$this->alias]['updated'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['updated']));
             }
 
             if (isset($val[$this->alias]['data_competencia'])) {

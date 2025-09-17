@@ -262,6 +262,7 @@ foreach ($data as $item) {
                         <th>Valor pago R$</th>
                         <th>Forma de pagamento</th>
                         <th>Condição de pagamento</th>
+                        <th>Última Atualização</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
@@ -301,7 +302,7 @@ foreach ($data as $item) {
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["valor_pago"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo isset($payment_method[$data[$i]['Income']['payment_method']]) ? $payment_method[$data[$i]['Income']['payment_method']] : '-'; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]["desc_condicao_pagamento"]; ?></td>
-
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['UserUpdated']["name"] ? $data[$i]['UserUpdated']["name"].' - '.$data[$i]['Income']['updated'] : ' - '; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/incomes/edit/'.$data[$i]["Income"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
