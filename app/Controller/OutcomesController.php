@@ -226,7 +226,21 @@ class OutcomesController extends AppController {
 		$this->Paginator->settings['order'] = ['Outcome.created' => 'DESC'];
 
 		$data = $this->Paginator->paginate('Outcome', $condition);
-		$status = $this->Status->find('all', array('conditions' => array('Status.categoria' => 4)));
+    $aba_status = [
+      '11' => 'Programado',
+      '12' => 'Aprovado',
+      '116' => 'Em Processamento',
+      '13' => 'Pago',
+      '14' => 'Cancelado',
+      '103' => 'Pendente',
+    ];
+		$status = array_map(function ($status, $id) {
+      return ['Status' => [
+        'id' => $id,
+         'name' => $status,
+      ]];
+    }, $aba_status, array_keys($aba_status));
+
     $customers = $this->Customer->find('list', ['fields' => ['Customer.id', 'Customer.nome_primario']]);
 
     $orderArr = $this->Order->find('all', [
