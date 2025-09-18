@@ -241,31 +241,21 @@
                         <?php } else { ?>
                             <a href="<?php echo $this->base.'/outcomes/reabrir_conta/'.$id.'/11/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Reabrir conta</a>
                         <?php } ?>
-                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 103])): ?>
-                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/12/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Aprovar conta</a>
-                            <?php if ($cancelarConta) { ?>
-                                <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/14/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-danger">Cancelar conta</a>
-                            <?php } ?>
-                        <?php endif ?>
-                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [11, 12])): ?>
-                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/103/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-warning">Marcar como Pendente</a>
-                        <?php endif ?>
-                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [103])): ?>
-                            <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/11/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-warning">Programado</a>
-                        <?php endif ?>
-
-                        <?php if (isset($this->request->data['Status']) && in_array($this->request->data['Status']['id'], [12,103])): ?>
-                            <!-- <a href="<?php echo $this->base.'/outcomes/change_status/'.$id.'/13/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-success">Conta paga</a> -->
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#modalContaPaga" class="btn btn-success">Conta paga</a>
-                        <?php endif ?>
+                        <a href="#" id="avancar_sel" class="btn btn-secondary me-3">
+                            Avançar
+                        </a>
                     <?php } else { ?>
                         <button type="submit" class="btn btn-success js-salvar" data-loading-text="Aguarde...">Salvar</button>
                     <?php } ?>
                 </div>
             </div>
-
         </form>
     </div>
 </div>
+
+<?php if (isset($id)) { ?>
+    <input style="display: none" type="checkbox" name="item_ck" checked class="check_individual" data-id="<?php echo $this->request->data["Outcome"]["id"]; ?>">
+    <?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $this->request->data["Outcome"]["status_id"]]) ?>
+<?php } ?>
 
 <?php echo $this->element('../Outcomes/modal_conta_paga') ?>

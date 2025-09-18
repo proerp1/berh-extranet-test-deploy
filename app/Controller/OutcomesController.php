@@ -510,20 +510,59 @@ class OutcomesController extends AppController {
 
 	public function change_status_lote()
 	{
-        $this->autoRender = false;
-        $this->layout = false;
+    $this->autoRender = false;
+    $this->layout = false;
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 
 		$outcomeIds = $this->request->data['outcomeIds'];
 		$status = $this->request->data['status'];
 
 		$this->Outcome->updateAll(
-            ['Outcome.status_id' => $status],
-            ['Outcome.id' => $outcomeIds]
-        );
+        ['Outcome.status_id' => $status],
+        ['Outcome.id' => $outcomeIds]
+    );
 
-        echo json_encode(['success' => true]);
+    echo json_encode(['success' => true]);
 	}
+
+  public function avanca_lote() {
+    $this->autoRender = false;
+    $this->layout = false;
+    $this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+
+    $outcomeIds = $this->request->data['outcomeIds'];
+    $status = $this->request->data['status'];
+    $data_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['data_pagamento'])));
+
+    if ($status == 13) {
+      if ($data_pagamento == '') {
+        echo json_encode(['success' => false]);die;
+      }
+
+      foreach ($outcomeIds as $id) {
+        $this->Outcome->recursive = -1;
+        $this->Outcome->id = $id;
+        $outcome = $this->Outcome->findById($id);
+
+        $this->request->data['Outcome']['valor_pago'] = $outcome['Outcome']['valor_total_not_formated'];
+        $this->request->data['Outcome']['data_pagamento'] = $data_pagamento;
+        $this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
+
+        $this->Outcome->save(['Outcome' => [
+          'valor_pago' => $outcome['Outcome']['valor_total_not_formated'],
+          'data_pagamento' => $data_pagamento,
+          'usuario_id_pagamento' => CakeSession::read("Auth.User.id"),
+        ]]);
+      }
+    } else {
+      $this->Outcome->updateAll(
+        ['Outcome.status_id' => $status],
+        ['Outcome.id' => $outcomeIds]
+      );
+    }
+
+    echo json_encode(['success' => true]);
+  }
 
 	public function pagar_titulo($id){
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");

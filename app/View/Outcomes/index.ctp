@@ -108,13 +108,13 @@
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
 
-                    <?php if ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 13 || $aba_atual_id == 103) { ?>
+                    <?php if ($aba_atual_id == 11 || $aba_atual_id == 12 || $aba_atual_id == 13 || $aba_atual_id == 103 || $aba_atual_id == 116) { ?>
                         <a href="#" id="download_sel" class="btn btn-secondary me-3">
                             Download em Lote
                         </a>
                     <?php } ?>
 
-                    <?php if ($aba_atual_id == 12 || $aba_atual_id == 13) { ?>
+                    <?php if ($aba_atual_id == 12 || $aba_atual_id == 13 || $aba_atual_id == 116) { ?>
                         <a href="#" id="avancar_sel" class="btn btn-secondary me-3">
                             Avançar em Lote
                         </a>
@@ -267,7 +267,7 @@
         	<?php echo $this->element("table"); ?>
 				<thead>
 					<tr class="fw-bolder text-muted bg-light">
-                        <?php if (isset($_GET["t"]) && in_array($_GET["t"], [11, 12, 13, 103])) { ?>
+                        <?php if (in_array($aba_atual_id, [11, 12, 13, 103, 116])) { ?>
                             <th class="ps-4 w-80px min-w-80px rounded-start">
                                 <input type="checkbox" class="check_all">
                             </th>
@@ -309,7 +309,7 @@
                                
                             ?>
 							<tr>
-                                <?php if (isset($_GET["t"]) && ($_GET["t"] == 11 || $_GET["t"] == 12 || $_GET["t"] == 13 || $_GET["t"] == 103)) { ?>
+                                <?php if (in_array($aba_atual_id, [11, 12, 13, 103, 116])) { ?>
                                     <td class="fw-bold fs-7 ps-4">
                                         <input type="checkbox" name="item_ck" class="check_individual" data-id="<?php echo $data[$i]["Outcome"]["id"]; ?>">
                                     </td>
@@ -415,49 +415,7 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_avancar_sel" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <p>Avançar os items selecionados?</p>
-
-                <div class="mb-7">
-                    <label class="fw-semibold fs-6 mb-2">Status</label>
-                    <?php
-                        if ($aba_atual_id == 12) {
-                            $avancar_statuses = [
-                                '13' => 'Pago',
-                                '103' => 'Pendente',
-                                '116' => 'Em Processamento'
-                            ];
-                        } else {
-                          $avancar_statuses = [
-                            '12' => 'Aprovado',
-                            '13' => 'Pago',
-                            '103' => 'Pendente',
-                          ];
-                        }
-
-                    ?>
-                    <select name="avancar_status" id="avancar_status" class="form-select">
-                        <?php foreach ($avancar_statuses as $id => $name) { ?>
-                            <option value="<?= $id ?>"><?= $name ?></option>
-                        <?php } ?>
-                    </select>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="avancar_confirm" class="btn btn-success">Sim</a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $aba_atual_id]) ?>
 
 <div class="modal fade" id="modalContaPaga" tabindex="-1" role="dialog" aria-labelledby="labelModalContaPaga">
     <div class="modal-dialog" role="document">
@@ -544,16 +502,6 @@
                 $('#modal_pendente_sel').modal('show');
             } else {
                 alert('Selecione ao menos um item a tornar pendente');
-            }
-        });
-
-        $('#avancar_sel').on('click', function(e) {
-            e.preventDefault();
-
-            if ($('input[name="item_ck"]:checked').length > 0) {
-                $('#modal_avancar_sel').modal('show');
-            } else {
-                alert('Selecione ao menos um item para avançar');
             }
         });
 
@@ -656,34 +604,6 @@
                     data: {
                         outcomeIds,
                         status: 103
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            location.reload();
-                        }
-                    }
-                });
-            }
-        });
-
-        $('#avancar_confirm').on('click', function(e) {
-            e.preventDefault();
-
-            const checkboxes = $('input[name="item_ck"]:checked');
-            const outcomeIds = [];
-
-            checkboxes.each(function() {
-                outcomeIds.push($(this).data('id'));
-            });
-
-            if (outcomeIds.length > 0) {
-                $.ajax({
-                    type: 'POST',
-                    url: base_url+'/outcomes/change_status_lote',
-                    data: {
-                        outcomeIds,
-                        status: $('#avancar_status').val(),
                     },
                     dataType: 'json',
                     success: function(response) {
