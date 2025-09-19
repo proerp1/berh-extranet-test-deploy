@@ -549,6 +549,7 @@ class OutcomesController extends AppController {
         $this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
 
         $this->Outcome->save(['Outcome' => [
+          'status_id' => 13,
           'valor_pago' => $outcome['Outcome']['valor_total_not_formated'],
           'data_pagamento' => $data_pagamento,
           'usuario_id_pagamento' => CakeSession::read("Auth.User.id"),
