@@ -65,7 +65,7 @@ class EconomicGroupProposalsController extends AppController
                     $this->EconomicGroupProposal->unbindModel(['belongsTo' => ['Customer', 'Status']]);
                     $this->EconomicGroupProposal->updateAll(
                         ['EconomicGroupProposal.status_id' => 92, 'EconomicGroupProposal.cancelled_description' => "'Cancelado por ativação de outra proposta'"],
-                        ['EconomicGroupProposal.customer_id' => $id, 'EconomicGroupProposal.status_id !=' => 92, 'EconomicGroupProposal.id !=' => $newId]
+                        ['EconomicGroupProposal.customer_id' => $id, 'EconomicGroupProposal.economic_group_id' => $economicGroupId, 'EconomicGroupProposal.status_id !=' => 92, 'EconomicGroupProposal.id !=' => $newId]
                     );
                 }
                 $this->Flash->set(__('A proposta foi salva com sucesso'), ['params' => ['class' => 'alert alert-success']]);
@@ -109,7 +109,7 @@ class EconomicGroupProposalsController extends AppController
                     $this->EconomicGroupProposal->unbindModel(['belongsTo' => ['Customer', 'Status']]);
                     $this->EconomicGroupProposal->updateAll(
                         ['EconomicGroupProposal.status_id' => 92, 'EconomicGroupProposal.cancelled_description' => "'Cancelado por ativação de outra proposta'"],
-                        ['EconomicGroupProposal.customer_id' => $id, 'EconomicGroupProposal.status_id !=' => 92, 'EconomicGroupProposal.id !=' => $EconomicGroupProposalId]
+                        ['EconomicGroupProposal.customer_id' => $id, 'EconomicGroupProposal.economic_group_id' => $economicGroupId, 'EconomicGroupProposal.status_id !=' => 92, 'EconomicGroupProposal.id !=' => $EconomicGroupProposalId]
                     );
                 }
 

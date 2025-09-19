@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="mb-7 col-3">
                     <label class="fw-semibold fs-6 mb-2">Status</label>
-                    <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "disabled" => $disabled]); ?>
+                    <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]); ?>
                 </div>
 
                 <div class="mb-7 col-2">
@@ -344,9 +344,7 @@
             <div class="mb-7">
                 <div class="col-sm-offset-2 col-sm-9">
                     <a href="<?php echo $this->base.'/economic_group_proposals/index/'.$id.'/'.$economicGroupId.'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
-                    <?php if (!$disabled) { ?>
-                        <button type="submit" class="btn btn-success js-salvar">Salvar</button>
-                    <?php } ?>
+                    <button type="submit" class="btn btn-success js-salvar">Salvar</button>
                 </div>
             </div>
         </form>
