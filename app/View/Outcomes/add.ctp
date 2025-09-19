@@ -255,7 +255,7 @@
 
 <?php if (isset($id)) { ?>
     <input style="display: none" type="checkbox" name="item_ck" checked class="check_individual" data-id="<?php echo $this->request->data["Outcome"]["id"]; ?>">
-    <?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $this->request->data["Outcome"]["status_id"]]) ?>
+    <?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $this->request->data["Outcome"]["status_id"], 'show_valor_pago' => true]) ?>
 <?php } ?>
 
 <?php echo $this->element('../Outcomes/modal_conta_paga') ?>

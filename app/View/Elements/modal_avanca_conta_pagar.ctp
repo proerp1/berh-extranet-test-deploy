@@ -29,9 +29,30 @@
                     </select>
                 </div>
 
-                <div id="avancar_data_pagamento_input" class="mb-7" style="display: none">
-                    <label class="fw-semibold fs-6 mb-2">Data Pagamento</label>
-                    <input type="text" name="avancar_data_pagamento" id="avancar_data_pagamento" class="form-control datepicker mb-3 mb-lg-0">
+                <div id="inputs_pago" style="display: none">
+                    <div class="mb-7">
+                        <label class="fw-semibold fs-6 mb-2">Data Pagamento</label>
+                        <input type="text" name="avancar_data_pagamento" id="avancar_data_pagamento" class="form-control datepicker mb-3 mb-lg-0">
+                    </div>
+
+                    <div class="mb-7">
+                        <label class="fw-semibold fs-6 mb-2">Forma de pagamento</label>
+                        <?php $metodos = ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito',  '7' => 'Débito em conta',  '8' => 'Dinheiro', '2' => 'Transfêrencia'] ?>
+                        <select name="avancar_forma_de_pagamento" id="avancar_forma_de_pagamento" class="form-select">
+                          <?php foreach ($metodos as $id => $name) { ?>
+                            <?php if (isset($filter_status_id) && $id != $filter_status_id) { ?>
+                                  <option value="<?= $id ?>"><?= $name ?></option>
+                            <?php } ?>
+                          <?php } ?>
+                        </select>
+                    </div>
+
+                    <?php if ($show_valor_pago) { ?>
+                        <div class="mb-7">
+                            <label class="fw-semibold fs-6 mb-2">Valor Pago</label>
+                            <input type="text" name="avancar_valor_pago" id="avancar_valor_pago" class="form-control money_exchange mb-3 mb-lg-0">
+                        </div>
+                    <?php } ?>
                 </div>
 
             </div>
@@ -61,6 +82,8 @@
             const checkboxes = $('input[name="item_ck"]:checked');
             const status = $('#avancar_status').val()
             const data_pagamento = $('#avancar_data_pagamento').val();
+            const valor_pago = $('#avancar_valor_pago') ? $('#avancar_valor_pago').val() : null;
+            const forma_de_pagamento = $('#avancar_forma_de_pagamento').val();
             const outcomeIds = [];
 
             checkboxes.each(function() {
@@ -75,6 +98,8 @@
                         outcomeIds,
                         status,
                         data_pagamento,
+                        valor_pago,
+                        forma_de_pagamento,
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -87,7 +112,7 @@
         });
 
         $('#avancar_status').on('change', function (e) {
-            $('#avancar_data_pagamento_input').toggle($(this).val() == 13)
+            $('#inputs_pago').toggle($(this).val() == 13)
         })
     })
 </script>
