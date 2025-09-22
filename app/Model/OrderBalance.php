@@ -183,7 +183,7 @@ public $belongsTo = array(
     public function find_user_order_items($orderID, $cpf) {
         $sql = "SELECT u.id
                     FROM order_items i
-                        INNER JOIN customer_users u ON u.id = i.customer_user_id 
+                        INNER JOIN customer_users u ON u.id = i.customer_user_id
                     WHERE i.order_id = ".$orderID."
                             AND i.data_cancel = '1901-01-01 00:00:00'
                             AND u.data_cancel = '1901-01-01 00:00:00'
@@ -192,6 +192,38 @@ public $belongsTo = array(
         $rsSql = $this->query($sql);
 
         return $rsSql;
+    }
+
+    public function bulk_load_users_for_orders($orderIds) {
+        if (empty($orderIds)) {
+            return [];
+        }
+
+        $orderIdsStr = implode(',', array_map('intval', $orderIds));
+        $sql = "SELECT DISTINCT u.id,
+                       REPLACE(REPLACE(u.cpf, '-', ''), '.', '') as clean_cpf,
+                       i.order_id
+                FROM order_items i
+                    INNER JOIN customer_users u ON u.id = i.customer_user_id
+                WHERE i.order_id IN ({$orderIdsStr})
+                        AND i.data_cancel = '1901-01-01 00:00:00'
+                        AND u.data_cancel = '1901-01-01 00:00:00'
+                ";
+        $result = $this->query($sql);
+
+        $userMap = [];
+        foreach ($result as $row) {
+            $orderId = $row['i']['order_id'];
+            $cleanCpf = $row[0]['clean_cpf'];
+            $userId = $row['u']['id'];
+
+            if (!isset($userMap[$orderId])) {
+                $userMap[$orderId] = [];
+            }
+            $userMap[$orderId][$cleanCpf] = $userId;
+        }
+
+        return $userMap;
     }
     
     public function batchCancelBalances($cancelData, $userID) {

@@ -4163,12 +4163,18 @@ class OrdersController extends AppController
         set_time_limit(0);
         ini_set('memory_limit', '512M');
         ignore_user_abort(true);
-        
+
+        $startTime = microtime(true);
+        CakeLog::write('info', 'Starting upload_saldo_csv_all process');
+
         $dataSource = $this->OrderBalance->getDataSource();
         $dataSource->begin();
-        
+
         try {
+            $parseStart = microtime(true);
             $ret = $this->parseCSVSaldoAll($this->request->data['file']['tmp_name']);
+            $parseTime = microtime(true) - $parseStart;
+            CakeLog::write('info', "CSV parsing completed in " . number_format($parseTime, 2) . " seconds");
 
             if (!$ret['success']) {
                 throw new Exception($ret['error']);
@@ -4179,6 +4185,7 @@ class OrdersController extends AppController
             $groupOrder = [];
             $cancelData = [];
 
+            $groupingStart = microtime(true);
             foreach ($processedData as $item) {
                 $keyTp = $item['tipo'] . '-' . $item['order_id'];
                 $keyOr = $item['order_id'];
@@ -4203,18 +4210,27 @@ class OrdersController extends AppController
                     'order_item_id' => $item['order_item_id']
                 ];
             }
+            $groupingTime = microtime(true) - $groupingStart;
+            CakeLog::write('info', "Data grouping completed in " . number_format($groupingTime, 2) . " seconds");
 
             if (!empty($cancelData)) {
+                $cancelStart = microtime(true);
                 $this->OrderBalance->batchCancelBalances($cancelData, CakeSession::read("Auth.User.id"));
+                $cancelTime = microtime(true) - $cancelStart;
+                CakeLog::write('info', "Batch cancel balances completed in " . number_format($cancelTime, 2) . " seconds");
             }
 
             if (!empty($processedData)) {
+                $insertStart = microtime(true);
                 $this->bulkInsertOrderBalances($processedData, $ret['benefitCache']);
+                $insertTime = microtime(true) - $insertStart;
+                CakeLog::write('info', "Bulk insert order balances completed in " . number_format($insertTime, 2) . " seconds");
             }
 
             $processedOrders = 0;
             $totalOrders = count($groupOrder);
-            
+
+            $updateStart = microtime(true);
             foreach ($groupOrder as $item) {
                 if ($item['order_id']) {
                     $this->OrderBalance->update_order_item_saldo($item['order_id'], CakeSession::read("Auth.User.id"));
@@ -4225,7 +4241,10 @@ class OrdersController extends AppController
                     }
                 }
             }
+            $updateTime = microtime(true) - $updateStart;
+            CakeLog::write('info', "Order balance updates completed in " . number_format($updateTime, 2) . " seconds");
 
+            $fileStart = microtime(true);
             $file = new File($this->request->data['file']['name']);
             $dir = new Folder(APP . "webroot/files/order_balances_all/", true);
 
@@ -4239,9 +4258,14 @@ class OrdersController extends AppController
 
             $this->OrderBalanceFile->create();
             $this->OrderBalanceFile->save($orderBalanceFile);
+            $fileTime = microtime(true) - $fileStart;
+            CakeLog::write('info', "File operations completed in " . number_format($fileTime, 2) . " seconds");
 
             $dataSource->commit();
-            
+
+            $totalTime = microtime(true) - $startTime;
+            CakeLog::write('info', "Total upload_saldo_csv_all process completed in " . number_format($totalTime, 2) . " seconds");
+
             $this->Flash->set(__('Movimentações incluídas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         } catch (Exception $e) {
             $dataSource->rollback();
@@ -4341,19 +4365,20 @@ class OrdersController extends AppController
 
         $csv = Reader::createFromPath($tmpFile, 'r');
         $csv->setDelimiter(';');
-        
+
         $records = $csv->getRecords();
         $header = null;
         $data = [];
         $line = 0;
         $chunkSize = 1000;
         $currentChunk = [];
-        
-        $benefitCache = $this->buildBenefitCache();
-        $userCache = [];
-        $processedOrderIds = [];
-        $lastProgressReport = 0;
 
+        $benefitCache = $this->buildBenefitCache();
+
+        // First pass: collect all order IDs from CSV
+        $preloadStart = microtime(true);
+        $allOrderIds = [];
+        $tempRecords = [];
         foreach ($records as $row) {
             if ($line == 0) {
                 $header = $row;
@@ -4369,15 +4394,39 @@ class OrdersController extends AppController
                 continue;
             }
 
+            $orderId = trim($row[7]);
+            if (!empty($orderId) && is_numeric($orderId)) {
+                $allOrderIds[$orderId] = true;
+            }
+            $tempRecords[] = $row;
+            $line++;
+        }
+
+        // Bulk load all users for all orders
+        $userMap = $this->OrderBalance->bulk_load_users_for_orders(array_keys($allOrderIds));
+        $preloadTime = microtime(true) - $preloadStart;
+        CakeLog::write('info', "Bulk user preload completed in " . number_format($preloadTime, 2) . " seconds for " . count($allOrderIds) . " orders");
+
+        $processedOrderIds = [];
+        $lastProgressReport = 0;
+        $line = 1; // Reset line counter
+
+        // Second pass: process the actual data using preloaded users
+        foreach ($tempRecords as $row) {
+            if (empty($row[0]) || count($row) < 8) {
+                $line++;
+                continue;
+            }
+
             $cpf = preg_replace('/\D/', '', $row[0]);
             $orderId = trim($row[7]);
-            
+
             if (empty($cpf) || empty($orderId) || !is_numeric($orderId)) {
                 CakeLog::write('warning', "Linha {$line}: CPF ou Order ID inválido - CPF: {$row[0]}, Order ID: {$orderId}");
                 $line++;
                 continue;
             }
-            
+
             $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 
             if (empty($cpf) || !$this->isValidCPF($cpf)) {
@@ -4386,16 +4435,18 @@ class OrdersController extends AppController
                 continue;
             }
 
-            $userCacheKey = $orderId . '_' . $cpf;
-            if (!isset($userCache[$userCacheKey])) {
-                $existingUser = $this->OrderBalance->find_user_order_items($orderId, $cpf);
-                $userCache[$userCacheKey] = isset($existingUser[0]['u']) ? $existingUser[0]['u']['id'] : null;
+            // Look up user from preloaded data instead of individual queries
+            $userId = null;
+            if (isset($userMap[$orderId][$cpf])) {
+                $userId = $userMap[$orderId][$cpf];
+            } else {
+                CakeLog::write('warning', "Linha {$line}: Customer user não encontrado para CPF: {$cpf}, Order ID: {$orderId}");
             }
 
             $total = str_replace(["R$", " "], "", $row[2]);
-            
+
             $currentChunk[] = [
-                'customer_user_id' => $userCache[$userCacheKey],
+                'customer_user_id' => $userId,
                 'document' => $row[0],
                 'benefit_code' => $row[1],
                 'total' => $total,
