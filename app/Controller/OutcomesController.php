@@ -532,6 +532,8 @@ class OutcomesController extends AppController {
 
     $outcomeIds = $this->request->data['outcomeIds'];
     $status = $this->request->data['status'];
+    $forma_de_pagamento = $this->request->data['forma_de_pagamento'];
+    $valor_pago = isset($this->request->data['valor_pago']) ? str_replace(',', '.', str_replace('.', '', $this->request->data['valor_pago'])) : null;
     $data_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['data_pagamento'])));
 
     if ($status == 13) {
@@ -544,19 +546,23 @@ class OutcomesController extends AppController {
         $this->Outcome->id = $id;
         $outcome = $this->Outcome->findById($id);
 
-        $this->request->data['Outcome']['valor_pago'] = $outcome['Outcome']['valor_total_not_formated'];
-        $this->request->data['Outcome']['data_pagamento'] = $data_pagamento;
-        $this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
-
         $this->Outcome->save(['Outcome' => [
-          'valor_pago' => $outcome['Outcome']['valor_total_not_formated'],
+          'status_id' => 13,
+          'valor_pago' => $valor_pago ?: $outcome['Outcome']['valor_total_not_formated'],
+          'payment_method_baixa' => $forma_de_pagamento,
           'data_pagamento' => $data_pagamento,
           'usuario_id_pagamento' => CakeSession::read("Auth.User.id"),
+          'updated' => date('Y-m-d H:i:s'),
+          'user_updated_id' => CakeSession::read("Auth.User.id"),
         ]]);
       }
     } else {
       $this->Outcome->updateAll(
-        ['Outcome.status_id' => $status],
+        [
+          'Outcome.status_id' => $status,
+          'updated' => "'".date('Y-m-d H:i:s')."'",
+          'user_updated_id' => CakeSession::read("Auth.User.id"),
+        ],
         ['Outcome.id' => $outcomeIds]
       );
     }

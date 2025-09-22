@@ -415,7 +415,7 @@
     </div>
 </div>
 
-<?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $aba_atual_id]) ?>
+<?php echo $this->element('modal_avanca_conta_pagar', ['filter_status_id' => $aba_atual_id, 'show_valor_pago' => false]) ?>
 
 <div class="modal fade" id="modalContaPaga" tabindex="-1" role="dialog" aria-labelledby="labelModalContaPaga">
     <div class="modal-dialog" role="document">
