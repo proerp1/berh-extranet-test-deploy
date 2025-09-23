@@ -36,7 +36,7 @@ class OutcomesController extends AppController {
 				) as order_ids"
             ],
             'limit' => 175,
-            'order' => ['Status.id' => 'asc', 'Outcome.vencimento' => 'asc', 'Outcome.name' => 'asc', 'Outcome.doc_num' => 'asc'],
+            'order' => ['Outcome.created' => 'asc', 'Status.id' => 'asc'],
             'paramType' => 'querystring',
         ]
 	];
