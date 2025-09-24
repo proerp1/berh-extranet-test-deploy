@@ -773,6 +773,12 @@ class OrdersController extends AppController
 
         $this->Order->id = $id;
         $old_order = $this->Order->read();
+
+        if(isset($_GET['internal_recalc_proerp'])){
+            $this->recalculateOrderTransferFees($id);
+            $this->Order->reProcessAmounts($id);
+            $this->Order->reprocessFirstOrder($id);
+        }
         
         $user = $this->Auth->user();
         $this->set('user', $user);
