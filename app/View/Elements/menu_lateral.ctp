@@ -143,6 +143,14 @@
                                 </span>
                                 <span class="menu-title">Conversor de Layouts</span>
                             </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'robos' && $this->request->params['pass'][0] == 'conversor_logistica') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'robos', 'conversor_logistica']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Conversor Logistica</span>
+                            </a>
                         </div>                        
                     </div>
                 </div>
@@ -246,7 +254,7 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Extrato</span>
+                                <span class="menu-title">Movimentação</span>
                             </a>
                         </div>
                         

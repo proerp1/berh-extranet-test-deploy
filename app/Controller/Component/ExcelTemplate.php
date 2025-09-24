@@ -3042,4 +3042,84 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]["UserCreated"]["name"]); $col++;
         }
     }
+
+    public function getRelatorioMovimentacao($spreadsheet, $info)
+    {
+        $dados = $info['rows'];
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        $col = 'A';
+        $activeWorksheet->setCellValue($col.'1', "Status"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Usuário"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Grupo Econômico"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Data de criação"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Número"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Data Pagamento"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Data Finalização"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Subtotal"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Repasse"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Taxa"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Desconto"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "TPP"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Fee Economia"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Cliente"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Economia"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Total"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Saldo"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Repasse Economia"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Valor Pedido Compra"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Repasse Pedido Compra"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Diferença Repasse"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Ajuste Creditado"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Ajuste Debitado"); $col++;
+        $activeWorksheet->setCellValue($col.'1', "Inconsistência"); $col++;
+
+        $indx = 1;
+        for ($i = 0; $i < count($dados); $i++) {
+            $data_extrato = $dados[$i]['Order']['extrato'];
+
+            $v_fee_economia             = $data_extrato['v_fee_economia'];
+            $v_vl_economia              = $data_extrato['v_vl_economia'];
+            $v_total_economia           = $data_extrato['v_total_economia'];
+            $v_perc_repasse             = $data_extrato['v_perc_repasse'];
+            $v_repasse_economia         = $data_extrato['v_repasse_economia'];
+            $v_valor_pedido_compra      = $data_extrato['v_valor_pedido_compra'];
+            $v_repasse_pedido_compra    = $data_extrato['v_repasse_pedido_compra'];
+            $v_diferenca_repasse        = $data_extrato['v_diferenca_repasse'];
+            $v_saldo                    = $data_extrato['v_saldo'];
+
+            $saldo = $info['saldo'] + ($v_saldo);
+
+            $v_total_bal_ajuste_cred    = $data_extrato['v_total_bal_ajuste_cred'];
+            $v_total_bal_ajuste_deb     = $data_extrato['v_total_bal_ajuste_deb'];
+            $v_total_bal_inconsistencia = $data_extrato['v_total_bal_inconsistencia'];
+            $col = 'A';
+
+            $indx++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]["Status"]["name"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]["CustomerCreator"]["name"] != '' ? $dados[$i]["CustomerCreator"]["name"] : $dados[$i]["Creator"]["name"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]['EconomicGroup']['name']); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]['Order']['created']); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]["Order"]["id"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]["Income"]["data_pagamento"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, $dados[$i]["Order"]["end_date"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["subtotal"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["transfer_fee"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["commission_fee"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["desconto"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["tpp_fee"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_fee_economia,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_vl_economia,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_total_economia,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . $dados[$i]["Order"]["total"]); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($saldo,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_repasse_economia,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_valor_pedido_compra,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_repasse_pedido_compra,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_diferenca_repasse,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_total_bal_ajuste_cred,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_total_bal_ajuste_deb,2,',','.')); $col++;
+            $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_total_bal_inconsistencia,2,',','.')); $col++;
+        }
+    }
 }

@@ -1919,41 +1919,30 @@ class CustomersController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        if ($tipo == 'grupo_economico') {
-            $this->Paginator->settings = [
-                'Order' => [
-                    'fields' => [
-                        'Order.*',
-                        'Income.*',
-                        'Status.*',
-                        'Creator.*',
-                        'CustomerCreator.*',
-                        'EconomicGroup.*',
-                    ],
-                    'limit' => 25,
-                    'group' => 'EconomicGroup.id',
-                    'order' => ['Order.created' => 'asc'],
-                ]
-            ];
-            
-            $condition = ['and' => ['Order.customer_id' => $id, 'EconomicGroup.id != ' => null], 'or' => []];
-        } else {
-            $this->Paginator->settings = [
-                'Order' => [
-                    'fields' => [
-                        'Order.*',
-                        'Income.*',
-                        'Status.*',
-                        'Creator.*',
-                        'CustomerCreator.*',
-                        'EconomicGroup.*',
-                    ],
-                    'limit' => 25,
-                    'order' => ['Order.created' => 'asc'],
-                ]
-            ];
+        $query_fields = [
+            'Order.*',
+            'Income.*',
+            'Status.*',
+            'Creator.*',
+            'CustomerCreator.*',
+            'EconomicGroup.*',
+        ];
 
-            $condition = ['and' => ['Order.customer_id' => $id], 'or' => []];
+        $query_order = ['Order.created' => 'asc'];
+
+        $this->Paginator->settings = [
+            'Order' => [
+                'fields' => $query_fields,
+                'limit' => 25,
+                'order' => $query_order,
+            ]
+        ];
+
+        $condition = ['and' => ['Order.customer_id' => $id], 'or' => []];
+
+        if ($tipo == 'grupo_economico') {
+            $this->Paginator->settings['Order']['group'] = 'EconomicGroup.id';
+            $condition['and'] = array_merge($condition['and'], ['EconomicGroup.id != ' => null]);
         }
         
         $data = [];
@@ -1981,8 +1970,6 @@ class CustomersController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
-            
-            $data = $this->Paginator->paginate('Order', $condition);
 
             $de_anterior = date('Y-m-d', strtotime('-1 day '.$de));
 
@@ -1996,6 +1983,28 @@ class CustomersController extends AppController
                     $saldo = $cliente['Customer']['economia_inicial_not_formated'];
                 }
             }
+
+            if (isset($_GET['excel'])) {
+                $dados = $this->Order->find('all', [
+                  'conditions' => $condition,
+                  'fields' => $query_fields,
+                  'order' => $query_order,
+                ]);
+
+                foreach ($dados as &$item) {
+                  $item['Order']['extrato'] = $this->Order->getExtrato($item['Order']['id']);
+                }
+
+                $nome = 'movimentacao_' . date('d_m_Y');
+
+                $this->ExcelGenerator->gerarExcelRelatorioMovimentacao($nome, [
+                  'rows' => $dados,
+                  'saldo' => $saldo,
+                ]);
+                $this->redirect("/files/excel/" . $nome . ".xlsx");
+            }
+
+            $data = $this->Paginator->paginate('Order', $condition);
         }
 
         $first_order = $this->Order->find('first', ['conditions' => ['Order.customer_id' => $id], 'fields' => 'MIN(Order.created) as data_criacao']);

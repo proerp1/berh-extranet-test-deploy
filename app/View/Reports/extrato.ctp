@@ -3,6 +3,7 @@
     echo $this->element("abas_extrato_report", array('url' => $url));
 ?>
 
+<?php if ($totalOrders) { ?>
 <div class="row mb-xl-5">
     <div class="col">
         <div class="card h-lg-100">
@@ -175,6 +176,19 @@
         </div>
     </div>
 </div>
+<?php } else { ?>
+    <div class="row mb-xl-5">
+        <div class="col">
+            <div class="card h-lg-100">
+                <div class="card-body d-flex justify-content-between align-items-start flex-column">
+                    <div class="m-0">
+                        <span class="fw-bold fs-2">Selecione um período para ver a movimentação!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
 
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "reports", "action" => "extrato", $tipo)); ?>" role="form" id="busca" autocomplete="off">
@@ -191,6 +205,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                    <a href="<?php echo $this->here.'/?excel&'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ;?>" class="btn btn-light-primary me-3">
+                        <i class="fas fa-file-excel"></i>
+                        Exportar
+                    </a>
                     <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                         <i class="fas fa-filter"></i>
                         Filtro
@@ -236,6 +254,15 @@
                                     <input class="form-control" id="de" name="de" value="<?php echo isset($_GET["de"]) ? $_GET["de"] : ""; ?>">
                                     <span class="input-group-text" style="padding: 5px;"> até </span>
                                     <input class="form-control" id="ate" name="ate" value="<?php echo isset($_GET["ate"]) ? $_GET["ate"] : ""; ?>">
+                                </div>
+                            </div>
+
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data Pagamento:</label>
+                                <div class="input-group input-daterange" id="datepicker">
+                                    <input class="form-control" id="pagamento_de" name="pagamento_de" value="<?php echo isset($_GET["pagamento_de"]) ? $_GET["pagamento_de"] : ""; ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="pagamento_ate" name="pagamento_ate" value="<?php echo isset($_GET["pagamento_ate"]) ? $_GET["pagamento_ate"] : ""; ?>">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-end">
@@ -328,19 +355,17 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["commission_fee"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4" style="color: #f00;"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["desconto"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["tpp_fee"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_fee_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_vl_economia,2,',','.'); ?></td>
-                                <td class="fw-bold fs-7 ps-4" style="color: #008000;"><?php echo 'R$' . number_format($v_total_economia,2,',','.'); ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["total"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($saldo,2,',','.'); ?></td>
-
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_economia,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_valor_pedido_compra,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_repasse_pedido_compra,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_diferenca_repasse,2,',','.'); ?></td>
-
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_ajuste_cred,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_ajuste_deb,2,',','.'); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . number_format($v_total_bal_inconsistencia,2,',','.'); ?></td>

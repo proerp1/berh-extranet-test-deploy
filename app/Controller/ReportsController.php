@@ -564,41 +564,30 @@ class ReportsController extends AppController
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        if ($tipo == 'grupo_economico') {
-            $this->Paginator->settings = [
-                'Order' => [
-                    'fields' => [
-                        'Order.*',
-                        'Income.*',
-                        'Status.*',
-                        'Creator.*',
-                        'CustomerCreator.*',
-                        'EconomicGroup.*',
-                    ],
-                    'limit' => 25,
-                    'group' => 'EconomicGroup.id',
-                    'order' => ['Order.created' => 'asc'],
-                ]
-            ];
-            
-            $condition = ['and' => ['Order.customer_id' => $id, 'EconomicGroup.id != ' => null], 'or' => []];
-        } else {
-            $this->Paginator->settings = [
-                'Order' => [
-                    'fields' => [
-                        'Order.*',
-                        'Income.*',
-                        'Status.*',
-                        'Creator.*',
-                        'CustomerCreator.*',
-                        'EconomicGroup.*',
-                    ],
-                    'limit' => 25,
-                    'order' => ['Order.created' => 'asc'],
-                ]
-            ];
+        $query_fields = [
+          'Order.*',
+          'Income.*',
+          'Status.*',
+          'Creator.*',
+          'CustomerCreator.*',
+          'EconomicGroup.*',
+        ];
 
-            $condition = ['and' => ['Order.customer_id' => $id], 'or' => []];
+        $query_order = ['Order.created' => 'asc'];
+
+        $this->Paginator->settings = [
+          'Order' => [
+            'fields' => $query_fields,
+            'limit' => 25,
+            'order' => $query_order,
+          ]
+        ];
+
+        $condition = ['and' => ['Order.customer_id' => $id], 'or' => []];
+
+        if ($tipo == 'grupo_economico') {
+            $this->Paginator->settings['Order']['group'] = 'EconomicGroup.id';
+            $condition['and'] = array_merge($condition['and'], ['EconomicGroup.id != ' => null]);
         }
         
         $data = [];
@@ -618,7 +607,11 @@ class ReportsController extends AppController
     
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
-    
+
+        $get_pagamento_de = isset($_GET['pagamento_de']) ? $_GET['pagamento_de'] : '';
+        $get_pagamento_ate = isset($_GET['pagamento_ate']) ? $_GET['pagamento_ate'] : '';
+
+        $totalOrders = false;
         if ($get_de != '' and $get_ate != '') {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
@@ -626,8 +619,15 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], [
                 'Order.created between ? and ?' => [$de . ' 00:00:00', $ate . ' 23:59:59']
             ]);
-            
-            $data = $this->Paginator->paginate('Order', $condition);
+
+            if ($get_pagamento_de != '' and $get_pagamento_ate != '') {
+              $pagamento_de = date('Y-m-d', strtotime(str_replace('/', '-', $get_pagamento_de)));
+              $pagamento_ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_pagamento_ate)));
+
+              $condition['and'] = array_merge($condition['and'], [
+                'Order.payment_date between ? and ?' => [$pagamento_de . ' 00:00:00', $pagamento_ate . ' 23:59:59']
+              ]);
+            }
 
             $de_anterior = date('Y-m-d', strtotime('-1 day '.$de));
 
@@ -637,11 +637,32 @@ class ReportsController extends AppController
             $saldo = ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
 
             if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
-                if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
-                    $saldo = $cliente['Customer']['economia_inicial_not_formated'];
-                }
+              if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
+                $saldo = $cliente['Customer']['economia_inicial_not_formated'];
+              }
             }
-        
+
+            if (isset($_GET['excel'])) {
+                $dados = $this->Order->find('all', [
+                  'conditions' => $condition,
+                  'fields' => $query_fields,
+                  'order' => $query_order,
+                ]);
+
+                foreach ($dados as &$item) {
+                  $item['Order']['extrato'] = $this->Order->getExtrato($item['Order']['id']);
+                }
+
+                $nome = 'movimentacao_' . date('d_m_Y');
+
+                $this->ExcelGenerator->gerarExcelRelatorioMovimentacao($nome, [
+                  'rows' => $dados,
+                  'saldo' => $saldo,
+                ]);
+                $this->redirect("/files/excel/" . $nome . ".xlsx");
+            }
+
+            $data = $this->Paginator->paginate('Order', $condition);
 
             $first_order = $this->Order->find('first', ['conditions' => ['Order.customer_id' => $id], 'fields' => 'MIN(Order.created) as data_criacao']);
 
@@ -724,16 +745,16 @@ class ReportsController extends AppController
 
             unset($item);
 
+            $this->set(compact('first_order', 'total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse', 'total_bal_ajuste_cred', 'total_bal_ajuste_deb', 'total_bal_inconsistencia', 'total_vlca'));
         }
         
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
 
-        $action = 'Extrato';
-        $breadcrumb = ['Relatórios' => '', 'Extrato' => ''];
+        $action = 'Movimentação';
+        $breadcrumb = ['Relatórios' => '', 'Movimentação' => ''];
 
-        $this->set(compact('id', 'data', 'customers', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo'));
-        $this->set(compact('total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse', 'total_bal_ajuste_cred', 'total_bal_ajuste_deb', 'total_bal_inconsistencia', 'total_vlca'));
+        $this->set(compact('id', 'data', 'customers', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'tipo'));
     }
 
     public function robos($menu)
@@ -769,6 +790,10 @@ class ReportsController extends AppController
         $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_compras";
             $breadcrumb='Conversor de compras';
+        } elseif ($menu == 'conversor_logistica') {
+        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+            $url_iframe = "https://robo.berh.com.br/conversor_logistica";
+            $breadcrumb='Conversor Logistica';
         }
 
         $this->set("action", $breadcrumb);
