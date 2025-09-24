@@ -476,6 +476,7 @@ class OrdersController extends AppController
                 }
 
                 $this->Order->id = $orderId;
+                $this->recalculateOrderTransferFees($orderId);
                 $this->Order->reProcessAmounts($orderId);
                 $this->Order->reprocessFirstOrder($orderId);
 
@@ -553,6 +554,7 @@ class OrdersController extends AppController
         }
 
         $this->OrderItem->saveMany($newItem);
+        $this->recalculateOrderTransferFees($newId);
         $this->Order->reProcessAmounts($newId);
         $this->Order->reprocessFirstOrder($newId);
 
@@ -825,6 +827,7 @@ class OrdersController extends AppController
             }
 
             if ($this->Order->save($order)) {
+                $this->recalculateOrderTransferFees($id);
                 $this->Order->reProcessAmounts($id);
                 $this->Order->reprocessFirstOrder($id);
                 $this->Flash->set(__('O Pedido foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -1423,6 +1426,7 @@ class OrdersController extends AppController
         $this->processItineraries($customerItineraries, $orderId, $workingDays, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
 
         $this->Order->id = $orderId;
+        $this->recalculateOrderTransferFees($orderId);
         $this->Order->reProcessAmounts($orderId);
         $this->Order->reprocessFirstOrder($orderId);
 
@@ -1491,6 +1495,7 @@ class OrdersController extends AppController
         $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], $order['Order']['working_days_type'], $proposal, $manualPricing);
 
         $this->Order->id = $orderId;
+        $this->recalculateOrderTransferFees($orderId);
         $this->Order->reProcessAmounts($orderId);
         $this->Order->reprocessFirstOrder($orderId);
 
@@ -1857,6 +1862,7 @@ class OrdersController extends AppController
         );
 
         $this->Order->id = $orderId;
+        $this->recalculateOrderTransferFees($orderId);
         $this->Order->reProcessAmounts($orderId);
         $this->Order->reprocessFirstOrder($orderId);
 
@@ -1912,6 +1918,7 @@ class OrdersController extends AppController
             $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
 
             $this->Order->id = $orderId;
+            $this->recalculateOrderTransferFees($orderId);
             $this->Order->reProcessAmounts($orderId);
             $this->Order->reprocessFirstOrder($orderId);
 
@@ -2074,6 +2081,7 @@ class OrdersController extends AppController
                 }
 
                 $this->Order->id = $orderId;
+                $this->recalculateOrderTransferFees($orderId);
                 $this->Order->reProcessAmounts($orderId);
                 $this->Order->reprocessFirstOrder($orderId);
 
@@ -4797,246 +4805,6 @@ class OrdersController extends AppController
         foreach ($supplierGroups as $supplierId => $items) {
             $supplier = $items[0]['CustomerUserItinerary']['Benefit']['Supplier'];
             $this->calculateTransferFeesForSupplier($orderId, $supplierId, $supplier, $items);
-        }
-    }
-
-    /**
-     * Calcula volume tier fees e distribui proporcionalmente entre os itens
-     */
-    private function calculateAndDistributeVolumeTierFees($orderId, $supplierId, $supplier, $items)
-    {
-        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
-        CakeLog::write('debug', "OrdersController: Volume tier calculation for supplier {$supplierId}, billing type: {$tipoCobranca}");
-
-        // Determinar a quantidade para o cálculo do tier
-        if ($tipoCobranca == 'cpf') {
-            $quantity = $this->countCustomerUsersForSupplier($supplierId, $orderId);
-            CakeLog::write('debug', "OrdersController: Counted {$quantity} unique users for supplier {$supplierId}");
-        } else {
-            $quantity = $this->getTotalAmountForSupplierInOrder($supplierId, $orderId);
-            CakeLog::write('debug', "OrdersController: Total amount {$quantity} for supplier {$supplierId}");
-        }
-
-        // Calcular o total de subtotal dos itens deste fornecedor
-        $totalSupplierSubtotal = 0;
-        foreach ($items as $item) {
-            $totalSupplierSubtotal += $item['OrderItem']['subtotal'];
-        }
-
-        if ($totalSupplierSubtotal == 0) {
-            CakeLog::write('debug', "OrdersController: No subtotal found for supplier {$supplierId}, skipping");
-            return;
-        }
-
-        // Usar RepaymentCalculator para obter o tier correto
-        try {
-            $calculationResult = RepaymentCalculator::calculateRepayment(
-                $supplierId, 
-                $quantity, 
-                $totalSupplierSubtotal
-            );
-            
-            $totalTransferFee = $calculationResult['repayment_value'];
-            $tierPercentage = $calculationResult['repayment_percentage'];
-            
-            CakeLog::write('debug', "OrdersController: Volume tier result - Total fee: {$totalTransferFee}, Percentage: {$tierPercentage}%");
-
-            // Distribuir proportionally entre os itens
-            foreach ($items as $item) {
-                $itemSubtotal = $item['OrderItem']['subtotal'];
-                $proportion = $totalSupplierSubtotal > 0 ? ($itemSubtotal / $totalSupplierSubtotal) : 0;
-                $itemTransferFee = $totalTransferFee * $proportion;
-
-                CakeLog::write('debug', "OrdersController: Item {$item['OrderItem']['id']} - Subtotal: {$itemSubtotal}, Proportion: {$proportion}, Transfer Fee: {$itemTransferFee}");
-
-                // Recalcular total do item
-                $newTotal = $itemSubtotal + $itemTransferFee + $item['OrderItem']['commission_fee'];
-
-                // Atualizar o item usando save ao invés de saveField
-                $updateData = [
-                    'OrderItem' => [
-                        'id' => $item['OrderItem']['id'],
-                        'transfer_fee' => $itemTransferFee,
-                        'total' => $newTotal
-                    ]
-                ];
-                
-                if ($this->OrderItem->save($updateData, ['callbacks' => false, 'validate' => false])) {
-                    CakeLog::write('debug', "OrdersController: Successfully updated OrderItem {$item['OrderItem']['id']} with transfer_fee: {$itemTransferFee}");
-                } else {
-                    CakeLog::write('error', "OrdersController: Failed to update OrderItem {$item['OrderItem']['id']}. Errors: " . json_encode($this->OrderItem->validationErrors));
-                }
-            }
-
-        } catch (Exception $e) {
-            CakeLog::write('error', "OrdersController: Error calculating volume tier for supplier {$supplierId}: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Calcula percentage fees individualmente para cada item do fornecedor
-     */
-    private function calculateIndividualPercentageFees($orderId, $supplierId, $supplier, $items)
-    {
-        CakeLog::write('debug', "OrdersController: Individual percentage calculation for supplier {$supplierId}");
-
-        // Get the percentage from supplier or from volume tier
-        $percentage = null;
-        if (!empty($supplier['transfer_fee_percentage'])) {
-            // Direct percentage from supplier - parse it to ensure it's numeric
-            $percentage = $this->parseFormattedNumber($supplier['transfer_fee_percentage']);
-        } else {
-            // Get percentage from volume tier
-            try {
-                $calculationResult = RepaymentCalculator::calculateRepayment($supplierId, 1, 100); // Sample calculation
-                $percentage = $calculationResult['repayment_percentage'];
-                if (!is_numeric($percentage)) {
-                    $percentage = $this->parseFormattedNumber($percentage);
-                }
-            } catch (Exception $e) {
-                CakeLog::write('error', "OrdersController: Could not determine percentage for supplier {$supplierId}: " . $e->getMessage());
-                return;
-            }
-        }
-
-        if (!$percentage || $percentage <= 0) {
-            CakeLog::write('debug', "OrdersController: No valid percentage found for supplier {$supplierId}, skipping");
-            return;
-        }
-
-        // Apply percentage to each item individually
-        foreach ($items as $item) {
-            // Use not_formated fields if available, otherwise parse the formatted values
-            $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
-                ? $item['OrderItem']['subtotal_not_formated'] 
-                : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
-                
-            $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
-                ? $item['OrderItem']['commission_fee_not_formated'] 
-                : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
-
-            // Calculate percentage fee for this specific item
-            $itemTransferFee = ($itemSubtotal * $percentage) / 100;
-            $newTotal = $itemSubtotal + $itemTransferFee + $itemCommissionFee;
-            
-            CakeLog::write('debug', "OrdersController: Item {$item['OrderItem']['id']} - Subtotal: {$itemSubtotal}, Percentage: {$percentage}%, Transfer Fee: {$itemTransferFee}");
-            
-            // Salvar log de cálculo
-            $calculationLog = json_encode([
-                'type' => 'individual_percentage',
-                'percentage' => $percentage,
-                'item_subtotal' => $itemSubtotal,
-                'calculated_fee' => $itemTransferFee
-            ]);
-
-            // Atualizar o item
-            $updateData = [
-                'OrderItem' => [
-                    'id' => $item['OrderItem']['id'],
-                    'transfer_fee' => $itemTransferFee,
-                    'total' => $newTotal,
-                    'calculation_details_log' => $calculationLog
-                ]
-            ];
-            
-            if ($this->OrderItem->save($updateData, ['callbacks' => false, 'validate' => false])) {
-                CakeLog::write('debug', "OrdersController: Successfully updated OrderItem {$item['OrderItem']['id']} with transfer_fee: {$itemTransferFee}");
-            } else {
-                CakeLog::write('error', "OrdersController: Failed to update OrderItem {$item['OrderItem']['id']}. Errors: " . json_encode($this->OrderItem->validationErrors));
-            }
-        }
-    }
-
-    /**
-     * Calcula fixed value fees baseado no tipo de cobrança
-     */
-    private function calculateFixedValueFees($orderId, $supplierId, $supplier, $items)
-    {
-        CakeLog::write('debug', "OrdersController: Fixed value calculation for supplier {$supplierId}");
-
-        $tipoCobranca = isset($supplier['tipo_cobranca']) ? $supplier['tipo_cobranca'] : 'pedido';
-        $fixedValue = isset($supplier['transfer_fee_fixed']) ? $supplier['transfer_fee_fixed'] : 0;
-
-        if ($fixedValue <= 0) {
-            CakeLog::write('debug', "OrdersController: No fixed value found for supplier {$supplierId}, skipping");
-            return;
-        }
-
-        if ($tipoCobranca == 'cpf') {
-            // Fixed by CPF: Apply fixed amount to all order items for each unique customer user
-            $this->calculateFixedByCpf($supplierId, $fixedValue, $items);
-        } else {
-            // Fixed by Order: Single fixed fee divided equally among all order items of that supplier
-            $this->calculateFixedByOrder($supplierId, $fixedValue, $items);
-        }
-    }
-
-    private function calculateFixedByCpf($supplierId, $fixedValue, $items)
-    {
-        // Group items by customer user
-        $customerGroups = [];
-        foreach ($items as $item) {
-            $customerUserId = $item['OrderItem']['customer_user_id'];
-            $customerGroups[$customerUserId][] = $item;
-        }
-
-        // Apply fixed fee to all items of each customer user
-        foreach ($customerGroups as $customerUserId => $customerItems) {
-            CakeLog::write('debug', "OrdersController: Applying fixed fee {$fixedValue} to all items of customer user {$customerUserId}");
-            
-            foreach ($customerItems as $item) {
-                $this->applyFixedFeeToItem($item, $fixedValue, 'fixed_by_cpf');
-            }
-        }
-    }
-
-    private function calculateFixedByOrder($supplierId, $fixedValue, $items)
-    {
-        // Single fixed fee divided equally among all order items
-        $itemCount = count($items);
-        $feePerItem = $itemCount > 0 ? ($fixedValue / $itemCount) : 0;
-
-        CakeLog::write('debug', "OrdersController: Dividing fixed fee {$fixedValue} equally among {$itemCount} items: {$feePerItem} per item");
-
-        foreach ($items as $item) {
-            $this->applyFixedFeeToItem($item, $feePerItem, 'volume_tier_fixed');
-        }
-    }
-
-    private function applyFixedFeeToItem($item, $transferFee, $calculationType)
-    {
-        // Use not_formated fields if available, otherwise parse the formatted values
-        $itemSubtotal = isset($item['OrderItem']['subtotal_not_formated']) 
-            ? $item['OrderItem']['subtotal_not_formated'] 
-            : $this->parseFormattedNumber($item['OrderItem']['subtotal']);
-            
-        $itemCommissionFee = isset($item['OrderItem']['commission_fee_not_formated']) 
-            ? $item['OrderItem']['commission_fee_not_formated'] 
-            : $this->parseFormattedNumber($item['OrderItem']['commission_fee']);
-
-        $newTotal = $itemSubtotal + $transferFee + $itemCommissionFee;
-        
-        // Salvar log de cálculo
-        $calculationLog = json_encode([
-            'type' => $calculationType,
-            'fixed_fee' => $transferFee,
-            'item_subtotal' => $itemSubtotal
-        ]);
-
-        // Atualizar o item
-        $updateData = [
-            'OrderItem' => [
-                'id' => $item['OrderItem']['id'],
-                'transfer_fee' => $transferFee,
-                'total' => $newTotal,
-                'calculation_details_log' => $calculationLog
-            ]
-        ];
-        
-        if ($this->OrderItem->save($updateData, ['callbacks' => false, 'validate' => false])) {
-            CakeLog::write('debug', "OrdersController: Successfully updated OrderItem {$item['OrderItem']['id']} with transfer_fee: {$transferFee}");
-        } else {
-            CakeLog::write('error', "OrdersController: Failed to update OrderItem {$item['OrderItem']['id']}. Errors: " . json_encode($this->OrderItem->validationErrors));
         }
     }
 
