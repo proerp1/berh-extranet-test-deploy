@@ -793,7 +793,7 @@ class ReportsController extends AppController
         } elseif ($menu == 'conversor_logistica') {
         $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_logistica";
-            $breadcrumb='Conversor Logistica';
+            $breadcrumb='Conversor Logística';
         }
 
         $this->set("action", $breadcrumb);
