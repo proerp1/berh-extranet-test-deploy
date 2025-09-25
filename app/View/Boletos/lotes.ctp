@@ -93,6 +93,7 @@
                         <th>Data</th>
                         <th>Banco</th>
                         <th>Qtde</th>
+                        <th>Pedidos</th>
                         <th>Total</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -111,6 +112,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['CnabLote']['created'])) ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Bank']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['qtde'] ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i][0]['pedidos'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo number_format($data[$i][0]['valor_total'],2,',','.') ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/boletos/detalhes_lote/'.$data[$i]["CnabLote"]["id"]; ?>" class="btn btn-info btn-sm">Visualizar</a>

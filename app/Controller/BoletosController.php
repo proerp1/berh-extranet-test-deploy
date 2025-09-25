@@ -187,7 +187,7 @@ class BoletosController extends AppController
         $data = $this->CnabLote->query("
                     SELECT CnabLote.id, CnabLote.remessa, CnabLote.created, CnabLote.arquivo, 
                     Status.name, Status.label, Bank.name,
-                    COUNT(ci.id) AS qtde, SUM(i.valor_total) AS valor_total
+                    COUNT(ci.id) AS qtde, SUM(i.valor_total) AS valor_total, group_concat(i.order_id SEPARATOR ', ') as pedidos
                     FROM cnab_lotes CnabLote
                         INNER JOIN banks Bank ON Bank.id = CnabLote.bank_id
                         LEFT JOIN statuses Status ON Status.id = CnabLote.status_id
