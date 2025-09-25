@@ -255,9 +255,14 @@ class ReportsController extends AppController
         $de = date('d/m/Y', strtotime($condition['de']));
         $para = date('d/m/Y', strtotime($condition['para']));
 
+        $conditionsJson = false;
+        if (!empty($_GET)) {
+            $conditionsJson = base64_encode(json_encode($condition['condition']));
+        }
+
         $action = 'Pedidos';
         $breadcrumb = ['Relatórios' => '', 'Pedidos' => ''];
-        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses', 'benefitTypes'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses', 'benefitTypes', 'conditionsJson'));
     }
 
     public function relatorio_processamento()
@@ -2018,12 +2023,14 @@ class ReportsController extends AppController
             'order' => ['nome_primario' => 'asc']
         ]);
 
+        $conditionsJson = base64_encode(json_encode($condition));
+
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 18, 'Status.id' => 104], 'order' => 'Status.name']);
 
         $action = 'Relatório Alteração Status Pedido';
         $breadcrumb = ['Relatórios' => '', 'Relatório Alteração Status Pedido' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'status', 'data', 'totalOrders'));
+        $this->set(compact('action', 'breadcrumb', 'status', 'data', 'totalOrders', 'conditionsJson'));
     }
 
     public function alter_status_pedido()

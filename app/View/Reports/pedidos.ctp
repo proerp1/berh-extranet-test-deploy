@@ -1,3 +1,5 @@
+<?php echo $this->element("../Reports/_totais_compras"); ?>
+
 <?php $url_novo = $this->base . "/users/add/";  ?>
 
 <div class="card mb-5 mb-xl-8">
