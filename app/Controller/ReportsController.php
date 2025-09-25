@@ -1004,7 +1004,8 @@ class ReportsController extends AppController
                 'CustomerUser.name',
                 'Benefit.name',
                 'BenefitType.name',
-                'CustomerUserItinerary.quantity',
+                'CustomerUserItinerary.quantity', 
+                'StatusOutcome.*',                
             ],
             'joins' => [
                 [
@@ -1045,6 +1046,22 @@ class ReportsController extends AppController
                     'type' => 'INNER',
                     'conditions' => [
                         'Status.id = Order.status_id',
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
                     ]
                 ],
             ]
@@ -1249,6 +1266,7 @@ class ReportsController extends AppController
 					'MAX(CustomerUserAddress.neighborhood) as bairro',
 					'MAX(CustomerUserAddress.city) as cidade',
 					'MAX(CustomerUserAddress.state) as estado',
+                    'StatusOutcome.*',
                 ],
                 'joins' => [
                     [
@@ -1291,6 +1309,22 @@ class ReportsController extends AppController
 						'type' => 'LEFT',
 						'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id and CustomerUserAddress.address_type_id = 1']
 					],
+                    [
+                        'table' => 'outcomes',
+                        'alias' => 'Outcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Outcome.id = OrderItem.outcome_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'StatusOutcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'StatusOutcome.id = Outcome.status_id'
+                        ]
+                    ],
                 ],
 				'group' => [
 					'OrderItem.id'
@@ -1323,6 +1357,7 @@ class ReportsController extends AppController
                     'BenefitType.name',
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
+                    'StatusOutcome.*',
                 ],
                 'joins' => [
                     [
@@ -1364,6 +1399,22 @@ class ReportsController extends AppController
                         'type' => 'INNER',
                         'conditions' => [
                             'Status.id = Order.status_id',
+                        ]
+                    ],
+                    [
+                        'table' => 'outcomes',
+                        'alias' => 'Outcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Outcome.id = OrderItem.outcome_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'StatusOutcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'StatusOutcome.id = Outcome.status_id'
                         ]
                     ],
                 ],

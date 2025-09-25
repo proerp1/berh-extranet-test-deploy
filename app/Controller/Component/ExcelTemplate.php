@@ -1163,6 +1163,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "GE"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Beneficio"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeiro Pedido"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Conta Pagar"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status do Pagamento"); $col++;
         
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -1199,6 +1201,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["BenefitType"]["name"] ); $col++;
             $primeiro_pedido = $dado["OrderItem"]["first_order"] == 1 ? 'Sim' : 'Não';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $primeiro_pedido); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["outcome_id"] ); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["StatusOutcome"]["name"] ); $col++;
         }
     }
 
@@ -1234,6 +1238,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Compra Operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeira Compra"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matricula Operadora"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Conta Pagar");$col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status do Pagamento");$col++;
         
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -1271,6 +1277,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), number_format(($dado['OrderItem']['subtotal_not_formated'] - $dado['OrderItem']['saldo_not_formated']), 2, ',', '.')); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não'); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUserItinerary']['matricula']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["outcome_id"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['StatusOutcome']['name']); $col++;
         }
     }
 
@@ -2284,6 +2292,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $activeWorksheet->setCellValue($col.'1', "Descrição Beneficio");$col++;
         $activeWorksheet->setCellValue($col.'1', "Condição de pagamento");$col++;
         $activeWorksheet->setCellValue($col.'1', "Prazo");$col++;
+        $activeWorksheet->setCellValue($col.'1', "ID Conta Pagar");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Status do Pagamento");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2415,6 +2425,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Benefit']['name']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['desc_condicao_pagamento']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['prazo']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['outcome_id']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i]['StatusOutcome']['name']);$col++;
         }
     }
 

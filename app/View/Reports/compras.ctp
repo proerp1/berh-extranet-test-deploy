@@ -190,6 +190,8 @@
                     <th>Motivo Processamento</th>
                     <th>Pedido Operadora</th>
                     <th>Data Entrega</th>
+                    <th>ID Conta Pagar</th>
+                    <th>Status do Pagamento</th>
                 </tr>
             </thead>
             <tbody>
@@ -251,6 +253,8 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["outcome_id"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["StatusOutcome"]["name"]; ?></td>
                         </tr>
                     <?php } ?>
                     <tr>

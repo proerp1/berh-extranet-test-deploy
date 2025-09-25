@@ -239,6 +239,7 @@ class ExcelConfigurationComponent extends Component {
                         WHERE i.customer_user_id = OrderItem.customer_user_id
                                 AND o.id != Order.id
                     ) AS qtde_pedido',
+					'StatusOutcome.*',
 				],
 				'joins' => [
 					[
@@ -355,7 +356,23 @@ class ExcelConfigurationComponent extends Component {
 						'alias' => 'SalaryRange',
 						'type' => 'LEFT',
 						'conditions' => ['SalaryRange.id = CustomerUser.customer_salary_id']
-					]
+					],
+					[
+						'table' => 'outcomes',
+						'alias' => 'Outcome',
+						'type' => 'LEFT',
+						'conditions' => [
+							'Outcome.id = OrderItem.outcome_id'
+						]
+					],
+					[
+						'table' => 'statuses',
+						'alias' => 'StatusOutcome',
+						'type' => 'LEFT',
+						'conditions' => [
+							'StatusOutcome.id = Outcome.status_id'
+						]
+					],
 				],
 				'group' => [
 					'OrderItem.id'
