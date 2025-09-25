@@ -6,16 +6,16 @@
         <a class="nav-link <?php echo $this->request->params['action'] == 'boletos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/boletos/<?php echo $id; ?>">Boletos</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link <?php echo in_array($this->request->params['action'], ['operadoras', 'operadoras_detalhes']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo $this->request->params['action'] == 'saldos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentação</a>
+        <a class="nav-link <?php echo $this->request->params['controller'] == 'order_documents' && in_array($this->request->params['action'], ['documentos', 'documentos_add' , 'edit_documentos']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/order_documents/documentos/<?php echo $id; ?>">Comprovantes</a>
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['controller'] == 'order_documents' && in_array($this->request->params['action'], ['index', 'add' , 'edit']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/order_documents/index/<?php echo $id; ?>">Notas fiscais</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link <?php echo $this->request->params['controller'] == 'order_documents' && in_array($this->request->params['action'], ['documentos', 'documentos_add' , 'edit_documentos']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/order_documents/documentos/<?php echo $id; ?>">Comprovantes</a>
+        <a class="nav-link <?php echo $this->request->params['action'] == 'saldos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentações</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo in_array($this->request->params['action'], ['operadoras', 'operadoras_detalhes']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['action'] == 'compras' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/compras/<?php echo $id; ?>">Compras</a>
