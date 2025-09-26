@@ -2966,6 +2966,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Cargo"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo Chave"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Chave Pix"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome Social"); $col++;
 
         foreach ($dados as $key => $data) {
             $col = 'A';
@@ -3029,6 +3030,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ''); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ''); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ''); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $data['CustomerUser']['social_name']); $col++;
         }
     }
     public function getClienteDeParaBeneficios($spreadsheet, $dados)

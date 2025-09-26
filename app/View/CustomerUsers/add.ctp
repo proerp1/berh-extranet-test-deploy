@@ -86,12 +86,17 @@ if (isset($user_id) && !$is_admin) {
             </div>
 
             <div class="mb-7 col">
-                <label class="fw-semibold fs-6 mb-2">Matrícula</label>
-                <?php echo $this->Form->input('matricula', ['placeholder' => 'Matrícula', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+                <label class="fw-semibold fs-6 mb-2">Nome Social</label>
+                <?php echo $this->Form->input('social_name', ['placeholder' => 'Nome Social', 'class' => 'form-control mb-3 mb-lg-0']); ?>
             </div>
         </div>
 
         <div class="row">
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Matrícula</label>
+                <?php echo $this->Form->input('matricula', ['placeholder' => 'Matrícula', 'class' => 'form-control mb-3 mb-lg-0']); ?>
+            </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Email</label>
                 <?php echo $this->Form->input('email', ['placeholder' => 'Email', 'class' => 'form-control mb-3 mb-lg-0', 'required' => false]); ?>

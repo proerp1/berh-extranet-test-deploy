@@ -1204,6 +1204,7 @@ class CustomerUsersController extends AppController
                 'CustomerUser.nome_mae',
                 'CustomerUser.sexo',
                 'CustomerUser.email',
+                'CustomerUser.social_name',
             ],
             'order' => ['CustomerUser.name' => 'asc'],
         ]);
