@@ -144,6 +144,24 @@
                                 </select>
                             </div>
 
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status de Pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="stpg[]" id="stpg" multiple>
+                                    <option value="">Selecione</option>
+                                    <?php
+                                    foreach ($status_pag as $keySt => $status) {
+                                        $selected = "";
+                                        if (isset($_GET["stpg"])) {
+                                            if (in_array($keySt, $_GET["stpg"])) {
+                                                $selected = "selected";
+                                            }
+                                        }
+                                        echo '<option value="' . $keySt . '" ' . $selected . '>' . $status . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
                             <div class="d-flex justify-content-end">
                                 <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
                                 <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
@@ -511,6 +529,9 @@
                 const statusProcElements = document.querySelectorAll('#kt-toolbar-filter #stp option:checked');
                 const curr_stp = Array.from(statusProcElements).map(el => el.value);
 
+                const statusPagElements = document.querySelectorAll('#kt-toolbar-filter #stpg option:checked');
+                const curr_stpg = Array.from(statusPagElements).map(el => el.value);                
+
                 const btElements = document.querySelectorAll('#kt-toolbar-filter #bt option:checked');
                 const curr_bt = Array.from(btElements).map(el => el.value);
 
@@ -527,6 +548,7 @@
                         curr_sup,
                         curr_st,
                         curr_stp,
+                        curr_stpg,
                         curr_c,
                         curr_de,
                         curr_para,

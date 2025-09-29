@@ -1161,6 +1161,12 @@ class ReportsController extends AppController
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
         }
+        
+        if (isset($_GET['stpg']) and $_GET['stpg'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['StatusOutcome.id' => $_GET['stpg']]);
+        }        
 
         if (!empty($_GET['cond_pag'])) {
             $buscar = true;
@@ -1223,7 +1229,22 @@ class ReportsController extends AppController
                             'Status.id = Order.status_id',
                         ]
                     ],
-
+                    [
+                        'table' => 'outcomes',
+                        'alias' => 'Outcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Outcome.id = OrderItem.outcome_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'StatusOutcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'StatusOutcome.id = Outcome.status_id'
+                        ]
+                    ],
                 ],
                 'conditions' => $condition,
             ]);
@@ -1431,6 +1452,8 @@ class ReportsController extends AppController
         }
 
         $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+        $status_pag = $this->Status->find('list', ['conditions' => ['Status.categoria' => 4]]);
+
         $benefitTypes = $this->BenefitType->find('list', [
             'order' => ['BenefitType.name' => 'ASC']
         ]);
@@ -1438,7 +1461,7 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag'));
     }
 
     public function getSupplierAndCustomer()
@@ -1562,6 +1585,7 @@ class ReportsController extends AppController
         $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
         $st             = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
         $stp            = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
+        $stpg           = isset($this->request->data['curr_stpg']) ? $this->request->data['curr_stpg'] : false;
         $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
         $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
         $bt             = isset($this->request->data['curr_bt']) ? $this->request->data['curr_bt'] : false;
@@ -1624,6 +1648,12 @@ class ReportsController extends AppController
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
+        }
+
+        if (isset($stpg) and $stpg != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['StatusOutcome.id' => $stpg]);
         }
 
         if (isset($c) and $c != 'Selecione') {
@@ -1697,6 +1727,22 @@ class ReportsController extends AppController
                     'type' => 'INNER',
                     'conditions' => [
                         'Status.id = Order.status_id',
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
                     ]
                 ],
             ]
@@ -2176,7 +2222,22 @@ class ReportsController extends AppController
                             'Status.id = Order.status_id',
                         ]
                     ],
-
+                    [
+                        'table' => 'outcomes',
+                        'alias' => 'Outcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Outcome.id = OrderItem.outcome_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'StatusOutcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'StatusOutcome.id = Outcome.status_id'
+                        ]
+                    ],
                 ],
                 'conditions' => $condition,
                 'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
@@ -2247,7 +2308,22 @@ class ReportsController extends AppController
                             'Status.id = Order.status_id',
                         ]
                     ],
-
+                    [
+                        'table' => 'outcomes',
+                        'alias' => 'Outcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Outcome.id = OrderItem.outcome_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'statuses',
+                        'alias' => 'StatusOutcome',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'StatusOutcome.id = Outcome.status_id'
+                        ]
+                    ],
                 ],
                 'conditions' => $condition,
                 'contain' => ['Order', 'CustomerUser', 'CustomerUserItinerary'],
