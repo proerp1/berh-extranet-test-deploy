@@ -29,32 +29,41 @@
                 <th class="ps-4 w-80px min-w-80px rounded-start">
                     <input type="checkbox" class="check_all">
                 </th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Fornecedor</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Status</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Subtotal</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Valor Conta a Pagar</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Diferença</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Economia</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">N° Pedido</th>
-                <th class="ps-4 w-250px min-w-250px rounded-start">Ações</th>
+                <th class="ps-4 rounded-start">Fornecedor</th>
+                <th class="ps-4 rounded-start">Status</th>
+                <th class="ps-4 rounded-start">Subtotal</th>
+                <th class="ps-4 rounded-start">Repasse</th>
+                <th class="ps-4 rounded-start">Taxa</th>
+                <th class="ps-4 rounded-start">Total</th>
+                <th class="ps-4 rounded-start">Valor Conta a Pagar</th>
+                <th class="ps-4 rounded-start">Diferença</th>
+                <th class="ps-4 rounded-start">Economia</th>
+                <th class="ps-4 rounded-start">N° Pedido</th>
+                <th class="ps-4 rounded-start">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                <?php 
+                <?php
                 $total_saldo=0;
                 $total=0;
                 $total_outcomes=0;
                 $total_diferenca=0;
+                $total_transfer_fee=0;
+                $total_commission_fee=0;
+                $total_total=0;
                 foreach ($suppliersAll as $supplier) {
                     $total_saldo+=$supplier[0]['total_saldo'];
                     $total+=$supplier[0]['subtotal'];
                     $total_outcomes+=$supplier[0]['total_outcomes'];
+                    $total_transfer_fee += $supplier[0]['transfer_fee'];
+                    $total_commission_fee += $supplier[0]['commission_fee'];
+                    $total_total += $supplier[0]['total'];
 
                     $valor_diferenca = 0;
                     if ($supplier[0]['subtotal'] != 0 and $supplier[0]['total_outcomes'] != 0) {
                         $valor_diferenca = ($supplier[0]['subtotal'] - $supplier[0]['total_outcomes']);
                     }
-                    
+
                     $total_diferenca+=$valor_diferenca;
                     ?>
                     <tr>
@@ -66,6 +75,9 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['Supplier']['razao_social']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $supplier['OrderItem']['status_processamento']; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['subtotal'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['transfer_fee'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['commission_fee'],2,',','.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_outcomes'],2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($valor_diferenca,2,',','.'); ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo number_format($supplier[0]['total_saldo'],2,',','.'); ?></td>
@@ -83,8 +95,13 @@
                 <tr>
                     <th  class="fw-bold fs-5 ps-4" colspan="3">Total</th>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total, 2, ',', '.'); ?></td>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_transfer_fee, 2, ',', '.'); ?></td>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_commission_fee, 2, ',', '.'); ?></td>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_total, 2, ',', '.'); ?></td>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_outcomes, 2, ',', '.'); ?></td>
                     <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_diferenca, 2, ',', '.'); ?></td>
+                    <td class="fw-bold fs-7 ps-4"><?php echo number_format($total_saldo, 2, ',', '.'); ?></td>
+                    <td class="fw-bold fs-7 ps-4" colspan="2"></td>
                 </tr>
             </tfoot>
         </div>

@@ -2198,6 +2198,9 @@ class OrdersController extends AppController
                 'Supplier.razao_social',
                 'OrderItem.status_processamento',
                 'sum(OrderItem.subtotal) as subtotal',
+                'sum(OrderItem.transfer_fee) as transfer_fee',
+                'sum(OrderItem.commission_fee) as commission_fee',
+                'sum(OrderItem.total) as total',
                 "(SELECT sum(b.total) as total_saldo
                     FROM order_balances b
                     INNER JOIN benefits be ON be.id = b.benefit_id
@@ -2219,7 +2222,7 @@ class OrdersController extends AppController
                             AND o.supplier_id = Supplier.id
                             AND o.data_cancel = '1901-01-01 00:00:00'
                 ) AS count_outcomes",
-                "(SELECT SUM(o.valor_total) AS valor_total 
+                "(SELECT SUM(o.valor_total) AS valor_total
                     FROM outcomes o
                     WHERE o.id = OrderItem.outcome_id
                             AND o.supplier_id = Supplier.id
@@ -2267,6 +2270,7 @@ class OrdersController extends AppController
                 'Benefit.name',
                 'CustomerUser.name',
                 'OrderItem.*',
+                'StatusOutcome.*',
             ],
             'joins' => [
                 [
@@ -2285,6 +2289,22 @@ class OrdersController extends AppController
                         'Supplier.id = Benefit.supplier_id'
                     ]
                 ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
             ],
             'group' => ['OrderItem.id']
 
@@ -2292,7 +2312,65 @@ class OrdersController extends AppController
 
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Operadores' => '', 'Detalhes' => ''];
-        $this->set(compact('action', 'breadcrumb', 'id', 'suppliersAll'));
+        $this->set(compact('action', 'breadcrumb', 'id', 'supplier_id', 'suppliersAll'));
+    }
+
+    public function operadoras_detalhes_export($id, $supplier_id)
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        
+        $suppliersAll = $this->OrderItem->find('all', [
+            'conditions' => ['OrderItem.order_id' => $id, 'Supplier.id' => $supplier_id],
+            'fields' => [
+                'Order.id',
+                'Supplier.id',
+                'Supplier.razao_social',
+                'Benefit.name',
+                'CustomerUser.name',
+                'OrderItem.*',
+                'StatusOutcome.*',
+            ],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
+            ],
+            'group' => ['OrderItem.id']
+        ]);
+
+        $nome = 'operadoras_detalhes_' . $id . '_' . $supplier_id . '_' . date('d_m_Y_H_i_s') . '.xlsx';
+        
+        $this->ExcelGenerator->gerarOperadorasDetalhes($nome, $suppliersAll);
+        $this->redirect('/files/excel/' . $nome);
     }
 
     public function liberar_faturamento($id)

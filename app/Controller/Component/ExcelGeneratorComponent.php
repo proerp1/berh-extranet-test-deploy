@@ -364,4 +364,16 @@ class ExcelGeneratorComponent extends Component
         $writer = new Xlsx($spreadsheet);
         $writer->save($local_salva);
     }
+
+    public function gerarOperadorasDetalhes($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getOperadorasDetalhes($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
 }

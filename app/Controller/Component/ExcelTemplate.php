@@ -3136,4 +3136,35 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $activeWorksheet->setCellValue($col.$indx, 'R$' . number_format($v_total_bal_inconsistencia,2,',','.')); $col++;
         }
     }
+
+    public function getOperadorasDetalhes($objPHPExcel, $dados)
+    {
+        $col = 'A';
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Fornecedor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Benefício"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Beneficiário"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Total"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data inicio Processamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data fim Processamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status Processamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Motivo Processamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Pedido Operadora"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Conta Pagar"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status do Pagamento"); $col++;
+        
+        foreach ($dados as $key => $dado) {
+            $col = 'A';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Supplier"]["razao_social"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["Benefit"]["name"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["CustomerUser"]["name"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), 'R$' . $dado["OrderItem"]["subtotal"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_inicio_processamento"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["data_fim_processamento"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["status_processamento"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["motivo_processamento"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["pedido_operadora"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["outcome_id"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["StatusOutcome"]["name"]); $col++;
+        }
+    }
 }
