@@ -639,16 +639,16 @@ class Order extends AppModel
         $pedidoComplementar = $order['Order']['pedido_complementar'];
 
         if ($condicaoPagamento == 2) {
-            $statusNovo = 87;
+            $statusID = 87;
         } else {
-            $statusNovo = ($pedidoComplementar == 2) ? 104 : 85;
+            $statusID = ($pedidoComplementar == 2) ? 104 : 85;
         }
         
         $this->id = $id;
         
         $result = $this->save([
             'Order' => [
-                'status_id'     => $statusNovo,
+                'status_id'     => $statusID,
                 'payment_ge'    => $pedidoComplementar,
                 'payment_date'  => $this->getNextWeekdayDate('Y-m-d'),
             ]
