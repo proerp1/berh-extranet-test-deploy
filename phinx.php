@@ -20,7 +20,7 @@ return
         ],
         'development' => [
             'adapter' => 'mysql',
-            'host' => 'localhost:3306',
+            'host' => 'localhost',
             'name' => 'berh',
             'user' => 'root',
             'pass' => 'inter123',
