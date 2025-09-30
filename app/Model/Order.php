@@ -287,38 +287,38 @@ class Order extends AppModel
 
     private function _ajustaStatusPorGE() 
     { 
-        if (!empty($this->data[$this->alias]['id'])) {
-            $registroAtual = $this->find('first', [
-                'conditions' => ['id' => $this->data[$this->alias]['id']],
-                'fields' => ['status_id', 'pedido_complementar'],
-                'recursive' => -1
-            ]);
+        if (empty($this->data[$this->alias]['id'])) {
+            return true;
+        }
 
-            $statusAtual = $registroAtual[$this->alias]['status_id'];
-            $geAntigo = $registroAtual[$this->alias]['pedido_complementar'];
+        $registroAtual = $this->find('first', [
+            'recursive'     => -1,
+            'fields'        => ['status_id', 'pedido_complementar'],
+            'conditions'    => [
+                'id' => $this->data[$this->alias]['id']
+            ],
+        ]);
 
-            $geNovo = isset($this->data[$this->alias]['pedido_complementar']) 
-                        ? $this->data[$this->alias]['pedido_complementar'] 
-                        : $geAntigo;
+        if (!$registroAtual) {
+            return true;
+        }
 
-            $statusNovo = isset($this->data[$this->alias]['status_id']) 
-                            ? $this->data[$this->alias]['status_id'] 
-                            : $statusAtual;
+        $statusAtual    = $registroAtual[$this->alias]['status_id'];
+        $geAtual        = $registroAtual[$this->alias]['pedido_complementar'];
+        
+        $statusNovo     = $this->data[$this->alias]['status_id'] ?? $statusAtual;
+        $geNovo         = $this->data[$this->alias]['pedido_complementar'] ?? $geAtual;
 
-            // ====================
-            // Regra 1: Pagamento Confirmado (85) -> GE de 1 para 2 -> muda para 104
-            // ====================
-            //if ($statusNovo == 85 && $geAntigo == 1 && $geNovo == 2) {
-            if ($statusNovo == 85 && $geNovo == 2) {
-                $this->data[$this->alias]['status_id'] = 104;
-            }
+        // Regra 1: Pagamento Confirmado (85) + GE mudou para 2 -> Aguardando Liberação (104)
+        if ($statusNovo == 85 && $geNovo == 2) {
+            $this->data[$this->alias]['status_id'] = 104;
+            return true;
+        }
 
-            // ====================
-            // Regra 2: Aguardando Liberação de Crédito (104) -> GE de 2 para 1 -> muda para 85
-            // ====================
-            if ($statusAtual == 104 && $geAntigo == 2 && $geNovo == 1) {
-                $this->data[$this->alias]['status_id'] = 85;
-            }
+        // Regra 2: Aguardando Liberação (104) + GE voltou de 2 para 1 -> Pagamento Confirmado (85)
+        if ($statusAtual == 104 && $geAtual == 2 && $geNovo == 1) {
+            $this->data[$this->alias]['status_id'] = 85;
+            return true;
         }
 
         return true;
@@ -627,7 +627,7 @@ class Order extends AppModel
 
         $order = $this->find('first', [
             'conditions' => ['Order.id' => $id],
-            'fields' => ['Order.pedido_complementar', 'Order.condicao_pagamento'],
+            'fields' => ['Order.pedido_complementar', 'Order.condicao_pagamento', 'Order.status_id'],
             'recursive' => -1
         ]);
 
@@ -635,20 +635,26 @@ class Order extends AppModel
             return false;
         }
 
-        if ($order['Order']['condicao_pagamento'] == 2) {
-            $statusId = 87;
+        $condicaoPagamento  = $order['Order']['condicao_pagamento'];
+        $pedidoComplementar = $order['Order']['pedido_complementar'];
+
+        if ($condicaoPagamento == 2) {
+            $statusNovo = 87;
         } else {
-            $statusId = ($order['Order']['pedido_complementar'] == 2) ? 104 : 85;
+            $statusNovo = ($pedidoComplementar == 2) ? 104 : 85;
         }
         
         $this->id = $id;
         
-        return $this->save([
+        $result = $this->save([
             'Order' => [
-                'status_id' => $statusId,
-                'payment_date' => $this->getNextWeekdayDate('Y-m-d'),
+                'status_id'     => $statusNovo,
+                'payment_ge'    => $pedidoComplementar,
+                'payment_date'  => $this->getNextWeekdayDate('Y-m-d'),
             ]
         ]);
+
+        return $result;
     }
 
     private function getNextWeekdayDate($format = 'Y-m-d H:i:s') {
