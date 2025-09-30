@@ -1883,6 +1883,7 @@ class OrdersController extends AppController
     {
         $id = $this->request->data['customer_id'];
         $orderId = $this->request->data['order_id'];
+        $working_days = $this->request->data['CustomerUserItinerary']['working_days'];
 
         $order = $this->Order->findById($orderId);
 
@@ -1900,7 +1901,6 @@ class OrdersController extends AppController
         $this->request->data['CustomerUserItinerary']['customer_id'] = $id;
 
         if ($this->CustomerUserItinerary->save($this->request->data)) {
-
             $idLastInserted = $this->CustomerUserItinerary->getLastInsertId();            
 
             $customerItineraries = $this->CustomerUserItinerary->find('all', [
@@ -1921,7 +1921,7 @@ class OrdersController extends AppController
                 ]
             ]);
 
-            $this->processItineraries($customerItineraries, $orderId, $order['Order']['working_days'], $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
+            $this->processItineraries($customerItineraries, $orderId, $working_days, $order['Order']['order_period_from'], $order['Order']['order_period_to'], 1, $proposal);
 
             $this->Order->id = $orderId;
             $this->recalculateOrderTransferFees($orderId);
