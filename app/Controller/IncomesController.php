@@ -579,6 +579,20 @@ class IncomesController extends AppController
         }
 
         if ($this->Income->save($data, ['validate' => false])) {
+            if ($old_status['Income']['status_id'] != $status) {
+                $newStatus = $this->Status->find('first', ['conditions' => ['Status.id' => $status]]);
+                $oldStatus = $this->Status->find('first', ['conditions' => ['Status.id' => $old_status['Income']['status_id']]]);
+
+                $this->ChargesHistory->create();
+                $charges = $this->ChargesHistory->save([
+                    'call_status' => 0,
+                    'cobranca_id' => 0,
+                    'customer_id' => 0,
+                    'income_id' => $id,
+                    'text' => 'Mudança do status '.$oldStatus['Status']['name'].' para '.$newStatus['Status']['name'],
+                    'user_creator_id' => CakeSession::read('Auth.User.id')
+                ]);
+            }
             $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect(['action' => 'index/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '')]);
         }
