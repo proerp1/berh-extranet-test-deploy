@@ -14,8 +14,9 @@ class ExcelTemplate
             ->setCellValue('C1', "Data")
             ->setCellValue('D1', "Banco")
             ->setCellValue('E1', "Qtde")
-            ->setCellValue('F1', "Total")
-            ->setCellValue('G1', "Documento");
+            ->setCellValue('F1', "Pedidos")
+            ->setCellValue('G1', "Total")
+            ->setCellValue('H1', "Documento");
 
         $indx = 1;
         for ($i = 0; $i < count($dados); $i++) {
@@ -26,8 +27,9 @@ class ExcelTemplate
                 ->setCellValue('C' . $indx, date('d/m/Y H:i:s', strtotime($dados[$i]['CnabLote']['created'])))
                 ->setCellValue('D' . $indx, $dados[$i]['Bank']['name'])
                 ->setCellValue('E' . $indx, $dados[$i][0]['qtde'])
-                ->setCellValue('F' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
-                ->setCellValue('G' . $indx, $dados[$i]['CnabLote']['arquivo']);
+                ->setCellValue('F' . $indx, $dados[$i][0]['pedidos'])
+                ->setCellValue('G' . $indx, number_format($dados[$i][0]['valor_total'], 2, ',', '.'))
+                ->setCellValue('H' . $indx, $dados[$i]['CnabLote']['arquivo']);
         }
     }
 
