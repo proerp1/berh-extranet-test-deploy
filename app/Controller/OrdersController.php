@@ -3249,46 +3249,82 @@ class OrdersController extends AppController
         $this->layout = 'ajax';
         $this->autoRender = false;
 
-        $outcome = $this->Outcome->find('first', ['conditions' => ['Outcome.order_id' => $id]]);
+        $orderItems = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id'
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'OrderItem.order_id' => $id,
+                'OrderItem.outcome_id' => null,
+            ],
+            'group' => ['Supplier.id'],
+        ]);
 
-        if ($outcome) {
-            $this->Flash->set(__('Já existe uma remessa com esse pedido.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect(['action'=> 'edit', $id]);
-        }
+        foreach ($orderItems as $item) {
+            $valor_total = ($item[0]['subtotal'] + $item[0]['transfer_fee']);
 
-        try {
-            $order = $this->Order->findById($id);
-
-            $newOutcome = $this->Outcome->save(['Outcome' => [
-                'status_id' => 11,
-                'doc_num' => $order['Order']['id'],
-                'order_id' => $order['Order']['id'],
-                'bank_account_id' => 4,
-                'payment_method' => 11,
-                'resale_id' => 1,
-                'plano_contas_id' => 1,
-                'expense_id' => 1,
-                'parcela' => 1,
-                'supplier_id' => 1,
-                'cost_center_id' => 116,
-                'recorrencia' => 2,
-                'name' => 'Pagamento ao fornecedor',
-                'valor_multa' => 0,
-                'valor_bruto' => $order['Order']['subtotal'],
-                'valor_total' => $order['Order']['total'],
-                'vencimento' => $order['Order']['due_date'],
-                'data_pagamento' => date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento']))),
-                'created' => date('Y-m-d H:i:s'),
-                'user_creator_id' => CakeSession::read("Auth.User.id"),
-            ]]);
-
-            $this->OutcomeOrder->save(['OutcomeOrder' => [
-              'order_id' => $order['Order']['id'],
-              'outcome_id' => $newOutcome['Outcome']['id'],
-            ]]);
-        } catch (Exception $e) {
-            $this->Flash->set(__('Não foi possível gerar a remessa. Verifique os dados e tente novamente.'), ['params' => ['class' => "alert alert-danger"]]);
-            $this->redirect(['action'=> 'edit', $id]);
+            $outcome = [];
+            $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
+            $outcome['Outcome']['resale_id'] = 1;
+            $outcome['Outcome']['doc_num'] = $id;
+            $outcome['Outcome']['parcela'] = 1;
+            $outcome['Outcome']['status_id'] = 11;
+            $outcome['Outcome']['name'] = 'Pagamento a Operadoras';
+            $outcome['Outcome']['valor_multa'] = 0;
+            $outcome['Outcome']['valor_desconto'] = 0;
+            $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
+            $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
+            $outcome['Outcome']['bank_account_id'] = 3;
+            $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+            $outcome['Outcome']['expense_id'] = 2;
+            $outcome['Outcome']['cost_center_id'] = 113;
+            $outcome['Outcome']['plano_contas_id'] = 1;
+            $outcome['Outcome']['recorrencia'] = 2;
+            $outcome['Outcome']['payment_method'] = 11;
+            $outcome['Outcome']['data_competencia'] = date('01/m/Y');
+            $outcome['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
+            $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
+            
+            $this->Outcome->create();
+            $this->Outcome->save($outcome);
+            
+            $outcome_id = $this->Outcome->id;
+            
+            $outcomeOrder = [];
+            $outcomeOrder['OutcomeOrder']['outcome_id'] = $outcome_id;
+            $outcomeOrder['OutcomeOrder']['order_id'] = $id;
+            
+            $this->OutcomeOrder->create();
+            $this->OutcomeOrder->save($outcomeOrder);
+            
+            // Atualizar todos os OrderItems deste supplier com o outcome_id
+            $this->OrderItem->updateAll(
+                ['OrderItem.outcome_id' => $outcome_id],
+                [
+                    'OrderItem.order_id' => $id,
+                    'OrderItem.outcome_id' => null,
+                    'EXISTS (SELECT 1 FROM benefits b 
+                            INNER JOIN suppliers s ON s.id = b.supplier_id 
+                            WHERE b.id = CustomerUserItinerary.benefit_id 
+                            AND s.id = ' . $item['Supplier']['id'] . ')'
+                ]
+            );
         }
 
         $this->Flash->set(__('Remessa gerada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
