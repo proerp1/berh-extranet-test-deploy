@@ -3560,6 +3560,7 @@ class OrdersController extends AppController
                 ],
                 'conditions' => [
                     'OrderItem.id' => $itemOrderId,
+                    'OrderItem.outcome_id' => null,
                 ],
                 'group' => ['Supplier.id'],
             ]);
@@ -3615,6 +3616,7 @@ class OrdersController extends AppController
                     ],
                     'conditions' => [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'Supplier.id' => $item['Supplier']['id']
                     ]
                 ]);
@@ -3634,6 +3636,7 @@ class OrdersController extends AppController
                     ['OrderItem.outcome_id' => $outcome_id],
                     [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'EXISTS (SELECT 1 FROM benefits b 
                                 INNER JOIN suppliers s ON s.id = b.supplier_id 
                                 WHERE b.id = CustomerUserItinerary.benefit_id 
@@ -3657,13 +3660,13 @@ class OrdersController extends AppController
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
 
-        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;        
 
         $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
         $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
         $stp    = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
 
-        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderId], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
@@ -3702,7 +3705,10 @@ class OrdersController extends AppController
             ]
         ]);
 
+        $itemOrderId = [];
         foreach ($items as $item) {
+            $itemOrderId[] = $item['OrderItem']['id'];
+
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
 
             $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
@@ -3813,6 +3819,7 @@ class OrdersController extends AppController
                 ],
                 'conditions' => [
                     'OrderItem.id' => $itemOrderId,
+                    'OrderItem.outcome_id' => null,
                 ],
                 'group' => ['Supplier.id'],
             ]);
@@ -3868,6 +3875,7 @@ class OrdersController extends AppController
                     ],
                     'conditions' => [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'Supplier.id' => $item['Supplier']['id']
                     ]
                 ]);
@@ -3887,6 +3895,7 @@ class OrdersController extends AppController
                     ['OrderItem.outcome_id' => $outcome_id],
                     [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'EXISTS (SELECT 1 FROM benefits b 
                                 INNER JOIN suppliers s ON s.id = b.supplier_id 
                                 WHERE b.id = CustomerUserItinerary.benefit_id 

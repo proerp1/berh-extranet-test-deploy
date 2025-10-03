@@ -1573,7 +1573,7 @@ class ReportsController extends AppController
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
 
-        $itemOrderId = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
 
         $buscar = false;
         $de = null;
@@ -1591,7 +1591,7 @@ class ReportsController extends AppController
         $bt             = isset($this->request->data['curr_bt']) ? $this->request->data['curr_bt'] : false;
         $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
 
-        $condition      = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderId], 'or' => []];
+        $condition      = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderIds], 'or' => []];
         
         if (isset($de) and $de != '') {
             $buscar = true;
@@ -1748,7 +1748,10 @@ class ReportsController extends AppController
             ]
         ]);
 
+        $itemOrderId = [];
         foreach ($items as $item) {
+            $itemOrderId[] = $item['OrderItem']['id'];
+
             $orderItem = $this->OrderItem->findById($item['OrderItem']['id']);
 
             $this->LogOrderItemsProcessamento->logProcessamento($orderItem);
@@ -1859,6 +1862,7 @@ class ReportsController extends AppController
                 ],
                 'conditions' => [
                     'OrderItem.id' => $itemOrderId,
+                    'OrderItem.outcome_id' => null,
                 ],
                 'group' => ['Supplier.id'],
             ]);
@@ -1914,6 +1918,7 @@ class ReportsController extends AppController
                     ],
                     'conditions' => [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'Supplier.id' => $item['Supplier']['id']
                     ]
                 ]);
@@ -1933,6 +1938,7 @@ class ReportsController extends AppController
                     ['OrderItem.outcome_id' => $outcome_id],
                     [
                         'OrderItem.id' => $itemOrderId,
+                        'OrderItem.outcome_id' => null,
                         'EXISTS (SELECT 1 FROM benefits b 
                                 INNER JOIN suppliers s ON s.id = b.supplier_id 
                                 WHERE b.id = CustomerUserItinerary.benefit_id 
