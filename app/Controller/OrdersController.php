@@ -3276,7 +3276,10 @@ class OrdersController extends AppController
             'group' => ['Supplier.id'],
         ]);
 
+        $total = 0;
         foreach ($orderItems as $item) {
+            $total++;
+
             $valor_total = ($item[0]['subtotal'] + $item[0]['transfer_fee']);
 
             $outcome = [];
@@ -3327,7 +3330,12 @@ class OrdersController extends AppController
             );
         }
 
-        $this->Flash->set(__('Remessa gerada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        if ($total > 0) {
+            $this->Flash->set(__('Remessa gerada com sucesso.'), ['params' => ['class' => "alert alert-success"]]);
+        } else {
+            $this->Flash->set(__('Já existe uma remessa com esse pedido.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+
         $this->redirect(['action'=> 'edit', $id]);
     }
 
