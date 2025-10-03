@@ -6,7 +6,7 @@ class CustomerBenefitCodesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['CustomerBenefitCode', 'Customer', 'Benefit'];
+    public $uses = ['CustomerBenefitCode', 'Customer', 'Benefit', 'Log'];
 
     public function beforeFilter() {
         parent::beforeFilter();
@@ -88,7 +88,28 @@ class CustomerBenefitCodesController extends AppController
 
                 $this->request->data['CustomerBenefitCode']['code_be'] = $benefit['Benefit']['code'];
                 $this->request->data['CustomerBenefitCode']['user_updated_id'] = CakeSession::read("Auth.User.id");
+
+                $old = $this->CustomerBenefitCode->find('first', ['conditions' => ['CustomerBenefitCode.id' => $id]]);
+
+                $dados_log = [
+                    'old_value' => json_encode($old),
+                    'new_value' => json_encode($this->request->data),
+                    'route' => 'customer_benefit_codes/edit',
+                    'log_action' => 'Alterou',
+                    'log_table' => 'CustomerBenefitCode',
+                    'primary_key' => $id,
+                    'parent_log' => $customer_id,
+                    'user_type' => 'ADMIN',
+                    'user_id' => CakeSession::read('Auth.User.id'),
+                    'message' => 'O depara de benefício do cliente foi alterado com sucesso',
+                    'log_date' => date('Y-m-d H:i:s'),
+                    'data_cancel' => '1901-01-01',
+                    'usuario_data_cancel' => 0,
+                    'ip' => $_SERVER['REMOTE_ADDR'],
+                ];
+
                 if ($this->CustomerBenefitCode->save($this->request->data)) {
+                    $this->Log->save($dados_log);
                     $this->Flash->set(__('A exceção do benefício foi alterada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                     $this->redirect(['action' => "edit/$customer_id/$id"]);
                 } else {

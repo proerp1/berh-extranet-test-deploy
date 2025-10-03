@@ -31,7 +31,8 @@ class CustomerUsersController extends AppController
         'BankCode',
         'EconomicGroup',
         'Group',
-        'CustomerAddress'
+        'CustomerAddress',
+        'Log'
     ];
 
     public $paginate = [
@@ -292,9 +293,29 @@ class CustomerUsersController extends AppController
 
         $this->CustomerUser->id = $user_id;
         if ($this->request->is(['post', 'put'])) {
+            $old = $this->CustomerUser->find('first', ['conditions' => ['CustomerUser.id' => $user_id]]);
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'customer_users/'.($is_admin ? 'edit_user' : 'edit'),
+                'log_action' => 'Alterou',
+                'log_table' => 'CustomerUser',
+                'primary_key' => $user_id,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O usuário foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             $this->request->data['CustomerUser']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
             if ($this->CustomerUser->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $action = $is_admin ? 'index_users/' . $id . '/' : 'index/' . $id . '/';
 
                 $this->Flash->set(__('O usuário foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);

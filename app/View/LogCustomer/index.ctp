@@ -1,4 +1,45 @@
-<?php echo $this->element("abas_customers", array('id' => $id)); ?>
+<?php
+echo $this->element("abas_customers", array('id' => $id));
+
+function cleanString(string $str): string {
+    $str = strip_tags($str);
+    $str = html_entity_decode($str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $str = preg_replace('/^\s+|\s+$/u', '', $str);
+    return preg_replace('/\s+/u', ' ', $str);
+}
+
+function compararValoresLog($log): string {
+    $old_json = json_decode($log['Log']['old_value'], true);
+    $new_json = json_decode($log['Log']['new_value'], true);
+
+    $old_values = $old_json[$log['Log']['log_table']];
+    $new_values = $new_json[$log['Log']['log_table']];
+    $html = "<ul>";
+
+    $todasChaves = array_intersect(array_keys($old_values), array_keys($new_values));
+
+    foreach ($todasChaves as $chave) {
+        $oldValue = $old_values[$chave] ?? null;
+        $newValue = $new_values[$chave] ?? null;
+        if ($chave == 'user_updated_id' || $chave == 'updated' || is_array($newValue) || is_array($oldValue)) continue;
+
+        $parsedOldValue = cleanString((string)$oldValue);
+        $parsedNewValue = cleanString((string)$newValue);
+
+        if ($parsedOldValue != $parsedNewValue) {
+            $html .= "<li class='mb-3'>"
+                . cleanString((string)$chave) . ": "
+                . "<span class='old_value'>" . ($parsedOldValue ?: '&nbsp;') . "</span>&nbsp;=>&nbsp;"
+                . "<span class='new_value'>" . $parsedNewValue . "</span>"
+                . "</li>";
+        }
+    }
+
+    $html .= "</ul>";
+
+    return $html == '<ul></ul>' ? 'Nenhuma alteração realizada.' : $html;
+}
+?>
 
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-0 py-3">
@@ -6,26 +47,37 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th class="ps-4 min-w-150px rounded-start">Emitir Nota Fiscal</th>
-                        <th>Saldo Inicial</th>
-                        <th>Data Saldo Inicial</th>
                         <th>Data e hora da Alteração</th>
                         <th>Usuário Alteração</th>
+                        <th class="ps-4 min-w-150px rounded-start">Aba Alterada</th>
+                        <th>Alteração</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) { ?>
                             <?php
-                                $nota_fiscal_tipos = ['N' => 'Não', 'S' => 'Automático', 'A' => 'Antecipada', 'M' => 'Manual'];
-                                $emite_nota_fiscal = $nota_fiscal_tipos[$data[$i]['LogCustomer']['emitir_nota_fiscal']]
+                                $abas = [
+                                    'Customer' => 'Cliente',
+                                    'Proposal' => 'Proposta',
+                                    'CustomerUser' => str_contains($data[$i]['Log']['route'], 'edit_users') ? 'Usuário' : 'Beneficiário',
+                                    'Document' => 'Documento',
+                                    'EconomicGroup' => 'Grupos Econômico',
+                                    'EconomicGroupProposal' => 'Proposta do Grupos Econômico',
+                                    'CustomerFile' => 'Arquivo',
+                                    'CustomerSupplierLogin' => 'Login e Senha',
+                                    'CustomerAddress' => 'Endereço',
+                                    'CustomerBenefitCode' => 'De/Para Benefício',
+                                ];
+                                $aba = $abas[$data[$i]['Log']['log_table']] ?? $data[$i]['Log']['log_table'];
                             ?>
                             <tr>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $emite_nota_fiscal; ?></td>
-                                <td class="fw-bold fs-7 ps-4">R$ <?php echo $data[$i]['LogCustomer']['economia_inicial']; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogCustomer']['dt_economia_inicial']; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['LogCustomer']['created']; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo date('d/m/Y H:i:s', strtotime($data[$i]['Log']['log_date'])); ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Creator']['name']; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $aba; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <?php echo compararValoresLog($data[$i]); ?>
+                                </td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>
@@ -39,3 +91,18 @@
         <?php echo $this->element("pagination"); ?>
     </div>
 </div>
+
+<style>
+    .new_value {
+        background: #60fda7;
+        color: #262626;
+        border-radius: 5px;
+        padding: 2px;
+    }
+    .old_value {
+        background: #f15076;
+        color: #262626;
+        border-radius: 5px;
+        padding: 2px;
+    }
+</style>

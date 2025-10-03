@@ -6,7 +6,7 @@ App::uses('AppController', 'Controller');
 class EconomicGroupsController extends AppController
 {
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['EconomicGroup', 'Status', 'Customer'];
+    public $uses = ['EconomicGroup', 'Status', 'Customer', 'Log'];
 
     public function index($id)
     {
@@ -79,8 +79,27 @@ class EconomicGroupsController extends AppController
         if ($this->request->is('post') || $this->request->is('put')) {
             $this->EconomicGroup->id = $economicGroupId;
             $this->request->data['EconomicGroup']['user_updated_id'] = CakeSession::read("Auth.CustomerUser.id");
+            $old = $this->EconomicGroup->find('first', ['conditions' => ['EconomicGroup.id' => $economicGroupId]]);
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'economic_groups/edit',
+                'log_action' => 'Alterou',
+                'log_table' => 'EconomicGroup',
+                'primary_key' => $economicGroupId,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O grupo econômico foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
 
             if ($this->EconomicGroup->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $this->Flash->set('Grupo econômico atualizado com sucesso.', ['params' => ['class' => 'alert alert-success']]);
                 $this->redirect(['action' => 'index', $id]);
             } else {

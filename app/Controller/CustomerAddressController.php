@@ -4,7 +4,7 @@ class CustomerAddressController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission'];
-    public $uses = ['Customer', 'Status', 'CustomerUser', 'CustomerAddress'];
+    public $uses = ['Customer', 'Status', 'CustomerUser', 'CustomerAddress', 'Log'];
 
     public function beforeFilter()
     {
@@ -111,7 +111,28 @@ class CustomerAddressController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerAddress->validates();
             $this->request->data['CustomerAddress']['user_updated_id'] = CakeSession::read('Auth.User.id');
+
+            $old = $this->CustomerAddress->find('first', ['conditions' => ['CustomerAddress.id' => $address_id]]);
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'customers_address/edit',
+                'log_action' => 'Alterou',
+                'log_table' => 'CustomerAddress',
+                'primary_key' => $address_id,
+                'parent_log' => $customer_id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O endereço do cliente foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             if ($this->CustomerAddress->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $this->Flash->set(__('O endereço foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'index', $customer_id]);
             } else {

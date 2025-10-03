@@ -42,7 +42,7 @@
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customer_address']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_address/index/'.$id; ?>">Endereços</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customers_benefit_codes']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_benefit_codes/index/'.$id; ?>">De/Para Benefício</a>
+		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['customer_benefit_codes']) ? 'active' : '' ?>" href="<?php echo $this->base.'/customer_benefit_codes/index/'.$id; ?>">De/Para Benefício</a>
 	</li>
 	<li class="nav-item">
 		<a class="nav-link <?php echo in_array($this->request->params['controller'], ['log_customer']) ? 'active' : '' ?>" href="<?php echo $this->base.'/log_customer/index/'.$id; ?>">Histórico Alterações</a>

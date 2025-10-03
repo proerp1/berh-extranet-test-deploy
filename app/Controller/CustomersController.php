@@ -1004,12 +1004,33 @@ class CustomersController extends AppController
         $this->Document->id = $document_id;
 
         if ($this->request->is(['post', 'put'])) {
+            $old = $this->Document->find('first', ['conditions' => ['Document.id' => $document_id]]);
+
             $this->Document->validates();
             if ($this->request->data['Document']['file']['name'] == '') {
                 unset($this->request->data['Document']['file']);
             }
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'customers/edit_document',
+                'log_action' => 'Alterou',
+                'log_table' => 'Document',
+                'primary_key' => $document_id,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O documento foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             $this->request->data['Document']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Document->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $this->Flash->set(__('O documento foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'documents/' . $id]);
             } else {
@@ -1855,8 +1876,27 @@ class CustomersController extends AppController
                 $this->request->data['CustomerFile']['user_finalizado_id'] = CakeSession::read('Auth.User.id');
                 $this->request->data['CustomerFile']['data_finalizacao'] =  date('Y-m-d H:i:s');
             }
-    
+            $old = $this->CustomerFile->find('first', ['conditions' => ['CustomerFile.id' => $file_id]]);
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'customers/edit_file',
+                'log_action' => 'Alterou',
+                'log_table' => 'CustomerFile',
+                'primary_key' => $file_id,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O arquivo do cliente foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             if ($this->CustomerFile->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $this->Flash->set(__('O arquivo foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'files/' . $id]);
             } else {

@@ -4,7 +4,7 @@ class LogCustomerController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email', 'HtmltoPdf', 'ExcelGenerator', 'Robo'];
-    public $uses = ['Customer', 'LogCustomer'];
+    public $uses = ['Customer', 'LogCustomer', 'Log'];
 
     public $paginate = [];
 
@@ -17,18 +17,45 @@ class LogCustomerController extends AppController
     {
         $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = array_merge($this->paginate, [
-          'order' => ['LogCustomer.created' => 'desc']
+            'order' => ['Log.log_date' => 'desc'],
+            'joins' => [
+                [
+                    'table' => 'users',
+                    'alias' => 'Creator',
+                    'type' => 'INNER',
+                    'conditions' => ['Creator.id = Log.user_id']
+                ],
+            ],
+            'fields' => ['Log.*', 'Creator.*']
         ]);
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
 
-        $condition = ['and' => ['LogCustomer.customer_id' => $id], 'or' => []];
+        $tabelas_abas = [
+            'Proposal',
+            'CustomerUser',
+            'Document',
+            'EconomicGroup',
+            'EconomicGroupProposal',
+            'CustomerFile',
+            'CustomerSupplierLogin',
+            'CustomerAddress',
+            'CustomerBenefitCode',
+        ];
 
-        $data = $this->Paginator->paginate('LogCustomer', $condition);
+        $condition = [
+            'and' => [],
+            'or' => [
+                'and' => ['Log.primary_key' => $id, 'Log.log_table' => 'Customer'],
+                'and ' => ['Log.parent_log' => $id, 'Log.log_table' => $tabelas_abas]
+            ]
+        ];
+
+        $data = $this->Paginator->paginate('Log', $condition);
 
         $breadcrumb = [
-          $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
-          'Histórico Alterações' => '',
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Histórico Alterações' => '',
         ];
 
         $this->set('action', 'Histórico Alterações');

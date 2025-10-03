@@ -4,7 +4,7 @@ class ProposalsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['Proposal', 'Status', 'Customer'];
+    public $uses = ['Proposal', 'Status', 'Customer', 'Log'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'Proposal.name' => 'asc'],
@@ -112,12 +112,29 @@ class ProposalsController extends AppController
         $this->Permission->check(11, 'escrita') ? '' : $this->redirect('/not_allowed');
         $this->Proposal->id = $proposalId;
         if ($this->request->is(['post', 'put'])) {
-
-            $old = $this->Proposal->find('first', ['conditions' => ['Proposal.id' => $proposalId], 'fields' => ['Proposal.status_id']]);
+            $old = $this->Proposal->find('first', ['conditions' => ['Proposal.id' => $proposalId]]);
             $old_status = (int)$old['Proposal']['status_id'];
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'proposals/edit',
+                'log_action' => 'Alterou',
+                'log_table' => 'Proposal',
+                'primary_key' => $proposalId,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'A proposta foi alterada com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
 
             $this->request->data['Proposal']['user_updated_id'] = CakeSession::read('Auth.User.id');
             if ($this->Proposal->save($this->request->data)) {
+                $this->Log->save($dados_log);
 
                 $newStatus = (int)$this->request->data['Proposal']['status_id'];
 

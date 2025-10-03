@@ -4,7 +4,7 @@ class EconomicGroupProposalsController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator', 'ExcelConfiguration'];
-    public $uses = ['EconomicGroupProposal', 'Status', 'Customer'];
+    public $uses = ['EconomicGroupProposal', 'Status', 'Customer', 'Log'];
 
     public $paginate = [
         'limit' => 10, 'order' => ['Status.id' => 'asc', 'EconomicGroupProposal.name' => 'asc'],
@@ -101,7 +101,28 @@ class EconomicGroupProposalsController extends AppController
             $old_status = (int)$old['EconomicGroupProposal']['status_id'];
 
             $this->request->data['EconomicGroupProposal']['user_updated_id'] = CakeSession::read('Auth.User.id');
+
+            $old = $this->EconomicGroupProposal->find('first', ['conditions' => ['EconomicGroupProposal.id' => $EconomicGroupProposalId]]);
+
+            $dados_log = [
+                'old_value' => json_encode($old),
+                'new_value' => json_encode($this->request->data),
+                'route' => 'economic_group_proposals/edit',
+                'log_action' => 'Alterou',
+                'log_table' => 'EconomicGroupProposal',
+                'primary_key' => $EconomicGroupProposalId,
+                'parent_log' => $id,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'A proposta do grupo econômico foi alterada com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             if ($this->EconomicGroupProposal->save($this->request->data)) {
+                $this->Log->save($dados_log);
 
                 $newStatus = (int)$this->request->data['EconomicGroupProposal']['status_id'];
 
