@@ -1,7 +1,10 @@
+<?php echo $this->element("../Reports/_abas_compras"); ?>
+
 <?php echo $this->element("../Reports/_totais_compras"); ?>
 
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "reports", "action" => "compras")); ?>" role="form" id="busca" autocomplete="off">
+        <input type="hidden" name="aba" id="aba" value="<?php echo $aba; ?>">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">

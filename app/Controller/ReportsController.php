@@ -1072,6 +1072,50 @@ class ReportsController extends AppController
         $buscar = false;
         $de = null;
         $para = null;
+
+        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
+
+        switch ($aba) {
+            case 'liberacao_credito':
+                $condition['and'][] = [
+                    'OrderItem.status_processamento' => [
+                        'INICIO_PROCESSAMENTO',
+                        'VALIDACAO_PENDENTE',
+                        'PROCESSAMENTO_PENDENTE',
+                        'ARQUIVO_GERADO',
+                        'CADASTRO_PROCESSADO',
+                        'CREDITO_PROCESSADO'
+                    ]
+                ];
+                break;
+                
+            case 'cartao_novo':
+                $condition['and'][] = [
+                    'OrderItem.status_processamento' => [
+                        'CARTAO_NOVO'
+                    ]
+                ];
+                break;
+                
+            case 'inconsistencias':
+                $condition['and'][] = [
+                    'OrderItem.status_processamento' => [
+                        'CADASTRO_INCONSISTENTE',
+                        'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                        'CREDITO_INCONSISTENTE',
+                    ]
+                ];
+                break;
+                
+            case 'financeiro':
+                $condition['and'][] = ['Order.status_id' => 104];
+                break;
+                
+            case 'finalizado':
+                $condition['and'][] = ['Order.status_id' => 87];
+                break;
+        }
+
         if (isset($_GET['de']) and $_GET['de'] != '') {
             $buscar = true;
 
@@ -1135,7 +1179,7 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
         }
 
-            if (!empty($_GET['bt'])) {
+        if (!empty($_GET['bt'])) {
             $buscar = true;
             $condition['and'][] = ['Benefit.benefit_type_id' => $_GET['bt']];
         }
@@ -1461,7 +1505,7 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba'));
     }
 
     public function getSupplierAndCustomer()
