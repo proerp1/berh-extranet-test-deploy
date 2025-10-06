@@ -336,15 +336,17 @@
                                         <span class="menu-title">Fluxo de caixa</span>
                                     </a>
                                 </div>
-
-                                <div class="menu-item">
-                                    <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'nfs') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'nfs']) ?>">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title">Notas Fiscais Emitidas</span>
-                                    </a>
-                                </div>
+                                
+                                <?php if (in_array(CakeSession::read("Auth.User.Group.name"), ['Administrador', 'Financeiro'])) { ?>
+                                    <div class="menu-item">
+                                        <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'nfs') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'nfs']) ?>">
+                                            <span class="menu-bullet">
+                                                <span class="bullet bullet-dot"></span>
+                                            </span>
+                                            <span class="menu-title">Notas Fiscais Emitidas</span>
+                                        </a>
+                                    </div>
+                                <?php } ?>
 
                             </div>
                         </div>

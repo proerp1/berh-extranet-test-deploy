@@ -11,15 +11,19 @@
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['controller'] == 'order_documents' && in_array($this->request->params['action'], ['index', 'add' , 'edit']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/order_documents/index/<?php echo $id; ?>">Notas fiscais</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo $this->request->params['action'] == 'saldos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentações</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo in_array($this->request->params['action'], ['operadoras', 'operadoras_detalhes']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link <?php echo $this->request->params['action'] == 'compras' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/compras/<?php echo $id; ?>">Compras</a>
-    </li>
+
+    <?php if (!in_array(CakeSession::read("Auth.User.Group.name"), ['Financeiro'])) { ?>
+        <li class="nav-item">
+            <a class="nav-link <?php echo $this->request->params['action'] == 'saldos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/saldos/<?php echo $id; ?>">Movimentações</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo in_array($this->request->params['action'], ['operadoras', 'operadoras_detalhes']) ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/operadoras/<?php echo $id; ?>">Operadoras</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo $this->request->params['action'] == 'compras' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/compras/<?php echo $id; ?>">Compras</a>
+        </li>
+    <?php } ?>
+
     <?php /* ?>
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['action'] == 'descontos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/descontos/<?php echo $id; ?>">Descontos</a>
