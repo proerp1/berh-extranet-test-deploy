@@ -106,16 +106,6 @@
                                     </td>
                                     <td class="fw-bolder text-end"><?php echo $order['Order']['order_period_from']; ?> a <?php echo $order['Order']['order_period_to']; ?></td>
                                 </tr>
-                                <!--end::Payment method-->
-                                <!--begin::Date-->
-                                <tr>
-                                    <td class="text-muted">
-                                        <div class="d-flex align-items-center">
-                                            Liberação do crédito
-                                        </div>
-                                    </td>
-                                    <td class="fw-bolder text-end"><?php echo $order['Order']['credit_release_date']; ?></td>
-                                </tr>
                                 <tr>
                                     <td class="text-muted">
                                         <div class="d-flex align-items-center">
@@ -324,15 +314,25 @@
                         <?php $is_dt_disabled = !($order['Order']['status_id'] == 85 || $order['Order']['status_id'] == 86 || $order['Order']['status_id'] == 104); ?>
 
                         <div class="row">
-                            <div class="mb-7 col-4">
+                            <div class="mb-7 col-6">
+                                <label class="form-label">Data Liberação do crédito</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                    <?php echo $this->Form->input('credit_release_date', array('type' => 'text', "id" => "credit_release_date", "placeholder" => "Data Liberação do crédito", "required" => false, "class" => "form-control mb-3 mb-lg-0 ". (($order['Order']['status_id'] == 87 || !$permDtLibCredito) ? '' : 'datepicker'), 'readonly' => ($order['Order']['status_id'] == 87 || !$permDtLibCredito))); ?>
+                                </div>
+                            </div>
+
+                            <div class="mb-7 col-6">
                                 <label class="form-label">Data Finalização</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
                                     <?php echo $this->Form->input('end_date', array('type' => 'text', "id" => "conta", "placeholder" => "Data Finalização", "required" => false, "class" => "form-control mb-3 mb-lg-0 ". ($is_dt_disabled ? '' : 'datepicker'), 'readonly' => $is_dt_disabled)); ?>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="mb-7 col-4">
+                        <div class="row">
+                            <div class="mb-7 col-6">
                                 <label class="form-label">Vencimento</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
@@ -343,7 +343,7 @@
                                 <?php } ?>
                             </div>
 
-                            <div class="mb-7 col-4">
+                            <div class="mb-7 col-6">
                                 <label class="form-label">Desconto</label>
                                 <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
                             </div>

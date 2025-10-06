@@ -832,6 +832,10 @@ class OrdersController extends AppController
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
             }
 
+            if (!empty($this->request->data['Order']['credit_release_date'])) {
+                $order['Order']['credit_release_date'] = $this->request->data['Order']['credit_release_date'];
+            }
+
             if ($this->Order->save($order)) {
                 $this->recalculateOrderTransferFees($id);
                 $this->Order->reProcessAmounts($id);
@@ -1068,13 +1072,13 @@ class OrdersController extends AppController
         $breadcrumb = ['Cadastros' => '', 'Pedido' => '', 'Alterar Pedido' => ''];
 
         $permObsPedido = $this->Permission->check(85, "escrita");
+        $permDtLibCredito = $this->Permission->check(87, "escrita");
 
         $this->set("form_action", "edit");
 
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
         $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
-        $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento', 'permObsPedido'));
-
+        $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento', 'permObsPedido', 'permDtLibCredito'));
 
         $this->render("add");
     }
