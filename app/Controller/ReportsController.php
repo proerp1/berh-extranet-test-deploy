@@ -768,19 +768,15 @@ class ReportsController extends AppController
 
         $url_iframe = "";
         if ($menu == 'roteirizacao') {
-	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
+	        $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
             $breadcrumb='Roteirização';
             $url_iframe = "https://robo.berh.com.br/roteirizacao";
         } elseif ($menu == 'extratos') {
-	    $this->Permission->check(72, "leitura") ? "" : $this->redirect("/not_allowed");
+	        $this->Permission->check(72, "leitura") ? "" : $this->redirect("/not_allowed");
             $breadcrumb='Extratos';
             $url_iframe = "https://robo.berh.com.br/extratos";
-        } elseif ($menu == 'consulta_transurc') {
-	    $this->Permission->check(68, "leitura") ? "" : $this->redirect("/not_allowed");
-            $url_iframe = "https://robo.berh.com.br/transurc";
-            $breadcrumb='Transurc';
         } elseif ($menu == 'consulta_sptrans') {
-	    $this->Permission->check(73, "leitura") ? "" : $this->redirect("/not_allowed");
+	        $this->Permission->check(73, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/sptrans";
             $breadcrumb='Consulta SPTrans';
         } elseif ($menu == 'captura_boletos') {
@@ -788,15 +784,15 @@ class ReportsController extends AppController
             $url_iframe = "https://robo.berh.com.br/captura_boletos";
             $breadcrumb='Captura de boletos';
         } elseif ($menu == 'conversor_layouts') {
-        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+            $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_layouts";
             $breadcrumb='Conversor de layouts';
         } elseif ($menu == 'conversor_compras') {
-        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+            $this->Permission->check(89, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_compras";
             $breadcrumb='Conversor de compras';
         } elseif ($menu == 'conversor_logistica') {
-        $this->Permission->check(75, "leitura") ? "" : $this->redirect("/not_allowed");
+            $this->Permission->check(90, "leitura") ? "" : $this->redirect("/not_allowed");
             $url_iframe = "https://robo.berh.com.br/conversor_logistica";
             $breadcrumb='Conversor Logística';
         }
@@ -988,7 +984,7 @@ class ReportsController extends AppController
     {
         ini_set('memory_limit', '-1');
 
-        $this->Permission->check(70, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(91, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 200,
