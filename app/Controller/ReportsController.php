@@ -976,10 +976,12 @@ class ReportsController extends AppController
         $benefit_types = [-1 => 'Transporte', 4 => 'PAT', 999 => 'Outros'];
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+
+        $conditionsJson = base64_encode(json_encode($condition));
     
         $action = 'Notas Fiscais Emitidas';
         $breadcrumb = ['Relatórios' => '', 'Notas Fiscais Emitidas' => ''];
-        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'status' ,'action', 'breadcrumb', 'customers', 'benefit_types', 'totalOrders', 'filtersFilled', 'queryString', 'conditionsJson'));
     }
 
     public function compras()
