@@ -1148,7 +1148,7 @@ class IncomesController extends AppController
 
     public function nfse($id)
     {
-        $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(88, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $this->Income->id = $id;
@@ -1198,7 +1198,7 @@ class IncomesController extends AppController
     }
 
     public function cria_nfse($income_id, $type) {
-        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(88, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $this->Income->recursive = 3;
         $income = $this->Income->find('first', ['conditions' => ['Income.id' => $income_id]]);
@@ -1242,7 +1242,7 @@ class IncomesController extends AppController
     }
 
     public function cancela_nfse($nfse_id) {
-        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(88, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
         $income_id = $income_nfse['IncomeNfse']['income_id'];
@@ -1278,7 +1278,7 @@ class IncomesController extends AppController
         $this->autoRender = false;
         $this->layout = 'ajax';
 
-        $this->Permission->check(23, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(88, "leitura") ? "" : $this->redirect("/not_allowed");
 
         $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
 
@@ -1296,7 +1296,7 @@ class IncomesController extends AppController
     }
 
     public function imprime_danfse($nfse_id) {
-        $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(88, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
         $income_id = $income_nfse['IncomeNfse']['income_id'];
