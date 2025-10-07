@@ -832,8 +832,12 @@ class OrdersController extends AppController
                 $order['Order']['end_date'] = $this->request->data['Order']['end_date'];
             }
 
-            if (!empty($this->request->data['Order']['credit_release_date'])) {
-                $order['Order']['credit_release_date'] = $this->request->data['Order']['credit_release_date'];
+            if (isset($this->request->data['Order']['credit_release_date'])) {
+                if (!empty($this->request->data['Order']['credit_release_date'])) {
+                    $order['Order']['credit_release_date'] = $this->request->data['Order']['credit_release_date'];
+                    $order['Order']['updated_credit_release_date'] = date('Y-m-d H:i:s');
+                    $order['Order']['user_updated_id_credit_release_date'] = CakeSession::read("Auth.User.id");
+                }
             }
 
             if ($this->Order->save($order)) {

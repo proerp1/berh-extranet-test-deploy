@@ -44,6 +44,10 @@ class Order extends AppModel
             'className' => 'User',
             'foreignKey' => 'user_updated_ge_id'
         ],
+        'UpdatedCreditRelease' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_id_credit_release_date'
+        ],
         'CustomerAddress'
     ];
 
@@ -191,6 +195,11 @@ class Order extends AppModel
                 $results[$key][$this->alias]['updated_ge_nao_formatado'] = $val[$this->alias]['updated_ge'];
                 $results[$key][$this->alias]['updated_ge'] = date("d/m/Y", strtotime($val[$this->alias]['updated_ge']));
             }
+
+            if (isset($val[$this->alias]['updated_credit_release_date'])) {
+                $results[$key][$this->alias]['updated_credit_release_date_nao_formatado'] = $val[$this->alias]['updated_credit_release_date'];
+                $results[$key][$this->alias]['updated_credit_release_date'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['updated_credit_release_date']));
+            }            
         }
 
         return $results;
@@ -276,6 +285,10 @@ class Order extends AppModel
 
         if (!empty($this->data[$this->alias]['updated_ge'])) {
             $this->data[$this->alias]['updated_ge'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_ge']);
+        }
+
+        if (!empty($this->data[$this->alias]['updated_credit_release_date'])) {
+            $this->data[$this->alias]['updated_credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_credit_release_date']);
         }
         
         $this->_ajustaStatusPorGE();
