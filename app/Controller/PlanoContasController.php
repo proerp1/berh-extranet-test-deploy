@@ -16,7 +16,8 @@ class PlanoContasController extends AppController
 
     public function index()
     {
-        //$this->Permission->check(42, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(42, "leitura") ? "" : $this->redirect("/not_allowed");
+
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => [], "or" => []];
@@ -38,8 +39,7 @@ class PlanoContasController extends AppController
 
     public function index1($nivel)
     {
-        //$this->Permission->check(42, "leitura") ? "" : $this->redirect("/not_allowed");
-
+        $this->Permission->check(42, "leitura") ? "" : $this->redirect("/not_allowed");
 
         $condition = ["and" => ['PlanoConta.nivel' => $nivel], "or" => []];
 
@@ -64,6 +64,8 @@ class PlanoContasController extends AppController
 
     public function index2($nivel, $pai_id)
     {
+        $this->Permission->check(42, "leitura") ? "" : $this->redirect("/not_allowed");
+
         $condition = ["and" => ['PlanoConta.nivel' => $nivel, 'PlanoConta.pai_id' => $pai_id], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
@@ -128,6 +130,7 @@ class PlanoContasController extends AppController
     public function edit($id = null)
     {
         $this->Permission->check(42, "escrita") ? "" : $this->redirect("/not_allowed");
+
         $this->PlanoConta->id = $id;
         if ($this->request->is(['post', 'put'])) {
             $this->PlanoConta->validates();
@@ -168,6 +171,7 @@ class PlanoContasController extends AppController
     public function delete($id)
     {
         $this->Permission->check(42, "excluir") ? "" : $this->redirect("/not_allowed");
+        
         $this->PlanoConta->id = $id;
         $this->request->data = $this->PlanoConta->read();
 

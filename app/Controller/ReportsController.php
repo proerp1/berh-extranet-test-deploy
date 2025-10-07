@@ -469,6 +469,8 @@ class ReportsController extends AppController
 
     public function baixa_manual()
     {
+        $this->Permission->check(92, "leitura") ? "" : $this->redirect("/not_allowed");
+
         $where = '';
 
         if (!empty($_GET['q'])) {
