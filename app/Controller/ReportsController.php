@@ -1070,15 +1070,15 @@ class ReportsController extends AppController
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
         
         $de = null;
-        $para = null;
-        
+        $para = null;        
         $buscar = true;
 
-        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
+        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'liberacao_credito';
 
         switch ($aba) {
             case 'liberacao_credito':
                 $condition['and'][] = [
+                    'Order.status_id' => 104, 
                     'OrderItem.status_processamento' => [
                         'INICIO_PROCESSAMENTO',
                         'VALIDACAO_PENDENTE',
@@ -1092,6 +1092,8 @@ class ReportsController extends AppController
                 
             case 'cartao_novo':
                 $condition['and'][] = [
+                    'Order.condicao_pagamento' => 2,
+                    'OrderItem.first_order' => 1,
                     'OrderItem.status_processamento' => [
                         'CARTAO_NOVO'
                     ]
@@ -1100,6 +1102,7 @@ class ReportsController extends AppController
                 
             case 'inconsistencias':
                 $condition['and'][] = [
+                    'Order.status_id' => 104,
                     'OrderItem.status_processamento' => [
                         'CADASTRO_INCONSISTENTE',
                         'CARTAO_NOVO_CREDITO_INCONSISTENTE',
@@ -1110,7 +1113,7 @@ class ReportsController extends AppController
                 
             case 'financeiro':
                 $condition['and'][] = [
-                    'Order.status_id' => 104, 
+                    'Order.status_id' => 104,
                     'Outcome.status_id' => [12, 13, 116]
                 ];
                 break;
