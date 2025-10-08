@@ -1069,9 +1069,10 @@ class ReportsController extends AppController
 
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
         
-        $buscar = false;
         $de = null;
         $para = null;
+        
+        $buscar = true;
 
         $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
 
@@ -1108,7 +1109,10 @@ class ReportsController extends AppController
                 break;
                 
             case 'financeiro':
-                $condition['and'][] = ['Order.status_id' => 104];
+                $condition['and'][] = [
+                    'Order.status_id' => 104, 
+                    'Outcome.status_id' => [12, 13, 116]
+                ];
                 break;
                 
             case 'finalizado':
