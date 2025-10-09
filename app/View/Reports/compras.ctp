@@ -251,7 +251,7 @@
                                 </span>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Customer"]["codigo_associado"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]['OrderItem']['created'] ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]['Order']['created'] ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Order"]["id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Customer"]["nome_primario"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Supplier"]["nome_fantasia"]; ?></td>
