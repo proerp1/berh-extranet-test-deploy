@@ -929,18 +929,72 @@
 
 <div class="modal fade" tabindex="-1" id="modal_gera_remessa_pix" role="dialog">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tem certeza que deseja gerar a remessa pix?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <form action="<?php echo $this->base . '/orders/gerar_remessa_pix/' . $id; ?>" class="form-horizontal" method="post">
+        <form action="<?php echo $this->base . '/orders/gerar_remessa_pix/' . $id; ?>" class="form-horizontal" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Tem certeza que deseja gerar a remessa pix?</h4>
+                </div>
                 <div class="modal-body">
-                    <div class="mb-7 col">
-                        <label class="form-label">Data de Pagamento</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                            <input type="text" name="data[Outcome][data_pagamento]" id="PixPagamento" required class="form-control">
+                    <p>Alterar Status Processamento</p>
+
+                    <div class="row" style="margin-top:20px;">
+                        <label class="mb-2">Status Processamento</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0" required="required">
+                                        <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                        <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                        <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                        <option value="CARTAO_NOVO">CARTAO_NOVO</option>
+                                        <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
+                                        <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                        <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                        <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                        <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                        <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                        <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
+                                        <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                        <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:20px;">
+                        <label class="mb-2">Pedido Operadora</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control" required="required">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:20px;">
+                        <label class="mb-2">Data Entrega</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="data_entrega" id="data_entrega" class="form-control datepicker" required="required">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:20px;">
+                        <label class="mb-2">Data de Pagamento</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="data_pagamento" id="PixPagamento" class="form-control datepicker" required="required">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row js_div_motivo" style="margin-top:20px;">
+                        <label class="mb-2">Motivo</label>
+                        <div class="row">
+                            <div class="col">
+                                <textarea name="motivo" id="motivo" class="form-control" rows="4"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -948,8 +1002,8 @@
                     <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success js-salvar">Gerar</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -1246,9 +1300,11 @@
         </div>
     </div>
 </div>
-<?php
-$statusCancelado = 94; // ID do status "Cancelado"
+
+<?php 
+    $statusCancelado = 94; // ID do status "Cancelado"
 ?>
+
 <div class="modal fade" id="modal_cancelar_pedido" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -1272,9 +1328,8 @@ $statusCancelado = 94; // ID do status "Cancelado"
   </div>
 </div>
 
-
-
 <?php echo $this->Html->script('moeda', array('block' => 'script')); ?>
+
 <?php echo $this->Html->script('itinerary'); ?>
 
 <script>
@@ -1555,8 +1610,28 @@ $statusCancelado = 94; // ID do status "Cancelado"
         $('.pedido_complementar').on('click', function () {
             $('.js_pedido_complementar textarea').prop('required', true);
         });
+
+        $('#status_processamento').on('change', function() {
+            const v_status = $(this).val();
+            const v_op_status = [
+                'CARTAO_NOVO',
+                'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                'CADASTRO_INCONSISTENTE',
+                'CREDITO_INCONSISTENTE',
+                'PAGAMENTO_REALIZADO'
+            ];
+
+            if (v_op_status.includes(v_status)) {
+                $('.js_div_motivo').show();
+            } else {
+                $('.js_div_motivo').hide();
+            }
+        });
+
+        $('#status_processamento').trigger('change');
     });
 </script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const textareas = document.querySelectorAll('.auto-expand');

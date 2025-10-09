@@ -1924,7 +1924,7 @@ class ReportsController extends AppController
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
                 $outcome['Outcome']['resale_id'] = 1;
-                $outcome['Outcome']['doc_num'] = $pedido_operadora;
+                $outcome['Outcome']['doc_num'] = $item['Order']['id'];
                 $outcome['Outcome']['parcela'] = 1;
                 $outcome['Outcome']['status_id'] = 11;
                 $outcome['Outcome']['name'] = 'Pagamento a Operadoras';

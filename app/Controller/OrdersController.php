@@ -3267,6 +3267,53 @@ class OrdersController extends AppController
         $this->layout = 'ajax';
         $this->autoRender = false;
 
+        $statusProcess      = isset($this->request->data['status_processamento']) ? $this->request->data['status_processamento'] : false;
+        $pedido_operadora   = isset($this->request->data['pedido_operadora']) ? $this->request->data['pedido_operadora'] : false;
+        $data_entrega       = isset($this->request->data['data_entrega']) ? $this->request->data['data_entrega'] : false;
+        $data_pagamento     = isset($this->request->data['data_pagamento']) ? $this->request->data['data_pagamento'] : false;
+        $motivo             = isset($this->request->data['motivo']) ? $this->request->data['motivo'] : false;
+
+        $orderItems = $this->OrderItem->find('all', [
+            'fields' => ['OrderItem.id', 'CustomerUser.id', 'CustomerUser.name'],
+            'conditions' => [
+                'OrderItem.order_id' => $id,
+                'OrderItem.outcome_id' => null,
+            ],
+        ]);
+
+        $benefitValid = [];
+        foreach ($orderItems as $item) {
+            $data = [
+                'OrderItem' => [
+                    'id' => $item['OrderItem']['id'],
+                    'status_processamento' => $statusProcess,
+                    'pedido_operadora' => $pedido_operadora,
+                    'data_entrega' => $data_entrega,
+                    'updated_user_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ];
+
+            if ($motivo) {
+                $data['OrderItem']['motivo_processamento'] = $motivo;
+            }
+
+            $this->OrderItem->save($data);
+
+            $existingBankAccount = $this->CustomerUserBankAccount->find('first', [
+                'conditions' => [
+                    'CustomerUserBankAccount.customer_user_id' => $item['CustomerUser']['id'],
+                    'CustomerUserBankAccount.data_cancel' => '1901-01-01 00:00:00'
+                ]
+            ]);
+
+            if (empty($existingBankAccount)) {
+                if (!in_array($item['CustomerUser']['name'], $benefitValid)) {
+                    $benefitValid[] = $item['CustomerUser']['name'];
+                }
+            }
+        }
+
         $orderItems = $this->OrderItem->find('all', [
             'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
             'joins' => [
@@ -3293,7 +3340,7 @@ class OrdersController extends AppController
             ],
             'group' => ['Supplier.id'],
         ]);
-
+        
         $total = 0;
         foreach ($orderItems as $item) {
             $total++;
@@ -3319,7 +3366,7 @@ class OrdersController extends AppController
             $outcome['Outcome']['recorrencia'] = 2;
             $outcome['Outcome']['payment_method'] = 11;
             $outcome['Outcome']['data_competencia'] = date('01/m/Y');
-            $outcome['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
+            $outcome['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $data_pagamento)));
             $outcome['Outcome']['user_creator_id'] = CakeSession::read("Auth.User.id");
             
             $this->Outcome->create();
@@ -3346,6 +3393,13 @@ class OrdersController extends AppController
                             AND s.id = ' . $item['Supplier']['id'] . ')'
                 ]
             );
+        }
+
+        if (!empty($benefitValid)) {
+            sort($benefitValid);
+            foreach ($benefitValid as $nome) {
+                $this->Flash->set(__('Beneficiário ' . $nome . ' não tem dados bancário.'), ['params' => ['class' => "alert alert-warning"]]);
+            }
         }
 
         if ($total > 0) {
@@ -3589,7 +3643,7 @@ class OrdersController extends AppController
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
                 $outcome['Outcome']['resale_id'] = 1;
-                $outcome['Outcome']['doc_num'] = $pedido_operadora;
+                $outcome['Outcome']['doc_num'] = $item['Order']['id'];
                 $outcome['Outcome']['parcela'] = 1;
                 $outcome['Outcome']['status_id'] = 11;
                 $outcome['Outcome']['name'] = 'Pagamento a Operadoras';
@@ -3848,7 +3902,7 @@ class OrdersController extends AppController
                 $outcome = [];
                 $outcome['Outcome']['supplier_id'] = $item['Supplier']['id'];
                 $outcome['Outcome']['resale_id'] = 1;
-                $outcome['Outcome']['doc_num'] = $pedido_operadora;
+                $outcome['Outcome']['doc_num'] = $item['Order']['id'];
                 $outcome['Outcome']['parcela'] = 1;
                 $outcome['Outcome']['status_id'] = 11;
                 $outcome['Outcome']['name'] = 'Pagamento a Operadoras';
