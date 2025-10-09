@@ -2929,6 +2929,7 @@ class OrdersController extends AppController
                 'Income.data_pagamento between ? and ?' => [$de_pagamento . ' 00:00:00', $ate_pagamento . ' 23:59:59']
             ]);
         }
+        
 
         $data = $this->Order->find('all', [
             'contain' => [
@@ -3063,7 +3064,14 @@ class OrdersController extends AppController
         }
 
         $orders = $this->Order->find('all', [
-            'contain' => ['Customer', 'EconomicGroup'],
+            'contain' => [
+                'Status',
+                'Customer',
+                'CustomerCreator',
+                'EconomicGroup',
+                'Income.data_pagamento',
+                'UpdatedGe',
+            ],
             'conditions' => $condition,
         ]);
 
