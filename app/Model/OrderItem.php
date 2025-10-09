@@ -126,6 +126,12 @@ class OrderItem extends AppModel {
                 $results[$key][$this->alias]['valor_unit_not_formated'] = 0;
                 $results[$key][$this->alias]['valor_unit'] = '0,00';
             }
+
+            if (isset($val[$this->alias]['created'])) {
+                $results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+                $results[$key][$this->alias]['created'] = date("d/m/Y", strtotime($val[$this->alias]['created']));
+            }
+
         }
 
         return $results;

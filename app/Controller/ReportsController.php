@@ -1133,7 +1133,7 @@ class ReportsController extends AppController
 
             $de = date('d/m/Y', strtotime($de));
         } else {
-            $de = date("01/m/Y");
+            $de = date("d/m/Y", strtotime("-30 days"));
         }
 
         if (isset($_GET['para']) and $_GET['para'] != '') {
@@ -1146,7 +1146,7 @@ class ReportsController extends AppController
 
             $para = date('d/m/Y', strtotime($para));
         } else {
-            $para = date("d/m/Y");
+            $para = date("d/m/Y", strtotime("+30 days"));
         }
 
         if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
