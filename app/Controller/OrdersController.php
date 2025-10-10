@@ -4836,7 +4836,7 @@ class OrdersController extends AppController
         if ($centroCusto) {
             $costCenter = $this->CostCenter->find('first', [
                 'conditions' => [
-                    'CostCenter.name' => $centroCusto,
+                    'TRIM(CostCenter.name)' => trim($centroCusto),
                     'CostCenter.customer_id' => $customerId,
                     'CostCenter.data_cancel' => '1901-01-01 00:00:00'
                 ]
@@ -4844,7 +4844,13 @@ class OrdersController extends AppController
 
             if (empty($costCenter)) {
                 $this->CostCenter->create();
-                $this->CostCenter->save(['name' => $centroCusto, 'customer_id' => $customerId, 'data_cancel' => '1901-01-01 00:00:00']);
+                $this->CostCenter->save([
+                    'name' => trim($centroCusto),
+                    'customer_id' => $customerId, 
+                    'user_creator_id' => CakeSession::read("Auth.User.id"),
+                    'data_cancel' => '1901-01-01 00:00:00'
+                ]);
+
                 $extra_ids['cost_center_id'] = $this->CostCenter->id;
             } else {
                 $extra_ids['cost_center_id'] = $costCenter['CostCenter']['id'];
@@ -4854,7 +4860,7 @@ class OrdersController extends AppController
         if ($departamento) {
             $customerDepartment = $this->CustomerDepartment->find('first', [
                 'conditions' => [
-                    'CustomerDepartment.name' => $departamento,
+                    'TRIM(CustomerDepartment.name)' => trim($departamento),
                     'CustomerDepartment.customer_id' => $customerId,
                     'CustomerDepartment.data_cancel' => '1901-01-01 00:00:00'
                 ]
@@ -4863,10 +4869,12 @@ class OrdersController extends AppController
             if (empty($customerDepartment)) {
                 $this->CustomerDepartment->create();
                 $this->CustomerDepartment->save([
-                    'name' => $departamento,
+                    'name' => trim($departamento),
                     'customer_id' => $customerId,
+                    'user_creator_id' => CakeSession::read("Auth.User.id"),
                     'data_cancel' => '1901-01-01 00:00:00'
                 ]);
+                
                 $extra_ids['customer_department_id'] = $this->CustomerDepartment->id;
             } else {
                 $extra_ids['customer_department_id'] = $customerDepartment['CustomerDepartment']['id'];
