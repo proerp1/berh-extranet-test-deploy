@@ -2418,19 +2418,15 @@ class ReportsController extends AppController
                 
                 if (!in_array($uploadedFile['type'], $tiposPermitidos)) {
                     $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
-                    $this->redirect($this->referer());
                 }
                 
                 if ($this->save_file_blue_angel($uploadedFile)) {
                     $this->Flash->set(__('Arquivo enviado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
-                    $this->redirect($this->referer());
                 } else {
                     $this->Flash->set(__('Não foi possível enviar o arquivo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
-                    $this->redirect($this->referer());
                 }
             } else {
                 $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
-                $this->redirect($this->referer());
             }
         }
 
