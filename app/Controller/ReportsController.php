@@ -2414,7 +2414,7 @@ class ReportsController extends AppController
             'Permissões' => is_dir($destino) ? substr(sprintf('%o', fileperms($destino)), -4) : 'N/A'
         ];
         
-        debug($info);
+        var_dump($info);
         exit;
     }
 }
