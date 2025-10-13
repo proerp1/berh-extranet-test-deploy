@@ -163,6 +163,15 @@
                                 </span>
                                 <span class="menu-title">Conversor Logística</span>
                             </a>
+                        </div>
+
+                        <div class="menu-item">
+                            <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'reports' && $this->request->params['action'] == 'upload_file_blue_angel') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'reports', 'action' => 'upload_file_blue_angel']) ?>">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Enviar Arquivo</span>
+                            </a>
                         </div>                        
                     </div>
                 </div>
@@ -214,7 +223,6 @@
                     </div>
                 </div>
 
-
                 <div class="menu-item">
                     <a class="menu-link <?php echo $class.(($this->request->params['controller'] == 'link_benefits') ? ' active' : '') ?>" href="<?php echo $this->Html->url(['controller' => 'link_benefits', 'action' => 'index']) ?>">
                         <span class="menu-icon">
@@ -224,8 +232,7 @@
                             Associar Cartão
                         </span>
                     </a>
-                </div>
-                
+                </div>                
 
                 <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
                     <span class="menu-link">

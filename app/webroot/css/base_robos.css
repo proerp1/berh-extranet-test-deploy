@@ -1,0 +1,110 @@
+/* Reset básico */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  /* Gradiente de fundo */
+  background: linear-gradient(135deg, #472F92 0%, #ED0677 100%);
+  background-attachment: fixed;
+  background-size: cover;
+  color: #fff;
+  height: 100%;
+}
+
+/* Container principal que será usado para centralizar */
+.main-container {
+  width: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* Card do formulário (fundo branco) */
+.form-card {
+  background-color: #fff;
+  border-radius: 16px;
+  color: #333;
+  max-width: 750px; /* Limite de largura do card */
+  width: 100%;      /* 100% para ocupar o espaço disponível */
+}
+
+/* Títulos */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  color: #472F92;
+}
+
+/* Botão custom */
+.btn-custom {
+  background-color: #ED0677;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-custom:hover {
+  transform: scale(1.05);
+  background-color: #da006b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Mensagens de feedback (flashes) */
+.flashes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.flashes li {
+  background-color: #ffaf00;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+/* Ajustes para inputs */
+.form-control,
+.form-check-input {
+  border-radius: 8px !important;
+}
+
+.form-check-input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+#input3 {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+#input3:hover,
+#input3:focus {
+  border-color: #ED0677;
+  outline: none;
+  box-shadow: 0 0 5px rgba(237, 6, 119, 0.5);
+}
+
+.select-form {
+  width: 30%;
+}

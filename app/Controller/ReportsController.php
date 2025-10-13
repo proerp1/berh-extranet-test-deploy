@@ -2401,21 +2401,58 @@ class ReportsController extends AppController
         ]);
     }
 
-    public function testarUploadReal()
+    public function upload_file_blue_angel()
     {
-        $destino = ROOT . DS . '..' . DS . '..' . DS . 'blue_angel' . DS;
-        $destino = ROOT . DS . '..' . DS . 'blue_angel' . DS;
+        $this->Permission->check(93, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            if (!empty($this->request->data['file']['name']) ) {
+                $uploadedFile = $this->request->data['file'];
+                
+                // Validação de tipo Excel
+                $tiposPermitidos = [
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel.sheet.macroEnabled.12'
+                ];
+                
+                if (!in_array($uploadedFile['type'], $tiposPermitidos)) {
+                    $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                    $this->redirect($this->referer());
+                }
+                
+                if ($this->save_file_blue_angel($uploadedFile)) {
+                    $this->Flash->set(__('Arquivo enviado com sucesso!'), ['params' => ['class' => "alert alert-success"]]);
+                    $this->redirect($this->referer());
+                } else {
+                    $this->Flash->set(__('Não foi possível enviar o arquivo, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                    $this->redirect($this->referer());
+                }
+            } else {
+                $this->Flash->set(__('Arquivo Inválido, Por favor tente de novo.'), ['params' => ['class' => 'alert alert-danger']]);
+                $this->redirect($this->referer());
+            }
+        }
+
+        $breadcrumb = 'Enviar Arquivo';
+
+        $this->set("action", $breadcrumb);
+    }
+    
+    private function save_file_blue_angel($uploadedFile)
+    {
+        $targetDir = ROOT . DS . '..' . DS . 'blue_angel' . DS;
         
-        $info = [
-            'ROOT' => ROOT,
-            'Caminho Configurado' => $destino,
-            'Caminho Real' => realpath($destino) ?: 'NÃO EXISTE',
-            'Pasta Existe?' => is_dir($destino) ? 'SIM' : 'NÃO',
-            'Pode Escrever?' => is_writable($destino) ? 'SIM' : 'NÃO',
-            'Permissões' => is_dir($destino) ? substr(sprintf('%o', fileperms($destino)), -4) : 'N/A'
-        ];
+        $targetFile = $targetDir . basename($uploadedFile['name']);
         
-        var_dump($info);
-        exit;
+        if (!file_exists($targetDir)) {
+            return false;
+        }
+        
+        if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
+            return true;
+        }
+        
+        return false;
     }
 }
