@@ -2400,4 +2400,21 @@ class ReportsController extends AppController
             'economia' => $total_economia
         ]);
     }
+
+    public function testarUploadReal()
+    {
+        $destino = ROOT . DS . '..' . DS . '..' . DS . 'blue_angel' . DS;
+        
+        $info = [
+            'ROOT' => ROOT,
+            'Caminho Configurado' => $destino,
+            'Caminho Real' => realpath($destino) ?: 'NÃO EXISTE',
+            'Pasta Existe?' => is_dir($destino) ? 'SIM' : 'NÃO',
+            'Pode Escrever?' => is_writable($destino) ? 'SIM' : 'NÃO',
+            'Permissões' => is_dir($destino) ? substr(sprintf('%o', fileperms($destino)), -4) : 'N/A'
+        ];
+        
+        debug($info);
+        exit;
+    }
 }
