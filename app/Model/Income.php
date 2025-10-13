@@ -91,10 +91,6 @@ class Income extends AppModel
         } elseif (!empty($this->data[$this->alias]['created'])) {
             $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
         }
-
-        if (!empty($this->data[$this->alias]['updated'])) {
-            $this->data[$this->alias]['updated'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated']);
-        }
     
         return true;
     }
