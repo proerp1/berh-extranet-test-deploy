@@ -1095,7 +1095,8 @@ class ReportsController extends AppController
                     'Order.condicao_pagamento' => 2,
                     'OrderItem.first_order' => 1,
                     'OrderItem.status_processamento' => [
-                        'CARTAO_NOVO'
+                        'CARTAO_NOVO',
+                        'CARTAO_NOVO_PROCESSADO'
                     ]
                 ];
                 break;
@@ -1119,7 +1120,12 @@ class ReportsController extends AppController
                 break;
                 
             case 'finalizado':
-                $condition['and'][] = ['Order.status_id' => 87];
+                $condition['and'][] = [
+                    'Order.status_id' => 87,
+                    'OrderItem.status_processamento' => [
+                        'CARTAO_NOVO_PROCESSADO',
+                    ]
+                ];
                 break;
         }
 

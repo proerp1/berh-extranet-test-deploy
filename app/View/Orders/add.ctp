@@ -948,6 +948,7 @@
                                         <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
                                         <option value="CARTAO_NOVO">CARTAO_NOVO</option>
                                         <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
+                                        <option value="CARTAO_NOVO_PROCESSADO">CARTAO_NOVO_PROCESSADO</option>                                        
                                         <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                         <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                         <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
@@ -1616,6 +1617,7 @@
             const v_op_status = [
                 'CARTAO_NOVO',
                 'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                'CARTAO_NOVO_PROCESSADO',
                 'CADASTRO_INCONSISTENTE',
                 'CREDITO_INCONSISTENTE',
                 'PAGAMENTO_REALIZADO'
