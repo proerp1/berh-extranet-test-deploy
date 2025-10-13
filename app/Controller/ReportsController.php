@@ -2404,6 +2404,7 @@ class ReportsController extends AppController
     public function testarUploadReal()
     {
         $destino = ROOT . DS . '..' . DS . '..' . DS . 'blue_angel' . DS;
+        $destino = ROOT . DS . '..' . DS . 'blue_angel' . DS;
         
         $info = [
             'ROOT' => ROOT,
