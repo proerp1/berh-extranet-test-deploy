@@ -2441,7 +2441,7 @@ class ReportsController extends AppController
     
     private function save_file_blue_angel($uploadedFile)
     {
-        $targetDir = ROOT . DS . '..' . DS . 'blue_angel' . DS;
+        $targetDir = ROOT . DS . '..' . DS . 'blue_angel' . DS . 'remessa' . DS;
         
         $targetFile = $targetDir . basename($uploadedFile['name']);
         
