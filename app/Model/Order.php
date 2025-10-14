@@ -198,7 +198,6 @@ class Order extends AppModel
 
             if (isset($val[$this->alias]['updated_credit_release_date'])) {
                 $results[$key][$this->alias]['updated_credit_release_date_nao_formatado'] = $val[$this->alias]['updated_credit_release_date'];
-                $results[$key][$this->alias]['updated_credit_release_date'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['updated_credit_release_date']));
             }            
         }
 

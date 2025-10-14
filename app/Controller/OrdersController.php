@@ -842,6 +842,7 @@ class OrdersController extends AppController
                 }
             }
 
+
             if ($this->Order->save($order)) {
                 $this->recalculateOrderTransferFees($id);
                 $this->Order->reProcessAmounts($id);

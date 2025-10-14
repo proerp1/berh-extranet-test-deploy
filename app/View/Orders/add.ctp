@@ -323,7 +323,7 @@
                                 
                                 <?php if (!empty($order['Order']['user_updated_id_credit_release_date'])) { ?>
                                     <span>Alterado por: <strong><?php echo $order['UpdatedCreditRelease']['name']; ?></strong></span>
-                                    <span>em: <strong><?php echo $order['Order']['updated_credit_release_date']; ?></strong></span>
+                                    <span>em: <strong><?php echo date("d/m/Y H:i:s", strtotime($order['Order']['updated_credit_release_date_nao_formatado'])); ?></strong></span>                                    
                                 <?php } ?>
                             </div>
                             
