@@ -258,6 +258,7 @@ class CustomReportsComponent extends Component
                         ) AS qtde_pedido',
                         'Order.primeiro_pedido',
                         'Order.pedido_complementar',
+                        'StatusOutcome.*',
                     ],
                     'joins' => [
                         [
@@ -284,9 +285,8 @@ class CustomReportsComponent extends Component
                             'type' => 'INNER',
                             'conditions' => ['CustomerUser.id = OrderItem.customer_user_id'],
                         ],
-
-
-                       /* [
+                        /*
+                        [
                             'table' => 'customer_departments',
                             'alias' => 'CustomerDepartment',
                             'type' => 'LEFT',
@@ -297,7 +297,8 @@ class CustomReportsComponent extends Component
                             'alias' => 'CostCenter',
                             'type' => 'LEFT',
                             'conditions' => ['CostCenter.id = CustomerUser.customer_departments_id'],
-                        ],*/
+                        ],
+                        */
                         [
                             'table' => 'customer_user_itineraries',
                             'alias' => 'CustomerUserItinerary',
@@ -311,16 +312,32 @@ class CustomReportsComponent extends Component
                             'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id'],
                         ],
                         [
-                        'table' => 'benefit_types',
-                        'alias' => 'BenefitType',
-                        'type' => 'LEFT',
-                        'conditions' => ['BenefitType.id = Benefit.benefit_type_id'],
-                    ],
-                                            [
+                            'table' => 'benefit_types',
+                            'alias' => 'BenefitType',
+                            'type' => 'LEFT',
+                            'conditions' => ['BenefitType.id = Benefit.benefit_type_id'],
+                        ],
+                        [
                             'table' => 'suppliers',
                             'alias' => 'Supplier',
                             'type' => 'INNER',
                             'conditions' => ['Supplier.id = Benefit.supplier_id'],
+                        ],
+                        [
+                            'table' => 'outcomes',
+                            'alias' => 'Outcome',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'Outcome.id = OrderItem.outcome_id'
+                            ]
+                        ],
+                        [
+                            'table' => 'statuses',
+                            'alias' => 'StatusOutcome',
+                            'type' => 'LEFT',
+                            'conditions' => [
+                                'StatusOutcome.id = Outcome.status_id'
+                            ]
                         ],
                     ],
                     'recursive' => -1,

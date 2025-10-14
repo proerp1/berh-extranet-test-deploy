@@ -364,7 +364,6 @@ class ReportsController extends AppController
         // Redirect to download the generated Excel file
         $this->redirect('/private_files/baixar/excel/ProcessamentoPedidoOperadora_xlsx');
     }
-
     
     public function demanda_judicial()
     {
@@ -451,8 +450,7 @@ class ReportsController extends AppController
         } else {
             $this->redirect($this->referer());
         }
-    }
-    
+    }    
 
     public function getDepAndCCByCustomer()
     {

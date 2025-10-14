@@ -2470,7 +2470,9 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         ->setCellValue('AE1', "Tipo de Benefício / Serviço")
         ->setCellValue('AF1', "Primeiro Pedido")
         ->setCellValue('AG1', "Condição de pagamento")
-        ->setCellValue('AH1', "Prazo");
+        ->setCellValue('AH1', "Prazo")
+        ->setCellValue('AI1', "ID Conta Pagar")
+        ->setCellValue('AJ1', "Status do Pagamento");
 
         $indx = 1;
         $total = 0;
@@ -2524,7 +2526,9 @@ public function getFluxo($objPHPExcel, $dados, $conta)
                 ->setCellValue('AE'. $indx, $dados[$i]['BenefitType']['name'])
                 ->setCellValue('AF'. $indx, $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não')
                 ->setCellValue('AG'. $indx, $dados[$i]['Order']['desc_condicao_pagamento'])
-                ->setCellValue('AH'. $indx, $dados[$i]['Order']['prazo']);
+                ->setCellValue('AH'. $indx, $dados[$i]['Order']['prazo'])
+                ->setCellValue('AI'. $indx, $dados[$i]['OrderItem']['outcome_id'])
+                ->setCellValue('AJ'. $indx, $dados[$i]['StatusOutcome']['name']);
         }
     }
 

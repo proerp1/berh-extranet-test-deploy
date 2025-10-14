@@ -327,6 +327,7 @@ class OrderItem extends AppModel {
                 'group_concat(OrderBalance.observacao SEPARATOR ", ") as obs',
                 'BenefitType.name',
                 "(CASE WHEN Order.condicao_pagamento = 1 THEN 'Pré pago' WHEN Order.condicao_pagamento = 2 THEN 'Faturado' ELSE '' END) AS Order__desc_condicao_pagamento",
+				'StatusOutcome.*',
             ],
             'conditions' => $conditions,
             'joins' => [
@@ -401,7 +402,23 @@ class OrderItem extends AppModel {
                     'conditions' => [
                         'OrderBalance.order_item_id = OrderItem.id', 'OrderBalance.tipo' => 3, 'OrderBalance.data_cancel' => '1901-01-01'
                     ]
-                ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
             ],
             'group' => ['OrderItem.id'],
             'order' => ['trim(CustomerUser.name)']

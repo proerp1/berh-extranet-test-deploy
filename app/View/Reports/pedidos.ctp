@@ -171,7 +171,9 @@
                     <th>Quantidade</th>
                     <th>Var</th>
                     <th>Repasse</th>
-                    <th class="w-100px min-w-100px rounded-end">Total</th>
+                    <th>Total</th>
+                    <th>ID Conta Pagar</th>
+                    <th class="w-100px min-w-100px rounded-end">Status do Pagamento</th>
                 </tr>
             </thead>
             <tbody>
@@ -198,7 +200,8 @@
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["var"]; ?></td>
                         <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["transfer_fee"]; ?></td>
                         <td class="fw-bold fs-7 ps-4">R$<?php echo $data[$i]["OrderItem"]["total"]; ?></td>
-
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["OrderItem"]["outcome_id"]; ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["StatusOutcome"]["name"]; ?></td>
                     </tr>
                 <?php } ?>
                 <tr>
