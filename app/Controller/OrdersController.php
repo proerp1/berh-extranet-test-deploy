@@ -5244,4 +5244,76 @@ class OrdersController extends AppController
             CakeLog::write('error', "OrdersController: Failed to update OrderItem {$item['OrderItem']['id']}. Errors: " . json_encode($this->OrderItem->validationErrors));
         }
     }
+
+    public function nota_debito_unificada()
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+        
+        $ids = $this->request->query('ids');
+        
+        $allOrders = [];        
+        foreach ($ids as $id) {
+            $order = $this->Order->find('first', [
+                'contain' => ['Customer', 'EconomicGroup'],
+                'conditions' => ['Order.id' => $id],
+            ]);
+            
+            if (empty($order)) {
+                continue;
+            }
+            
+            $itens = $this->OrderItem->find('all', [
+                'fields' => [
+                    'CustomerUserItinerary.benefit_id',
+                    'Benefit.name',
+                    'count(CustomerUserItinerary.quantity) as qtd',
+                    'round(sum(OrderItem.subtotal),2) as valor',
+                    'round(sum(OrderItem.total),2) as total',
+                ],
+                'joins' => [
+                    [
+                        'table' => 'benefits',
+                        'alias' => 'Benefit',
+                        'type' => 'INNER',
+                        'conditions' => [
+                            'Benefit.id = CustomerUserItinerary.benefit_id'
+                        ]
+                    ]
+                ],
+                'conditions' => ['OrderItem.order_id' => $id],
+                'group' => ['CustomerUserItinerary.benefit_id']
+            ]);
+            
+            $itensAjustados = [];
+            foreach ($itens as $item) {
+                $itensAjustados[] = [
+                    'CustomerUserItinerary' => [
+                        'benefit_id' => $item['CustomerUserItinerary']['benefit_id'],
+                        'benefit_name' => $item['Benefit']['name']
+                    ],
+                    0 => [
+                        'qtd' => $item[0]['qtd'],
+                        'valor' => $item[0]['valor'],
+                        'total' => $item[0]['total']
+                    ]
+                ];
+            }
+            
+            $allOrders[] = [
+                'order' => $order,
+                'itens' => $itensAjustados
+            ];
+        }
+        
+        $view = new View($this, false);
+        $view->layout = false;
+        $link = APP . 'webroot';
+        
+        $view->set(compact("link", "allOrders"));
+        $html = $view->render('../Elements/nota_debito_unificada');
+        
+        $nomeArquivo = 'notas_debito_unificadas_' . date('Ymd_His') . '.pdf';
+        $this->HtmltoPdf->convert($html, $nomeArquivo, 'download');
+    }
 }

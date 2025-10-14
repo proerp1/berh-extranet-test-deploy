@@ -26,28 +26,27 @@
                     </a>
                    
                     <?php if ($filtersFilled): ?>
+                        <a href="#" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
+                            <i class="fas fa-download"></i>
+                            Unificar nota de débito
+                        </a>
+                        
                         <a href="<?php echo $this->base . '/orders/relatorio_processamento_index?' . $queryString; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                             <i class="fas fa-download"></i>
                             Relatorio de Processamento
                         </a>
                     <?php endif; ?>
                     
-
-                    <!--
-                    <a href="<?php echo $this->base . '/orders/relatorio_pedidos/'; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
-                        <i class="fas fa-download"></i>
-                        Relatório de Pedidos
-                    </a>
-                    -->
-                    
                     <a href="#" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_gerar_arquivo">
                         <i class="fas fa-file"></i>
                         Novo Pedido
                     </a>
+
                     <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
                         <div class="px-7 py-5">
                             <div class="fs-4 text-dark fw-bolder">Opções</div>
                         </div>
+
                         <div class="separator border-gray-200"></div>
                         
                         <div class="px-7 py-5">
@@ -148,6 +147,11 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
+                        <?php if ($filtersFilled) { ?>
+                            <th class="ps-4 w-80px min-w-80px rounded-start">
+                                <input type="checkbox" class="check_all">
+                            </th>
+                        <?php } ?>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Código</th>
                         <th>Número</th>
@@ -202,6 +206,11 @@
                                 }
                             ?>
                             <tr>
+                                <?php if ($filtersFilled) { ?>
+                                    <td class="fw-bold fs-7 ps-4">
+                                        <input type="checkbox" name="alt_linha" class="check_individual" value="<?php echo $data[$i]["Order"]["id"] ?>">
+                                    </td>
+                                <?php } ?>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                         <?php echo $data[$i]["Status"]["name"] ?>
@@ -258,33 +267,29 @@
 <script id="template_order" type="text/x-handlebars-template">
     <option value="{{id}}">{{name}}</option>
 </script>
+
 <script>
-function verConfirm_Pedido(locate, str){
+    function verConfirm_Pedido(locate, str){
+        string =  '<div id="myModal" class="modal fade in" >'+
+                                '<div class="modal-dialog">'+
+                                    '<div class="modal-content">'+
+                                            '<div class="modal-header bg-danger">'+
+                                                '<h3 id="myModalLabel" class="text-white"><i class="fa fa-trash-o fa-3"></i> '+str+'</h3>'+
+                                                '<button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>'+
+                                            '</div>'+
+                                            '<div class="modal-body">'+
+                                                'Importante: Esta não poderá ser desfeita.'+
+                                            '</div>'+
+                                            '<div class="modal-footer">'+
+                                                '<button class="btn" data-bs-dismiss="modal" aria-hidden="true">N&atilde;o</button>'+
+                                                '<button class="btn btn-danger" onClick="javascript: window.location ='+ " '" + locate +"' "+'">Sim</button>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                            '</div>';
 
-	string =  '<div id="myModal" class="modal fade in" >'+
-							'<div class="modal-dialog">'+
-						    	'<div class="modal-content">'+
-										'<div class="modal-header bg-danger">'+
-											'<h3 id="myModalLabel" class="text-white"><i class="fa fa-trash-o fa-3"></i> '+str+'</h3>'+
-											'<button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>'+
-										'</div>'+
-										'<div class="modal-body">'+
-											'Importante: Esta não poderá ser desfeita.'+
-										'</div>'+
-										'<div class="modal-footer">'+
-											'<button class="btn" data-bs-dismiss="modal" aria-hidden="true">N&atilde;o</button>'+
-											'<button class="btn btn-danger" onClick="javascript: window.location ='+ " '" + locate +"' "+'">Sim</button>'+
-										'</div>'+
-									'</div>'+
-								'</div>'+
-						'</div>';
-
-	$(string).modal("show");
-
-
-}
+        $(string).modal("show");
+    }
 </script>
 
 <?php echo $this->Html->script('orders'); ?>
-
-

@@ -429,4 +429,30 @@ $(document).ready(function() {
         }
     }
 
+    $(".check_all").on("change", function(){
+        if ($(this).is(':checked')) {
+            $(".check_individual").prop('checked', true);
+        } else {
+            $(".check_individual").prop('checked', false);
+        }
+    });
+
+    $('#js_unificar_nota').on('click', function(e) {
+        e.preventDefault();
+        
+        var itensSelecionados = $('input[name="alt_linha"]:checked');
+        
+        if (itensSelecionados.length === 0) {
+            alert('Selecione ao menos um item.');
+            return;
+        }
+        
+        var pedidoIds = itensSelecionados.map(function() {
+            return $(this).val();
+        }).get();
+        
+        var queryString = 'ids[]=' + pedidoIds.join('&ids[]=');
+        
+        window.location.href = '/orders/nota_debito_unificada?' + queryString;
+    });
 });
