@@ -112,6 +112,86 @@ class ReportsController extends AppController
         $this->set(compact('data', 'action', 'breadcrumb', 'de', 'para', 'customers', 'statuses'));
     }
 
+    public function orderConditions()
+    {
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
+
+        if (!isset($_GET['de']) && !isset($_GET['para'])) {
+            $dates = $this->getCurrentDates();
+
+            $condition['and'] = array_merge($condition['and'], ['Order.created between ? and ?' => [$dates['from'], $dates['to'] . ' 23:59:59']]);
+
+            $de = $dates['from'];
+            $para = $dates['to'];
+        }
+
+        if (isset($_GET['de']) and $_GET['de'] != '') {
+            $deRaw = $_GET['de'];
+            $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
+            $de = $dateObjectDe->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['Order.created >=' => $de]);
+        }
+
+        if (isset($_GET['para']) and $_GET['para'] != '') {
+            $paraRaw = $_GET['para'];
+            $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
+            $para = $dateObjectPara->format('Y-m-d');
+            $condition['and'] = array_merge($condition['and'], ['Order.created <=' => $para . ' 23:59:59']);
+        }
+
+        if (!empty($_GET['stp'])) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $_GET['stp']]);
+        }
+
+        if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
+        if (isset($_GET['num']) && $_GET['num'] != '') {
+            // Dividindo a entrada em uma matriz de números
+            $selectedNumbers = preg_split("/[\s,]+/", $_GET['num']);
+            
+            // Removendo valores em branco da matriz
+            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
+
+            // Adicionando a condição para cada número selecionado
+            $orConditions = [];
+            foreach ($selectedNumbers as $number) {
+                $orConditions[] = ['Order.id' => $number];
+            }
+
+            // Unindo as condições com OR
+            $condition['and'][] = ['or' => $orConditions];
+        }
+
+
+        if (isset($_GET['st']) and $_GET['st'] != '') {
+            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $_GET['st']]);
+        }
+
+        if (isset($_GET['c']) and $_GET['c'] != 'Selecione') {
+            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $_GET['c']]);
+        } /*else {
+            $condition['and'] = array_merge($condition['and'], ['1 = 2']);
+        }*/
+
+        if (!empty($_GET['q'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.name LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.email LIKE' => '%' . $_GET['q'] . '%',
+                'CustomerUser.cpf LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.nome_primario LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.documento LIKE' => '%' . $_GET['q'] . '%',
+                'Order.id LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.id LIKE' => '%' . $_GET['q'] . '%',
+                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
+
+            ]);
+        }
+
+        return compact('condition', 'de', 'para');
+    }
+
     public function pedidosConditions()
     {
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
@@ -199,7 +279,7 @@ class ReportsController extends AppController
 	    ini_set('memory_limit', '-1');
         ini_set('max_execution_time', -1); 
 
-        $condition = $this->pedidosConditions();
+        $condition = $this->orderConditions();
 
         if (isset($_GET['exportar'])) {
             $paginationConfig = $this->ExcelConfiguration->getConfiguration('OrderItemReportsPedido');
