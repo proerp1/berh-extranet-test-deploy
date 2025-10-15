@@ -239,7 +239,10 @@ class OrdersController extends AppController
             $this->redirect("/files/excel/" . $nome);
         }
 
-        $data = $this->Paginator->paginate('Order', $condition);
+        $data = $this->Paginator->paginate('Order', $condition);        
+
+        $uniqueCustomers = array_unique(Hash::extract($data, '{n}.Order.customer_id'));
+        $isSingleCustomer = count($uniqueCustomers) === 1 && count($data) > 0;
 
         $customers = $this->Customer->find('list', [
             'conditions' => ['Customer.status_id' => 3],
@@ -256,7 +259,8 @@ class OrdersController extends AppController
         $action = 'Pedido';
         $breadcrumb = ['Cadastros' => '', 'Pedido' => ''];
 
-        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types', 'conditionsJson', 'filtersFilled', 'queryString'));
+        $this->set(compact('data', 'limit', 'status', 'action', 'breadcrumb', 'customers', 'benefit_types'));
+        $this->set(compact('conditionsJson', 'filtersFilled', 'queryString', 'isSingleCustomer'));        
     }
 
     public function getTotalOrders()

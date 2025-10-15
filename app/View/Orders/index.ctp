@@ -25,17 +25,19 @@
                         Exportar
                     </a>
                    
-                    <?php if ($filtersFilled): ?>
-                        <a href="#" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
-                            <i class="fas fa-download"></i>
-                            Unificar nota de débito
-                        </a>
+                    <?php if ($filtersFilled) { ?>
+                        <?php if ($isSingleCustomer) { ?>
+                            <a href="#" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
+                                <i class="fas fa-download"></i>
+                                Unificar nota de débito
+                            </a>
+                        <?php } ?>
                         
                         <a href="<?php echo $this->base . '/orders/relatorio_processamento_index?' . $queryString; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                             <i class="fas fa-download"></i>
                             Relatorio de Processamento
                         </a>
-                    <?php endif; ?>
+                    <?php } ?>
                     
                     <a href="#" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_gerar_arquivo">
                         <i class="fas fa-file"></i>
@@ -148,9 +150,11 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         <?php if ($filtersFilled) { ?>
-                            <th class="ps-4 w-80px min-w-80px rounded-start">
-                                <input type="checkbox" class="check_all">
-                            </th>
+                            <?php if ($isSingleCustomer) { ?>
+                                <th class="ps-4 w-80px min-w-80px rounded-start">
+                                    <input type="checkbox" class="check_all">
+                                </th>
+                            <?php } ?>
                         <?php } ?>
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Código</th>
@@ -207,9 +211,11 @@
                             ?>
                             <tr>
                                 <?php if ($filtersFilled) { ?>
-                                    <td class="fw-bold fs-7 ps-4">
-                                        <input type="checkbox" name="alt_linha" class="check_individual" value="<?php echo $data[$i]["Order"]["id"] ?>">
-                                    </td>
+                                    <?php if ($isSingleCustomer) { ?>
+                                        <td class="fw-bold fs-7 ps-4">
+                                            <input type="checkbox" name="alt_linha" class="check_individual" value="<?php echo $data[$i]["Order"]["id"] ?>">
+                                        </td>
+                                    <?php } ?>
                                 <?php } ?>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
