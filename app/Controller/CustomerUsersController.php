@@ -512,7 +512,8 @@ class CustomerUsersController extends AppController
 
     public function add_vacation($customer_id, $user_id)
     {
-        // $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
+
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserVacation->create();
             $this->CustomerUserVacation->validates();
@@ -545,14 +546,16 @@ class CustomerUsersController extends AppController
 
     public function edit_vacation($customer_id, $user_id, $id_vacation)
     {
-        // $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(65, "escrita") ? "" : $this->redirect("/not_allowed");
+        
         $this->CustomerUserVacation->id = $id_vacation;
+
         if ($this->request->is(['post', 'put'])) {
             $this->CustomerUserVacation->validates();
             $this->request->data['CustomerUserVacation']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->CustomerUserVacation->save($this->request->data)) {
                 $this->Flash->set(__('As férias foram alteradas com sucesso'), ['params' => ['class' => "alert alert-success"]]);
-                $this->redirect(['action' => 'vacations/' . $user_id]);
+                $this->redirect(['action' => 'vacations/' . $customer_id . '/' . $user_id]);
             } else {
                 $this->Flash->set(__('As férias não puderam ser alteradas, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
             }
@@ -573,7 +576,7 @@ class CustomerUsersController extends AppController
         ];
 
         $this->set("form_action", "../customers/edit_user/" . $user_id);
-        $this->set(compact('statuses', 'id', 'user_id', 'action', 'breadcrumb'));
+        $this->set(compact('statuses', 'id', 'user_id', 'customer_id', 'action', 'breadcrumb'));
 
         $this->render("add_vacation");
     }

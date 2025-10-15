@@ -30,7 +30,7 @@
             <?php echo $this->element("table"); ?>
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
-                        <th>Começo</th>
+                        <th class="ps-4 rounded-start">Começo</th>
                         <th>Fim</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
@@ -39,10 +39,10 @@
                     <?php if ($data) { ?>
                         <?php foreach ($data as $key => $value) { ?>
                             <tr>
-                                <td><?php echo $value['CustomerUserVacation']['start_date']; ?></td>
-                                <td><?php echo $value['CustomerUserVacation']['end_date']; ?></td>
-                                <td>
-                                    <a href="<?php echo $this->base.'/customer_users/edit_vacation/'.$user_id.'/'.$value["CustomerUserVacation"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
+                                <td class="fw-bold fs-7 ps-4"><?php echo $value['CustomerUserVacation']['start_date']; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $value['CustomerUserVacation']['end_date']; ?></td>
+                                <td class="fw-bold fs-7 ps-4">
+                                    <a href="<?php echo $this->base.'/customer_users/edit_vacation/'. $id .'/'.$user_id.'/'.$value["CustomerUserVacation"]["id"].'/?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-info btn-sm">
                                         Editar
                                     </a>
 

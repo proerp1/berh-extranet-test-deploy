@@ -14,17 +14,17 @@ if ($user_id) {
         <div class="row">
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">De</label>
-                <?php echo $this->Form->input('start_date', array("type" => "text", "id" => "start_date", "placeholder" => "De", "required" => false, "autocomplete" => "one-time-code", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('start_date', array("type" => "text", "id" => "start_date", "placeholder" => "De", "required" => true, "autocomplete" => "one-time-code", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
             </div>
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2 required">Até</label>
-                <?php echo $this->Form->input('end_date', array("type" => "text", "id" => "end_date", "placeholder" => "Até", "required" => false, "autocompl1ete" => "one-time-code", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
+                <?php echo $this->Form->input('end_date', array("type" => "text", "id" => "end_date", "placeholder" => "Até", "required" => true, "autocompl1ete" => "one-time-code", "class" => "form-control datepicker mb-3 mb-lg-0"));  ?>
             </div>
         </div>
 
         <div class="mb-7">
             <div class="col-sm-offset-2 col-sm-9">
-                <a href="<?php echo $this->base . '/customer_users/vacations/' . $user_id . '?' . (isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
+                <a href="<?php echo $this->base.'/customer_users/vacations/'.$customer_id.'/'.$user_id.'?'.(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : ''); ?>" class="btn btn-light-dark">Voltar</a>
                 <button type="submit" class="btn btn-success js-salvar">Salvar</button>
             </div>
         </div>
