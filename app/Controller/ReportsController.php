@@ -2497,7 +2497,9 @@ class ReportsController extends AppController
                 $tiposPermitidos = [
                     'application/vnd.ms-excel',
                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'application/vnd.ms-excel.sheet.macroEnabled.12'
+                    'application/vnd.ms-excel.sheet.macroEnabled.12',
+                    'text/plain',
+                    'text/csv'
                 ];
                 
                 if (!in_array($uploadedFile['type'], $tiposPermitidos)) {
