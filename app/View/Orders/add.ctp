@@ -1620,7 +1620,9 @@
                 'CARTAO_NOVO_PROCESSADO',
                 'CADASTRO_INCONSISTENTE',
                 'CREDITO_INCONSISTENTE',
-                'PAGAMENTO_REALIZADO'
+                'PAGAMENTO_REALIZADO',
+                'CARTAO_NOVO_PROCESSADO',
+                'GERAR_PAGAMENTO'
             ];
 
             if (v_op_status.includes(v_status)) {

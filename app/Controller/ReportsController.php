@@ -1149,21 +1149,41 @@ class ReportsController extends AppController
         
         $de = null;
         $para = null;        
+        
+        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
+        
         $buscar = true;
-
-        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'liberacao_credito';
+        if ($aba == 'todos') {
+            $buscar = false;
+        }
 
         switch ($aba) {
             case 'liberacao_credito':
                 $condition['and'][] = [
-                    'Order.status_id' => 104, 
-                    'OrderItem.status_processamento' => [
-                        'INICIO_PROCESSAMENTO',
-                        'VALIDACAO_PENDENTE',
-                        'PROCESSAMENTO_PENDENTE',
-                        'ARQUIVO_GERADO',
-                        'CADASTRO_PROCESSADO',
-                        'CREDITO_PROCESSADO'
+                    'OR' => [
+                        // Cenário 1: Pedidos "Aguardando Liberação de Crédito"
+                        [
+                            'Order.status_id' => 104,
+                            'OrderItem.status_processamento' => [
+                                'INICIO_PROCESSAMENTO',
+                                'VALIDACAO_PENDENTE',
+                                'PROCESSAMENTO_PENDENTE',
+                                'ARQUIVO_GERADO',
+                                'CADASTRO_PROCESSADO',
+                                'CREDITO_PROCESSADO'
+                            ]
+                        ],
+                        // Cenário 2: Pedidos "Aguardando Pagamento"
+                        [
+                            'Order.status_id' => 84,
+                            'OrderItem.status_processamento' => [
+                                'VALIDACAO_PENDENTE',
+                                'PROCESSAMENTO_PENDENTE',
+                                'ARQUIVO_GERADO',
+                                'CADASTRO_PROCESSADO',
+                                'CREDITO_PROCESSADO'
+                            ]
+                        ]
                     ]
                 ];
                 break;
