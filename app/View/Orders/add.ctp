@@ -1617,7 +1617,6 @@
             const v_op_status = [
                 'CARTAO_NOVO',
                 'CARTAO_NOVO_CREDITO_INCONSISTENTE',
-                'CARTAO_NOVO_PROCESSADO',
                 'CADASTRO_INCONSISTENTE',
                 'CREDITO_INCONSISTENTE',
                 'PAGAMENTO_REALIZADO',
