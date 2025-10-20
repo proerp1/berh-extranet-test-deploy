@@ -191,28 +191,21 @@
         .m-0 {
             margin: 0;
         }
-        
-        /* Quebra de página entre notas */
-        .page-break {
-            page-break-after: always;
-        }
     </style>
 </head>
 <body>
     <?php 
-    $totalPedidos = count($allOrders);
-    $contador = 0;
     foreach ($allOrders as $orderData): 
-        $contador++;
         $order = $orderData['order'];
         $itens = $orderData['itens'];
+        $listaPedidos = isset($orderData['lista_pedidos']) ? $orderData['lista_pedidos'] : [];
     ?>
-    <div class="page <?php echo ($contador < $totalPedidos) ? 'page-break' : ''; ?>">
+    <div class="page">
         <div class="cell p-10">
             <img src="<?php echo $link."/img/logo-berh-colorido.png" ?>" alt="" width="150">
         </div>
         <div class="cell text-right">
-            <p class="pr-50 bold m-0">Nº <?php echo $order['Order']['id'] ?></p>
+            <p class="pr-50 bold m-0">Nº Nota Unificada</p>
         </div>
         <div class="cell p-10 d-flex flex-col">
             <table>
@@ -220,7 +213,7 @@
                     <td class="pb-10" colspan="3"><p class="m-0 bold">Dados da Prestação de Serviços:</p></td>
                 </tr>
                 <tr>
-                    <td class="pb-10" width="25%"><b>ND Nº <?php echo $order['Order']['id'] ?></b></td>
+                    <td class="pb-10" width="25%"><b>Nº Nota Unificada</b></td>
                     <td class="pb-10" width="55%"><b>Série: 3</b></td>
                     <td class="pb-10" style="text-align: end"><b>Emitido em: <?php echo date('d/m/Y') ?></b></td>
                 </tr>
@@ -321,7 +314,10 @@
             <b>PEDIDO(S):</b>
         </div>
         <div class="cell">
-            <p class="pl-20 bold m-0"><?php echo $order['Order']['id'] ?></p>
+            <p class="pl-20 bold m-0">
+                <?php echo implode(', ', $listaPedidos) ?><br>
+                Referente a Unificação de Nota de Débito.
+            </p>
         </div>
         <div class="cell text-center">
             <b>OUTRAS INFORMAÇÕES</b>
@@ -361,17 +357,15 @@
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B - C + D)</th>
                     <td style="text-align: center;"> <?php echo number_format(($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'] - $order['Order']['desconto_not_formated']), 2, ',', '.') ?></td>
-                    </tr>
+                </tr>
             </table>
         </div>
-        <?php if ($order['Order']['observation'] != '') { ?>
-            <div class="cell text-center">
-                <b>DESCRIÇÃO DO DEMONSTRATIVO DE BENEFÍCIOS</b>
-            </div>
-            <div class="cell">
-                <p class="m-0 p-10"><?php echo $order['Order']['observation'] ?></p>
-            </div>
-        <?php } ?>
+        <div class="cell text-center">
+            <b>OBSERVAÇÕES</b>
+        </div>
+        <div class="cell">
+            <p class="m-0 p-10">&nbsp;</p>
+        </div>
     </div>
     <?php endforeach; ?>
 </body>

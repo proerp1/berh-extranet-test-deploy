@@ -5256,16 +5256,25 @@ class OrdersController extends AppController
         
         $ids = $this->request->query('ids');
         
-        $allOrders = [];        
-        foreach ($ids as $id) {
-            $order = $this->Order->find('first', [
-                'contain' => ['Customer', 'EconomicGroup'],
-                'conditions' => ['Order.id' => $id],
-            ]);
+        $orders = $this->Order->find('all', [
+            'contain' => ['Customer', 'EconomicGroup'],
+            'conditions' => ['Order.id' => $ids],
+        ]);
+        
+        $baseOrder = $orders[0];
+        
+        $itensConsolidados = [];
+        $totalSubtotal = 0;
+        $totalTransferFee = 0;
+        $totalDesconto = 0;
+        $listaPedidos = [];
+        
+        foreach ($orders as $order) {
+            $listaPedidos[] = $order['Order']['id'];
             
-            if (empty($order)) {
-                continue;
-            }
+            $totalSubtotal += $order['Order']['subtotal_not_formated'];
+            $totalTransferFee += $order['Order']['transfer_fee_not_formated'];
+            $totalDesconto += $order['Order']['desconto_not_formated'];
             
             $itens = $this->OrderItem->find('all', [
                 'fields' => [
@@ -5273,42 +5282,78 @@ class OrdersController extends AppController
                     'Benefit.name',
                     'count(CustomerUserItinerary.quantity) as qtd',
                     'round(sum(OrderItem.subtotal),2) as valor',
-                    'round(sum(OrderItem.total),2) as total',
                 ],
                 'joins' => [
                     [
                         'table' => 'benefits',
                         'alias' => 'Benefit',
                         'type' => 'INNER',
-                        'conditions' => [
-                            'Benefit.id = CustomerUserItinerary.benefit_id'
-                        ]
+                        'conditions' => ['Benefit.id = CustomerUserItinerary.benefit_id']
                     ]
                 ],
-                'conditions' => ['OrderItem.order_id' => $id],
+                'conditions' => ['OrderItem.order_id' => $order['Order']['id']],
                 'group' => ['CustomerUserItinerary.benefit_id']
             ]);
             
-            $itensAjustados = [];
             foreach ($itens as $item) {
-                $itensAjustados[] = [
-                    'CustomerUserItinerary' => [
-                        'benefit_id' => $item['CustomerUserItinerary']['benefit_id'],
-                        'benefit_name' => $item['Benefit']['name']
-                    ],
-                    0 => [
-                        'qtd' => $item[0]['qtd'],
-                        'valor' => $item[0]['valor'],
-                        'total' => $item[0]['total']
-                    ]
-                ];
+                $benefitId = $item['CustomerUserItinerary']['benefit_id'];
+                
+                if (!isset($itensConsolidados[$benefitId])) {
+                    $itensConsolidados[$benefitId] = [
+                        'benefit_name' => $item['Benefit']['name'],
+                        'qtd' => 0,
+                        'valor' => 0
+                    ];
+                }
+                
+                $itensConsolidados[$benefitId]['qtd'] += $item[0]['qtd'];
+                $itensConsolidados[$benefitId]['valor'] += $item[0]['valor'];
             }
-            
-            $allOrders[] = [
-                'order' => $order,
-                'itens' => $itensAjustados
+        }
+        
+        $itensFormatados = [];
+        foreach ($itensConsolidados as $benefitId => $item) {
+            $itensFormatados[] = [
+                'CustomerUserItinerary' => [
+                    'benefit_id' => $benefitId,
+                    'benefit_name' => $item['benefit_name']
+                ],
+                0 => [
+                    'qtd' => $item['qtd'],
+                    'valor' => $item['valor']
+                ]
             ];
         }
+        
+        $numeroNotaUnificada = implode(', ', $listaPedidos);
+        
+        $orderConsolidado = [
+            'Order' => [
+                'id' => $numeroNotaUnificada,
+                'subtotal' => 'R$ ' . number_format($totalSubtotal, 2, ',', '.'),
+                'subtotal_not_formated' => $totalSubtotal,
+                'transfer_fee' => 'R$ ' . number_format($totalTransferFee, 2, ',', '.'),
+                'transfer_fee_not_formated' => $totalTransferFee,
+                'desconto' => 'R$ ' . number_format($totalDesconto, 2, ',', '.'),
+                'desconto_not_formated' => $totalDesconto,
+                'total' => 'R$ ' . number_format(
+                    ($totalSubtotal + $totalTransferFee - $totalDesconto), 
+                    2, ',', '.'
+                ),
+                'observation' => '', // Mantém em branco
+                'economic_group_id' => $baseOrder['Order']['economic_group_id']
+            ],
+            'Customer' => $baseOrder['Customer'],
+            'EconomicGroup' => $baseOrder['EconomicGroup']
+        ];
+        
+        $allOrders = [
+            [
+                'order' => $orderConsolidado,
+                'itens' => $itensFormatados,
+                'lista_pedidos' => $listaPedidos
+            ]
+        ];
         
         $view = new View($this, false);
         $view->layout = false;
@@ -5317,7 +5362,7 @@ class OrdersController extends AppController
         $view->set(compact("link", "allOrders"));
         $html = $view->render('../Elements/nota_debito_unificada');
         
-        $nomeArquivo = 'notas_debito_unificadas_' . date('Ymd_His') . '.pdf';
+        $nomeArquivo = 'nota_debito_unificada_' . date('Ymd_His') . '.pdf';
         $this->HtmltoPdf->convert($html, $nomeArquivo, 'download');
     }
 }
