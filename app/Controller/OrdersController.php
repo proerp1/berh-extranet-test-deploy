@@ -335,6 +335,7 @@ class OrdersController extends AppController
         ini_set('max_execution_time', '-1');
 
         ini_set('memory_limit', '-1');
+
         if ($this->request->is('post')) {
             $customerId = $this->request->data['customer_id'];
             $customerAddressId = isset($this->request->data['customer_address_id']) ? $this->request->data['customer_address_id'] : null;
@@ -352,6 +353,7 @@ class OrdersController extends AppController
             $is_beneficio = (int)$is_beneficio;
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
+            $due_date = $this->request->data['due_date'];
 
             $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : 1;
             $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
@@ -380,8 +382,6 @@ class OrdersController extends AppController
 
             if ($is_partial == 3 || $is_partial == 4) {
                 $pedido_complementar = 2;
-            } else {
-                $pedido_complementar = ($customer['Customer']['flag_gestao_economico'] == "S" ? 1 : 2);
             }
 
             if ($condicao_pagamento != 2) {
@@ -390,7 +390,7 @@ class OrdersController extends AppController
 
             if ($is_consolidated == 2) {
                 $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar, $condicao_pagamento, $prazo);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar, $condicao_pagamento, $prazo, $due_date);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -460,7 +460,7 @@ class OrdersController extends AppController
                 'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
-                'due_date' => $this->request->data['due_date'],
+                'due_date' => $due_date,
                 'nfse_observation' => $obs_notafiscal,
                 'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
                 'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
@@ -2007,7 +2007,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar, $condicao_pagamento, $prazo)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar, $condicao_pagamento, $prazo, $due_date)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -2148,6 +2148,7 @@ class OrdersController extends AppController
                 'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
                 'condicao_pagamento' => $condicao_pagamento,
                 'prazo' => $prazo,
+                'due_date' => $due_date,
             ];
 
             $this->Order->create();
