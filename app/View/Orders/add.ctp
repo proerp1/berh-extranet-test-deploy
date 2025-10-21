@@ -1320,7 +1320,7 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
         <a href="<?php echo $this->Html->url([
             'controller' => 'orders',
-            'action' => 'change_status',
+            'action' => 'change_status_cancel',
             $order['Order']['id'],
             $statusCancelado
         ]); ?>" class="btn btn-danger">Sim, cancelar</a>
