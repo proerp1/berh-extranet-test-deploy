@@ -15,7 +15,7 @@ class LogCustomerController extends AppController
 
     public function index($id = null)
     {
-        $this->Permission->check(3, 'leitura') ? '' : $this->redirect('/not_allowed');
+        $this->Permission->check(94, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = array_merge($this->paginate, [
             'order' => ['Log.log_date' => 'desc'],
             'joins' => [
