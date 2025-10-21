@@ -259,7 +259,7 @@ class CustomerUser extends AppModel
               ) b ON b.customer_user_id = u.id
               LEFT JOIN bank_codes k ON k.id = b.bank_code_id 
               LEFT JOIN bank_account_types t ON t.id = b.account_type_id 
-              WHERE o.id = ".$orderID."
+              WHERE o.id in (".implode(', ', $orderID).")
                 AND i.pix_status_id = 109
                 AND o.data_cancel = '1901-01-01 00:00:00' 
                 AND c.data_cancel = '1901-01-01 00:00:00' 

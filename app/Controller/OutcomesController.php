@@ -959,8 +959,11 @@ public function edit_document($id, $document_id = null)
         $this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Outcome->id = $id;
         $this->request->data = $this->Outcome->read();
-        $order_id = $this->request->data['Outcome']['order_id'];
-        $order = $this->Order->find('first', ['conditions' => ['Order.id' => $order_id]]);
+        $order_ids = array_map(function ($outcomeOrder) {
+            return $outcomeOrder['order_id'];
+        }, $this->request->data['OutcomeOrder']);
+
+        $order = $this->Order->find('first', ['conditions' => ['Order.id' => $order_ids]]);
 
         $this->Paginator->settings = ['OrderItem' => [
             'limit' => 100,
@@ -1002,7 +1005,7 @@ public function edit_document($id, $document_id = null)
             ]
         ]];
 
-        $condition = ["and" => ['Order.id' => $order_id], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_ids], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);
@@ -1010,8 +1013,7 @@ public function edit_document($id, $document_id = null)
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
-        $outcome = $this->Outcome->read(null, $id);
-        $pendingPix = $this->CustomerUser->find_pix_pendentes($outcome['Outcome']['order_id']);
+        $pendingPix = $this->CustomerUser->find_pix_pendentes($order_ids);
 
         $action = 'Contas a pagar';
         $breadcrumb = ['Pagamentos' => ''];
@@ -1023,7 +1025,12 @@ public function edit_document($id, $document_id = null)
         $this->autoRender = false;
 
         $outcome = $this->Outcome->read(null, $id);
-        $pix_pendentes = $this->CustomerUser->find_pix_pendentes($outcome['Outcome']['order_id']);
+
+        $order_ids = array_map(function ($outcomeOrder) {
+            return $outcomeOrder['order_id'];
+        }, $outcome['OutcomeOrder']);
+
+        $pix_pendentes = $this->CustomerUser->find_pix_pendentes($order_ids);
 
         if (!count($pix_pendentes)) {
             $this->Flash->set(__('Não há pagamentos pendentes.'), ['params' => ['class' => "alert alert-warning"]]);

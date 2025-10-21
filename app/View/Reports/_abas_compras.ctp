@@ -5,11 +5,6 @@
 ?>
 
 <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-    <?php /* ?>
-    <li class="nav-item">
-        <a class="nav-link <?php echo (isset($aba) and $aba == 'todos') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=todos&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Todos</a>
-    </li>
-    <?php */ ?>
     <li class="nav-item">
         <a class="nav-link <?php echo (isset($aba) and $aba == 'liberacao_credito') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=liberacao_credito&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Aguardando liberação de crédito</a>
     </li>
@@ -24,5 +19,8 @@
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo (isset($aba) and $aba == 'finalizado') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=finalizado&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Finalizado</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo (isset($aba) and $aba == 'todos') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=todos&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Todos</a>
     </li>
 </ul>

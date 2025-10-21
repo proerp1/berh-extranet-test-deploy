@@ -1149,21 +1149,41 @@ class ReportsController extends AppController
         
         $de = null;
         $para = null;        
+        
+        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
+        
         $buscar = true;
-
-        $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'liberacao_credito';
+        if ($aba == 'todos') {
+            $buscar = false;
+        }
 
         switch ($aba) {
             case 'liberacao_credito':
                 $condition['and'][] = [
-                    'Order.status_id' => 104, 
-                    'OrderItem.status_processamento' => [
-                        'INICIO_PROCESSAMENTO',
-                        'VALIDACAO_PENDENTE',
-                        'PROCESSAMENTO_PENDENTE',
-                        'ARQUIVO_GERADO',
-                        'CADASTRO_PROCESSADO',
-                        'CREDITO_PROCESSADO'
+                    'OR' => [
+                        // Cenário 1: Pedidos "Aguardando Liberação de Crédito"
+                        [
+                            'Order.status_id' => 104,
+                            'OrderItem.status_processamento' => [
+                                'INICIO_PROCESSAMENTO',
+                                'VALIDACAO_PENDENTE',
+                                'PROCESSAMENTO_PENDENTE',
+                                'ARQUIVO_GERADO',
+                                'CADASTRO_PROCESSADO',
+                                'CREDITO_PROCESSADO'
+                            ]
+                        ],
+                        // Cenário 2: Pedidos "Aguardando Pagamento"
+                        [
+                            'Order.status_id' => 84,
+                            'OrderItem.status_processamento' => [
+                                'VALIDACAO_PENDENTE',
+                                'PROCESSAMENTO_PENDENTE',
+                                'ARQUIVO_GERADO',
+                                'CADASTRO_PROCESSADO',
+                                'CREDITO_PROCESSADO'
+                            ]
+                        ]
                     ]
                 ];
                 break;
@@ -1974,7 +1994,7 @@ class ReportsController extends AppController
             }
         }
         
-        if (in_array($statusProcess, ['GERAR_PAGAMENTO'])) {
+        if (in_array($statusProcess, ['GERAR_PAGAMENTO', 'CARTAO_NOVO_PROCESSADO'])) {
             $orderItems = $this->OrderItem->find('all', [
                 'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
                 'joins' => [
@@ -2497,7 +2517,9 @@ class ReportsController extends AppController
                 $tiposPermitidos = [
                     'application/vnd.ms-excel',
                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'application/vnd.ms-excel.sheet.macroEnabled.12'
+                    'application/vnd.ms-excel.sheet.macroEnabled.12',
+                    'text/plain',
+                    'text/csv'
                 ];
                 
                 if (!in_array($uploadedFile['type'], $tiposPermitidos)) {
