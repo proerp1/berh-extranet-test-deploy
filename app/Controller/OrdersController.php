@@ -335,6 +335,7 @@ class OrdersController extends AppController
         ini_set('max_execution_time', '-1');
 
         ini_set('memory_limit', '-1');
+
         if ($this->request->is('post')) {
             $customerId = $this->request->data['customer_id'];
             $customerAddressId = isset($this->request->data['customer_address_id']) ? $this->request->data['customer_address_id'] : null;
@@ -352,6 +353,7 @@ class OrdersController extends AppController
             $is_beneficio = (int)$is_beneficio;
             $benefit_type = $is_beneficio == 1 ? '' : $benefit_type;
             $credit_release_date = $this->request->data['credit_release_date'];
+            $due_date = $this->request->data['due_date'];
 
             $condicao_pagamento = isset($this->request->data['condicao_pagamento']) ? $this->request->data['condicao_pagamento'] : 1;
             $prazo = isset($this->request->data['prazo']) ? $this->request->data['prazo'] : null;
@@ -380,8 +382,6 @@ class OrdersController extends AppController
 
             if ($is_partial == 3 || $is_partial == 4) {
                 $pedido_complementar = 2;
-            } else {
-                $pedido_complementar = ($customer['Customer']['flag_gestao_economico'] == "S" ? 1 : 2);
             }
 
             if ($condicao_pagamento != 2) {
@@ -390,7 +390,7 @@ class OrdersController extends AppController
 
             if ($is_consolidated == 2) {
                 $b_type_consolidated = $benefit_type_persist == 0 ? '' : $benefit_type_persist;
-                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar, $condicao_pagamento, $prazo);
+                $orderId = $this->processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $b_type_consolidated, $proposal, $pedido_complementar, $condicao_pagamento, $prazo, $due_date);
                 if ($orderId) {
                     // se já foi processado, acaba a função aqui
                     $this->redirect(['action' => 'index']);
@@ -460,7 +460,7 @@ class OrdersController extends AppController
                 'created' => date('Y-m-d H:i:s'),
                 'working_days_type' => $working_days_type,
                 'benefit_type' => $benefit_type_persist,
-                'due_date' => $this->request->data['due_date'],
+                'due_date' => $due_date,
                 'nfse_observation' => $obs_notafiscal,
                 'flag_gestao_economico' => $customer['Customer']['flag_gestao_economico'],
                 'porcentagem_margem_seguranca' => $customer['Customer']['porcentagem_margem_seguranca'],
@@ -1193,39 +1193,96 @@ class OrdersController extends AppController
     }
 
     public function change_status($id = null, $status = null)
-{
-    $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
 
-    $id = (int)$id;
-    $status = (int)$status;
+        $id = (int)$id;
+        $status = (int)$status;
 
-    if (!$id || !$status) {
-        $this->Flash->set(__('Parâmetros inválidos'), ['params' => ['class' => 'alert alert-danger']]);
-        return $this->redirect($this->referer());
+        if (!$id || !$status) {
+            $this->Flash->set(__('Parâmetros inválidos'), ['params' => ['class' => 'alert alert-danger']]);
+            return $this->redirect($this->referer());
+        }
+        
+        $this->Order->id = $id;
+
+        if (!$this->Order->exists()) {
+            $this->Flash->set(__('Pedido não encontrado'), ['params' => ['class' => 'alert alert-danger']]);
+            return $this->redirect($this->referer());
+        }
+
+        $old_status = $this->Order->read();
+
+        $data = ['Order' => ['status_id' => $status]];
+
+        if ($this->Order->save($data, ['validate' => false])) {
+            $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+        } else {
+            $this->Flash->set(__('Não foi possível alterar o status'), ['params' => ['class' => 'alert alert-danger']]);
+        }
+
+        $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+        return $this->redirect(['action' => 'index/?' . $qs]);
     }
 
-    
-    $this->Order->id = $id;
+    public function change_status_cancel($id = null, $status = null)
+    {
+        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
 
-    if (!$this->Order->exists()) {
-        $this->Flash->set(__('Pedido não encontrado'), ['params' => ['class' => 'alert alert-danger']]);
-        return $this->redirect($this->referer());
+        $id = (int)$id;
+        $status = (int)$status;
+
+        if (!$id || !$status) {
+            $this->Flash->set(__('Parâmetros inválidos'), ['params' => ['class' => 'alert alert-danger']]);
+            return $this->redirect($this->referer());
+        }
+        
+        $this->Order->id = $id;
+
+        if (!$this->Order->exists()) {
+            $this->Flash->set(__('Pedido não encontrado'), ['params' => ['class' => 'alert alert-danger']]);
+            return $this->redirect($this->referer());
+        }
+
+        $old_status = $this->Order->read();
+
+        $data = ['Order' => ['status_id' => $status]];
+
+        if ($this->Order->save($data, ['validate' => false])) {            
+            $this->Income->updateAll(
+                [
+                    'Income.status_id' => 18,
+                    'Income.updated' => 'current_timestamp',
+                    'Income.user_updated_id' => CakeSession::read("Auth.User.id"),
+                    'Income.usuario_id_cancelamento' => CakeSession::read("Auth.User.id")
+                ],
+                ['Income.order_id' => $id]
+            );
+
+            $income_id = $this->Income->find('list', [
+                'conditions' => ['Income.order_id' => $id],
+                'fields' => ['Income.id', 'Income.id']
+            ]);
+
+            if (!empty($income_id)) {
+                $this->CnabItem->updateAll(
+                    [
+                        'CnabItem.status_id' => 63,
+                        'CnabItem.updated' => 'current_timestamp',
+                        'CnabItem.user_updated_id' => CakeSession::read("Auth.User.id")
+                    ],
+                    ['CnabItem.income_id' => $income_id]
+                );
+            }
+
+            $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
+        } else {
+            $this->Flash->set(__('Não foi possível alterar o status'), ['params' => ['class' => 'alert alert-danger']]);
+        }
+
+        $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
+        return $this->redirect(['action' => 'index/?' . $qs]);
     }
-
-    $old_status = $this->Order->read();
-
-    $data = ['Order' => ['status_id' => $status]];
-
-    if ($this->Order->save($data, ['validate' => false])) {
-        $this->Flash->set(__('Status alterado com sucesso'), ['params' => ['class' => 'alert alert-success']]);
-    } else {
-        $this->Flash->set(__('Não foi possível alterar o status'), ['params' => ['class' => 'alert alert-danger']]);
-    }
-
-    $qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
-    return $this->redirect(['action' => 'index/?' . $qs]);
-}
-
 
     public function notificaNotaAntecipada($order)
     {
@@ -1950,7 +2007,7 @@ class OrdersController extends AppController
         }
     }
 
-    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar, $condicao_pagamento, $prazo)
+    private function processConsolidated($customerId, $workingDays, $period_from, $period_to, $is_partial, $credit_release_date, $working_days_type, $grupo_especifico, $benefit_type, $proposal, $pedido_complementar, $condicao_pagamento, $prazo, $due_date)
     {
         $cond = [
             'CustomerUserItinerary.customer_id' => $customerId,
@@ -2091,6 +2148,7 @@ class OrdersController extends AppController
                 'primeiro_pedido' => ($customer_orders > 1 ? "N" : "S"),
                 'condicao_pagamento' => $condicao_pagamento,
                 'prazo' => $prazo,
+                'due_date' => $due_date,
             ];
 
             $this->Order->create();
