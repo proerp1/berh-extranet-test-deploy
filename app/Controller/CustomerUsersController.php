@@ -32,7 +32,8 @@ class CustomerUsersController extends AppController
         'EconomicGroup',
         'Group',
         'CustomerAddress',
-        'Log'
+        'Log',
+        'CustomerUserItineraryLog'
     ];
 
     public $paginate = [
@@ -64,6 +65,12 @@ class CustomerUsersController extends AppController
             'limit' => 10,
             'order' => ['CustomerUserBankAccount.id' => 'asc'],
             'contain' => ['Status', 'BankCode', 'BankAccountType'] // Incluir a associação Status
+        ],
+        'CustomerUserItinerary' => [
+            'limit' => 20,
+            'order' => ['CustomerUser.name' => 'asc'],
+            'conditions' => [],
+            'contain' => ['CustomerUser', 'Benefit', 'Status']
         ]
     ];
 
@@ -1187,6 +1194,283 @@ class CustomerUsersController extends AppController
         }
 
         return ['data' => $data];
+    }
+
+
+    /**
+     * View all benefits (CustomerUserItinerary) for a customer
+     * Displays all benefit assignments with filters and batch actions
+     */
+    public function view_all_benefits($id)
+    {
+        ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('memory_limit', '-1');
+
+        // Check permission for the new page
+        $this->Permission->check(95, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        $this->Paginator->settings = $this->paginate;
+        $user = $this->Auth->user();
+
+        // Build conditions
+        $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
+
+        // Search filter (name, CPF, email)
+        if (!empty($_GET['q'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%",
+                'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%",
+                'CustomerUser.email LIKE' => "%" . $_GET['q'] . "%"
+            ]);
+        }
+
+        // Benefit code filter
+        if (!empty($_GET['benefit_code'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'Benefit.code LIKE' => "%" . $_GET['benefit_code'] . "%"
+            ]);
+        }
+
+        // Benefit name filter
+        if (!empty($_GET['benefit_name'])) {
+            $condition['or'] = array_merge($condition['or'], [
+                'Benefit.name LIKE' => "%" . $_GET['benefit_name'] . "%"
+            ]);
+        }
+
+        // Status filter for itinerary (link status)
+        if (!empty($_GET["status_link"])) {
+            $condition['and'] = array_merge($condition['and'], ['CustomerUserItinerary.status_id' => $_GET['status_link']]);
+        }
+
+        // Status filter for benefit
+        if (!empty($_GET["status_benefit"])) {
+            $condition['and'] = array_merge($condition['and'], ['Benefit.status_id' => $_GET['status_benefit']]);
+        }
+
+        // Get data with pagination
+        $data = $this->Paginator->paginate('CustomerUserItinerary', $condition);
+
+        // Get all statuses for filters
+        $status = $this->Status->find('all', [
+            'conditions' => ['Status.categoria' => 1],
+            'order' => 'Status.name'
+        ]);
+
+        // Get all benefits for the customer for filter
+        $benefits = $this->Benefit->find('all', [
+            'conditions' => [],
+            'order' => 'Benefit.name'
+        ]);
+
+        // Get customer info
+        $this->Customer->id = $id;
+        $cliente = $this->Customer->read();
+
+        $breadcrumb = [
+            $cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'edit', $id],
+            'Gerenciamento de Benefícios' => ''
+        ];
+
+        $this->set(compact('data', 'id', 'status', 'benefits', 'breadcrumb', 'user', 'cliente'));
+    }
+
+    /**
+     * Batch activate CustomerUserItinerary records
+     */
+    public function batch_activate_itineraries()
+    {
+        $this->autoRender = false;
+        $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $customerId = $this->request->data['customerId'];
+            $user = $this->Auth->user();
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($itineraryIds as $itineraryId) {
+                // Get current data before update
+                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+
+                if ($currentData) {
+                    // Find active status (assuming status_id = 1 is active, adjust if needed)
+                    $activeStatus = $this->Status->find('first', [
+                        'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Ativo']
+                    ]);
+
+                    $this->CustomerUserItinerary->id = $itineraryId;
+                    $updateData = [
+                        'status_id' => $activeStatus['Status']['id'],
+                        'user_updated_id' => $user['id']
+                    ];
+
+                    if ($this->CustomerUserItinerary->save($updateData, false)) {
+                        // Log the action
+                        $this->CustomerUserItineraryLog->logAction(
+                            $currentData['CustomerUserItinerary']['customer_user_id'],
+                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itineraryId,
+                            'activate',
+                            $user,
+                            ['status_id' => $currentData['CustomerUserItinerary']['status_id']],
+                            ['status_id' => $activeStatus['Status']['id']]
+                        );
+                        $successCount++;
+                    } else {
+                        $errorCount++;
+                    }
+                }
+            }
+
+            if ($successCount > 0) {
+                $this->Flash->set(__("$successCount registro(s) ativado(s) com sucesso."), ['params' => ['class' => "alert alert-success"]]);
+            }
+            if ($errorCount > 0) {
+                $this->Flash->set(__("$errorCount erro(s) ao ativar registros."), ['params' => ['class' => "alert alert-danger"]]);
+            }
+
+            // Preserve filter parameters from the referring page
+            $queryString = '';
+            if (!empty($this->request->data['queryString'])) {
+                $queryString = '?' . $this->request->data['queryString'];
+            }
+
+            $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
+        }
+    }
+
+    /**
+     * Batch inactivate CustomerUserItinerary records
+     */
+    public function batch_inactivate_itineraries()
+    {
+        $this->autoRender = false;
+        $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $customerId = $this->request->data['customerId'];
+            $user = $this->Auth->user();
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($itineraryIds as $itineraryId) {
+                // Get current data before update
+                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+
+                if ($currentData) {
+                    // Find inactive status
+                    $inactiveStatus = $this->Status->find('first', [
+                        'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Inativo']
+                    ]);
+
+                    $this->CustomerUserItinerary->id = $itineraryId;
+                    $updateData = [
+                        'status_id' => $inactiveStatus['Status']['id'],
+                        'user_updated_id' => $user['id']
+                    ];
+
+                    if ($this->CustomerUserItinerary->save($updateData, false)) {
+                        // Log the action
+                        $this->CustomerUserItineraryLog->logAction(
+                            $currentData['CustomerUserItinerary']['customer_user_id'],
+                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itineraryId,
+                            'inactivate',
+                            $user,
+                            ['status_id' => $currentData['CustomerUserItinerary']['status_id']],
+                            ['status_id' => $inactiveStatus['Status']['id']]
+                        );
+                        $successCount++;
+                    } else {
+                        $errorCount++;
+                    }
+                }
+            }
+
+            if ($successCount > 0) {
+                $this->Flash->set(__("$successCount registro(s) inativado(s) com sucesso."), ['params' => ['class' => "alert alert-success"]]);
+            }
+            if ($errorCount > 0) {
+                $this->Flash->set(__("$errorCount erro(s) ao inativar registros."), ['params' => ['class' => "alert alert-danger"]]);
+            }
+
+            // Preserve filter parameters from the referring page
+            $queryString = '';
+            if (!empty($this->request->data['queryString'])) {
+                $queryString = '?' . $this->request->data['queryString'];
+            }
+
+            $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
+        }
+    }
+
+    /**
+     * Batch delete (soft delete) CustomerUserItinerary records
+     */
+    public function batch_delete_itineraries()
+    {
+        $this->autoRender = false;
+        $this->Permission->check(95, "excluir") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $customerId = $this->request->data['customerId'];
+            $user = $this->Auth->user();
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($itineraryIds as $itineraryId) {
+                // Get current data before delete
+                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+
+                if ($currentData) {
+                    $this->CustomerUserItinerary->id = $itineraryId;
+
+                    // Soft delete: set data_cancel to current timestamp
+                    $updateData = [
+                        'data_cancel' => date('Y-m-d H:i:s'),
+                        'user_updated_id' => $user['id']
+                    ];
+
+                    if ($this->CustomerUserItinerary->save($updateData, false)) {
+                        // Log the action
+                        $this->CustomerUserItineraryLog->logAction(
+                            $currentData['CustomerUserItinerary']['customer_user_id'],
+                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itineraryId,
+                            'delete',
+                            $user,
+                            $currentData['CustomerUserItinerary'],
+                            null
+                        );
+                        $successCount++;
+                    } else {
+                        $errorCount++;
+                    }
+                }
+            }
+
+            if ($successCount > 0) {
+                $this->Flash->set(__("$successCount registro(s) excluído(s) com sucesso."), ['params' => ['class' => "alert alert-success"]]);
+            }
+            if ($errorCount > 0) {
+                $this->Flash->set(__("$errorCount erro(s) ao excluir registros."), ['params' => ['class' => "alert alert-danger"]]);
+            }
+
+            // Preserve filter parameters from the referring page
+            $queryString = '';
+            if (!empty($this->request->data['queryString'])) {
+                $queryString = '?' . $this->request->data['queryString'];
+            }
+
+            $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
+        }
     }
 
     public function baixar_beneficiarios($id, $is_admin = false)

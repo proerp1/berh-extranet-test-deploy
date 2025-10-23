@@ -48,6 +48,11 @@ echo $this->element("abas_customers", array('id' => $id));
                         Excluir Todos
                     </a> -->
 
+                    <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "view_all_benefits", $id)); ?>" class="btn btn-sm btn-info me-3 d-flex align-items-center justify-content-center text-center">
+                        <i class="fas fa-list me-2"></i>
+                        Ver todos Benefícios
+                    </a>
+
                     <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "generate_excel_report", $id)); ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center text-center">
                         <i class="fas fa-download me-2"></i>
                         Relatório de Benefícios

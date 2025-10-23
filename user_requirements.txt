@@ -1,0 +1,23 @@
+Solução 
+
+Vamos criar uma nova tela que pode ser chamado sobre um botão “Ver todos Benefícios”, ao lado esquerdo do botão Relatorio de Beneficios.
+
+Ao abrir a tela listas todos os benefícios que esta associados ao cliente.
+
+Dessa forma ele pode deletar de todos os beneficiários um benefício específico. 
+
+Objetivo
+
+Tornar visível, em tela, a lista de benefícios associados a cada CPF (tanto no cadastro de Usuário quanto no de Beneficiário), com status do vínculo e status do benefício.
+
+Habilitar ações em lote sobre os vínculos de benefício: Inativar  / ATivar e Excluir.
+
+Disponibilizar filtro com multipla seleção para benefícios (mesmo comportamento já disponível para Usuários/Beneficiários).
+
+Permissões e segurança > disponibilizar alçada na manutenção de permissões
+
+Ações em lote > apenas no SIG
+
+Auditoria e logs>  registrar histórico de transaçao tanto para gravação quanto para exclusão com nome data  e horário e ação executada >ação, ids afetados, antes/depois, usuário, data/hora.
+
+https://sig.berh.com.br/customer_users/index/88356
