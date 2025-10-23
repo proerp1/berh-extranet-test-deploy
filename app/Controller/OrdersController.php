@@ -41,7 +41,8 @@ class OrdersController extends AppController
         'LogOrderItemsProcessamento',
         'SupplierVolumeTier',
         'OutcomeOrder',
-        'OrderDesconto'
+        'OrderDiscountBatch',
+        'OrderDiscountBatchItem'
     ];
     
     public $groupBenefitType = [
@@ -1048,34 +1049,6 @@ class OrdersController extends AppController
         $order_balances_total = $this->OrderBalance->find('all', ['conditions' => ["OrderBalance.order_id" => $id, "OrderBalance.tipo" => 1], 'fields' => 'SUM(OrderBalance.total) as total']);
 
         $this->Order->recursive = 0;
-        $orders = $this->Order->find(
-            'all',
-            [
-                'fields' => [
-                    'Order.*',
-                    'OrderDiscount.id',
-                    'Customer.nome_primario'
-                ],
-                'joins' => [
-                    [
-                        'table' => 'order_discounts',
-                        'alias' => 'OrderDiscount',
-                        'type' => 'LEFT',
-                        'conditions' => [
-                            'OrderDiscount.order_parent_id = Order.id',
-                            'OrderDiscount.data_cancel' => '1901-01-01',
-                        ]
-                    ]
-                ],
-                'conditions' => [
-                    'Order.id !=' => $id,
-                    'Order.customer_id' => $order['Order']['customer_id']
-                ],
-                'order' => [
-                    'Order.id' => 'DESC'
-                ],
-            ]
-        );
 
         $outcome = $this->Outcome->find('first', ['conditions' => ['Outcome.order_id' => $id]]);
 
@@ -1088,7 +1061,7 @@ class OrdersController extends AppController
         $this->set("form_action", "edit");
 
         $this->set(compact('id', 'action', 'breadcrumb', 'order', 'items', 'progress', 'v_is_partial', 'v_cond_pagamento'));
-        $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order', 'orders'));
+        $this->set(compact('outcome', 'suppliersCount', 'usersCount', 'income', 'benefits', 'gerarNota', 'benefit_type_desc', 'order_balances_total', 'next_order', 'prev_order'));
         $this->set(compact('hide_payment_confirmed', 'hide_credit_release', 'hide_processing', 'condicao_pagamento', 'permObsPedido', 'permDtLibCredito'));
 
         $this->render("add");
@@ -4768,96 +4741,6 @@ class OrdersController extends AppController
         ];
     }
 
-    public function aplicar_desconto()
-    {
-        $this->autoRender = false;
-
-        $order_id = $this->request->data['order_id'];
-        $total_desconto = $this->request->data['total_desconto'];
-        $orders_select = $this->request->data['orders_select'];
-
-        $this->OrderDiscount->updateAll(
-            [
-                'OrderDiscount.data_cancel' => 'CURRENT_DATE',
-                'OrderDiscount.usuario_id_cancel' => CakeSession::read("Auth.User.id")
-            ],
-            [
-                'OrderDiscount.order_id' => $order_id
-            ]
-        );
-
-        foreach ($orders_select as $order_select) {
-            $data = [
-                'order_id' => $order_id,
-                'order_parent_id' => $order_select['order_parent'],
-                'created' => date('Y-m-d H:i:s'),
-                'user_creator_id' => CakeSession::read("Auth.User.id"),
-            ];
-
-            $this->OrderDiscount->create();
-            $this->OrderDiscount->save($data);
-        }
-
-        $this->Order->save([
-            'Order' => [
-                'id' => $order_id,
-                'desconto' => $total_desconto,
-                'user_updated_id' => CakeSession::read("Auth.User.id"),
-                'updated' => date('Y-m-d H:i:s'),
-            ]
-        ]);
-
-        echo json_encode(['success' => true]);
-    }
-
-    public function descontos($id)
-    {
-        $this->Permission->check(63, "escrita") ? "" : $this->redirect("/not_allowed");
-
-        $this->Order->id = $id;
-        $old_order = $this->Order->read();
-
-        $this->request->data = $this->Order->read();
-        $order = $this->Order->findById($id);
-
-        $this->Paginator->settings = ['OrderDiscount' => [
-            'limit' => 200,
-            'order' => ['Order.id' => 'desc'],
-            'fields' => [
-                'OrderParent.*',
-                'Customer.nome_primario'
-            ],
-            'joins' => [
-                [
-                    'table' => 'customers',
-                    'alias' => 'Customer',
-                    'type' => 'LEFT',
-                    'conditions' => [
-                        'Customer.id = OrderParent.customer_id'
-                    ]
-                ],
-            ],
-        ]];
-
-        $condition = ["and" => ['Order.id' => $id], "or" => []];
-
-        if (isset($_GET['q']) and $_GET['q'] != "") {
-            $condition['or'] = array_merge($condition['or'], [
-                'OrderParent.id' => $_GET['q'],
-                'Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%",
-                'Customer.codigo_associado LIKE' => "%" . $_GET['q'] . "%",
-                'Customer.id LIKE' => "%" . $_GET['q'] . "%"
-            ]);
-        }
-
-        $orders = $this->Paginator->paginate('OrderDiscount', $condition);
-
-        $action = 'Descontos';
-        $breadcrumb = ['Cadastros' => '', 'Descontos' => '', 'Alterar Descontos' => ''];
-
-        $this->set(compact('id', 'action', 'breadcrumb', 'order', 'orders'));
-    }
-
     public function isValidCPF($cpf)
     {
         $cpf = preg_replace('/\D/', '', $cpf);
@@ -5422,5 +5305,197 @@ class OrdersController extends AppController
         
         $nomeArquivo = 'nota_debito_unificada_' . date('Ymd_His') . '.pdf';
         $this->HtmltoPdf->convert($html, $nomeArquivo, 'download');
+    }
+
+    public function descontos($id) 
+    {
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        if (!$id) {
+            $this->Flash->error('Pedido não encontrado');
+            $this->redirect(['action' => 'index']);
+            return;
+        }
+
+        $order = $this->Order->findById($id);
+
+        if (!$order) {
+            $this->Flash->error('Pedido não encontrado');
+            $this->redirect(['action' => 'index']);
+            return;
+        }
+
+        $this->paginate = [
+            'OrderDiscountBatch' => [
+                'conditions' => [
+                    'OrderDiscountBatch.order_id' => $id,
+                    'OrderDiscountBatch.data_cancel' => '1901-01-01 00:00:00'
+                ],
+                'contain' => [
+                    'UserCreator'
+                ],
+                'order' => 'OrderDiscountBatch.created DESC',
+                'limit' => 10
+            ]
+        ];
+
+        $batches = $this->paginate('OrderDiscountBatch');
+
+        $available_orders = $this->Order->find('all', [
+            'fields' => [
+                'Order.*',
+                'Customer.nome_primario'
+            ],
+            'joins' => [
+                [
+                    'table' => 'order_discount_batch_items',
+                    'alias' => 'OrderDiscountBatchItem',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderDiscountBatchItem.order_parent_id = Order.id'
+                    ]
+                ],
+                [
+                    'table' => 'order_discount_batches',
+                    'alias' => 'OrderDiscountBatch',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OrderDiscountBatch.id = OrderDiscountBatchItem.batch_id',
+                        'OrderDiscountBatch.data_cancel' => '1901-01-01 00:00:00'
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'Order.id !=' => $id,
+                'Order.customer_id' => $order['Order']['customer_id'],
+                'OrderDiscountBatch.id IS NULL'
+            ],
+            'order' => [
+                'Order.id' => 'DESC'
+            ],
+            'group' => 'Order.id'
+        ]);
+
+        $action = 'Descontos';
+        $breadcrumb = [
+            'Cadastros' => ['controller' => 'orders', 'action' => 'edit', $id],
+            'Descontos' => '',
+        ];
+
+        $this->set(compact('id', 'order', 'batches', 'available_orders', 'breadcrumb', 'action'));
+    }
+
+    public function criar_lote_desconto() {
+        $this->autoRender = false;
+        
+        if (!$this->request->is('post')) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Método não permitido'
+            ]);
+            return;
+        }
+
+        $order_id       = $this->request->data['order_id'];
+        $pedidos        = $this->request->data['pedidos'];
+        $discount_type  = $this->request->data['discount_type'];
+        $observacao     = isset($this->request->data['observacao']) ? $this->request->data['observacao'] : '';
+        $valor_total    = $this->request->data['valor_total'];        
+        
+        $qtdPedidos = count($pedidos);
+        
+        $data = [
+            'order_id' => $order_id,
+            'discount_type' => $discount_type,
+            'observacao' => $observacao,
+            'valor_total' => $valor_total,
+            'quantidade_pedidos' => $qtdPedidos,
+            'user_creator_id' => $this->Auth->user('id'),
+            'created' => date('Y-m-d H:i:s')
+        ];
+
+        $this->OrderDiscountBatch->create();
+        $this->OrderDiscountBatch->save($data);
+
+        $batchId = $this->OrderDiscountBatch->id;
+
+        foreach ($pedidos as $orderParentId) {
+            $item = [
+                'batch_id' => $batchId,
+                'order_parent_id' => $orderParentId,
+                'created' => date('Y-m-d H:i:s')
+            ];
+
+            $this->OrderDiscountBatchItem->create();
+            $this->OrderDiscountBatchItem->save($item);
+        }
+
+        $order_discount = $this->OrderDiscountBatch->find('first', [
+            'fields' => ['SUM(OrderDiscountBatch.valor_total) as total'],
+            'conditions' => [
+                'OrderDiscountBatch.order_id' => $order_id,
+                'OrderDiscountBatch.data_cancel' => '1901-01-01 00:00:00'
+            ]
+        ]);
+
+        $desconto_total = $order_discount[0]['total'];
+        
+        $this->Order->save([
+            'Order' => [
+                'id' => $order_id,
+                'desconto' => $desconto_total,
+                'user_updated_id' => CakeSession::read("Auth.User.id"),
+                'updated' => date('Y-m-d H:i:s'),
+            ]
+        ]);
+
+        echo json_encode(['success' => true]);
+    }
+
+    public function lote_desconto($id, $batch_id)
+    {
+        $this->Permission->check(63, "excluir") ? "" : $this->redirect("/not_allowed");
+
+        $action = 'Descontos';
+        $breadcrumb = [
+            'Cadastros' => ['controller' => 'orders', 'action' => 'edit', $id],
+            'Descontos' => '',
+            'Editar Desconto' => '',
+        ];
+
+        $this->set(compact('id', 'batch_id', 'breadcrumb', 'action'));
+    }
+
+    public function delete_lote_desconto($id, $batch_id)
+    {
+        $this->Permission->check(63, "excluir") ? "" : $this->redirect("/not_allowed");
+
+		$this->OrderDiscountBatch->id = $batch_id;
+
+		$data = ['OrderDiscountBatch' => ['data_cancel' => date("Y-m-d H:i:s"), 'usuario_id_cancel' => CakeSession::read("Auth.User.id")]];
+
+        if ($this->OrderDiscountBatch->save($data)) {
+            $order_discount = $this->OrderDiscountBatch->find('first', [
+                'fields' => ['SUM(OrderDiscountBatch.valor_total) as total'],
+                'conditions' => [
+                    'OrderDiscountBatch.order_id' => $id,
+                    'OrderDiscountBatch.data_cancel' => '1901-01-01 00:00:00'
+                ]
+            ]);
+
+            $desconto_total = $order_discount[0]['total'];
+            
+            $this->Order->save([
+                'Order' => [
+                    'id' => $id,
+                    'desconto' => $desconto_total,
+                    'user_updated_id' => CakeSession::read("Auth.User.id"),
+                    'updated' => date('Y-m-d H:i:s'),
+                ]
+            ]);
+
+            $this->Flash->set(__('O Desconto foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
+            $this->redirect(['action' => 'descontos/' . $id]);
+        }
     }
 }

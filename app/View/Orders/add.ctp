@@ -348,19 +348,13 @@
 
                             <div class="mb-7 col-6">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
+                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled">
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="mb-12 col" style="text-align: right; margin-bottom: 10px !important;">
                                 <div class="dropdown">
-                                    <?php /*if ($order['Order']['status_id'] == 83) { ?>
-                                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
-                                            Aplicar Desconto
-                                        </a>
-                                    <?php }*/ ?>
-
                                     <?php if ($order['Order']['status_id'] == 104 && $order['Order']['condicao_pagamento'] == 2) { ?>
                                         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_enviar_faturamento">
                                             Liberar para Faturamento
@@ -1243,65 +1237,6 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_desconto" role="dialog">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal_desconto_label">Selecionar Pedidos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-
-            <div class="modal-body">
-                <div class="mb-7 col-4">
-                    <label class="form-label">Total</label>
-                    <div class="input-group">
-                        <span class="input-group-text">R$</span>
-                        <input type="text" name="total_desconto" id="total_desconto" class="form-control" readonly>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <?php echo $this->element("table"); ?>
-                        <thead>
-                            <tr class="fw-bolder text-muted bg-light">
-                                <th class="ps-4 w-50px min-w-50px rounded-start"></th>
-                                <th>Número</th>
-                                <th>Cliente</th>
-                                <th>Data de criação</th>
-                                <th>Desconto</th>
-                                <th class="rounded-end">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ($orders) { ?>
-                                <?php for ($i=0; $i < count($orders); $i++) { ?>
-                                    <tr>
-                                        <td class="fw-bold fs-7 ps-4"><input type="checkbox" class="seletor-item" data-desconto="<?php echo $orders[$i]["Order"]["desconto_not_formated"]; ?>" <?php echo $orders[$i]["OrderDiscount"]["id"] ? "checked" : ""; ?> ></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["id"]; ?></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Customer"]["nome_primario"]; ?></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo $orders[$i]["Order"]["created"] ?></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["desconto"]; ?></td>
-                                        <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $orders[$i]["Order"]["subtotal"]; ?></td>
-                                    </tr>
-                                <?php } ?>
-                            <?php } else { ?>
-                                <tr>
-                                    <td class="fw-bold fs-7 ps-4" colspan="4">Nenhum registro encontrado</td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button id="enviar_desconto" class="btn btn-success">Salvar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <?php 
     $statusCancelado = 94; // ID do status "Cancelado"
 ?>
@@ -1572,40 +1507,6 @@
 
         $('.seletor-item').on('change', function () {
             fnc_calc_total();
-        });
-
-        $('#enviar_desconto').on('click', function () {
-            const order_id = <?php echo $id; ?>;
-            let total_desconto = $('#total_desconto').val();
-            let orders_select = [];
-
-            $('.seletor-item:checked').each(function () {
-                let linha = $(this).closest('tr');
-                let order_parent = linha.find('td:eq(1)').text().trim();
-
-                orders_select.push({
-                    order_parent: order_parent,
-                });
-            });
-
-            $.ajax({
-                type: 'POST',
-                url: base_url + '/orders/aplicar_desconto',
-                data: {
-                    order_id,
-                    total_desconto,
-                    orders_select
-                },
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success) {
-                        location.reload();
-                    }
-                },
-                error: function (err) {
-                    alert('Erro ao enviar os dados');
-                }
-            });
         });
 
         $('.pedido_complementar').on('click', function () {

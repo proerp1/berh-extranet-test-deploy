@@ -955,10 +955,13 @@ public function edit_document($id, $document_id = null)
 		$this->set(compact('status', 'tiposDocumentos', 'data', 'action'));
 	}
 	
-	public function payments($id) {
+	public function payments($id) 
+	{
         $this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+
         $this->Outcome->id = $id;
         $this->request->data = $this->Outcome->read();
+
         $order_ids = array_map(function ($outcomeOrder) {
             return $outcomeOrder['order_id'];
         }, $this->request->data['OutcomeOrder']);
@@ -1017,6 +1020,7 @@ public function edit_document($id, $document_id = null)
 
         $action = 'Contas a pagar';
         $breadcrumb = ['Pagamentos' => ''];
+		
         $this->set(compact('breadcrumb', 'action', 'id', 'order', 'items', 'pendingPix'));
     }
 
