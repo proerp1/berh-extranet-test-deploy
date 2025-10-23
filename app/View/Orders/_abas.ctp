@@ -23,8 +23,10 @@
             <a class="nav-link <?php echo $this->request->params['action'] == 'compras' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/compras/<?php echo $id; ?>">Compras</a>
         </li>
     <?php } ?>
-
+    
+    <?php /* ?>
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['action'] == 'descontos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/descontos/<?php echo $id; ?>">Descontos</a>
     </li>
+    <?php */ ?>
 </ul>
