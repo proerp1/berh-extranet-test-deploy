@@ -348,8 +348,7 @@
 
                             <div class="mb-7 col-6">
                                 <label class="form-label">Desconto</label>
-                                <?php /* ?><input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled"><?php */ ?>
-                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
+                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled">
                             </div>
                         </div>
 

@@ -24,9 +24,7 @@
         </li>
     <?php } ?>
     
-    <?php /* ?>
     <li class="nav-item">
         <a class="nav-link <?php echo $this->request->params['action'] == 'descontos' ? 'active' : '' ?>" href="<?php echo $this->base; ?>/orders/descontos/<?php echo $id; ?>">Descontos</a>
     </li>
-    <?php */ ?>
 </ul>
