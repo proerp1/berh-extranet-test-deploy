@@ -5384,13 +5384,18 @@ class OrdersController extends AppController
             'group' => 'Order.id'
         ]);
 
+        $orders = [];
+        foreach ($available_orders as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
+
         $action = 'Descontos';
         $breadcrumb = [
             'Cadastros' => ['controller' => 'orders', 'action' => 'edit', $id],
             'Descontos' => '',
         ];
 
-        $this->set(compact('id', 'order', 'batches', 'available_orders', 'breadcrumb', 'action'));
+        $this->set(compact('id', 'order', 'batches', 'breadcrumb', 'action', 'orders'));
     }
 
     public function criar_lote_desconto() 

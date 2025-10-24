@@ -15,12 +15,10 @@
             </div>
             <div class="card-toolbar">
                 <div class="d-flex justify-content-end gap-2" data-kt-customer-table-toolbar="base">
-                    <?php if ($order['Order']['status_id'] == 83) { ?>
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
-                            <i class="fas fa-plus"></i>
-                            Novo Desconto
-                        </a>
-                    <?php } ?>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_desconto">
+                        <i class="fas fa-plus"></i>
+                        Novo Desconto
+                    </a>
                 </div>
             </div>
         </div>
@@ -116,18 +114,7 @@
                     <div class="row mb-7">
                         <div class="col-md-12 mb-5">
                             <label class="form-label required">Pedidos</label>
-                            <select name="pedidos[]" id="select_pedidos" class="form-select" multiple="multiple" data-placeholder="Busque por número ou nome do cliente" required>
-                                <?php if ($available_orders) { ?>
-                                    <?php foreach ($available_orders as $order) { ?>
-                                        <option 
-                                            value="<?php echo $order['Order']['id']; ?>" 
-                                            data-cliente="<?php echo isset($order['Customer']['nome_primario']) ? $order['Customer']['nome_primario'] : ''; ?>"
-                                        >
-                                            <?php echo $order['Order']['id'] . ' - ' . (isset($order['Customer']['nome_primario']) ? $order['Customer']['nome_primario'] : 'Cliente não informado'); ?>
-                                        </option>
-                                    <?php } ?>
-                                <?php } ?>
-                            </select>
+                            <?php echo $this->Form->input('pedidos', ["multiple" => true, "label" => false, "id" => "select_pedidos", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "required" => true, "empty" => "Selecione", 'options' => $orders]);?>
                         </div>
                     </div>
 
