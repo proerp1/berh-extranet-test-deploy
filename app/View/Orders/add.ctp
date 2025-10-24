@@ -348,7 +348,8 @@
 
                             <div class="mb-7 col-6">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled">
+                                <?php /* ?><input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled"><?php */ ?>
+                                <input type="text" name="data[Order][desconto]" id="OrderUnitPrice" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" <?php echo $order['Order']['status_id'] >= 85 ? 'disabled="disabled"' : ''; ?>>
                             </div>
                         </div>
 
@@ -824,7 +825,7 @@
                             $repasse_compra = ($items[$i]["OrderItem"]["transfer_fee_not_formated"] - $items[$i]["OrderItem"]["saldo_transfer_fee_not_formated"]);
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
-                                <td class="fw-bold fs-7 ps-4">                                    
+                                <td class="fw-bold fs-7 ps-4">
                                     <?php echo !$items[$i]["OrderItem"]["outcome_id"] ? '<input type="checkbox" name="del_linha" class="check_individual" id="">' : ''; ?>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
