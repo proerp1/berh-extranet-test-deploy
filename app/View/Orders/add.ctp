@@ -348,7 +348,7 @@
 
                             <div class="mb-7 col-6">
                                 <label class="form-label">Desconto</label>
-                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" disabled="disabled">
+                                <input type="text" name="data[Order][desconto]" class="form-control" value="<?php echo $order['Order']['desconto']; ?>" readonly="readonly">
                             </div>
                         </div>
 
