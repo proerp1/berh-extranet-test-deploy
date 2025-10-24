@@ -5327,10 +5327,6 @@ class OrdersController extends AppController
 
         $this->paginate = [
             'OrderDiscountBatch' => [
-                'conditions' => [
-                    'OrderDiscountBatch.order_id' => $id,
-                    'OrderDiscountBatch.data_cancel' => '1901-01-01 00:00:00'
-                ],
                 'contain' => [
                     'UserCreator'
                 ],
@@ -5338,8 +5334,20 @@ class OrdersController extends AppController
                 'limit' => 10
             ]
         ];
+        
+        $this->Paginator->settings = $this->paginate;
 
-        $batches = $this->paginate('OrderDiscountBatch');
+        $condition = ["and" => ['OrderDiscountBatch.order_id' => $id], "or" => []];
+
+        if (isset($_GET['q']) and $_GET['q'] != "") {
+            $condition['or'] = array_merge($condition['or'], [
+                                                            'OrderDiscountBatch.id LIKE' => "%" . $_GET['q'] . "%", 
+                                                            'OrderDiscountBatch.discount_type LIKE' => "%" . $_GET['q'] . "%",
+                                                            'OrderDiscountBatch.observacao LIKE' => "%" . $_GET['q'] . "%"
+                                                            ]);
+        }
+
+        $batches = $this->Paginator->paginate('OrderDiscountBatch', $condition);
 
         $available_orders = $this->Order->find('all', [
             'fields' => [
@@ -5385,7 +5393,8 @@ class OrdersController extends AppController
         $this->set(compact('id', 'order', 'batches', 'available_orders', 'breadcrumb', 'action'));
     }
 
-    public function criar_lote_desconto() {
+    public function criar_lote_desconto() 
+    {
         $this->autoRender = false;
         
         if (!$this->request->is('post')) {
@@ -5454,7 +5463,27 @@ class OrdersController extends AppController
 
     public function lote_desconto($id, $batch_id)
     {
-        $this->Permission->check(63, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = $this->paginate;
+
+        $items = $this->OrderDiscountBatchItem->find('all', [
+            'conditions' => ['OrderDiscountBatch.order_id' => $id, 'OrderDiscountBatchItem.batch_id' => $batch_id],            
+            'fields' => [
+                'OrderDiscountBatchItem.*',
+                'Order.id',
+                'Order.total',
+                'Customer.documento',
+                'Customer.nome_secundario',
+            ],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => ['Customer.id = Order.customer_id'],
+                ],
+            ],
+        ]);
 
         $action = 'Descontos';
         $breadcrumb = [
@@ -5463,7 +5492,7 @@ class OrdersController extends AppController
             'Editar Desconto' => '',
         ];
 
-        $this->set(compact('id', 'batch_id', 'breadcrumb', 'action'));
+        $this->set(compact('id', 'batch_id', 'breadcrumb', 'action', 'items'));
     }
 
     public function delete_lote_desconto($id, $batch_id)

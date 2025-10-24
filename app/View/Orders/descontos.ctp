@@ -74,7 +74,7 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $batch['UserCreator']['name']; ?></td>
                                 <td>
                                     <a href="<?php echo $this->base.'/orders/lote_desconto/'.$id.'/'.$batch['OrderDiscountBatch']['id']; ?>" class="btn btn-info btn-sm">
-                                        Editar
+                                        Visualizar
                                     </a>
                                     <a href="javascript:" onclick="verConfirm('<?php echo $this->base.'/orders/delete_lote_desconto/'.$id.'/'.$batch['OrderDiscountBatch']['id']; ?>');" rel="tooltip" title="Excluir" class="btn btn-danger btn-sm">
                                         Excluir
@@ -88,10 +88,10 @@
                         </tr>
                     <?php } ?>
                     <tr>
-                        <td>Total</td>
+                        <td class="fw-bold fs-7 ps-4">Total</td>
                         <td colspan="2"></td>
-                        <td><?php echo $total_quantidade_pedidos; ?></td>
-                        <td>R$<?php echo number_format($total_valor, 2, ',', '.'); ?></td>
+                        <td class="fw-bold fs-7 ps-4"><?php echo $total_quantidade_pedidos; ?></td>
+                        <td class="fw-bold fs-7 ps-4">R$<?php echo number_format($total_valor, 2, ',', '.'); ?></td>
                         <td colspan="3"></td>
                     </tr>
                 </tbody>
