@@ -136,7 +136,7 @@
                         ?>
                             <tr class="<?php echo $items[$i]["OrderItem"]["working_days"] != $items[$i]["Order"]["working_days"] ? 'table-warning' : ''; ?>">
                                 <td class="fw-bold fs-7 ps-4">
-                                    <input type="checkbox" name="alt_linha" class="check_individual" id="">
+                                    <?php echo !$items[$i]["OrderItem"]["outcome_id"] ? '<input type="checkbox" name="alt_linha" class="check_individual" id="">' : ''; ?>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Supplier"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["CustomerUser"]["name"]; ?></td>
