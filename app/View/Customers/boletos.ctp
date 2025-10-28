@@ -4,7 +4,7 @@
 ?>
 
 <div class="card mb-5 mb-xl-8">
-    <form action="<?php echo $this->Html->url(array("controller" => "customers", "action" => "boletos")); ?>" role="form" id="busca" autocomplete="off">
+    <form action="<?php echo $this->Html->url(array("controller" => "customers", "action" => "boletos", $id)); ?>" role="form" id="busca" autocomplete="off">
         <div class="card-header border-0 pt-6 pb-6">
             <div class="card-title">
                 <div class="row">
