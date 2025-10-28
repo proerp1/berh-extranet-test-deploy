@@ -43,6 +43,8 @@ class OutcomesController extends AppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+
+        $this->Auth->allow(['btg_webhook_pix']);
 	}
 
 	public function index()
@@ -1081,5 +1083,46 @@ public function edit_document($id, $document_id = null)
         ]);
 
         $this->redirect($this->referer());
+    }
+
+    public function btg_webhook_pix() {
+        $this->autoRender = false;
+        $this->layout = 'ajax';
+
+        try {
+            $body = json_decode(file_get_contents("php://input"), true);
+
+            if (isset($body['status'])) {
+                $status = $body['status'];
+            } else {
+                $status = !isset($body['paymentDate']) ? 'CANCELED' : 'SCHEDULED';
+            }
+
+            $statuses = [
+                'CONFIRMED' => 117,
+                'CREATED' => 118,
+                'CANCELED' => 119,
+                'FAILED' => 120,
+                'PROCESSED' => 121,
+                'ADJOURNED' => 122,
+                'REVERTED' => 123,
+                'SCHEDULED' => 124,
+                'VALIDATED' => 125,
+                'INVALIDATED' => 126
+            ];
+
+            $statusId = $statuses[$status];
+
+            $orderItemId = $body['tags']['externalId'];
+
+            $this->OrderItem->id = $orderItemId;
+
+            $this->OrderItem->save([
+                'pix_status_id' => $statusId
+            ]);
+        } catch (\Exception $e) {
+            debug($e);
+            return 'Erro no webhook!';
+        }
     }
 }

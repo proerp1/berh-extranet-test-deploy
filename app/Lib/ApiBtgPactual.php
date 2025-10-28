@@ -232,7 +232,10 @@ class ApiBtgPactual extends Controller
                         "branchCode" => "50",
                         "number" => "5695397"
                     ],
-                    "paymentDate" => $pagamento
+                    "paymentDate" => $pagamento,
+                    "tag" => [
+                        "externalId" => $data['i']['id'],
+                    ]
                 ]
             ]
         ];
