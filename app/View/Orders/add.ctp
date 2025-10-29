@@ -984,6 +984,15 @@
                         </div>
                     </div>
 
+                    <div class="row js_div_data_vencimento" style="margin-top:20px;">
+                        <label class="mb-2">Data Vencimento</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="data_vencimento" id="data_vencimento" class="form-control datepicker">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row js_div_motivo" style="margin-top:20px;">
                         <label class="mb-2">Motivo</label>
                         <div class="row">
@@ -1529,6 +1538,17 @@
                 $('.js_div_motivo').show();
             } else {
                 $('.js_div_motivo').hide();
+            }
+
+            const v_op_status_venc = [
+                'CARTAO_NOVO_PROCESSADO',
+                'GERAR_PAGAMENTO'
+            ];
+
+            if (v_op_status_venc.includes(v_status)) {
+                $('.js_div_data_vencimento').show();
+            } else {
+                $('.js_div_data_vencimento').hide();
             }
         });
 

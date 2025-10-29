@@ -121,18 +121,21 @@ if (isset($id)) {
         <div id="volume_tiers_section" style="display: none;"></div>
 
         <div class="row">
-
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Razão social</label>
-                    <?php echo $this->Form->input('razao_social', ["id" => "nome_secundario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"]);  ?>
-                </div>
-
-                <div class="mb-7 col">
-                    <label class="fw-semibold fs-6 mb-2">Nome fantasia</label>
-                    <?php echo $this->Form->input('nome_fantasia', ["id" => "nome_primario", "placeholder" => "Nome fantasia", "class" => "form-control mb-3 mb-lg-0"]);  ?>
-                </div>
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Razão social</label>
+                <?php echo $this->Form->input('razao_social', ["id" => "nome_secundario", "placeholder" => "Razão social", "class" => "form-control mb-3 mb-lg-0"]);  ?>
             </div>
 
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Nome fantasia</label>
+                <?php echo $this->Form->input('nome_fantasia', ["id" => "nome_primario", "placeholder" => "Nome fantasia", "class" => "form-control mb-3 mb-lg-0"]);  ?>
+            </div>
+
+            <div class="mb-7 col-2">
+                <label class="fw-semibold fs-6 mb-2">Boleto</label>
+                <?php echo $this->Form->input('tipo_boleto', ["id" => "tipo_cobranca", "options" => [1 => 'Total do Item', 2 => 'Repasse'], "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione", "type" => "select", "required" => false]); ?>
+            </div>
+        </div>
 
             <div class="row">
                 <div class="mb-7 col">

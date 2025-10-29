@@ -19,7 +19,9 @@ class ReportsController extends AppController
         'Log', 
         'OrderBalance', 
         'BenefitType', 
-        'LogOrderItemsProcessamento'
+        'LogOrderItemsProcessamento',
+        'OutcomeOrder',
+        'Docoutcome'
     ];
 
     public function beforeFilter()
@@ -1078,6 +1080,8 @@ class ReportsController extends AppController
                 'Status.name',
                 'Customer.codigo_associado',
                 'Customer.nome_primario',
+                'Supplier.id',
+                'Supplier.tipo_boleto',
                 'Supplier.nome_fantasia',
                 'CustomerUser.name',
                 'Benefit.name',
@@ -1148,7 +1152,7 @@ class ReportsController extends AppController
         $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00'], 'or' => []];
         
         $de = null;
-        $para = null;        
+        $para = null;
         
         $aba = isset($this->request->query['aba']) ? $this->request->query['aba'] : 'todos';
         
@@ -1157,75 +1161,9 @@ class ReportsController extends AppController
             $buscar = false;
         }
 
-        switch ($aba) {
-            case 'liberacao_credito':
-                $condition['and'][] = [
-                    'OR' => [
-                        // Cenário 1: Pedidos "Aguardando Liberação de Crédito"
-                        [
-                            'Order.status_id' => 104,
-                            'OrderItem.status_processamento' => [
-                                'INICIO_PROCESSAMENTO',
-                                'VALIDACAO_PENDENTE',
-                                'PROCESSAMENTO_PENDENTE',
-                                'ARQUIVO_GERADO',
-                                'CADASTRO_PROCESSADO',
-                                'CREDITO_PROCESSADO'
-                            ]
-                        ],
-                        // Cenário 2: Pedidos "Aguardando Pagamento"
-                        [
-                            'Order.status_id' => 84,
-                            'OrderItem.status_processamento' => [
-                                'VALIDACAO_PENDENTE',
-                                'PROCESSAMENTO_PENDENTE',
-                                'ARQUIVO_GERADO',
-                                'CADASTRO_PROCESSADO',
-                                'CREDITO_PROCESSADO'
-                            ]
-                        ]
-                    ]
-                ];
-                break;
-                
-            case 'cartao_novo':
-                $condition['and'][] = [
-                    'Order.condicao_pagamento' => 2,
-                    'OrderItem.first_order' => 1,
-                    'OrderItem.status_processamento' => [
-                        'CARTAO_NOVO',
-                        'CARTAO_NOVO_PROCESSADO'
-                    ]
-                ];
-                break;
-                
-            case 'inconsistencias':
-                $condition['and'][] = [
-                    'Order.status_id' => 104,
-                    'OrderItem.status_processamento' => [
-                        'CADASTRO_INCONSISTENTE',
-                        'CARTAO_NOVO_CREDITO_INCONSISTENTE',
-                        'CREDITO_INCONSISTENTE',
-                    ]
-                ];
-                break;
-                
-            case 'financeiro':
-                $condition['and'][] = [
-                    'Order.status_id' => 104,
-                    'Outcome.status_id' => [12, 13, 116]
-                ];
-                break;
-                
-            case 'finalizado':
-                $condition['and'][] = [
-                    'Order.status_id' => 87,
-                    'OrderItem.status_processamento' => [
-                        'CARTAO_NOVO_PROCESSADO',
-                    ]
-                ];
-                break;
-        }
+        $condicao = $this->getCondicoesAbaCompras($aba);
+
+        $condition['and'][] = $condicao;
 
         if (isset($_GET['de']) and $_GET['de'] != '') {
             $buscar = true;
@@ -1619,6 +1557,72 @@ class ReportsController extends AppController
         $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba'));
     }
 
+    private function getCondicoesAbaCompras($aba)
+    {
+        $condicoes = [
+            'liberacao_credito' => [
+                'OR' => [
+                    // Cenário 1: Pedidos "Aguardando Liberação de Crédito"
+                    [
+                        'Order.status_id' => 104,
+                        'OrderItem.status_processamento' => [
+                            'INICIO_PROCESSAMENTO',
+                            'VALIDACAO_PENDENTE',
+                            'PROCESSAMENTO_PENDENTE',
+                            'ARQUIVO_GERADO',
+                            'CADASTRO_PROCESSADO',
+                            'CREDITO_PROCESSADO'
+                        ]
+                    ],
+                    // Cenário 2: Pedidos "Aguardando Pagamento"
+                    [
+                        'Order.status_id' => 84,
+                        'OrderItem.status_processamento' => [
+                            'VALIDACAO_PENDENTE',
+                            'PROCESSAMENTO_PENDENTE',
+                            'ARQUIVO_GERADO',
+                            'CADASTRO_PROCESSADO',
+                            'CREDITO_PROCESSADO'
+                        ]
+                    ]
+                ]
+            ],
+            
+            'cartao_novo' => [
+                'Order.status_id != ' => 87,
+                'Order.condicao_pagamento' => 2,
+                'OrderItem.first_order' => 1,
+                'OrderItem.status_processamento' => [
+                    'CARTAO_NOVO',
+                    'CARTAO_NOVO_PROCESSADO'
+                ]
+            ],
+            
+            'inconsistencias' => [
+                'Order.status_id' => 104,
+                'OrderItem.status_processamento' => [
+                    'CADASTRO_INCONSISTENTE',
+                    'CARTAO_NOVO_CREDITO_INCONSISTENTE',
+                    'CREDITO_INCONSISTENTE',
+                ]
+            ],
+            
+            'financeiro' => [
+                'Order.status_id' => 104,
+                'Outcome.status_id' => [12, 13, 116]
+            ],
+            
+            'finalizado' => [
+                'Order.status_id' => 87,
+                'OrderItem.status_processamento' => [
+                    'CARTAO_NOVO_PROCESSADO',
+                ]
+            ]
+        ];
+
+        return isset($condicoes[$aba]) ? $condicoes[$aba] : null;
+    }
+
     public function getSupplierAndCustomer()
     {
         $this->autoRender = false;
@@ -1726,27 +1730,36 @@ class ReportsController extends AppController
         $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
 
-        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;
+        $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
+        $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
+
+        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
+        $bt             = isset($this->request->data['curr_bt']) ? json_decode($this->request->data['curr_bt'], true) : false;
+        $stpg           = isset($this->request->data['curr_stpg']) ? json_decode($this->request->data['curr_stpg'], true) : false;
+        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
+        $st             = isset($this->request->data['curr_st']) ? json_decode($this->request->data['curr_st'], true) : false;
 
         $buscar = false;
         $de = null;
         $para = null;
 
+        $aba            = isset($this->request->data['curr_aba']) ? $this->request->data['curr_aba'] : false;
         $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
         $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
         $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
         $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
-        $st             = isset($this->request->data['curr_st']) ? $this->request->data['curr_st'] : false;
-        $stp            = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
-        $stpg           = isset($this->request->data['curr_stpg']) ? $this->request->data['curr_stpg'] : false;
         $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
         $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-        $bt             = isset($this->request->data['curr_bt']) ? $this->request->data['curr_bt'] : false;
         $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
 
-        $condition      = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.id !=' => $itemOrderIds], 'or' => []];
+        $condition = ['and' => ['OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id !=' => null], 'or' => []];
+
+        $condicao = $this->getCondicoesAbaCompras($aba);
+
+        $condition['and'][] = $condicao;
         
         if (isset($de) and $de != '') {
             $buscar = true;
@@ -1793,19 +1806,25 @@ class ReportsController extends AppController
             $condition['and'][] = ['or' => $orConditions];
         }
 
-        if (isset($st) and $st != '') {
+        if (!empty($bt) && is_array($bt)) {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['Benefit.benefit_type_id' => $bt]);
+        }
+
+        if (!empty($st) && is_array($st)) {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
         }
 
-        if (isset($stp) and $stp != '') {
+        if (!empty($stp) && is_array($stp)) {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
         }
 
-        if (isset($stpg) and $stpg != '') {
+        if (!empty($stpg) && is_array($stpg)) {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['StatusOutcome.id' => $stpg]);
@@ -1815,12 +1834,6 @@ class ReportsController extends AppController
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
-        }
-
-        if (isset($bt) and $bt != '') {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['Benefit.benefit_type_id' => $bt]);
         }
         
         if (isset($first_order) and $first_order != '') {
@@ -2037,7 +2050,7 @@ class ReportsController extends AppController
                 $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
-                $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+                $outcome['Outcome']['vencimento'] = $data_vencimento;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -2049,6 +2062,31 @@ class ReportsController extends AppController
                 $this->Outcome->save($outcome);
                 
                 $outcome_id = $this->Outcome->id;
+                
+                $doc_outcome = [];
+                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                $doc_outcome['Docoutcome']['file'] = $file_item;
+                $doc_outcome['Docoutcome']['status_id'] = 1;
+                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                $this->Docoutcome->create();
+                $this->Docoutcome->save($doc_outcome);
+
+                if ($file_repasse) {
+                    $this->Outcome->create();
+                    $this->Outcome->save($outcome);
+                
+                    $outc_id = $this->Outcome->id;
+
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outc_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_repasse;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
                 
                 // Buscar TODOS os pedidos deste supplier nos itens selecionados
                 $ordersForSupplier = $this->OrderItem->find('all', [
@@ -2086,6 +2124,15 @@ class ReportsController extends AppController
                     
                     $this->OutcomeOrder->create();
                     $this->OutcomeOrder->save($outcomeOrder);
+
+                    if (isset($outc_id)) {
+                        $outcomeOrder = [];
+                        $outcomeOrder['OutcomeOrder']['outcome_id'] = $outc_id;
+                        $outcomeOrder['OutcomeOrder']['order_id'] = $order['Order']['id'];
+                        
+                        $this->OutcomeOrder->create();
+                        $this->OutcomeOrder->save($outcomeOrder);
+                    }
                 }
                 
                 // Atualizar todos os OrderItems deste supplier com o outcome_id

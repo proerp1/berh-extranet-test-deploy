@@ -143,6 +143,9 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Benefit"]["name"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <input type="hidden" class="item_id" value="<?php echo $items[$i]["OrderItem"]["id"]; ?>">
+                                    <input type="hidden" class="supplier_id" value="<?php echo $items[$i]["Supplier"]["id"]; ?>">
+                                    <input type="hidden" class="supplier_boleto" value="<?php echo $items[$i]["Supplier"]["tipo_boleto"]; ?>">
+                                    <?php echo $items[$i]["OrderItem"]["working_days"]; ?>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["manual_quantity"] != 0 ? $items[$i]["OrderItem"]["manual_quantity"] : $items[$i]["CustomerUserItinerary"]["quantity"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $items[$i]["OrderItem"]["price_per_day"]; ?></td>
@@ -193,59 +196,94 @@
 </div>
 
 <div class="modal fade" tabindex="-1" id="modal_alterar_sel" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
+                <h4 class="modal-title">Alterar Status Processamento</h4>
             </div>
             <div class="modal-body">
-                <p>Alterar Status Processamento</p>
+                <div class="row mb-7">
+                    <div class="col-md-6">
+                        <label class="mb-2">Status Processamento</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
+                                        <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
+                                        <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
+                                        <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
+                                        <option value="CARTAO_NOVO">CARTAO_NOVO</option>
+                                        <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
+                                        <option value="CARTAO_NOVO_PROCESSADO">CARTAO_NOVO_PROCESSADO</option>                                    
+                                        <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
+                                        <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
+                                        <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
+                                        <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
+                                        <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
+                                        <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
+                                        <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
+                                        <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="row" style="margin-top:20px;">
-                    <label class="mb-2">Status Processamento</label>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check form-check-custom form-check-solid">
-                                <select name="status_processamento" id="status_processamento" class="form-select mb-3 mb-lg-0">
-                                    <option value="ARQUIVO_GERADO">ARQUIVO_GERADO</option>
-                                    <option value="CADASTRO_INCONSISTENTE">CADASTRO_INCONSISTENTE</option>
-                                    <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
-                                    <option value="CARTAO_NOVO">CARTAO_NOVO</option>
-                                    <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>                                    
-                                    <option value="CARTAO_NOVO_PROCESSADO">CARTAO_NOVO_PROCESSADO</option>
-                                    <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
-                                    <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
-                                    <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
-                                    <option value="GERAR_PAGAMENTO">GERAR_PAGAMENTO</option>
-                                    <option value="INICIO_PROCESSAMENTO">INICIO_PROCESSAMENTO</option>
-                                    <option value="PAGAMENTO_REALIZADO">PAGAMENTO_REALIZADO</option>
-                                    <option value="PROCESSAMENTO_PENDENTE">PROCESSAMENTO_PENDENTE</option>
-                                    <option value="VALIDACAO_PENDENTE">VALIDACAO_PENDENTE</option>
-                                </select>
+                    <div class="col-md-6">
+                        <label class="mb-2">Pedido Operadora</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-7">
+                    <div class="col-md-6">
+                        <label class="mb-2">Data Entrega</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="data_entrega" id="data_entrega" class="form-control datepicker">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 js_div_data_vencimento">
+                        <label class="mb-2">Data Vencimento</label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" name="data_vencimento" id="data_vencimento" class="form-control datepicker">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-7">
+                    <div class="col-md-6 js_div_boleto_item">
+                        <label class="mb-2">Boleto Total Item</label>
+                        <div class="row">
+                            <div class="col">
+                                <a class="btn btn-default btn-primary me-3">
+                                    <input type="file" name="file_item" required="required" notempty="1" data-ui-file-upload="1" class="btn-primary" title="Escolha o documento" id="file_item">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 js_div_boleto_repasse">
+                        <label class="mb-2">Boleto Repasse</label>
+                        <div class="row">
+                            <div class="col">
+                                <a class="btn btn-default btn-primary me-3">
+                                    <input type="file" name="file_repasse" required="required" notempty="1" data-ui-file-upload="1" class="btn-primary" title="Escolha o documento" id="file_repasse">
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row" style="margin-top:20px;">
-                    <label class="mb-2">Pedido Operadora</label>
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" name="pedido_operadora" id="pedido_operadora" class="form-control">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" style="margin-top:20px;">
-                    <label class="mb-2">Data Entrega</label>
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" name="data_entrega" id="data_entrega" class="form-control datepicker">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row js_div_motivo" style="margin-top:20px;">
+                <div class="row mb-7 js_div_motivo">
                     <label class="mb-2">Motivo</label>
                     <div class="row">
                         <div class="col">
@@ -253,6 +291,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" id="canc_confirm" data-bs-dismiss="modal">Cancelar</button>
@@ -316,83 +355,105 @@
             $(this).prop('disabled', true);
             $("#canc_confirm").prop('disabled', true);
 
+            const formData = new FormData();
+
+            formData.append('v_status_processamento', $('#status_processamento').val());
+            
+            const v_pedido_operadora = $('#pedido_operadora').val();
+            const v_data_entrega = $('#data_entrega').val();
+            const v_data_vencimento = $('#data_vencimento').val();
+            const v_motivo = $('#motivo').val();
+            
+            if (v_pedido_operadora) formData.append('v_pedido_operadora', v_pedido_operadora);
+            if (v_data_entrega) formData.append('v_data_entrega', v_data_entrega);
+            if (v_data_vencimento) formData.append('v_data_vencimento', v_data_vencimento);
+            if (v_motivo) formData.append('v_motivo', v_motivo);
+
+            const file_item = $('#file_item')[0].files[0];
+            const file_repasse = $('#file_repasse')[0].files[0];
+            
+            if (file_item) formData.append('file_item', file_item);
+            if (file_repasse) formData.append('file_repasse', file_repasse);
+
             if ($(".check_all").is(':checked')) {
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
 
-                const order_id = <?php echo $id ?>;
-
-                const v_status_processamento = $('#status_processamento').val();
-                const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
-                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
-                const v_motivo = $('textarea[name="motivo"]').length ? $('textarea[name="motivo"]').val() : null;
-
-                const not_checkboxes = $('input[name="alt_linha"]:not(:checked)');
                 const notOrderItemIds = [];
-
-                not_checkboxes.each(function() {
+                $('input[name="alt_linha"]:not(:checked)').each(function() {
                     notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
                 });
                 
-                const curr_q = urlParams.get('q');
-                const curr_sup = urlParams.get('sup');
+                const order_id = <?php echo $id ?>;
 
-                const statusElements = document.querySelectorAll('#kt-toolbar-filter #stp option:checked');
-                const curr_stp = Array.from(statusElements).map(el => el.value);
+                formData.append('order_id', order_id);
+                formData.append('notOrderItemIds', JSON.stringify(notOrderItemIds));
+                formData.append('curr_q', urlParams.get('q') || '');
+                formData.append('curr_sup', urlParams.get('sup') || '');
+
+                const curr_stp = Array.from(document.querySelectorAll('#kt-toolbar-filter #stp option:checked')).map(el => el.value);
+
+                formData.append('curr_stp', JSON.stringify(curr_stp));
 
                 $.ajax({
                     type: 'POST',
-                    url: base_url+'/orders/alter_item_status_processamento_order_all',
-                    data: {
-                        notOrderItemIds,
-                        order_id,
-                        v_status_processamento,
-                        v_pedido_operadora,
-                        v_data_entrega,
-                        v_motivo,
-                        curr_q,
-                        curr_sup,
-                        curr_stp
-                    },
+                    url: base_url + '/orders/alter_item_status_processamento_order_all',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
                             location.reload();
+                        } else {
+                            alert('Erro ao processar: ' + (response.message || 'Erro desconhecido'));
+                            $('#alterar_confirm').prop('disabled', false);
+                            $("#canc_confirm").prop('disabled', false);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Erro na requisição: ' + error);
+                        $('#alterar_confirm').prop('disabled', false);
+                        $("#canc_confirm").prop('disabled', false);
                     }
                 });
             } else {
-                const v_status_processamento = $('#status_processamento').val();
-                const v_pedido_operadora = $('input[name="pedido_operadora"]').length ? $('input[name="pedido_operadora"]').val() : null;
-                const v_data_entrega = $('input[name="data_entrega"]').length ? $('input[name="data_entrega"]').val() : null;
-                const v_motivo = $('textarea[name="motivo"]').length ? $('textarea[name="motivo"]').val() : null;
-
-                const checkboxes = $('input[name="alt_linha"]:checked');
                 const orderItemIds = [];
-
-                checkboxes.each(function() {
+                $('input[name="alt_linha"]:checked').each(function() {
                     orderItemIds.push($(this).parent().parent().find('.item_id').val());
                 });
 
-                if (orderItemIds.length > 0) {
-                    $.ajax({
-                        type: 'POST',
-                        url: base_url+'/orders/alter_item_status_processamento',
-                        data: {
-                            orderItemIds,
-                            v_status_processamento,
-                            v_pedido_operadora,
-                            v_data_entrega,
-                            v_motivo
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                location.reload();
-                            }
-                        }
-                    });
+                if (orderItemIds.length === 0) {
+                    alert('Selecione ao menos um item.');
+                    $('#alterar_confirm').prop('disabled', false);
+                    $("#canc_confirm").prop('disabled', false);
+                    return;
                 }
+
+                formData.append('orderItemIds', JSON.stringify(orderItemIds));
+
+                $.ajax({
+                    type: 'POST',
+                    url: base_url + '/orders/alter_item_status_processamento',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Erro ao processar: ' + (response.message || 'Erro desconhecido'));
+                            $('#alterar_confirm').prop('disabled', false);
+                            $("#canc_confirm").prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Erro na requisição: ' + error);
+                        $('#alterar_confirm').prop('disabled', false);
+                        $("#canc_confirm").prop('disabled', false);
+                    }
+                });
             }
         });
 
@@ -421,8 +482,68 @@
             } else {
                 $('.js_div_motivo').hide();
             }
+
+            const v_op_status_venc = [
+                'CARTAO_NOVO_PROCESSADO',
+                'GERAR_PAGAMENTO'
+            ];
+
+            const check = $('input[name="alt_linha"]:checked');
+
+            let v_boleto = null;
+            let v_supplier = null;
+            let v_valid = true;
+
+            check.each(function() {
+                const v_name = $(this).parent().parent().find('.supplier_id').val();
+                v_boleto = $(this).parent().parent().find('.supplier_boleto').val();
+
+                if (v_supplier === null) {
+                    v_supplier = v_name;
+                } else if (v_supplier !== v_name) {
+                    v_valid = false;
+                    return false;
+                }
+            });
+
+            if (v_op_status_venc.includes(v_status)) {
+                $('.js_div_data_vencimento').show();
+
+                if (v_boleto == 1) {
+                    $('.js_div_boleto_item').show();
+                } else if (v_boleto == 2) {
+                    $('.js_div_boleto_item').show();
+                    $('.js_div_boleto_repasse').show();
+                }
+
+                if (!v_valid) {
+                    $('#modal_alterar_sel .alert').remove();
+                    
+                    const alertHtml = `
+                        <div class="alert alert-danger alert-dismissible alert_supplier fade show" role="alert">
+                            <strong>Atenção!</strong> Todos os fornecedores devem ser iguais para criar conta a pagar.
+                        </div>
+                    `;
+                    
+                    $('#modal_alterar_sel .modal-body').prepend(alertHtml);
+                    $("#alterar_confirm").prop('disabled', true);
+                }
+            } else {
+                $('.js_div_data_vencimento').hide();
+                $('.js_div_boleto_item').hide();
+                $('.js_div_boleto_repasse').hide();
+                $('#modal_alterar_sel').find('.alert_supplier').remove();
+                $("#alterar_confirm").prop('disabled', false);
+            }
         });
 
         $('#status_processamento').trigger('change');
+
+        $('#modal_alterar_sel').on('hidden.bs.modal', function () {
+            $(this).find('input[type="text"], textarea').val('');
+            $(this).find('select').prop('selectedIndex', 0);
+            $(this).find('.alert_supplier').remove();
+            $(this).find("#alterar_confirm").prop('disabled', false);
+        });
     });
 </script>

@@ -42,7 +42,8 @@ class OrdersController extends AppController
         'SupplierVolumeTier',
         'OutcomeOrder',
         'OrderDiscountBatch',
-        'OrderDiscountBatchItem'
+        'OrderDiscountBatchItem',
+        'Docoutcome'
     ];
     
     public $groupBenefitType = [
@@ -3306,6 +3307,7 @@ class OrdersController extends AppController
         $statusProcess      = isset($this->request->data['status_processamento']) ? $this->request->data['status_processamento'] : false;
         $pedido_operadora   = isset($this->request->data['pedido_operadora']) ? $this->request->data['pedido_operadora'] : false;
         $data_entrega       = isset($this->request->data['data_entrega']) ? $this->request->data['data_entrega'] : false;
+        $data_vencimento    = isset($this->request->data['data_vencimento']) ? $this->request->data['data_vencimento'] : false;        
         $data_pagamento     = isset($this->request->data['data_pagamento']) ? $this->request->data['data_pagamento'] : false;
         $motivo             = isset($this->request->data['motivo']) ? $this->request->data['motivo'] : false;
 
@@ -3395,7 +3397,7 @@ class OrdersController extends AppController
             $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
             $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
             $outcome['Outcome']['bank_account_id'] = 3;
-            $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+            $outcome['Outcome']['vencimento'] = $data_vencimento;
             $outcome['Outcome']['expense_id'] = 2;
             $outcome['Outcome']['cost_center_id'] = 113;
             $outcome['Outcome']['plano_contas_id'] = 1;
@@ -3551,12 +3553,16 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
-        $itemOrderId        = isset($this->request->data['orderItemIds']) ? $this->request->data['orderItemIds'] : false;
+        $itemOrderId        = isset($this->request->data['orderItemIds']) ? json_decode($this->request->data['orderItemIds'], true) : false;
         $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
-
+        
+        $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
+        $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
+        
         foreach ($itemOrderId as $key => $value) {
             $orderItem = $this->OrderItem->findById($value);
 
@@ -3688,7 +3694,7 @@ class OrdersController extends AppController
                 $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
-                $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+                $outcome['Outcome']['vencimento'] = $data_vencimento;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -3700,6 +3706,31 @@ class OrdersController extends AppController
                 $this->Outcome->save($outcome);
                 
                 $outcome_id = $this->Outcome->id;
+
+                $doc_outcome = [];
+                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                $doc_outcome['Docoutcome']['file'] = $file_item;
+                $doc_outcome['Docoutcome']['status_id'] = 1;
+                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                $this->Docoutcome->create();
+                $this->Docoutcome->save($doc_outcome);
+
+                if ($file_repasse) {
+                    $this->Outcome->create();
+                    $this->Outcome->save($outcome);
+                
+                    $outc_id = $this->Outcome->id;
+
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outc_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_repasse;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
                 
                 // Buscar TODOS os pedidos deste supplier nos itens selecionados
                 $ordersForSupplier = $this->OrderItem->find('all', [
@@ -3737,6 +3768,15 @@ class OrdersController extends AppController
                     
                     $this->OutcomeOrder->create();
                     $this->OutcomeOrder->save($outcomeOrder);
+
+                    if (isset($outc_id)) {
+                        $outcomeOrder = [];
+                        $outcomeOrder['OutcomeOrder']['outcome_id'] = $outc_id;
+                        $outcomeOrder['OutcomeOrder']['order_id'] = $order['Order']['id'];
+                        
+                        $this->OutcomeOrder->create();
+                        $this->OutcomeOrder->save($outcomeOrder);
+                    }
                 }
                 
                 // Atualizar todos os OrderItems deste supplier com o outcome_id
@@ -3766,15 +3806,19 @@ class OrdersController extends AppController
         $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
 
-        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? $this->request->data['notOrderItemIds'] : false;        
+        $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
+        $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
+
+        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
+        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
 
         $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
         $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
-        $stp    = isset($this->request->data['curr_stp']) ? $this->request->data['curr_stp'] : false;
 
-        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id !=' => null], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
@@ -3784,7 +3828,7 @@ class OrdersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
         }
 
-        if (isset($stp) and $stp != '') {
+        if (!empty($stp) && is_array($stp)) {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
@@ -3947,7 +3991,7 @@ class OrdersController extends AppController
                 $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
-                $outcome['Outcome']['vencimento'] = date('d/m/Y', strtotime(' + 3 day'));
+                $outcome['Outcome']['vencimento'] = $data_vencimento;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -3959,6 +4003,31 @@ class OrdersController extends AppController
                 $this->Outcome->save($outcome);
                 
                 $outcome_id = $this->Outcome->id;
+                
+                $doc_outcome = [];
+                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                $doc_outcome['Docoutcome']['file'] = $file_item;
+                $doc_outcome['Docoutcome']['status_id'] = 1;
+                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                $this->Docoutcome->create();
+                $this->Docoutcome->save($doc_outcome);
+
+                if ($file_repasse) {
+                    $this->Outcome->create();
+                    $this->Outcome->save($outcome);
+                
+                    $outc_id = $this->Outcome->id;
+
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outc_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_repasse;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
                 
                 // Buscar TODOS os pedidos deste supplier nos itens selecionados
                 $ordersForSupplier = $this->OrderItem->find('all', [
@@ -3996,6 +4065,15 @@ class OrdersController extends AppController
                     
                     $this->OutcomeOrder->create();
                     $this->OutcomeOrder->save($outcomeOrder);
+
+                    if (isset($outc_id)) {
+                        $outcomeOrder = [];
+                        $outcomeOrder['OutcomeOrder']['outcome_id'] = $outc_id;
+                        $outcomeOrder['OutcomeOrder']['order_id'] = $order['Order']['id'];
+                        
+                        $this->OutcomeOrder->create();
+                        $this->OutcomeOrder->save($outcomeOrder);
+                    }
                 }
                 
                 // Atualizar todos os OrderItems deste supplier com o outcome_id
