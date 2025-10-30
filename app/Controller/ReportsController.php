@@ -1161,9 +1161,9 @@ class ReportsController extends AppController
             $buscar = false;
         }
 
-        $condicao = $this->getCondicoesAbaCompras($aba);
+        $cond_aba = $this->getCondicoesAbaCompras($aba);
 
-        $condition['and'][] = $condicao;
+        $condition['and'][] = $cond_aba;
 
         if (isset($_GET['de']) and $_GET['de'] != '') {
             $buscar = true;
@@ -1727,11 +1727,11 @@ class ReportsController extends AppController
     {
         $this->autoRender = false;
 
-        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
-        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
-        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
-        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
-        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
+        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : null;
+        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
+        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
 
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
@@ -1755,11 +1755,11 @@ class ReportsController extends AppController
         $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
         $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
 
-        $condition = ['and' => ['OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id !=' => null], 'or' => []];
+        $condition = ['and' => ['OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id' => null], 'or' => []];
 
-        $condicao = $this->getCondicoesAbaCompras($aba);
+        $cond_aba = $this->getCondicoesAbaCompras($aba);
 
-        $condition['and'][] = $condicao;
+        $condition['and'][] = $cond_aba;
         
         if (isset($de) and $de != '') {
             $buscar = true;

@@ -3304,12 +3304,12 @@ class OrdersController extends AppController
         $this->layout = 'ajax';
         $this->autoRender = false;
 
-        $statusProcess      = isset($this->request->data['status_processamento']) ? $this->request->data['status_processamento'] : false;
-        $pedido_operadora   = isset($this->request->data['pedido_operadora']) ? $this->request->data['pedido_operadora'] : false;
-        $data_entrega       = isset($this->request->data['data_entrega']) ? $this->request->data['data_entrega'] : false;
-        $data_vencimento    = isset($this->request->data['data_vencimento']) ? $this->request->data['data_vencimento'] : false;        
-        $data_pagamento     = isset($this->request->data['data_pagamento']) ? $this->request->data['data_pagamento'] : false;
-        $motivo             = isset($this->request->data['motivo']) ? $this->request->data['motivo'] : false;
+        $statusProcess      = isset($this->request->data['status_processamento']) ? $this->request->data['status_processamento'] : null;
+        $pedido_operadora   = isset($this->request->data['pedido_operadora']) ? $this->request->data['pedido_operadora'] : null;
+        $data_entrega       = isset($this->request->data['data_entrega']) ? $this->request->data['data_entrega'] : null;
+        $data_vencimento    = isset($this->request->data['data_vencimento']) ? $this->request->data['data_vencimento'] : null;        
+        $data_pagamento     = isset($this->request->data['data_pagamento']) ? $this->request->data['data_pagamento'] : null;
+        $motivo             = isset($this->request->data['motivo']) ? $this->request->data['motivo'] : null;
 
         $orderItems = $this->OrderItem->find('all', [
             'fields' => ['OrderItem.id', 'CustomerUser.id', 'CustomerUser.name'],
@@ -3553,12 +3553,12 @@ class OrdersController extends AppController
     {
         $this->autoRender = false;
 
-        $itemOrderId        = isset($this->request->data['orderItemIds']) ? json_decode($this->request->data['orderItemIds'], true) : false;
-        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
-        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
-        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
-        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
-        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
+        $itemOrderId        = isset($this->request->data['orderItemIds']) ? json_decode($this->request->data['orderItemIds'], true) : null;
+        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : null;
+        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
+        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
         
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
@@ -3803,22 +3803,22 @@ class OrdersController extends AppController
 
         $order_id = $this->request->data['order_id'];
 
-        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : false;
-        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : false;
-        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : false;
-        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : false;
-        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : false;
+        $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : null;
+        $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
+        $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
+        $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
 
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
 
-        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
-        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
+        $itemOrderIds       = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
+        $stp                = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
 
-        $q      = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-        $sup    = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $q                  = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
+        $sup                = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
 
-        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id !=' => null], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id' => null], "or" => []];
 
         if (isset($q) and $q != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
