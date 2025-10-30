@@ -402,9 +402,33 @@
                             <textarea name="motivo" id="motivo" class="form-control" rows="4"></textarea>
                         </div>
                     </div>
-                </div>
-                
+                </div>                
             </div>
+
+            <div class="row mb-7 js_div_valores_totais" style="display: none;">
+                <div class="col-12">
+                    <div class="card bg-light-primary">
+                        <div class="card-body p-5">
+                            <h5 class="card-title mb-4">Resumo dos Valores</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="fw-bold text-muted mb-1">Compra Operadora:</label>
+                                    <div class="fs-4 fw-bolder text-gray-800" id="display_subtotal">R$ 0,00</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fw-bold text-muted mb-1">Compra Repasse Operadora:</label>
+                                    <div class="fs-4 fw-bolder text-gray-800" id="display_transfer_fee">R$ 0,00</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fw-bold text-muted mb-1">Total:</label>
+                                    <div class="fs-4 fw-bolder text-primary" id="display_total">R$ 0,00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" id="canc_confirm" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-success" id="alterar_confirm">Sim</button>
@@ -691,6 +715,8 @@
             let v_boleto = null;
             let v_supplier = null;
             let v_valid = true;
+            let soma_subtotal = 0;
+            let soma_transfer_fee = 0;
 
             check.each(function() {
                 const v_name = $(this).parent().parent().find('.supplier_id').val();
@@ -702,10 +728,26 @@
                     v_valid = false;
                     return false;
                 }
+
+                if (v_op_status_venc.includes(v_status)) {
+                    const subtotal = parseFloat($(this).parent().parent().find('.subtotal_line').data('valor')) || 0;
+                    const transfer_fee = parseFloat($(this).parent().parent().find('.transfer_fee_line').data('valor')) || 0;
+                    
+                    soma_subtotal += subtotal;
+                    soma_transfer_fee += transfer_fee;
+                }
             });
 
             if (v_op_status_venc.includes(v_status)) {
                 $('.js_div_data_vencimento').show();
+                
+                const soma_total = soma_subtotal + soma_transfer_fee;
+                
+                $('#display_subtotal').text('R$ ' + soma_subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#display_transfer_fee').text('R$ ' + soma_transfer_fee.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                $('#display_total').text('R$ ' + soma_total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                
+                $('.js_div_valores_totais').show();
 
                 if (v_boleto == 1) {
                     $('.js_div_boleto_item').show();
@@ -730,6 +772,7 @@
                 $('.js_div_data_vencimento').hide();
                 $('.js_div_boleto_item').hide();
                 $('.js_div_boleto_repasse').hide();
+                $('.js_div_valores_totais').hide();
                 $('#modal_alterar_sel').find('.alert_supplier').remove();
                 $("#alterar_confirm").prop('disabled', false);
             }
@@ -742,6 +785,11 @@
             $(this).find('select').prop('selectedIndex', 0);
             $(this).find('.alert_supplier').remove();
             $(this).find("#alterar_confirm").prop('disabled', false);
+            
+            $('#display_subtotal').text('R$ 0,00');
+            $('#display_transfer_fee').text('R$ 0,00');
+            $('#display_total').text('R$ 0,00');
+            $('.js_div_valores_totais').hide();
         });
     });
 </script>
