@@ -18,7 +18,7 @@
         <a class="nav-link <?php echo (isset($aba) and $aba == 'financeiro') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=financeiro&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Financeiro</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link <?php echo (isset($aba) and $aba == 'finalizado') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=finalizado&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Finalizado</a>
+        <a class="nav-link <?php echo (isset($aba) and $aba == 'finalizado') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=finalizado&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Pago</a>
     </li>
     <li class="nav-item">
         <a class="nav-link <?php echo (isset($aba) and $aba == 'todos') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=todos&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Todos</a>
