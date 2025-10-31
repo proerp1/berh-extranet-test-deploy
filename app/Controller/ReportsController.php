@@ -1591,7 +1591,7 @@ class ReportsController extends AppController
             'cartao_novo' => [
                 'Order.status_id != ' => 87,
                 'Order.condicao_pagamento' => 2,
-                'OrderItem.first_order' => 1,
+                'OrderItem.first_order' => 0,
                 'OrderItem.status_processamento' => [
                     'CARTAO_NOVO',
                     'CARTAO_NOVO_PROCESSADO'
