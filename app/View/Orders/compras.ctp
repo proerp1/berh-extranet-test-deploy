@@ -214,7 +214,7 @@
                                         <option value="CADASTRO_PROCESSADO">CADASTRO_PROCESSADO</option>
                                         <option value="CARTAO_NOVO">CARTAO_NOVO</option>
                                         <option value="CARTAO_NOVO_CREDITO_INCONSISTENTE">CARTAO_NOVO_CREDITO_INCONSISTENTE</option>
-                                        <option value="CARTAO_NOVO_PROCESSADO">CARTAO_NOVO_PROCESSADO</option>                                    
+                                        <option value="CARTAO_NOVO_PROCESSADO">CARTAO_NOVO_PROCESSADO</option>
                                         <option value="CREDITO_INCONSISTENTE">CREDITO_INCONSISTENTE</option>
                                         <option value="CREDITO_PROCESSADO">CREDITO_PROCESSADO</option>
                                         <option value="FALHA_GERACAO_ARQUIVO">FALHA_GERACAO_ARQUIVO</option>
@@ -249,7 +249,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 js_div_data_vencimento">
+                    <div class="col-md-6 js_div_pagamento">
                         <label class="mb-2">Data Vencimento</label>
                         <div class="row">
                             <div class="col">
@@ -259,6 +259,30 @@
                     </div>
                 </div>
                 
+                <div class="row mb-7">
+                    <div class="col-md-6 js_div_pagamento">
+                        <label class="mb-2">Forma de Pagamento</label>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <select name="forma_pagamento" id="forma_pagamento" class="form-select mb-3 mb-lg-0">
+                                        <option value="1">Boleto</option>
+                                        <option value="3">Cartão de crédito</option>
+                                        <option value="6">Crédito em conta corrente</option>
+                                        <option value="5">Cheque</option>
+                                        <option value="4">Depósito</option>
+                                        <option value="7">Débito em conta</option>
+                                        <option value="8">Dinheiro</option>
+                                        <option value="2">Transfêrencia</option>
+                                        <option value="11">Pix</option>
+                                        <option value="9">Desconto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row mb-7">
                     <div class="col-md-6 js_div_boleto_item">
                         <label class="mb-2">Boleto Total Item</label>
@@ -290,7 +314,16 @@
                             <textarea name="motivo" id="motivo" class="form-control" rows="4"></textarea>
                         </div>
                     </div>
-                </div>                
+                </div> 
+
+                <div class="row mb-7 js_div_pagamento">
+                    <label class="mb-2">Observações</label>
+                    <div class="row">
+                        <div class="col">
+                            <textarea name="observacoes" id="observacoes" class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row mb-7 js_div_valores_totais" style="display: none;">
@@ -386,12 +419,16 @@
             const v_pedido_operadora = $('#pedido_operadora').val();
             const v_data_entrega = $('#data_entrega').val();
             const v_data_vencimento = $('#data_vencimento').val();
+            const v_forma_pagamento = $('#forma_pagamento').val();
             const v_motivo = $('#motivo').val();
+            const v_observacoes = $('#observacoes').val();
             
             if (v_pedido_operadora) formData.append('v_pedido_operadora', v_pedido_operadora);
             if (v_data_entrega) formData.append('v_data_entrega', v_data_entrega);
             if (v_data_vencimento) formData.append('v_data_vencimento', v_data_vencimento);
+            if (v_forma_pagamento) formData.append('v_forma_pagamento', v_forma_pagamento);
             if (v_motivo) formData.append('v_motivo', v_motivo);
+            if (v_observacoes) formData.append('v_observacoes', v_observacoes);
 
             const file_item = $('#file_item')[0].files[0];
             const file_repasse = $('#file_repasse')[0].files[0];
@@ -541,7 +578,7 @@
             });
 
             if (v_op_status_venc.includes(v_status)) {
-                $('.js_div_data_vencimento').show();
+                $('.js_div_pagamento').show();
                 
                 const soma_total = soma_subtotal + soma_transfer_fee;
                 
@@ -571,7 +608,7 @@
                     $("#alterar_confirm").prop('disabled', true);
                 }
             } else {
-                $('.js_div_data_vencimento').hide();
+                $('.js_div_pagamento').hide();
                 $('.js_div_boleto_item').hide();
                 $('.js_div_boleto_repasse').hide();
                 $('.js_div_valores_totais').hide();

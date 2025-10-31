@@ -1731,37 +1731,45 @@ class ReportsController extends AppController
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
         $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $forma_pagamento    = isset($this->request->data['v_forma_pagamento']) ? $this->request->data['v_forma_pagamento'] : null;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
+        $observacoes        = isset($this->request->data['v_observacoes']) ? $this->request->data['v_observacoes'] : null;
 
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
 
-        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
-        $bt             = isset($this->request->data['curr_bt']) ? json_decode($this->request->data['curr_bt'], true) : false;
-        $stpg           = isset($this->request->data['curr_stpg']) ? json_decode($this->request->data['curr_stpg'], true) : false;
-        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
-        $st             = isset($this->request->data['curr_st']) ? json_decode($this->request->data['curr_st'], true) : false;
+        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : null;
+        $bt             = isset($this->request->data['curr_bt']) ? json_decode($this->request->data['curr_bt'], true) : null;
+        $stpg           = isset($this->request->data['curr_stpg']) ? json_decode($this->request->data['curr_stpg'], true) : null;
+        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : null;
+        $st             = isset($this->request->data['curr_st']) ? json_decode($this->request->data['curr_st'], true) : null;
 
         $buscar = false;
         $de = null;
         $para = null;
 
-        $aba            = isset($this->request->data['curr_aba']) ? $this->request->data['curr_aba'] : false;
-        $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : false;
-        $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : false;
-        $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : false;
-        $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
-        $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : false;
-        $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-        $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : false;
+        $aba            = isset($this->request->data['curr_aba']) ? $this->request->data['curr_aba'] : null;
+        $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : null;
+        $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : null;
+        $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : null;
+        $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : null;
+        $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : null;
+        $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : null;
+        $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : null;
 
-        $condition = ['and' => ['OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id' => null], 'or' => []];
+        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.outcome_id' => null], 'or' => []];
 
         $cond_aba = $this->getCondicoesAbaCompras($aba);
 
         $condition['and'][] = $cond_aba;
+
+        if (!empty($itemOrderIds) && is_array($itemOrderIds)) {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $itemOrderIds]);
+        }
         
-        if (isset($de) and $de != '') {
+        if (!empty($de)) {
             $buscar = true;
 
             $deRaw = $de;
@@ -1771,7 +1779,7 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
         }
 
-        if (isset($para) and $para != '') {
+        if (!empty($para)) {
             $buscar = true;
 
             $paraRaw = $para;
@@ -1781,13 +1789,13 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
         }
 
-        if (isset($sup) and $sup != 'Selecione') {
+        if (!empty($sup) and $sup != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
         }
 
-        if (isset($num) && $num != '') {
+        if (!empty($num)) {
             $buscar = true;
 
             // Dividindo a entrada em uma matriz de números
@@ -1830,13 +1838,13 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['StatusOutcome.id' => $stpg]);
         }
 
-        if (isset($c) and $c != 'Selecione') {
+        if (!empty($c) and $c != 'Selecione') {
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
         }
         
-        if (isset($first_order) and $first_order != '') {
+        if (!empty($first_order)) {
             $buscar = true;
             
             if ($first_order == 'sim') {
@@ -2051,6 +2059,8 @@ class ReportsController extends AppController
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
                 $outcome['Outcome']['vencimento'] = $data_vencimento;
+                $outcome['Outcome']['payment_method'] = $forma_pagamento;
+                $outcome['Outcome']['observation'] = $observacoes;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -2063,14 +2073,16 @@ class ReportsController extends AppController
                 
                 $outcome_id = $this->Outcome->id;
                 
-                $doc_outcome = [];
-                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
-                $doc_outcome['Docoutcome']['file'] = $file_item;
-                $doc_outcome['Docoutcome']['status_id'] = 1;
-                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+                if ($file_item) {                
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_item;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
 
-                $this->Docoutcome->create();
-                $this->Docoutcome->save($doc_outcome);
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
 
                 if ($file_repasse) {
                     $this->Outcome->create();

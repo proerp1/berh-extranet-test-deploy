@@ -3558,7 +3558,9 @@ class OrdersController extends AppController
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
         $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $forma_pagamento    = isset($this->request->data['v_forma_pagamento']) ? $this->request->data['v_forma_pagamento'] : null;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
+        $observacoes        = isset($this->request->data['v_observacoes']) ? $this->request->data['v_observacoes'] : null;
         
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
@@ -3695,6 +3697,8 @@ class OrdersController extends AppController
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
                 $outcome['Outcome']['vencimento'] = $data_vencimento;
+                $outcome['Outcome']['payment_method'] = $forma_pagamento;
+                $outcome['Outcome']['observation'] = $observacoes;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -3707,14 +3711,16 @@ class OrdersController extends AppController
                 
                 $outcome_id = $this->Outcome->id;
 
-                $doc_outcome = [];
-                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
-                $doc_outcome['Docoutcome']['file'] = $file_item;
-                $doc_outcome['Docoutcome']['status_id'] = 1;
-                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+                if ($file_item) {                
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_item;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
 
-                $this->Docoutcome->create();
-                $this->Docoutcome->save($doc_outcome);
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
 
                 if ($file_repasse) {
                     $this->Outcome->create();
@@ -3807,24 +3813,30 @@ class OrdersController extends AppController
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
         $data_entrega       = isset($this->request->data['v_data_entrega']) ? $this->request->data['v_data_entrega'] : null;
         $data_vencimento    = isset($this->request->data['v_data_vencimento']) ? $this->request->data['v_data_vencimento'] : null;
+        $forma_pagamento    = isset($this->request->data['v_forma_pagamento']) ? $this->request->data['v_forma_pagamento'] : null;
         $motivo             = isset($this->request->data['v_motivo']) ? $this->request->data['v_motivo'] : null;
+        $observacoes        = isset($this->request->data['v_observacoes']) ? $this->request->data['v_observacoes'] : null;
 
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
 
-        $itemOrderIds       = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : false;
-        $stp                = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : false;
+        $itemOrderIds       = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : null;
+        $stp                = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : null;
 
-        $q                  = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : false;
-        $sup                = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : false;
+        $q                  = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : null;
+        $sup                = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : null;
 
-        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.id !=' => $itemOrderIds, 'OrderItem.outcome_id' => null], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_id, 'OrderItem.outcome_id' => null], "or" => []];
 
-        if (isset($q) and $q != "") {
+        if (!empty($itemOrderIds) && is_array($itemOrderIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $itemOrderIds]);
+        }
+
+        if (!empty($q)) {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $q . "%", 'CustomerUser.cpf LIKE' => "%" . $q . "%", 'Benefit.name LIKE' => "%" . $q . "%", 'Benefit.code LIKE' => "%" . $q . "%", 'Supplier.nome_fantasia LIKE' => "%" . $q . "%", 'OrderItem.status_processamento LIKE' => "%" . $q . "%"]);
         }
 
-        if (isset($sup) and $sup != '') {
+        if (!empty($sup)) {
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
         }
 
@@ -3992,6 +4004,8 @@ class OrdersController extends AppController
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['bank_account_id'] = 3;
                 $outcome['Outcome']['vencimento'] = $data_vencimento;
+                $outcome['Outcome']['payment_method'] = $forma_pagamento;
+                $outcome['Outcome']['observation'] = $observacoes;
                 $outcome['Outcome']['expense_id'] = 2;
                 $outcome['Outcome']['cost_center_id'] = 113;
                 $outcome['Outcome']['plano_contas_id'] = 1;
@@ -4003,15 +4017,17 @@ class OrdersController extends AppController
                 $this->Outcome->save($outcome);
                 
                 $outcome_id = $this->Outcome->id;
-                
-                $doc_outcome = [];
-                $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
-                $doc_outcome['Docoutcome']['file'] = $file_item;
-                $doc_outcome['Docoutcome']['status_id'] = 1;
-                $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
 
-                $this->Docoutcome->create();
-                $this->Docoutcome->save($doc_outcome);
+                if ($file_item) {
+                    $doc_outcome = [];
+                    $doc_outcome['Docoutcome']['outcome_id'] = $outcome_id;
+                    $doc_outcome['Docoutcome']['file'] = $file_item;
+                    $doc_outcome['Docoutcome']['status_id'] = 1;
+                    $doc_outcome['Docoutcome']['user_creator_id'] = CakeSession::read('Auth.User.id');
+
+                    $this->Docoutcome->create();
+                    $this->Docoutcome->save($doc_outcome);
+                }
 
                 if ($file_repasse) {
                     $this->Outcome->create();
