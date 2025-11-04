@@ -5179,13 +5179,14 @@ class OrdersController extends AppController
                 'type' => 'fixed_by_cpf',
                 'tier_used' => $calculationResult['tier_used'],
                 'fixed_value' => $fixedValue,
-                'calculation_method' => $calculationResult['calculation_method']
+                'calculation_method' => $calculationResult['calculation_method'],
+                'billing_type' => 'cpf'
             ]);
         }
     }
     
     /**
-     * Fixed by Order: Apply tier's fixed value once, divide among all items
+     * Fixed by Order: Apply tier's fixed value to only the first item
      */
     private function applyFixedValueByOrder($calculationResult, $items)
     {
@@ -5197,16 +5198,27 @@ class OrdersController extends AppController
         }
         
         $itemCount = count($items);
-        $feePerItem = $totalFixedValue / $itemCount;
         
-        foreach ($items as $item) {
-            $this->updateOrderItemWithTransferFee($item, $feePerItem, [
+        // Apply full transfer fee to only the first item
+        $firstItem = reset($items);
+        $this->updateOrderItemWithTransferFee($firstItem, $totalFixedValue, [
+            'type' => 'volume_tier_fixed',
+            'tier_used' => $calculationResult['tier_used'],
+            'total_fixed_value' => $totalFixedValue,
+            'item_count' => $itemCount,
+            'calculation_method' => $calculationResult['calculation_method'],
+            'billing_type' => 'pedido'
+        ]);
+        
+        // Set transfer fee to 0 for remaining items
+        foreach (array_slice($items, 1) as $item) {
+            $this->updateOrderItemWithTransferFee($item, 0, [
                 'type' => 'volume_tier_fixed',
                 'tier_used' => $calculationResult['tier_used'],
-                'total_fixed_value' => $totalFixedValue,
-                'fee_per_item' => $feePerItem,
+                'total_fixed_value' => 0,
                 'item_count' => $itemCount,
-                'calculation_method' => $calculationResult['calculation_method']
+                'calculation_method' => $calculationResult['calculation_method'],
+                'billing_type' => 'pedido'
             ]);
         }
     }
@@ -5236,7 +5248,8 @@ class OrdersController extends AppController
                 'percentage' => $percentage,
                 'item_subtotal' => $itemSubtotal,
                 'calculated_fee' => $itemTransferFee,
-                'calculation_method' => $calculationResult['calculation_method']
+                'calculation_method' => $calculationResult['calculation_method'],
+                'billing_type' => 'pedido'
             ]);
         }
     }
