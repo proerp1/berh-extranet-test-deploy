@@ -2759,11 +2759,22 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
         foreach ($dados as $key => $dado) {
             $col = 'A';
+
+            $conta = $dado[0]["conta"];
+            $agencia = $dado[0]["agencia"];
+
+            if (substr($conta, -1) === '-') {
+                $conta = substr($conta, 0, -1);
+            }
+            if (substr($agencia, -1) === '-') {
+                $agencia = substr($agencia, 0, -1);
+            }
+
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "0050"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["code"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["conta"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["agencia"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $conta); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $agencia); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
