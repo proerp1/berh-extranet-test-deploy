@@ -207,6 +207,7 @@ class CustomersController extends AppController
 
         $is_admin = CakeSession::read("Auth.User.Group.name") == 'Administrador';
 
+        $this->set('canEditNfseObs', $this->Permission->check(86, "escrita"));
         $this->set('action', 'Novo Cliente');
         $this->set('form_action', 'add');
         $this->set(compact('statuses', 'senha', 'codFranquias', 'activityAreas', 'sellers', 'is_admin'));
@@ -301,7 +302,6 @@ class CustomersController extends AppController
         $this->request->data = $this->Customer->read();
         $this->Customer->validationErrors = $temp_errors;
         $this->request->data['Customer']['created'] = $this->request->data['Customer']['created'];
-
 
         $activityAreas = $this->ActivityArea->find('list', ['conditions' => ['ActivityArea.status_id' => 1], 'order' => 'ActivityArea.name']);
         $sellers = $this->Seller->find('list', ['order' => 'Seller.name']);

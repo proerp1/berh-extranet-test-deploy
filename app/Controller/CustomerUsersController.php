@@ -639,6 +639,14 @@ class CustomerUsersController extends AppController
             $this->request->data['CustomerUserBankAccount']['customer_user_id'] = $user_id;
 
             if ($this->CustomerUserBankAccount->save($this->request->data)) {
+                if ($this->request->data['CustomerUserBankAccount']['status_id'] == 1) {
+                    $this->CustomerUserBankAccount->updateAll([
+                        'CustomerUserBankAccount.status_id' => 2
+                    ], [
+                        'CustomerUserBankAccount.customer_user_id' => $user_id,
+                        'CustomerUserBankAccount.id !=' => $this->CustomerUserBankAccount->id,
+                    ]);
+                }
                 $this->Flash->set(__('O endereço foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
                 $this->redirect(['action' => 'bank_info/' . $id . '/' . $user_id]);
             } else {

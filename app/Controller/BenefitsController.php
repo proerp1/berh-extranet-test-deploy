@@ -113,17 +113,15 @@ class BenefitsController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $unit_price = str_replace(',', '.', str_replace('.', '', $this->request->data['Benefit']['unit_price']));
 
-            if($benef['Benefit']['unit_price_not_formated'] <> $unit_price){
-                $dados_log = [
-                    'old_value' => $benef['Benefit']['unit_price'],
-                    'de' => $benef['Benefit']['de'],
-                    'ate' => $benef['Benefit']['ate'],
-                    'benefit_id' => $id,
-                    'user_id' => CakeSession::read("Auth.User.id")
-                ];
+            $dados_log = [
+                'old_value' => $benef['Benefit']['unit_price'],
+                'de' => $benef['Benefit']['de'],
+                'ate' => $benef['Benefit']['ate'],
+                'benefit_id' => $id,
+                'user_id' => CakeSession::read("Auth.User.id")
+            ];
 
-                $this->LogBenefits->save($dados_log);
-            }
+            $this->LogBenefits->save($dados_log);
 
             // if is_variable is not present set it as 2
             if(!isset($this->request->data['Benefit']['is_variable']) 

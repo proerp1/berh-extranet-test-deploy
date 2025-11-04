@@ -351,15 +351,7 @@ class ItineraryCSVParser extends Controller
             ]);
             $bank_id = !empty($bankCode['BankCode']['id']) ? $bankCode['BankCode']['id'] : null;
 
-            $bankAccount = $this->CustomerUserBankAccount->find('first', [
-                'conditions' => [
-                    'customer_user_id' => $userId,
-                    'bank_code_id' => $bank_id,
-                    'acc_number' => $row[49],
-                ]
-            ]);
-
-            if (!$bankAccount && $bank_id != null) {
+            if ($bank_id != null) {
                 $bankAccountData = [
                     'customer_id' => $customerId,
                     'customer_user_id' => $userId,
@@ -372,6 +364,12 @@ class ItineraryCSVParser extends Controller
                     'pix_type'=> $row[57],
                     'pix_id'=> $row[58],
                 ];
+
+                $this->CustomerUserBankAccount->updateAll([
+                    'CustomerUserBankAccount.status_id' => 2
+                ], [
+                    'CustomerUserBankAccount.customer_user_id' => $userId,
+                ]);
 
                 $this->CustomerUserBankAccount->create();
                 $this->CustomerUserBankAccount->save($bankAccountData);
