@@ -1607,9 +1607,18 @@ class ReportsController extends AppController
                 ]
             ],
             
-            'financeiro' => [
+            'papel' => [
                 'Order.status_id' => 104,
-                'Outcome.status_id' => [12, 13, 116]
+                'Benefit.benefit_type_id' => 2
+            ],
+            
+            'financeiro' => [
+                'Outcome.id != ' => null,
+                'Order.status_id' => 104,
+                'OrderItem.status_processamento' => [
+                    'CARTAO_NOVO',
+                    'CARTAO_NOVO_PROCESSADO'
+                ]
             ],
             
             'finalizado' => [

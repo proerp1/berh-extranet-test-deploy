@@ -15,6 +15,9 @@
         <a class="nav-link <?php echo (isset($aba) and $aba == 'inconsistencias') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=inconsistencias&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Inconsistências</a>
     </li>
     <li class="nav-item">
+        <a class="nav-link <?php echo (isset($aba) and $aba == 'papel') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=papel&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Papel</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link <?php echo (isset($aba) and $aba == 'financeiro') ? 'active' : '' ?>" href="<?php echo $this->base.'/reports/compras?aba=financeiro&'.(isset($newQueryString) ? $newQueryString : ''); ?>">Financeiro</a>
     </li>
     <li class="nav-item">
