@@ -1616,7 +1616,7 @@ class ReportsController extends AppController
                 'Outcome.id != ' => null,
                 'Order.status_id' => 104,
                 'OrderItem.status_processamento' => [
-                    'CARTAO_NOVO',
+                    'GERAR_PAGAMENTO',
                     'CARTAO_NOVO_PROCESSADO'
                 ]
             ],
