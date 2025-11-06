@@ -1224,7 +1224,17 @@ class IncomesController extends AppController
             $response = $nfse_sdk->cria($nfse_data);
 
             if (!$response->sucesso) {
-                $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
+                if (str_contains($response->mensagem, 'Esse NFS-e já existe')) {
+                    $this->IncomeNfse->save([
+                        'tipo' => $type,
+                        'chave' => $response->chave,
+                        'status_id' => 107,
+                        'income_id' => $income['Income']['id'],
+                        'description' => $obs
+                    ]);
+                } else {
+                    $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
+                }
                 $this->redirect(['action'=> 'nfse', $income_id]);
             }
 
