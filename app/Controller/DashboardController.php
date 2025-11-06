@@ -155,4 +155,10 @@ public function testeRelacionamentoFaq()
         $action = 'Produto';
         $this->set(compact('breadcrumb', 'action'));
     }
+
+    public function info_php() 
+    {
+        $this->autoRender = false;
+        phpinfo();die;
+    }
 }
