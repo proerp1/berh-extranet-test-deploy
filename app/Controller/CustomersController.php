@@ -1993,6 +1993,12 @@ class CustomersController extends AppController
                 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
             ]);
         }
+
+        if (isset($_GET['o']) and $_GET['o'] != "") {
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.id' => $_GET['o'],
+            ]);
+        }
     
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], [
@@ -2129,6 +2135,21 @@ class CustomersController extends AppController
         unset($item);
     
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+        $orders = $this->Order->find('list', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'conditions' => ['Order.customer_id' => $id],
+            'order' => ['Order.id' => 'desc'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Order.customer_id = Customer.id', "Customer.data_cancel = '1901-01-01 00:00:00'"
+                    ]
+                ]
+            ]
+        ]);
 
         $action = 'Extrato';
 
@@ -2138,6 +2159,6 @@ class CustomersController extends AppController
         ];
 
         $this->set(compact('id', 'data', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'first_order', 'tipo'));
-        $this->set(compact('total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse', 'total_bal_ajuste_cred', 'total_bal_ajuste_deb', 'total_bal_inconsistencia', 'total_vlca'));
+        $this->set(compact('total_fee_economia', 'total_vl_economia', 'total_repasse_economia', 'total_diferenca_repasse', 'total_bal_ajuste_cred', 'total_bal_ajuste_deb', 'total_bal_inconsistencia', 'total_vlca', 'orders'));
     }
 }

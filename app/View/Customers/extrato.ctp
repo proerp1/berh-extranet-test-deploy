@@ -226,6 +226,19 @@
                                     ?>
                                 </select>
                             </div>
+
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Pedido:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="o" id="o">
+                                    <option value=''></option>
+                                    <?php
+                                    foreach ($orders as $id => $customerName) {
+                                        $selected = ($_GET["o"] ?? '') == $id ? 'selected' : '';
+                                        echo '<option value="'.$id.'" '.$selected.'>'.$id.' - '.$customerName.'</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                            
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Data:</label>

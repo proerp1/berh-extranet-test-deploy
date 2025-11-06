@@ -272,7 +272,7 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Movimentação</span>
+                                <span class="menu-title">Extrato</span>
                             </a>
                         </div>
                         

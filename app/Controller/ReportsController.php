@@ -685,6 +685,12 @@ class ReportsController extends AppController
                 'EconomicGroup.name LIKE' => "%" . $_GET['q'] . "%", 
             ]);
         }
+
+        if (isset($_GET['o']) and $_GET['o'] != "") {
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.id' => $_GET['o'],
+            ]);
+        }
     
         if (!empty($_GET['t'])) {
             $condition['and'] = array_merge($condition['and'], [
@@ -837,11 +843,25 @@ class ReportsController extends AppController
         
         $customers = $this->Customer->find('list', ['fields' => ['id', 'nome_primario'], 'conditions' => ['Customer.status_id' => 3], 'recursive' => -1]);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 2], 'order' => 'Status.name']);
+        $orders = $this->Order->find('list', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'order' => ['Order.id' => 'desc'],
+            'joins' => [
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Order.customer_id = Customer.id', "Customer.data_cancel = '1901-01-01 00:00:00'"
+                    ]
+                ]
+            ]
+        ]);
 
-        $action = 'Movimentação';
-        $breadcrumb = ['Relatórios' => '', 'Movimentação' => ''];
+        $action = 'Extrato';
+        $breadcrumb = ['Relatórios' => '', 'Extrato' => ''];
 
-        $this->set(compact('id', 'data', 'customers', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'tipo'));
+        $this->set(compact('id', 'data', 'customers', 'status' ,'action', 'breadcrumb', 'totalOrders', 'saldo', 'tipo', 'orders'));
     }
 
     public function robos($menu)

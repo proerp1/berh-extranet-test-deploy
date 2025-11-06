@@ -15,7 +15,7 @@
                 <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
                     <a href="#" class="btn btn-primary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_importar_saldo">
                         <i class="fas fa-arrow-up"></i>
-                        Importar Movimentação em Lote (CSV)
+                        Importar Extrato em Lote (CSV)
                     </a>                 
                 </div>
             </div>
