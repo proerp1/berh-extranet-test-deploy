@@ -1080,12 +1080,13 @@ class IncomesController extends AppController
         ];
 
         $response = $nfse_sdk->consulta($payload);
+        $response = json_decode(json_encode($response), true);
 
-        if (!$response->sucesso) {
+        if (!$response['sucesso']) {
             return null;
         }
 
-        $link_pdf = $response->link_pdf.'&imprimir=1';
+        $link_pdf = $response['link_pdf'].'&imprimir=1';
 
         return str_replace('notaprint', 'notaprintimg', $link_pdf);
     }
@@ -1223,24 +1224,26 @@ class IncomesController extends AppController
 
             $response = $nfse_sdk->cria($nfse_data);
 
-            if (!$response->sucesso) {
-                if (str_contains($response->mensagem, 'Esse NFS-e já existe')) {
+            $response = json_decode(json_encode($response), true);
+
+            if (!$response['sucesso']) {
+                if (str_contains($response['mensagem'], 'Esse NFS-e já existe')) {
                     $this->IncomeNfse->save([
                         'tipo' => $type,
-                        'chave' => $response->chave,
+                        'chave' => $response['chave'],
                         'status_id' => 107,
                         'income_id' => $income['Income']['id'],
                         'description' => $obs
                     ]);
                 } else {
-                    $this->Flash->set(__($response->mensagem), ['params' => ['class' => "alert alert-danger"]]);
+                    $this->Flash->set(__($response['mensagem']), ['params' => ['class' => "alert alert-danger"]]);
                 }
                 $this->redirect(['action'=> 'nfse', $income_id]);
             }
 
             $this->IncomeNfse->save([
               'tipo' => $type,
-              'chave' => $response->chave,
+              'chave' => $response['chave'],
               'status_id' => 106,
               'income_id' => $income['Income']['id'],
               'description' => $obs
@@ -1326,12 +1329,13 @@ class IncomesController extends AppController
             ];
 
             $response = $nfse_sdk->consulta($payload);
+            $response = json_decode(json_encode($response), true);
 
-            if (!$response->sucesso) {
+            if (!$response['sucesso']) {
                 throw new \Exception('PDF não encontrado.');
             }
 
-            $pdf = base64_decode($response->pdf);
+            $pdf = base64_decode($response['pdf']);
 
             $this->printPdf($pdf);
         } catch (\Exception $e) {
