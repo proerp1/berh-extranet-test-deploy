@@ -1359,14 +1359,14 @@ class IncomesController extends AppController
 
             Webhook::isValid($token, $body);
 
-            $data = json_decode($body);
+            $data = json_decode($body, true);
 
-            if ($data->origem === 'TESTE') {
+            if ($data['origem'] === 'TESTE') {
                 return 'Teste realizado com sucesso!';
             }
 
-            $success = $data->sucesso;
-            $chave_nfse = $data->chave;
+            $success = $data['sucesso'];
+            $chave_nfse = $data['chave'];
 
             $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.chave' => $chave_nfse]]);
 
