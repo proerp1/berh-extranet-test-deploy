@@ -5458,7 +5458,7 @@ class OrdersController extends AppController
 
         $available_orders = $this->Order->find('all', [
             'fields' => [
-                'Order.*',
+                'Order.id',
                 'Customer.nome_primario'
             ],
             'joins' => [
