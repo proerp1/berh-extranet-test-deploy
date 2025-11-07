@@ -114,7 +114,7 @@
                     <div class="row mb-7">
                         <div class="col-md-12 mb-5">
                             <label class="form-label required">Pedidos</label>
-                            <?php //echo $this->Form->input('pedidos', ["multiple" => true, "label" => false, "id" => "select_pedidos", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "required" => true, "empty" => "Selecione", 'options' => $orders]);?>
+                            <?php echo $this->Form->input('pedidos', ["multiple" => true, "label" => false, "id" => "select_pedidos", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "required" => true, "empty" => "Selecione", 'options' => $orders]);?>
                         </div>
                     </div>
 

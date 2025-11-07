@@ -5491,6 +5491,8 @@ class OrdersController extends AppController
             'group' => 'Order.id'
         ]);
 
+        die;
+
         $orders = [];
         foreach ($available_orders as $order) {
             $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
