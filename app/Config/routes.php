@@ -29,7 +29,6 @@
 /**
  * ...and connect the rest of 'Pages' controller's URLs.
  */
-	Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 	Router::connect('/transparencies/add', array('controller' => 'transparency', 'action' => 'add' ));
 	Router::connect('/transparencies/edit/*', array('controller' => 'transparency', 'action' => 'edit' ));
 

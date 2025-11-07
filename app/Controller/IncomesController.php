@@ -586,7 +586,7 @@ class IncomesController extends AppController
                 $oldStatus = $this->Status->find('first', ['conditions' => ['Status.id' => $old_status['Income']['status_id']]]);
 
                 $this->ChargesHistory->create();
-                $charges = $this->ChargesHistory->save([
+                $this->ChargesHistory->save([
                     'call_status' => 0,
                     'cobranca_id' => 0,
                     'customer_id' => 0,
@@ -641,6 +641,7 @@ class IncomesController extends AppController
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Income->id = $id;
 
+        $income = $this->Income->findById($id);
         $valueFormatado = str_replace('.', '', $this->request->data['Income']['valor_pago']);
         $valueFormatado = str_replace(',', '.', $valueFormatado);
         $this->request->data['Income']['valor_pago'] = $valueFormatado;
@@ -668,6 +669,19 @@ class IncomesController extends AppController
         }
 
         $this->Income->save($this->request->data);
+
+        $newStatus = $this->Status->find('first', ['conditions' => ['Status.id' => 17]]);
+        $oldStatus = $this->Status->find('first', ['conditions' => ['Status.id' => $income['Income']['status_id']]]);
+
+        $this->ChargesHistory->create();
+        $this->ChargesHistory->save([
+          'call_status' => 0,
+          'cobranca_id' => 0,
+          'customer_id' => 0,
+          'income_id' => $id,
+          'text' => 'Mudança do status '.$oldStatus['Status']['name'].' para '.$newStatus['Status']['name'],
+          'user_creator_id' => CakeSession::read('Auth.User.id')
+        ]);
 
         $this->Flash->set(__('A conta a receber foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
         $this->redirect($this->referer());

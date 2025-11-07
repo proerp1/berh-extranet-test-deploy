@@ -18,6 +18,30 @@
         <div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
             <div class="d-flex align-items-stretch" id="kt_header_nav">
                 <div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
+                    <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'comunicados']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">Comunicados</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
+                    <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'documentacao']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">Documentação</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
+                    <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'layout']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">Layout</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
+                    <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'ajuda']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
+                        <span class="menu-link py-3">
+                            <span class="menu-title">Ajuda</span>
+                            <span class="menu-arrow d-lg-none"></span>
+                        </span>
+                    </a>
                     <a href="<?php echo $this->Html->url(['controller' => 'pages', 'action' => 'biblioteca']) ?>" class="menu-item here show menu-lg-down-accordion me-lg-1">
                         <span class="menu-link py-3">
                             <span class="menu-title">Biblioteca</span>

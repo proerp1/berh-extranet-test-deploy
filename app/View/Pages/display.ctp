@@ -15,10 +15,10 @@
                             <!--begin::Content-->
                             <div class="mb-15">
                                 <!--begin::Title-->
-                                <h4 class="fs-2x text-gray-800 w-bolder mb-6">Biblioteca</h4>
+                                <h4 class="fs-2x text-gray-800 w-bolder mb-6"><?=$page_title?></h4>
                                 <!--end::Title-->
                                 <!--begin::Text-->
-                                <p class="fw-semibold fs-4 text-gray-600 mb-2">Aqui você poderá encontrar todas as Bibliotecas enviadas pela Be RH.</p>
+                                <p class="fw-semibold fs-4 text-gray-600 mb-2"><?=$page_subtitle?></p>
                                 <!--end::Text-->
                             </div>
                             <div id="kt_job_8_1" class="fs-6 ms-1" style="">
