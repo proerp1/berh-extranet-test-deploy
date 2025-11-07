@@ -5416,6 +5416,9 @@ class OrdersController extends AppController
 
     public function descontos($id) 
     {
+        ini_set('pcre.backtrack_limit', '15000000');
+        ini_set('memory_limit', '-1');
+        
         $this->Permission->check(63, "leitura") ? "" : $this->redirect("/not_allowed");
 
         if (!$id) {
@@ -5455,8 +5458,6 @@ class OrdersController extends AppController
         }
 
         $batches = $this->Paginator->paginate('OrderDiscountBatch', $condition);
-
-        die;
 
         $available_orders = $this->Order->find('all', [
             'fields' => [
