@@ -1222,9 +1222,13 @@ class IncomesController extends AppController
 
             $nfse_data = $this->get_nfse_data($income, $type, $obs);
 
-            $response = $nfse_sdk->cria($nfse_data);
+            $stdResponse = $nfse_sdk->cria($nfse_data);
 
-            $response = json_decode(json_encode($response), true);
+            $response = json_decode(json_encode($stdResponse), true);
+
+            if ($income_id == 5462) {
+                dd($stdResponse, $response);
+            }
 
             if (!$response['sucesso']) {
                 if (str_contains($response['mensagem'], 'Esse NFS-e já existe')) {
