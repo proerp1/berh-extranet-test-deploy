@@ -5456,6 +5456,8 @@ class OrdersController extends AppController
 
         $batches = $this->Paginator->paginate('OrderDiscountBatch', $condition);
 
+        die;
+
         $available_orders = $this->Order->find('all', [
             'fields' => [
                 'Order.id',
@@ -5490,8 +5492,6 @@ class OrdersController extends AppController
             ],
             'group' => 'Order.id'
         ]);
-
-        die;
 
         $orders = [];
         foreach ($available_orders as $order) {
