@@ -1226,10 +1226,6 @@ class IncomesController extends AppController
 
             $response = json_decode(json_encode($stdResponse), true);
 
-            if ($income_id == 5462) {
-                dd($stdResponse, $response);
-            }
-
             if (!$response['sucesso']) {
                 if (str_contains($response['mensagem'], 'Esse NFS-e já existe')) {
                     $this->IncomeNfse->save([

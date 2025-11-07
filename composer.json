@@ -8,7 +8,7 @@
         "phpoffice/phpspreadsheet": "^1.19",
         "league/csv": "^9.6",
         "sendgrid/sendgrid": "^7.11",
-        "cloud-dfe/sdk-php": "^0.4.4"
+        "cloud-dfe/sdk-php": "0.4.4"
     },
     "config": {
         "allow-plugins": {
