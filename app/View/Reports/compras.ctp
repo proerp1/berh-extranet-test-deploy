@@ -2,6 +2,8 @@
 
 <?php echo $this->element("../Reports/_totais_compras"); ?>
 
+<input type="hidden" id="conditions-data" value="<?php echo $conditionsJson; ?>">
+
 <div class="card mb-5 mb-xl-8">
     <form action="<?php echo $this->Html->url(array("controller" => "reports", "action" => "compras")); ?>" role="form" id="busca" autocomplete="off">
         <input type="hidden" name="aba" id="aba" value="<?php echo $aba; ?>">
@@ -24,20 +26,53 @@
                         Filtro
                     </button>
 
-                    <a href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
-                        Exportar Relatório Pedidos
-                    </a>
+                    <div class="btn-group me-3">
+                        <button type="button" class="btn btn-light-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-table"></i>
+                            Exportar Relatórios
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="<?php echo $this->here.'?excel_pedidos&'.$_SERVER['QUERY_STRING'] ?>">
+                                    <i class="fas fa-file-excel me-2"></i>
+                                    Relatório Pedidos
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?php echo $this->here.'?excel_simples&'.$_SERVER['QUERY_STRING'] ?>">
+                                    <i class="fas fa-file-excel me-2"></i>
+                                    Exportar Simples
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?php echo $this->here.'?excel&'.$_SERVER['QUERY_STRING'] ?>">
+                                    <i class="fas fa-file-excel me-2"></i>
+                                    Exportar Completo
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <a href="<?php echo $this->here.'?excel_simples&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel_simples">
-                        <i class="fas fa-table"></i>
-                        Exportar Simples
-                    </a>
-
-                    <a href="<?php echo $this->here.'?excel&'.$_SERVER['QUERY_STRING'] ?>" class="btn btn-light-primary me-3" name="excel">
-                        <i class="fas fa-table"></i>
-                        Exportar Completo
-                    </a>
+                    <div class="btn-group me-3">
+                        <button type="button" class="btn btn-light-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-table"></i>
+                            Gerador de Arquivos
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#" id="btn_arquivo_credito">
+                                    <i class="fas fa-file-export me-2"></i>
+                                    Arquivo Crédito
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" id="btn_arquivo_cadastro">
+                                    <i class="fas fa-file-export me-2"></i>
+                                    Arquivo Cadastro
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
                     <a href="#" id="alterar_sel" class="btn btn-primary me-3">
                         <i class="fas fa-edit"></i>
@@ -470,6 +505,119 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="modal_arquivo_credito" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Confirma o envio dos dados filtrados para geração do arquivo de crédito?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="btn_arquivo_credito_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="modal_arquivo_cadastro" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tem certeza?</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Confirma o envio dos dados filtrados para geração do arquivo de cadastro?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="btn_arquivo_cadastro_confirm" class="btn btn-success">Sim</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        showTotalsLoading();
+        loadTotals();
+    });
+
+    function showTotalsLoading() {
+        $('.total-value').html('<div class="spinner-border spinner-border-sm" role="status"></div>');
+    }
+
+    function loadTotals() {
+        $.ajax({
+            url: '/reports/getTotalOrders',
+            method: 'POST',
+            data: {
+                conditions: $('#conditions-data').val()
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    updateBasicTotalsDisplay(response.totals);
+                    
+                    loadEconomia();
+                } else {
+                    showTotalsError();
+                }
+            },
+            error: function() {
+                showTotalsError();
+            }
+        });
+    }
+
+    function loadEconomia() {
+        $('#economia-value').html('<div class="spinner-border spinner-border-sm text-warning" role="status"><span class="sr-only">Calculando economia...</span></div>');
+        
+        $.ajax({
+            url: '/reports/getTotalEconomia',
+            method: 'POST',
+            data: {
+                conditions: $('#conditions-data').val()
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $('#economia-value').text(formatMoney(response.economia));
+                } else {
+                    $('#economia-value').html('<span class="text-danger">Erro</span>');
+                }
+            },
+            error: function() {
+                $('#economia-value').html('<span class="text-danger">Erro ao calcular</span>');
+            }
+        });
+    }
+
+    function updateBasicTotalsDisplay(totals) {
+        $('#subtotal-value').text(formatMoney(totals.subtotal));
+        $('#repasse-value').text(formatMoney(totals.transfer_fee));
+        $('#tpp-value').text(formatMoney(totals.total_tpp));
+        $('#taxa-value').text(formatMoney(totals.commission_fee));
+        $('#desconto-value').text(formatMoney(totals.desconto));
+        $('#total-value').text(formatMoney(totals.total));
+    }
+
+    function formatMoney(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value || 0);
+    }
+
+    function showTotalsError() {
+        $('.total-value').html('<span class="text-danger">Erro ao carregar</span>');
+    }
+</script>
+
 <script>
     function trigger_date_change() {
         var v_ini = $("#de").val();
@@ -827,6 +975,138 @@
             $('#display_transfer_fee').text('R$ 0,00');
             $('#display_total').text('R$ 0,00');
             $('.js_div_valores_totais').hide();
+        });
+
+        $('#btn_arquivo_credito').on('click', function(e) {
+            e.preventDefault();
+            
+            if (!$('#conditions-data').val()) {
+                alert('Por favor, aplique os filtros antes de gerar o arquivo.');
+                return;
+            }
+
+            $('#modal_arquivo_credito').modal('show');
+        });
+
+        $('#btn_arquivo_cadastro').on('click', function(e) {
+            e.preventDefault();
+            
+            if (!$('#conditions-data').val()) {
+                alert('Por favor, aplique os filtros antes de gerar o arquivo.');
+                return;
+            }
+
+            $('#modal_arquivo_cadastro').modal('show');
+        });
+
+        $('#btn_arquivo_credito_confirm').on('click', function(e) {
+            e.preventDefault();
+            
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+            
+            $.ajax({
+                url: base_url + '/reports/send_json_order_items',
+                method: 'POST',
+                data: {
+                    conditions: $('#conditions-data').val(),
+                    tipo: 'credito'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        let msg = response.message + '\n\n';
+                        msg += 'Total de registros: ' + response.total_registros;
+                        
+                        if (response.robot_response && response.robot_response.file_url) {
+                            msg += '\n\nArquivo disponível em:\n' + response.robot_response.file_url;
+                        }
+                        
+                        alert(msg);
+                        
+                        location.reload();
+                    } else {
+                        let errorMsg = response.message || 'Erro desconhecido';
+                        
+                        if (response.errors && response.errors.length > 0) {
+                            errorMsg += '\n\nErros encontrados:\n';
+                            response.errors.forEach(function(erro) {
+                                errorMsg += '- ' + erro + '\n';
+                            });
+                        }
+                        
+                        if (response.total_registros) {
+                            errorMsg += '\n\nTotal de registros: ' + response.total_registros;
+                        }
+                        
+                        alert(errorMsg);
+                    }
+                    $(this).prop('disabled', true).html('Sim');
+                },
+                error: function(xhr) {
+                    let errorMsg = 'Erro ao processar solicitação.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                        if (xhr.responseJSON.error) {
+                            errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
+                        }
+                    }
+                    alert(errorMsg);
+                    $(this).prop('disabled', true).html('Sim');
+                }
+            });
+        });
+
+        $('#btn_arquivo_cadastro_confirm').on('click', function(e) {
+            e.preventDefault();
+            
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+            
+            $.ajax({
+                url: base_url + '/reports/send_json_order_items',
+                method: 'POST',
+                data: {
+                    conditions: $('#conditions-data').val(),
+                    tipo: 'cadastro'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        let msg = response.message + '\n\n';
+                        msg += 'Total de registros: ' + response.total_registros;
+                        
+                        alert(msg);
+
+                        location.reload();
+                    } else {
+                        let errorMsg = response.message || 'Erro desconhecido';
+                        
+                        if (response.errors && response.errors.length > 0) {
+                            errorMsg += '\n\nErros encontrados:\n';
+                            response.errors.forEach(function(erro) {
+                                errorMsg += '- ' + erro + '\n';
+                            });
+                        }
+                        
+                        if (response.total_registros) {
+                            errorMsg += '\n\nTotal de registros: ' + response.total_registros;
+                        }
+                        
+                        alert(errorMsg);
+                    }
+                    $(this).prop('disabled', true).html('Sim');
+                },
+                error: function(xhr) {
+                    let errorMsg = 'Erro ao processar solicitação.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                        if (xhr.responseJSON.error) {
+                            errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
+                        }
+                    }
+                    alert(errorMsg);
+                    $(this).prop('disabled', true).html('Sim');
+                }
+            });
         });
     });
 </script>

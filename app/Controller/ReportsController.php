@@ -2644,5 +2644,318 @@ class ReportsController extends AppController
         }
         
         return false;
+    }    
+
+    public function send_json_order_items()
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(91, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $tipo = isset($this->request->data['tipo']) ? $this->request->data['tipo'] : 'credito';
+        
+        $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+
+        $dados = $this->OrderItem->find('all', [
+            'conditions' => $condition,
+            'order' => ['Order.id' => 'desc'],
+            'fields' => [
+                'Customer.documento',
+                'CustomerUser.matricula',
+                'CustomerUser.name',
+                'CustomerUser.cpf',
+                'CustomerUser.rg',
+                'CustomerUser.emissor_rg',
+                'CustomerUser.data_nascimento',
+                'CustomerUser.nome_mae',
+                'CustomerDepartment.name',
+                'OrderItem.working_days',
+                'Order.is_partial',
+                'BenefitType.name',
+                'Supplier.id',
+                'Benefit.code',
+                'CustomerUserItinerary.card_number',
+                'OrderItem.valor_unit',
+                'OrderItem.manual_quantity',
+                'CustomerUserItinerary.quantity',
+                'OrderItem.subtotal',
+                'CustomerUser.sexo',
+                'CustomerPosition.name',
+                'Order.id',
+                'Customer.nome_primario',
+                'EconomicGroups.razao_social',
+                'EconomicGroups.document',
+                'OrderItem.saldo',
+                'OrderItem.id',
+                'Order.credit_release_date',
+                'Order.order_period_from',
+                'Order.order_period_to',
+                'OrderItem.first_order',
+                'OrderItem.status_processamento',
+                'CustomerUserItinerary.matricula',
+                'MAX(CustomerUserAddress.zip_code) as cep',
+                'MAX(CustomerUserAddress.address_line) as endereco',
+                'MAX(CustomerUserAddress.address_number) as numero',
+                'MAX(CustomerUserAddress.address_complement) as complemento',
+                'MAX(CustomerUserAddress.neighborhood) as bairro',
+                'MAX(CustomerUserAddress.city) as cidade',
+                'MAX(CustomerUserAddress.state) as estado',
+            ],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'benefit_types',
+                    'alias' => 'BenefitType',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'BenefitType.id = Benefit.benefit_type_id'
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'customer_departments',
+                    'alias' => 'CustomerDepartment',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerDepartment.id = CustomerUser.customer_departments_id'
+                    ],
+                ],
+                [
+                    'table' => 'economic_groups',
+                    'alias' => 'EconomicGroups',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.economic_group_id = EconomicGroups.id'
+                    ],
+                ],
+                [
+                    'table' => 'customer_positions',
+                    'alias' => 'CustomerPosition',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'CustomerPosition.id = CustomerUser.customer_positions_id'
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
+                [
+                    'table' => 'customer_user_addresses',
+                    'alias' => 'CustomerUserAddress',
+                    'type' => 'LEFT',
+                    'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id and CustomerUserAddress.address_type_id = 1']
+                ],
+            ],
+            'group' => ['OrderItem.id']
+        ]);
+
+        $arr_data = [];
+
+        for ($i = 0; $i < count($dados); $i++) {
+            $tipo_pedido = "";
+            if ($dados[$i]['Order']['is_partial'] == '1') {
+                $tipo_pedido = 'Automático';
+            } elseif ($dados[$i]['Order']['is_partial'] == '2') {
+                $tipo_pedido = 'Emissão';
+            } elseif ($dados[$i]['Order']['is_partial'] == '3') {
+                $tipo_pedido = 'Importação';
+            } elseif ($dados[$i]['Order']['is_partial'] == '4') {
+                $tipo_pedido = 'PIX';
+            }
+
+            $arr_data[] = [
+                'cnpj_cliente'                  => $dados[$i]['Customer']['documento'],
+                'matricula'                     => $dados[$i]['CustomerUser']['matricula'],
+                'nome'                          => $dados[$i]['CustomerUser']['name'],
+                'cpf'                           => $dados[$i]['CustomerUser']['cpf'],
+                'rg'                            => $dados[$i]['CustomerUser']['rg'],
+                'orgao_expeditor'               => $dados[$i]['CustomerUser']['emissor_rg'],
+                'data_nascimento'               => $dados[$i]['CustomerUser']['data_nascimento'],
+                'nome_mae'                      => $dados[$i]['CustomerUser']['nome_mae'],
+                'departamento'                  => $dados[$i]['CustomerDepartment']['name'],
+                'dias_uteis'                    => $dados[$i]['OrderItem']['working_days'],
+                'tipo_pedido'                   => $tipo_pedido,
+                'tipo_beneficio_servico'        => $dados[$i]['BenefitType']['name'],
+                'id_codigo_operadora'           => $dados[$i]['Supplier']['id'],
+                'id_codigo_beneficio_item'      => $dados[$i]['Benefit']['code'],
+                'numero_cartao_vale_transporte' => $dados[$i]['CustomerUserItinerary']['card_number'],
+                'valor_unitario'                => $dados[$i]['OrderItem']['valor_unit'],
+                'qtde_beneficio_dia'            => $dados[$i]['OrderItem']['manual_quantity'] != 0 ? $dados[$i]['OrderItem']['manual_quantity'] : $dados[$i]['CustomerUserItinerary']['quantity'],
+                'total'                         => $dados[$i]['OrderItem']['subtotal'],
+                'genero'                        => $dados[$i]['CustomerUser']['sexo'],
+                'cargo'                         => $dados[$i]['CustomerPosition']['name'],
+                'pedido'                        => $dados[$i]['Order']['id'],
+                'razao_social_cliente'          => $dados[$i]['Customer']['nome_primario'],
+                'ge'                            => $dados[$i]['EconomicGroups']['razao_social'],
+                'ge_cnpj'                       => $dados[$i]['EconomicGroups']['document'],
+                'economia'                      => $dados[$i]['OrderItem']['saldo'],
+                'id'                            => $dados[$i]['OrderItem']['id'],
+                'liberacao_credito'             => $dados[$i]['Order']['credit_release_date'],
+                'periodo_inicio'                => $dados[$i]['Order']['order_period_from'],
+                'periodo_fim'                   => $dados[$i]['Order']['order_period_to'],
+                'compra_operadora'              => number_format(($dados[$i]['OrderItem']['subtotal_not_formated'] - $dados[$i]['OrderItem']['saldo_not_formated']), 2, ',', '.'),
+                'primeira_compra'               => $dados[$i]['OrderItem']['first_order'] == 1 ? 'Sim' : 'Não',
+                'status_operadora'              => $dados[$i]['OrderItem']['status_processamento'],
+                'matricula_operadora'           => $dados[$i]['CustomerUserItinerary']['matricula'],
+                'cep'                           => isset($dados[$i][0]['cep']) ? $dados[$i][0]['cep'] : null,
+                'endereco'                      => isset($dados[$i][0]['endereco']) ? $dados[$i][0]['endereco'] : null,
+                'numero'                        => isset($dados[$i][0]['numero']) ? $dados[$i][0]['numero'] : null,
+                'complemento'                   => isset($dados[$i][0]['complemento']) ? $dados[$i][0]['complemento'] : null,
+                'bairro'                        => isset($dados[$i][0]['bairro']) ? $dados[$i][0]['bairro'] : null,
+                'cidade'                        => isset($dados[$i][0]['cidade']) ? $dados[$i][0]['cidade'] : null,
+                'estado'                        => isset($dados[$i][0]['estado']) ? $dados[$i][0]['estado'] : null,
+            ];
+        }
+
+        $token = $this->getRobotToken();
+
+        if (!$token) {
+            $this->response->statusCode(401);
+            $this->response->type('application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro ao obter token de autenticação do robô'
+            ]);
+            return $this->response;
+        }
+
+        $url = $tipo == 'credito' 
+            ? 'https://robo.berh.com.br/converter_compras_json/credito'
+            : 'https://robo.berh.com.br/converter_compras_json/cadastro';
+        
+        $jsonData = json_encode($arr_data);
+        
+        $ch = curl_init();
+        
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $jsonData,
+            CURLOPT_TIMEOUT => 300,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token,
+            ],
+        ]);
+
+        $response   = curl_exec($ch);
+        $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError  = curl_error($ch);
+        curl_close($ch);
+
+        $this->response->type('application/json');
+        $this->response->charset('UTF-8');
+
+        if ($curlError) {
+            $this->response->statusCode(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Erro de conexão com o robô',
+                'error'   => $curlError
+            ]);
+            return $this->response;
+        }
+
+        if ($httpCode === 200) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Arquivo enviado e processado com sucesso!',
+                'total_registros' => count($arr_data)
+            ]);
+            return $this->response;
+        }
+
+        $this->response->statusCode($httpCode);
+        echo json_encode([
+            'success' => false,
+            'message' => 'Falha ao enviar para o robô (HTTP ' . $httpCode . ')'
+        ]);
+
+        return $this->response;
     }
+
+    private function getRobotToken()
+    {
+        $ch = curl_init();
+        
+        curl_setopt_array($ch, [
+            CURLOPT_URL => "https://robo.berh.com.br/login",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_POSTFIELDS => http_build_query([
+                'usuario' => 'api_user_1434',
+                'senha' => 'vj9503892RdPMUc@FWfseC!U'
+            ]),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/x-www-form-urlencoded'
+            ],
+        ]);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode == 200) {
+            $result = json_decode($response, true);
+            
+            if (isset($result['token'])) {
+                return $result['token'];
+            } elseif (isset($result['access_token'])) {
+                return $result['access_token'];
+            } elseif (isset($result['data']['token'])) {
+                return $result['data']['token'];
+            }
+        }
+        
+        return null;
+    }
+
 }
