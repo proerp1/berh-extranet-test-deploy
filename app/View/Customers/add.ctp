@@ -391,10 +391,26 @@
                 </div>
             </div>
 
-            <div class="form-check form-switch mb-4">
-                <?php echo $this->Form->input('mesmo_endereco', array( "type" => "checkbox", "id" => "mesmo_endereco","div" => false, "label" => false, "class" => "form-check-input"));  ?>
-                <label for="mesmo_endereco" class="form-check-label">Usar o mesmo endereço de faturamento na Entrega</label>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <?php echo $this->Form->input('mesmo_endereco', ['type' => 'checkbox', 'id' => 'mesmo_endereco', 'div' => false, 'label' => false, 'class' => 'form-check-input']); ?>
+                        <label for="mesmo_endereco" class="form-check-label">
+                            Usar o mesmo endereço de faturamento na Entrega
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <?php echo $this->Form->input('permitir_emissao_segunda_via', ['type' => 'checkbox', 'id' => 'permitir_emissao_segunda_via', 'div' => false, 'label' => false, 'class' => 'form-check-input']); ?>
+                        <label for="permitir_emissao_segunda_via" class="form-check-label">
+                            Permitir emissão de 2º via do cartão de forma automática?
+                        </label>
+                    </div>
+                </div>
             </div>
+
             <br>
 
             <h3 class="mb-4">Endereço de Entrega</h3>
