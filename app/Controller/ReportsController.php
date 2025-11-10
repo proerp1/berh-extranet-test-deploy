@@ -2815,8 +2815,6 @@ class ReportsController extends AppController
             ],
         ]);
 
-        echo count($dados);die;
-
         $arr_data = [];
 
         for ($i = 0; $i < count($dados); $i++) {
