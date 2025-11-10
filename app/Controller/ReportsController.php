@@ -2662,9 +2662,26 @@ class ReportsController extends AppController
         $tipo = isset($this->request->data['tipo']) ? $this->request->data['tipo'] : 'credito';
         
         $condition = json_decode(base64_decode($this->request->data('conditions')), true);
+    
+        $orderItemIds = isset($this->request->data['orderItemIds']) 
+            ? json_decode($this->request->data['orderItemIds'], true) 
+            : null;
+    
+        $notOrderItemIds = isset($this->request->data['notOrderItemIds']) 
+            ? json_decode($this->request->data['notOrderItemIds'], true) 
+            : null;
+        
+        if (!empty($orderItemIds) && is_array($orderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id' => $orderItemIds]);
+        }
+        
+        if (!empty($notOrderItemIds) && is_array($notOrderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $notOrderItemIds]);
+        }
 
         $dados = $this->OrderItem->find('all', [
             'conditions' => $condition,
+            'group' => ['OrderItem.id'],
             'order' => ['Order.id' => 'desc'],
             'fields' => [
                 'Customer.documento',
@@ -2796,8 +2813,9 @@ class ReportsController extends AppController
                     'conditions' => ['CustomerUserAddress.customer_user_id = CustomerUser.id and CustomerUserAddress.address_type_id = 1']
                 ],
             ],
-            'group' => ['OrderItem.id']
         ]);
+
+        echo count($dados);die;
 
         $arr_data = [];
 

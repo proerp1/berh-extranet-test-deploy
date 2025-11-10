@@ -60,13 +60,13 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="#" id="btn_arquivo_credito">
+                                <a class="dropdown-item btn-gerar-arquivo" href="#" data-tipo="credito">
                                     <i class="fas fa-file-export me-2"></i>
                                     Arquivo Crédito
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#" id="btn_arquivo_cadastro">
+                                <a class="dropdown-item btn-gerar-arquivo" href="#" data-tipo="cadastro">
                                     <i class="fas fa-file-export me-2"></i>
                                     Arquivo Cadastro
                                 </a>
@@ -505,7 +505,7 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="modal_arquivo_credito" role="dialog">
+<div class="modal fade" tabindex="-1" id="modal_arquivo_confirmacao" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -513,40 +513,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p>Confirma o envio dos dados filtrados para geração do arquivo de crédito?</p>
+                <p id="modal_arquivo_mensagem"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="btn_arquivo_credito_confirm" class="btn btn-success">Sim</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" id="modal_arquivo_cadastro" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tem certeza?</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-            </div>
-            <div class="modal-body">
-                <p>Confirma o envio dos dados filtrados para geração do arquivo de cadastro?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="btn_arquivo_cadastro_confirm" class="btn btn-success">Sim</a>
+                <button type="button" id="btn_arquivo_confirm" class="btn btn-success">Sim</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function() {
-        showTotalsLoading();
-        loadTotals();
-    });
-
     function showTotalsLoading() {
         $('.total-value').html('<div class="spinner-border spinner-border-sm" role="status"></div>');
     }
@@ -616,9 +593,7 @@
     function showTotalsError() {
         $('.total-value').html('<span class="text-danger">Erro ao carregar</span>');
     }
-</script>
-
-<script>
+    
     function trigger_date_change() {
         var v_ini = $("#de").val();
         var v_end = $("#ate").val();
@@ -701,9 +676,87 @@
         }
     }
 
+    function enviarArquivo(tipo, btnConfirm) {
+        btnConfirm.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
+        
+        let postData = {
+            conditions: $('#conditions-data').val(),
+            tipo: tipo
+        };
+
+        if ($(".check_all").is(':checked')) {
+            const notOrderItemIds = [];
+            $('input[name="alt_linha"]:not(:checked)').each(function() {
+                notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            postData.notOrderItemIds = JSON.stringify(notOrderItemIds);
+        } else {
+            const orderItemIds = [];
+            $('input[name="alt_linha"]:checked').each(function() {
+                orderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+
+            postData.orderItemIds = JSON.stringify(orderItemIds);
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: base_url + '/reports/send_json_order_items',
+            data: postData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    let msg = response.message + '\n\n';
+                    msg += 'Total de registros: ' + response.total_registros;
+                    
+                    if (response.robot_response && response.robot_response.file_url) {
+                        msg += '\n\nArquivo disponível em:\n' + response.robot_response.file_url;
+                    }
+                    
+                    alert(msg);
+
+                    location.reload();
+                } else {
+                    let errorMsg = response.message || 'Erro desconhecido';
+                    
+                    if (response.errors && response.errors.length > 0) {
+                        errorMsg += '\n\nErros encontrados:\n';
+                        response.errors.forEach(function(erro) {
+                            errorMsg += '- ' + erro + '\n';
+                        });
+                    }
+                    
+                    if (response.total_registros) {
+                        errorMsg += '\n\nTotal de registros: ' + response.total_registros;
+                    }
+                    
+                    alert(errorMsg);
+                }
+
+                btnConfirm.prop('disabled', false).html('Sim');
+            },
+            error: function(xhr, status, error) {
+                let errorMsg = 'Erro ao processar solicitação.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                    if (xhr.responseJSON.error) {
+                        errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
+                    }
+                }
+
+                alert(errorMsg);
+
+                btnConfirm.prop('disabled', false).html('Sim');
+            }
+        });
+    }
+
     $(document).ready(function() {
         $(".datepicker").mask("99/99/9999");
 
+        showTotalsLoading();
+        loadTotals();
         trigger_date_change();
 
         $('[data-kt-customer-table-filter="reset"]').on('click', function() {
@@ -977,136 +1030,29 @@
             $('.js_div_valores_totais').hide();
         });
 
-        $('#btn_arquivo_credito').on('click', function(e) {
+        let tipoArquivo = '';
+
+        $('.btn-gerar-arquivo').on('click', function(e) {
             e.preventDefault();
             
-            if (!$('#conditions-data').val()) {
-                alert('Por favor, aplique os filtros antes de gerar o arquivo.');
+            if ($('input[name="alt_linha"]:checked').length === 0) {
+                alert('Selecione ao menos um item a ser alterado.');
                 return;
             }
 
-            $('#modal_arquivo_credito').modal('show');
+            tipoArquivo = $(this).data('tipo');
+            
+            const mensagem = tipoArquivo === 'credito' 
+                ? 'Confirma o envio dos dados filtrados para geração do arquivo de crédito?'
+                : 'Confirma o envio dos dados filtrados para geração do arquivo de cadastro?';
+            
+            $('#modal_arquivo_mensagem').text(mensagem);
+            $('#modal_arquivo_confirmacao').modal('show');
         });
 
-        $('#btn_arquivo_cadastro').on('click', function(e) {
+        $('#btn_arquivo_confirm').on('click', function(e) {
             e.preventDefault();
-            
-            if (!$('#conditions-data').val()) {
-                alert('Por favor, aplique os filtros antes de gerar o arquivo.');
-                return;
-            }
-
-            $('#modal_arquivo_cadastro').modal('show');
-        });
-
-        $('#btn_arquivo_credito_confirm').on('click', function(e) {
-            e.preventDefault();
-            
-            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
-            
-            $.ajax({
-                url: base_url + '/reports/send_json_order_items',
-                method: 'POST',
-                data: {
-                    conditions: $('#conditions-data').val(),
-                    tipo: 'credito'
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        let msg = response.message + '\n\n';
-                        msg += 'Total de registros: ' + response.total_registros;
-                        
-                        if (response.robot_response && response.robot_response.file_url) {
-                            msg += '\n\nArquivo disponível em:\n' + response.robot_response.file_url;
-                        }
-                        
-                        alert(msg);
-                        
-                        location.reload();
-                    } else {
-                        let errorMsg = response.message || 'Erro desconhecido';
-                        
-                        if (response.errors && response.errors.length > 0) {
-                            errorMsg += '\n\nErros encontrados:\n';
-                            response.errors.forEach(function(erro) {
-                                errorMsg += '- ' + erro + '\n';
-                            });
-                        }
-                        
-                        if (response.total_registros) {
-                            errorMsg += '\n\nTotal de registros: ' + response.total_registros;
-                        }
-                        
-                        alert(errorMsg);
-                    }
-                    $(this).prop('disabled', true).html('Sim');
-                },
-                error: function(xhr) {
-                    let errorMsg = 'Erro ao processar solicitação.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                        if (xhr.responseJSON.error) {
-                            errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
-                        }
-                    }
-                    alert(errorMsg);
-                    $(this).prop('disabled', true).html('Sim');
-                }
-            });
-        });
-
-        $('#btn_arquivo_cadastro_confirm').on('click', function(e) {
-            e.preventDefault();
-            
-            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Processando...');
-            
-            $.ajax({
-                url: base_url + '/reports/send_json_order_items',
-                method: 'POST',
-                data: {
-                    conditions: $('#conditions-data').val(),
-                    tipo: 'cadastro'
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        let msg = response.message + '\n\n';
-                        msg += 'Total de registros: ' + response.total_registros;
-                        
-                        alert(msg);
-
-                        location.reload();
-                    } else {
-                        let errorMsg = response.message || 'Erro desconhecido';
-                        
-                        if (response.errors && response.errors.length > 0) {
-                            errorMsg += '\n\nErros encontrados:\n';
-                            response.errors.forEach(function(erro) {
-                                errorMsg += '- ' + erro + '\n';
-                            });
-                        }
-                        
-                        if (response.total_registros) {
-                            errorMsg += '\n\nTotal de registros: ' + response.total_registros;
-                        }
-                        
-                        alert(errorMsg);
-                    }
-                    $(this).prop('disabled', true).html('Sim');
-                },
-                error: function(xhr) {
-                    let errorMsg = 'Erro ao processar solicitação.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                        if (xhr.responseJSON.error) {
-                            errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
-                        }
-                    }
-                    alert(errorMsg);
-                    $(this).prop('disabled', true).html('Sim');
-                }
-            });
+            enviarArquivo(tipoArquivo, $(this));
         });
     });
 </script>
