@@ -67,6 +67,14 @@
                                 <label class="form-label fs-5 fw-bold mb-3">Número(s) de Pedido:</label>
                                 <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula" value="<?php echo isset($_GET['num']) ? $_GET['num'] : ''; ?>">
                             </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Condição de pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="cond_pag" id="cond_pag">
+                                    <option value=''></option>
+                                    <option value="1" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '1' ? 'selected' : ''; ?>>Pré pago</option>
+                                    <option value="2" <?php echo isset($_GET['cond_pag']) && $_GET['cond_pag'] == '2' ? 'selected' : ''; ?>>Faturado</option>
+                                </select>
+                            </div>
                             <div id="selectedNumbers"></div>
 
                             <div class="d-flex justify-content-end">
@@ -110,7 +118,8 @@
                         <th>Grupo Econômico</th>
                         <th>Tipo</th>
                         <th>Gestão Eficiente</th>
-                        <th class="w-200px min-w-200px rounded-end">Vencimento</th>
+                        <th>Vencimento</th>
+                        <th class="w-200px min-w-200px rounded-end">Condição de pagamento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,7 +177,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['EconomicGroup']['name'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $v_is_partial ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]['pedido_complementar'] == 1 ? 'Sim' : 'Não'; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>     
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["due_date"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["desc_condicao_pagamento"]; ?></td>
                             </tr>
                         <?php } ?>
                     <?php } else { ?>

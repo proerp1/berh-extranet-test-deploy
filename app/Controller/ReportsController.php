@@ -2288,6 +2288,10 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Order.is_partial' => $_GET['tipo']]);
         }
 
+        if (!empty($_GET['cond_pag'])) {
+            $condition['and'] = array_merge($condition['and'], ['Order.condicao_pagamento' => $_GET['cond_pag']]);
+        }
+
         $queryString = http_build_query($_GET);
 
         if (isset($_GET['exportar'])) {
