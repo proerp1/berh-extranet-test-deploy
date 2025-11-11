@@ -2905,9 +2905,10 @@ class ReportsController extends AppController
             ],
         ]);
 
-        $response   = curl_exec($ch);
-        $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError  = curl_error($ch);
+        $response    = curl_exec($ch);
+        $httpCode    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $curlError   = curl_error($ch);
         curl_close($ch);
 
         $this->response->type('application/json');
@@ -2924,20 +2925,121 @@ class ReportsController extends AppController
         }
 
         if ($httpCode === 200) {
+            $robotResponse = json_decode($response, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($robotResponse)) {
+                if (!empty($robotResponse['errors'])) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => $robotResponse['message'] ?? 'Falha ao processar parte ou todos os registros',
+                        'errors'  => $robotResponse['errors'],
+                        'total_registros' => count($arr_data),
+                        'robot_response'  => $robotResponse
+                    ]);
+                    return $this->response;
+                }
+
+                if (!empty($robotResponse['file_url'])) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Arquivo enviado e processado com sucesso!',
+                        'total_registros' => count($arr_data),
+                        'file_url' => $robotResponse['file_url'],
+                        'robot_response' => $robotResponse
+                    ]);
+                    return $this->response;
+                }
+
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Processado com sucesso!',
+                    'total_registros' => count($arr_data),
+                    'robot_response' => $robotResponse
+                ]);
+                return $this->response;
+            }
+
+            $isZip = (strpos((string)$contentType, 'zip') !== false)
+                || (strpos((string)$contentType, 'octet-stream') !== false)
+                || (substr($response, 0, 2) === "PK");
+
+            if ($isZip) {
+                $fname = $tipo.'_'.date('Ymd_His').'.zip';
+
+                $fullPath = TMP . $fname;
+
+                file_put_contents($fullPath, $response);
+
+                $downloadUrl = Router::url('/reports/download_robot_tmp?f=' . urlencode($fname), true);
+
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'ZIP gerado pelo robô.',
+                    'total_registros' => count($arr_data),
+                    'file_url' => $downloadUrl,
+                    'meta' => [
+                        'content_type' => $contentType,
+                        'size' => strlen($response)
+                    ]
+                ]);
+                return $this->response;
+            }
+
             echo json_encode([
-                'success' => true,
-                'message' => 'Arquivo enviado e processado com sucesso!',
-                'total_registros' => count($arr_data)
+                'success' => false,
+                'message' => 'Resposta inesperada do robô (não é JSON nem ZIP).',
+                'debug_info' => [
+                    'content_type' => $contentType,
+                    'first_bytes_hex' => bin2hex(substr($response, 0, 20)),
+                    'len' => strlen($response),
+                ]
             ]);
+
             return $this->response;
         }
 
         $this->response->statusCode($httpCode);
+        $this->response->type('application/json');
+
+        $robotJson = json_decode($response, true);
+        $isRobotJson = (json_last_error() === JSON_ERROR_NONE && is_array($robotJson));
+
+        if ($isRobotJson) {
+            echo json_encode([
+                'success' => false,
+                'message' => $robotJson['message'] ?? 'Falha ao enviar para o robô (HTTP ' . $httpCode . ')',
+                'errors'  => $robotJson['errors'] ?? [],
+                'robot_response' => $robotJson
+            ]);
+            return $this->response;
+        }
+
         echo json_encode([
             'success' => false,
-            'message' => 'Falha ao enviar para o robô (HTTP ' . $httpCode . ')'
+            'message' => 'Falha ao enviar para o robô (HTTP ' . $httpCode . ')',
+            'raw_response' => substr($response, 0, 1000)
         ]);
 
+        return $this->response;
+    }
+
+    public function download_robot_tmp()
+    {
+        $this->autoRender = false;
+
+        $fname = $this->request->query('f');
+        if (!$fname || !preg_match('/^[a-zA-Z0-9_\-\.]+$/', $fname)) {
+            throw new BadRequestException('Parâmetro inválido');
+        }
+
+        $fullPath = TMP . $fname;
+        if (!file_exists($fullPath)) {
+            throw new NotFoundException('Arquivo não encontrado');
+        }
+
+        $this->response->type('zip');
+        $this->response->download($fname);
+        $this->response->body(file_get_contents($fullPath));
+        
         return $this->response;
     }
 
@@ -2977,5 +3079,4 @@ class ReportsController extends AppController
         
         return null;
     }
-
 }

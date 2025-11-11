@@ -706,47 +706,61 @@
             data: postData,
             dataType: 'json',
             success: function(response) {
-                if (response.success) {
-                    let msg = response.message + '\n\n';
-                    msg += 'Total de registros: ' + response.total_registros;
-                    
-                    if (response.robot_response && response.robot_response.file_url) {
-                        msg += '\n\nArquivo disponível em:\n' + response.robot_response.file_url;
-                    }
-                    
-                    alert(msg);
+                $('#modal_arquivo_confirmacao').modal('hide');
 
-                    location.reload();
+                if (response.success) {
+                    if (response.file_url) {
+                        const link = document.createElement('a');
+                        link.href = response.file_url;
+                        link.download = ''; // deixa o nome vir do servidor
+                        link.target = '_blank';
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                    } else {
+                        setTimeout(() => location.reload(), 1000);
+                    }
                 } else {
-                    let errorMsg = response.message || 'Erro desconhecido';
-                    
+                    let msg = response.message || 'Erro ao processar solicitação.';
+
                     if (response.errors && response.errors.length > 0) {
-                        errorMsg += '\n\nErros encontrados:\n';
-                        response.errors.forEach(function(erro) {
-                            errorMsg += '- ' + erro + '\n';
+                        msg += '\n\nErros encontrados:\n\n';
+                        response.errors.forEach((erro, i) => {
+                            if (erro.mensagem) {
+                                msg += (i + 1) + '. CPF: ' + erro.cpf + '\n';
+                                msg += '   Nome: ' + erro.nome + '\n';
+                                msg += '   Operadora: ' + erro.id_codigo_operadora + '\n';
+                                msg += '   Erro: ' + erro.mensagem + '\n\n';
+                            }
                         });
                     }
-                    
-                    if (response.total_registros) {
-                        errorMsg += '\n\nTotal de registros: ' + response.total_registros;
-                    }
-                    
-                    alert(errorMsg);
+
+                    alert(msg);
                 }
 
                 btnConfirm.prop('disabled', false).html('Sim');
             },
-            error: function(xhr, status, error) {
-                let errorMsg = 'Erro ao processar solicitação.';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMsg = xhr.responseJSON.message;
-                    if (xhr.responseJSON.error) {
-                        errorMsg += '\n\nDetalhes: ' + xhr.responseJSON.error;
-                    }
+            error: function(xhr) {
+                let payload = xhr.responseJSON;
+                if (!payload && xhr.responseText) {
+                    try { payload = JSON.parse(xhr.responseText); } catch (e) {}
                 }
 
-                alert(errorMsg);
+                let msg = (payload && payload.message)
+                    ? payload.message
+                    : ('Falha ao enviar para o robô (HTTP ' + xhr.status + ')');
 
+                if (payload && Array.isArray(payload.errors) && payload.errors.length > 0) {
+                    msg += '\n\nErros encontrados:\n\n';
+                    payload.errors.forEach(function(erro, i) {
+                        msg += (i + 1) + '. CPF: ' + erro.cpf + '\n';
+                        msg += '   Nome: ' + erro.nome + '\n';
+                        msg += '   Operadora: ' + erro.id_codigo_operadora + '\n';
+                        msg += '   Erro: ' + erro.mensagem + '\n\n';
+                    });
+                }
+
+                alert(msg);
                 btnConfirm.prop('disabled', false).html('Sim');
             }
         });
