@@ -1752,9 +1752,14 @@ class ReportsController extends AppController
         $this->set(compact('action', 'breadcrumb', 'data', 'buscar'));
     }
 
-    public function alter_item_status_processamento_all()
+    public function alter_item_status_processamento()
     {
+        $this->layout = 'ajax';
         $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(91, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $statusProcess      = isset($this->request->data['v_status_processamento']) ? $this->request->data['v_status_processamento'] : null;
         $pedido_operadora   = isset($this->request->data['v_pedido_operadora']) ? $this->request->data['v_pedido_operadora'] : null;
@@ -1766,137 +1771,21 @@ class ReportsController extends AppController
 
         $file_item          = isset($_FILES['file_item']) ? $_FILES['file_item'] : null;
         $file_repasse       = isset($_FILES['file_repasse']) ? $_FILES['file_repasse'] : null;
-
-        $itemOrderIds   = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : null;
-        $bt             = isset($this->request->data['curr_bt']) ? json_decode($this->request->data['curr_bt'], true) : null;
-        $stpg           = isset($this->request->data['curr_stpg']) ? json_decode($this->request->data['curr_stpg'], true) : null;
-        $stp            = isset($this->request->data['curr_stp']) ? json_decode($this->request->data['curr_stp'], true) : null;
-        $st             = isset($this->request->data['curr_st']) ? json_decode($this->request->data['curr_st'], true) : null;
-
-        $buscar = false;
-        $de = null;
-        $para = null;
-
-        $aba            = isset($this->request->data['curr_aba']) ? $this->request->data['curr_aba'] : null;
-        $de             = isset($this->request->data['curr_de']) ? $this->request->data['curr_de'] : null;
-        $para           = isset($this->request->data['curr_para']) ? $this->request->data['curr_para'] : null;
-        $num            = isset($this->request->data['curr_num']) ? $this->request->data['curr_num'] : null;
-        $sup            = isset($this->request->data['curr_sup']) ? $this->request->data['curr_sup'] : null;
-        $c              = isset($this->request->data['curr_c']) ? $this->request->data['curr_c'] : null;
-        $q              = isset($this->request->data['curr_q']) ? $this->request->data['curr_q'] : null;
-        $first_order    = isset($this->request->data['curr_first_order']) ? $this->request->data['curr_first_order'] : null;
-
-        $condition = ['and' => ['Order.data_cancel' => '1901-01-01 00:00:00', 'OrderItem.outcome_id' => null], 'or' => []];
-
-        $cond_aba = $this->getCondicoesAbaCompras($aba);
-
-        $condition['and'][] = $cond_aba;
-
-        if (!empty($itemOrderIds) && is_array($itemOrderIds)) {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $itemOrderIds]);
+                
+        $orderItemIds       = isset($this->request->data['orderItemIds']) ? json_decode($this->request->data['orderItemIds'], true) : null;
+        $notOrderItemIds    = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : null;
+        
+        $condition          = json_decode(base64_decode($this->request->data('conditions')), true);
+        
+        if (!empty($orderItemIds) && is_array($orderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id' => $orderItemIds]);
         }
         
-        if (!empty($de)) {
-            $buscar = true;
-
-            $deRaw = $de;
-            $dateObjectDe = DateTime::createFromFormat('d/m/Y', $deRaw);
-            $de = $dateObjectDe->format('Y-m-d');
-
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created >=' => $de]);
-        }
-
-        if (!empty($para)) {
-            $buscar = true;
-
-            $paraRaw = $para;
-            $dateObjectPara = DateTime::createFromFormat('d/m/Y', $paraRaw);
-            $para = $dateObjectPara->format('Y-m-d');
-            
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.created <=' => $para . ' 23:59:59']);
-        }
-
-        if (!empty($sup) and $sup != 'Selecione') {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $sup]);
-        }
-
-        if (!empty($num)) {
-            $buscar = true;
-
-            // Dividindo a entrada em uma matriz de números
-            $selectedNumbers = preg_split("/[\s,]+/", $num);
-            
-            // Removendo valores em branco da matriz
-            $selectedNumbers = array_filter($selectedNumbers, 'strlen');
-
-            // Adicionando a condição para cada número selecionado
-            $orConditions = [];
-            foreach ($selectedNumbers as $number) {
-                $orConditions[] = ['Order.id' => $number];
-            }
-
-            // Unindo as condições com OR
-            $condition['and'][] = ['or' => $orConditions];
-        }
-
-        if (!empty($bt) && is_array($bt)) {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['Benefit.benefit_type_id' => $bt]);
-        }
-
-        if (!empty($st) && is_array($st)) {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['Order.status_id' => $st]);
-        }
-
-        if (!empty($stp) && is_array($stp)) {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['OrderItem.status_processamento' => $stp]);
-        }
-
-        if (!empty($stpg) && is_array($stpg)) {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['StatusOutcome.id' => $stpg]);
-        }
-
-        if (!empty($c) and $c != 'Selecione') {
-            $buscar = true;
-
-            $condition['and'] = array_merge($condition['and'], ['Customer.id' => $c]);
+        if (!empty($notOrderItemIds) && is_array($notOrderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $notOrderItemIds]);
         }
         
-        if (!empty($first_order)) {
-            $buscar = true;
-            
-            if ($first_order == 'sim') {
-                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 1]);
-            } elseif ($first_order == 'nao') {
-                $condition['and'] = array_merge($condition['and'], ['OrderItem.first_order' => 0]);
-            }
-        }
-
-        if (!empty($q)) {
-            $buscar = true;
-
-            $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.name LIKE' => '%' . $q . '%',
-                'CustomerUser.email LIKE' => '%' . $q . '%',
-                'CustomerUser.cpf LIKE' => '%' . $q . '%',
-                'Customer.nome_primario LIKE' => '%' . $q . '%',
-                'Customer.documento LIKE' => '%' . $q . '%',
-                'Order.id LIKE' => '%' . $q . '%',
-                'Customer.id LIKE' => '%' . $q . '%',
-                'Customer.codigo_associado LIKE' => "%" . $q . "%",
-            ]);
-        }
+        $condition['and'] = array_merge($condition['and'], ['OrderItem.outcome_id' => null]);
 
         $items = $this->OrderItem->find('all', [
             'fields' => ['OrderItem.id'],
@@ -2192,6 +2081,121 @@ class ReportsController extends AppController
         }
 
         echo json_encode(['success' => true]);
+    }
+
+    public function get_total_items() 
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+
+        $this->Permission->check(91, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $orderItemIds       = isset($this->request->data['orderItemIds']) ? json_decode($this->request->data['orderItemIds'], true) : null;
+        $notOrderItemIds    = isset($this->request->data['notOrderItemIds']) ? json_decode($this->request->data['notOrderItemIds'], true) : null;
+        
+        $condition          = json_decode(base64_decode($this->request->data('conditions')), true);
+        
+        if (!empty($orderItemIds) && is_array($orderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id' => $orderItemIds]);
+        }
+        
+        if (!empty($notOrderItemIds) && is_array($notOrderItemIds)) {
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $notOrderItemIds]);
+        }
+        
+        $condition['and'] = array_merge($condition['and'], ['OrderItem.outcome_id' => null]);
+
+        $items = $this->OrderItem->find('all', [
+            'conditions' => $condition,
+            'group' => ['Supplier.id', 'Supplier.tipo_boleto'],
+            'fields' => [
+                'Supplier.id',
+                'Supplier.tipo_boleto',
+                'SUM(COALESCE(OrderItem.subtotal, 0) - COALESCE(OrderItem.saldo, 0)) as soma_subtotal',
+                'SUM(COALESCE(OrderItem.transfer_fee, 0) - COALESCE(OrderItem.saldo_transfer_fee, 0)) as soma_transfer_fee',
+                'SUM((COALESCE(OrderItem.subtotal, 0) - COALESCE(OrderItem.saldo, 0)) + (COALESCE(OrderItem.transfer_fee, 0) - COALESCE(OrderItem.saldo_transfer_fee, 0))) as soma_total'
+            ],
+            'joins' => [
+                [
+                    'table' => 'benefits',
+                    'alias' => 'Benefit',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Benefit.id = CustomerUserItinerary.benefit_id', 'Benefit.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'suppliers',
+                    'alias' => 'Supplier',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Supplier.id = Benefit.supplier_id', 'Supplier.data_cancel' => '1901-01-01',
+                    ]
+                ],
+                [
+                    'table' => 'customers',
+                    'alias' => 'Customer',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Customer.id = Order.customer_id', 'Customer.data_cancel' => '1901-01-01',
+                    ],
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'Status',
+                    'type' => 'INNER',
+                    'conditions' => [
+                        'Status.id = Order.status_id',
+                    ]
+                ],
+                [
+                    'table' => 'outcomes',
+                    'alias' => 'Outcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Outcome.id = OrderItem.outcome_id'
+                    ]
+                ],
+                [
+                    'table' => 'statuses',
+                    'alias' => 'StatusOutcome',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
+            ]
+        ]);
+        
+        $suppliers = [];
+        $tipo_boleto = null;
+        $soma_subtotal = 0;
+        $soma_transfer_fee = 0;
+        $soma_total = 0;
+
+        foreach ($items as $result) {
+            $suppliers[] = $result['Supplier']['id'];
+            $tipo_boleto = $result['Supplier']['tipo_boleto'];
+            $soma_subtotal += floatval($result[0]['soma_subtotal']);
+            $soma_transfer_fee += floatval($result[0]['soma_transfer_fee']);
+            $soma_total += floatval($result[0]['soma_total']);
+        }
+        
+        $valid = count(array_unique($suppliers)) === 1;
+        
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'soma_subtotal' => $soma_subtotal,
+                'soma_transfer_fee' => $soma_transfer_fee,
+                'soma_total' => $soma_total,
+                'tipo_boleto' => $tipo_boleto,
+                'valid' => $valid,
+                'supplier_id' => !empty($suppliers) ? $suppliers[0] : null
+            ]
+        ]);
     }
 
     public function status_pedidos()

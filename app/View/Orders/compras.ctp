@@ -1,5 +1,7 @@
 <?php echo $this->element("../Orders/_abas"); ?>
 
+<input type="hidden" id="conditions-data" value="<?php echo $conditionsJson; ?>">
+
 <div class="row">
     <div class="card mb-5 mb-xl-8">
         <div class="card-body pt-0 py-3 mt-10">
@@ -383,14 +385,116 @@
                     }
                     html += '<option value="' + obj.suppliers[i].Supplier.id + '" '+sel_sup+'>' + obj.suppliers[i].Supplier.nome_fantasia + '</option>';
                 }
+
                 $("#sup").html(html);
 
-                // reload select2
                 $("#sup").select2();
             }
         });
+    }    
+
+    function alterarStatusProcessamento(btnAlter) {
+        btnAlter.prop('disabled', true);
+
+        $("#canc_confirm").prop('disabled', true);
+        
+        const order_id = <?php echo $id ?>;
+        const v_status_processamento = $('#status_processamento').val();
+        const v_pedido_operadora = $('#pedido_operadora').val();
+        const v_data_entrega = $('#data_entrega').val();
+        const v_data_vencimento = $('#data_vencimento').val();
+        const v_forma_pagamento = $('#forma_pagamento').val();
+        const v_motivo = $('#motivo').val();
+        const v_observacoes = $('#observacoes').val();
+        const file_item = $('#file_item')[0].files[0];
+        const file_repasse = $('#file_repasse')[0].files[0];
+        
+        let formData = new FormData();
+        
+        formData.append('conditions', $('#conditions-data').val());
+        formData.append('v_order_id', order_id);
+        formData.append('v_status_processamento', v_status_processamento);
+        formData.append('v_pedido_operadora', v_pedido_operadora);
+        formData.append('v_data_entrega', v_data_entrega);
+        formData.append('v_data_vencimento', v_data_vencimento);
+        formData.append('v_forma_pagamento', v_forma_pagamento);
+        formData.append('v_motivo', v_motivo);
+        formData.append('v_observacoes', v_observacoes);
+        
+        if (file_item) {
+            formData.append('file_item', file_item);
+        }
+        if (file_repasse) {
+            formData.append('file_repasse', file_repasse);
+        }
+
+        if ($(".check_all").is(':checked')) {
+            const notOrderItemIds = [];
+            $('input[name="alt_linha"]:not(:checked)').each(function() {
+                notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+            formData.append('notOrderItemIds', JSON.stringify(notOrderItemIds));
+        } else {
+            const orderItemIds = [];
+            $('input[name="alt_linha"]:checked').each(function() {
+                orderItemIds.push($(this).parent().parent().find('.item_id').val());
+            });
+            formData.append('orderItemIds', JSON.stringify(orderItemIds));
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: base_url + '/orders/alter_item_status_processamento',
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('Erro ao processar: ' + (response.message || 'Erro desconhecido'));
+                    btnAlter.prop('disabled', false);
+                    $("#canc_confirm").prop('disabled', false);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Erro na requisição: ' + error);
+                btnAlter.prop('disabled', false);
+                $("#canc_confirm").prop('disabled', false);
+            }
+        });
     }
-    
+
+    function limparModalAlterarStatus() {
+        const $modal = $('#modal_alterar_sel');
+        
+        $modal.find('input').not('[type="hidden"]').val('');
+        $modal.find('textarea').val('');
+        $modal.find('select').each(function() {
+            $(this).prop('selectedIndex', 0);
+            
+            if ($(this).hasClass('select2-hidden-accessible')) {
+                $(this).val(null).trigger('change');
+            }
+        });
+        
+        $modal.find('.alert').remove();
+        
+        $('#alterar_confirm').prop('disabled', false);
+        $('#canc_confirm').prop('disabled', false);
+        
+        $('#display_subtotal').text('R$ 0,00');
+        $('#display_transfer_fee').text('R$ 0,00');
+        $('#display_total').text('R$ 0,00');
+        
+        $('.js_div_valores_totais').hide();
+        $('.js_div_pagamento').hide();
+        $('.js_div_motivo').hide();
+        $('.js_div_boleto_item').hide();
+        $('.js_div_boleto_repasse').hide();
+    }
+
     $(document).ready(function() {
         $(".datepicker").mask("99/99/9999");
 
@@ -408,114 +512,7 @@
 
         $('#alterar_confirm').on('click', function(e) {
             e.preventDefault();
-            
-            $(this).prop('disabled', true);
-            $("#canc_confirm").prop('disabled', true);
-
-            const formData = new FormData();
-
-            formData.append('v_status_processamento', $('#status_processamento').val());
-            
-            const v_pedido_operadora = $('#pedido_operadora').val();
-            const v_data_entrega = $('#data_entrega').val();
-            const v_data_vencimento = $('#data_vencimento').val();
-            const v_forma_pagamento = $('#forma_pagamento').val();
-            const v_motivo = $('#motivo').val();
-            const v_observacoes = $('#observacoes').val();
-            
-            if (v_pedido_operadora) formData.append('v_pedido_operadora', v_pedido_operadora);
-            if (v_data_entrega) formData.append('v_data_entrega', v_data_entrega);
-            if (v_data_vencimento) formData.append('v_data_vencimento', v_data_vencimento);
-            if (v_forma_pagamento) formData.append('v_forma_pagamento', v_forma_pagamento);
-            if (v_motivo) formData.append('v_motivo', v_motivo);
-            if (v_observacoes) formData.append('v_observacoes', v_observacoes);
-
-            const file_item = $('#file_item')[0].files[0];
-            const file_repasse = $('#file_repasse')[0].files[0];
-            
-            if (file_item) formData.append('file_item', file_item);
-            if (file_repasse) formData.append('file_repasse', file_repasse);
-
-            if ($(".check_all").is(':checked')) {
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-
-                const notOrderItemIds = [];
-                $('input[name="alt_linha"]:not(:checked)').each(function() {
-                    notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
-                });
-                
-                const order_id = <?php echo $id ?>;
-
-                formData.append('order_id', order_id);
-                formData.append('notOrderItemIds', JSON.stringify(notOrderItemIds));
-                formData.append('curr_q', urlParams.get('q') || '');
-                formData.append('curr_sup', urlParams.get('sup') || '');
-
-                const curr_stp = Array.from(document.querySelectorAll('#kt-toolbar-filter #stp option:checked')).map(el => el.value);
-
-                formData.append('curr_stp', JSON.stringify(curr_stp));
-
-                $.ajax({
-                    type: 'POST',
-                    url: base_url + '/orders/alter_item_status_processamento_order_all',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert('Erro ao processar: ' + (response.message || 'Erro desconhecido'));
-                            $('#alterar_confirm').prop('disabled', false);
-                            $("#canc_confirm").prop('disabled', false);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Erro na requisição: ' + error);
-                        $('#alterar_confirm').prop('disabled', false);
-                        $("#canc_confirm").prop('disabled', false);
-                    }
-                });
-            } else {
-                const orderItemIds = [];
-                $('input[name="alt_linha"]:checked').each(function() {
-                    orderItemIds.push($(this).parent().parent().find('.item_id').val());
-                });
-
-                if (orderItemIds.length === 0) {
-                    alert('Selecione ao menos um item.');
-                    $('#alterar_confirm').prop('disabled', false);
-                    $("#canc_confirm").prop('disabled', false);
-                    return;
-                }
-
-                formData.append('orderItemIds', JSON.stringify(orderItemIds));
-
-                $.ajax({
-                    type: 'POST',
-                    url: base_url + '/orders/alter_item_status_processamento',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            location.reload();
-                        } else {
-                            alert('Erro ao processar: ' + (response.message || 'Erro desconhecido'));
-                            $('#alterar_confirm').prop('disabled', false);
-                            $("#canc_confirm").prop('disabled', false);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Erro na requisição: ' + error);
-                        $('#alterar_confirm').prop('disabled', false);
-                        $("#canc_confirm").prop('disabled', false);
-                    }
-                });
-            }
+            alterarStatusProcessamento($(this));
         });
 
         $(".check_all").on("change", function(){
@@ -549,64 +546,98 @@
                 'GERAR_PAGAMENTO'
             ];
 
-            const check = $('input[name="alt_linha"]:checked');
-
-            let v_boleto = null;
-            let v_supplier = null;
-            let v_valid = true;
-            let soma_subtotal = 0;
-            let soma_transfer_fee = 0;
-
-            check.each(function() {
-                const v_name = $(this).parent().parent().find('.supplier_id').val();
-                v_boleto = $(this).parent().parent().find('.supplier_boleto').val();
-
-                if (v_supplier === null) {
-                    v_supplier = v_name;
-                } else if (v_supplier !== v_name) {
-                    v_valid = false;
-                    return false;
-                }
-
-                if (v_op_status_venc.includes(v_status)) {
-                    const subtotal = parseFloat($(this).parent().parent().find('.subtotal_line').data('valor')) || 0;
-                    const transfer_fee = parseFloat($(this).parent().parent().find('.transfer_fee_line').data('valor')) || 0;
-                    
-                    soma_subtotal += subtotal;
-                    soma_transfer_fee += transfer_fee;
-                }
-            });
-
             if (v_op_status_venc.includes(v_status)) {
+                $('#display_subtotal').html('<i class="fas fa-spinner fa-spin"></i>');
+                $('#display_transfer_fee').html('<i class="fas fa-spinner fa-spin"></i>');
+                $('#display_total').html('<i class="fas fa-spinner fa-spin"></i>');
+                $('.js_div_valores_totais').show();
                 $('.js_div_pagamento').show();
                 
-                const soma_total = soma_subtotal + soma_transfer_fee;
-                
-                $('#display_subtotal').text('R$ ' + soma_subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                $('#display_transfer_fee').text('R$ ' + soma_transfer_fee.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                $('#display_total').text('R$ ' + soma_total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-                
-                $('.js_div_valores_totais').show();
+                let formData = new FormData();
 
-                if (v_boleto == 1) {
-                    $('.js_div_boleto_item').show();
-                } else if (v_boleto == 2) {
-                    $('.js_div_boleto_item').show();
-                    $('.js_div_boleto_repasse').show();
-                }
+                const order_id = <?php echo $id ?>;
+        
+                formData.append('conditions', $('#conditions-data').val());
+                formData.append('v_order_id', order_id);
 
-                if (!v_valid) {
-                    $('#modal_alterar_sel .alert').remove();
-                    
-                    const alertHtml = `
-                        <div class="alert alert-danger alert-dismissible alert_supplier fade show" role="alert">
-                            <strong>Atenção!</strong> Todos os fornecedores devem ser iguais para criar conta a pagar.
-                        </div>
-                    `;
-                    
-                    $('#modal_alterar_sel .modal-body').prepend(alertHtml);
-                    $("#alterar_confirm").prop('disabled', true);
+                if ($(".check_all").is(':checked')) {
+                    const notOrderItemIds = [];
+                    $('input[name="alt_linha"]:not(:checked)').each(function() {
+                        notOrderItemIds.push($(this).parent().parent().find('.item_id').val());
+                    });
+                    formData.append('notOrderItemIds', JSON.stringify(notOrderItemIds));
+                } else {
+                    const orderItemIds = [];
+                    $('input[name="alt_linha"]:checked').each(function() {
+                        orderItemIds.push($(this).parent().parent().find('.item_id').val());
+                    });
+                    formData.append('orderItemIds', JSON.stringify(orderItemIds));
                 }
+                
+                $.ajax({
+                    url: base_url + '/orders/get_total_items',
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            const data = response.data;
+                            
+                            $('#display_subtotal').text('R$ ' + data.soma_subtotal.toLocaleString('pt-BR', { 
+                                minimumFractionDigits: 2, 
+                                maximumFractionDigits: 2 
+                            }));
+                            $('#display_transfer_fee').text('R$ ' + data.soma_transfer_fee.toLocaleString('pt-BR', { 
+                                minimumFractionDigits: 2, 
+                                maximumFractionDigits: 2 
+                            }));
+                            $('#display_total').text('R$ ' + data.soma_total.toLocaleString('pt-BR', { 
+                                minimumFractionDigits: 2, 
+                                maximumFractionDigits: 2 
+                            }));
+                            
+                            if (data.tipo_boleto == 1) {
+                                $('.js_div_boleto_item').show();
+                                $('.js_div_boleto_repasse').hide();
+                            } else if (data.tipo_boleto == 2) {
+                                $('.js_div_boleto_item').show();
+                                $('.js_div_boleto_repasse').show();
+                            } else {
+                                $('.js_div_boleto_item').hide();
+                                $('.js_div_boleto_repasse').hide();
+                            }
+                            
+                            if (!data.valid) {
+                                $('#modal_alterar_sel .alert').remove();
+                                
+                                const alertHtml = `
+                                    <div class="alert alert-danger alert-dismissible alert_supplier fade show" role="alert">
+                                        <strong>Atenção!</strong> Todos os fornecedores devem ser iguais para criar conta a pagar.
+                                    </div>
+                                `;
+                                
+                                $('#modal_alterar_sel .modal-body').prepend(alertHtml);
+                                $("#alterar_confirm").prop('disabled', true);
+                            } else {
+                                $('#modal_alterar_sel').find('.alert_supplier').remove();
+                                $("#alterar_confirm").prop('disabled', false);
+                            }
+                        } else {
+                            alert(response.message || 'Erro ao calcular totais');
+                            $('#display_subtotal').text('R$ 0,00');
+                            $('#display_transfer_fee').text('R$ 0,00');
+                            $('#display_total').text('R$ 0,00');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Erro ao calcular totais: ' + error);
+                        $('#display_subtotal').text('R$ 0,00');
+                        $('#display_transfer_fee').text('R$ 0,00');
+                        $('#display_total').text('R$ 0,00');
+                    }
+                });
             } else {
                 $('.js_div_pagamento').hide();
                 $('.js_div_boleto_item').hide();
@@ -619,16 +650,12 @@
 
         $('#status_processamento').trigger('change');
 
+        $('#modal_alterar_sel').on('show.bs.modal', function () {
+            limparModalAlterarStatus();
+        });
+        
         $('#modal_alterar_sel').on('hidden.bs.modal', function () {
-            $(this).find('input[type="text"], textarea').val('');
-            $(this).find('select').prop('selectedIndex', 0);
-            $(this).find('.alert_supplier').remove();
-            $(this).find("#alterar_confirm").prop('disabled', false);
-            
-            $('#display_subtotal').text('R$ 0,00');
-            $('#display_transfer_fee').text('R$ 0,00');
-            $('#display_total').text('R$ 0,00');
-            $('.js_div_valores_totais').hide();
+            limparModalAlterarStatus();
         });
     });
 </script>
