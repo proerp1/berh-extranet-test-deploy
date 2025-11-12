@@ -4861,7 +4861,11 @@ class OrdersController extends AppController
     // if not found, create for costCenter and department, not for economicGroup
     private function getExtraIds($customerId, $centroCusto, $departamento, $grupoEconomico)
     {
-        $extra_ids = [];
+        $extra_ids = [
+            'cost_center_id' => null,
+            'customer_department_id' => null,
+            'economic_group_id' => null
+        ];
 
         if (!$this->loadModel('CostCenter')) {
             $this->loadModel('CostCenter');
