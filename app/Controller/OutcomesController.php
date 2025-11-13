@@ -1010,7 +1010,7 @@ public function edit_document($id, $document_id = null)
             ]
         ]];
 
-        $condition = ["and" => ['Order.id' => $order_ids], "or" => []];
+        $condition = ["and" => ['Order.id' => $order_ids, 'CustomerUserBankAccounts.status_id' => 1], "or" => []];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);

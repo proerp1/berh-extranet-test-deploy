@@ -230,6 +230,7 @@ class CustomerUser extends AppModel
                   k.code, 
                   CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, 
                   CONCAT(b.acc_number, '-', b.acc_digit) AS conta, 
+                    b.status_id,
                   b.pix_type, 
                   b.pix_id, 
                   t.description, 
@@ -265,6 +266,7 @@ class CustomerUser extends AppModel
                 AND c.data_cancel = '1901-01-01 00:00:00' 
                 AND u.data_cancel = '1901-01-01 00:00:00' 
                 AND i.data_cancel = '1901-01-01 00:00:00' 
+                AND b.status_id = 1 
               ORDER BY 1;
                     ";
 
