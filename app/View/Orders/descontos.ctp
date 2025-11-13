@@ -117,20 +117,19 @@
                             <?php echo $this->Form->input('pedidos', ["multiple" => true, "label" => false, "id" => "select_pedidos", "class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "required" => true, "empty" => "Selecione", 'options' => $orders]);?>
                         </div>
                     </div>
-
+                    
                     <div class="row mb-7">
                         <div class="col-md-6">
                             <label class="form-label required">Tipo de Desconto</label>
                             <select name="discount_type" id="discount_type" class="form-select" required>
                                 <option value="">Selecione o tipo...</option>
-                                <option value="REEBOLSO">REEBOLSO</option>
-                                <option value="ECONOMIA = CREDITA CONTA">ECONOMIA = CREDITA CONTA</option>
-                                <option value="AJUSTE = CREDITA E DEBITA">AJUSTE = CREDITA E DEBITA</option>
-                                <option value="INCONSISTENCIA = SOMENTE CREDITA">INCONSISTENCIA = SOMENTE CREDITA</option>
-                                <option value="SALDO">SALDO</option>
-                                <option value="BOLSA DE CREDITO">BOLSA DE CREDITO</option>
-                                <option value="CONTESTACAO GE = SOMENTE DEBITA">CONTESTACAO GE = SOMENTE DEBITA</option>
-                                <option value="RECEITA DERIVADA = SOMENTE CREDITA">RECEITA DERIVADA = SOMENTE CREDITA</option>
+                                <option value="1_ECONOMIA = CREDITA CONTA">1_ECONOMIA = CREDITA CONTA</option>
+                                <option value="2_AJUSTE = CREDITA E DEBITA">2_AJUSTE = CREDITA E DEBITA</option>
+                                <option value="3_INCONSISTENCIA = SOMENTE CREDITA">3_INCONSISTENCIA = SOMENTE CREDITA</option>
+                                <option value="4_SALDO">4_SALDO</option>
+                                <option value="5_BOLSA DE CREDITO">5_BOLSA DE CREDITO</option>
+                                <option value="6_CONTESTACAO GE = SOMENTE DEBITA">6_CONTESTACAO GE = SOMENTE DEBITA</option>
+                                <option value="7_RECEITA DERIVADA = SOMENTE CREDITA">7_RECEITA DERIVADA = SOMENTE CREDITA</option>
                             </select>
                         </div>
 
