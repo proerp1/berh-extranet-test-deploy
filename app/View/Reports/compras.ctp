@@ -637,7 +637,6 @@
                 }
                 $("#sup").html(html);
 
-                // reload select2
                 $("#c").select2();
                 $("#sup").select2();
             }
@@ -1046,10 +1045,6 @@
         });
 
         $('#status_processamento').trigger('change');
-
-        $('#modal_alterar_sel').on('show.bs.modal', function () {
-            limparModalAlterarStatus();
-        });
 
         $('#modal_alterar_sel').on('hidden.bs.modal', function () {
             limparModalAlterarStatus();

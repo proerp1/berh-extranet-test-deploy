@@ -649,10 +649,6 @@
         });
 
         $('#status_processamento').trigger('change');
-
-        $('#modal_alterar_sel').on('show.bs.modal', function () {
-            limparModalAlterarStatus();
-        });
         
         $('#modal_alterar_sel').on('hidden.bs.modal', function () {
             limparModalAlterarStatus();
