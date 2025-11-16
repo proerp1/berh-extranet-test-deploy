@@ -290,7 +290,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btn_salvar_unificar">Gerar Nota</button>
+                <button type="button" class="btn btn-success" id="btn_salvar_unificar">Gerar Nota</button>
             </div>
         </div>
     </div>
