@@ -5137,7 +5137,15 @@ class OrdersController extends AppController
         $this->autoRender = false;
         
         $ids = $this->request->query('ids');
-        
+        $valor_informado = $this->request->query('valor');
+        $motivo = $this->request->query('motivo');
+
+        if ($valor_informado) {
+            $valor_informado = $this->priceFormatBeforeSave($valor_informado);
+        } else {
+            $valor_informado = 0;
+        }
+
         $orders = $this->Order->find('all', [
             'contain' => ['Customer', 'EconomicGroup'],
             'conditions' => ['Order.id' => $ids],
@@ -5212,17 +5220,18 @@ class OrdersController extends AppController
         $orderConsolidado = [
             'Order' => [
                 'id' => $numeroNotaUnificada,
-                'subtotal' => 'R$ ' . number_format($totalSubtotal, 2, ',', '.'),
+                'motivo' => $motivo,
+                'valor_informado' => number_format($valor_informado, 2, ',', '.'),
+                'subtotal' => number_format($totalSubtotal, 2, ',', '.'),
                 'subtotal_not_formated' => $totalSubtotal,
-                'transfer_fee' => 'R$ ' . number_format($totalTransferFee, 2, ',', '.'),
+                'transfer_fee' => number_format($totalTransferFee, 2, ',', '.'),
                 'transfer_fee_not_formated' => $totalTransferFee,
-                'desconto' => 'R$ ' . number_format($totalDesconto, 2, ',', '.'),
+                'desconto' => number_format($totalDesconto, 2, ',', '.'),
                 'desconto_not_formated' => $totalDesconto,
-                'total' => 'R$ ' . number_format(
-                    ($totalSubtotal + $totalTransferFee - $totalDesconto), 
+                'total' => number_format(
+                    ($totalSubtotal + $totalTransferFee - $valor_informado), 
                     2, ',', '.'
                 ),
-                'observation' => '', // Mantém em branco
                 'economic_group_id' => $baseOrder['Order']['economic_group_id']
             ],
             'Customer' => $baseOrder['Customer'],

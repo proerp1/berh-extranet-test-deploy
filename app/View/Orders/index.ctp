@@ -27,10 +27,10 @@
                    
                     <?php if ($filtersFilled) { ?>
                         <?php if ($isSingleCustomer) { ?>
-                            <a href="#" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
+                            <button type="button" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                                 <i class="fas fa-download"></i>
                                 Unificar nota de débito
-                            </a>
+                            </button>
                         <?php } ?>
                         
                         <a href="<?php echo $this->base . '/orders/relatorio_processamento_index?' . $queryString; ?>" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
@@ -266,6 +266,33 @@
         </div>
 
         <?php echo $this->element("pagination"); ?>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_unificar_nota" tabindex="-1" aria-labelledby="modalUnificarNotaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUnificarNotaLabel">Unificar Nota de Débito</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form_unificar_nota">
+                    <div class="mb-3">
+                        <label for="valor_unificado" class="form-label">Valor</label>
+                        <input type="text" class="form-control" id="valor_unificado" name="valor_unificado">
+                    </div>
+                    <div class="mb-3">
+                        <label for="motivo_unificado" class="form-label">Motivo</label>
+                        <textarea class="form-control" id="motivo_unificado" name="motivo_unificado" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn_salvar_unificar">Gerar Nota</button>
+            </div>
+        </div>
     </div>
 </div>
 

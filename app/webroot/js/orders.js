@@ -437,6 +437,12 @@ $(document).ready(function() {
         }
     });
 
+    $('#valor_unificado').maskMoney({
+        decimal: ',',
+        thousands: '.',
+        precision: 2
+    });
+
     $('#js_unificar_nota').on('click', function(e) {
         e.preventDefault();
         
@@ -447,11 +453,28 @@ $(document).ready(function() {
             return;
         }
         
+        $('#form_unificar_nota')[0].reset();
+        $('#form_unificar_nota').removeClass('was-validated');
+        
+        var modal = new bootstrap.Modal(document.getElementById('modal_unificar_nota'));
+        modal.show();
+    });
+
+    $('#btn_salvar_unificar').on('click', function() {               
+        var valor = $('#valor_unificado').val();
+        var motivo = $('#motivo_unificado').val();
+
+        var itensSelecionados = $('input[name="alt_linha"]:checked');
+
         var pedidoIds = itensSelecionados.map(function() {
             return $(this).val();
         }).get();
         
         var queryString = 'ids[]=' + pedidoIds.join('&ids[]=');
+        queryString += '&valor=' + encodeURIComponent(valor);
+        queryString += '&motivo=' + encodeURIComponent(motivo);
+        
+        bootstrap.Modal.getInstance(document.getElementById('modal_unificar_nota')).hide();
         
         window.location.href = '/orders/nota_debito_unificada?' + queryString;
     });

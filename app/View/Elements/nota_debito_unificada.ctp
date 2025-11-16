@@ -348,7 +348,7 @@
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">CRÉDITO (C)</th>
-                    <td style="text-align: center;"> <?php echo $order['Order']['desconto']; ?></td>
+                    <td style="text-align: center;"> <?php echo $order['Order']['valor_informado']; ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">ACRÉSCIMO (D)</th>
@@ -356,7 +356,7 @@
                 </tr>
                 <tr>
                     <th colspan="2" style="text-align: right;" class="pr-10">TOTAL GERAL (A + B - C + D)</th>
-                    <td style="text-align: center;"> <?php echo number_format(($order['Order']['subtotal_not_formated'] + $order['Order']['transfer_fee_not_formated'] - $order['Order']['desconto_not_formated']), 2, ',', '.') ?></td>
+                    <td style="text-align: center;"> <?php echo $order['Order']['total'] ?></td>
                 </tr>
             </table>
         </div>
@@ -364,7 +364,7 @@
             <b>OBSERVAÇÕES</b>
         </div>
         <div class="cell">
-            <p class="m-0 p-10">&nbsp;</p>
+            <p class="m-0 p-10"><?php echo $order['Order']['motivo']; ?></p>
         </div>
     </div>
     <?php endforeach; ?>
