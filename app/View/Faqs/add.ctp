@@ -99,7 +99,7 @@
         </div>
 
         <!-- Upload de Documentação -->
-<div class="row" id="documentacao-wrapper" style="display: none;">
+<div class="row" id="documentacao-wrapper">
     <div class="mb-7 col-md-12">
         <label for="file" class="fw-semibold fs-6 mb-2">Documento ou Imagem</label>
         <?php echo $this->Form->input('file', [
@@ -144,23 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.height = this.scrollHeight + 'px';
         });
     });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const selectCategoria = document.getElementById('FaqCategoriaFaqId');
-    const docWrapper = document.getElementById('documentacao-wrapper');
-
-    function toggleUpload() {
-        if (selectCategoria.value === '3') {
-            docWrapper.style.display = 'block';
-        } else {
-            docWrapper.style.display = 'none';
-        }
-    }
-
-    toggleUpload(); // executa ao carregar
-    selectCategoria.addEventListener('change', toggleUpload);
 });
 </script>
 <script>
