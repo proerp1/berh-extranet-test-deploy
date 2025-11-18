@@ -702,29 +702,39 @@
                 <div class="col-3">
                     <h3>Itens</h3>
                 </div>
-                <div class="col-9">
+                <div class="col-9 d-flex justify-content-end">
                     <?php if ($order['Order']['status_id'] == 83) { ?>
-                        <a href="#" class="btn btn-sm btn-secondary me-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
+                        <a href="#" class="btn btn-sm btn-secondary me-3" data-bs-toggle="modal" data-bs-target="#modal_lote_usuarios">
                             <i class="fas fa-arrow-up"></i>
                             Beneficiários em lote (CSV)
                         </a>
                     <?php } ?>
                     <?php if ($order['Order']['is_partial'] == 3) { ?>
-                        <a data-bs-toggle="modal" data-bs-target="#modal_gera_remessa_pix" class="btn btn-sm btn-success me-3" style="float:right">
+                        <a data-bs-toggle="modal" data-bs-target="#modal_gera_remessa_pix" class="btn btn-sm btn-success me-3">
                             <i class="fas fa-dollar-sign"></i>
                             Remessa Pix
                         </a>
-                        <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $id; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
-                            <i class="fas fa-file-excel"></i>
-                            Baixar lista de Beneficiários - PIX
-                        </a>
+                        <button class="btn btn-sm btn-primary dropdown-toggle me-3" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Baixar lista de Beneficiários
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
+                            <div class="d-flex flex-column justify-content-start">
+
+                                <a href="<?php echo $this->base . '/orders/baixar_beneficiarios_pix/' . $id; ?>" class="btn btn-sm btn-primary me-3 mb-3">
+                                    <i class="fas fa-download"></i> PIX
+                                </a>
+                                <a href="<?php echo $this->base . '/orders/baixar_beneficiarios_conta_bancaria/' . $id; ?>" class="btn btn-sm btn-primary me-3">
+                                    <i class="fas fa-download"></i> Conta Bancária
+                                </a>
+                            </div>
+                        </div>
                     <?php } ?>
                     <?php if ($order['Order']['status_id'] == 83) { ?>
-                        <a href="#" class="btn btn-sm btn-primary me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
+                        <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#modal_add_beneficiarios">
                             <i class="fas fa-user"></i>
                             Novo Beneficiário
                         </a>
-                        <a href="#" class="btn btn-sm btn-info me-3 mb-3" style="float:right" data-bs-toggle="modal" data-bs-target="#modal_add_itinerario">
+                        <a href="#" class="btn btn-sm btn-info me-3" data-bs-toggle="modal" data-bs-target="#modal_add_itinerario">
                             <i class="fas fa-bus"></i>
                             Novo Itinerário
                         </a>

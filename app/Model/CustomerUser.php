@@ -195,8 +195,15 @@ class CustomerUser extends AppModel
         return false;
     }
 
-    public function find_pedido_beneficiarios_info($orderID)
+    public function find_pedido_beneficiarios_info($orderID, $pix = 'ambos')
     {
+        $pixWhere = '';
+        if ($pix == 'sim') {
+            $pixWhere = "AND b.pix_id != ''";
+        } elseif ($pix == 'nao') {
+            $pixWhere = "AND b.pix_id = ''";
+        }
+
         $sql = "SELECT u.name, u.cpf, u.email, IFNULL(u.cel, u.tel) as telefone, k.name, k.code, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_type, b.pix_id, t.description, i.subtotal, i.total, i.id, i.pix_status_id
                     FROM orders o 
                         INNER JOIN order_items i ON i.order_id = o.id 
@@ -206,7 +213,7 @@ class CustomerUser extends AppModel
                         LEFT JOIN customer_user_bank_accounts b ON b.customer_user_id = u.id AND b.data_cancel = '1901-01-01 00:00:00' 
                         LEFT JOIN bank_codes k ON k.id = b.bank_code_id 
                         LEFT JOIN bank_account_types t ON t.id = b.account_type_id 
-                    WHERE o.id = ".$orderID." 
+                    WHERE o.id = ".$orderID." $pixWhere
                             AND o.data_cancel = '1901-01-01 00:00:00' 
                             AND c.data_cancel = '1901-01-01 00:00:00' 
                             AND u.data_cancel = '1901-01-01 00:00:00' 

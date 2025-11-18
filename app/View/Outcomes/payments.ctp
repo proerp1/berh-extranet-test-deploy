@@ -68,10 +68,19 @@
                                 Liberar PIX
                             </a>
                         <?php } ?>
-                        <a href="<?php echo $this->base . '/orders/baixar_beneficiarios/' . $order['Order']['id']; ?>" class="btn btn-sm btn-primary me-3" style="float:right">
-                            <i class="fas fa-file-excel"></i>
-                            Baixar lista de Beneficiários - PIX
-                        </a>
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            Baixar lista de Beneficiários
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton">
+                            <div class="d-flex flex-column justify-content-start">
+                                <a href="<?php echo $this->base . '/orders/baixar_beneficiarios_pix/' . $order['Order']['id']; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                    <i class="fas fa-download"></i> PIX
+                                </a>
+                                <a href="<?php echo $this->base . '/orders/baixar_beneficiarios_conta_bancaria/' . $order['Order']['id']; ?>" class="btn btn-sm btn-primary me-2 mb-2">
+                                    <i class="fas fa-download"></i> Conta Bancária
+                                </a>
+                            </div>
+                        </div>
                     <?php } ?>
                 </div>
             </div>

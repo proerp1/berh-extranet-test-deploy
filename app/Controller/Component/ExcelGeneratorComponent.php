@@ -244,6 +244,18 @@ class ExcelGeneratorComponent extends Component
         $writer->save($local_salva);
     }
 
+    public function gerarExcelPedidosBeneficiariosContaBancaria($nome, $dados)
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $this->templates_list->getPedidosBeneficiariosContaBancaria($spreadsheet, $dados);
+
+        $local_salva = APP.'webroot/files/excel/'.$nome;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($local_salva);
+    }
+
     public function gerarExcelFornecedores($nome, $dados_sup, $dados_log)
     {
         $spreadsheet = new Spreadsheet();

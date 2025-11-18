@@ -3281,7 +3281,7 @@ class OrdersController extends AppController
         echo json_encode($customers);
     }
 
-    public function baixar_beneficiarios($id)
+    public function baixar_beneficiarios_pix($id)
     {
         $this->layout = 'ajax';
         $this->autoRender = false;
@@ -3291,11 +3291,30 @@ class OrdersController extends AppController
         $view = new View($this, false);
         $view->layout = false;
 
-        $nome = 'beneficiarios_pedido_' . $id . '.xlsx';
+        $nome = 'beneficiarios_pedido_pix_' . $id . '.xlsx';
 
-        $data = $this->CustomerUser->find_pedido_beneficiarios_info($id);
+        $data = $this->CustomerUser->find_pedido_beneficiarios_info($id, 'sim');
 
         $this->ExcelGenerator->gerarExcelPedidosBeneficiariosPIX($nome, $data);
+
+        $this->redirect("/files/excel/" . $nome);
+    }
+
+    public function baixar_beneficiarios_conta_bancaria($id)
+    {
+        $this->layout = 'ajax';
+        $this->autoRender = false;
+
+        ini_set('memory_limit', '-1');
+
+        $view = new View($this, false);
+        $view->layout = false;
+
+        $nome = 'beneficiarios_pedido_conta_bancaria_' . $id . '.xlsx';
+
+        $data = $this->CustomerUser->find_pedido_beneficiarios_info($id, 'nao');
+
+        $this->ExcelGenerator->gerarExcelPedidosBeneficiariosContaBancaria($nome, $data);
 
         $this->redirect("/files/excel/" . $nome);
     }
