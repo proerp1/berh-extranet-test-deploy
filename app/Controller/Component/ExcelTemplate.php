@@ -2761,8 +2761,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["o"]["id"] . " - PIX"); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), "0050", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
         }
     }
 
@@ -2787,8 +2787,8 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["o"]["id"] . " - TED"); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), "0050", \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "569539-7"); $col++;
         }
     }
 
