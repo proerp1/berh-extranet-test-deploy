@@ -1206,8 +1206,8 @@ class CustomerUsersController extends AppController
 
 
     /**
-     * View all benefits (CustomerUserItinerary) for a customer
-     * Displays all benefit assignments with filters and batch actions
+     * View all benefits (grouped by unique benefits) for a customer
+     * Displays unique benefits with customer user counts and batch actions
      */
     public function view_all_benefits($id)
     {
@@ -1217,20 +1217,10 @@ class CustomerUsersController extends AppController
         // Check permission for the new page
         $this->Permission->check(95, "leitura") ? "" : $this->redirect("/not_allowed");
 
-        $this->Paginator->settings = $this->paginate;
         $user = $this->Auth->user();
 
-        // Build conditions
+        // Build base conditions for itineraries
         $condition = ["and" => ['CustomerUser.customer_id' => $id], "or" => []];
-
-        // Search filter (name, CPF, email)
-        if (!empty($_GET['q'])) {
-            $condition['or'] = array_merge($condition['or'], [
-                'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%",
-                'CustomerUser.name LIKE' => "%" . $_GET['q'] . "%",
-                'CustomerUser.email LIKE' => "%" . $_GET['q'] . "%"
-            ]);
-        }
 
         // Benefit code filter
         if (!empty($_GET['benefit_code'])) {
@@ -1256,8 +1246,68 @@ class CustomerUsersController extends AppController
             $condition['and'] = array_merge($condition['and'], ['Benefit.status_id' => $_GET['status_benefit']]);
         }
 
-        // Get data with pagination
-        $data = $this->Paginator->paginate('CustomerUserItinerary', $condition);
+        // Get all itineraries for this customer matching the filters
+        $allItineraries = $this->CustomerUserItinerary->find('all', [
+            'conditions' => $condition,
+            'contain' => ['CustomerUser', 'Benefit', 'Status']
+        ]);
+
+        // Group by benefit_id and aggregate data
+        $benefitsData = [];
+        foreach ($allItineraries as $itinerary) {
+            $benefitId = $itinerary['CustomerUserItinerary']['benefit_id'];
+            
+            if (!isset($benefitsData[$benefitId])) {
+                $benefitsData[$benefitId] = [
+                    'Benefit' => $itinerary['Benefit'],
+                    'customer_user_count' => 0,
+                    'itinerary_ids' => [],
+                    'total_working_days' => 0,
+                    'total_quantity' => 0,
+                    // Track different statuses for the links
+                    'status_counts' => [],
+                    'most_common_status' => null
+                ];
+            }
+            
+            $benefitsData[$benefitId]['customer_user_count']++;
+            $benefitsData[$benefitId]['itinerary_ids'][] = $itinerary['CustomerUserItinerary']['id'];
+            $benefitsData[$benefitId]['total_working_days'] += $itinerary['CustomerUserItinerary']['working_days'];
+            $benefitsData[$benefitId]['total_quantity'] += $itinerary['CustomerUserItinerary']['quantity'];
+            
+            // Track status counts
+            $statusId = $itinerary['CustomerUserItinerary']['status_id'];
+            if (!isset($benefitsData[$benefitId]['status_counts'][$statusId])) {
+                $benefitsData[$benefitId]['status_counts'][$statusId] = [
+                    'count' => 0,
+                    'status' => $itinerary['Status']
+                ];
+            }
+            $benefitsData[$benefitId]['status_counts'][$statusId]['count']++;
+        }
+
+        // Determine most common status for each benefit
+        foreach ($benefitsData as $benefitId => &$data) {
+            $maxCount = 0;
+            foreach ($data['status_counts'] as $statusId => $statusInfo) {
+                if ($statusInfo['count'] > $maxCount) {
+                    $maxCount = $statusInfo['count'];
+                    $data['most_common_status'] = $statusInfo['status'];
+                }
+            }
+        }
+
+        // Convert to indexed array for view
+        $data = array_values($benefitsData);
+
+        // Manual pagination
+        $perPage = 20;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $total = count($data);
+        $pageCount = ceil($total / $perPage);
+        $offset = ($page - 1) * $perPage;
+        
+        $paginatedData = array_slice($data, $offset, $perPage);
 
         // Get all statuses for filters
         $status = $this->Status->find('all', [
@@ -1280,11 +1330,20 @@ class CustomerUsersController extends AppController
             'Gerenciamento de Benefícios' => ''
         ];
 
-        $this->set(compact('data', 'id', 'status', 'benefits', 'breadcrumb', 'user', 'cliente'));
+        // Set pagination info for the view
+        $paginationInfo = [
+            'page' => $page,
+            'pageCount' => $pageCount,
+            'count' => $total,
+            'current' => count($paginatedData),
+            'limit' => $perPage
+        ];
+
+        $this->set(compact('paginatedData', 'id', 'status', 'benefits', 'breadcrumb', 'user', 'cliente', 'paginationInfo'));
     }
 
     /**
-     * Batch activate CustomerUserItinerary records
+     * Batch activate CustomerUserItinerary records for all customer users with selected benefits
      */
     public function batch_activate_itineraries()
     {
@@ -1292,22 +1351,31 @@ class CustomerUsersController extends AppController
         $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
 
         if ($this->request->is('post')) {
-            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $benefitIds = json_decode($this->request->data['benefitIds'], true);
             $customerId = $this->request->data['customerId'];
             $user = $this->Auth->user();
 
             $successCount = 0;
             $errorCount = 0;
 
-            foreach ($itineraryIds as $itineraryId) {
-                // Get current data before update
-                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+            // Find active status
+            $activeStatus = $this->Status->find('first', [
+                'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Ativo']
+            ]);
 
-                if ($currentData) {
-                    // Find active status (assuming status_id = 1 is active, adjust if needed)
-                    $activeStatus = $this->Status->find('first', [
-                        'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Ativo']
-                    ]);
+            foreach ($benefitIds as $benefitId) {
+                // Find all itineraries for this benefit and customer
+                $itineraries = $this->CustomerUserItinerary->find('all', [
+                    'conditions' => [
+                        'CustomerUserItinerary.benefit_id' => $benefitId,
+                        'CustomerUser.customer_id' => $customerId
+                    ],
+                    'contain' => ['CustomerUser']
+                ]);
+
+                foreach ($itineraries as $itinerary) {
+                    $itineraryId = $itinerary['CustomerUserItinerary']['id'];
+                    $currentStatusId = $itinerary['CustomerUserItinerary']['status_id'];
 
                     $this->CustomerUserItinerary->id = $itineraryId;
                     $updateData = [
@@ -1318,12 +1386,12 @@ class CustomerUsersController extends AppController
                     if ($this->CustomerUserItinerary->save($updateData, false)) {
                         // Log the action
                         $this->CustomerUserItineraryLog->logAction(
-                            $currentData['CustomerUserItinerary']['customer_user_id'],
-                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itinerary['CustomerUserItinerary']['customer_user_id'],
+                            $benefitId,
                             $itineraryId,
                             'activate',
                             $user,
-                            ['status_id' => $currentData['CustomerUserItinerary']['status_id']],
+                            ['status_id' => $currentStatusId],
                             ['status_id' => $activeStatus['Status']['id']]
                         );
                         $successCount++;
@@ -1351,7 +1419,7 @@ class CustomerUsersController extends AppController
     }
 
     /**
-     * Batch inactivate CustomerUserItinerary records
+     * Batch inactivate CustomerUserItinerary records for all customer users with selected benefits
      */
     public function batch_inactivate_itineraries()
     {
@@ -1359,22 +1427,31 @@ class CustomerUsersController extends AppController
         $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
 
         if ($this->request->is('post')) {
-            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $benefitIds = json_decode($this->request->data['benefitIds'], true);
             $customerId = $this->request->data['customerId'];
             $user = $this->Auth->user();
 
             $successCount = 0;
             $errorCount = 0;
 
-            foreach ($itineraryIds as $itineraryId) {
-                // Get current data before update
-                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+            // Find inactive status
+            $inactiveStatus = $this->Status->find('first', [
+                'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Inativo']
+            ]);
 
-                if ($currentData) {
-                    // Find inactive status
-                    $inactiveStatus = $this->Status->find('first', [
-                        'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Inativo']
-                    ]);
+            foreach ($benefitIds as $benefitId) {
+                // Find all itineraries for this benefit and customer
+                $itineraries = $this->CustomerUserItinerary->find('all', [
+                    'conditions' => [
+                        'CustomerUserItinerary.benefit_id' => $benefitId,
+                        'CustomerUser.customer_id' => $customerId
+                    ],
+                    'contain' => ['CustomerUser']
+                ]);
+
+                foreach ($itineraries as $itinerary) {
+                    $itineraryId = $itinerary['CustomerUserItinerary']['id'];
+                    $currentStatusId = $itinerary['CustomerUserItinerary']['status_id'];
 
                     $this->CustomerUserItinerary->id = $itineraryId;
                     $updateData = [
@@ -1385,12 +1462,12 @@ class CustomerUsersController extends AppController
                     if ($this->CustomerUserItinerary->save($updateData, false)) {
                         // Log the action
                         $this->CustomerUserItineraryLog->logAction(
-                            $currentData['CustomerUserItinerary']['customer_user_id'],
-                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itinerary['CustomerUserItinerary']['customer_user_id'],
+                            $benefitId,
                             $itineraryId,
                             'inactivate',
                             $user,
-                            ['status_id' => $currentData['CustomerUserItinerary']['status_id']],
+                            ['status_id' => $currentStatusId],
                             ['status_id' => $inactiveStatus['Status']['id']]
                         );
                         $successCount++;
@@ -1418,7 +1495,7 @@ class CustomerUsersController extends AppController
     }
 
     /**
-     * Batch delete (soft delete) CustomerUserItinerary records
+     * Batch delete (soft delete) CustomerUserItinerary records for all customer users with selected benefits
      */
     public function batch_delete_itineraries()
     {
@@ -1426,18 +1503,26 @@ class CustomerUsersController extends AppController
         $this->Permission->check(95, "excluir") ? "" : $this->redirect("/not_allowed");
 
         if ($this->request->is('post')) {
-            $itineraryIds = json_decode($this->request->data['itineraryIds'], true);
+            $benefitIds = json_decode($this->request->data['benefitIds'], true);
             $customerId = $this->request->data['customerId'];
             $user = $this->Auth->user();
 
             $successCount = 0;
             $errorCount = 0;
 
-            foreach ($itineraryIds as $itineraryId) {
-                // Get current data before delete
-                $currentData = $this->CustomerUserItinerary->findById($itineraryId);
+            foreach ($benefitIds as $benefitId) {
+                // Find all itineraries for this benefit and customer
+                $itineraries = $this->CustomerUserItinerary->find('all', [
+                    'conditions' => [
+                        'CustomerUserItinerary.benefit_id' => $benefitId,
+                        'CustomerUser.customer_id' => $customerId
+                    ],
+                    'contain' => ['CustomerUser']
+                ]);
 
-                if ($currentData) {
+                foreach ($itineraries as $itinerary) {
+                    $itineraryId = $itinerary['CustomerUserItinerary']['id'];
+
                     $this->CustomerUserItinerary->id = $itineraryId;
 
                     // Soft delete: set data_cancel to current timestamp
@@ -1449,12 +1534,12 @@ class CustomerUsersController extends AppController
                     if ($this->CustomerUserItinerary->save($updateData, false)) {
                         // Log the action
                         $this->CustomerUserItineraryLog->logAction(
-                            $currentData['CustomerUserItinerary']['customer_user_id'],
-                            $currentData['CustomerUserItinerary']['benefit_id'],
+                            $itinerary['CustomerUserItinerary']['customer_user_id'],
+                            $benefitId,
                             $itineraryId,
                             'delete',
                             $user,
-                            $currentData['CustomerUserItinerary'],
+                            $itinerary['CustomerUserItinerary'],
                             null
                         );
                         $successCount++;
@@ -1477,6 +1562,135 @@ class CustomerUsersController extends AppController
                 $queryString = '?' . $this->request->data['queryString'];
             }
 
+            $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
+        }
+    }
+
+    /**
+     * Get benefit details for a specific benefit and customer
+     * Returns HTML for AJAX modal
+     */
+    public function get_benefit_details()
+    {
+        $this->layout = 'ajax';
+        $this->Permission->check(95, "leitura") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $benefitId = $this->request->data['benefit_id'];
+            $customerId = $this->request->data['customer_id'];
+
+            // Get all customer users with this benefit
+            $itineraries = $this->CustomerUserItinerary->find('all', [
+                'conditions' => [
+                    'CustomerUserItinerary.benefit_id' => $benefitId,
+                    'CustomerUser.customer_id' => $customerId
+                ],
+                'contain' => ['CustomerUser', 'Benefit', 'Status'],
+                'order' => 'CustomerUser.name ASC'
+            ]);
+
+            $this->set(compact('itineraries', 'benefitId', 'customerId'));
+        }
+    }
+
+    /**
+     * Batch disable benefits themselves (not just the links)
+     */
+    public function batch_disable_benefits()
+    {
+        $this->autoRender = false;
+        $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $benefitIds = json_decode($this->request->data['benefitIds'], true);
+            $user = $this->Auth->user();
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            // Find inactive status
+            $inactiveStatus = $this->Status->find('first', [
+                'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Inativo']
+            ]);
+
+            foreach ($benefitIds as $benefitId) {
+                $this->Benefit->id = $benefitId;
+                $updateData = [
+                    'status_id' => $inactiveStatus['Status']['id']
+                ];
+
+                if ($this->Benefit->save($updateData, false)) {
+                    $successCount++;
+                } else {
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                $this->Flash->set(__("$successCount benefício(s) desativado(s) com sucesso."), ['params' => ['class' => "alert alert-success"]]);
+            }
+            if ($errorCount > 0) {
+                $this->Flash->set(__("$errorCount erro(s) ao desativar benefícios."), ['params' => ['class' => "alert alert-danger"]]);
+            }
+
+            // Preserve filter parameters
+            $queryString = '';
+            if (!empty($this->request->data['queryString'])) {
+                $queryString = '?' . $this->request->data['queryString'];
+            }
+
+            $customerId = $this->request->data['customerId'];
+            $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
+        }
+    }
+
+    /**
+     * Batch enable benefits themselves (not just the links)
+     */
+    public function batch_enable_benefits()
+    {
+        $this->autoRender = false;
+        $this->Permission->check(95, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        if ($this->request->is('post')) {
+            $benefitIds = json_decode($this->request->data['benefitIds'], true);
+            $user = $this->Auth->user();
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            // Find active status
+            $activeStatus = $this->Status->find('first', [
+                'conditions' => ['Status.categoria' => 1, 'Status.name' => 'Ativo']
+            ]);
+
+            foreach ($benefitIds as $benefitId) {
+                $this->Benefit->id = $benefitId;
+                $updateData = [
+                    'status_id' => $activeStatus['Status']['id']
+                ];
+
+                if ($this->Benefit->save($updateData, false)) {
+                    $successCount++;
+                } else {
+                    $errorCount++;
+                }
+            }
+
+            if ($successCount > 0) {
+                $this->Flash->set(__("$successCount benefício(s) ativado(s) com sucesso."), ['params' => ['class' => "alert alert-success"]]);
+            }
+            if ($errorCount > 0) {
+                $this->Flash->set(__("$errorCount erro(s) ao ativar benefícios."), ['params' => ['class' => "alert alert-danger"]]);
+            }
+
+            // Preserve filter parameters
+            $queryString = '';
+            if (!empty($this->request->data['queryString'])) {
+                $queryString = '?' . $this->request->data['queryString'];
+            }
+
+            $customerId = $this->request->data['customerId'];
             $this->redirect('/customer_users/view_all_benefits/' . $customerId . $queryString);
         }
     }

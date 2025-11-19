@@ -8,10 +8,7 @@ echo $this->element("abas_customers", array('id' => $id));
             <div class="card-title">
                 <div class="row">
                     <div class="col d-flex align-items-center">
-                        <span class="position-absolute ms-6">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" class="form-control form-control-solid ps-15" id="q" name="q" value="<?php echo isset($_GET["q"]) ? $_GET["q"] : ""; ?>" placeholder="Buscar por Nome, CPF ou E-mail" />
+                        <span class="fw-bold fs-4">Benefícios por Cliente</span>
                     </div>
                 </div>
             </div>
@@ -23,21 +20,35 @@ echo $this->element("abas_customers", array('id' => $id));
                             Ações em Lote
                         </button>
 
-                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton" style="width: 300px;">
+                        <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="dropdownMenuButton" style="width: 350px;">
                             <div class="d-flex flex-column justify-content-start gap-3">
-                                <button type="button" id="ativar_sel" class="btn btn-success">
-                                    <i class="fas fa-check"></i>
-                                    Ativar Selecionados
+                                <div class="fw-bold text-dark border-bottom pb-2">Ações nos Benefícios:</div>
+
+                                <button type="button" id="ativar_beneficio_sel" class="btn btn-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Ativar Benefícios
                                 </button>
 
-                                <button type="button" id="inativar_sel" class="btn btn-warning">
+                                <button type="button" id="desativar_beneficio_sel" class="btn btn-warning">
                                     <i class="fas fa-ban"></i>
-                                    Inativar Selecionados
+                                    Desativar Benefícios
                                 </button>
 
-                                <button type="button" id="excluir_sel" class="btn btn-danger">
+                                <div class="fw-bold text-dark border-bottom border-top pt-3 pb-2 mt-2">Ações nos Vínculos:</div>
+
+                                <button type="button" id="ativar_sel" class="btn btn-success btn-sm">
+                                    <i class="fas fa-link"></i>
+                                    Ativar Vínculos
+                                </button>
+
+                                <button type="button" id="inativar_sel" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-unlink"></i>
+                                    Inativar Vínculos
+                                </button>
+
+                                <button type="button" id="excluir_sel" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i>
-                                    Excluir Selecionados
+                                    Excluir Vínculos
                                 </button>
                             </div>
                         </div>
@@ -120,45 +131,31 @@ echo $this->element("abas_customers", array('id' => $id));
                     <th class="ps-4 w-80px min-w-80px rounded-start">
                         <input type="checkbox" class="check_all">
                     </th>
-                    <th>Beneficiário</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
                     <th>Código Benefício</th>
                     <th>Nome Benefício</th>
-                    <th>Status do Vínculo</th>
                     <th>Status do Benefício</th>
-                    <th>Dias Úteis</th>
-                    <th>Quantidade</th>
-                    <th>Preço Unitário</th>
+                    <th>Qtd. Beneficiários</th>
                     <th class="w-100px min-w-100px rounded-end">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if ($data) { ?>
-                    <?php for ($i = 0; $i < count($data); $i++) { ?>
+                <?php if ($paginatedData) { ?>
+                    <?php for ($i = 0; $i < count($paginatedData); $i++) { ?>
                         <tr>
                             <td class="fw-bold fs-7 ps-4">
                                 <input type="checkbox" name="item_ck" class="check_individual">
-                                <input type="hidden" class="item_id" value="<?php echo $data[$i]["CustomerUserItinerary"]["id"]; ?>">
+                                <input type="hidden" class="item_id" value="<?php echo $paginatedData[$i]["Benefit"]["id"]; ?>">
                             </td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["CustomerUser"]["name"]) ? $data[$i]["CustomerUser"]["name"] : ''; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["CustomerUser"]["cpf"]) ? $data[$i]["CustomerUser"]["cpf"] : ''; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["CustomerUser"]["email"]) ? $data[$i]["CustomerUser"]["email"] : ''; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["Benefit"]["code"]) ? $data[$i]["Benefit"]["code"] : ''; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["Benefit"]["name"]) ? $data[$i]["Benefit"]["name"] : ''; ?></td>
-                            <td>
-                                <span class='badge <?php echo isset($data[$i]["Status"]["label"]) ? $data[$i]["Status"]["label"] : '' ?>'>
-                                    <?php echo isset($data[$i]["Status"]["name"]) ? $data[$i]["Status"]["name"] : 'N/A' ?>
-                                </span>
-                            </td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo isset($paginatedData[$i]["Benefit"]["code"]) ? $paginatedData[$i]["Benefit"]["code"] : ''; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo isset($paginatedData[$i]["Benefit"]["name"]) ? $paginatedData[$i]["Benefit"]["name"] : ''; ?></td>
                             <td>
                                 <?php
-                                // Get benefit status separately if needed
+                                // Get benefit status
                                 $benefitStatusLabel = '';
                                 $benefitStatusName = '';
-                                if (isset($data[$i]["Benefit"]["status_id"])) {
+                                if (isset($paginatedData[$i]["Benefit"]["status_id"])) {
                                     foreach ($status as $st) {
-                                        if ($st['Status']['id'] == $data[$i]["Benefit"]["status_id"]) {
+                                        if ($st['Status']['id'] == $paginatedData[$i]["Benefit"]["status_id"]) {
                                             $benefitStatusLabel = $st['Status']['label'];
                                             $benefitStatusName = $st['Status']['name'];
                                             break;
@@ -170,25 +167,66 @@ echo $this->element("abas_customers", array('id' => $id));
                                     <?php echo $benefitStatusName ? $benefitStatusName : 'N/A' ?>
                                 </span>
                             </td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["CustomerUserItinerary"]["working_days"]) ? $data[$i]["CustomerUserItinerary"]["working_days"] : '0'; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo isset($data[$i]["CustomerUserItinerary"]["quantity"]) ? $data[$i]["CustomerUserItinerary"]["quantity"] : '0'; ?></td>
-                            <td class="fw-bold fs-7 ps-4">R$ <?php echo isset($data[$i]["CustomerUserItinerary"]["unit_price"]) ? $data[$i]["CustomerUserItinerary"]["unit_price"] : '0,00'; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $paginatedData[$i]["customer_user_count"]; ?></td>
                             <td class="fw-bold fs-7 ps-4">
-                                <a href="<?php echo $this->base . '/customer_users/itineraries/' . $id . '/' . $data[$i]["CustomerUserItinerary"]["customer_user_id"]; ?>" class="btn btn-info btn-sm">
+                                <button type="button" class="btn btn-info btn-sm view-details"
+                                        data-benefit-id="<?php echo $paginatedData[$i]["Benefit"]["id"]; ?>"
+                                        data-benefit-name="<?php echo htmlspecialchars($paginatedData[$i]["Benefit"]["name"]); ?>"
+                                        data-customer-id="<?php echo $id; ?>">
                                     Ver Detalhes
-                                </a>
+                                </button>
                             </td>
                         </tr>
                     <?php } ?>
                 <?php } else { ?>
                     <tr>
-                        <td colspan="12" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
+                        <td colspan="6" class="fw-bold fs-7 ps-4">Nenhum registro encontrado</td>
                     </tr>
                 <?php } ?>
             </tbody>
             </table>
         </div>
-        <?php echo $this->element("pagination"); ?>
+
+        <?php if (isset($paginationInfo)): ?>
+        <div class="row">
+            <div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+                <div class="dataTables_length">
+                    Exibindo <?php echo $paginationInfo['current']; ?> de <?php echo $paginationInfo['count']; ?> registros
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+                <?php if ($paginationInfo['pageCount'] > 1): ?>
+                <div class="dataTables_paginate paging_simple_numbers">
+                    <ul class="pagination">
+                        <?php if ($paginationInfo['page'] > 1): ?>
+                        <li class="paginate_button page-item previous">
+                            <a href="?page=<?php echo $paginationInfo['page'] - 1; ?><?php echo isset($_GET['benefit_code']) ? '&benefit_code=' . $_GET['benefit_code'] : ''; ?><?php echo isset($_GET['benefit_name']) ? '&benefit_name=' . $_GET['benefit_name'] : ''; ?><?php echo isset($_GET['status_link']) ? '&status_link=' . $_GET['status_link'] : ''; ?><?php echo isset($_GET['status_benefit']) ? '&status_benefit=' . $_GET['status_benefit'] : ''; ?>" class="page-link">
+                                <i class="previous"></i>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+
+                        <?php for ($p = 1; $p <= $paginationInfo['pageCount']; $p++): ?>
+                        <li class="paginate_button page-item <?php echo $p == $paginationInfo['page'] ? 'active' : ''; ?>">
+                            <a href="?page=<?php echo $p; ?><?php echo isset($_GET['benefit_code']) ? '&benefit_code=' . $_GET['benefit_code'] : ''; ?><?php echo isset($_GET['benefit_name']) ? '&benefit_name=' . $_GET['benefit_name'] : ''; ?><?php echo isset($_GET['status_link']) ? '&status_link=' . $_GET['status_link'] : ''; ?><?php echo isset($_GET['status_benefit']) ? '&status_benefit=' . $_GET['status_benefit'] : ''; ?>" class="page-link">
+                                <?php echo $p; ?>
+                            </a>
+                        </li>
+                        <?php endfor; ?>
+
+                        <?php if ($paginationInfo['page'] < $paginationInfo['pageCount']): ?>
+                        <li class="paginate_button page-item next">
+                            <a href="?page=<?php echo $paginationInfo['page'] + 1; ?><?php echo isset($_GET['benefit_code']) ? '&benefit_code=' . $_GET['benefit_code'] : ''; ?><?php echo isset($_GET['benefit_name']) ? '&benefit_name=' . $_GET['benefit_name'] : ''; ?><?php echo isset($_GET['status_link']) ? '&status_link=' . $_GET['status_link'] : ''; ?><?php echo isset($_GET['status_benefit']) ? '&status_benefit=' . $_GET['status_benefit'] : ''; ?>" class="page-link">
+                                <i class="next"></i>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <div class="card-footer d-flex justify-content-start py-4">
             <a href="<?php echo $this->Html->url(array("controller" => "customer_users", "action" => "index", $id)); ?>" class="btn btn-light-secondary">
@@ -199,58 +237,124 @@ echo $this->element("abas_customers", array('id' => $id));
     </div>
 </div>
 
-<!-- Modal for Activate Confirmation -->
+<!-- Modal for Activate Benefit Confirmation -->
+<div class="modal fade" tabindex="-1" id="modal_ativar_beneficio_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmar Ativação do Benefício</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja ativar <strong>os benefícios selecionados</strong>?</p>
+                <p class="text-muted">Esta ação ativa o benefício globalmente (não apenas os vínculos com beneficiários).</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="ativa_beneficio_confirm" class="btn btn-success">Sim, Ativar Benefícios</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Deactivate Benefit Confirmation -->
+<div class="modal fade" tabindex="-1" id="modal_desativar_beneficio_sel" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmar Desativação do Benefício</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desativar <strong>os benefícios selecionados</strong>?</p>
+                <p class="text-muted">Esta ação desativa o benefício globalmente (não apenas os vínculos com beneficiários).</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
+                <a id="desativa_beneficio_confirm" class="btn btn-warning">Sim, Desativar Benefícios</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Activate Links Confirmation -->
 <div class="modal fade" tabindex="-1" id="modal_ativar_sel" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Confirmar Ativação</h4>
+                <h4 class="modal-title">Confirmar Ativação dos Vínculos</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja ativar os vínculos selecionados?</p>
+                <p>Tem certeza que deseja ativar <strong>TODOS os vínculos</strong> dos benefícios selecionados?</p>
+                <p class="text-muted">Esta ação afetará todos os beneficiários que possuem estes benefícios.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="ativa_confirm" class="btn btn-success">Sim, Ativar</a>
+                <a id="ativa_confirm" class="btn btn-success">Sim, Ativar Vínculos</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal for Inactivate Confirmation -->
+<!-- Modal for Inactivate Links Confirmation -->
 <div class="modal fade" tabindex="-1" id="modal_inativar_sel" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Confirmar Inativação</h4>
+                <h4 class="modal-title">Confirmar Inativação dos Vínculos</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja inativar os vínculos selecionados?</p>
+                <p>Tem certeza que deseja inativar <strong>TODOS os vínculos</strong> dos benefícios selecionados?</p>
+                <p class="text-muted">Esta ação afetará todos os beneficiários que possuem estes benefícios.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="inativa_confirm" class="btn btn-warning">Sim, Inativar</a>
+                <a id="inativa_confirm" class="btn btn-warning">Sim, Inativar Vínculos</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal for Delete Confirmation -->
+<!-- Modal for Delete Links Confirmation -->
 <div class="modal fade" tabindex="-1" id="modal_excluir_sel" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Confirmar Exclusão</h4>
+                <h4 class="modal-title">Confirmar Exclusão dos Vínculos</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
-                <p>Tem certeza que deseja excluir os vínculos selecionados? Esta ação não pode ser desfeita.</p>
+                <p>Tem certeza que deseja excluir <strong>TODOS os vínculos</strong> dos benefícios selecionados?</p>
+                <p class="text-muted">Esta ação afetará todos os beneficiários que possuem estes benefícios e não pode ser desfeita.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Cancelar</button>
-                <a id="exclui_confirm" class="btn btn-danger">Sim, Excluir</a>
+                <a id="exclui_confirm" class="btn btn-danger">Sim, Excluir Vínculos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Benefit Details -->
+<div class="modal fade" tabindex="-1" id="modal_benefit_details" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Detalhes do Benefício: <span id="detail_benefit_name"></span></h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="benefit_details_content">
+                    <div class="text-center py-5">
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                        Carregando...
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-dark" data-bs-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
@@ -264,18 +368,68 @@ echo $this->element("abas_customers", array('id' => $id));
             $("#status_benefit").val(null).trigger('change');
             $("#benefit_code").val('');
             $("#benefit_name").val('');
-            $("#q").val('');
             $("#busca").submit();
         });
 
-        // Activate button click
+        // View details button
+        $('.view-details').on('click', function(e) {
+            e.preventDefault();
+            const benefitId = $(this).data('benefit-id');
+            const benefitName = $(this).data('benefit-name');
+            const customerId = $(this).data('customer-id');
+
+            $('#detail_benefit_name').text(benefitName);
+            $('#modal_benefit_details').modal('show');
+
+            // Load benefit details via AJAX
+            $('#benefit_details_content').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm" role="status"></span> Carregando...</div>');
+
+            $.ajax({
+                url: base_url + '/customer_users/get_benefit_details',
+                type: 'POST',
+                data: {
+                    benefit_id: benefitId,
+                    customer_id: customerId
+                },
+                success: function(response) {
+                    $('#benefit_details_content').html(response);
+                },
+                error: function() {
+                    $('#benefit_details_content').html('<div class="alert alert-danger">Erro ao carregar detalhes</div>');
+                }
+            });
+        });
+
+        // Activate benefit button click
+        $('#ativar_beneficio_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_ativar_beneficio_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um benefício para ativar');
+            }
+        });
+
+        // Deactivate benefit button click
+        $('#desativar_beneficio_sel').on('click', function(e) {
+            e.preventDefault();
+
+            if ($('input[name="item_ck"]:checked').length > 0) {
+                $('#modal_desativar_beneficio_sel').modal('show');
+            } else {
+                alert('Selecione ao menos um benefício para desativar');
+            }
+        });
+
+        // Activate links button click
         $('#ativar_sel').on('click', function(e) {
             e.preventDefault();
 
             if ($('input[name="item_ck"]:checked').length > 0) {
                 $('#modal_ativar_sel').modal('show');
             } else {
-                alert('Selecione ao menos um item para ativar');
+                alert('Selecione ao menos um benefício para ativar os vínculos');
             }
         });
 
@@ -286,18 +440,18 @@ echo $this->element("abas_customers", array('id' => $id));
             if ($('input[name="item_ck"]:checked').length > 0) {
                 $('#modal_inativar_sel').modal('show');
             } else {
-                alert('Selecione ao menos um item para inativar');
+                alert('Selecione ao menos um benefício para inativar');
             }
         });
 
-        // Delete button click
+        // Delete links button click
         $('#excluir_sel').on('click', function(e) {
             e.preventDefault();
 
             if ($('input[name="item_ck"]:checked').length > 0) {
                 $('#modal_excluir_sel').modal('show');
             } else {
-                alert('Selecione ao menos um item para excluir');
+                alert('Selecione ao menos um benefício para excluir os vínculos');
             }
         });
 
@@ -307,13 +461,13 @@ echo $this->element("abas_customers", array('id' => $id));
 
             const customerId = <?php echo $id; ?>;
             const checkboxes = $('input[name="item_ck"]:checked');
-            const itineraryIds = [];
+            const benefitIds = [];
 
             checkboxes.each(function() {
-                itineraryIds.push($(this).parent().find('.item_id').val());
+                benefitIds.push($(this).parent().find('.item_id').val());
             });
 
-            if (itineraryIds.length > 0) {
+            if (benefitIds.length > 0) {
                 // Create a form and submit it
                 const form = $('<form>', {
                     'method': 'POST',
@@ -322,8 +476,8 @@ echo $this->element("abas_customers", array('id' => $id));
 
                 form.append($('<input>', {
                     'type': 'hidden',
-                    'name': 'data[itineraryIds]',
-                    'value': JSON.stringify(itineraryIds)
+                    'name': 'data[benefitIds]',
+                    'value': JSON.stringify(benefitIds)
                 }));
 
                 form.append($('<input>', {
@@ -350,13 +504,13 @@ echo $this->element("abas_customers", array('id' => $id));
 
             const customerId = <?php echo $id; ?>;
             const checkboxes = $('input[name="item_ck"]:checked');
-            const itineraryIds = [];
+            const benefitIds = [];
 
             checkboxes.each(function() {
-                itineraryIds.push($(this).parent().find('.item_id').val());
+                benefitIds.push($(this).parent().find('.item_id').val());
             });
 
-            if (itineraryIds.length > 0) {
+            if (benefitIds.length > 0) {
                 // Create a form and submit it
                 const form = $('<form>', {
                     'method': 'POST',
@@ -365,8 +519,8 @@ echo $this->element("abas_customers", array('id' => $id));
 
                 form.append($('<input>', {
                     'type': 'hidden',
-                    'name': 'data[itineraryIds]',
-                    'value': JSON.stringify(itineraryIds)
+                    'name': 'data[benefitIds]',
+                    'value': JSON.stringify(benefitIds)
                 }));
 
                 form.append($('<input>', {
@@ -393,13 +547,13 @@ echo $this->element("abas_customers", array('id' => $id));
 
             const customerId = <?php echo $id; ?>;
             const checkboxes = $('input[name="item_ck"]:checked');
-            const itineraryIds = [];
+            const benefitIds = [];
 
             checkboxes.each(function() {
-                itineraryIds.push($(this).parent().find('.item_id').val());
+                benefitIds.push($(this).parent().find('.item_id').val());
             });
 
-            if (itineraryIds.length > 0) {
+            if (benefitIds.length > 0) {
                 // Create a form and submit it
                 const form = $('<form>', {
                     'method': 'POST',
@@ -408,8 +562,8 @@ echo $this->element("abas_customers", array('id' => $id));
 
                 form.append($('<input>', {
                     'type': 'hidden',
-                    'name': 'data[itineraryIds]',
-                    'value': JSON.stringify(itineraryIds)
+                    'name': 'data[benefitIds]',
+                    'value': JSON.stringify(benefitIds)
                 }));
 
                 form.append($('<input>', {
@@ -419,6 +573,88 @@ echo $this->element("abas_customers", array('id' => $id));
                 }));
 
                 // Preserve current filter parameters
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[queryString]',
+                    'value': window.location.search.substring(1)
+                }));
+
+                $('body').append(form);
+                form.submit();
+            }
+        });
+
+        // Activate benefit confirmation
+        $('#ativa_beneficio_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const customerId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const benefitIds = [];
+
+            checkboxes.each(function() {
+                benefitIds.push($(this).parent().find('.item_id').val());
+            });
+
+            if (benefitIds.length > 0) {
+                const form = $('<form>', {
+                    'method': 'POST',
+                    'action': base_url + '/customer_users/batch_enable_benefits'
+                });
+
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[benefitIds]',
+                    'value': JSON.stringify(benefitIds)
+                }));
+
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[customerId]',
+                    'value': customerId
+                }));
+
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[queryString]',
+                    'value': window.location.search.substring(1)
+                }));
+
+                $('body').append(form);
+                form.submit();
+            }
+        });
+
+        // Deactivate benefit confirmation
+        $('#desativa_beneficio_confirm').on('click', function(e) {
+            e.preventDefault();
+
+            const customerId = <?php echo $id; ?>;
+            const checkboxes = $('input[name="item_ck"]:checked');
+            const benefitIds = [];
+
+            checkboxes.each(function() {
+                benefitIds.push($(this).parent().find('.item_id').val());
+            });
+
+            if (benefitIds.length > 0) {
+                const form = $('<form>', {
+                    'method': 'POST',
+                    'action': base_url + '/customer_users/batch_disable_benefits'
+                });
+
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[benefitIds]',
+                    'value': JSON.stringify(benefitIds)
+                }));
+
+                form.append($('<input>', {
+                    'type': 'hidden',
+                    'name': 'data[customerId]',
+                    'value': customerId
+                }));
+
                 form.append($('<input>', {
                     'type': 'hidden',
                     'name': 'data[queryString]',
