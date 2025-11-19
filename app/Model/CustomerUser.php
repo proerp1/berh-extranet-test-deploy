@@ -204,7 +204,7 @@ class CustomerUser extends AppModel
             $pixWhere = "AND b.pix_id = ''";
         }
 
-        $sql = "SELECT u.name, u.cpf, u.email, IFNULL(u.cel, u.tel) as telefone, k.name, k.code, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_type, b.pix_id, t.description, i.subtotal, i.total, i.id, i.pix_status_id
+        $sql = "SELECT o.id, u.name, u.cpf, u.email, IFNULL(u.cel, u.tel) as telefone, k.name, k.code, CONCAT(b.branch_number, '-', b.branch_digit) AS agencia, CONCAT(b.acc_number, '-', b.acc_digit) AS conta, b.pix_type, b.pix_id, t.description, i.subtotal, i.total, i.id, i.pix_status_id
                     FROM orders o 
                         INNER JOIN order_items i ON i.order_id = o.id 
                         INNER JOIN customers c ON c.id = o.customer_id 

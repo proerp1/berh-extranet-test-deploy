@@ -53,6 +53,7 @@ class ComunicadosController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->Comunicado->create();
             if ($this->Comunicado->validates()) {
+                $this->request->data['Comunicado']['status_id'] = 0;
                 $this->request->data['Comunicado']['user_creator_id'] = CakeSession::read("Auth.User.id");
                 if ($this->Comunicado->save($this->request->data)) {
                     $this->Flash->set(__('O Comunicado foi salvo com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -110,11 +111,9 @@ class ComunicadosController extends AppController
     {
         $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->Comunicado->id = $id;
-        $this->request->data = $this->Comunicado->read();
 
         $this->request->data['Comunicado']['data_cancel'] = date("Y-m-d H:i:s");
-         $this->request->data['Comunicado']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
-        
+        $this->request->data['Comunicado']['usuario_id_cancel'] = CakeSession::read("Auth.User.id");
 
         if ($this->Comunicado->save($this->request->data)) {
             $this->Flash->set(__('O Comunicado foi excluido com sucesso'), ['params' => ['class' => "alert alert-success"]]);
