@@ -90,7 +90,7 @@
                             <i class="fas fa-briefcase"></i> 
                         </span>
                         <span class="menu-title">
-                            Parceiros
+                            Canais
                         </span>
                     </a>
                 </div>

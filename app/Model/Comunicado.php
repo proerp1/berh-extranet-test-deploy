@@ -25,6 +25,29 @@ class Comunicado extends AppModel
         return $queryData;
     }
 
+    public function removeEmojis($string) {
+        return preg_replace('/[\x{1F600}-\x{1F64F}'
+            . '\x{1F300}-\x{1F5FF}'
+            . '\x{1F680}-\x{1F6FF}'
+            . '\x{2600}-\x{26FF}'
+            . '\x{2700}-\x{27BF}'
+            . ']+/u', '', $string);
+    }
+
+    public function beforeSave($options = []) {
+        if (!empty($this->data[$this->alias]['file'])) {
+            $file = $this->data[$this->alias]['file'];
+
+            if (!empty($file['name'])) {
+                $cleanName = $this->removeEmojis($file['name']);
+                $cleanName = preg_replace('/[^A-Za-z0-9_\.\-]/', '_', $cleanName);
+                $this->data[$this->alias]['file']['name'] = $cleanName;
+            }
+        }
+
+        return parent::beforeSave($options);
+    }
+
     public $validate = [
         'name' => [
             'required' => [
