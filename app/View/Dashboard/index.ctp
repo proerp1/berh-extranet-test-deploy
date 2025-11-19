@@ -195,13 +195,13 @@
 
                 <?php if (!empty($file)): ?>
                     <div style="margin-top: 0.8rem;">
-                        <a 
-                            href="<?php echo $this->webroot . 'files/faq/file/' . $faqId . '/' . $file; ?>" 
-                            download="<?php echo h($file); ?>" 
-                            style="color: #ED0677; font-weight: 500; text-decoration: none;"
+                        <span
+                            class="show-faq-file"
+                            data-file-url="<?php echo $this->base . 'files/faq/file/' . $faqId . '/' . $file; ?>"
+                            style="color: #ED0677; font-weight: 500; text-decoration: none;cursor: pointer"
                         >
-                            📎 Baixar Anexo: <?php echo h($file); ?>
-                        </a>
+                            📎 Visualizar Anexo: <?php echo h($file); ?>
+                        </span>
                     </div>
                 <?php endif; ?>
 
@@ -213,6 +213,21 @@
         </div>
     </div>
 <?php endforeach; ?>
+
+<div class="modal fade" tabindex="-1" id="modal_exibe_arquivo" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Arquivo FAQ</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="modal-faq-anexo">
+                <img id="modal-faq-img" src="" alt="" style="width: 100%;">
+                <object id="modal-faq-pdf" data="" type="application/pdf" style="width: 100%;height: 500px"></object>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     let lastOpen = null;
@@ -268,6 +283,24 @@
         $('#supplier_id').on('change', function () {
             // Não submete automaticamente — segue o padrão do seu outro filtro com botão manual
         });
+
+        $('.show-faq-file').on('click', function () {
+            const fileUrl = $(this).data('file-url')
+            const ext = fileUrl.split('.').pop()
+            if (ext === 'pdf') {
+                const pdf = document.createElement('object')
+                pdf.type = 'application/pdf'
+                pdf.data = fileUrl
+                pdf.style = 'width: 100%;height: 500px';
+                $('#modal-faq-anexo').html(pdf)
+            } else {
+                const img = document.createElement('img')
+                img.src = fileUrl
+                img.style = 'width:100%;';
+                $('#modal-faq-anexo').html(img)
+            }
+            $('#modal_exibe_arquivo').modal('show')
+        })
     });
 </script>
 
