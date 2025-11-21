@@ -13,18 +13,17 @@ class Outcome extends AppModel {
 		'Expense',
 		'CostCenter',
 		'Supplier',
-    'UserUpdated' => array(
-      'className' => 'User',
-      'foreignKey' => 'user_updated_id'
-    ),
+		'UserUpdated' => array(
+			'className' => 'User',
+			'foreignKey' => 'user_updated_id'
+		),
 	);
 
-  public $hasMany = array(
-    'OutcomeOrder'
-  );
+  	public $hasMany = array(
+    	'OutcomeOrder'
+  	);
 
 	public function beforeFind($queryData) {
-
 		$queryData['conditions'][] = array('Outcome.data_cancel' => '1901-01-01 00:00:00');
 		
 		return $queryData;
@@ -36,8 +35,8 @@ class Outcome extends AppModel {
 		}
 
 		if (empty($this->data['Outcome']['id']) && empty($this->data['Outcome']['created'])) {
-      $this->data['Outcome']['created'] = date('Y-m-d H:i:s');
-    }
+      		$this->data['Outcome']['created'] = date('Y-m-d H:i:s');
+    	}
 
 		if (!empty($this->data['Outcome']['valor_bruto'])) {
 			$this->data['Outcome']['valor_bruto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_bruto']);
@@ -54,6 +53,8 @@ class Outcome extends AppModel {
 		if (!empty($this->data['Outcome']['valor_total'])) {
 			$this->data['Outcome']['valor_total'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_total']);
 		}
+
+		$this->updateOrderItemsStatus();
 
 		return true;
 	}
@@ -81,21 +82,21 @@ class Outcome extends AppModel {
 	public function afterFind($results, $primary = false){
 		foreach ($results as $key => $val) {
 			if (isset($val['Outcome']['vencimento'])) {
-        $results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
-      }
-      if (isset($val['Outcome']['created'])) {
-				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
-        $results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
-      }
-      if (isset($val[$this->alias]['updated'])) {
-				$results[$key][$this->alias]['updated_nao_formatado'] = $val[$this->alias]['updated'];
-        $results[$key][$this->alias]['updated'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['updated']));
-      }
-      if (isset($val['Outcome']['data_pagamento'])) {
-        $results[$key]['Outcome']['data_pagamento_nao_formatado'] = $val['Outcome']['data_pagamento'];
+				$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
+			}
+			if (isset($val['Outcome']['created'])) {
+						$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+				$results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
+			}
+			if (isset($val[$this->alias]['updated'])) {
+						$results[$key][$this->alias]['updated_nao_formatado'] = $val[$this->alias]['updated'];
+				$results[$key][$this->alias]['updated'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['updated']));
+			}
+			if (isset($val['Outcome']['data_pagamento'])) {
+				$results[$key]['Outcome']['data_pagamento_nao_formatado'] = $val['Outcome']['data_pagamento'];
 
-        $results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
-      }
+				$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
+			}
 			if (isset($val['Outcome']['valor_bruto'])) {
 				$results[$key]['Outcome']['valor_bruto'] = number_format($results[$key]['Outcome']['valor_bruto'],2,',','.');
 			}
@@ -186,4 +187,38 @@ class Outcome extends AppModel {
 		)
 	);
 
+	private function updateOrderItemsStatus() 
+	{
+		$outcome_id = $this->id;
+
+		if (empty($outcome_id)) {
+			return;
+		}
+
+		if (!isset($this->data[$this->alias]['status_id'])) {
+			return;
+		}
+
+		$new_status_id = (int)$this->data[$this->alias]['status_id'];
+
+		if ($new_status_id !== 13) {
+			return;
+		}
+
+		$old_status_id = (int)$this->field(
+			'status_id',
+			array($this->alias . '.id' => $outcome_id)
+		);
+
+		if ($old_status_id === 13) {
+			return;
+		}
+
+		$orderItem = ClassRegistry::init('OrderItem');
+
+		$orderItem->updateAll(
+			array('OrderItem.status_processamento' => "'PAGAMENTO_REALIZADO'"),
+			array('OrderItem.outcome_id' => $outcome_id)
+		);
+	}
 }
