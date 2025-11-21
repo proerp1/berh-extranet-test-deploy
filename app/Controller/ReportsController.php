@@ -1975,12 +1975,12 @@ class ReportsController extends AppController
                 $outcome['Outcome']['valor_desconto'] = 0;
                 $outcome['Outcome']['valor_bruto'] = number_format($valor_total, 2, ',', '.');
                 $outcome['Outcome']['valor_total'] = number_format($valor_total, 2, ',', '.');
-                $outcome['Outcome']['bank_account_id'] = 3;
+                $outcome['Outcome']['bank_account_id'] = 4;
                 $outcome['Outcome']['vencimento'] = $data_vencimento;
                 $outcome['Outcome']['payment_method'] = $forma_pagamento;
                 $outcome['Outcome']['observation'] = $observacoes;
-                $outcome['Outcome']['expense_id'] = 2;
-                $outcome['Outcome']['cost_center_id'] = 113;
+                $outcome['Outcome']['expense_id'] = 1;
+                $outcome['Outcome']['cost_center_id'] = 116;
                 $outcome['Outcome']['plano_contas_id'] = 1;
                 $outcome['Outcome']['recorrencia'] = 2;
                 $outcome['Outcome']['data_competencia'] = date('01/m/Y');
