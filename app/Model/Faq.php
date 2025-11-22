@@ -28,7 +28,8 @@ class Faq extends AppModel
             'className' => 'FaqRelacionamento',
             'foreignKey' => 'faq_id',
             'dependent' => true
-        ]
+        ],
+        'FaqFile'
     ];
 
     // Validações

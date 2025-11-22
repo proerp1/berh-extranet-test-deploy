@@ -4,7 +4,7 @@ class FaqsController extends AppController
     public $helpers = ['Html', 'Form', 'Text'];
     public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
     
-    public $uses = ['Faq', 'CategoriaFaq', 'FaqRelacionamento', 'Supplier'];
+    public $uses = ['Faq', 'CategoriaFaq', 'FaqRelacionamento', 'Supplier', 'FaqFile'];
 
     public $paginate = [
         'Faq' => [
@@ -127,6 +127,16 @@ class FaqsController extends AppController
             if ($this->Faq->save($this->request->data)) {
                 $faqId = $this->Faq->id;
 
+                if (!empty($this->request->data['FaqFile']['file'])) {
+                    foreach ($this->request->data['FaqFile']['file'] as $file) {
+                        $this->FaqFile->create();
+                        $this->FaqFile->save([
+                            'faq_id' => $faqId,
+                            'file' => $file
+                        ]);
+                    }
+                }
+
                 if (!empty($this->request->data['FaqRelacionamento']['supplier_id'])) {
                     $selecionados = (array)$this->request->data['FaqRelacionamento']['supplier_id'];
                     $this->FaqRelacionamento->deleteAll(['faq_id' => $faqId], false);
@@ -171,6 +181,24 @@ class FaqsController extends AppController
         if ($this->request->is(['post', 'put'])) {
             if ($this->Faq->save($this->request->data)) {
                 $this->FaqRelacionamento->deleteAll(['faq_id' => $id], false);
+
+                $fileDeleteCondition = ['FaqFile.faq_id' => $id];
+
+                if (isset($this->request->data['keep_file_ids']) && count($this->request->data['keep_file_ids'])) {
+                    $fileDeleteCondition = array_merge($fileDeleteCondition, ['FaqFile.id not in' => $this->request->data['keep_file_ids']]);
+                }
+
+                $this->FaqFile->deleteAll($fileDeleteCondition, false);
+
+                if (!empty($this->request->data['FaqFile']['file'])) {
+                    foreach ($this->request->data['FaqFile']['file'] as $file) {
+                        $this->FaqFile->create();
+                        $this->FaqFile->save([
+                            'faq_id' => $id,
+                            'file' => $file
+                        ]);
+                    }
+                }
 
                 if (!empty($this->request->data['FaqRelacionamento']['supplier_id'])) {
                     $selecionados = (array)$this->request->data['FaqRelacionamento']['supplier_id'];

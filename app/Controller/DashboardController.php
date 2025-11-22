@@ -46,7 +46,8 @@ public function index()
                     'Supplier' => [
                         'fields' => ['Supplier.id', 'Supplier.nome_fantasia']
                     ]
-                ]
+                ],
+                'FaqFile'
             ]
         ]);
 

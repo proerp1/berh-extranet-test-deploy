@@ -152,7 +152,7 @@
         <div class="faq-list">
 <?php foreach ($categoria['Faqs'] as $index => $faq): 
     $uid = $categoria['CategoriaFaq']['id'] . '-' . $index;
-    $file = $faq['Faq']['file'] ?? null;
+    $files = $faq['FaqFile'] ?? [];
     $faqId = $faq['Faq']['id'] ?? null;
 ?>
     <div class="faq-card">
@@ -193,17 +193,31 @@
 
                 <p><?php echo nl2br(h($faq['Faq']['resposta'])); ?></p>
 
-                <?php if (!empty($file)): ?>
+                <?php for ($i = 0; $i < count($files); $i++) { ?>
+                    <?php
+                    $faqFile = $files[$i];
+                    $ext = pathinfo($faqFile['file'], PATHINFO_EXTENSION);
+                    ?>
                     <div style="margin-top: 0.8rem;">
-                        <span
-                            class="show-faq-file"
-                            data-file-url="<?php echo $this->base . 'files/faq/file/' . $faqId . '/' . $file; ?>"
-                            style="color: #ED0677; font-weight: 500; text-decoration: none;cursor: pointer"
-                        >
-                            📎 Visualizar Anexo: <?php echo h($file); ?>
-                        </span>
+                        <?php if ($ext == 'pdf' || $ext == 'jpeg' || $ext == 'jpg' || $ext == 'png') { ?>
+                            <span
+                                class="show-faq-file"
+                                data-file-url="<?php echo $faqFile['full_path']; ?>"
+                                style="color: #ED0677; font-weight: 500; text-decoration: none;cursor: pointer"
+                            >
+                                📎 Visualizar Anexo: <?php echo h($faqFile['file']); ?>
+                            </span>
+                        <?php } else { ?>
+                            <a
+                                href="<?php echo $faqFile['full_path']; ?>"
+                                download="<?php echo h($faqFile['file']); ?>"
+                                style="color: #ED0677; font-weight: 500; text-decoration: none;"
+                            >
+                                📎 Baixar Anexo: <?php echo h($faqFile['file']); ?>
+                            </a>
+                        <?php } ?>
                     </div>
-                <?php endif; ?>
+                <?php } ?>
 
             </div>
         </div>
@@ -261,19 +275,6 @@
         lastOpen = index;
     }
 
-    document.addEventListener('click', function(event) {
-        const isClickInside = event.target.closest('.faq-question');
-        if (!isClickInside && lastOpen !== null) {
-            const prev = document.getElementById("faq-" + lastOpen);
-            const prevIcon = document.getElementById("icon-" + lastOpen);
-            const prevQuestion = prevIcon.parentElement;
-
-            if (prev) prev.classList.remove("open");
-            if (prevIcon) prevIcon.innerText = "+";
-            if (prevQuestion) prevQuestion.classList.remove("active");
-            lastOpen = null;
-        }
-    });
     $(document).ready(function () {
         $('#reset-filtro-faq').on('click', function () {
             $('#supplier_id').val(null).trigger('change');

@@ -167,11 +167,15 @@
                                 <td class="fw-bold fs-7"><?php echo h($faq["Faq"]["resposta"]); ?></td>
                                 <td class="fw-bold fs-7"><?php echo h($faq["CategoriaFaq"]["nome"]); ?></td>
                                 <td class="fw-bold fs-7">
-                                <?php if (!empty($faq["Faq"]["file"])): ?>
-                                    <a download href="<?php echo $this->webroot . 'files/faq/file/' . $faq["Faq"]["id"] . '/' . h($faq["Faq"]["file"]); ?>"
-                                    style="color: #ED0677; font-weight: 500;">
-                                    📎 <?php echo h($faq["Faq"]["file"]); ?>
-                                    </a>
+                                <?php if (!empty($faq["FaqFile"])): ?>
+                                    <?php for ($i = 0; $i < count($faq['FaqFile']); $i++) { ?>
+                                        <?php $faqFile = $faq['FaqFile'][$i]; ?>
+                                            <?= $i > 0 ? '<br>' : '' ?>
+                                            <a download href="<?php echo $faqFile["full_path"]; ?>"
+                                               style="color: #ED0677; font-weight: 500;">
+                                                📎 <?php echo h($faqFile["file"]); ?>
+                                            </a>
+                                    <?php } ?>
                                 <?php else: ?>
                                     —
                                 <?php endif; ?>

@@ -99,25 +99,31 @@
         </div>
 
         <!-- Upload de Documentação -->
-<div class="row" id="documentacao-wrapper">
-    <div class="mb-7 col-md-12">
-        <label for="file" class="fw-semibold fs-6 mb-2">Documento ou Imagem</label>
-        <?php echo $this->Form->input('file', [
-            'type' => 'file',
-            'label' => false,
-            'div' => false,
-            'class' => 'form-control form-control-solid',
-            'accept' => 'image/*,.pdf'
-        ]); ?>
-
-        <?php if (!empty($this->request->data['Faq']['file'])): ?>
-            <br>
-            <a download href="<?php echo $this->webroot . 'files/faq/file/' . $this->request->data['Faq']['id'] . '/' . $this->request->data['Faq']['file']; ?>">
-                📎 <?php echo h($this->request->data['Faq']['file']); ?>
-            </a>
-        <?php endif; ?>
-    </div>
-</div>
+        <h2>Documentos</h2>
+        <div id="files">
+            <?php if (isset($this->request->data['FaqFile'])) { ?>
+                <?php for ($i = 0; $i < count($this->request->data['FaqFile']); $i++) { ?>
+                    <?php $faqFile = $this->request->data['FaqFile'][$i]; ?>
+                    <div class="row mb-7">
+                        <div class="col-md-1">
+                            <a class="btn btn-sm btn-primary" download href="<?php echo $faqFile['full_path']; ?>">
+                                <i class="fa fa-download"></i>
+                            </a>
+                            <div class="btn btn-sm btn-danger remove-file"><i class="fa fa-trash"></i></div>
+                        </div>
+                        <div class="col-md-11">
+                            <input type="hidden" name="data[keep_file_ids][]" value="<?= $faqFile['id'] ?>">
+                            <h2><?= $faqFile['file'] ?></h2>
+                        </div>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="add-file" class="btn btn-primary">Novo Arquivo</button>
+            </div>
+        </div>
 
 
         <!-- Botões -->
@@ -168,5 +174,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     supplierSelect.addEventListener('change', handleSupplierSelection);
     handleSupplierSelection();
+
+    $("#add-file").on('click', function () {
+        $("#files").append(
+            '<div class="row mb-7">' +
+                '<div class="col-md-1">' +
+                    '<div class="btn btn-sm btn-danger remove-file">' +
+                        '<i class="fa fa-trash"></i>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="col-md-11">' +
+                    '<input type="file" class="form-control form-control-solid" name="data[FaqFile][file][]">' +
+                '</div>' +
+            '</div>'
+        )
+    })
 });
+
+$(document).on('ready', function () {
+    $('.remove-file').click(function () {
+        $(this).parent().parent().remove()
+    })
+})
 </script>
