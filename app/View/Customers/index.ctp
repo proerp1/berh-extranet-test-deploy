@@ -61,7 +61,7 @@
                                 </select>
                             </div>
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Franquias:</label>
+                                <label class="form-label fs-5 fw-bold mb-3">Canal:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="f" id="f">
                                     <option value=''></option>
                                     <?php

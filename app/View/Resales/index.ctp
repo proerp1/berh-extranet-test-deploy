@@ -29,14 +29,22 @@
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
+                                    <option></option>
+                                    <option value="1" <?= isset($_GET['t']) && $_GET['t'] == '1' ? 'selected' : '' ?>>Revenda</option>
+                                    <option value="2" <?= isset($_GET['t']) && $_GET['t'] == '2' ? 'selected' : '' ?>>Parceiro</option>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="s" id="s">
                                     <option></option>
                                     <?php
                                         for($a = 0; $a < count($status); $a++){
                                             $selected = "";
-                                            if (isset($_GET["t"])) {
-                                                if($status[$a]['Status']['id'] == $_GET["t"]){
+                                            if (isset($_GET["s"])) {
+                                                if($status[$a]['Status']['id'] == $_GET["s"]){
                                                     $selected = "selected";
                                                 }
                                             }
@@ -65,6 +73,7 @@
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
                         <th>Nome</th>
+                        <th>Tipo</th>
                         <th>Documento</th>
                         <th>Telefone</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
@@ -72,7 +81,10 @@
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
-                        <?php for ($i=0; $i < count($data); $i++) { ?>
+                        <?php for ($i=0; $i < count($data); $i++) {
+                            $tipos = ['1' => 'Revenda', '2' => 'Parceiro'];
+                            $tipo = $tipos[$data[$i]['Resale']['tipo']]
+                            ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
                                     <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
@@ -80,6 +92,7 @@
                                     </span>
                                 </td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["cnpj"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["telefone"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">

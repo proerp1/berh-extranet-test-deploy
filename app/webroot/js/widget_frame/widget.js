@@ -38,4 +38,11 @@
         iframeContainer.style.display = 'none';
         iframe.src = iframeSrc;
     }
+
+    $(document).keyup(function(e) {
+        if (e.key === "Escape") { // escape key maps to keycode `27`
+            console.log('pressed esc!')
+            closeWidget()
+        }
+    });
 })();

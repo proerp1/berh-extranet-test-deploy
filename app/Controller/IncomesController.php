@@ -10,7 +10,7 @@ App::uses('ApiBtgPactual', 'Lib');
 class IncomesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'Boleto', 'HtmltoPdf', 'ExcelGenerator', 'GerarCaixaNossoNumero', 'Email'];
+    public $components = ['Paginator', 'Permission', 'Boleto', 'HtmltoPdf', 'ExcelGenerator', 'GerarCaixaNossoNumero', 'Email', 'ArrayCompare'];
     public $uses = ['Income', 'Status', 'Revenue', 'BankAccount', 'CostCenter', 'Customer', 'Instituicao', 'TmpRetornoCnab', 'ChargesHistory', 'Socios', 'Log', 'Resale', 'CnabItem', 'Order', 'OrderBalance', 'IncomeNfse', 'OrderDocument'];
 
     public $paginate = [
@@ -441,6 +441,33 @@ class IncomesController extends AppController
         $this->Permission->check(23, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Income->id = $id;
         $this->Income->recursive = 2;
+
+        $temp_errors = $this->Income->validationErrors;
+        $income = $this->Income->read();
+        $this->Income->validationErrors = $temp_errors;
+
+        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 5]]);
+        $socios = $this->Socios->find('list');
+        $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
+        $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1, 'BankAccount.id !=' => 5], 'order' => 'BankAccount.name']);
+        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1, 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
+        $orderArr = $this->Order->find('all', [
+            'fields' => ['Order.id', 'Customer.nome_primario'],
+            'contain' => ['Customer'],
+            'order' => 'Order.id'
+        ]);
+        $orders = [];
+        foreach ($orderArr as $order) {
+            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
+        }
+
+        $dataCustomers = $this->Customer->find('all', ['conditions' => ['or' => ['Customer.id' => $income["Customer"]["id"]]], 'fields' => ['Customer.id', 'concat(Customer.codigo_associado, " - ", Customer.nome_secundario) as name'], 'order' => 'Customer.codigo_associado']);
+
+        $customers = [];
+        foreach ($dataCustomers as $customer) {
+            $customers[$customer['Customer']['id']] = $customer[0]['name'];
+        }
+
         if ($this->request->is(['post', 'put'])) {
             $this->Income->validates();
             $this->request->data['Income']['user_updated_id'] = CakeSession::read("Auth.User.id");
@@ -465,7 +492,46 @@ class IncomesController extends AppController
                 "usuario_data_cancel" => 0,
                 "ip" => $_SERVER["REMOTE_ADDR"]
             ];
+
+
             if ($this->Income->save($this->request->data)) {
+                $diff = $this->ArrayCompare->arrayDiff(
+                    json_decode($log_old_value, true)['Income'],
+                    $this->request->data['Income'],
+                    [
+                        'valor_bruto' => 'Valor Bruto',
+                        'valor_total' => 'Valor liquido',
+                        'valor_multa' => 'Valor Multa',
+                        'valor_desconto' => 'Valor Desconto',
+                        'name' => 'Descrição da conta',
+                        'data_competencia' => 'Data Competência',
+                        'vencimento' => 'Vencimento',
+                        'observation' => 'Observação',
+                        'payment_method' => 'Forma de Pagamento',
+                        'bank_account_id' => 'Conta Bancária',
+                        'order_id' => 'Pedido',
+                        'revenue_id' => 'Receita',
+                        'cost_center_id' => 'Centro de Custo',
+                        'customer_id' => 'Cliente',
+                    ], [
+                        'payment_method' => ['1' => 'Boleto', '3' => 'Cartão de crédito', '6' => 'Crédito em conta corrente', '5' => 'Cheque', '4' => 'Depósito', '7' => 'Débito em conta', '8' => 'Dinheiro', '2' => 'Transfêrencia', '9' => 'Desconto', '11' => 'Pix', '10' => 'Outros'],
+                        'bank_account_id' => $bankAccounts,
+                        'order_id' => $orders,
+                        'revenue_id' => $revenues,
+                        'cost_center_id' => $costCenters,
+                        'customer_id' => $customers,
+                    ]);
+
+                $this->ChargesHistory->create();
+                $this->ChargesHistory->save([
+                    'call_status' => 0,
+                    'cobranca_id' => 0,
+                    'customer_id' => 0,
+                    'income_id' => $id,
+                    'text' => $diff,
+                    'user_creator_id' => CakeSession::read('Auth.User.id')
+                ]);
+
                 $this->Log->save($dados_log);
                 $id_origem = $this->Income->id;
                 if ($this->request->data['Income']['recorrencia'] == 1) {
@@ -500,31 +566,7 @@ class IncomesController extends AppController
             }
         }
 
-        $temp_errors = $this->Income->validationErrors;
-        $this->request->data = $this->Income->read();
-        $this->Income->validationErrors = $temp_errors;
-        
-        $statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 5]]);
-        $socios = $this->Socios->find('list');
-        $revenues = $this->Revenue->find('list', ['conditions' => ['Revenue.status_id' => 1], 'order' => 'Revenue.name']);
-        $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1, 'BankAccount.id !=' => 5], 'order' => 'BankAccount.name']);
-        $costCenters = $this->CostCenter->find('list', ['conditions' => ['CostCenter.status_id' => 1, 'CostCenter.customer_id' => 0], 'order' => 'CostCenter.name']);
-        $orderArr = $this->Order->find('all', [
-            'fields' => ['Order.id', 'Customer.nome_primario'],
-            'contain' => ['Customer'],
-            'order' => 'Order.id'
-        ]);
-        $orders = [];
-        foreach ($orderArr as $order) {
-            $orders[$order['Order']['id']] = $order['Order']['id'].' - '.$order['Customer']['nome_primario'];
-        }
-
-        $dataCustomers = $this->Customer->find('all', ['conditions' => ['or' => ['Customer.id' => $this->request->data["Customer"]["id"]]], 'fields' => ['Customer.id', 'concat(Customer.codigo_associado, " - ", Customer.nome_secundario) as name'], 'order' => 'Customer.codigo_associado']);
-
-        $customers = [];
-        foreach ($dataCustomers as $customer) {
-            $customers[$customer['Customer']['id']] = $customer[0]['name'];
-        }
+        $this->request->data = $income;
 
         $cancelarConta = $this->Permission->check(58, "escrita");
 

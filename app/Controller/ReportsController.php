@@ -1304,6 +1304,7 @@ class ReportsController extends AppController
 
         $items = [];
         $items_total = null;
+        dd($buscar);
         if ($buscar) {
             $items = $this->Paginator->paginate('OrderItem', $condition);
 

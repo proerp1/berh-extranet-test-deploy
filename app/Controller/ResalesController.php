@@ -29,13 +29,17 @@ class ResalesController extends AppController
         }
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
-            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['t']]);
+            $condition['and'] = array_merge($condition['and'], ['Resale.tipo' => $_GET['t']]);
+        }
+
+        if (isset($_GET["s"]) and $_GET["s"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['s']]);
         }
 
         $data = $this->Paginator->paginate('Resale', $condition);
         $status = $this->Status->find('all', ['conditions' => ['Status.categoria' => 1]]);
 
-        $action = 'Parceiros';
+        $action = 'Canais';
         $breadcrumb = ['Lista' => ''];
         $this->set(compact('status', 'data', 'action', 'breadcrumb'));
     }
