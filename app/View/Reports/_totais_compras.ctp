@@ -96,3 +96,80 @@
         </div>
     </div>
 </div>
+
+<script>
+    function showTotalsLoading() {
+        $('.total-value').html('<div class="spinner-border spinner-border-sm" role="status"></div>');
+    }
+
+    function loadTotals() {
+        $.ajax({
+            url: '/reports/getTotalOrders',
+            method: 'POST',
+            data: {
+                conditions: $('#conditions-data').val()
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    updateBasicTotalsDisplay(response.totals);
+                    
+                    loadEconomia();
+                } else {
+                    showTotalsError();
+                }
+            },
+            error: function() {
+                showTotalsError();
+            }
+        });
+    }
+
+    function loadEconomia() {
+        $('#economia-value').html('<div class="spinner-border spinner-border-sm text-warning" role="status"><span class="sr-only">Calculando economia...</span></div>');
+        
+        $.ajax({
+            url: '/reports/getTotalEconomia',
+            method: 'POST',
+            data: {
+                conditions: $('#conditions-data').val()
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $('#economia-value').text(formatMoney(response.economia));
+                } else {
+                    $('#economia-value').html('<span class="text-danger">Erro</span>');
+                }
+            },
+            error: function() {
+                $('#economia-value').html('<span class="text-danger">Erro ao calcular</span>');
+            }
+        });
+    }
+
+    function updateBasicTotalsDisplay(totals) {
+        $('#subtotal-value').text(formatMoney(totals.subtotal));
+        $('#repasse-value').text(formatMoney(totals.transfer_fee));
+        $('#tpp-value').text(formatMoney(totals.total_tpp));
+        $('#taxa-value').text(formatMoney(totals.commission_fee));
+        $('#desconto-value').text(formatMoney(totals.desconto));
+        $('#total-value').text(formatMoney(totals.total));
+    }
+
+    function formatMoney(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value || 0);
+    }
+
+    function showTotalsError() {
+        $('.total-value').html('<span class="text-danger">Erro ao carregar</span>');
+    }
+
+    $(document).ready(function() {
+        showTotalsLoading();
+        loadTotals();
+    });
+</script>

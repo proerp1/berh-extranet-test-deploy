@@ -1,3 +1,5 @@
+<input type="hidden" id="conditions-data" value="<?php echo $conditionsJson; ?>">
+
 <?php echo $this->element("../Reports/_totais_compras"); ?>
 
 <?php $url_novo = $this->base . "/users/add/";  ?>
