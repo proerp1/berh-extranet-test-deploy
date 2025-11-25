@@ -1,5 +1,7 @@
 <?php 
 App::uses('AuthComponent', 'Controller/Component');
+App::uses('CakeSession', 'Model/Datasource');
+
 class Outcome extends AppModel {
 	public $name = 'Outcome';
 
@@ -29,32 +31,30 @@ class Outcome extends AppModel {
 		return $queryData;
 	}
 
-	public function beforeSave($options = array()) {
+	public function beforeSave($options = array()) 
+	{
 		if (!empty($this->data['Outcome']['vencimento'])) {
 			$this->data['Outcome']['vencimento'] = $this->dateFormatBeforeSave($this->data['Outcome']['vencimento']);
 		}
-
-		if (empty($this->data['Outcome']['id']) && empty($this->data['Outcome']['created'])) {
-      		$this->data['Outcome']['created'] = date('Y-m-d H:i:s');
-    	}
-
 		if (!empty($this->data['Outcome']['valor_bruto'])) {
 			$this->data['Outcome']['valor_bruto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_bruto']);
 		}
-
 		if (!empty($this->data['Outcome']['valor_multa'])) {
 			$this->data['Outcome']['valor_multa'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_multa']);
 		}
-
 		if (!empty($this->data['Outcome']['valor_desconto'])) {
 			$this->data['Outcome']['valor_desconto'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_desconto']);
 		}
-
 		if (!empty($this->data['Outcome']['valor_total'])) {
 			$this->data['Outcome']['valor_total'] = $this->priceFormatBeforeSave($this->data['Outcome']['valor_total']);
 		}
+        if (empty($this->data[$this->alias]['id']) && empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = date('Y-m-d H:i:s');
+        } elseif (!empty($this->data[$this->alias]['created'])) {
+            $this->data[$this->alias]['created'] = $this->dateFormatBeforeSave($this->data[$this->alias]['created']);
+        }
 
-		$this->updateOrderItemsStatus();
+		$this->checkOrderStatus();
 
 		return true;
 	}
@@ -85,16 +85,15 @@ class Outcome extends AppModel {
 				$results[$key]['Outcome']['vencimento'] = date("d/m/Y", strtotime($val['Outcome']['vencimento']));
 			}
 			if (isset($val['Outcome']['created'])) {
-						$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
+				$results[$key][$this->alias]['created_nao_formatado'] = $val[$this->alias]['created'];
 				$results[$key]['Outcome']['created'] = date("d/m/Y", strtotime($val['Outcome']['created']));
 			}
 			if (isset($val[$this->alias]['updated'])) {
-						$results[$key][$this->alias]['updated_nao_formatado'] = $val[$this->alias]['updated'];
-				$results[$key][$this->alias]['updated'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['updated']));
+				$results[$key][$this->alias]['updated_nao'] = $val[$this->alias]['updated'];
+				$results[$key][$this->alias]['updated_formatado'] = date("d/m/Y H:i:s", strtotime($val['Outcome']['updated']));
 			}
 			if (isset($val['Outcome']['data_pagamento'])) {
 				$results[$key]['Outcome']['data_pagamento_nao_formatado'] = $val['Outcome']['data_pagamento'];
-
 				$results[$key]['Outcome']['data_pagamento'] = date("d/m/Y", strtotime($val['Outcome']['data_pagamento']));
 			}
 			if (isset($val['Outcome']['valor_bruto'])) {
@@ -103,21 +102,16 @@ class Outcome extends AppModel {
 			if (isset($val['Outcome']['valor_multa'])) {
 				$results[$key]['Outcome']['valor_multa'] = number_format($results[$key]['Outcome']['valor_multa'],2,',','.');
 			}
-
 			if (isset($val['Outcome']['valor_desconto'])) {
 				$results[$key]['Outcome']['valor_desconto'] = number_format($results[$key]['Outcome']['valor_desconto'],2,',','.');
 			}
 			if (isset($val['Outcome']['valor_total'])) {
 				$results[$key]['Outcome']['valor_total_not_formated'] = $results[$key]['Outcome']['valor_total'];
 				$results[$key]['Outcome']['valor_total'] = number_format($results[$key]['Outcome']['valor_total'],2,',','.');
-				
-                
 			}
 			if (isset($val['Outcome']['valor_pago'])) {
 				$results[$key]['Outcome']['valor_pago_not_formated'] = $results[$key]['Outcome']['valor_pago'];
 				$results[$key]['Outcome']['valor_pago'] = number_format($results[$key]['Outcome']['valor_pago'],2,',','.');
-				
-                
 			}
 		}
 
@@ -187,9 +181,11 @@ class Outcome extends AppModel {
 		)
 	);
 
-	private function updateOrderItemsStatus() 
+	private function checkOrderStatus() 
 	{
-		$outcome_id = $this->id;
+		$outcome_id = !empty($this->data[$this->alias]['id'])
+			? $this->data[$this->alias]['id']
+			: $this->id;
 
 		if (empty($outcome_id)) {
 			return;
@@ -201,24 +197,67 @@ class Outcome extends AppModel {
 
 		$new_status_id = (int)$this->data[$this->alias]['status_id'];
 
-		if ($new_status_id !== 13) {
+		$old_status_id = (int)$this->field(
+			'status_id',
+			[$this->alias . '.id' => $outcome_id]
+		);
+
+		if ($old_status_id === $new_status_id) {
 			return;
 		}
 
-		$old_status_id = (int)$this->field(
-			'status_id',
-			array($this->alias . '.id' => $outcome_id)
-		);
+		$this->registerStatusChangeLog($outcome_id, $old_status_id, $new_status_id);
+
+		if ($new_status_id !== 13) {
+			return;
+		}
 
 		if ($old_status_id === 13) {
 			return;
 		}
 
+		$this->updateOrderItemsStatus($outcome_id);
+	}
+
+	private function updateOrderItemsStatus($outcome_id) 
+	{
 		$orderItem = ClassRegistry::init('OrderItem');
 
 		$orderItem->updateAll(
-			array('OrderItem.status_processamento' => "'PAGAMENTO_REALIZADO'"),
-			array('OrderItem.outcome_id' => $outcome_id)
+			['OrderItem.status_processamento' => "'PAGAMENTO_REALIZADO'"],
+			['OrderItem.outcome_id' => $outcome_id]
 		);
+	}
+
+	private function registerStatusChangeLog($outcome_id, $old_status_id, $new_status_id)
+	{
+		$oldStatus = $this->Status->find('first', array(
+			'conditions' => array('Status.id' => $old_status_id),
+			'recursive'  => -1
+		));
+
+		$newStatus = $this->Status->find('first', array(
+			'conditions' => array('Status.id' => $new_status_id),
+			'recursive'  => -1
+		));
+
+		$oldName = !empty($oldStatus['Status']['name']) ? $oldStatus['Status']['name'] : 'N/A';
+		$newName = !empty($newStatus['Status']['name']) ? $newStatus['Status']['name'] : 'N/A';
+
+		$description = 'Mudança do status ' . $oldName . ' para ' . $newName;
+
+		$userId = CakeSession::read('Auth.User.id');
+
+		$OutcomeLog = ClassRegistry::init('OutcomeLog');
+
+		$OutcomeLog->create();
+		$OutcomeLog->save(array(
+			'OutcomeLog' => array(
+				'outcome_id'      => $outcome_id,
+				'description'     => $description,
+				'created'         => date('Y-m-d H:i:s'),
+				'user_creator_id' => $userId,
+			)
+		));
 	}
 }

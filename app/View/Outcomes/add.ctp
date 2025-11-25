@@ -1,4 +1,3 @@
-
 <?php
     if (isset($id)) {
         $url = $this->here;
@@ -55,10 +54,6 @@
             calc_valor_total();
         })
     })
-
-   
-   
-
     
     function calc_valor_total(){
         var multa = replaceAll($("#OutcomeValorMulta").val(), ".", "");

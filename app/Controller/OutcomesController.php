@@ -4,7 +4,27 @@ App::uses('ApiBtgPactual', 'Lib');
 class OutcomesController extends AppController {
 	public $helpers = ['Html', 'Form'];
 	public $components = ['Paginator', 'Permission', 'ExcelGenerator'];
-	public $uses = ['TipoDocumento','Outcome', 'Status', 'Expense', 'BankAccount', 'CostCenter', 'Supplier', 'Log', 'PlanoConta', 'Resale', 'Docoutcome', 'Order','BankAccountType','BankCode','OutcomeOrder','Customer', 'OrderItem','CustomerUser'];
+	public $uses = [
+		'TipoDocumento',
+		'Outcome',
+		'Status',
+		'Expense',
+		'BankAccount',
+		'CostCenter',
+		'Supplier',
+		'Log',
+		'PlanoConta',
+		'Resale',
+		'Docoutcome',
+		'Order',
+		'BankAccountType',
+		'BankCode',
+		'OutcomeOrder',
+		'Customer',
+		'OrderItem',
+		'CustomerUser',
+		'OutcomeLog'
+	];
 
 	public $paginate = [
         'Outcome' => [
@@ -38,7 +58,13 @@ class OutcomesController extends AppController {
             'limit' => 175,
             'order' => ['Outcome.created' => 'asc'],
             'paramType' => 'querystring',
-        ]
+        ],
+        'OutcomeLog' => [
+            'limit' => 10,
+            'order' => [
+                'OutcomeLog.created' => 'desc',
+            ],
+        ],
 	];
 
 	public function beforeFilter() {
@@ -512,65 +538,93 @@ class OutcomesController extends AppController {
 
 	public function change_status_lote()
 	{
-    $this->autoRender = false;
-    $this->layout = false;
+		$this->autoRender = false;
+		$this->layout = false;
+		
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 
-		$outcomeIds = $this->request->data['outcomeIds'];
-		$status = $this->request->data['status'];
+		$outcomeIds 	= $this->request->data['outcomeIds'];
+		$status 		= $this->request->data['status'];
 
-		$this->Outcome->updateAll(
-        ['Outcome.status_id' => $status],
-        ['Outcome.id' => $outcomeIds]
-    );
+		foreach ($outcomeIds as $id) {
+			$id = (int)$id;
 
-    echo json_encode(['success' => true]);
+			$this->Outcome->id = $id;
+
+			$this->Outcome->save(
+				[
+					'Outcome' => [
+						'id'              => $id,
+						'status_id'       => $status,
+						'updated'         => date('Y-m-d H:i:s'),
+						'user_updated_id' => CakeSession::read("Auth.User.id"),
+					]
+				]
+			);
+		}
+
+		echo json_encode(['success' => true]);
 	}
 
-  public function avanca_lote() {
-    $this->autoRender = false;
-    $this->layout = false;
-    $this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
+	public function avanca_lote() 
+	{
+		$this->autoRender = false;
+		$this->layout = false;
+		
+		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
 
-    $outcomeIds = $this->request->data['outcomeIds'];
-    $status = $this->request->data['status'];
-    $forma_de_pagamento = $this->request->data['forma_de_pagamento'];
-    $valor_pago = isset($this->request->data['valor_pago']) ? str_replace(',', '.', str_replace('.', '', $this->request->data['valor_pago'])) : null;
-    $data_pagamento = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['data_pagamento'])));
+		$outcomeIds 		= $this->request->data['outcomeIds'];
+		$status 			= $this->request->data['status'];
+		$forma_de_pagamento = $this->request->data['forma_de_pagamento'];
+		$valor_pago 		= isset($this->request->data['valor_pago']) ? str_replace(',', '.', str_replace('.', '', $this->request->data['valor_pago'])) : null;
+		$data_pagamento 	= date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['data_pagamento'])));
 
-    if ($status == 13) {
-      if ($data_pagamento == '') {
-        echo json_encode(['success' => false]);die;
-      }
+		if ($status == 13) {
+			if ($data_pagamento == '') {
+				echo json_encode(['success' => false]);die;
+			}
 
-      foreach ($outcomeIds as $id) {
-        $this->Outcome->recursive = -1;
-        $this->Outcome->id = $id;
-        $outcome = $this->Outcome->findById($id);
+			foreach ($outcomeIds as $id) {
+				$this->Outcome->recursive = -1;
+				$this->Outcome->id = $id;
 
-        $this->Outcome->save(['Outcome' => [
-          'status_id' => 13,
-          'valor_pago' => $valor_pago ?: $outcome['Outcome']['valor_total_not_formated'],
-          'payment_method_baixa' => $forma_de_pagamento,
-          'data_pagamento' => $data_pagamento,
-          'usuario_id_pagamento' => CakeSession::read("Auth.User.id"),
-          'updated' => date('Y-m-d H:i:s'),
-          'user_updated_id' => CakeSession::read("Auth.User.id"),
-        ]]);
-      }
-    } else {
-      $this->Outcome->updateAll(
-        [
-          'Outcome.status_id' => $status,
-          'updated' => "'".date('Y-m-d H:i:s')."'",
-          'user_updated_id' => CakeSession::read("Auth.User.id"),
-        ],
-        ['Outcome.id' => $outcomeIds]
-      );
-    }
+				$outcome = $this->Outcome->findById($id);
 
-    echo json_encode(['success' => true]);
-  }
+				$this->Outcome->save(
+					[
+						'Outcome' => [
+							'status_id' 			=> 13,
+							'valor_pago' 			=> $valor_pago ?: $outcome['Outcome']['valor_total_not_formated'],
+							'payment_method_baixa' 	=> $forma_de_pagamento,
+							'data_pagamento' 		=> $data_pagamento,
+							'usuario_id_pagamento' 	=> CakeSession::read("Auth.User.id"),
+							'updated' 				=> date('Y-m-d H:i:s'),
+							'user_updated_id' 		=> CakeSession::read("Auth.User.id"),
+						]
+					]
+				);
+			}
+		} else {
+			foreach ($outcomeIds as $id) {
+				$id = (int)$id;
+
+				$this->Outcome->id = $id;
+
+				$this->Outcome->save(
+					[
+						'Outcome' => [
+							'id'              => $id,
+							'status_id'       => $status,
+							'updated'         => date('Y-m-d H:i:s'),
+							'user_updated_id' => CakeSession::read("Auth.User.id"),
+						]
+					]
+				);
+			}
+		}
+
+		echo json_encode(['success' => true]);
+	}
 
 	public function pagar_titulo($id){
 		$this->Permission->check(15, "escrita") ? "" : $this->redirect("/not_allowed");
@@ -581,6 +635,8 @@ class OutcomesController extends AppController {
 		$this->request->data['Outcome']['valor_pago'] = $valueFormatado;
 		$this->request->data['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
 		$this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
+		$this->request->data['Outcome']['updated'] = date('Y-m-d H:i:s');
+		$this->request->data['Outcome']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
 		if ($this->Outcome->save($this->request->data)) {
 			$this->Flash->set(__('A conta a pagar foi salva com sucesso'), ['params' => ['class' => "alert alert-success"]]);
@@ -596,11 +652,14 @@ class OutcomesController extends AppController {
 		foreach ($ids as $id) {
 			$this->Outcome->recursive = -1;
 			$this->Outcome->id = $id;
+
 			$outcome = $this->Outcome->read();
 
 			$this->request->data['Outcome']['valor_pago'] = $outcome['Outcome']['valor_total_not_formated'];
 			$this->request->data['Outcome']['data_pagamento'] = date('Y-m-d', strtotime(str_replace('/', '-', $this->request->data['Outcome']['data_pagamento'])));
 			$this->request->data['Outcome']['usuario_id_pagamento'] = CakeSession::read("Auth.User.id");
+			$this->request->data['Outcome']['updated'] = date('Y-m-d H:i:s');
+			$this->request->data['Outcome']['user_updated_id'] = CakeSession::read("Auth.User.id");
 
 			if (!$this->Outcome->save($this->request->data)) {
 				$this->Flash->set(__('Houve algum erro!'), ['params' => ['class' => "alert alert-danger"]]);
@@ -617,7 +676,7 @@ class OutcomesController extends AppController {
      **********************/
     public function documents($id)
     {
-		    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
+	    $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');
         $this->Paginator->settings = $this->paginate;
 
         $condition = ['and' => ['Outcome.id' => $id], 'or' => []];
@@ -1124,5 +1183,26 @@ public function edit_document($id, $document_id = null)
             debug($e);
             return 'Erro no webhook!';
         }
+    }
+
+    /*******************
+                HISTORICO
+    ********************/
+    public function historico($id)
+    {
+        $this->Permission->check(15, 'leitura') ? '' : $this->redirect('/not_allowed');		
+        $this->Paginator->settings = $this->paginate;
+
+        $this->Outcome->id = $id;
+        $this->request->data = $this->Outcome->read();
+
+        $condition = ["and" => ["OutcomeLog.outcome_id" => $id], "or" => []];
+
+        $data = $this->Paginator->paginate('OutcomeLog', $condition);
+
+        $action = 'Contas a pagar';
+        $breadcrumb = ['Historico de pagamento' => ''];
+
+        $this->set(compact('data', 'id', 'action', 'breadcrumb'));
     }
 }
