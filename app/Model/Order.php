@@ -575,7 +575,7 @@ class Order extends AppModel
                             SUM(CASE WHEN b.tipo = 2 AND b.total < 0 THEN b.total END) AS total_bal_ajuste_deb, 
                             SUM(CASE WHEN b.tipo = 3 THEN b.total END) AS total_bal_inconsistencia 
                         FROM orders o 
-                            INNER JOIN order_balances b ON o.id = b.order_id 
+                            INNER JOIN order_balances b ON b.order_id = o.id 
                                                             AND b.data_cancel = '1901-01-01 00:00:00' 
                                                             AND b.tipo IN(1, 2, 3) 
                         WHERE o.id = :order_id 
