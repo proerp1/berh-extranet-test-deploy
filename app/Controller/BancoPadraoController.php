@@ -12,7 +12,7 @@ class BancoPadraoController extends AppController
 
     public function index()
     {
-        CakeSession::read('Auth.User.group_id') == 1 ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $banks = $this->Bank->find('list', ['conditions' => ['Bank.id' => [1,9]]]);
 
