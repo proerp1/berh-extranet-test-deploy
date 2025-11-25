@@ -2445,7 +2445,7 @@ class ReportsController extends AppController
         $condition = json_decode(base64_decode($this->request->data('conditions')), true);
 
         $data = [];
-        if ($this->request->data('conditions')) {
+        if ($condition) {
             $totalOrders = $this->OrderItem->find('first', [
                 'joins' => [
                     [
@@ -2531,7 +2531,7 @@ class ReportsController extends AppController
         $condition = json_decode(base64_decode($this->request->data('conditions')), true);
 
         $order_ids = [];
-        if ($this->request->data('conditions')) {
+        if ($condition) {
             $order_ids = $this->OrderItem->find('list', [
                 'joins' => [
                     [
