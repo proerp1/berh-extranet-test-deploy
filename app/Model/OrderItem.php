@@ -427,7 +427,7 @@ class OrderItem extends AppModel {
 
     public function calculateFirstOrder()
     {
-        if (empty($this->data[$this->alias]['customer_user_id']) || 
+        if (empty($this->data[$this->alias]['customer_user_id']) ||
             empty($this->data[$this->alias]['customer_user_itinerary_id'])) {
             return 0;
         }
@@ -435,6 +435,18 @@ class OrderItem extends AppModel {
         $customerUserId = $this->data[$this->alias]['customer_user_id'];
         $itineraryId = $this->data[$this->alias]['customer_user_itinerary_id'];
         $currentOrderItemId = isset($this->data[$this->alias]['id']) ? $this->data[$this->alias]['id'] : null;
+
+        if ($currentOrderItemId) {
+            $existingOrderItem = $this->find('first', [
+                'conditions' => ['OrderItem.id' => $currentOrderItemId],
+                'fields' => ['OrderItem.first_order'],
+                'recursive' => -1
+            ]);
+
+            if (!empty($existingOrderItem) && $existingOrderItem['OrderItem']['first_order'] == 1) {
+                return 1;
+            }
+        }
 
         $CustomerUser = ClassRegistry::init('CustomerUser');
         $CustomerUserItinerary = ClassRegistry::init('CustomerUserItinerary');
