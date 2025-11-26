@@ -213,7 +213,7 @@
                         </tr>
                     <?php } ?>
                     <tr>
-                        <td colspan="5"></td>
+                        <td colspan="10"></td>
                         <td>R$<?php echo number_format($total, 2, ',', '.'); ?></td>
                     </tr>
                 <?php } else { ?>
