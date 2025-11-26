@@ -185,7 +185,6 @@ public $belongsTo = array(
                         INNER JOIN customer_users u ON u.id = i.customer_user_id
                     WHERE i.order_id = ".$orderID."
                             AND i.data_cancel = '1901-01-01 00:00:00'
-                            AND u.data_cancel = '1901-01-01 00:00:00'
                             AND REPLACE(REPLACE(u.cpf, '-', ''), '.', '') LIKE '%".$cpf."%'
                 ";
         $rsSql = $this->query($sql);
