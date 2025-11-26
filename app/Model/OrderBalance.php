@@ -109,7 +109,6 @@ public $belongsTo = array(
                                     INNER JOIN suppliers s ON s.id = b.supplier_id 
                                 WHERE i.id = ".$itemID." 
                                         AND i.data_cancel = '1901-01-01 00:00:00'
-                                        AND u.data_cancel = '1901-01-01 00:00:00'
                                         AND b.data_cancel = '1901-01-01 00:00:00'
                                         AND s.data_cancel = '1901-01-01 00:00:00'
                             ";
