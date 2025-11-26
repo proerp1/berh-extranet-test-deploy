@@ -642,7 +642,7 @@ class ReportsController extends AppController
     public function extrato($tipo = null)
     {
         $this->Permission->check(64, "leitura") ? "" : $this->redirect("/not_allowed");
-        
+
         $id = null;
         if (isset($_GET['c'])) {
             $id = $_GET['c'];
@@ -670,7 +670,7 @@ class ReportsController extends AppController
           ]
         ];
 
-        $condition = ['and' => ['Order.customer_id' => $id], 'or' => []];
+        $condition = ['and' => [], 'or' => []];
 
         if ($tipo == 'grupo_economico') {
             $this->Paginator->settings['Order']['group'] = 'EconomicGroup.id';
@@ -697,6 +697,14 @@ class ReportsController extends AppController
                 'Order.status_id' => $_GET['t']
             ]);
         }
+
+        $customerIds = $_GET['c'] ?? [];
+
+        if (!empty($_GET['t'])) {
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.customer_id' => $customerIds
+            ]);
+        }
     
         $get_de = isset($_GET['de']) ? $_GET['de'] : '';
         $get_ate = isset($_GET['ate']) ? $_GET['ate'] : '';
@@ -705,7 +713,7 @@ class ReportsController extends AppController
         $get_pagamento_ate = isset($_GET['pagamento_ate']) ? $_GET['pagamento_ate'] : '';
 
         $totalOrders = false;
-        if ($get_de != '' and $get_ate != '') {
+        if ($get_de != '' and $get_ate != '' and count($customerIds)) {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
     
@@ -724,15 +732,30 @@ class ReportsController extends AppController
 
             $de_anterior = date('Y-m-d', strtotime('-1 day '.$de));
 
-            $orderDesconto = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.desconto) as valor_desconto']);
-            $orderSaldo = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $id, "Order.created <= '{$de_anterior}'"], 'fields' => 'SUM(Order.saldo) as valor_saldo']);
+            $clientes = $this->Customer->find('all', ['conditions' => ['Customer.id' => $customerIds]]);
 
-            $saldo = ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
+            $orderDescontos = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $customerIds, "Order.created <= '{$de_anterior}'"], 'fields' => ['SUM(Order.desconto) as valor_desconto, Order.customer_id, Order.id'], 'group' => ['Order.customer_id']]);
+            $orderSaldos = $this->Order->find('all', ['conditions' => ['Order.customer_id' => $customerIds, "Order.created <= '{$de_anterior}'"], 'fields' => ['SUM(Order.saldo) as valor_saldo, Order.customer_id, Order.id'], 'group' => ['Order.customer_id']]);
 
-            if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
-              if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
-                $saldo = $cliente['Customer']['economia_inicial_not_formated'];
-              }
+            foreach ($clientes as $client) {
+                $id = $client['Customer']['id'];
+
+                $orderDesconto = array_values(array_filter($orderDescontos, function ($order) use ($id) {
+                    return $order['Order']['customer_id'] === $id;
+                }));
+                $orderSaldo = array_values(array_filter($orderSaldos, function ($order) use ($id) {
+                    return $order['Order']['customer_id'] === $id;
+                }));
+
+                $addSaldo = ($orderSaldo[0][0]['valor_saldo'] - $orderDesconto[0][0]['valor_desconto']);
+
+                if (isset($cliente['Customer']['dt_economia_inicial_nao_formatado'])) {
+                    if ($cliente['Customer']['dt_economia_inicial_nao_formatado'] <= $de_anterior) {
+                        $addSaldo = $cliente['Customer']['economia_inicial_not_formated'];
+                    }
+                }
+
+                $saldo += $addSaldo;
             }
 
             if (isset($_GET['excel'])) {
