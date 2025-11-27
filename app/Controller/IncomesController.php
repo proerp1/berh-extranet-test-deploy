@@ -1256,6 +1256,45 @@ class IncomesController extends AppController
         $this->set(compact( 'id', 'action', 'breadcrumb', 'nfses'));
     }
 
+    public function check_nfse($nfse_id) {
+        $this->Permission->check(88, "escrita") ? "" : $this->redirect("/not_allowed");
+
+        $income_nfse = $this->IncomeNfse->find('first', ['conditions' => ['IncomeNfse.id' => $nfse_id]]);
+        $income_id = $income_nfse['IncomeNfse']['income_id'];
+
+        if ($income_nfse['IncomeNfse']['status_id'] != 106) {
+            $this->Flash->set(__('Só é possível verificar o processamento de uma nota fiscal em processamento.'), ['params' => ['class' => "alert alert-danger"]]);
+            $this->redirect(['action'=> 'nfse', $income_id]);
+        }
+
+        try {
+            $nfse_sdk = $this->connect_nfse_sdk();
+
+            $payload = [
+                "chave" => $income_nfse['IncomeNfse']['chave']
+            ];
+
+            $stdResponse = $nfse_sdk->consulta($payload);
+
+            $response = json_decode(json_encode($stdResponse), true);
+
+            $alert = 'alert alert-warning';
+            if ($response['sucesso'] && $response['codigo'] == 100) {
+                $this->IncomeNfse->id = $nfse_id;
+                $this->IncomeNfse->save([
+                    'status_id' => 107
+                ]);
+
+                $alert = "alert alert-success";
+            }
+            $this->Flash->set(__($response['mensagem']), ['params' => ['class' => $alert]]);
+        } catch (\Exception $e) {
+            $this->Flash->set(__('Houve um erro ao tentar verificar a nota fical. Tente novamente mais tarde.'), ['params' => ['class' => "alert alert-danger"]]);
+        }
+
+        $this->redirect(['action'=> 'nfse', $income_id]);
+    }
+
     public function cria_nfse($income_id, $type) {
         $this->Permission->check(88, "escrita") ? "" : $this->redirect("/not_allowed");
 

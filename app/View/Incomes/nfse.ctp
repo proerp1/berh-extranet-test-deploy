@@ -59,6 +59,10 @@
                                 <?php } ?>
                             <?php if (!isset($nfse['status_id'])){ ?>
                                 <button type="submit" class="btn btn-success" data-loading-text="Aguarde...">Enviar</button>
+                            <?php } else if ($nfse['status_id'] == 106){ ?>
+                                <a href="<?php echo $this->base.'/incomes/check_nfse/'.$nfse['id'] ?>" class="btn btn-warning">
+                                    Verificar Processamento
+                                </a>
                             <?php } else if ($nfse['status_id'] == 107){ ?>
                                 <button data-id="<?php echo $nfse['id'] ?>" type="button" class="btn btn-danger confirm_cancel_nfse">Cancelar</button>
                             <?php } ?>
