@@ -2740,6 +2740,17 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         } 
     }
 
+    private function getPedidosBeneficiariosDataPagamento() {
+        $limite = new DateTime('17:30');
+        $agora = new DateTime();
+
+        if ($agora > $limite) {
+            $agora->modify('+1 day');
+        }
+
+        return $agora->format('Y-m-d');
+    }
+
     public function getPedidosBeneficiariosPIX($objPHPExcel, $dados) {
         $col = 'A';
         $objPHPExcel->setActiveSheetIndex(0)->getStyle($col)->getNumberFormat()->setFormatCode('@');
@@ -2748,6 +2759,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->getStyle($col)->getNumberFormat()->setFormatCode('@');
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF/CNPJ do Favorecido"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->getStyle($col)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Pagamento (dd/mm/aaaa)"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Descrição (Opcional)"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Identificação Interna (Opcional)"); $col++;
@@ -2755,13 +2767,15 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência de Origem"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta de Origem"); $col++;
 
+        $dataPagto = $this->getPedidosBeneficiariosDataPagamento();
+
         foreach ($dados as $key => $dado) {
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["b"]["pix_id"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dataPagto, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_ISO_DATE);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["o"]["id"] . " - PIX"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "0050"); $col++;
@@ -2776,6 +2790,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF/CNPJ do Favorecido"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de transferência"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Valor"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->getStyle($col)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data de Pagamento (dd/mm/aaaa)"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Descrição (Opcional)"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Identificação Interna (Opcional)"); $col++;
@@ -2783,13 +2798,15 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência de Origem"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta de Origem"); $col++;
 
+        $dataPagto = $this->getPedidosBeneficiariosDataPagamento();
+
         foreach ($dados as $key => $dado) {
             $col = 'A';
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["cpf"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dataPagto, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_ISO_DATE);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["o"]["id"] . " - TED"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "0050"); $col++;
