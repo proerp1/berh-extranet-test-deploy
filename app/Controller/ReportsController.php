@@ -1119,6 +1119,8 @@ class ReportsController extends AppController
                 'Order.id',
                 'Order.working_days',
                 'Order.created',
+                'Order.credit_release_date',
+                'Order.payment_date',
                 'Status.label',
                 'Status.name',
                 'Customer.codigo_associado',
@@ -1232,6 +1234,18 @@ class ReportsController extends AppController
             $para = date('d/m/Y', strtotime($para));
         } else {
             $para = date("d/m/Y", strtotime("+30 days"));
+        }
+
+        $de_lib = isset($_GET['de_lib']) ? $_GET['de_lib'] : '';
+        $ate_lib = isset($_GET['ate_lib']) ? $_GET['ate_lib'] : '';
+
+        if ($de_lib != '' && $ate_lib != '') {
+            $de_lib_cond = date('Y-m-d', strtotime(str_replace('/', '-', $de_lib)));
+            $ate_lib_cond = date('Y-m-d', strtotime(str_replace('/', '-', $ate_lib)));
+
+            $condition['and'] = array_merge($condition['and'], [
+                'Order.credit_release_date between ? and ?' => [$de_lib_cond . ' 00:00:00', $ate_lib_cond . ' 23:59:59']
+            ]);
         }
 
         if (isset($_GET['sup']) and $_GET['sup'] != 'Selecione') {
@@ -1598,7 +1612,7 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba'));
+        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba', 'de_lib', 'ate_lib'));
     }
 
     private function getCondicoesAbaCompras($aba)

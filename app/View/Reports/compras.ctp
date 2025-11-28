@@ -97,6 +97,17 @@
                                     <input class="form-control" id="ate" name="para" value="<?php echo $para; ?>">
                                 </div>
                             </div>
+                            
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Data Liberação do crédito:</label>
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <span class="input-group-text" style="padding: 5px;"> de </span>
+                                    <input class="form-control" id="de_lib" name="de_lib" value="<?php echo $de_lib ?>">
+                                    <span class="input-group-text" style="padding: 5px;"> até </span>
+                                    <input class="form-control" id="ate_lib" name="ate_lib" value="<?php echo $ate_lib; ?>">
+                                </div>
+                            </div>                            
+
                             <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c" id="c">
@@ -247,6 +258,7 @@
                     <th>Status Processamento</th>
                     <th>Motivo Processamento</th>
                     <th>Pedido Operadora</th>
+                    <th>Data Liberação do crédito</th>
                     <th>Data Entrega</th>
                     <th>ID Conta Pagar</th>
                     <th>Status do Pagamento</th>
@@ -315,6 +327,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Order"]["credit_release_date"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["outcome_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["StatusOutcome"]["name"]; ?></td>

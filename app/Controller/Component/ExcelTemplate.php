@@ -1081,6 +1081,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Prazo"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Condição de pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Data Liberação do crédito"); $col++;
 
         foreach ($dados as $key => $dado) {
             $fee_economia = 0;
@@ -1130,6 +1131,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['desc_condicao_pagamento']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['prazo']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['desc_condicao_pagamento']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['Order']['credit_release_date']); $col++;
         }
     }
 
