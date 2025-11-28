@@ -1172,6 +1172,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Primeiro Pedido"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Conta Pagar"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status do Pagamento"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Alterado em"); $col++;
         
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -1210,6 +1211,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key + 2), $primeiro_pedido); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["outcome_id"] ); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["StatusOutcome"]["name"] ); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["status_alterado_em"] ); $col++;
         }
     }
 
@@ -1247,6 +1249,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Matricula Operadora"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "ID Conta Pagar");$col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Status do Pagamento");$col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Alterado em"); $col++;
         
         foreach ($dados as $key => $dado) {
             $col = 'A';
@@ -1286,6 +1289,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['CustomerUserItinerary']['matricula']); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["OrderItem"]["outcome_id"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado['StatusOutcome']['name']); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["status_alterado_em"] ); $col++;
         }
     }
 
@@ -2301,6 +2305,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $activeWorksheet->setCellValue($col.'1', "Prazo");$col++;
         $activeWorksheet->setCellValue($col.'1', "ID Conta Pagar");$col++;
         $activeWorksheet->setCellValue($col.'1', "Status do Pagamento");$col++;
+        $activeWorksheet->setCellValue($col.'1', "Alterado em");$col++;
 
         $indx = 1;
         $total = 0;
@@ -2434,6 +2439,7 @@ public function getFluxo($objPHPExcel, $dados, $conta)
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['Order']['prazo']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['OrderItem']['outcome_id']);$col++;
             $activeWorksheet->setCellValue($col . $indx, $dados[$i]['StatusOutcome']['name']);$col++;
+            $activeWorksheet->setCellValue($col . $indx, $dados[$i][0]['status_alterado_em']);$col++;
         }
     }
 

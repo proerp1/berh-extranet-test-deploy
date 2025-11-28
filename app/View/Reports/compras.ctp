@@ -262,6 +262,7 @@
                     <th>Data Entrega</th>
                     <th>ID Conta Pagar</th>
                     <th>Status do Pagamento</th>
+                    <th class="w-200px min-w-200px">Alterado em</th>
                 </tr>
             </thead>
             <tbody>
@@ -331,6 +332,7 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["outcome_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["StatusOutcome"]["name"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i][0]["status_alterado_em"]; ?></td>
                         </tr>
                     <?php } ?>
                     <tr>

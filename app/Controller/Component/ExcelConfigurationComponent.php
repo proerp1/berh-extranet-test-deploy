@@ -240,6 +240,11 @@ class ExcelConfigurationComponent extends Component {
                                 AND o.id != Order.id
                     ) AS qtde_pedido',
 					'StatusOutcome.*',
+					'IF(Order.status_processamento_data IS NOT NULL, 
+						CONCAT(
+							COALESCE(UserStatusProcessamento.name, ""), " - ", DATE_FORMAT(Order.status_processamento_data, "%d/%m/%Y %H:%i:%s")
+						)
+					, "") AS status_alterado_em'
 				],
 				'joins' => [
 					[
@@ -371,6 +376,14 @@ class ExcelConfigurationComponent extends Component {
 						'type' => 'LEFT',
 						'conditions' => [
 							'StatusOutcome.id = Outcome.status_id'
+						]
+					],
+					[
+						'table' => 'users',
+						'alias' => 'UserStatusProcessamento',
+						'type' => 'LEFT',
+						'conditions' => [
+							'Order.status_processamento_user_id = UserStatusProcessamento.id'
 						]
 					],
 				],

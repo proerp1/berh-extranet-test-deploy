@@ -1132,7 +1132,12 @@ class ReportsController extends AppController
                 'Benefit.name',
                 'BenefitType.name',
                 'CustomerUserItinerary.quantity', 
-                'StatusOutcome.*',                
+                'StatusOutcome.*',
+                'IF(Order.status_processamento_data IS NOT NULL, 
+                    CONCAT(
+                        COALESCE(UserStatusProcessamento.name, ""), " - ", DATE_FORMAT(Order.status_processamento_data, "%d/%m/%Y %H:%i:%s")
+                    )
+                , "") AS status_alterado_em'
             ],
             'joins' => [
                 [
@@ -1189,6 +1194,14 @@ class ReportsController extends AppController
                     'type' => 'LEFT',
                     'conditions' => [
                         'StatusOutcome.id = Outcome.status_id'
+                    ]
+                ],
+                [
+                    'table' => 'users',
+                    'alias' => 'UserStatusProcessamento',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'Order.status_processamento_user_id = UserStatusProcessamento.id'
                     ]
                 ],
             ]
@@ -1439,6 +1452,11 @@ class ReportsController extends AppController
 					'MAX(CustomerUserAddress.city) as cidade',
 					'MAX(CustomerUserAddress.state) as estado',
                     'StatusOutcome.*',
+                    'IF(Order.status_processamento_data IS NOT NULL, 
+                        CONCAT(
+                            COALESCE(UserStatusProcessamento.name, ""), " - ", DATE_FORMAT(Order.status_processamento_data, "%d/%m/%Y %H:%i:%s")
+                        )
+                    , "") AS status_alterado_em'
                 ],
                 'joins' => [
                     [
@@ -1497,6 +1515,14 @@ class ReportsController extends AppController
                             'StatusOutcome.id = Outcome.status_id'
                         ]
                     ],
+                    [
+                        'table' => 'users',
+                        'alias' => 'UserStatusProcessamento',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Order.status_processamento_user_id = UserStatusProcessamento.id'
+                        ]
+                    ],
                 ],
 				'group' => [
 					'OrderItem.id'
@@ -1530,6 +1556,11 @@ class ReportsController extends AppController
                     'CustomerUserItinerary.quantity',
                     'CustomerUserItinerary.*',
                     'StatusOutcome.*',
+                    'IF(Order.status_processamento_data IS NOT NULL, 
+                        CONCAT(
+                            COALESCE(UserStatusProcessamento.name, ""), " - ", DATE_FORMAT(Order.status_processamento_data, "%d/%m/%Y %H:%i:%s")
+                        )
+                    , "") AS status_alterado_em'
                 ],
                 'joins' => [
                     [
@@ -1587,6 +1618,14 @@ class ReportsController extends AppController
                         'type' => 'LEFT',
                         'conditions' => [
                             'StatusOutcome.id = Outcome.status_id'
+                        ]
+                    ],
+                    [
+                        'table' => 'users',
+                        'alias' => 'UserStatusProcessamento',
+                        'type' => 'LEFT',
+                        'conditions' => [
+                            'Order.status_processamento_user_id = UserStatusProcessamento.id'
                         ]
                     ],
                 ],
@@ -2455,14 +2494,36 @@ class ReportsController extends AppController
             $this->Log->create();
             $this->Log->save($dados_log);
 
-            $this->Order->save([
-                'Order' => [
-                    'id' => $order['Order']['id'],
-                    'status_id' => $status,
-                    'updated_user_id' => CakeSession::read("Auth.User.id"),
-                    'updated' => date('Y-m-d H:i:s'),
-                ]
-            ]);
+            $order_data = [
+                'id'                => $order['Order']['id'],
+                'status_id'         => $status,
+                'updated_user_id'   => CakeSession::read("Auth.User.id"),
+                'updated'           => date('Y-m-d H:i:s'),
+            ];
+
+            $order_ge = (isset($order['Order']['pedido_complementar']) && (int)$order['Order']['pedido_complementar'] === 1);
+
+            $order_cond_pagamento = isset($order['Order']['desc_condicao_pagamento'])
+                ? trim($order['Order']['desc_condicao_pagamento'])
+                : '';
+
+            if ($status == 104) {
+                if ($order_ge) {
+                    // GE = SIM e Pré Pago
+                    if (stripos($order_cond_pagamento, 'Pré Pago') !== false) {
+                        $order_data['status_processamento_data']     = date('Y-m-d H:i:s');
+                        $order_data['status_processamento_user_id']  = CakeSession::read("Auth.User.id");
+                    }
+
+                    // GE = SIM e Faturado
+                    if (stripos($order_cond_pagamento, 'Faturado') !== false) {
+                        $order_data['status_processamento_data']     = date('Y-m-d H:i:s');
+                        $order_data['status_processamento_user_id']  = CakeSession::read("Auth.User.id");
+                    }
+                }
+            }
+
+            $this->Order->save(['Order' => $order_data]);
         }
         
         echo json_encode(['success' => true]);
