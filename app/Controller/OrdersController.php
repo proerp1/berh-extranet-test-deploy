@@ -2447,17 +2447,13 @@ class OrdersController extends AppController
         $this->Order->recursive = -1;
         $this->Order->atualizarStatusPagamento($id);
 
-        $order = $this->Order->find('first', ['fields' => ['Order.status_id'], 'conditions' => ['Order.id' => $id], 'recursive' => -1]); 
-
-        if (in_array($order['Order']['status_id'], [85, 87])) {
-            $this->Order->save([
-                'Order' => [
-                    'id' => $id,
-                    'status_id' => 87,
-                    'end_date' => date('d/m/Y'),
-                ]
-            ]);
-        }
+        $this->Order->save([
+            'Order' => [
+                'id' => $id,
+                'status_id' => 87,
+                'end_date' => date('d/m/Y'),
+            ]
+        ]);
 
         $this->Flash->set(__('O Pagamento foi confirmado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
 
