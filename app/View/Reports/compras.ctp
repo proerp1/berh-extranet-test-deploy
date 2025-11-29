@@ -256,13 +256,13 @@
                     <th>Data inicio Processamento</th>
                     <th>Data fim Processamento</th>
                     <th>Status Processamento</th>
+                    <th>Alterado em</th>
                     <th>Motivo Processamento</th>
                     <th>Pedido Operadora</th>
                     <th>Data Liberação do crédito</th>
                     <th>Data Entrega</th>
                     <th>ID Conta Pagar</th>
-                    <th>Status do Pagamento</th>
-                    <th class="w-200px min-w-200px">Alterado em</th>
+                    <th class="w-200px min-w-200px">Status do Pagamento</th>
                 </tr>
             </thead>
             <tbody>
@@ -326,13 +326,13 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_inicio_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_fim_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i][0]["status_alterado_em"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Order"]["credit_release_date"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_entrega"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["outcome_id"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["StatusOutcome"]["name"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i][0]["status_alterado_em"]; ?></td>
                         </tr>
                     <?php } ?>
                     <tr>
