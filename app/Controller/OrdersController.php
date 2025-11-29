@@ -2449,9 +2449,9 @@ class OrdersController extends AppController
 
         $this->Order->save([
             'Order' => [
-                'id' => $id,
+                'id'        => $id,
                 'status_id' => 87,
-                'end_date' => date('d/m/Y'),
+                'end_date'  => date('d/m/Y'),
             ]
         ]);
 

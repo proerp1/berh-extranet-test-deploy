@@ -658,13 +658,19 @@ class Order extends AppModel
         
         $this->id = $id;
         
-        $result = $this->save([
+        $data = [
             'Order' => [
                 'status_id'     => $statusID,
                 'payment_ge'    => $pedidoComplementar,
                 'payment_date'  => $this->getNextWeekdayDate('Y-m-d'),
             ]
-        ]);
+        ];
+
+        if ($statusID == 87) {
+            $data['Order']['end_date'] = date('d/m/Y');
+        }
+
+        $result = $this->save($data);
 
         return $result;
     }
