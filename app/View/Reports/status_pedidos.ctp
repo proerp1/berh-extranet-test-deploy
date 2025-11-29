@@ -104,6 +104,7 @@
                         <th>Número</th>
                         <th>Cliente</th>
                         <th>Data Pagamento</th>
+                        <th>Data Liberação do crédito</th>
                         <th>Data Finalização</th>
                         <th>Subtotal</th>
                         <th>Repasse</th>
@@ -162,7 +163,8 @@
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]['Order']['created'] ?></td>
                                 <td class="fw-bold fs-7 ps-4"><input type="hidden" class="order_id" value="<?php echo $data[$i]["Order"]["id"]; ?>"><a href="<?php echo $this->base.'/orders/edit/'.$data[$i]["Order"]["id"]; ?>"><?php echo $data[$i]["Order"]["id"]; ?></a></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Customer"]["nome_primario"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>     
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Income"]["data_pagamento"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["credit_release_date"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["end_date"]; ?></td>     
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["subtotal"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo 'R$' . $data[$i]["Order"]["transfer_fee"]; ?></td>
