@@ -261,7 +261,7 @@ class OrderItem extends AppModel {
         return $this->query($sql);
     }
 
-    public function apiBenficiaryCurrentOrders($data, $customer_user_id){
+    public function apiBenficiaryCurrentOrders($data, $cpf){
         $dateOneMonthAgo = date('Y-m-d', strtotime('-1 month', strtotime($data)));
 
         // SUM(i.subtotal-IFNULL(i.saldo, 0)) AS valor_credito,
@@ -297,7 +297,7 @@ class OrderItem extends AppModel {
 	            (o.order_period_to BETWEEN '".$dateOneMonthAgo."' AND '".$data."')
 	        )
 	 )
-        AND i.customer_user_id = ".$customer_user_id."
+        AND REPLACE(REPLACE(REPLACE(b.cpf, '.', ''), ',', ''), '-', '') = '".$cpf."'
         GROUP BY b.id, su.id, o.id, i.status_processamento
         ORDER BY beneficiario, beneficio
         ";
