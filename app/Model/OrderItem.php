@@ -252,7 +252,6 @@ class OrderItem extends AppModel {
         INNER JOIN suppliers Supplier on Benefit.supplier_id = Supplier.id
         WHERE OrderItem.data_cancel = '1901-01-01 00:00:00'
         and `Order`.data_cancel = '1901-01-01 00:00:00'
-        and CustomerUser.data_cancel = '1901-01-01 00:00:00'
         and Customer.data_cancel = '1901-01-01 00:00:00'
         and `Order`.status_id = 85
         GROUP BY
@@ -285,8 +284,7 @@ class OrderItem extends AppModel {
             INNER JOIN customer_user_itineraries ci ON ci.id = i.customer_user_itinerary_id
             INNER JOIN benefits be ON be.id = ci.benefit_id 
             INNER JOIN suppliers su ON su.id = be.supplier_id
-        WHERE b.data_cancel = '1901-01-01'
-	AND o.status_id = 87
+        WHERE o.status_id = 87
         AND 
 	(
 		(
