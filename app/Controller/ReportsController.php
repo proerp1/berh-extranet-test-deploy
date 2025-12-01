@@ -700,7 +700,7 @@ class ReportsController extends AppController
 
         $customerIds = $_GET['c'] ?? [];
 
-        if (!empty($_GET['t'])) {
+        if (!empty($customerIds) and !in_array('todos', $customerIds)) {
             $condition['and'] = array_merge($condition['and'], [
                 'Order.customer_id' => $customerIds
             ]);
@@ -713,7 +713,7 @@ class ReportsController extends AppController
         $get_pagamento_ate = isset($_GET['pagamento_ate']) ? $_GET['pagamento_ate'] : '';
 
         $totalOrders = false;
-        if ($get_de != '' and $get_ate != '' and count($customerIds)) {
+        if ($get_de != '' and $get_ate != '' and (count($customerIds) or in_array('todos', $customerIds))) {
             $de = date('Y-m-d', strtotime(str_replace('/', '-', $get_de)));
             $ate = date('Y-m-d', strtotime(str_replace('/', '-', $get_ate)));
     

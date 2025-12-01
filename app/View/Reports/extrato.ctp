@@ -239,8 +239,9 @@
                                 <label class="form-label fs-5 fw-bold mb-3">Clientes:</label>
                                 <select class="form-select form-select-solid fw-bolder" multiple data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="c[]" id="c[]">
                                     <option value=''></option>
+                                    <?php $ids = $_GET["c"] ?? []; ?>
+                                    <option value='todos' <?= in_array('todos', $ids) ? 'selected' : '' ?>>Todos</option>
                                     <?php
-                                        $ids = $_GET["c"] ?? [];
                                         foreach ($customers as $customerId => $customerName) {
                                             $selected = in_array($customerId, $ids) ? 'selected' : '';
                                             echo '<option value="'.$customerId.'" '.$selected.'>'.$customerName.'</option>';

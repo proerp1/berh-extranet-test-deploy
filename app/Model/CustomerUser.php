@@ -210,7 +210,15 @@ class CustomerUser extends AppModel
                         INNER JOIN customers c ON c.id = o.customer_id 
                         INNER JOIN customer_users u ON u.customer_id = c.id 
                                                         AND u.id = i.customer_user_id 
-                        LEFT JOIN customer_user_bank_accounts b ON b.customer_user_id = u.id AND b.data_cancel = '1901-01-01 00:00:00' 
+                        LEFT JOIN customer_user_bank_accounts b ON b.id = (
+                                SELECT sb.id
+                                FROM customer_user_bank_accounts sb
+                                WHERE sb.customer_user_id = u.id
+                                  AND sb.data_cancel = '1901-01-01 00:00:00'
+                                  and sb.status_id = 1
+                                ORDER BY sb.created DESC
+                                LIMIT 1
+                            ) 
                         LEFT JOIN bank_codes k ON k.id = b.bank_code_id 
                         LEFT JOIN bank_account_types t ON t.id = b.account_type_id 
                     WHERE o.id = ".$orderID." $pixWhere

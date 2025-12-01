@@ -234,7 +234,8 @@
                     <th class="ps-4 w-80px min-w-80px rounded-start">
                         <input type="checkbox" class="check_all">
                     </th>
-                    <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                    <th class="ps-4 w-150px min-w-150px rounded-start">Status Pedido</th>
+                    <th>Alterado em</th>
                     <th>Código</th>
                     <th>Data de criação</th>
                     <th>Número</th>
@@ -256,7 +257,6 @@
                     <th>Data inicio Processamento</th>
                     <th>Data fim Processamento</th>
                     <th>Status Processamento</th>
-                    <th>Alterado em</th>
                     <th>Motivo Processamento</th>
                     <th>Pedido Operadora</th>
                     <th>Data Liberação do crédito</th>
@@ -300,6 +300,7 @@
                                     <?php echo $items[$i]["Status"]["name"] ?>
                                 </span>
                             </td>
+                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i][0]["status_alterado_em"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Customer"]["codigo_associado"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]['OrderItem']['created'] ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Order"]["id"]; ?></td>
@@ -326,7 +327,6 @@
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_inicio_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["data_fim_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["status_processamento"]; ?></td>
-                            <td class="fw-bold fs-7 ps-4"><?php echo $items[$i][0]["status_alterado_em"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["motivo_processamento"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["OrderItem"]["pedido_operadora"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $items[$i]["Order"]["credit_release_date"]; ?></td>
