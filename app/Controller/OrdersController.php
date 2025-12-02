@@ -556,6 +556,7 @@ class OrdersController extends AppController
             $item['motivo_processamento'] = null;
             $item['pedido_operadora'] = null;
             $item['user_creator_id'] = CakeSession::read("Auth.User.id");
+            $item['created'] = date('Y-m-d H:i:s');
             $newItem[] = $item;
         }
 
@@ -745,6 +746,7 @@ class OrdersController extends AppController
             'values_from_csv' => $values_from_csv,
             'manual_quantity' => $manualQuantity,
             'calculation_details_log' => $calculationLog,
+            'created' => date('Y-m-d H:i:s'),
         ];
 
         $this->OrderItem->create();
