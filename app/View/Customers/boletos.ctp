@@ -16,6 +16,48 @@
                     </div>
                 </div>
             </div>
+            <div class="card-toolbar">
+                <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                    <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                        <i class="fas fa-filter"></i>
+                        Filtro
+                    </button>
+
+                    <div class="menu menu-sub menu-sub-dropdown w-300px w-md-400px" data-kt-menu="true" id="kt-toolbar-filter">
+                        <div class="px-7 py-5">
+                            <div class="fs-4 text-dark fw-bolder">Opções</div>
+                        </div>
+                        <div class="separator border-gray-200"></div>
+
+                        <div class="px-7 py-5">
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="os" id="os">
+                                    <option value=''></option>
+                                    <?php foreach ($order_statuses as $status_id => $status) {
+                                        $get_status = $_GET['os'] ?? ''; ?>
+                                        <option value="<?= $status_id ?>" <?php echo $get_status == $status_id ? 'selected' : ''; ?>><?= $status ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Status Pagamento:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="is" id="is">
+                                    <option value=''></option>
+                                    <?php foreach ($income_statuses as $status_id => $status) {
+                                        $get_status = $_GET['is'] ?? ''; ?>
+                                        <option value="<?= $status_id ?>" <?php echo $get_status == $status_id ? 'selected' : ''; ?>><?= $status ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="reset" class="btn btn-light btn-active-light-primary me-2" data-kt-menu-dismiss="true" data-kt-customer-table-filter="reset">Limpar</button>
+                                <button type="submit" class="btn btn-primary" data-kt-menu-dismiss="true" data-kt-customer-table-filter="filter">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 
@@ -25,6 +67,7 @@
             <thead>
                 <tr class="fw-bolder text-muted bg-light">
                     <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
+                    <th>Status Pagamento</th>
                     <th>Período</th>
                     <th>Nº do pedido</th>
                     <th>Vencimento</th>
@@ -44,6 +87,15 @@
                                 <span class='badge <?php echo $data[$i]["Status"]["label"] ?>'>
                                     <?php echo $data[$i]["Status"]["name"] ?>
                                 </span>
+                            </td>
+                            <td class="fw-bold fs-7 ps-4">
+                                <?php if ($data[$i]['Income']['status_id']) { ?>
+                                    <span class='badge <?php echo $data[$i]['Income']["Status"]["label"] ?>'>
+                                    <?php echo $data[$i]['Income']["Status"]["name"] ?>
+                                </span>
+                                <?php } else { ?>
+                                    -
+                                <?php } ?>
                             </td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["order_period_from"].' - '.$data[$i]["Order"]["order_period_to"]; ?></td>
                             <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Order"]["id"]; ?></td>
