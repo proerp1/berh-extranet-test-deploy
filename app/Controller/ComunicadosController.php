@@ -17,7 +17,7 @@ class ComunicadosController extends AppController
 
     public function index()
     {
-        $this->Permission->check(2, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
     
         $condition = ["and" => [], "or" => []];
@@ -49,7 +49,7 @@ class ComunicadosController extends AppController
     
     public function add()
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->Comunicado->create();
             if ($this->Comunicado->validates()) {
@@ -77,7 +77,7 @@ class ComunicadosController extends AppController
 
     public function edit($id = null)
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "escrita") ? "" : $this->redirect("/not_allowed");
         $this->Comunicado->id = $id;
         if ($this->request->is(['post', 'put'])) {
             $this->Comunicado->validates();
@@ -109,7 +109,7 @@ class ComunicadosController extends AppController
 
     public function delete($id)
     {
-        $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->Comunicado->id = $id;
 
         $this->request->data['Comunicado']['data_cancel'] = date("Y-m-d H:i:s");
@@ -123,7 +123,7 @@ class ComunicadosController extends AppController
 
     public function clientes($id)
     {
-        $this->Permission->check(2, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "leitura") ? "" : $this->redirect("/not_allowed");
         $this->Paginator->settings = $this->paginate;
 
         $condition = ["and" => ['ComunicadoCliente.comunicado_id' => $id], "or" => []];
@@ -152,7 +152,7 @@ class ComunicadosController extends AppController
     
     public function add_cliente($id)
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "escrita") ? "" : $this->redirect("/not_allowed");
         if ($this->request->is(['post', 'put'])) {
             $this->request->data['ComunicadoCliente']['comunicado_id'] = $id;
             $this->request->data['ComunicadoCliente']['user_creator_id'] = CakeSession::read("Auth.User.id");
@@ -169,7 +169,7 @@ class ComunicadosController extends AppController
     
     public function add_all_clientes($id)
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $condition = ["and" => ['ComunicadoCliente.comunicado_id' => $id], "or" => []];
 
@@ -219,7 +219,7 @@ class ComunicadosController extends AppController
 
     public function delete_cliente($id, $comunicado_cliente_id)
     {
-        $this->Permission->check(2, "excluir") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "excluir") ? "" : $this->redirect("/not_allowed");
         $this->ComunicadoCliente->id = $comunicado_cliente_id;
 
         $data['ComunicadoCliente']['data_cancel'] = date("Y-m-d H:i:s");
@@ -233,7 +233,7 @@ class ComunicadosController extends AppController
 
     public function enviar_comunicado($id)
     {
-        $this->Permission->check(2, "escrita") ? "" : $this->redirect("/not_allowed");
+        $this->Permission->check(96, "escrita") ? "" : $this->redirect("/not_allowed");
 
         $comunicado_clientes = $this->ComunicadoCliente->find('all', ['conditions' => ['ComunicadoCliente.comunicado_id' => $id]]);
         
