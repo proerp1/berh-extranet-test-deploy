@@ -904,6 +904,9 @@ class CustomersController extends AppController
                     'Customer', 
                     'Income.id',
                     'Income.vencimento',
+                    'Income.status_id',
+                    'Income.Status.label',
+                    'Income.Status.name',
                 ],
             ]
         ];
@@ -917,7 +920,18 @@ class CustomersController extends AppController
             $condition['or'] = array_merge($condition['or'], ['Customer.nome_primario LIKE' => "%" . $_GET['q'] . "%"]);
         }
 
+        if (isset($_GET['os']) and $_GET['os'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['Order.status_id' => $_GET['os']]);
+        }
+
+        if (isset($_GET['is']) and $_GET['is'] != "") {
+            $condition['or'] = array_merge($condition['or'], ['Income.status_id' => $_GET['is']]);
+        }
+
         $data = $this->Paginator->paginate('Order', $condition);
+
+        $order_statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 18]]);
+        $income_statuses = $this->Status->find('list', ['conditions' => ['Status.categoria' => 22]]);
 
         $this->Customer->id = $id;
         $cliente = $this->Customer->read();
@@ -925,7 +939,7 @@ class CustomersController extends AppController
         $action = 'Pedido';
         $breadcrumb = [$cliente['Customer']['nome_secundario'] => ['controller' => 'customers', 'action' => 'boletos', $id],
         'Boletos' => '',];
-        $this->set(compact('data', 'action', 'breadcrumb', 'id'));
+        $this->set(compact('data', 'action', 'breadcrumb', 'id', 'income_statuses', 'order_statuses'));
     }
 
     /*********************
