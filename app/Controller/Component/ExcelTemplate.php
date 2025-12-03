@@ -2779,10 +2779,31 @@ public function getFluxo($objPHPExcel, $dados, $conta)
         $dataPagto = $this->getPedidosBeneficiariosDataPagamento();
 
         foreach ($dados as $key => $dado) {
+            $chave = $dado["b"]["pix_id"];
+            if ($dado["b"]["pix_type"] == "celular") {
+                $digits = preg_replace('/\D/', '', $chave);
+
+                if (strlen($digits) > 11) {
+                    $ddi = substr($digits, 0, strlen($digits) - 11);
+                    $rest = substr($digits, -11);
+                } else {
+                    $ddi = "55";
+                    $rest = $digits;
+                }
+
+                $rest = str_pad($rest, 11, "0", STR_PAD_LEFT);
+
+                $ddd  = substr($rest, 0, 2);
+                $num1 = substr($rest, 2, 5);
+                $num2 = substr($rest, 7, 4);
+
+                $chave = "+" . $ddi . " ($ddd) $num1-$num2";
+            }
+
             $col = 'A';
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["b"]["pix_id"], DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $chave, DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["u"]["cpf"], DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado[0]["cpf"], DataType::TYPE_STRING); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dataPagto);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
@@ -2794,6 +2815,10 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
     public function getPedidosBeneficiariosContaBancaria($objPHPExcel, $dados) {
         $col = 'A';
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Banco do Favorecido"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Agência do Favorecido"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Conta do Favorecido"); $col++;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Tipo de Conta do Favorecido"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "Nome / Razão Social do Favorecido"); $col++;
         $objPHPExcel->setActiveSheetIndex(0)->getStyle($col)->getNumberFormat()->setFormatCode('@');
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col.'1', "CPF/CNPJ do Favorecido"); $col++;
@@ -2811,9 +2836,13 @@ public function getFluxo($objPHPExcel, $dados, $conta)
 
         foreach ($dados as $key => $dado) {
             $col = 'A';
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["k"]["code"]." - ".$dado["k"]["name"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["agencia"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado[0]["conta"]); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["t"]["description"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["u"]["name"]); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado["u"]["cpf"], DataType::TYPE_STRING); $col++;
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit($col . ($key+2), $dado[0]["cpf"], DataType::TYPE_STRING); $col++;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), "TED"); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dado["i"]["subtotal"]); $col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), $dataPagto);$col++;
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($col . ($key+2), ""); $col++;

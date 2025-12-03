@@ -12,16 +12,37 @@
     z-index: 1000;
 
     /* Ajustar a imagem para caber perfeitamente no círculo */
-    background-image: url("logo_be_widget.png");
-    background-size: contain; /* Faz a imagem caber no container */
+    background-image: url("berh-bella.png");
+    background-size: 65px; /* Faz a imagem caber no container */
     background-repeat: no-repeat; /* Evitar repetição da imagem */
-    background-position: center; /* Centraliza a imagem */
-    transition: transform 0.3s ease;
+    background-position: top right; /* Centraliza a imagem */
+    transition: 0.3s ease;
 }
 
 
 .redirect-widget:hover {
     transform: scale(1.1);
+}
+
+.redirect-widget::after {
+    content: 'Posso te ajudar?';
+    display: none;
+    position: absolute;
+    left: -5px;
+    top: 10px;
+    transform: translateX(-100%);
+    white-space: nowrap;
+    width: fit-content;
+    height: 35px;
+    color: #6a1b9a;
+    border: 2px #6a1b9a solid;
+    background: white;
+    border-radius: 20px;
+    padding: 7px 15px;
+}
+
+.redirect-widget:hover::after {
+    display: block;
 }
 
 .iframe-container {
