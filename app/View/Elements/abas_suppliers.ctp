@@ -14,4 +14,7 @@
     <li class="nav-item">
         <a class="nav-link <?php echo in_array($this->request->params['controller'], ['log_supplier']) ? 'active' : '' ?>" href="<?php echo $this->base.'/log_supplier/index/'.$id; ?>">Histórico Alterações</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo in_array($this->request->params['controller'], ['supplier_params_ge']) ? 'active' : '' ?>" href="<?php echo $this->base.'/supplier_params_ge/index/'.$id; ?>">Parâmetros GE</a>
+    </li>
 </ul>
