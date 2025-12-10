@@ -1059,17 +1059,37 @@ public function edit_document($id, $document_id = null)
                     ]
                 ],
                 [
+                    'table' => 'outcome_orders',
+                    'alias' => 'OutcomeOrder',
+                    'type' => 'LEFT',
+                    'conditions' => [
+                        'OutcomeOrder.order_id = Order.id'
+                    ]
+                ],
+                [
                     'table' => 'outcomes',
                     'alias' => 'Outcome',
                     'type' => 'LEFT',
                     'conditions' => [
-                        'Outcome.order_id = Order.id'
+                        'Outcome.id = OutcomeOrder.outcome_id'
                     ]
                 ]
             ]
         ]];
 
-        $condition = ["and" => ['Order.id' => $order_ids, 'CustomerUserBankAccounts.status_id' => 1], "or" => []];
+        $hasOrderItemWithOutcomeId = $this->OrderItem->find('count', ['conditions' => ['OrderItem.outcome_id' => $id]]);
+
+        $orderItemOutcomeId = $hasOrderItemWithOutcomeId ? $id : null;
+
+        $condition = [
+            "and" => [
+                'Order.id' => $order_ids,
+                'Outcome.id' => $id,
+                'OrderItem.outcome_id' => $orderItemOutcomeId,
+                'CustomerUserBankAccounts.status_id' => 1
+            ],
+            "or" => []
+        ];
 
         if (isset($_GET['q']) and $_GET['q'] != "") {
             $condition['or'] = array_merge($condition['or'], ['CustomerUser.name LIKE' => "%" . $_GET['q'] . "%", 'CustomerUser.cpf LIKE' => "%" . $_GET['q'] . "%", 'Benefit.name LIKE' => "%" . $_GET['q'] . "%"]);
@@ -1077,7 +1097,7 @@ public function edit_document($id, $document_id = null)
 
         $items = $this->Paginator->paginate('OrderItem', $condition);
 
-        $pendingPix = $this->CustomerUser->find_pix_pendentes($order_ids);
+        $pendingPix = $this->CustomerUser->find_pix_pendentes($order_ids, $id);
 
         $action = 'Contas a pagar';
         $breadcrumb = ['Pagamentos' => ''];
@@ -1095,7 +1115,7 @@ public function edit_document($id, $document_id = null)
             return $outcomeOrder['order_id'];
         }, $outcome['OutcomeOrder']);
 
-        $pix_pendentes = $this->CustomerUser->find_pix_pendentes($order_ids);
+        $pix_pendentes = $this->CustomerUser->find_pix_pendentes($order_ids, $id);
 
         if (!count($pix_pendentes)) {
             $this->Flash->set(__('Não há pagamentos pendentes.'), ['params' => ['class' => "alert alert-warning"]]);

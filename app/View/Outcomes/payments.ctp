@@ -60,10 +60,10 @@
                 <div class="col-3">
                     <h3>Itens</h3>
                 </div>
-                <div class="col-9">
+                <div class="col-9 d-flex justify-content-end">
                     <?php if ($order['Order']['is_partial'] == 3) { ?>
                         <?php if (count($pendingPix)) { ?>
-                            <a href="<?php echo $this->base . '/outcomes/enviar_btg/' . $id; ?>" class="btn btn-sm btn-success me-3" style="float:right">
+                            <a href="<?php echo $this->base . '/outcomes/enviar_btg/' . $id; ?>" class="btn btn-success me-3">
                                 <i class="fas fa-dollar-sign"></i>
                                 Liberar PIX
                             </a>

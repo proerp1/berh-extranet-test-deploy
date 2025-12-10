@@ -29,11 +29,20 @@
                         
                         <div class="px-7 py-5">
                             <div class="mb-10">
-                                <label class="form-label fs-5 fw-bold mb-3">Tipo:</label>
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo Canal:</label>
                                 <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="t" id="t">
                                     <option></option>
                                     <option value="1" <?= isset($_GET['t']) && $_GET['t'] == '1' ? 'selected' : '' ?>>Revenda</option>
                                     <option value="2" <?= isset($_GET['t']) && $_GET['t'] == '2' ? 'selected' : '' ?>>Parceiro</option>
+                                    <option value="3" <?= isset($_GET['t']) && $_GET['t'] == '3' ? 'selected' : '' ?>>Executivo</option>
+                                </select>
+                            </div>
+                            <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Tipo Pessoa:</label>
+                                <select class="form-select form-select-solid fw-bolder" data-kt-select2="true" data-placeholder="Selecione" data-allow-clear="true" name="tp" id="tp">
+                                    <option></option>
+                                    <option value="1" <?= isset($_GET['tp']) && $_GET['tp'] == '1' ? 'selected' : '' ?>>Física</option>
+                                    <option value="2" <?= isset($_GET['tp']) && $_GET['tp'] == '2' ? 'selected' : '' ?>>Jurídica</option>
                                 </select>
                             </div>
                             <div class="mb-10">
@@ -72,18 +81,20 @@
                 <thead>
                     <tr class="fw-bolder text-muted bg-light">
                         <th class="ps-4 w-150px min-w-150px rounded-start">Status</th>
-                        <th>Nome</th>
-                        <th>Tipo</th>
-                        <th>Documento</th>
-                        <th>Telefone</th>
+                        <th>Tipo Canal</th>
+                        <th>Tipo Pessoa</th>
+                        <th>Nome do Contato</th>
+                        <th>Observação</th>
                         <th class="w-200px min-w-200px rounded-end">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ($data) { ?>
                         <?php for ($i=0; $i < count($data); $i++) {
-                            $tipos = ['1' => 'Revenda', '2' => 'Parceiro'];
-                            $tipo = $tipos[$data[$i]['Resale']['tipo']]
+                            $tipos = ['1' => 'Revenda', '2' => 'Parceiro', 3 => 'Executivo'];
+                            $tipo = $tipos[$data[$i]['Resale']['tipo']];
+                            $tipos_pessoa = ['1' => 'Física', '2' => 'Jurídica'];
+                            $tipo_pessoa = $tipos_pessoa[$data[$i]['Resale']['tipo']];
                             ?>
                             <tr>
                                 <td class="fw-bold fs-7 ps-4">
@@ -91,10 +102,10 @@
                                         <?php echo $data[$i]["Status"]["name"] ?>
                                     </span>
                                 </td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4"><?php echo $tipo; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["cnpj"]; ?></td>
-                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["telefone"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $tipo_pessoa; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["nome_fantasia"]; ?></td>
+                                <td class="fw-bold fs-7 ps-4"><?php echo $data[$i]["Resale"]["observation"]; ?></td>
                                 <td class="fw-bold fs-7 ps-4">
                                     <a href="<?php echo $this->base.'/resales/edit/'.$data[$i]["Resale"]["id"]; ?>" class="btn btn-info btn-sm">
                                         Editar

@@ -234,8 +234,16 @@ class CustomerUser extends AppModel
         return $res;
     }
 
-    public function find_pix_pendentes($orderID)
+    public function find_pix_pendentes($orderID, $outcomeId)
     {
+        $orderItemsOutcomeQtdQuery = "SELECT count(*) as total from order_items where outcome_id = $outcomeId";
+
+        $result = $this->query($orderItemsOutcomeQtdQuery);
+
+        $total = $result[0][0]['total'];
+
+        $filterByOrderItemOutcomeId = $total ? "i.outcome_id = $outcomeId" : "i.outcome_id is null";
+
         $sql = "SELECT 
                   u.name, 
                   u.cpf, 
@@ -274,8 +282,11 @@ class CustomerUser extends AppModel
                     )
               ) b ON b.customer_user_id = u.id
               LEFT JOIN bank_codes k ON k.id = b.bank_code_id 
-              LEFT JOIN bank_account_types t ON t.id = b.account_type_id 
+              LEFT JOIN bank_account_types t ON t.id = b.account_type_id
+              LEFT JOIN outcome_orders oo on oo.order_id = o.id
               WHERE o.id in (".implode(', ', $orderID).")
+                and oo.outcome_id = $outcomeId
+                AND $filterByOrderItemOutcomeId
                 AND i.pix_status_id = 109
                 AND o.data_cancel = '1901-01-01 00:00:00' 
                 AND c.data_cancel = '1901-01-01 00:00:00' 

@@ -19,4 +19,7 @@
 	<li class="nav-item">
 		<a class="nav-link <?php echo ($this->request->params['action'] == 'carteira') ? 'active' : '' ?>" href="<?php echo $this->base.'/resales/carteira/'.$id; ?>">Carteira</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link <?php echo ($this->request->params['action'] == 'log_resale') ? 'active' : '' ?>" href="<?php echo $this->base.'/resales/historico/'.$id; ?>">Historico de Alterações</a>
+	</li>
 </ul>

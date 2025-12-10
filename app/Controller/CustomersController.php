@@ -506,9 +506,6 @@ class CustomersController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $this->request->data['PlanCustomer']['user_updated_id'] = CakeSession::read('Auth.User.id');
 
-            $log_old_value = $this->request->data['log_old_value'];
-            unset($this->request->data['log_old_value']);
-
             $log_old_value = $this->request->data["log_old_value"];
             unset($this->request->data["log_old_value"]);
 

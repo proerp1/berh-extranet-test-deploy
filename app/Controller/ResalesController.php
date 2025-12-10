@@ -3,7 +3,7 @@ class ResalesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
     public $components = ['Paginator', 'Permission', 'Email'];
-    public $uses = ['Resale', 'Status', 'Vencimento', 'Seller', 'Customer', 'CustomerUser', 'BankAccount'];
+    public $uses = ['Resale', 'Status', 'Vencimento', 'Seller', 'Customer', 'CustomerUser', 'BankAccount', 'Log'];
 
     public $paginate = [
         'Resale'			 => ['limit' => 10, 'order' => ['Status.id' => 'asc', 'Resale.nome_fantasia' => 'asc']],
@@ -30,6 +30,10 @@ class ResalesController extends AppController
 
         if (isset($_GET["t"]) and $_GET["t"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Resale.tipo' => $_GET['t']]);
+        }
+
+        if (isset($_GET["tp"]) and $_GET["tp"] != "") {
+            $condition['and'] = array_merge($condition['and'], ['Resale.tipo_pessoa' => $_GET['tp']]);
         }
 
         if (isset($_GET["s"]) and $_GET["s"] != "") {
@@ -77,8 +81,30 @@ class ResalesController extends AppController
         $this->Resale->id = $id;
         if ($this->request->is(['post', 'put'])) {
             $this->Resale->validates();
+
+            $log_old_value = $this->request->data['log_old_value'];
+            unset($this->request->data['log_old_value']);
+
+            $dados_log = [
+                'old_value' => $log_old_value,
+                'new_value' => json_encode($this->request->data),
+                'route' => 'relases/edit',
+                'log_action' => 'Alterou',
+                'log_table' => 'Resale',
+                'primary_key' => $id,
+                'parent_log' => 0,
+                'user_type' => 'ADMIN',
+                'user_id' => CakeSession::read('Auth.User.id'),
+                'message' => 'O canal foi alterado com sucesso',
+                'log_date' => date('Y-m-d H:i:s'),
+                'data_cancel' => '1901-01-01',
+                'usuario_data_cancel' => 0,
+                'ip' => $_SERVER['REMOTE_ADDR'],
+            ];
+
             $this->request->data['Resale']['user_updated_id'] = CakeSession::read("Auth.User.id");
             if ($this->Resale->save($this->request->data)) {
+                $this->Log->save($dados_log);
                 $this->Flash->set(__('O parceiro foi alterado com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             } else {
                 $this->Flash->set(__('O parceiro não pode ser alterado, Por favor tente de novo.'), ['params' => ['class' => "alert alert-danger"]]);
@@ -93,7 +119,7 @@ class ResalesController extends AppController
         $bankAccounts = $this->BankAccount->find('list', ['conditions' => ['BankAccount.status_id' => 1], 'order' => ['BankAccount.name' => 'asc']]);
         $vencimentos = $this->Vencimento->find('list');
 
-        $this->set("action", 'Revenda - '.$this->request->data['Resale']['nome_fantasia']);
+        $this->set("action", 'Canal - '.$this->request->data['Resale']['nome_fantasia']);
         $this->set("form_action", "edit");
         $this->set(compact('statuses', 'id', 'vencimentos', 'bankAccounts'));
         
@@ -460,5 +486,40 @@ class ResalesController extends AppController
             $this->Flash->set(__('Senha reenviada com sucesso'), ['params' => ['class' => "alert alert-success"]]);
             $this->redirect("/customers/users/".$id);
         }
+    }
+
+    public function historico($id) {
+        $this->Permission->check(10, "leitura") ? "" : $this->redirect("/not_allowed");
+        $this->Paginator->settings = array_merge($this->paginate, [
+            'order' => ['Log.log_date' => 'desc'],
+            'joins' => [
+                [
+                    'table' => 'users',
+                    'alias' => 'Creator',
+                    'type' => 'INNER',
+                    'conditions' => ['Creator.id = Log.user_id']
+                ],
+            ],
+            'fields' => ['Log.*', 'Creator.*']
+        ]);
+        $this->Resale->id = $id;
+        $canal = $this->Resale->read();
+
+        $condition = [
+            'and' => [],
+            'or' => [
+                'and' => ['Log.primary_key' => $id, 'Log.log_table' => 'Resale'],
+            ]
+        ];
+
+        $data = $this->Paginator->paginate('Log', $condition);
+
+        $breadcrumb = [
+            $canal['Resale']['nome_fantasia'] => ['controller' => 'resale', 'action' => 'edit', $id],
+            'Histórico Alterações' => '',
+        ];
+
+        $this->set('action', 'Histórico Alterações');
+        $this->set(compact('id', 'data', 'breadcrumb'));
     }
 }

@@ -57,6 +57,10 @@
 <div class="card mb-5 mb-xl-8">
     <div class="card-body pt-7 py-3">
         <?php echo $this->Form->create('Resale', ["id" => "js-form-submit", "action" => $form_action, "method" => "post", 'inputDefaults' => ['div' => false, 'label' => false]]); ?>
+            <?php if (isset($id)) { ?>
+                <textarea name="log_old_value" style="display:none"><?php echo json_encode(array('Resale' => $this->request->data['Resale'])); ?></textarea>
+            <?php } ?>
+
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Status</label>
                 <?php echo $this->Form->input('status_id', ["class" => "form-select mb-3 mb-lg-0", "data-control" => "select2", "empty" => "Selecione"]);?>
@@ -64,7 +68,12 @@
 
             <div class="mb-7 col">
                     <label class="fw-semibold fs-6 mb-2">Tipo</label>
-                    <?php echo $this->Form->input('tipo', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Revenda', '2' => 'Parceiro'), "class" => "form-select mb-3 mb-lg-0"));  ?>
+                    <?php echo $this->Form->input('tipo', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Revenda', '2' => 'Parceiro', '3' => 'Executivo'), "class" => "form-select mb-3 mb-lg-0"));  ?>
+            </div>
+
+            <div class="mb-7 col">
+                    <label class="fw-semibold fs-6 mb-2">Tipo Pessoa</label>
+                    <?php echo $this->Form->input('tipo_pessoa', array("id" => "tipo", "data-control" => "select2", "empty" => "Selecione", 'options' => array('1' => 'Física', '2' => 'Jurídica'), "class" => "form-select mb-3 mb-lg-0"));  ?>
             </div>
 
             <div class="mb-7 col">
@@ -171,6 +180,11 @@
                     <?php echo $this->Form->input('valor_recebido_cliente', ["type" => "text", "placeholder" => "Valor recebido por cliente", "class" => "form-control money_exchange mb-3 mb-lg-0"]);  ?>
                     <span class="input-group-text">%</span>
                 </div>
+            </div>
+
+            <div class="mb-7 col">
+                <label class="fw-semibold fs-6 mb-2">Observação</label>
+                <?php echo $this->Form->textarea('observation', ['id' => 'observation', 'class' => 'form-control']); ?>
             </div>
 
             <div class="mb-7">
