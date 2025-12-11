@@ -29,7 +29,7 @@
                         <?php if ($isSingleCustomer) { ?>
                             <button type="button" id="js_unificar_nota" class="btn btn-sm btn-primary me-3 d-flex align-items-center justify-content-center fs-6">
                                 <i class="fas fa-download"></i>
-                                Unificar nota de débito
+                                Unificar Nota de Débito
                             </button>
                         <?php } ?>
                         
@@ -281,7 +281,7 @@
             <div class="modal-body">
                 <form id="form_unificar_nota">
                     <div class="mb-3">
-                        <label for="valor_unificado" class="form-label">Valor</label>
+                        <label for="valor_unificado" class="form-label">Valor do desconto</label>
                         <input type="text" class="form-control" id="valor_unificado" name="valor_unificado">
                     </div>
                     <div class="mb-3">
