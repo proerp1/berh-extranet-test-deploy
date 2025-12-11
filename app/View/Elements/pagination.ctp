@@ -17,10 +17,26 @@
 	<?php if (isset($limit)) { ?>
 		<div class="col">
 		    <?php
-		        echo $this->Form->create(false, ['type' => 'get', 'style' => 'display: flex;align-items: center;gap: 10px;', 'class' => 'justify-content-end']);
+				echo $this->Form->create(false, ['type' => 'get', 'style' => 'display: flex;align-items: center;gap: 10px;', 'class' => 'justify-content-end']);
+					$current_params = $this->request->query;
+
+					foreach ($current_params as $key => $value) {
+						if ($key !== 'limit' && $key !== 'url') {
+							if (is_array($value)) {
+								foreach ($value as $v) {
+									echo $this->Form->hidden($key . '[]', ['value' => $v]);
+								}
+							} else {
+								echo $this->Form->hidden($key, ['value' => $value]);
+							}
+						}
+					}
+					
+					$pag_options = [5 => '5', 10 => '10', 20 => '20', 50 => '50'];
+
 		            echo $this->Form->input('limit', [
 		                'type' => 'select',
-		                'options' => [5 => '5', 10 => '10', 20 => '20', 50 => '50'],
+		                'options' => isset($limit_options) ? $limit_options : $pag_options,
 		                'default' => $this->request->query('limit') ? $this->request->query('limit') : $limit,
 		                'style' => 'flex: 0.1',
 		                'div' => false,

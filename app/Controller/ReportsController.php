@@ -1111,8 +1111,10 @@ class ReportsController extends AppController
 
         $this->Permission->check(91, "escrita") ? "" : $this->redirect("/not_allowed");
 
+        $limit = !empty($this->request->query('limit')) ? (int)$this->request->query('limit') : 100;
+
         $this->Paginator->settings = ['OrderItem' => [
-            'limit' => 200,
+            'limit' => $limit,
             'order' => ['Order.id' => 'desc'],
             'fields' => [
                 'OrderItem.*',
@@ -1651,7 +1653,10 @@ class ReportsController extends AppController
         $action = 'Relatório de Compras';
         $breadcrumb = ['Relatórios' => '', 'Relatório de Compras' => ''];
 
-        $this->set(compact('action', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total', 'de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba', 'de_lib', 'ate_lib'));
+        $limit_options = [25 => '25', 50 => '50', 100 => '100'];
+
+        $this->set(compact('action', 'limit', 'limit_options', 'breadcrumb', 'items', 'statuses', 'buscar', 'items_total'));
+        $this->set(compact('de', 'para', 'benefitTypes', 'conditionsJson', 'status_pag', 'aba', 'de_lib', 'ate_lib'));
     }
 
     private function getCondicoesAbaCompras($aba)
