@@ -1966,8 +1966,8 @@ class ReportsController extends AppController
             if ($motivo) {
                 $data['OrderItem']['motivo_processamento'] = $motivo;
             }
-
-            if ($statusProcess == 'PAGAMENTO_REALIZADO') {
+            
+            if (in_array($statusProcess, ['GERAR_PAGAMENTO', 'PAGAMENTO_REALIZADO'])) {
                 if (in_array($orderItem['OrderItem']['status_processamento'], ['CADASTRO_INCONSISTENTE', 'CARTAO_NOVO_CREDITO_INCONSISTENTE', 'CREDITO_INCONSISTENTE'])) {
                     $subtotal = $orderItem['OrderItem']['subtotal_not_formated'];
                     if ($subtotal > 0) {
