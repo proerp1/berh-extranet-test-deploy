@@ -2787,6 +2787,10 @@ class ReportsController extends AppController
             $condition['and'] = array_merge($condition['and'], ['OrderItem.id !=' => $notOrderItemIds]);
         }
 
+        if ($tipo == 'credito') {
+            $condition['and'] = array_merge($condition['and'], ['(IFNULL(OrderItem.subtotal, 0) - IFNULL(OrderItem.saldo, 0)) <> 0']);
+        }
+
         $dados = $this->OrderItem->find('all', [
             'conditions' => $condition,
             'group' => ['OrderItem.id'],
