@@ -184,7 +184,7 @@
 
             <div class="mb-7 col">
                 <label class="fw-semibold fs-6 mb-2">Observação</label>
-                <?php echo $this->Form->textarea('observation', ['id' => 'observation', 'class' => 'form-control']); ?>
+                <?php echo $this->Form->input('observation', ['id' => 'observation', 'class' => 'form-control']); ?>
             </div>
 
             <div class="mb-7">

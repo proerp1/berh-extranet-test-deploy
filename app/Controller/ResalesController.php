@@ -2,7 +2,7 @@
 class ResalesController extends AppController
 {
     public $helpers = ['Html', 'Form'];
-    public $components = ['Paginator', 'Permission', 'Email'];
+    public $components = ['Paginator', 'Permission', 'Email', 'ExcelGenerator'];
     public $uses = ['Resale', 'Status', 'Vencimento', 'Seller', 'Customer', 'CustomerUser', 'BankAccount', 'Log'];
 
     public $paginate = [
@@ -38,6 +38,15 @@ class ResalesController extends AppController
 
         if (isset($_GET["s"]) and $_GET["s"] != "") {
             $condition['and'] = array_merge($condition['and'], ['Status.id' => $_GET['s']]);
+        }
+
+        if (isset($_GET['excel'])) {
+            $dados = $this->Resale->find('all', ['conditions' => $condition]);
+
+            $nome = 'canais_' . date('d_m_Y'). '.xlsx';
+
+            $this->ExcelGenerator->gerarExcelCanais($nome, $dados);
+            $this->redirect("/files/excel/" . $nome);
         }
 
         $data = $this->Paginator->paginate('Resale', $condition);

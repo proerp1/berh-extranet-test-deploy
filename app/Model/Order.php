@@ -44,6 +44,10 @@ class Order extends AppModel
             'className' => 'User',
             'foreignKey' => 'user_updated_ge_id'
         ],
+        'UpdatedDueDate' => [
+            'className' => 'User',
+            'foreignKey' => 'user_updated_due_date_id'
+        ],
         'UpdatedCreditRelease' => [
             'className' => 'User',
             'foreignKey' => 'user_updated_id_credit_release_date'
@@ -194,6 +198,11 @@ class Order extends AppModel
             if (isset($val[$this->alias]['updated_ge'])) {
                 $results[$key][$this->alias]['updated_ge_nao_formatado'] = $val[$this->alias]['updated_ge'];
                 $results[$key][$this->alias]['updated_ge'] = date("d/m/Y", strtotime($val[$this->alias]['updated_ge']));
+            }
+
+            if (isset($val[$this->alias]['updated_due_date'])) {
+                $results[$key][$this->alias]['updated_due_date_nao_formatado'] = $val[$this->alias]['updated_due_date'];
+                $results[$key][$this->alias]['updated_due_date'] = date("d/m/Y H:i:s", strtotime($val[$this->alias]['updated_due_date']));
             }
 
             if (isset($val[$this->alias]['updated_credit_release_date'])) {

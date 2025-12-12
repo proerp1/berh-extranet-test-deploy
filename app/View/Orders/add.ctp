@@ -339,8 +339,11 @@
                                 <label class="form-label">Vencimento</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-                                    <input type="text" name="data[Order][due_date]" id="OrderDueDate" required class="form-control <?php echo $order['Order']['status_id'] != 83 ? '' : 'OrderDueDate'; ?>" value="<?php echo $order['Order']['due_date']; ?>" <?php echo $order['Order']['status_id'] != 83 ? 'readonly' : ''; ?>>
+                                    <input type="text" name="data[Order][due_date]" id="OrderDueDate" required class="form-control <?php echo $order['Order']['status_id'] != 83 ? '' : 'OrderDueDate'; ?>" value="<?php echo $order['Order']['due_date']; ?>">
                                 </div>
+                                <?php if ($order['Order']['updated_due_date']) { ?>
+                                    <p id="message_classification" style="margin: 0;">Última alteração por <?= $order['UpdatedDueDate']['name'] ?> às <?= $order['Order']['updated_due_date'] ?></p>
+                                <?php } ?>
                                 <?php if (strtotime($order['Order']['due_date_nao_formatado']) < strtotime('today') && $order['Order']['status_id'] == 83) { ?>
                                     <p id="message_classification" style="color: red; margin: 0;">A data de vencimento não pode ser menor que a data de hoje</p>
                                 <?php } ?>

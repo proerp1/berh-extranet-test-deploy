@@ -11,6 +11,7 @@ class Resale extends AppModel
             'conditions' => ['Status.categoria' => 1]
         ],
         'Vencimento',
+        'BankAccount'
     ];
 
     public function beforeFind($queryData)

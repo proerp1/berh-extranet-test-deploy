@@ -832,7 +832,12 @@ class OrdersController extends AppController
 
                 $order['Order']['desconto'] = $this->request->data['Order']['desconto'];
                 $order['Order']['total'] = $total;
+            }
+
+            if ($old_order['Order']['due_date'] != $this->request->data['Order']['due_date']) {
                 $order['Order']['due_date'] = $this->request->data['Order']['due_date'];
+                $order['Order']['updated_due_date'] = date('Y-m-d H:i:s');
+                $order['Order']['user_updated_due_date_id'] = CakeSession::read("Auth.User.id");
             }
 
             if (!empty($this->request->data['Order']['end_date'])) {
