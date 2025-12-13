@@ -2017,7 +2017,13 @@ class ReportsController extends AppController
         
         if (in_array($statusProcess, ['GERAR_PAGAMENTO', 'CARTAO_NOVO_PROCESSADO'])) {
             $orderItems = $this->OrderItem->find('all', [
-                'fields' => ['OrderItem.id', 'Order.id', 'Supplier.id', 'SUM(OrderItem.subtotal) as subtotal', 'SUM(OrderItem.transfer_fee) as transfer_fee'],
+                'fields' => [
+                    'OrderItem.id', 
+                    'Order.id', 
+                    'Supplier.id', 
+                    'SUM(COALESCE(OrderItem.subtotal, 0) - COALESCE(OrderItem.saldo, 0)) as subtotal',
+                    'SUM(COALESCE(OrderItem.transfer_fee, 0) - COALESCE(OrderItem.saldo_transfer_fee, 0)) as transfer_fee',
+                ],
                 'joins' => [
                     [
                         'table' => 'benefits',
