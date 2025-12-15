@@ -494,6 +494,7 @@ class ReportsController extends AppController
         $suppliers = $this->OrderItem->find('all',
             [
                 'fields' => ['Supplier.id', 'Supplier.nome_fantasia'],
+                'order' => ['TRIM(Supplier.nome_fantasia)' => 'asc'],
                 'conditions' => $cond,
                 'group' => ['Supplier.id'],
                 'recursive' => -1,
@@ -523,6 +524,7 @@ class ReportsController extends AppController
         $customers = $this->OrderItem->find('all',
             [
                 'fields' => ['Customer.id', 'Customer.nome_primario'],
+                'order' => ['TRIM(Customer.nome_primario)' => 'asc'],
                 'conditions' => $cond,
                 'group' => ['Customer.id'],
                 'recursive' => -1,
@@ -1267,6 +1269,12 @@ class ReportsController extends AppController
             $buscar = true;
 
             $condition['and'] = array_merge($condition['and'], ['Supplier.id' => $_GET['sup']]);
+        }
+
+        if (isset($_GET['num_ped_op']) and $_GET['num_ped_op'] != '') {
+            $buscar = true;
+
+            $condition['and'] = array_merge($condition['and'], ['OrderItem.pedido_operadora' => $_GET['num_ped_op']]);
         }
 
         if (isset($_GET['num']) && $_GET['num'] != '') {

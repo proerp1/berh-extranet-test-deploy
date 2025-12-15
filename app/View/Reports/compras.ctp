@@ -121,6 +121,10 @@
                                 </select>
                             </div>
                             <div class="mb-10">
+                                <label class="form-label fs-5 fw-bold mb-3">Pedido Operadora:</label>
+                                <input type="text" class="form-control form-control-solid fw-bolder" name="num_ped_op" id="num_ped_op" placeholder="Digite o pedido operadora" value="<?php echo isset($_GET['num_ped_op']) ? $_GET['num_ped_op'] : ''; ?>">
+                            </div>
+                            <div class="mb-10">
                                 <label class="form-label fs-5 fw-bold mb-3">Número(s) de Pedido:</label>
                                 <input type="text" class="form-control form-control-solid fw-bolder" name="num" id="num" placeholder="Digite o(s) pedido(s) separado(s) por virgula" value="<?php echo isset($_GET['num']) ? $_GET['num'] : ''; ?>">
                             </div>
