@@ -295,6 +295,10 @@ class Order extends AppModel
             $this->data[$this->alias]['updated_ge'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_ge']);
         }
 
+        if (!empty($this->data[$this->alias]['updated_due_date'])) {
+            $this->data[$this->alias]['updated_due_date'] = $this->dateTimeFormatBeforeSave($this->data[$this->alias]['updated_due_date']);
+        }
+
         if (!empty($this->data[$this->alias]['updated_credit_release_date'])) {
             $this->data[$this->alias]['updated_credit_release_date'] = $this->dateFormatBeforeSave($this->data[$this->alias]['updated_credit_release_date']);
         }
@@ -558,6 +562,22 @@ class Order extends AppModel
     public function dateFormatBeforeSave($dateString)
     {
         $date = DateTime::createFromFormat('d/m/Y', $dateString);
+
+        if ($date === false) {
+            $date = new DateTime($dateString);
+        }
+
+        # Check if it contains time
+        if (strpos($dateString, ':') !== false) {
+            return $date->format('Y-m-d H:i:s');
+        }
+
+        return $date->format('Y-m-d');
+    }
+
+    public function dateTimeFormatBeforeSave($dateString)
+    {
+        $date = DateTime::createFromFormat('d/m/Y H:i:s', $dateString);
 
         if ($date === false) {
             $date = new DateTime($dateString);
