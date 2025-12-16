@@ -41,8 +41,14 @@ jobs:
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          # Usamos sshpass -e também para o rsync
-          sshpass -e rsync -avuz -P --exclude=".*" \
+          # Adicionei flags para ignorar erros de permissão e tempo:
+          # --no-perms: Não tenta alterar permissões (chmod)
+          # --no-owner: Não tenta alterar o dono (chown)
+          # --no-group: Não tenta alterar o grupo
+          # --no-times: Não tenta alterar a data de modificação
+          sshpass -e rsync -rlozDv -P --exclude=".*" \
+          --no-perms --no-owner --no-group --no-times \
+          --rsync-path="/usr/bin/rsync" \
           -e "ssh -p 4501 -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=no" \
           . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
 
