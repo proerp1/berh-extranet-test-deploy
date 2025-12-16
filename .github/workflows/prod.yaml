@@ -26,11 +26,20 @@ jobs:
           ssh-keyscan -p 4501 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      - name: Test SSH login (password)
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" \
+          ssh -p 4501 \
+          -o PreferredAuthentications=password \
+          -o PubkeyAuthentication=no \
+          -o StrictHostKeyChecking=yes \
+          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "whoami && pwd"
+
       - name: Deploy with rsync using password
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" \
           rsync -avuz -P --exclude=".*" \
-          -e "ssh -p 4501" \
+          -e "ssh -p 4501 -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=yes" \
           . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
 
       - name: Install composer and run migration
