@@ -5,13 +5,11 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -23,23 +21,29 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan -p 4501 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          # -H faz hash dos nomes dos hosts para segurança e -p define a porta
+          ssh-keyscan -H -p 4501 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Test SSH login (password)
+        env:
+          # Injetamos a senha na variavel de ambiente SSHPASS para proteger os caracteres especiais
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" \
-          ssh -p 4501 \
+          # A flag -e diz para o sshpass ler a senha da variavel SSHPASS
+          sshpass -e ssh -p 4501 \
           -o PreferredAuthentications=password \
           -o PubkeyAuthentication=no \
-          -o StrictHostKeyChecking=yes \
+          -o StrictHostKeyChecking=no \
           ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "whoami && pwd"
 
       - name: Deploy with rsync using password
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" \
-          rsync -avuz -P --exclude=".*" \
-          -e "ssh -p 4501 -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=yes" \
+          # Usamos sshpass -e também para o rsync
+          sshpass -e rsync -avuz -P --exclude=".*" \
+          -e "ssh -p 4501 -o PreferredAuthentications=password -o PubkeyAuthentication=no -o StrictHostKeyChecking=no" \
           . ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/berh.com.br/httpdocs/admin/
 
       - name: Install composer and run migration
@@ -52,5 +56,7 @@ jobs:
           script: |
             cd /var/www/vhosts/berh.com.br/httpdocs/admin/
             php -v
+            # Adicionei export PATH para garantir que o composer e php sejam encontrados
+            export PATH=$PATH:/usr/local/bin:/usr/bin
             php composer.phar install --no-dev --prefer-dist --optimize-autoloader
             vendor/bin/phinx migrate -e production
