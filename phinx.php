@@ -11,7 +11,7 @@ return
         'default_environment' => 'development',
         'production' => [
             'adapter' => 'mysql',
-            'host' => 'localhost',
+            'host' => '10.0.30.6',
             'name' => 'berhl_db1_1',
             'user' => 'berhl_user1_db1',
             'pass' => 'Iu1qtG3n@%i@~Xf$xkn8hU#',
