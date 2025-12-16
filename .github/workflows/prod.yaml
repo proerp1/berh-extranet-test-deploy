@@ -20,7 +20,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
       - name: Adding Known Hosts
-        run: ssh-keyscan -p 4501 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -p 4501 ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy with rsync using password
         run: |
