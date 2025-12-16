@@ -66,3 +66,6 @@ jobs:
             export PATH=$PATH:/usr/local/bin:/usr/bin
             php composer.phar install --no-dev --prefer-dist --optimize-autoloader
             vendor/bin/phinx migrate -e production
+            echo "Corrigindo Permissões (www-data:berhl_ftp1_user1)"
+            sudo chown -R www-data:berhl_ftp1_user1 /var/www/vhosts/berh.com.br/httpdocs && sudo chmod 770 -R /var/www/vhosts/berh.com.br/httpdocs
+            echo "Permissões Corrigidas"
